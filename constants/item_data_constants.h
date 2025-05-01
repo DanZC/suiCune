@@ -48,6 +48,8 @@ enum {
     NUM_POCKETS,
 };
 
+#define PC_ITEM_POCKET NUM_POCKETS
+
 #define MAX_ITEMS 20
 #define MAX_BALLS 12
 #define MAX_KEY_ITEMS 25

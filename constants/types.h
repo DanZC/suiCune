@@ -1590,15 +1590,29 @@ struct PokemonCry
     uint16_t length;
 };
 
-typedef struct ItemPocketEntry {
+typedef struct ItemQuantityPocketEntry {
     item_t item;
     uint8_t quantity;
+} item_quantity_pocket_en_s;
+
+typedef struct ItemPocketEntry {
+    item_t item;
 } item_pocket_en_s;
 
 typedef struct ItemPocket {
     uint8_t count;
     item_pocket_en_s pocket[];
 } item_pocket_s;
+
+typedef struct ItemQuantityPocket {
+    uint8_t count;
+    item_quantity_pocket_en_s pocket[];
+} item_quantity_pocket_s;
+
+typedef union ItemPocketU {
+    item_quantity_pocket_s quantity_pocket;
+    item_pocket_s pocket;
+} item_pocket_u;
 
 struct U8Item {
     uint8_t value;

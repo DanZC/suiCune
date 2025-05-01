@@ -1,2 +1,1 @@
-void CheckSave(void);
-uint8_t CheckSave_Conv(void);
+uint8_t CheckSave(void);

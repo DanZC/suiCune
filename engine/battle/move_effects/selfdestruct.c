@@ -46,7 +46,7 @@ void BattleCommand_Selfdestruct(void){
     bit_reset(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS5_OPP), SUBSTATUS_DESTINY_BOND);
     // CALL(av_CheckBattleScene);
     // RET_NC ;
-    if(CheckBattleScene_Conv())
+    if(CheckBattleScene())
         return;
     // FARCALL(aDrawPlayerHUD);
     DrawPlayerHUD_Conv();

@@ -72,30 +72,13 @@ void NextCallReceiveDelay(void){
     // LD_A_H;
 #endif
     // JP(mRestartReceiveCallDelay);
-    RestartReceiveCallDelay_Conv(a);
+    RestartReceiveCallDelay(a);
 }
 
-void CheckReceiveCallTimer(void){
-    CALL(aCheckReceiveCallDelay);  // check timer
-    RET_NC ;
-    LD_HL(wTimeCyclesSinceLastCall);
-    LD_A_hl;
-    CP_A(3);
-    IF_NC goto ok;
-    INC_hl;
-
-
-ok:
-    CALL(aNextCallReceiveDelay);  // restart timer
-    SCF;
-    RET;
-
-}
-
-bool CheckReceiveCallTimer_Conv(void){
+bool CheckReceiveCallTimer(void){
     // CALL(aCheckReceiveCallDelay);  // check timer
     // RET_NC ;
-    if(!CheckReceiveCallDelay_Conv())
+    if(!CheckReceiveCallDelay())
         return false;
 
     // LD_HL(wTimeCyclesSinceLastCall);
@@ -115,29 +98,12 @@ bool CheckReceiveCallTimer_Conv(void){
     return true;
 }
 
-void InitOneDayCountdown(void){
-    LD_A(1);
-
-    return InitNDaysCountdown();
-}
-
-void InitOneDayCountdown_Conv(uint8_t* hl){
+void InitOneDayCountdown(uint8_t* hl){
     // LD_A(1);
-    return InitNDaysCountdown_Conv(hl, 1);
+    return InitNDaysCountdown(hl, 1);
 }
 
-void InitNDaysCountdown(void){
-    LD_hl_A;
-    PUSH_HL;
-    CALL(aUpdateTime);
-    POP_HL;
-    INC_HL;
-    CALL(aCopyDayToHL);
-    RET;
-
-}
-
-void InitNDaysCountdown_Conv(uint8_t* hl, uint8_t n){
+void InitNDaysCountdown(uint8_t* hl, uint8_t n){
     // LD_hl_A;
     hl[0] = n;
     // PUSH_HL;
@@ -150,43 +116,21 @@ void InitNDaysCountdown_Conv(uint8_t* hl, uint8_t n){
     // RET;
 }
 
-void CheckDayDependentEventHL(void){
-    INC_HL;
-    PUSH_HL;
-    CALL(aCalcDaysSince);
-    CALL(aGetDaysSince);
-    POP_HL;
-    DEC_HL;
-    CALL(aUpdateTimeRemaining);
-    RET;
-
-}
-
-bool CheckDayDependentEventHL_Conv(uint8_t* hl){
+bool CheckDayDependentEventHL(uint8_t* hl){
     // INC_HL;
     // PUSH_HL;
     // CALL(aCalcDaysSince);
-    CalcDaysSince_Conv(hl + 1);
+    CalcDaysSince(hl + 1);
     // CALL(aGetDaysSince);
-    uint8_t days = GetDaysSince_Conv();
+    uint8_t days = GetDaysSince();
     // POP_HL;
     // DEC_HL;
     // CALL(aUpdateTimeRemaining);
-    return UpdateTimeRemaining_Conv(hl, days);
+    return UpdateTimeRemaining(hl, days);
     // RET;
 }
 
-void RestartReceiveCallDelay(void){
-    LD_HL(wReceiveCallDelay_MinsRemaining);
-    LD_hl_A;
-    CALL(aUpdateTime);
-    LD_HL(wReceiveCallDelay_StartTime);
-    CALL(aCopyDayHourMinToHL);
-    RET;
-
-}
-
-void RestartReceiveCallDelay_Conv(uint8_t a){
+void RestartReceiveCallDelay(uint8_t a){
     // LD_HL(wReceiveCallDelay_MinsRemaining);
     // LD_hl_A;
     wram->wReceiveCallDelay_MinsRemaining = a;
@@ -194,86 +138,33 @@ void RestartReceiveCallDelay_Conv(uint8_t a){
     UpdateTime();
     // LD_HL(wReceiveCallDelay_StartTime);
     // CALL(aCopyDayHourMinToHL);
-    CopyDayHourMinToHL_Conv(wram->wReceiveCallDelay_StartTime);
+    CopyDayHourMinToHL(wram->wReceiveCallDelay_StartTime);
     // RET;
 }
 
-void CheckReceiveCallDelay(void){
-    LD_HL(wReceiveCallDelay_StartTime);
-    CALL(aCalcMinsHoursDaysSince);
-    CALL(aGetMinutesSinceIfLessThan60);
-    LD_HL(wReceiveCallDelay_MinsRemaining);
-    CALL(aUpdateTimeRemaining);
-    RET;
-
-}
-
-bool CheckReceiveCallDelay_Conv(void){
+bool CheckReceiveCallDelay(void){
     // LD_HL(wReceiveCallDelay_StartTime);
     // CALL(aCalcMinsHoursDaysSince);
-    CalcMinsHoursDaysSince_Conv(wram->wReceiveCallDelay_StartTime);
+    CalcMinsHoursDaysSince(wram->wReceiveCallDelay_StartTime);
     // CALL(aGetMinutesSinceIfLessThan60);
-    uint8_t mins = GetMinutesSinceIfLessThan60_Conv();
+    uint8_t mins = GetMinutesSinceIfLessThan60();
     // LD_HL(wReceiveCallDelay_MinsRemaining);
     // CALL(aUpdateTimeRemaining);
-    return UpdateTimeRemaining_Conv(&wram->wReceiveCallDelay_MinsRemaining, mins);
+    return UpdateTimeRemaining(&wram->wReceiveCallDelay_MinsRemaining, mins);
     // RET;
 }
 
 void RestartDailyResetTimer(void){
-    LD_HL(wDailyResetTimer);
-    JP(mInitOneDayCountdown);
-
-}
-
-void RestartDailyResetTimer_Conv(void){
     // LD_HL(wDailyResetTimer);
     // JP(mInitOneDayCountdown);
-    return InitOneDayCountdown_Conv((uint8_t*)&wram->wDailyResetTimer);
+    return InitOneDayCountdown((uint8_t*)&wram->wDailyResetTimer);
 }
 
 void CheckDailyResetTimer(void){
-    LD_HL(wDailyResetTimer);
-    CALL(aCheckDayDependentEventHL);
-    RET_NC ;
-    XOR_A_A;
-    LD_HL(wDailyFlags1);
-    LD_hli_A;  // wDailyFlags1
-    LD_hli_A;  // wDailyFlags2
-    LD_hli_A;  // wSwarmFlags
-    LD_hl_A;  // wSwarmFlags + 1
-    LD_HL(wDailyRematchFlags);
-    for(int rept = 0; rept < 4; rept++){
-    LD_hli_A;
-    }
-    LD_HL(wDailyPhoneItemFlags);
-    for(int rept = 0; rept < 4; rept++){
-    LD_hli_A;
-    }
-    LD_HL(wDailyPhoneTimeOfDayFlags);
-    for(int rept = 0; rept < 4; rept++){
-    LD_hli_A;
-    }
-    LD_HL(wKenjiBreakTimer);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto RestartKenjiBreakCountdown;
-    DEC_hl;
-    IF_NZ goto DontRestartKenjiBreakCountdown;
-
-RestartKenjiBreakCountdown:
-    CALL(aSampleKenjiBreakCountdown);
-
-DontRestartKenjiBreakCountdown:
-    JR(mRestartDailyResetTimer);
-
-}
-
-void CheckDailyResetTimer_Conv(void){
     // LD_HL(wDailyResetTimer);
     // CALL(aCheckDayDependentEventHL);
     // RET_NC ;
-    if(!CheckDayDependentEventHL_Conv((uint8_t*)&wram->wDailyResetTimer))
+    if(!CheckDayDependentEventHL((uint8_t*)&wram->wDailyResetTimer))
         return;
     
     // XOR_A_A;
@@ -309,33 +200,23 @@ void CheckDailyResetTimer_Conv(void){
     // AND_A_A;
     // IF_Z goto RestartKenjiBreakCountdown;
     if(wram->wKenjiBreakTimer[0] == 0) {
-        SampleKenjiBreakCountdown_Conv();
+        SampleKenjiBreakCountdown();
     }
     // DEC_hl;
     // IF_NZ goto DontRestartKenjiBreakCountdown;
     else if(--wram->wKenjiBreakTimer[0] == 0) {
-        SampleKenjiBreakCountdown_Conv();
+        SampleKenjiBreakCountdown();
     }
 // RestartKenjiBreakCountdown:
     // CALL(aSampleKenjiBreakCountdown);
 
 // DontRestartKenjiBreakCountdown:
     // JR(mRestartDailyResetTimer);
-    return RestartDailyResetTimer_Conv();
+    return RestartDailyResetTimer();
 }
 
+//  Generate a random number between 3 and 6
 void SampleKenjiBreakCountdown(void){
-//  Generate a random number between 3 and 6
-    CALL(aRandom);
-    AND_A(0b11);
-    ADD_A(3);
-    LD_addr_A(wKenjiBreakTimer);
-    RET;
-
-}
-
-//  Generate a random number between 3 and 6
-void SampleKenjiBreakCountdown_Conv(void){
     // CALL(aRandom);
     // AND_A(0b11);
     // ADD_A(3);
@@ -345,18 +226,6 @@ void SampleKenjiBreakCountdown_Conv(void){
 }
 
 void StartBugContestTimer(void){
-    LD_A(BUG_CONTEST_MINUTES);
-    LD_addr_A(wBugContestMinsRemaining);
-    LD_A(BUG_CONTEST_SECONDS);
-    LD_addr_A(wBugContestSecsRemaining);
-    CALL(aUpdateTime);
-    LD_HL(wBugContestStartTime);
-    CALL(aCopyDayHourMinSecToHL);
-    RET;
-
-}
-
-void StartBugContestTimer_Conv(void){
     // LD_A(BUG_CONTEST_MINUTES);
     // LD_addr_A(wBugContestMinsRemaining);
     wram->wBugContestMinsRemaining = BUG_CONTEST_MINUTES;
@@ -367,52 +236,14 @@ void StartBugContestTimer_Conv(void){
     UpdateTime();
     // LD_HL(wBugContestStartTime);
     // CALL(aCopyDayHourMinSecToHL);
-    CopyDayHourMinSecToHL_Conv(wram->wBugContestStartTime);
+    CopyDayHourMinSecToHL(wram->wBugContestStartTime);
     // RET;
 }
 
-void CheckBugContestTimer(void){
-    LD_HL(wBugContestStartTime);
-    CALL(aCalcSecsMinsHoursDaysSince);
-    LD_A_addr(wDaysSince);
-    AND_A_A;
-    IF_NZ goto timed_out;
-    LD_A_addr(wHoursSince);
-    AND_A_A;
-    IF_NZ goto timed_out;
-    LD_A_addr(wSecondsSince);
-    LD_B_A;
-    LD_A_addr(wBugContestSecsRemaining);
-    SUB_A_B;
-    IF_NC goto okay;
-    ADD_A(60);
-
-
-okay:
-    LD_addr_A(wBugContestSecsRemaining);
-    LD_A_addr(wMinutesSince);
-    LD_B_A;
-    LD_A_addr(wBugContestMinsRemaining);
-    SBC_A_B;
-    LD_addr_A(wBugContestMinsRemaining);
-    IF_C goto timed_out;
-    AND_A_A;
-    RET;
-
-
-timed_out:
-    XOR_A_A;
-    LD_addr_A(wBugContestMinsRemaining);
-    LD_addr_A(wBugContestSecsRemaining);
-    SCF;
-    RET;
-
-}
-
-bool CheckBugContestTimer_Conv(void){
+bool CheckBugContestTimer(void){
     // LD_HL(wBugContestStartTime);
     // CALL(aCalcSecsMinsHoursDaysSince);
-    CalcSecsMinsHoursDaysSince_Conv(wram->wBugContestStartTime);
+    CalcSecsMinsHoursDaysSince(wram->wBugContestStartTime);
     // LD_A_addr(wDaysSince);
     // AND_A_A;
     // IF_NZ goto timed_out;
@@ -467,31 +298,16 @@ void InitializeStartDay(void){
     UpdateTime();
     // LD_HL(wTimerEventStartDay);
     // CALL(aCopyDayToHL);
-    CopyDayToHL_Conv(&wram->wTimerEventStartDay);
+    CopyDayToHL(&wram->wTimerEventStartDay);
     // RET;
 }
 
 void CheckPokerusTick(void){
-    LD_HL(wTimerEventStartDay);
-    CALL(aCalcDaysSince);
-    CALL(aGetDaysSince);
-    AND_A_A;
-    IF_Z goto done;  // not even a day has passed since game start
-    LD_B_A;
-    FARCALL(aApplyPokerusTick);
-
-done:
-    XOR_A_A;
-    RET;
-
-}
-
-void CheckPokerusTick_Conv(void){
     // LD_HL(wTimerEventStartDay);
     // CALL(aCalcDaysSince);
-    CalcDaysSince_Conv(&wram->wTimerEventStartDay);
+    CalcDaysSince(&wram->wTimerEventStartDay);
     // CALL(aGetDaysSince);
-    uint8_t days = GetDaysSince_Conv();
+    uint8_t days = GetDaysSince();
     // AND_A_A;
     // IF_Z goto done;  // not even a day has passed since game start
     if(days != 0) {
@@ -570,19 +386,13 @@ void RestartLuckyNumberCountdown(void){
     uint8_t n = RestartLuckyNumberCountdown_GetDaysUntilNextFriday();
     // LD_HL(wLuckyNumberDayTimer);
     // JP(mInitNDaysCountdown);
-    return InitNDaysCountdown_Conv((uint8_t*)&wram->wLuckyNumberDayTimer, n);
+    return InitNDaysCountdown((uint8_t*)&wram->wLuckyNumberDayTimer, n);
 }
 
-void v_CheckLuckyNumberShowFlag(void){
-    LD_HL(wLuckyNumberDayTimer);
-    JP(mCheckDayDependentEventHL);
-
-}
-
-bool v_CheckLuckyNumberShowFlag_Conv(void){
+bool v_CheckLuckyNumberShowFlag(void){
     // LD_HL(wLuckyNumberDayTimer);
     // JP(mCheckDayDependentEventHL);
-    return CheckDayDependentEventHL_Conv((uint8_t*)&wram->wLuckyNumberDayTimer);
+    return CheckDayDependentEventHL((uint8_t*)&wram->wLuckyNumberDayTimer);
 }
 
 void DoMysteryGiftIfDayHasPassed(void){
@@ -601,10 +411,10 @@ void DoMysteryGiftIfDayHasPassed(void){
     // LD_HL(wTempMysteryGiftTimer);
     // CALL(aCheckDayDependentEventHL);
     // IF_NC goto not_timed_out;
-    if(CheckDayDependentEventHL_Conv((uint8_t*)&wram->wTempMysteryGiftTimer)) {
+    if(CheckDayDependentEventHL((uint8_t*)&wram->wTempMysteryGiftTimer)) {
         // LD_HL(wTempMysteryGiftTimer);
         // CALL(aInitOneDayCountdown);
-        InitOneDayCountdown_Conv((uint8_t*)&wram->wTempMysteryGiftTimer);
+        InitOneDayCountdown((uint8_t*)&wram->wTempMysteryGiftTimer);
         // CALL(aCloseSRAM);
         CloseSRAM();
         // FARCALL(aResetDailyMysteryGiftLimitIfUnlocked);
@@ -626,36 +436,9 @@ void DoMysteryGiftIfDayHasPassed(void){
     // RET;
 }
 
-void UpdateTimeRemaining(void){
 //  If the amount of time elapsed exceeds the capacity of its
 //  unit, skip this part.
-    CP_A(-1);
-    IF_Z goto set_carry;
-    LD_C_A;
-    LD_A_hl;  // time remaining
-    SUB_A_C;
-    IF_NC goto ok;
-    XOR_A_A;
-
-
-ok:
-    LD_hl_A;
-    IF_Z goto set_carry;
-    XOR_A_A;
-    RET;
-
-
-set_carry:
-    XOR_A_A;
-    LD_hl_A;
-    SCF;
-    RET;
-
-}
-
-//  If the amount of time elapsed exceeds the capacity of its
-//  unit, skip this part.
-bool UpdateTimeRemaining_Conv(uint8_t* hl, uint8_t a){
+bool UpdateTimeRemaining(uint8_t* hl, uint8_t a){
     // CP_A(-1);
     // IF_Z goto set_carry;
     if(a == 0xff) {
@@ -708,19 +491,7 @@ void GetSecondsSinceIfLessThan60(void){
 
 }
 
-void GetMinutesSinceIfLessThan60(void){
-    LD_A_addr(wDaysSince);
-    AND_A_A;
-    JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
-    LD_A_addr(wHoursSince);
-    AND_A_A;
-    JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
-    LD_A_addr(wMinutesSince);
-    RET;
-
-}
-
-uint8_t GetMinutesSinceIfLessThan60_Conv(void){
+uint8_t GetMinutesSinceIfLessThan60(void){
     // LD_A_addr(wDaysSince);
     // AND_A_A;
     // JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
@@ -745,13 +516,7 @@ void GetHoursSinceIfLessThan24(void){
 
 }
 
-void GetDaysSince(void){
-    LD_A_addr(wDaysSince);
-    RET;
-
-}
-
-uint8_t GetDaysSince_Conv(void){
+uint8_t GetDaysSince(void){
     // LD_A_addr(wDaysSince);
     // RET;
     return wram->wDaysSince;
@@ -763,16 +528,10 @@ void GetTimeElapsed_ExceedsUnitLimit(void){
 
 }
 
-void CalcDaysSince(void){
-    XOR_A_A;
-    JR(mv_CalcDaysSince);
-
-}
-
-void CalcDaysSince_Conv(uint8_t* hl){
+void CalcDaysSince(uint8_t* hl){
     // XOR_A_A;
     // JR(mv_CalcDaysSince);
-    return v_CalcDaysSince_Conv(hl, 0);
+    return v_CalcDaysSince(hl, 0);
 }
 
 void CalcHoursDaysSince(void){
@@ -783,41 +542,15 @@ void CalcHoursDaysSince(void){
 
 }
 
-void CalcMinsHoursDaysSince(void){
-    INC_HL;
-    INC_HL;
-    XOR_A_A;
-    JR(mv_CalcMinsHoursDaysSince);
-
-}
-
-void CalcMinsHoursDaysSince_Conv(uint8_t* hl){
+void CalcMinsHoursDaysSince(uint8_t* hl){
     // INC_HL;
     // INC_HL;
     // XOR_A_A;
     // JR(mv_CalcMinsHoursDaysSince);
-    return v_CalcMinsHoursDaysSince_Conv(hl + 2, 0);
+    return v_CalcMinsHoursDaysSince(hl + 2, 0);
 }
 
-void CalcSecsMinsHoursDaysSince(void){
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    LDH_A_addr(hSeconds);
-    LD_C_A;
-    SUB_A_hl;
-    IF_NC goto skip;
-    ADD_A(60);
-
-skip:
-    LD_hl_C;  // current seconds
-    DEC_HL;
-    LD_addr_A(wSecondsSince);  // seconds since
-
-    return v_CalcMinsHoursDaysSince();
-}
-
-void CalcSecsMinsHoursDaysSince_Conv(uint8_t* hl){
+void CalcSecsMinsHoursDaysSince(uint8_t* hl){
     // INC_HL;
     // INC_HL;
     // INC_HL;
@@ -842,25 +575,10 @@ void CalcSecsMinsHoursDaysSince_Conv(uint8_t* hl){
     // LD_addr_A(wSecondsSince);  // seconds since
     wram->wSecondsSince = a;
 
-    return v_CalcMinsHoursDaysSince_Conv(hl, carry);
+    return v_CalcMinsHoursDaysSince(hl, carry);
 }
 
-void v_CalcMinsHoursDaysSince(void){
-    LDH_A_addr(hMinutes);
-    LD_C_A;
-    SBC_A_hl;
-    IF_NC goto skip;
-    ADD_A(60);
-
-skip:
-    LD_hl_C;  // current minutes
-    DEC_HL;
-    LD_addr_A(wMinutesSince);  // minutes since
-
-    return v_CalcHoursDaysSince();
-}
-
-void v_CalcMinsHoursDaysSince_Conv(uint8_t* hl, uint8_t carry){
+void v_CalcMinsHoursDaysSince(uint8_t* hl, uint8_t carry){
     // LDH_A_addr(hMinutes);
     // LD_C_A;
     // SBC_A_hl;
@@ -881,25 +599,10 @@ void v_CalcMinsHoursDaysSince_Conv(uint8_t* hl, uint8_t carry){
     // LD_addr_A(wMinutesSince);  // minutes since
     wram->wMinutesSince = a;
 
-    return v_CalcHoursDaysSince_Conv(hl, carry);
+    return v_CalcHoursDaysSince(hl, carry);
 }
 
-void v_CalcHoursDaysSince(void){
-    LDH_A_addr(hHours);
-    LD_C_A;
-    SBC_A_hl;
-    IF_NC goto skip;
-    ADD_A(MAX_HOUR);
-
-skip:
-    LD_hl_C;  // current hours
-    DEC_HL;
-    LD_addr_A(wHoursSince);  // hours since
-
-    return v_CalcDaysSince();
-}
-
-void v_CalcHoursDaysSince_Conv(uint8_t* hl, uint8_t carry){
+void v_CalcHoursDaysSince(uint8_t* hl, uint8_t carry){
     // LDH_A_addr(hHours);
     // LD_C_A;
     // SBC_A_hl;
@@ -920,24 +623,10 @@ void v_CalcHoursDaysSince_Conv(uint8_t* hl, uint8_t carry){
     // LD_addr_A(wHoursSince);  // hours since
     wram->wHoursSince = a;
 
-    return v_CalcDaysSince_Conv(hl, carry);
+    return v_CalcDaysSince(hl, carry);
 }
 
-void v_CalcDaysSince(void){
-    LD_A_addr(wCurDay);
-    LD_C_A;
-    SBC_A_hl;
-    IF_NC goto skip;
-    ADD_A(20 * 7);
-
-skip:
-    LD_hl_C;  // current days
-    LD_addr_A(wDaysSince);  // days since
-    RET;
-
-}
-
-void v_CalcDaysSince_Conv(uint8_t* hl, uint8_t carry){
+void v_CalcDaysSince(uint8_t* hl, uint8_t carry){
     // LD_A_addr(wCurDay);
     // LD_C_A;
     // SBC_A_hl;
@@ -958,20 +647,7 @@ void v_CalcDaysSince_Conv(uint8_t* hl, uint8_t carry){
     // RET;
 }
 
-void CopyDayHourMinSecToHL(void){
-    LD_A_addr(wCurDay);
-    LD_hli_A;
-    LDH_A_addr(hHours);
-    LD_hli_A;
-    LDH_A_addr(hMinutes);
-    LD_hli_A;
-    LDH_A_addr(hSeconds);
-    LD_hli_A;
-    RET;
-
-}
-
-void CopyDayHourMinSecToHL_Conv(uint8_t* hl){
+void CopyDayHourMinSecToHL(uint8_t* hl){
     // LD_A_addr(wCurDay);
     // LD_hli_A;
     hl[0] = wram->wCurDay;
@@ -987,42 +663,25 @@ void CopyDayHourMinSecToHL_Conv(uint8_t* hl){
     // RET;
 }
 
-void CopyDayToHL(void){
-    LD_A_addr(wCurDay);
-    LD_hl_A;
-    RET;
-
-}
-
-void CopyDayToHL_Conv(uint8_t* hl){
+void CopyDayToHL(uint8_t* hl){
     // LD_A_addr(wCurDay);
     // LD_hl_A;
     hl[0] = wram->wCurDay;
     // RET;
 }
 
-void CopyDayHourToHL(void){
+void CopyDayHourToHL(uint8_t* hl){
 //  //  unreferenced
-    LD_A_addr(wCurDay);
-    LD_hli_A;
-    LDH_A_addr(hHours);
-    LD_hli_A;
-    RET;
-
+    // LD_A_addr(wCurDay);
+    // LD_hli_A;
+    hl[0] = wram->wCurDay;
+    // LDH_A_addr(hHours);
+    // LD_hli_A;
+    hl[1] = hram->hHours;
+    // RET;
 }
 
-void CopyDayHourMinToHL(void){
-    LD_A_addr(wCurDay);
-    LD_hli_A;
-    LDH_A_addr(hHours);
-    LD_hli_A;
-    LDH_A_addr(hMinutes);
-    LD_hli_A;
-    RET;
-
-}
-
-void CopyDayHourMinToHL_Conv(uint8_t* hl){
+void CopyDayHourMinToHL(uint8_t* hl){
     // LD_A_addr(wCurDay);
     // LD_hli_A;
     hl[0] = wram->wCurDay;

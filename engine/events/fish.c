@@ -3,109 +3,6 @@
 #include "../../home/random.h"
 #include "../../data/wild/fish.h"
 
-void Fish(void){
-    struct SpeciesLevel res = Fish_Conv(REG_E, REG_D);
-    REG_E = res.level;
-    REG_D = res.species;
-    return;
-//  Using a fishing rod.
-//  Fish for monsters with rod e in encounter group d.
-//  Return monster d at level e.
-
-    PUSH_AF;
-    PUSH_BC;
-    PUSH_HL;
-
-    LD_B_E;
-    CALL(aGetFishGroupIndex);
-
-    LD_HL(mFishGroups);
-    for(int rept = 0; rept < FISHGROUP_DATA_LENGTH; rept++){
-    ADD_HL_DE;
-    }
-    CALL(aFish_Fish);
-
-    POP_HL;
-    POP_BC;
-    POP_AF;
-    RET;
-
-
-Fish:
-//  Fish for monsters with rod b from encounter data in FishGroup at hl.
-//  Return monster d at level e.
-
-    CALL(aRandom);
-    CP_A_hl;
-    IF_NC goto no_bite;
-
-// Get encounter data by rod:
-// 0: Old
-// 1: Good
-// 2: Super
-    INC_HL;
-    LD_E_B;
-    LD_D(0);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-
-// Compare the encounter chance to select a Pokemon.
-    CALL(aRandom);
-
-loop:
-    CP_A_hl;
-    IF_Z goto ok;
-    IF_C goto ok;
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    goto loop;
-
-ok:
-    INC_HL;
-
-// Species 0 reads from a time-based encounter table.
-    LD_A_hli;
-    LD_D_A;
-    AND_A_A;
-    CALL_Z (aFish_TimeEncounter);
-
-    LD_E_hl;
-    RET;
-
-
-no_bite:
-    LD_DE(0);
-    RET;
-
-
-TimeEncounter:
-// The level byte is repurposed as the index for the new table.
-    LD_E_hl;
-    LD_D(0);
-    LD_HL(mTimeFishGroups);
-    for(int rept = 0; rept < 4; rept++){
-    ADD_HL_DE;
-    }
-
-    LD_A_addr(wTimeOfDay);
-    maskbits(NUM_DAYTIMES, 0);
-    CP_A(NITE_F);
-    IF_C goto time_species;
-    INC_HL;
-    INC_HL;
-
-
-time_species:
-    LD_D_hl;
-    INC_HL;
-    RET;
-
-}
-
 enum {
     ROD_OLD,
     ROD_GOOD,
@@ -211,7 +108,7 @@ static struct SpeciesLevel Fish_Fish(const struct FishGroup* hl, uint8_t rod) {
 //  Using a fishing rod.
 //  Fish for monsters with rod e in encounter group d.
 //  Return monster d at level e.
-struct SpeciesLevel Fish_Conv(uint8_t e, uint8_t d){
+struct SpeciesLevel Fish(uint8_t e, uint8_t d){
     // PUSH_AF;
     // PUSH_BC;
     // PUSH_HL;

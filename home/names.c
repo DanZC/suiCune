@@ -474,7 +474,7 @@ uint8_t* GetTMHMName(item_t a){
     // LD_A_addr(wNamedObjectIndex);
     // LD_C_A;
     // CALLFAR(aGetTMHMNumber);
-    uint8_t c = GetTMHMNumber_Conv(a);
+    uint8_t c = GetTMHMNumber(a);
     // POP_DE;
 
 //  HM numbers start from 51, not 1

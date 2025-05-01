@@ -4,21 +4,7 @@
 #include "../../data/battle_anims/oam.h"
 #include "../../data/battle_anims/object_gfx.h"
 
-void ReinitBattleAnimFrameset(void){
-    LD_HL(BATTLEANIMSTRUCT_FRAMESET_ID);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(BATTLEANIMSTRUCT_DURATION);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(BATTLEANIMSTRUCT_FRAME);
-    ADD_HL_BC;
-    LD_hl(-1);
-    RET;
-
-}
-
-void ReinitBattleAnimFrameset_Conv(struct BattleAnim* bc, uint8_t a){
+void ReinitBattleAnimFrameset(struct BattleAnim* bc, uint8_t a){
     // LD_HL(BATTLEANIMSTRUCT_FRAMESET_ID);
     // ADD_HL_BC;
     // LD_hl_A;
@@ -32,97 +18,6 @@ void ReinitBattleAnimFrameset_Conv(struct BattleAnim* bc, uint8_t a){
     // LD_hl(-1);
     bc->frame = (uint8_t)-1;
     // RET;
-}
-
-void GetBattleAnimFrame(void){
-
-loop:
-    LD_HL(BATTLEANIMSTRUCT_DURATION);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next_frame;
-    DEC_hl;
-    CALL(aGetBattleAnimFrame_GetPointer);
-    LD_A_hli;
-    PUSH_AF;
-    goto okay;
-
-
-next_frame:
-    LD_HL(BATTLEANIMSTRUCT_FRAME);
-    ADD_HL_BC;
-    INC_hl;
-    CALL(aGetBattleAnimFrame_GetPointer);
-    LD_A_hli;
-    CP_A(dorestart_command);
-    IF_Z goto restart;
-    CP_A(endanim_command);
-    IF_Z goto repeat_last;
-
-    PUSH_AF;
-    LD_A_hl;
-    PUSH_HL;
-    AND_A(~(Y_FLIP << 1 | X_FLIP << 1));
-    LD_HL(BATTLEANIMSTRUCT_DURATION);
-    ADD_HL_BC;
-    LD_hl_A;
-    POP_HL;
-
-okay:
-    LD_A_hl;
-    AND_A(Y_FLIP << 1 | X_FLIP << 1);  // The << 1 is compensated in the "frame" macro
-    SRL_A;
-    LD_addr_A(wBattleAnimTempFrameOAMFlags);
-    POP_AF;
-    RET;
-
-
-repeat_last:
-    XOR_A_A;
-    LD_HL(BATTLEANIMSTRUCT_DURATION);
-    ADD_HL_BC;
-    LD_hl_A;
-
-    LD_HL(BATTLEANIMSTRUCT_FRAME);
-    ADD_HL_BC;
-    DEC_hl;
-    DEC_hl;
-    goto loop;
-
-
-restart:
-    XOR_A_A;
-    LD_HL(BATTLEANIMSTRUCT_DURATION);
-    ADD_HL_BC;
-    LD_hl_A;
-
-    DEC_A;
-    LD_HL(BATTLEANIMSTRUCT_FRAME);
-    ADD_HL_BC;
-    LD_hl_A;
-    goto loop;
-
-
-GetPointer:
-    LD_HL(BATTLEANIMSTRUCT_FRAMESET_ID);
-    ADD_HL_BC;
-    LD_E_hl;
-    LD_D(0);
-    LD_HL(mBattleAnimFrameData);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    LD_HL(BATTLEANIMSTRUCT_FRAME);
-    ADD_HL_BC;
-    LD_L_hl;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_DE;
-    RET;
-
 }
 
 static const uint8_t* GetBattleAnimFrame_GetPointer(struct BattleAnim* bc) {
@@ -147,7 +42,7 @@ static const uint8_t* GetBattleAnimFrame_GetPointer(struct BattleAnim* bc) {
     return de + 2 * bc->frame;
 }
 
-uint8_t GetBattleAnimFrame_Conv(struct BattleAnim* bc){
+uint8_t GetBattleAnimFrame(struct BattleAnim* bc){
     while(1) {
     // loop:
         // LD_HL(BATTLEANIMSTRUCT_DURATION);
@@ -237,17 +132,7 @@ uint8_t GetBattleAnimFrame_Conv(struct BattleAnim* bc){
     }
 }
 
-void GetBattleAnimOAMPointer(void){
-    LD_L_A;
-    LD_H(0);
-    LD_DE(mBattleAnimOAMData);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    ADD_HL_DE;
-    RET;
-}
-
-const struct BattleOAMData* GetBattleAnimOAMPointer_Conv(uint8_t a){
+const struct BattleOAMData* GetBattleAnimOAMPointer(uint8_t a){
     // LD_L_A;
     // LD_H(0);
     // LD_DE(mBattleAnimOAMData);
@@ -258,36 +143,7 @@ const struct BattleOAMData* GetBattleAnimOAMPointer_Conv(uint8_t a){
     return BattleAnimOAMData + a;
 }
 
-void LoadBattleAnimGFX(void){
-    PUSH_HL;
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_DE(mAnimObjGFX);
-    ADD_HL_DE;
-    LD_C_hl;
-    INC_HL;
-    LD_B_hl;
-    INC_HL;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    POP_DE;
-    PUSH_BC;
-    CALL(aDecompressRequest2bpp);
-    POP_BC;
-    RET;
-
-// INCLUDE "data/battle_anims/framesets.asm"
-
-// INCLUDE "data/battle_anims/oam.asm"
-
-// INCLUDE "data/battle_anims/object_gfx.asm"
-
-}
-
-uint8_t LoadBattleAnimGFX_Conv(uint8_t* de, uint8_t a){
+uint8_t LoadBattleAnimGFX(uint8_t* de, uint8_t a){
     // PUSH_HL;
     // LD_L_A;
     // LD_H(0);

@@ -1,12 +1,6 @@
-void CheckWarpCollision(void);
-bool CheckWarpCollision_Conv(void);
-void CheckDirectionalWarp(void);
-bool CheckDirectionalWarp_Conv(void);
-void CheckWarpFacingDown(void);
-bool CheckWarpFacingDown_Conv(void);
-void CheckGrassCollision(void);
-bool CheckGrassCollision_Conv(void);
-void CheckCutCollision(void);
-bool CheckCutCollision_Conv(uint8_t tile);
-void GetWarpSFX(void);
-uint16_t GetWarpSFX_Conv(void);
+bool CheckWarpCollision(void);
+bool CheckDirectionalWarp(void);
+bool CheckWarpFacingDown(void);
+bool CheckGrassCollision(void);
+bool CheckCutCollision(uint8_t tile);
+uint16_t GetWarpSFX(void);

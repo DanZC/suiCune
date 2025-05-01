@@ -13,7 +13,7 @@ void GiveParkBalls(void){
     // LD_addr_A(wParkBallsRemaining);
     wram->wParkBallsRemaining = BUG_CONTEST_BALLS;
     // FARCALL(aStartBugContestTimer);
-    StartBugContestTimer_Conv();
+    StartBugContestTimer();
     // RET;
 
 }

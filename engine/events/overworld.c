@@ -313,7 +313,7 @@ static bool CheckMapForSomethingToCut(void){
     // FARCALL(aCheckCutCollision);
     // POP_DE;
     // IF_NC goto fail;
-    if(!CheckCutCollision_Conv(cid.tileId))
+    if(!CheckCutCollision(cid.tileId))
         return false;
 // Get the location of the current block in wOverworldMapBlocks.
     // CALL(aGetBlockLocation);
@@ -1351,7 +1351,7 @@ static uint8_t TeleportFunction_TryTeleport(void){
         // LD_A_addr(wLastSpawnMapNumber);
         // LD_E_A;
         // FARCALL(aIsSpawnPoint);
-        u8_flag_s res = IsSpawnPoint_Conv(wram->wLastSpawnMapGroup, wram->wLastSpawnMapNumber);
+        u8_flag_s res = IsSpawnPoint(wram->wLastSpawnMapGroup, wram->wLastSpawnMapNumber);
         // IF_NC goto nope;
         if(res.flag) {
             // LD_A_C;
@@ -2121,7 +2121,7 @@ static uint8_t FishFunction_TryFish(void) {
     // LD_A_addr(wFishingRodUsed);
     // LD_E_A;
     // FARCALL(aFish);
-    struct SpeciesLevel fishMon = Fish_Conv(sFieldMoveData.fishingRodUsed, fishGroup);
+    struct SpeciesLevel fishMon = Fish(sFieldMoveData.fishingRodUsed, fishGroup);
     // LD_A_D;
     // AND_A_A;
     // IF_Z goto nonibble;

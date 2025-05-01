@@ -147,7 +147,7 @@ void BattleCommand_Conversion(void){
     mon->types[1] = de[c];
     // LD_addr_A(wNamedObjectIndex);
     // FARCALL(aGetTypeName);
-    GetTypeName_Conv(de[c]);
+    GetTypeName(de[c]);
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
     // LD_HL(mTransformedTypeText);

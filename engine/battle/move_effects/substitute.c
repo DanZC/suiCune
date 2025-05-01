@@ -103,7 +103,7 @@ void BattleCommand_Substitute(void){
     // CALL(av_CheckBattleScene);
     // IF_C goto no_anim;
 
-    if(CheckBattleScene_Conv()) {
+    if(CheckBattleScene()) {
         // XOR_A_A;
         // LD_addr_A(wNumHits);
         wram->wNumHits = 0;

@@ -22,6 +22,8 @@
 #include "../../home/scrolling_menu.h"
 #include "../../home/pokemon.h"
 #include "../../home/item.h"
+#include "../../home/names.h"
+#include "../../home/copy_name.h"
 #include "../../data/text/common.h"
 
 //  Pack.Jumptable and BattlePack.Jumptable indexes
@@ -304,7 +306,7 @@ void Pack_RunJumptable(void) {
             if(Pack_InterpretJoypad_Conv(PACKSTATE_INITKEYITEMSPOCKET, PACKSTATE_INITITEMSPOCKET))
                 return;
             // FARCALL(av_CheckTossableItem);
-            bool tossable = v_CheckTossableItem_Conv(wram->wCurItem);
+            bool tossable = v_CheckTossableItem(wram->wCurItem);
             // LD_A_addr(wItemAttributeValue);
             // AND_A_A;
             // IF_NZ goto use_quit;
@@ -402,13 +404,13 @@ static void Pack_ItemBallsKey_LoadSubmenu(void){
     // LD_A_addr(wItemAttributeValue);
     // AND_A_A;
     // IF_NZ goto tossable;
-    if(!v_CheckTossableItem_Conv(wram->wCurItem)){
+    if(!v_CheckTossableItem(wram->wCurItem)){
     // tossable:
         // FARCALL(aCheckSelectableItem);
         // LD_A_addr(wItemAttributeValue);
         // AND_A_A;
         // IF_NZ goto tossable_selectable;
-        if(!CheckSelectableItem_Conv(wram->wCurItem)){
+        if(!CheckSelectableItem(wram->wCurItem)){
         // tossable_selectable:
             // LD_HL(mMenuHeader_UnusableItem);
             hl = &MenuHeader_UnusableItem;
@@ -430,13 +432,13 @@ static void Pack_ItemBallsKey_LoadSubmenu(void){
     // LD_A_addr(wItemAttributeValue);
     // AND_A_A;
     // IF_NZ goto selectable;
-    else if(!CheckSelectableItem_Conv(wram->wCurItem)){
+    else if(!CheckSelectableItem(wram->wCurItem)){
     // selectable:
         // FARCALL(aCheckItemMenu);
         // LD_A_addr(wItemAttributeValue);
         // AND_A_A;
         // IF_NZ goto selectable_usable;
-        if(CheckItemMenu_Conv(wram->wCurItem) != 0){
+        if(CheckItemMenu(wram->wCurItem) != 0){
         // selectable_usable:
             // LD_HL(mMenuHeader_UsableItem);
             hl = &MenuHeader_UsableItem;
@@ -450,14 +452,14 @@ static void Pack_ItemBallsKey_LoadSubmenu(void){
             // LD_HL(mMenuHeader_HoldableItem);
             hl = &MenuHeader_HoldableItem;
             // LD_DE(mJumptable_GiveTossQuit);
-            de = Jumptable_UseGiveTossQuit;
+            de = Jumptable_GiveTossQuit;
         }
     }
     // FARCALL(aCheckItemMenu);
     // LD_A_addr(wItemAttributeValue);
     // AND_A_A;
     // IF_NZ goto usable;
-    else if(CheckItemMenu_Conv(wram->wCurItem) != 0){
+    else if(CheckItemMenu(wram->wCurItem) != 0){
     // usable:
         // LD_HL(mMenuHeader_UsableKeyItem);
         hl = &MenuHeader_UsableKeyItem;
@@ -651,7 +653,7 @@ void UseItem(void){
     // RST(aJumpTable);
     // RET;
 // dw:
-    switch(CheckItemMenu_Conv(wram->wCurItem)){
+    switch(CheckItemMenu(wram->wCurItem)){
     //  entries correspond to ITEMMENU_* constants
         //dw ['.Field'];  // ITEMMENU_CLOSE
         case ITEMMENU_CLOSE:
@@ -733,7 +735,7 @@ void TossMenu(void){
     // IF_C goto finish;
     if(!quit){
         // CALL(aPack_GetItemName);
-        Pack_GetItemName();
+        Pack_GetItemName(wram->wCurItem);
         // LD_HL(mAskQuantityThrowAwayText);
         // CALL(aMenuTextbox);
         MenuTextbox(AskQuantityThrowAwayText);
@@ -748,9 +750,9 @@ void TossMenu(void){
             // LD_HL(wNumItems);
             // LD_A_addr(wCurItemQuantity);
             // CALL(aTossItem);
-            TossItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItemQuantity);
+            TossItem(GetItemPocket(ITEM_POCKET), wram->wCurItem, wram->wItemQuantityChange);
             // CALL(aPack_GetItemName);
-            Pack_GetItemName();
+            Pack_GetItemName(wram->wCurItem);
             // LD_HL(mThrewAwayText);
             // CALL(aPack_PrintTextNoScroll);
             Pack_PrintTextNoScroll(ThrewAwayText);
@@ -800,7 +802,7 @@ void RegisterItem(void){
     // LD_A_addr(wItemAttributeValue);
     // AND_A_A;
     // IF_NZ goto cant_register;
-    if(!CheckSelectableItem_Conv(wram->wCurItem)){
+    if(!CheckSelectableItem(wram->wCurItem)){
     // cant_register:
         // LD_HL(mCantRegisterText);
         // CALL(aPack_PrintTextNoScroll);
@@ -823,7 +825,7 @@ void RegisterItem(void){
     // LD_addr_A(wRegisteredItem);
     wram->wRegisteredItem = wram->wCurItem;
     // CALL(aPack_GetItemName);
-    Pack_GetItemName();
+    Pack_GetItemName(wram->wCurItem);
     // LD_DE(SFX_FULL_HEAL);
     // CALL(aWaitPlaySFX);
     WaitPlaySFX(SFX_FULL_HEAL);
@@ -1186,7 +1188,7 @@ void ItemSubmenu(void){
     PEEK("");
     // FARCALL(aCheckItemContext);
     // LD_A_addr(wItemAttributeValue);
-    return TMHMSubmenu(CheckItemContext_Conv(wram->wCurItem));
+    return TMHMSubmenu(CheckItemContext(wram->wCurItem));
 }
 
 static const struct MenuHeader UsableMenuHeader = {
@@ -1256,7 +1258,7 @@ void TMHMSubmenu(uint8_t a){
                 // RET;
 
             // ItemFunctionJumptable:
-                switch(CheckItemContext_Conv(wram->wCurItem)){
+                switch(CheckItemContext(wram->wCurItem)){
                 //  entries correspond to ITEMMENU_* constants
                     default:
                     case ITEMMENU_NOUSE:    //dw ['.Oak'];  // ITEMMENU_NOUSE
@@ -2218,13 +2220,13 @@ void DrawPocketName(uint8_t pocket){
     // RET;
 }
 
-void Pack_GetItemName(void){
-    LD_A_addr(wCurItem);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetItemName);
-    CALL(aCopyName1);
-    RET;
-
+void Pack_GetItemName(item_t item){
+    // LD_A_addr(wCurItem);
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetItemName);
+    // CALL(aCopyName1);
+    CopyName1(GetItemName(item));
+    // RET;
 }
 
 void Pack_ClearTilemap(void){

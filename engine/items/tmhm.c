@@ -26,15 +26,11 @@ static void TMHMPocket_ConvertItemToTMHMNumber(void){
     // CALLFAR(aGetNumberedTMHM);
     // LD_A_C;
     // LD_addr_A(wCurItem);
-    wram->wCurItem = GetNumberedTMHM_Conv(wram->wCurItem);
+    wram->wCurItem = GetNumberedTMHM(wram->wCurItem);
     // RET;
 }
 
-void TMHMPocket(void){
-    TMHMPocket_Conv();
-}
-
-bool TMHMPocket_Conv(void){
+bool TMHMPocket(void){
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
     hram->hInMenu = 0x1;
@@ -74,7 +70,7 @@ void ConvertCurItemIntoCurTMHM(void){
     // CALLFAR(aGetTMHMNumber);
     // LD_A_C;
     // LD_addr_A(wTempTMHM);
-    wram->wTempTMHM = GetTMHMNumber_Conv(wram->wCurItem);
+    wram->wTempTMHM = GetTMHMNumber(wram->wCurItem);
     // RET;
 
 }
@@ -83,14 +79,14 @@ void GetTMHMItemMove(void){
     // CALL(aConvertCurItemIntoCurTMHM);
     ConvertCurItemIntoCurTMHM();
     // PREDEF(pGetTMHMMove);
-    wram->wTempTMHM = GetTMHMMove_Conv(wram->wTempTMHM);
+    wram->wTempTMHM = GetTMHMMove(wram->wTempTMHM);
     // RET;
 }
 
 move_t GetTMHMItemMove_Conv(item_t item){
     // CALL(aConvertCurItemIntoCurTMHM);
     // PREDEF(pGetTMHMMove);
-    return GetTMHMMove_Conv(GetTMHMNumber_Conv(item));
+    return GetTMHMMove(GetTMHMNumber(item));
     // RET;
 }
 
@@ -210,7 +206,7 @@ u8_flag_s ChooseMonToLearnTMHM_NoRefresh(void){
 
 void TeachTMHM(void){
     // PREDEF(pCanLearnTMHMMove);
-    uint8_t c = CanLearnTMHMMove_Conv(wram->wCurSpecies, wram->wPutativeTMHMMove);
+    uint8_t c = CanLearnTMHMMove(wram->wCurSpecies, wram->wPutativeTMHMMove);
 
     // PUSH_BC;
     // LD_A_addr(wCurPartyMon);
@@ -259,7 +255,7 @@ void TeachTMHM(void){
 
     // LD_C(HAPPINESS_LEARNMOVE);
     // CALLFAR(aChangeHappiness);
-    ChangeHappiness_Conv(HAPPINESS_LEARNMOVE);
+    ChangeHappiness(HAPPINESS_LEARNMOVE);
     // CALL(aConsumeTM);
     ConsumeTM();
     // goto learned_move;
@@ -426,7 +422,7 @@ bool TMHM_PocketLoop_Conv(void){
             // LD_addr_A(wCurSpecies);
             // hlcoord(1, 14, wTilemap);
             // CALL(aPrintMoveDescription);
-            PrintMoveDescription_Conv(coord(1, 14, wram->wTilemap), GetTMHMMove_Conv(wram->wCurItem));
+            PrintMoveDescription_Conv(coord(1, 14, wram->wTilemap), GetTMHMMove(wram->wCurItem));
             // JP(mTMHM_JoypadLoop);
         }
 
@@ -753,7 +749,7 @@ uint8_t TMHM_DisplayPocketItems(void){
 
     // okay:
         // PREDEF(pGetTMHMMove);
-        move_t move = GetTMHMMove_Conv(wram->wTempTMHM);
+        move_t move = GetTMHMMove(wram->wTempTMHM);
         // LD_A_addr(wNamedObjectIndex);
         // LD_addr_A(wPutativeTMHMMove);
         // CALL(aGetMoveName);

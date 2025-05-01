@@ -653,7 +653,7 @@ uint8_t StartMenu_Quit_Conv(void) {
     // LD_HL(mStartMenu_Quit_StartMenuContestEndText);
     // CALL(aStartMenuYesNo);
     // IF_C goto DontEndContest;
-    if(StartMenuYesNo_Conv(StartMenuContestEndText)) {
+    if(StartMenuYesNo(StartMenuContestEndText)) {
         // LD_A(BANK(aBugCatchingContestReturnToGateScript));
         // LD_HL(mBugCatchingContestReturnToGateScript);
         // CALL(aFarQueueScript);

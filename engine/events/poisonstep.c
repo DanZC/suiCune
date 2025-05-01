@@ -62,7 +62,7 @@ static void Script_MonFaintedToPoison_CheckWhitedOut(void) {
         if(de[wram->wCurPartyMon] & 0b10) {
             // LD_C(HAPPINESS_POISONFAINT);
             // FARCALL(aChangeHappiness);
-            ChangeHappiness_Conv(HAPPINESS_POISONFAINT);
+            ChangeHappiness(HAPPINESS_POISONFAINT);
             // FARCALL(aGetPartyNickname);
             GetPartyNickname();
             // LD_HL(mDoPoisonStep_PoisonFaintText);

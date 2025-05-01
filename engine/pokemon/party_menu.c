@@ -547,7 +547,7 @@ void PlacePartyMonTMHMCompatibility(void){
             // LD_A_hl;
             // LD_addr_A(wCurPartySpecies);
             // PREDEF(pCanLearnTMHMMove);
-            uint8_t c = CanLearnTMHMMove_Conv(wram->wPartySpecies[b], wram->wCurItem);
+            uint8_t c = CanLearnTMHMMove(wram->wPartySpecies[b], wram->wCurItem);
             // POP_HL;
             // CALL(aPlacePartyMonTMHMCompatibility_PlaceAbleNotAble);
             // CALL(aPlaceString);

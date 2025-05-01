@@ -1,7 +1,6 @@
 #include "../../constants.h"
 #include "spawn_points.h"
 
-// INCLUDE "data/maps/spawn_points.asm"
 #include "../../data/maps/spawn_points.h"
 
 void EnterMapSpawnPoint(void){
@@ -38,45 +37,8 @@ void EnterMapSpawnPoint(void){
     // RET;
 }
 
-void IsSpawnPoint(void){
-//  Checks if the map loaded in de is a spawn point.  Returns carry if it's a spawn point.
-    LD_HL(mSpawnPoints);
-    LD_C(0);
-
-loop:
-    LD_A_hl;
-    CP_A(SPAWN_N_A);
-    IF_Z goto nope;
-    CP_A_D;
-    IF_NZ goto next;
-    INC_HL;
-    LD_A_hld;
-    CP_A_E;
-    IF_Z goto yes;
-
-
-next:
-    PUSH_BC;
-    LD_BC(4);  // length of a spawn table entry
-    ADD_HL_BC;
-    POP_BC;
-    INC_C;
-    goto loop;
-
-
-nope:
-    AND_A_A;
-    RET;
-
-
-yes:
-    SCF;
-    RET;
-
-}
-
 //  Checks if the map loaded in de is a spawn point.  Returns carry if it's a spawn point and the spawn point index.
-u8_flag_s IsSpawnPoint_Conv(uint8_t d, uint8_t e){
+u8_flag_s IsSpawnPoint(uint8_t d, uint8_t e){
     // LD_HL(mSpawnPoints);
     const struct Spawn* hl = SpawnPoints;
     // LD_C(0);

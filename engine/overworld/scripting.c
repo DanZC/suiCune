@@ -1181,7 +1181,7 @@ void Script_verbosegiveitemvar_Conv(script_s* s, item_t item, uint8_t action){
     wram->wItemQuantityChange = *GetVarAction_Conv(action);
     // LD_HL(wNumItems);
     // CALL(aReceiveItem);
-    bool ok = ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem, wram->wItemQuantityChange);
+    bool ok = ReceiveItem(GetItemPocket(ITEM_POCKET), wram->wCurItem, wram->wItemQuantityChange);
     // LD_A(TRUE);
     // IF_C goto ok2;
     // XOR_A_A;
@@ -1265,7 +1265,7 @@ void Script_specialsound_Conv(script_s* s){
     (void)s;
     // FARCALL(aCheckItemPocket);
     // LD_A_addr(wItemAttributeValue);
-    uint8_t pocket = CheckItemPocket_Conv(wram->wCurItem);
+    uint8_t pocket = CheckItemPocket(wram->wCurItem);
     // CP_A(TM_HM);
     // LD_DE(SFX_GET_TM);
     // IF_Z goto play;
@@ -1327,7 +1327,7 @@ uint8_t* GetPocketName_Conv(void){
     // LD_E_A;
     // LD_HL(wStringBuffer3);
     // CALL(aCopyName2);
-    return Utf8ToCrystalBuffer(wram->wStringBuffer3, sizeof(wram->wStringBuffer3), ItemPocketNames[CheckItemPocket_Conv(wram->wCurItem) - 1]);
+    return Utf8ToCrystalBuffer(wram->wStringBuffer3, sizeof(wram->wStringBuffer3), ItemPocketNames[CheckItemPocket(wram->wCurItem) - 1]);
     // RET;
 
 // INCLUDE "data/items/pocket_names.asm"
@@ -1388,7 +1388,7 @@ void Script_pokemart_Conv(script_s* s, uint8_t mart_type, uint16_t mart_id){
     // LD_A_addr(wScriptBank);
     // LD_B_A;
     // FARCALL(aOpenMartDialog);
-    OpenMartDialog_Conv(mart_type, mart_id);
+    OpenMartDialog(mart_type, mart_id);
     // RET;
 }
 
@@ -1911,7 +1911,7 @@ void Script_warpsound_Conv(script_s* s){
     // FARCALL(aGetWarpSFX);
     // CALL(aPlaySFX);
     // RET;
-    return PlaySFX(GetWarpSFX_Conv());
+    return PlaySFX(GetWarpSFX());
 }
 
 void Script_cry(void){
@@ -3719,7 +3719,7 @@ uint8_t* GetVarAction_Conv(uint8_t a){
     // LD_C_A;
     // FARCALL(av_GetVarAction);
     // RET;
-    return v_GetVarAction_Conv(a);
+    return v_GetVarAction(a);
 }
 
 void Script_checkver(void){
@@ -4178,7 +4178,7 @@ void Script_giveitem_Conv(script_s* s, item_t item, uint8_t quantity){
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);
     // RET;
-    wram->wScriptVar = ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, item, quantity);
+    wram->wScriptVar = ReceiveItem(GetItemPocket(ITEM_POCKET), item, quantity);
 
 // full:
     // XOR_A_A;
@@ -4221,7 +4221,7 @@ void Script_takeitem_Conv(script_s* s, item_t item, uint8_t quantity){
     // LD_HL(wNumItems);
     // CALL(aTossItem);
     // RET_NC ;
-    if(!TossItem_Conv((item_pocket_s*)&wram->wNumItems, item))
+    if(!TossItem(GetItemPocket(ITEM_POCKET), item, quantity))
         return;
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);
@@ -4253,7 +4253,7 @@ void Script_checkitem_Conv(script_s* s, item_t item){
     wram->wCurItem = item;
     // LD_HL(wNumItems);
     // CALL(aCheckItem);
-    if(!CheckItem_Conv(item, wram->wItems))
+    if(!CheckItem(GetItemPocket(ITEM_POCKET), item))
         return;
     // RET_NC ;
 
@@ -4507,7 +4507,7 @@ void Script_checktime_Conv(script_s* s, uint8_t time){
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = 0;
     // FARCALL(aCheckTime);
-    u8_flag_s res = CheckTime_Conv();
+    u8_flag_s res = CheckTime();
     // CALL(aGetScriptByte);
     // AND_A_C;
     // RET_Z ;
@@ -5800,7 +5800,7 @@ void Script_checksave_Conv(script_s* s){
     // FARCALL(aCheckSave);
     // LD_A_C;
     // LD_addr_A(wScriptVar);
-    wram->wScriptVar = CheckSave_Conv();
+    wram->wScriptVar = CheckSave();
     // RET;
 }
 

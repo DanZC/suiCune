@@ -86,7 +86,7 @@ void v_GiveOddEgg(void){
     wram->wCurItemQuantity = (uint8_t)-1;
     // LD_HL(wNumItems);
     // CALL(aTossItem);
-    TossItem_Conv((item_pocket_s*)&wram->wNumItems, EGG_TICKET);
+    TossItem(GetItemPocket(ITEM_POCKET), EGG_TICKET, 1);
 
 // load species in wMobileMonSpecies
     // LD_A(EGG);

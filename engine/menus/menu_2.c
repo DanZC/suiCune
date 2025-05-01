@@ -67,7 +67,7 @@ void PlaceMenuItemQuantity_Conv(const struct MenuData* data, tile_t* de){
     // POP_HL;
     // AND_A_A;
     // IF_NZ goto done;
-    if(v_CheckTossableItem_Conv(wram->wMenuSelection)){
+    if(v_CheckTossableItem(wram->wMenuSelection)){
         // LD_DE(0x15);
         // ADD_HL_DE;
         // LD_hl(0xf1);
@@ -417,7 +417,7 @@ bool FindApricornsInBag_Conv(void){
         // CALL(aCheckItem);
         // POP_HL;
         // IF_NC goto nope;
-        if(CheckItem_Conv(a, &wram->wNumItems)) {
+        if(CheckItem(GetItemPocket(ITEM_POCKET), a)) {
             // LD_A_hl;
             // CALL(aFindApricornsInBag_addtobuffer);
             FindApricornsInBag_addtobuffer(hl->item);

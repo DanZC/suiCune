@@ -40,7 +40,7 @@ bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c);
 void Pack_InitGFX(void);
 void PlacePackGFX(void);
 void DrawPocketName(uint8_t pocket);
-void Pack_GetItemName(void);
+void Pack_GetItemName(item_t item);
 void Pack_ClearTilemap(void);
 void ClearPocketList(void);
 void Pack_InitColors(void);

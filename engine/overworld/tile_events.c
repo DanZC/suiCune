@@ -1,28 +1,8 @@
 #include "../../constants.h"
 #include "tile_events.h"
 
-void CheckWarpCollision(void){
 //  Is this tile a warp?
-    LD_A_addr(wPlayerStandingTile);
-    CP_A(COLL_PIT);
-    IF_Z goto warp;
-    CP_A(COLL_PIT_68);
-    IF_Z goto warp;
-    AND_A(0xf0);
-    CP_A(HI_NYBBLE_WARPS);
-    IF_Z goto warp;
-    AND_A_A;
-    RET;
-
-
-warp:
-    SCF;
-    RET;
-
-}
-
-//  Is this tile a warp?
-bool CheckWarpCollision_Conv(void){
+bool CheckWarpCollision(void){
     // LD_A_addr(wPlayerStandingTile);
     // CP_A(COLL_PIT);
     // IF_Z goto warp;
@@ -43,31 +23,9 @@ bool CheckWarpCollision_Conv(void){
     // RET;
 }
 
-void CheckDirectionalWarp(void){
-//  If this is a directional warp, clear carry (press the designated button to warp).
-//  Else, set carry (immediate warp).
-    LD_A_addr(wPlayerStandingTile);
-    CP_A(COLL_WARP_CARPET_DOWN);
-    IF_Z goto directional;
-    CP_A(COLL_WARP_CARPET_LEFT);
-    IF_Z goto directional;
-    CP_A(COLL_WARP_CARPET_UP);
-    IF_Z goto directional;
-    CP_A(COLL_WARP_CARPET_RIGHT);
-    IF_Z goto directional;
-    SCF;
-    RET;
-
-
-directional:
-    XOR_A_A;
-    RET;
-
-}
-
 //  If this is a directional warp, clear carry (true) (press the designated button to warp).
 //  Else, set carry (false) (immediate warp).
-bool CheckDirectionalWarp_Conv(void){
+bool CheckDirectionalWarp(void){
     // LD_A_addr(wPlayerStandingTile);
     const uint8_t tile = wram->wPlayerStruct.nextTile;
     // CP_A(COLL_WARP_CARPET_DOWN);
@@ -89,30 +47,7 @@ bool CheckDirectionalWarp_Conv(void){
     // RET;
 }
 
-void CheckWarpFacingDown(void){
-    LD_DE(1);
-    LD_HL(mCheckWarpFacingDown_blocks);
-    LD_A_addr(wPlayerStandingTile);
-    CALL(aIsInArray);
-    RET;
-
-
-blocks:
-    //db ['COLL_DOOR'];
-    //db ['COLL_DOOR_79'];
-    //db ['COLL_STAIRCASE'];
-    //db ['COLL_STAIRCASE_73'];
-    //db ['COLL_CAVE'];
-    //db ['COLL_CAVE_74'];
-    //db ['COLL_WARP_PANEL'];
-    //db ['COLL_DOOR_75'];
-    //db ['COLL_DOOR_7D'];
-    //db ['-1'];
-
-    return CheckGrassCollision();
-}
-
-bool CheckWarpFacingDown_Conv(void){
+bool CheckWarpFacingDown(void){
     static const uint8_t blocks[] = {
         COLL_DOOR,
         COLL_DOOR_79,
@@ -139,31 +74,7 @@ bool CheckWarpFacingDown_Conv(void){
     return false;
 }
 
-void CheckGrassCollision(void){
-    LD_A_addr(wPlayerStandingTile);
-    LD_HL(mCheckGrassCollision_blocks);
-    LD_DE(1);
-    CALL(aIsInArray);
-    RET;
-
-
-blocks:
-    //db ['COLL_CUT_08'];
-    //db ['COLL_TALL_GRASS'];
-    //db ['COLL_LONG_GRASS'];
-    //db ['COLL_CUT_28'];
-    //db ['COLL_WATER'];
-    //db ['COLL_GRASS_48'];
-    //db ['COLL_GRASS_49'];
-    //db ['COLL_GRASS_4A'];
-    //db ['COLL_GRASS_4B'];
-    //db ['COLL_GRASS_4C'];
-    //db ['-1'];
-
-    return CheckCutCollision();
-}
-
-bool CheckGrassCollision_Conv(void){
+bool CheckGrassCollision(void){
     static const uint8_t blocks[] = {
         COLL_CUT_08,
         COLL_TALL_GRASS,
@@ -189,27 +100,7 @@ bool CheckGrassCollision_Conv(void){
     return false;
 }
 
-void CheckCutCollision(void){
-    LD_A_C;
-    LD_HL(mCheckCutCollision_blocks);
-    LD_DE(1);
-    CALL(aIsInArray);
-    RET;
-
-
-blocks:
-    //db ['COLL_CUT_TREE'];
-    //db ['COLL_CUT_TREE_1A'];
-    //db ['COLL_TALL_GRASS_10'];
-    //db ['COLL_TALL_GRASS'];
-    //db ['COLL_LONG_GRASS'];
-    //db ['COLL_LONG_GRASS_1C'];
-    //db ['-1'];
-
-    return GetWarpSFX();
-}
-
-bool CheckCutCollision_Conv(uint8_t tile){
+bool CheckCutCollision(uint8_t tile){
     static const uint8_t blocks[] = {
         COLL_CUT_TREE,
         COLL_CUT_TREE_1A,
@@ -230,20 +121,7 @@ bool CheckCutCollision_Conv(uint8_t tile){
     return false;
 }
 
-void GetWarpSFX(void){
-    LD_A_addr(wPlayerStandingTile);
-    LD_DE(SFX_ENTER_DOOR);
-    CP_A(COLL_DOOR);
-    RET_Z ;
-    LD_DE(SFX_WARP_TO);
-    CP_A(COLL_WARP_PANEL);
-    RET_Z ;
-    LD_DE(SFX_EXIT_BUILDING);
-    RET;
-
-}
-
-uint16_t GetWarpSFX_Conv(void) {
+uint16_t GetWarpSFX(void) {
     // LD_A_addr(wPlayerStandingTile);
     const uint8_t tile = wram->wPlayerStruct.nextTile;
     // LD_DE(SFX_ENTER_DOOR);

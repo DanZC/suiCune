@@ -374,7 +374,7 @@ static u8_flag_s DoPlayerMovement_CheckTurning(void) {
 }
 
 static bool DoPlayerMovement_CheckFacingOffEdgeOfMap(void) {
-    return CheckFacingOffEdgeOfMap_Conv();
+    return CheckFacingOffEdgeOfMap();
 }
 
 static u8_flag_s DoPlayerMovement_TryStep(void) {

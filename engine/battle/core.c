@@ -4841,7 +4841,7 @@ void UpdateFaintedPlayerMon(void){
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = wram->wCurBattleMon;
     // CALLFAR(aChangeHappiness);
-    ChangeHappiness_Conv(c);
+    ChangeHappiness(c);
     // LD_A_addr(wBattleResult);
     // AND_A(BATTLERESULT_BITMASK);
     // ADD_A(LOSE);
@@ -6570,7 +6570,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
     if(!CheckFaintedFrzSlp_Conv(&wram->wTempMon)) {
         // FARCALL(aCheckBattleScene);
         // IF_C goto cry_no_anim;
-        if(CheckBattleScene_Conv()) {
+        if(CheckBattleScene()) {
 
             // hlcoord(12, 0, wTilemap);
             // LD_D(0x0);
@@ -9269,7 +9269,7 @@ BattleMenu_begin:
                 // LD_A_addr(wItemAttributeValue);
                 // CP_A(BALL);
                 // IF_Z goto ball;
-                if(CheckItemPocket_Conv(wram->wCurItem) != BALL) {
+                if(CheckItemPocket(wram->wCurItem) != BALL) {
                     // CALL(aClearBGPalettes);
                     ClearBGPalettes();
                 }
@@ -10618,7 +10618,7 @@ void MoveInfoBox(void){
     // LD_B_A;
     // hlcoord(2, 10, wTilemap);
     // PREDEF(pPrintMoveType);
-    PrintMoveType_Conv(coord(2, 10, wram->wTilemap), wram->wPlayerMoveStruct.animation);
+    PrintMoveType(coord(2, 10, wram->wTilemap), wram->wPlayerMoveStruct.animation);
 
 // done:
     // RET;
@@ -14752,7 +14752,7 @@ void InitEnemyTrainer_Conv(uint8_t tclass){
             if(wram->wPartyMon[wram->wCurPartyMon].HP != 0) {
                 // LD_C(HAPPINESS_GYMBATTLE);
                 // CALLFAR(aChangeHappiness);
-                ChangeHappiness_Conv(HAPPINESS_GYMBATTLE);
+                ChangeHappiness(HAPPINESS_GYMBATTLE);
             }
 
         // skipfaintedmon:
@@ -16184,7 +16184,7 @@ void BattleStartMessage(void){
         if(!CheckSleepingTreeMon_Conv(wram->wTempWildMonSpecies)) {
             // FARCALL(aCheckBattleScene);
             // IF_C goto cry_no_anim;
-            if(CheckBattleScene_Conv()) {
+            if(CheckBattleScene()) {
                 // hlcoord(12, 0, wTilemap);
                 // LD_D(0x0);
                 // LD_E(ANIM_MON_NORMAL);

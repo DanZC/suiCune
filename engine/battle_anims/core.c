@@ -338,7 +338,7 @@ bool BattleAnimOAMUpdate_Conv(struct BattleAnim* bc, uint8_t* oamIndex){
     // CALL(aInitBattleAnimBuffer);
     InitBattleAnimBuffer_Conv(bc);
     // CALL(aGetBattleAnimFrame);
-    uint8_t a = GetBattleAnimFrame_Conv(bc);
+    uint8_t a = GetBattleAnimFrame(bc);
     // CP_A(dowait_command);
     // JP_Z (mBattleAnimOAMUpdate_done);
     if(a == dowait_command)
@@ -367,7 +367,7 @@ bool BattleAnimOAMUpdate_Conv(struct BattleAnim* bc, uint8_t* oamIndex){
 
     // PUSH_BC;
     // CALL(aGetBattleAnimOAMPointer);
-    const struct BattleOAMData* oam = GetBattleAnimOAMPointer_Conv(a);
+    const struct BattleOAMData* oam = GetBattleAnimOAMPointer(a);
     // LD_A_addr(wBattleAnimTempTileID);
     // ADD_A_hl;  // tile offset
     // LD_addr_A(wBattleAnimTempTileID);

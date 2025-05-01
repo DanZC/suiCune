@@ -169,7 +169,7 @@ void BattleCommand_Transform(void){
     BattleSideCopy(wram->wEnemyStatLevels, wram->wPlayerStatLevels, 2 * 5);
     // CALL(av_CheckBattleScene);
     // IF_C goto mimic_anims;
-    if(!v_CheckBattleScene_Conv()) {
+    if(!v_CheckBattleScene()) {
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // LD_A_addr(wPlayerMinimized);

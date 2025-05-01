@@ -167,7 +167,7 @@ void HaircutOrGrooming_Conv(const uint8_t (*hl)[3]){
     wram->wScriptVar = (*hl)[1];
     // LD_C_hl;
     // CALL(aChangeHappiness);
-    ChangeHappiness_Conv((*hl)[2]);
+    ChangeHappiness((*hl)[2]);
     // RET;
 }
 

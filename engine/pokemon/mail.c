@@ -854,7 +854,7 @@ static void MailboxPC_Submenu(void){
                 // LD_HL(wNumItems);
                 // CALL(aReceiveItem);
                 // IF_C goto put_in_bag;
-                if(!ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, item, 1)) {
+                if(!ReceiveItem(GetItemPocket(ITEM_POCKET), item, 1)) {
                     // LD_HL(mMailboxPC_MailPackFullText);
                     // JP(mMenuTextboxBackup);
                     return MenuTextboxBackup(MailPackFullText);

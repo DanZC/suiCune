@@ -361,7 +361,7 @@ bool CheckWarpTile(void){
     // FARCALL(aCheckDirectionalWarp);
     // POP_BC;
     // RET_NC ;
-    if(CheckDirectionalWarp_Conv())
+    if(CheckDirectionalWarp())
         return false;
 
     // CALL(aCopyWarpData);
@@ -467,7 +467,7 @@ static u8_flag_s GetDestinationWarpNumber_Function(void) {
 u8_flag_s GetDestinationWarpNumber(void){
     // FARCALL(aCheckWarpCollision);
     // RET_NC ;
-    if(!CheckWarpCollision_Conv())
+    if(!CheckWarpCollision())
         return u8_flag(0xff, false);
 
     // LDH_A_addr(hROMBank);

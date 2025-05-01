@@ -701,7 +701,7 @@ u8_flag_s CheckTileEvent_Conv(void){
     if(CheckWarpConnxnScriptFlag()) {
         // FARCALL(aCheckMovingOffEdgeOfMap);
         // IF_C goto map_connection;
-        if(CheckMovingOffEdgeOfMap_Conv()) {
+        if(CheckMovingOffEdgeOfMap()) {
         // map_connection:
             // LD_A(PLAYEREVENT_CONNECTION);
             // SCF;
@@ -1006,9 +1006,9 @@ u8_flag_s CheckTimeEvents_Conv(void){
     if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
     // do_daily:
         // FARCALL(aCheckDailyResetTimer);
-        CheckDailyResetTimer_Conv();
+        CheckDailyResetTimer();
         // FARCALL(aCheckPokerusTick);
-        CheckPokerusTick_Conv();
+        CheckPokerusTick();
         // FARCALL(aCheckPhoneCall);
         // RET_C ;
         u8_flag_s res = CheckPhoneCall();
@@ -1019,7 +1019,7 @@ u8_flag_s CheckTimeEvents_Conv(void){
 
     // FARCALL(aCheckBugContestTimer);
     // IF_C goto end_bug_contest;
-    if(CheckBugContestTimer_Conv()) {
+    if(CheckBugContestTimer()) {
     // end_bug_contest:
         // LD_A(BANK(aBugCatchingContestOverScript));
         // LD_HL(mBugCatchingContestOverScript);
@@ -2683,7 +2683,7 @@ bool CanUseSweetScent_Conv(void){
     // IF_Z goto ice_check;
     // FARCALL(aCheckGrassCollision);
     // IF_NC goto no;
-    if(a != CAVE && a != DUNGEON && !CheckGrassCollision_Conv())
+    if(a != CAVE && a != DUNGEON && !CheckGrassCollision())
         return false;
 
 // ice_check:

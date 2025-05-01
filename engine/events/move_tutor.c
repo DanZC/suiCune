@@ -112,7 +112,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
     LoadMenuHeader(&CheckCanLearnMoveTutorMove_MenuHeader);
 
     // PREDEF(pCanLearnTMHMMove);
-    uint8_t canLearn = CanLearnTMHMMove_Conv(wram->wCurPartySpecies, move);
+    uint8_t canLearn = CanLearnTMHMMove(wram->wCurPartySpecies, move);
 
     // PUSH_BC;
     // LD_A_addr(wCurPartyMon);

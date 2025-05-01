@@ -165,7 +165,7 @@ void MoveDeletion(void){
         // CALL(aLoadStandardMenuHeader);
         LoadStandardMenuHeader();
         // FARCALL(aChooseMoveToDelete);
-        u8_flag_s res2 = ChooseMoveToDelete_Conv();
+        u8_flag_s res2 = ChooseMoveToDelete();
         // PUSH_AF;
         // CALL(aReturnToMapWithSpeechTextbox);
         ReturnToMapWithSpeechTextbox();

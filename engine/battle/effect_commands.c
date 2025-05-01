@@ -2946,7 +2946,7 @@ void BattleCommand_LowerSub(void){
 // charge_turn:
     // CALL(av_CheckBattleScene);
     // IF_C goto mimic_anims;
-    if(!CheckBattleScene_Conv()) {
+    if(!CheckBattleScene()) {
     // mimic_anims:
         // CALL(aBattleCommand_LowerSubNoAnim);
         BattleCommand_LowerSubNoAnim();
@@ -3166,7 +3166,7 @@ void BattleCommand_RaiseSub(void){
 
     // CALL(av_CheckBattleScene);
     // JP_C (mBattleCommand_RaiseSubNoAnim);
-    if(!CheckBattleScene_Conv())
+    if(!CheckBattleScene())
         return BattleCommand_RaiseSubNoAnim();
 
     // XOR_A_A;
@@ -7093,7 +7093,7 @@ void MinimizeDropSub(void){
     *bc = 0x1;
     // CALL(av_CheckBattleScene);
     // RET_NC ;
-    if(CheckBattleScene_Conv())
+    if(CheckBattleScene())
         return;
 
     // XOR_A_A;
@@ -11464,22 +11464,8 @@ void AppearUserRaiseSub(void){
     // RET;
 }
 
-//  Checks the options.  Returns carry if battle animations are disabled.
-void v_CheckBattleScene(void){
-    // PUSH_HL;
-    // PUSH_DE;
-    // PUSH_BC;
-    // FARCALL(aCheckBattleScene);
-    // POP_BC;
-    // POP_DE;
-    // POP_HL;
-    REG_F_C = CheckBattleScene_Conv()? 0: 1;
-    RET;
-
-}
-
 //  Checks the options.  Returns true if battle animations are disabled.
-bool v_CheckBattleScene_Conv(void){
+bool v_CheckBattleScene(void){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -11487,9 +11473,9 @@ bool v_CheckBattleScene_Conv(void){
     // POP_BC;
     // POP_DE;
     // POP_HL;
-    // REG_F_C = CheckBattleScene_Conv()? 0: 1;
+    // REG_F_C = CheckBattleScene()? 0: 1;
     // RET;
-    return CheckBattleScene_Conv()? false: true;
+    return CheckBattleScene()? false: true;
 }
 
 #include "./move_effects/triple_kick.c"

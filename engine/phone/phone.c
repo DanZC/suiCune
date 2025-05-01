@@ -172,7 +172,7 @@ void BrokenPlaceFarString(void){
 static bool CheckPhoneCall_timecheck(void) {
     // FARCALL(aCheckReceiveCallTimer);
     // RET;
-    return CheckReceiveCallTimer_Conv();
+    return CheckReceiveCallTimer();
 }
 
 //  Check if the phone is ringing in the overworld.
@@ -235,7 +235,7 @@ static bool CheckPhoneContactTimeOfDay(uint8_t a){
     // PUSH_AF;
 
     // FARCALL(aCheckTime);
-    uint8_t curTime = CheckTime_Conv().a;
+    uint8_t curTime = CheckTime().a;
     // POP_AF;
     // AND_A(ANYTIME);
     // AND_A_C;
@@ -284,7 +284,7 @@ u8_flag_s ChooseRandomCaller(void){
 
 void GetAvailableCallers(void){
     // FARCALL(aCheckTime);
-    u8_flag_s time = CheckTime_Conv();
+    u8_flag_s time = CheckTime();
     // LD_A_C;
     // LD_addr_A(wCheckedTime);
     wram->wCheckedTime = time.a;

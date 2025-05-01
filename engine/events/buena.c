@@ -210,7 +210,7 @@ void BuenaPrize(void){
         // CALL(aReceiveItem);
         // POP_HL;
         // IF_NC goto BagFull;
-        if(!ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, prize->id, 0x1)) {
+        if(!ReceiveItem(GetItemPocket(ITEM_POCKET), prize->id, 0x1)) {
         // BagFull:
             // LD_HL(mBuenaPrize_BuenaNoRoomText);
             // goto print;

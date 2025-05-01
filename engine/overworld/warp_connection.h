@@ -1,13 +1,11 @@
 void HandleNewMap(void);
 void HandleContinueMap(void);
 void EnterMapConnection(void);
-bool EnterMapConnection_Conv(void);
 void EnterMapWarp(void);
 void LoadMapTimeOfDay(void);
 void LoadMapGraphics(void);
 void LoadMapPalettes(void);
 void RefreshMapSprites(void);
-void CheckMovingOffEdgeOfMap(void);
-bool CheckMovingOffEdgeOfMap_Conv(void);
-bool CheckFacingOffEdgeOfMap_Conv(void);
+bool CheckMovingOffEdgeOfMap(void);
+bool CheckFacingOffEdgeOfMap(void);
 void GetMapScreenCoords(void);

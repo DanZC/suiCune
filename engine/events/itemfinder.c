@@ -60,7 +60,7 @@ static bool Script_FoundNothing(script_s* s) {
 
 void ItemFinder(void){
     // FARCALL(aCheckForHiddenItems);
-    bool found = CheckForHiddenItems_Conv();
+    bool found = CheckForHiddenItems();
     // IF_C goto found_something;
     // LD_HL(mItemFinder_Script_FoundNothing);
     // goto resume;

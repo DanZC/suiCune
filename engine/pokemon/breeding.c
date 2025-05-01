@@ -1063,7 +1063,7 @@ inherit_tmhm:
     } while(*tmhm != *de);
     // LD_addr_A(wPutativeTMHMMove);
     // PREDEF(pCanLearnTMHMMove);
-    uint8_t c = CanLearnTMHMMove_Conv(wram->wCurPartySpecies, *de);
+    uint8_t c = CanLearnTMHMMove(wram->wCurPartySpecies, *de);
     // LD_A_C;
     // AND_A_A;
     // IF_Z goto done;

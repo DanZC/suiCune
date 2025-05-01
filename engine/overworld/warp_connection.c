@@ -45,156 +45,8 @@ void HandleContinueMap(void){
     // RET;
 }
 
+//  Return true (carry) if a connection has been entered.
 void EnterMapConnection(void){
-    EnterMapConnection_Conv();
-    return;
-//  Return carry if a connection has been entered.
-    LD_A_addr(wPlayerStepDirection);
-    AND_A_A;  // DOWN
-    JP_Z (mEnterMapConnection_south);
-    CP_A(UP);
-    JP_Z (mEnterMapConnection_north);
-    CP_A(LEFT);
-    JP_Z (mEnterMapConnection_west);
-    CP_A(RIGHT);
-    JP_Z (mEnterMapConnection_east);
-    RET;
-
-
-west:
-    LD_A_addr(wWestConnectedMapGroup);
-    LD_addr_A(wMapGroup);
-    LD_A_addr(wWestConnectedMapNumber);
-    LD_addr_A(wMapNumber);
-    LD_A_addr(wWestConnectionStripXOffset);
-    LD_addr_A(wXCoord);
-    LD_A_addr(wWestConnectionStripYOffset);
-    LD_HL(wYCoord);
-    ADD_A_hl;
-    LD_hl_A;
-    LD_C_A;
-    LD_HL(wWestConnectionWindow);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    SRL_C;
-    IF_Z goto skip_to_load;
-    LD_A_addr(wWestConnectedMapWidth);
-    ADD_A(6);
-    LD_E_A;
-    LD_D(0);
-
-
-loop:
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto loop;
-
-
-skip_to_load:
-    LD_A_L;
-    LD_addr_A(wOverworldMapAnchor);
-    LD_A_H;
-    LD_addr_A(wOverworldMapAnchor + 1);
-    JP(mEnterMapConnection_done);
-
-
-east:
-    LD_A_addr(wEastConnectedMapGroup);
-    LD_addr_A(wMapGroup);
-    LD_A_addr(wEastConnectedMapNumber);
-    LD_addr_A(wMapNumber);
-    LD_A_addr(wEastConnectionStripXOffset);
-    LD_addr_A(wXCoord);
-    LD_A_addr(wEastConnectionStripYOffset);
-    LD_HL(wYCoord);
-    ADD_A_hl;
-    LD_hl_A;
-    LD_C_A;
-    LD_HL(wEastConnectionWindow);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    SRL_C;
-    IF_Z goto skip_to_load2;
-    LD_A_addr(wEastConnectedMapWidth);
-    ADD_A(6);
-    LD_E_A;
-    LD_D(0);
-
-
-loop2:
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto loop2;
-
-
-skip_to_load2:
-    LD_A_L;
-    LD_addr_A(wOverworldMapAnchor);
-    LD_A_H;
-    LD_addr_A(wOverworldMapAnchor + 1);
-    JP(mEnterMapConnection_done);
-
-
-north:
-    LD_A_addr(wNorthConnectedMapGroup);
-    LD_addr_A(wMapGroup);
-    LD_A_addr(wNorthConnectedMapNumber);
-    LD_addr_A(wMapNumber);
-    LD_A_addr(wNorthConnectionStripYOffset);
-    LD_addr_A(wYCoord);
-    LD_A_addr(wNorthConnectionStripXOffset);
-    LD_HL(wXCoord);
-    ADD_A_hl;
-    LD_hl_A;
-    LD_C_A;
-    LD_HL(wNorthConnectionWindow);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_B(0);
-    SRL_C;
-    ADD_HL_BC;
-    LD_A_L;
-    LD_addr_A(wOverworldMapAnchor);
-    LD_A_H;
-    LD_addr_A(wOverworldMapAnchor + 1);
-    JP(mEnterMapConnection_done);
-
-
-south:
-    LD_A_addr(wSouthConnectedMapGroup);
-    LD_addr_A(wMapGroup);
-    LD_A_addr(wSouthConnectedMapNumber);
-    LD_addr_A(wMapNumber);
-    LD_A_addr(wSouthConnectionStripYOffset);
-    LD_addr_A(wYCoord);
-    LD_A_addr(wSouthConnectionStripXOffset);
-    LD_HL(wXCoord);
-    ADD_A_hl;
-    LD_hl_A;
-    LD_C_A;
-    LD_HL(wSouthConnectionWindow);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_B(0);
-    SRL_C;
-    ADD_HL_BC;
-    LD_A_L;
-    LD_addr_A(wOverworldMapAnchor);
-    LD_A_H;
-    LD_addr_A(wOverworldMapAnchor + 1);
-
-done:
-    SCF;
-    RET;
-
-}
-
-bool EnterMapConnection_Conv(void){
-//  Return carry if a connection has been entered.
     // LD_A_addr(wPlayerStepDirection);
     switch(wram->wPlayerStepDirection) {
     // AND_A_A;  // DOWN
@@ -228,7 +80,7 @@ bool EnterMapConnection_Conv(void){
         // LD_A_H;
         // LD_addr_A(wOverworldMapAnchor + 1);
         wram->wOverworldMapAnchor = (uint16_t)(gMapConnections[SOUTH_F].connectionWindow + (wram->wXCoord >> 1) - wram->wOverworldMapBlocks);
-        return true;
+        return;
     // CP_A(UP);
     // JP_Z (mEnterMapConnection_north);
     case UP:
@@ -261,7 +113,7 @@ bool EnterMapConnection_Conv(void){
         // LD_addr_A(wOverworldMapAnchor + 1);
         wram->wOverworldMapAnchor = (uint16_t)(gMapConnections[NORTH_F].connectionWindow + (wram->wXCoord >> 1) - wram->wOverworldMapBlocks);
         // JP(mEnterMapConnection_done);
-        return true;
+        return;
     // CP_A(LEFT);
     // JP_Z (mEnterMapConnection_west);
     case LEFT:
@@ -304,7 +156,7 @@ bool EnterMapConnection_Conv(void){
         // LD_A_H;
         // LD_addr_A(wOverworldMapAnchor + 1);
         // JP(mEnterMapConnection_done);
-        return true;
+        return;
     // CP_A(RIGHT);
     case RIGHT:
     // east:
@@ -348,10 +200,10 @@ bool EnterMapConnection_Conv(void){
         // LD_addr_A(wOverworldMapAnchor + 1);
         wram->wOverworldMapAnchor = (uint16_t)((gMapConnections[EAST_F].connectionWindow + ((gMapConnections[EAST_F].connectedMapWidth + 6) * (wram->wYCoord >> 1))) - wram->wOverworldMapBlocks);
         // JP(mEnterMapConnection_done);
-        return true;
+        return;
     // JP_Z (mEnterMapConnection_east);
     default:
-        return false;
+        return;
     }
     // RET;
 
@@ -624,71 +476,7 @@ void RefreshMapSprites(void){
     // RET;
 }
 
-void CheckMovingOffEdgeOfMap(void){
-    LD_A_addr(wPlayerStepDirection);
-    CP_A(STANDING);
-    RET_Z ;
-    AND_A_A;  // DOWN
-    IF_Z goto down;
-    CP_A(UP);
-    IF_Z goto up;
-    CP_A(LEFT);
-    IF_Z goto left;
-    CP_A(RIGHT);
-    IF_Z goto right;
-    AND_A_A;
-    RET;
-
-
-down:
-    LD_A_addr(wPlayerStandingMapY);
-    SUB_A(4);
-    LD_B_A;
-    LD_A_addr(wMapHeight);
-    ADD_A_A;
-    CP_A_B;
-    IF_Z goto ok;
-    AND_A_A;
-    RET;
-
-
-up:
-    LD_A_addr(wPlayerStandingMapY);
-    SUB_A(4);
-    CP_A(-1);
-    IF_Z goto ok;
-    AND_A_A;
-    RET;
-
-
-left:
-    LD_A_addr(wPlayerStandingMapX);
-    SUB_A(4);
-    CP_A(-1);
-    IF_Z goto ok;
-    AND_A_A;
-    RET;
-
-
-right:
-    LD_A_addr(wPlayerStandingMapX);
-    SUB_A(4);
-    LD_B_A;
-    LD_A_addr(wMapWidth);
-    ADD_A_A;
-    CP_A_B;
-    IF_Z goto ok;
-    AND_A_A;
-    RET;
-
-
-ok:
-    SCF;
-    RET;
-
-}
-
-bool CheckMovingOffEdgeOfMap_Conv(void){
+bool CheckMovingOffEdgeOfMap(void){
     // LD_A_addr(wPlayerStepDirection);
     // CP_A(STANDING);
     // RET_Z ;
@@ -765,7 +553,7 @@ bool CheckMovingOffEdgeOfMap_Conv(void){
     // RET;
 }
 
-bool CheckFacingOffEdgeOfMap_Conv(void){
+bool CheckFacingOffEdgeOfMap(void){
     // LD_A_addr(wPlayerStepDirection);
     // CP_A(STANDING);
     // RET_Z ;

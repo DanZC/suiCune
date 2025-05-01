@@ -5,45 +5,8 @@
 #include "../../home/text.h"
 #include "../../data/items/descriptions.h"
 
-void PrintItemDescription(void){
 //  Print the description for item [wCurSpecies] at de.
-
-    LD_A_addr(wCurSpecies);
-    CP_A(TM01);
-    IF_C goto not_a_tm;
-
-    LD_addr_A(wCurItem);
-    PUSH_DE;
-    FARCALL(aGetTMHMItemMove);
-    POP_HL;
-    LD_A_addr(wTempTMHM);
-    LD_addr_A(wCurSpecies);
-    PREDEF(pPrintMoveDescription);
-    RET;
-
-
-not_a_tm:
-    PUSH_DE;
-    LD_HL(mItemDescriptions);
-    LD_A_addr(wCurSpecies);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    POP_HL;
-    JP(mPlaceString);
-
-// INCLUDE "data/items/descriptions.asm"
-
-}
-
-//  Print the description for item [wCurSpecies] at de.
-void PrintItemDescription_Conv(tile_t* de, item_t item){
-
+void PrintItemDescription(tile_t* de, item_t item){
     // LD_A_addr(wCurSpecies);
     // CP_A(TM01);
     // IF_C goto not_a_tm;

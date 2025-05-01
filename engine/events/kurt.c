@@ -402,7 +402,7 @@ done2:
 uint8_t Kurt_GetQuantityOfApricorn_Conv(item_t apricorn){
     // PUSH_BC;
     // LD_HL(wNumItems);
-    item_pocket_s* hl = (item_pocket_s*)&wram->wNumItems;
+    item_quantity_pocket_s* hl = &GetItemPocket(ITEM_POCKET)->quantity_pocket;
     // LD_A_addr(wCurItem);
     // LD_C_A;
     // LD_B(0);
@@ -459,7 +459,7 @@ void Kurt_GiveUpSelectedQuantityOfSelectedApricorn(void){
     // PUSH_DE;
     // PUSH_BC;
     // LD_HL(wNumItems);
-    item_pocket_s* hl = (item_pocket_s*)&wram->wNumItems;
+    item_quantity_pocket_s* hl = &GetItemPocket(ITEM_POCKET)->quantity_pocket;
     // LD_A_addr(wCurItem);
     // LD_C_A;
     item_t c = wram->wCurItem;
@@ -486,7 +486,7 @@ void Kurt_GiveUpSelectedQuantityOfSelectedApricorn(void){
         //  Get the index of the next item.
             // INC_HL;
             // LD_A_hli;
-            a = hl->pocket[i].item;
+            a = hl->pocket[i++].item;
         //  If we've reached the end of the pocket, break.
             // CP_A(-1);
             // IF_Z goto okay1;
@@ -682,7 +682,7 @@ uint8_t Kurt_GetAddressOfApricornQuantity_Conv(uint8_t a){
     // PUSH_HL;
     // PUSH_BC;
     // LD_HL(wNumItems);
-    item_pocket_s* pocket = (item_pocket_s*)&wram->wNumItems;
+    item_quantity_pocket_s* pocket = &GetItemPocket(ITEM_POCKET)->quantity_pocket;
     // INC_HL;
     // LD_C_A;
     // LD_B(0);
@@ -743,7 +743,7 @@ done:
 void Kurt_GetRidOfItem_Conv(void){
     // PUSH_BC;
     // LD_HL(wNumItems);
-    item_pocket_s* pocket = (item_pocket_s*)&wram->wNumItems;
+    item_quantity_pocket_s* pocket = &GetItemPocket(ITEM_POCKET)->quantity_pocket;
     // LD_A_addr(wCurItemQuantity);
     // LD_C_A;
     // LD_B(0);
@@ -781,7 +781,7 @@ void Kurt_GetRidOfItem_Conv(void){
         // LD_addr_A(wItemQuantityChange);
         wram->wItemQuantityChange = b;
         // CALL(aTossItem);
-        TossItem_Conv((item_pocket_s*)&wram->wNumItems, b);
+        TossItem(GetItemPocket(ITEM_POCKET), c, b);
         // POP_BC;
         // LD_A_C;
         // SUB_A_B;

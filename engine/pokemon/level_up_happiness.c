@@ -26,6 +26,6 @@ void LevelUpHappinessMod(void){
 
 // ok:
     // CALLFAR(aChangeHappiness);
-    ChangeHappiness_Conv(c);
+    ChangeHappiness(c);
     // RET;
 }

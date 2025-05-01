@@ -1936,7 +1936,7 @@ void BattleTowerAction_EggTicket(void){
     // LD_HL(wNumItems);
     // CALL(aCheckItem);
     // RET_NC ;
-    if(!CheckItem_Conv(EGG_TICKET, wram->wItems))
+    if(!CheckItem(GetItemPocket(ITEM_POCKET), EGG_TICKET))
         return;
     // LD_A_addr(wPartyCount);
     // LD_B(0);
@@ -2009,7 +2009,7 @@ void BattleTowerAction_EggTicket(void){
             wram->wCurItemQuantity = 0xff;
             // LD_HL(wNumItems);
             // CALL(aTossItem);
-            TossItem_Conv((item_pocket_s*)&wram->wNumItems, EGG_TICKET);
+            TossItem(GetItemPocket(ITEM_POCKET), EGG_TICKET, 1);
             // LD_A(TRUE);
             // LD_addr_A(wScriptVar);
             wram->wScriptVar = TRUE;

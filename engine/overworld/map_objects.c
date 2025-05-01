@@ -6073,7 +6073,7 @@ void RefreshPlayerSprite(void) {
     // CALL(aTryResetPlayerAction);
     TryResetPlayerAction();
     // FARCALL(aCheckWarpFacingDown);
-    if(CheckWarpFacingDown_Conv()) {
+    if(CheckWarpFacingDown()) {
         // CALL_C(aSpawnInFacingDown);
         SpawnInFacingDown();
     }

@@ -1233,7 +1233,7 @@ void LoadPinkPage(void){
 // done_status:
     // hlcoord(1, 15, wTilemap);
     // PREDEF(pPrintMonTypes);
-    PrintMonTypes_Conv(coord(1, 15, wram->wTilemap));
+    PrintMonTypes(coord(1, 15, wram->wTilemap));
     // hlcoord(9, 8, wTilemap);
     // LD_DE(SCREEN_WIDTH);
     // LD_B(10);

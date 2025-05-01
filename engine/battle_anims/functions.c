@@ -5,193 +5,7 @@
 #include "../../home/sine.h"
 #include "../../data/battle_anims/ball_colors.h"
 
-void DoBattleAnimFrame(void) {
-    SET_PC(aDoBattleAnimFrame);
-    LD_HL(BATTLEANIMSTRUCT_FUNCTION);
-    ADD_HL_BC;
-    LD_E_hl;
-    LD_D(0);
-    struct BattleAnim* bc = wram->wAnimObject + ((REG_BC - wAnimObject1) / sizeof(wram->wAnimObject[0]));
-    // LD_HL(mDoBattleAnimFrame_Jumptable);
-    // ADD_HL_DE;
-    // ADD_HL_DE;
-    // LD_A_hli;
-    // LD_H_hl;
-    // LD_L_A;
-    // JP_hl;
-    switch(REG_DE) {
-        case BATTLEANIMFUNC_NULL: // CALL(aBattleAnimFunction_Null); break;
-        case BATTLEANIMFUNC_USER_TO_TARGET: // CALL(aBattleAnimFunction_MoveFromUserToTarget); break;
-        case BATTLEANIMFUNC_USER_TO_TARGET_DISAPPEAR: // CALL(aBattleAnimFunction_MoveFromUserToTargetAndDisappear); break;
-        case BATTLEANIMFUNC_MOVE_IN_CIRCLE: // CALL(aBattleAnimFunction_MoveInCircle); break;
-        case BATTLEANIMFUNC_WAVE_TO_TARGET: // CALL(aBattleAnimFunction_MoveWaveToTarget); break;
-        case BATTLEANIMFUNC_THROW_TO_TARGET: // CALL(aBattleAnimFunction_ThrowFromUserToTarget); break;
-        case BATTLEANIMFUNC_THROW_TO_TARGET_DISAPPEAR: // CALL(aBattleAnimFunction_ThrowFromUserToTargetAndDisappear); break;
-        case BATTLEANIMFUNC_DROP: // CALL(aBattleAnimFunction_Drop); break;
-        case BATTLEANIMFUNC_USER_TO_TARGET_SPIN: // CALL(aBattleAnimFunction_MoveFromUserToTargetSpinAround); break;
-        case BATTLEANIMFUNC_SHAKE: // CALL(aBattleAnimFunction_Shake); break;
-        case BATTLEANIMFUNC_FIRE_BLAST: // CALL(aBattleAnimFunction_FireBlast); break;
-        case BATTLEANIMFUNC_RAZOR_LEAF: // CALL(aBattleAnimFunction_RazorLeaf); break;
-        case BATTLEANIMFUNC_BUBBLE: // CALL(aBattleAnimFunction_Bubble); break;
-        case BATTLEANIMFUNC_SURF: // CALL(aBattleAnimFunction_Surf); break;
-        case BATTLEANIMFUNC_SING: // CALL(aBattleAnimFunction_Sing); break;
-        case BATTLEANIMFUNC_WATER_GUN: // CALL(aBattleAnimFunction_WaterGun); break;
-        case BATTLEANIMFUNC_EMBER: // CALL(aBattleAnimFunction_Ember); break;
-        case BATTLEANIMFUNC_POWDER: // CALL(aBattleAnimFunction_Powder); break;
-        case BATTLEANIMFUNC_POKEBALL: // CALL(aBattleAnimFunction_PokeBall); break;
-        case BATTLEANIMFUNC_POKEBALL_BLOCKED: // CALL(aBattleAnimFunction_PokeBallBlocked); break;
-        case BATTLEANIMFUNC_RECOVER: // CALL(aBattleAnimFunction_Recover); break;
-        case BATTLEANIMFUNC_THUNDER_WAVE: // CALL(aBattleAnimFunction_ThunderWave); break;
-        case BATTLEANIMFUNC_CLAMP_ENCORE: // CALL(aBattleAnimFunction_Clamp_Encore); break;
-        case BATTLEANIMFUNC_BITE: // CALL(aBattleAnimFunction_Bite); break;
-        case BATTLEANIMFUNC_SOLAR_BEAM: // CALL(aBattleAnimFunction_SolarBeam); break;
-        case BATTLEANIMFUNC_GUST: // CALL(aBattleAnimFunction_Gust); break;
-        case BATTLEANIMFUNC_RAZOR_WIND: // CALL(aBattleAnimFunction_RazorWind); break;
-        case BATTLEANIMFUNC_KICK: //CALL(aBattleAnimFunction_Kick); break;
-        case BATTLEANIMFUNC_ABSORB: //CALL(aBattleAnimFunction_Absorb); break;
-        case BATTLEANIMFUNC_EGG: //CALL(aBattleAnimFunction_Egg); break;
-        case BATTLEANIMFUNC_MOVE_UP: //CALL(aBattleAnimFunction_MoveUp); break;
-        case BATTLEANIMFUNC_WRAP: //CALL(aBattleAnimFunction_Wrap); break;
-        case BATTLEANIMFUNC_LEECH_SEED: //CALL(aBattleAnimFunction_LeechSeed); break;
-        case BATTLEANIMFUNC_SOUND: //CALL(aBattleAnimFunction_Sound); break;
-        case BATTLEANIMFUNC_CONFUSE_RAY: //CALL(aBattleAnimFunction_ConfuseRay); break;
-        case BATTLEANIMFUNC_DIZZY: //CALL(aBattleAnimFunction_Dizzy); break;
-        case BATTLEANIMFUNC_AMNESIA: //CALL(aBattleAnimFunction_Amnesia); break;
-        case BATTLEANIMFUNC_FLOAT_UP: //CALL(aBattleAnimFunction_FloatUp); break;
-        case BATTLEANIMFUNC_DIG: //CALL(aBattleAnimFunction_Dig); break;
-        case BATTLEANIMFUNC_STRING: //CALL(aBattleAnimFunction_String); break;
-        case BATTLEANIMFUNC_PARALYZED: //CALL(aBattleAnimFunction_Paralyzed); break;
-        case BATTLEANIMFUNC_SPIRAL_DESCENT: //CALL(aBattleAnimFunction_SpiralDescent); break;
-        case BATTLEANIMFUNC_POISON_GAS: //CALL(aBattleAnimFunction_PoisonGas); break;
-        case BATTLEANIMFUNC_HORN: //CALL(aBattleAnimFunction_Horn); break;
-        case BATTLEANIMFUNC_NEEDLE: //CALL(aBattleAnimFunction_Needle); break;
-        case BATTLEANIMFUNC_PETAL_DANCE: //CALL(aBattleAnimFunction_PetalDance); break;
-        case BATTLEANIMFUNC_THIEF_PAYDAY: //CALL(aBattleAnimFunction_ThiefPayday); break;
-        case BATTLEANIMFUNC_ABSORB_CIRCLE: //CALL(aBattleAnimFunction_AbsorbCircle); break;
-        case BATTLEANIMFUNC_BONEMERANG: //CALL(aBattleAnimFunction_Bonemerang); break;
-        case BATTLEANIMFUNC_SHINY: //CALL(aBattleAnimFunction_Shiny); break;
-        case BATTLEANIMFUNC_SKY_ATTACK: //CALL(aBattleAnimFunction_SkyAttack); break;
-        case BATTLEANIMFUNC_GROWTH_SWORDS_DANCE: //CALL(aBattleAnimFunction_GrowthSwordsDance); break;
-        case BATTLEANIMFUNC_SMOKE_FLAME_WHEEL: //CALL(aBattleAnimFunction_SmokeFlameWheel); break;
-        case BATTLEANIMFUNC_PRESENT_SMOKESCREEN: //CALL(aBattleAnimFunction_PresentSmokescreen); break;
-        case BATTLEANIMFUNC_STRENGTH_SEISMIC_TOSS: //CALL(aBattleAnimFunction_StrengthSeismicToss); break;
-        case BATTLEANIMFUNC_SPEED_LINE: //CALL(aBattleAnimFunction_SpeedLine); break;
-        case BATTLEANIMFUNC_SLUDGE: //CALL(aBattleAnimFunction_Sludge); break;
-        case BATTLEANIMFUNC_METRONOME_HAND: //CALL(aBattleAnimFunction_MetronomeHand); break;
-        case BATTLEANIMFUNC_METRONOME_SPARKLE_SKETCH: //CALL(aBattleAnimFunction_MetronomeSparkleSketch); break;
-        case BATTLEANIMFUNC_AGILITY: //CALL(aBattleAnimFunction_Agility); break;
-        case BATTLEANIMFUNC_SACRED_FIRE: //CALL(aBattleAnimFunction_SacredFire); break;
-        case BATTLEANIMFUNC_SAFEGUARD_PROTECT: //CALL(aBattleAnimFunction_SafeguardProtect); break;
-        case BATTLEANIMFUNC_LOCK_ON_MIND_READER: //CALL(aBattleAnimFunction_LockOnMindReader); break;
-        case BATTLEANIMFUNC_SPIKES: //CALL(aBattleAnimFunction_Spikes); break;
-        case BATTLEANIMFUNC_HEAL_BELL_NOTES: //CALL(aBattleAnimFunction_HealBellNotes); break;
-        case BATTLEANIMFUNC_BATON_PASS: //CALL(aBattleAnimFunction_BatonPass); break;
-        case BATTLEANIMFUNC_CONVERSION: //CALL(aBattleAnimFunction_Conversion); break;
-        case BATTLEANIMFUNC_ENCORE_BELLY_DRUM: //CALL(aBattleAnimFunction_EncoreBellyDrum); break;
-        case BATTLEANIMFUNC_SWAGGER_MORNING_SUN: // CALL(aBattleAnimFunction_SwaggerMorningSun); break;
-        case BATTLEANIMFUNC_HIDDEN_POWER: // CALL(aBattleAnimFunction_HiddenPower); break;
-        case BATTLEANIMFUNC_CURSE: // CALL(aBattleAnimFunction_Curse); break;
-        case BATTLEANIMFUNC_PERISH_SONG: // CALL(aBattleAnimFunction_PerishSong); break;
-        case BATTLEANIMFUNC_RAPID_SPIN: // CALL(aBattleAnimFunction_RapidSpin); break;
-        case BATTLEANIMFUNC_BETA_PURSUIT: // CALL(aBattleAnimFunction_BetaPursuit); break;
-        case BATTLEANIMFUNC_RAIN_SANDSTORM: // CALL(aBattleAnimFunction_RainSandstorm); break;
-            DoBattleAnimFrame_Conv(bc); break;
-        case BATTLEANIMFUNC_ANIM_OBJ_B0: CALL(aBattleAnimFunction_AnimObjB0); break;
-        case BATTLEANIMFUNC_PSYCH_UP: // CALL(aBattleAnimFunction_PsychUp); break;
-        case BATTLEANIMFUNC_ANCIENT_POWER: // CALL(aBattleAnimFunction_AncientPower); break;
-        case BATTLEANIMFUNC_ROCK_SMASH: // CALL(aBattleAnimFunction_RockSmash); break;
-        case BATTLEANIMFUNC_COTTON: // CALL(aBattleAnimFunction_Cotton); break;
-            DoBattleAnimFrame_Conv(bc); break;
-        default: break;
-    }
-    RET;
-
-//Jumptable:
-
-    //  entries correspond to BATTLEANIMFUNC_* constants
-    // dw ['BattleAnimFunction_Null'];
-    // dw ['BattleAnimFunction_MoveFromUserToTarget'];
-    // dw ['BattleAnimFunction_MoveFromUserToTargetAndDisappear'];
-    // dw ['BattleAnimFunction_MoveInCircle'];
-    // dw ['BattleAnimFunction_MoveWaveToTarget'];
-    // dw ['BattleAnimFunction_ThrowFromUserToTarget'];
-    // dw ['BattleAnimFunction_ThrowFromUserToTargetAndDisappear'];
-    // dw ['BattleAnimFunction_Drop'];
-    // dw ['BattleAnimFunction_MoveFromUserToTargetSpinAround'];
-    // dw ['BattleAnimFunction_Shake'];
-    // dw ['BattleAnimFunction_FireBlast'];
-    // dw ['BattleAnimFunction_RazorLeaf'];
-    // dw ['BattleAnimFunction_Bubble'];
-    // dw ['BattleAnimFunction_Surf'];
-    // dw ['BattleAnimFunction_Sing'];
-    // dw ['BattleAnimFunction_WaterGun'];
-    // dw ['BattleAnimFunction_Ember'];
-    // dw ['BattleAnimFunction_Powder'];
-    // dw ['BattleAnimFunction_PokeBall'];
-    // dw ['BattleAnimFunction_PokeBallBlocked'];
-    // dw ['BattleAnimFunction_Recover'];
-    // dw ['BattleAnimFunction_ThunderWave'];
-    // dw ['BattleAnimFunction_Clamp_Encore'];
-    // dw ['BattleAnimFunction_Bite'];
-    // dw ['BattleAnimFunction_SolarBeam'];
-    // dw ['BattleAnimFunction_Gust'];
-    // dw ['BattleAnimFunction_RazorWind'];
-    // dw ['BattleAnimFunction_Kick'];
-    // dw ['BattleAnimFunction_Absorb'];
-    // dw ['BattleAnimFunction_Egg'];
-    // dw ['BattleAnimFunction_MoveUp'];
-    // dw ['BattleAnimFunction_Wrap'];
-    // dw ['BattleAnimFunction_LeechSeed'];
-    // dw ['BattleAnimFunction_Sound'];
-    // dw ['BattleAnimFunction_ConfuseRay'];
-    // dw ['BattleAnimFunction_Dizzy'];
-    // dw ['BattleAnimFunction_Amnesia'];
-    // dw ['BattleAnimFunction_FloatUp'];
-    // dw ['BattleAnimFunction_Dig'];
-    // dw ['BattleAnimFunction_String'];
-    // dw ['BattleAnimFunction_Paralyzed'];
-    // dw ['BattleAnimFunction_SpiralDescent'];
-    // dw ['BattleAnimFunction_PoisonGas'];
-    // dw ['BattleAnimFunction_Horn'];
-    // dw ['BattleAnimFunction_Needle'];
-    // dw ['BattleAnimFunction_PetalDance'];
-    // dw ['BattleAnimFunction_ThiefPayday'];
-    // dw ['BattleAnimFunction_AbsorbCircle'];
-    // dw ['BattleAnimFunction_Bonemerang'];
-    // dw ['BattleAnimFunction_Shiny'];
-    // dw ['BattleAnimFunction_SkyAttack'];
-    // dw ['BattleAnimFunction_GrowthSwordsDance'];
-    // dw ['BattleAnimFunction_SmokeFlameWheel'];
-    // dw ['BattleAnimFunction_PresentSmokescreen'];
-    // dw ['BattleAnimFunction_StrengthSeismicToss'];
-    // dw ['BattleAnimFunction_SpeedLine'];
-    // dw ['BattleAnimFunction_Sludge'];
-    // dw ['BattleAnimFunction_MetronomeHand'];
-    // dw ['BattleAnimFunction_MetronomeSparkleSketch'];
-    // dw ['BattleAnimFunction_Agility'];
-    // dw ['BattleAnimFunction_SacredFire'];
-    // dw ['BattleAnimFunction_SafeguardProtect'];
-    // dw ['BattleAnimFunction_LockOnMindReader'];
-    // dw ['BattleAnimFunction_Spikes'];
-    // dw ['BattleAnimFunction_HealBellNotes'];
-    // dw ['BattleAnimFunction_BatonPass'];
-    // dw ['BattleAnimFunction_Conversion'];
-    // dw ['BattleAnimFunction_EncoreBellyDrum'];
-    // dw ['BattleAnimFunction_SwaggerMorningSun'];
-    // dw ['BattleAnimFunction_HiddenPower'];
-    // dw ['BattleAnimFunction_Curse'];
-    // dw ['BattleAnimFunction_PerishSong'];
-    // dw ['BattleAnimFunction_RapidSpin'];
-    // dw ['BattleAnimFunction_BetaPursuit'];
-    // dw ['BattleAnimFunction_RainSandstorm'];
-    // dw ['BattleAnimFunction_AnimObjB0'];
-    // dw ['BattleAnimFunction_PsychUp'];
-    // dw ['BattleAnimFunction_AncientPower'];
-    // dw ['BattleAnimFunction_RockSmash'];
-    // dw ['BattleAnimFunction_Cotton'];
-}
-
-void DoBattleAnimFrame_Conv(struct BattleAnim* bc) {
+void DoBattleAnimFrame(struct BattleAnim* bc) {
     // SET_PC(aDoBattleAnimFrame);
     // LD_HL(BATTLEANIMSTRUCT_FUNCTION);
     // ADD_HL_BC;
@@ -572,7 +386,7 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
         //
         //  init
         // CALL(aGetBallAnimPal);
-        GetBallAnimPal_Conv(bc, wram->wCurItem);
+        GetBallAnimPal(bc, wram->wCurItem);
         // CALL(aBattleAnim_IncAnonJumptableIndex);
         bc->jumptableIndex++;
         // RET;
@@ -594,7 +408,7 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
         bc->yCoord += bc->yOffset;
         // LD_A(BATTLEANIMFRAMESET_0B);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_0B);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_0B);
         // CALL(aBattleAnim_IncAnonJumptableIndex);
         bc->jumptableIndex++;
         // RET;
@@ -606,7 +420,7 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
         bc->jumptableIndex++;
         // LD_A(BATTLEANIMFRAMESET_09);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_09);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_09);
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // LD_hl(0x0);
@@ -650,7 +464,7 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
             return;
         // LD_A(BATTLEANIMFRAMESET_0C);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_0C);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_0C);
         // CALL(aBattleAnim_IncAnonJumptableIndex);
         bc->jumptableIndex++;
         // RET;
@@ -660,7 +474,7 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
     // six:
         // LD_A(BATTLEANIMFRAMESET_0D);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_0D);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_0D);
         // LD_HL(BATTLEANIMSTRUCT_JUMPTABLE_INDEX);
         // ADD_HL_BC;
         // DEC_hl;
@@ -679,10 +493,10 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
     case 7:
     // seven:
         // CALL(aGetBallAnimPal);
-        GetBallAnimPal_Conv(bc, wram->wCurItem);
+        GetBallAnimPal(bc, wram->wCurItem);
         // LD_A(BATTLEANIMFRAMESET_0A);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_0A);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_0A);
         // CALL(aBattleAnim_IncAnonJumptableIndex);
         bc->jumptableIndex++;
         // LD_HL(BATTLEANIMSTRUCT_VAR2);
@@ -745,7 +559,7 @@ void BattleAnimFunction_PokeBallBlocked(struct BattleAnim* bc) {
     case 0:
     // zero:
         // CALL(aGetBallAnimPal);
-        GetBallAnimPal_Conv(bc, wram->wCurItem);
+        GetBallAnimPal(bc, wram->wCurItem);
         // CALL(aBattleAnim_IncAnonJumptableIndex);
         bc->jumptableIndex++;
         // RET;
@@ -797,40 +611,7 @@ void BattleAnimFunction_PokeBallBlocked(struct BattleAnim* bc) {
     }
 }
 
-void GetBallAnimPal(void) {
-    SET_PC(aGetBallAnimPal);
-    LD_HL(mBallColors);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awCurItem));
-    LDH_addr_A(rSVBK);
-    LD_A_addr(wCurItem);
-    LD_E_A;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-IsInArray:
-
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto load;
-    CP_A_E;
-    IF_Z goto load;
-    INC_HL;
-    goto IsInArray;
-
-load:
-
-    LD_A_hl;
-    LD_HL(BATTLEANIMSTRUCT_PALETTE);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-
-    // INCLUDE "data/battle_anims/ball_colors.asm"
-}
-
-void GetBallAnimPal_Conv(struct BattleAnim* bc, item_t item) {
+void GetBallAnimPal(struct BattleAnim* bc, item_t item) {
     // SET_PC(aGetBallAnimPal);
     // LD_HL(mBallColors);
     // LDH_A_addr(rSVBK);
@@ -921,7 +702,7 @@ void BattleAnimFunction_Ember(struct BattleAnim* bc) {
         bc->jumptableIndex++;
         // LD_A(BATTLEANIMFRAMESET_0F);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_0F);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_0F);
         fallthrough;
 
     case 4:
@@ -1267,7 +1048,7 @@ void BattleAnimFunction_FireBlast(struct BattleAnim* bc) {
         if(bc->param != 0x7) {
             // LD_A(BATTLEANIMFRAMESET_11);
             // CALL(aReinitBattleAnimFrameset);
-            ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_11);
+            ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_11);
             // RET;
             return;
         }
@@ -1297,7 +1078,7 @@ void BattleAnimFunction_FireBlast(struct BattleAnim* bc) {
         bc->jumptableIndex++;
         // LD_A(BATTLEANIMFRAMESET_10);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_10);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_10);
         fallthrough;
 
     case 8:
@@ -1434,7 +1215,7 @@ void BattleAnimFunction_RazorLeaf(struct BattleAnim* bc) {
             bc->var2 = 0;
             // LD_A(BATTLEANIMFRAMESET_17);
             // CALL(aReinitBattleAnimFrameset);
-            ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_17);
+            ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_17);
             // LD_HL(BATTLEANIMSTRUCT_PARAM);
             // ADD_HL_BC;
             // BIT_hl(6);
@@ -1559,7 +1340,7 @@ void BattleAnimFunction_RazorLeaf(struct BattleAnim* bc) {
     // three:
         // LD_A(BATTLEANIMFRAMESET_16);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_16);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_16);
         // LD_HL(BATTLEANIMSTRUCT_OAMFLAGS);
         // ADD_HL_BC;
         // RES_hl(5);
@@ -1787,7 +1568,7 @@ void BattleAnimFunction_Bubble(struct BattleAnim* bc) {
         bc->var1 = 0x0;
         // LD_A(BATTLEANIMFRAMESET_22);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_22);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_22);
         fallthrough;
 
     case 2: {
@@ -2006,7 +1787,7 @@ void BattleAnimFunction_Sing(struct BattleAnim* bc) {
         // LD_A(BATTLEANIMFRAMESET_24);
         // ADD_A_hl;  // BATTLEANIMFRAMESET_25 BATTLEANIMFRAMESET_26
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_24 + bc->param);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_24 + bc->param);
         fallthrough;
 
     case 1:
@@ -2089,7 +1870,7 @@ void BattleAnimFunction_WaterGun(struct BattleAnim* bc) {
         bc->jumptableIndex++;
         // LD_A(BATTLEANIMFRAMESET_28);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_28);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_28);
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl(0x0);
@@ -2125,7 +1906,7 @@ void BattleAnimFunction_WaterGun(struct BattleAnim* bc) {
         bc->jumptableIndex++;
         // LD_A(BATTLEANIMFRAMESET_29);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_29);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_29);
         fallthrough;
 
     case 3:
@@ -2292,7 +2073,7 @@ void BattleAnimFunction_ThunderWave(struct BattleAnim* bc) {
         bc->jumptableIndex++;
         // LD_A(BATTLEANIMFRAMESET_35);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_35);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_35);
         fallthrough;
 
     case 0:
@@ -2388,7 +2169,7 @@ void BattleAnimFunction_Clamp_Encore(struct BattleAnim* bc) {
             // ADD_HL_BC;
             // LD_A_hl;  // BATTLEANIMFRAMESET_3A (Clamp)
             // ['?']  // BATTLEANIMFRAMESET_A0 (Hands)
-            ReinitBattleAnimFrameset_Conv(bc, bc->var2);
+            ReinitBattleAnimFrameset(bc, bc->var2);
         }
         else {
             // LD_HL(BATTLEANIMSTRUCT_VAR2);
@@ -2396,7 +2177,7 @@ void BattleAnimFunction_Clamp_Encore(struct BattleAnim* bc) {
             // LD_A_hl;
             // INC_A;  // BATTLEANIMFRAMESET_3B (Clamp Flipped)
             // // ['?']  // BATTLEANIMFRAMESET_A1 (Hands Flipped)
-            ReinitBattleAnimFrameset_Conv(bc, bc->var2 + 1);
+            ReinitBattleAnimFrameset(bc, bc->var2 + 1);
             // goto reinit;
         }
 
@@ -2503,11 +2284,11 @@ void BattleAnimFunction_Bite(struct BattleAnim* bc) {
         if(bit_test(bc->yOffset, 7)) {
         // flipped2:
             // LD_A(BATTLEANIMFRAMESET_3C);
-            ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_3C);
+            ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_3C);
         }
         else {
             // LD_A(BATTLEANIMFRAMESET_3D);
-            ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_3D);
+            ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_3D);
             // goto got_frameset;
         }
 
@@ -2865,7 +2646,7 @@ void BattleAnimFunction_Wrap(struct BattleAnim* bc) {
         // INC_A;  // BATTLEANIMFRAMESET_53
         // ['?']  // BATTLEANIMFRAMESET_55
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, bc->framesetId + 1);
+        ReinitBattleAnimFrameset(bc, bc->framesetId + 1);
         // CALL(aBattleAnim_IncAnonJumptableIndex);
         bc->jumptableIndex++;
         // LD_HL(BATTLEANIMSTRUCT_VAR1);  // Unused?
@@ -2925,7 +2706,7 @@ void BattleAnimFunction_LeechSeed(struct BattleAnim* bc) {
         bc->var2 = 0x40;
         // LD_A(BATTLEANIMFRAMESET_57);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_57);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_57);
         // CALL(aBattleAnim_IncAnonJumptableIndex);
         bc->jumptableIndex++;
         // RET;
@@ -2950,7 +2731,7 @@ void BattleAnimFunction_LeechSeed(struct BattleAnim* bc) {
         bc->jumptableIndex++;
         // LD_A(BATTLEANIMFRAMESET_58);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_58);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_58);
         fallthrough;
 
     case 3:
@@ -3424,7 +3205,7 @@ void BattleAnimFunction_Egg(struct BattleAnim* bc) {
         // Switches Softboiled frameset to egg wobbling
         // LD_A(BATTLEANIMFRAMESET_4E);  // Egg wobbling
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_4E);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_4E);
         // CALL(aBattleAnim_IncAnonJumptableIndex);
         bc->jumptableIndex++;
         // RET;
@@ -3454,7 +3235,7 @@ void BattleAnimFunction_Egg(struct BattleAnim* bc) {
         // First Softboiled ANIM_OBJ_EGG turns into the bottom half frameset
         // LD_A(BATTLEANIMFRAMESET_50);  // Cracked egg bottom
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_50);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_50);
         // LD_HL(BATTLEANIMSTRUCT_YOFFSET);
         // ADD_HL_BC;
         // LD_hl(0x4);
@@ -3469,7 +3250,7 @@ void BattleAnimFunction_Egg(struct BattleAnim* bc) {
         // Second Softboiled ANIM_OBJ_EGG
         // LD_A(BATTLEANIMFRAMESET_4F);  // Cracked egg top
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_4F);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_4F);
         // CALL(aBattleAnim_IncAnonJumptableIndex);
         bc->jumptableIndex++;
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
@@ -3634,7 +3415,7 @@ void BattleAnimFunction_Sound(struct BattleAnim* bc) {
         // LD_A(BATTLEANIMFRAMESET_59);
         // ADD_A_hl;  // BATTLEANIMFRAMESET_5A BATTLEANIMFRAMESET_5B
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_59 + bc->param);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_59 + bc->param);
         // RET;
         return;
 
@@ -3695,7 +3476,7 @@ void BattleAnimFunction_ConfuseRay(struct BattleAnim* bc) {
         bc->param = ((bc->param & 0x80) >> 7);
         // ADD_A(BATTLEANIMFRAMESET_5D);  // BATTLEANIMFRAMESET_5E
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, bc->param + BATTLEANIMFRAMESET_5D);
+        ReinitBattleAnimFrameset(bc, bc->param + BATTLEANIMFRAMESET_5D);
         // RET;
         return;
 
@@ -3792,7 +3573,7 @@ void BattleAnimFunction_Dizzy(struct BattleAnim* bc) {
         // ADD_A_hl;  // BATTLEANIMFRAMESET_61 BATTLEANIMFRAMESET_62
         // // ['?']  // BATTLEANIMFRAMESET_9C BATTLEANIMFRAMESET_9D
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, ((bc->param & 0x80) >> 7) + bc->var1);
+        ReinitBattleAnimFrameset(bc, ((bc->param & 0x80) >> 7) + bc->var1);
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -3842,7 +3623,7 @@ void BattleAnimFunction_Dizzy(struct BattleAnim* bc) {
             // INC_A;  // BATTLEANIMFRAMESET_62
             // ['?']  // BATTLEANIMFRAMESET_9D
             // goto got_frameset;
-            ReinitBattleAnimFrameset_Conv(bc, bc->var1 + 1);
+            ReinitBattleAnimFrameset(bc, bc->var1 + 1);
         }
         else {
         // not_flipped:
@@ -3850,7 +3631,7 @@ void BattleAnimFunction_Dizzy(struct BattleAnim* bc) {
             // ADD_HL_BC;
             // LD_A_hl;  // BATTLEANIMFRAMESET_61
             // ['?']  // BATTLEANIMFRAMESET_9C
-            ReinitBattleAnimFrameset_Conv(bc, bc->var1);
+            ReinitBattleAnimFrameset(bc, bc->var1);
         }
     // got_frameset:
         // CALL(aReinitBattleAnimFrameset);
@@ -3887,7 +3668,7 @@ void BattleAnimFunction_Amnesia(struct BattleAnim* bc) {
         // LD_A_hl;
         // ADD_A(BATTLEANIMFRAMESET_63);  // BATTLEANIMFRAMESET_64 BATTLEANIMFRAMESET_65
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_63);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_63);
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // LD_E_hl;
@@ -4007,7 +3788,7 @@ void BattleAnimFunction_String(struct BattleAnim* bc) {
     // not_param_zero:
         // ADD_A(BATTLEANIMFRAMESET_6A);  // BATTLEANIMFRAMESET_6B BATTLEANIMFRAMESET_6C
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_6A + bc->param);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_6A + bc->param);
         fallthrough;
 
     case 1:
@@ -4061,7 +3842,7 @@ void BattleAnimFunction_Paralyzed(struct BattleAnim* bc) {
             bc->xOffset = -(param & 0xf);
             // LD_A(BATTLEANIMFRAMESET_6E);
             // CALL(aReinitBattleAnimFrameset);
-            ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_6E);
+            ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_6E);
             // RET;
             return;
         }
@@ -5247,7 +5028,7 @@ void BattleAnimFunction_SpeedLine(struct BattleAnim* bc) {
         // AND_A(0x7f);
         // ADD_A(BATTLEANIMFRAMESET_81);  // BATTLEANIMFRAMESET_82 BATTLEANIMFRAMESET_83
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_81 + (bc->param & 0x7f));
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_81 + (bc->param & 0x7f));
         fallthrough;
 
     case 1:
@@ -5316,7 +5097,7 @@ void BattleAnimFunction_Sludge(struct BattleAnim* bc) {
         bc->jumptableIndex++;
         // LD_A(BATTLEANIMFRAMESET_20);
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_20);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_20);
         fallthrough;
 
     case 2:
@@ -5494,7 +5275,7 @@ void BattleAnimFunction_LockOnMindReader(struct BattleAnim* bc) {
         // ADD_A_hl;  // BATTLEANIMFRAMESET_8F BATTLEANIMFRAMESET_90 BATTLEANIMFRAMESET_91
         // ['?']  // BATTLEANIMFRAMESET_93 BATTLEANIMFRAMESET_94 BATTLEANIMFRAMESET_95
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, (bc->param & 0xf) + bc->framesetId);
+        ReinitBattleAnimFrameset(bc, (bc->param & 0xf) + bc->framesetId);
         // LD_HL(BATTLEANIMSTRUCT_PARAM);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -5582,7 +5363,7 @@ void BattleAnimFunction_HealBellNotes(struct BattleAnim* bc) {
         // LD_A(BATTLEANIMFRAMESET_24);
         // ADD_A_hl;  // BATTLEANIMFRAMESET_25 BATTLEANIMFRAMESET_26
         // CALL(aReinitBattleAnimFrameset);
-        ReinitBattleAnimFrameset_Conv(bc, BATTLEANIMFRAMESET_24 + bc->param);
+        ReinitBattleAnimFrameset(bc, BATTLEANIMFRAMESET_24 + bc->param);
         fallthrough;
 
     case 1:

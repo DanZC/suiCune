@@ -30,6 +30,7 @@
 #include "../../home/pokedex_flags.h"
 #include "../../home/print_text.h"
 #include "../../home/map_objects.h"
+#include "../../home/item.h"
 #include "../../mobile/mobile_41.h"
 #include "../../mobile/mobile_5b.h"
 #include "../../gfx/misc.h"
@@ -243,13 +244,13 @@ static void v_ResetWRAM_InitMonList(uint8_t* hl, species_t* sp){
 }
 
 //  Loads 0 in the count and -1 in the first item slot.
-static void v_ResetWRAM_InitItemList(item_pocket_s* hl){
+static void v_ResetWRAM_InitItemList(item_pocket_u* hl){
     // XOR_A_A;
     // LD_hli_A;
-    hl->count = 0;
+    hl->pocket.count = 0;
     // DEC_A;
     // LD_hl_A;
-    hl->pocket[0].item = (item_t)-1;
+    hl->pocket.pocket[0].item = (item_t)-1;
     // RET;
 }
 
@@ -323,19 +324,19 @@ void v_ResetWRAM(void) {
 
     // LD_HL(wNumItems);
     // CALL(av_ResetWRAM_InitList);
-    v_ResetWRAM_InitItemList((item_pocket_s*)&wram->wNumItems);
+    v_ResetWRAM_InitItemList(GetItemPocket(ITEM_POCKET));
 
     // LD_HL(wNumKeyItems);
     // CALL(av_ResetWRAM_InitList);
-    v_ResetWRAM_InitItemList((item_pocket_s*)&wram->wNumKeyItems);
+    v_ResetWRAM_InitItemList(GetItemPocket(KEY_ITEM_POCKET));
 
     // LD_HL(wNumBalls);
     // CALL(av_ResetWRAM_InitList);
-    v_ResetWRAM_InitItemList((item_pocket_s*)&wram->wNumBalls);
+    v_ResetWRAM_InitItemList(GetItemPocket(BALL_POCKET));
 
     // LD_HL(wNumPCItems);
     // CALL(av_ResetWRAM_InitList);
-    v_ResetWRAM_InitItemList((item_pocket_s*)&wram->wNumPCItems);
+    v_ResetWRAM_InitItemList(GetItemPocket(PC_ITEM_POCKET));
 
     // XOR_A_A;
     // LD_addr_A(wRoamMon1Species);

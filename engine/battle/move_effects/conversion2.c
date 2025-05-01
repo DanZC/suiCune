@@ -94,7 +94,7 @@ void BattleCommand_Conversion2(void){
     // LD_A_hl;
     // LD_addr_A(wNamedObjectIndex);
     // PREDEF(pGetTypeName);
-    GetTypeName_Conv(mon->types[0]);
+    GetTypeName(mon->types[0]);
     // LD_HL(mTransformedTypeText);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox(TransformedTypeText);

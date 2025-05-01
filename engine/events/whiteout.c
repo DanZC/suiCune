@@ -104,7 +104,7 @@ void GetWhiteoutSpawn(void){
     // LD_A_addr(wLastSpawnMapNumber);
     // LD_E_A;
     // FARCALL(aIsSpawnPoint);
-    u8_flag_s res = IsSpawnPoint_Conv(wram->wLastSpawnMapGroup, wram->wLastSpawnMapNumber);
+    u8_flag_s res = IsSpawnPoint(wram->wLastSpawnMapGroup, wram->wLastSpawnMapNumber);
     // LD_A_C;
     // IF_C goto yes;
     // XOR_A_A;  // SPAWN_HOME

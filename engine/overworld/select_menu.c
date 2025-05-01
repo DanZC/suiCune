@@ -167,7 +167,7 @@ bool CheckRegisteredItem(void){
 bool UseRegisteredItem(void){
     // FARCALL(aCheckItemMenu);
     // LD_A_addr(wItemAttributeValue);
-    uint8_t menu = CheckItemMenu_Conv(wram->wCurItem);
+    uint8_t menu = CheckItemMenu(wram->wCurItem);
     // LD_HL(mUseRegisteredItem_SwitchTo);
     // RST(aJumpTable);
     // RET;

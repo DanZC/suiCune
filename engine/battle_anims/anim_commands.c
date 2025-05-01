@@ -116,7 +116,7 @@ void BattleAnimRunScript(void){
     if(HIGH(wram->wFXAnimID) == 0) {
         // FARCALL(aCheckBattleScene);
         // IF_C goto disabled;
-        if(CheckBattleScene_Conv()) {
+        if(CheckBattleScene()) {
             // CALL(aBattleAnimClearHud);
             BattleAnimClearHud();
             // CALL(aRunBattleAnimScript);
@@ -1458,7 +1458,7 @@ void BattleAnimCmd_NGFX_Conv(uint8_t c, ...){
         // LD_A_addr(wBattleAnimGFXTempTileID);
         // ADD_A_C;
         // LD_addr_A(wBattleAnimGFXTempTileID);
-        wram->wBattleAnimGFXTempTileID += LoadBattleAnimGFX_Conv(de, byte);
+        wram->wBattleAnimGFXTempTileID += LoadBattleAnimGFX(de, byte);
         // POP_HL;
         // POP_BC;
         // DEC_C;
@@ -3068,7 +3068,7 @@ void BattleAnim_UpdateOAM_All(void){
         // PUSH_HL;
         // PUSH_DE;
         // CALL(aDoBattleAnimFrame);
-        DoBattleAnimFrame_Conv(hl);
+        DoBattleAnimFrame(hl);
         // CALL(aBattleAnimOAMUpdate);
         bool error = BattleAnimOAMUpdate_Conv(hl, &oamIndex);
         // POP_DE;

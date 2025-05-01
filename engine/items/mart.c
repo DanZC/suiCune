@@ -69,34 +69,14 @@ uint32_t GetMartSize(uint16_t de) {
     return MartsSizes[de];
 }
 
-void OpenMartDialog(void){
-    return OpenMartDialog_Conv(REG_C, REG_DE);
-    CALL(aGetMart);
-    LD_A_C;
-    LD_addr_A(wMartType);
-    CALL(aLoadMartPointer);
-    LD_A_addr(wMartType);
-    LD_HL(mOpenMartDialog_dialogs);
-    RST(aJumpTable);
-    RET;
-
-
-//dialogs:
-    //dw ['MartDialog'];
-    //dw ['HerbShop'];
-    //dw ['BargainShop'];
-    //dw ['Pharmacist'];
-    //dw ['RooftopSale'];
-}
-
-void OpenMartDialog_Conv(uint8_t type, uint16_t id){
+void OpenMartDialog(uint8_t type, uint16_t id){
     // CALL(aGetMart);
-    const item_t* mart = GetMart_Conv(id);
+    const item_t* mart = GetMart(id);
     // LD_A_C;
     // LD_addr_A(wMartType);
     wram->wMartType = type;
     // CALL(aLoadMartPointer);
-    LoadMartPointer_Conv(mart, GetMartSize(id));
+    LoadMartPointer(mart, GetMartSize(id));
     // LD_A_addr(wMartType);
     // LD_HL(mOpenMartDialog_dialogs);
     // RST(aJumpTable);
@@ -126,7 +106,7 @@ void MartDialog(void){
 
 void HerbShop(void){
     // CALL(aFarReadMart);
-    FarReadMart_Conv();
+    FarReadMart();
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader();
     // LD_HL(mHerbShopLadyIntroText);
@@ -144,7 +124,7 @@ void BargainShop(void){
     // LD_B(BANK(aBargainShopData));
     // LD_DE(mBargainShopData);
     // CALL(aLoadMartPointer);
-    LoadMartPointer_Conv((const item_t*)BargainShopData, BargainShopData_Size);
+    LoadMartPointer((const item_t*)BargainShopData, BargainShopData_Size);
     // CALL(aReadMart);
     ReadMart();
     // CALL(aLoadStandardMenuHeader);
@@ -173,7 +153,7 @@ void BargainShop(void){
 
 void Pharmacist(void){
     // CALL(aFarReadMart);
-    FarReadMart_Conv();
+    FarReadMart();
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader();
     // LD_HL(mPharmacyIntroText);
@@ -200,7 +180,7 @@ void RooftopSale(void){
 
 // ok:
     // CALL(aLoadMartPointer);
-    LoadMartPointer_Conv((const item_t*)de, de_size);
+    LoadMartPointer((const item_t*)de, de_size);
     // CALL(aReadMart);
     ReadMart();
     // CALL(aLoadStandardMenuHeader);
@@ -216,27 +196,7 @@ void RooftopSale(void){
     // RET;
 }
 
-void LoadMartPointer(void){
-    LD_A_B;
-    LD_addr_A(wMartPointerBank);
-    LD_A_E;
-    LD_addr_A(wMartPointer);
-    LD_A_D;
-    LD_addr_A(wMartPointer + 1);
-    LD_HL(wCurMartCount);
-    //assert ['wCurMartCount + 1 == wCurMartItems'];
-    XOR_A_A;
-    LD_BC(16);
-    CALL(aByteFill);
-    XOR_A_A;  // STANDARDMART_HOWMAYIHELPYOU
-    LD_addr_A(wMartJumptableIndex);
-    LD_addr_A(wBargainShopFlags);
-    LD_addr_A(wFacingDirection);
-    RET;
-
-}
-
-void LoadMartPointer_Conv(const item_t* ptr, uint32_t size){
+void LoadMartPointer(const item_t* ptr, uint32_t size){
     // LD_A_B;
     // LD_addr_A(wMartPointerBank);
     // LD_A_E;
@@ -262,27 +222,7 @@ void LoadMartPointer_Conv(const item_t* ptr, uint32_t size){
     // RET;
 }
 
-void GetMart(void){
-    LD_A_E;
-    CP_A(NUM_MARTS);
-    IF_C goto IsAMart;
-    LD_B(BANK(aDefaultMart));
-    LD_DE(mDefaultMart);
-    RET;
-
-
-IsAMart:
-    LD_HL(mMarts);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    LD_B(BANK(aMarts));
-    RET;
-}
-
-const item_t* GetMart_Conv(uint16_t de){
+const item_t* GetMart(uint16_t de){
     // LD_A_E;
     // CP_A(NUM_MARTS);
     // IF_C goto IsAMart;
@@ -350,7 +290,7 @@ static uint8_t StandardMart_Buy(void) {
     // CALL(aExitMenu);
     ExitMenu();
     // CALL(aFarReadMart);
-    FarReadMart_Conv();
+    FarReadMart();
     // CALL(aBuyMenu);
     BuyMenu();
     // AND_A_A;
@@ -425,40 +365,6 @@ void StandardMart(void){
 }
 
 void FarReadMart(void){
-    LD_HL(wMartPointer);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wCurMartCount);
-
-CopyMart:
-    LD_A_addr(wMartPointerBank);
-    CALL(aGetFarByte);
-    LD_de_A;
-    INC_HL;
-    INC_DE;
-    CP_A(-1);
-    IF_NZ goto CopyMart;
-    LD_HL(wMartItem1BCD);
-    LD_DE(wCurMartItems);
-
-ReadMartItem:
-    LD_A_de;
-    INC_DE;
-    CP_A(-1);
-    IF_Z goto done;
-    PUSH_DE;
-    CALL(aGetMartItemPrice);
-    POP_DE;
-    goto ReadMartItem;
-
-
-done:
-    RET;
-
-}
-
-void FarReadMart_Conv(void){
     // LD_HL(wMartPointer);
     // LD_A_hli;
     // LD_H_hl;
@@ -494,7 +400,7 @@ void FarReadMart_Conv(void){
         // IF_Z goto done;
         // PUSH_DE;
         // CALL(aGetMartItemPrice);
-        GetMartItemPrice_Conv(bcd + i, de[i]);
+        GetMartItemPrice(bcd + i, de[i]);
         // POP_DE;
         // goto ReadMartItem;
     }
@@ -504,69 +410,17 @@ void FarReadMart_Conv(void){
     // RET;
 }
 
-void GetMartItemPrice(void){
 //  Return the price of item a in BCD at hl and in tiles at wStringBuffer1.
-    PUSH_HL;
-    LD_addr_A(wCurItem);
-    FARCALL(aGetItemPrice);
-    POP_HL;
-
-    return GetMartPrice();
-}
-
-//  Return the price of item a in BCD at hl and in tiles at wStringBuffer1.
-void GetMartItemPrice_Conv(item_price_s* hl, item_t a){
+void GetMartItemPrice(item_price_s* hl, item_t a){
     // PUSH_HL;
     // LD_addr_A(wCurItem);
     // FARCALL(aGetItemPrice);
-    uint16_t de = GetItemPrice_Conv(a);
+    uint16_t de = GetItemPrice(a);
     // POP_HL;
     hl->id = a;
     hl->price = de;
 
-    // return GetMartPrice_Conv(hl, de, a);
-}
-
-void GetMartPrice(void){
-//  Return price de in BCD at hl and in tiles at wStringBuffer1.
-    PUSH_HL;
-    LD_A_D;
-    LD_addr_A(wStringBuffer2);
-    LD_A_E;
-    LD_addr_A(wStringBuffer2 + 1);
-    LD_HL(wStringBuffer1);
-    LD_DE(wStringBuffer2);
-    LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 6);  // 6 digits
-    CALL(aPrintNum);
-    POP_HL;
-
-    LD_DE(wStringBuffer1);
-    LD_C(6 / 2);  // 6 digits
-
-loop:
-    CALL(aGetMartPrice_CharToNybble);
-    SWAP_A;
-    LD_B_A;
-    CALL(aGetMartPrice_CharToNybble);
-    OR_A_B;
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-CharToNybble:
-    LD_A_de;
-    INC_DE;
-    CP_A(0x7f);
-    IF_NZ goto not_space;
-    LD_A(0xf6);
-
-
-not_space:
-    SUB_A(0xf6);
-    RET;
-
+    // return GetMartPrice(hl, de, a);
 }
 
 static uint8_t GetMartPrice_CharToNybble(uint8_t a){
@@ -585,7 +439,7 @@ static uint8_t GetMartPrice_CharToNybble(uint8_t a){
 }
 
 //  Return price de in BCD at hl and in tiles at wStringBuffer1.
-void GetMartPrice_Conv(item_price_s* hl, uint16_t price){
+void GetMartPrice(item_price_s* hl, uint16_t price){
     // PUSH_HL;
     // LD_A_D;
     // LD_addr_A(wStringBuffer2);
@@ -660,7 +514,7 @@ void ReadMart(void){
         // LD_H_B;
         // LD_L_C;
         // CALL(aGetMartPrice);
-        GetMartPrice_Conv(bc + i, hl[i].price);
+        GetMartPrice(bc + i, hl[i].price);
         // LD_B_H;
         // LD_C_L;
         // POP_HL;
@@ -856,7 +710,7 @@ bool BuyMenuLoop(void){
         // LD_HL(wNumItems);
         // CALL(aReceiveItem);
         // IF_NC goto insufficient_bag_space;
-        if(!ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem, wram->wItemQuantityChange)){
+        if(!ReceiveItem(GetItemPocket(ITEM_POCKET), wram->wCurItem, wram->wItemQuantityChange)){
         // insufficient_bag_space:
             // LD_A(MARTTEXT_BAG_FULL);
             // CALL(aLoadBuyMenuText);
@@ -916,7 +770,7 @@ bool StandardMartAskPurchaseQuantity(void){
 
 bool MartConfirmPurchase(void){
     // PREDEF(pPartyMonItemName);
-    PartyMonItemName_Conv(wram->wCurItem);
+    PartyMonItemName(wram->wCurItem);
     // LD_A(MARTTEXT_COSTS_THIS_MUCH);
     // CALL(aLoadBuyMenuText);
     LoadBuyMenuText(MARTTEXT_COSTS_THIS_MUCH);
@@ -1181,7 +1035,7 @@ const txt_cmd_s PharmacyComeAgainText[] = {
 
 static void SellMenu_TryToSellItem(void) {
     // FARCALL(aCheckItemMenu);
-    uint8_t attr = CheckItemMenu_Conv(wram->wCurItem);
+    uint8_t attr = CheckItemMenu(wram->wCurItem);
     // LD_A_addr(wItemAttributeValue);
     // LD_HL(mSellMenu_dw);
     // RST(aJumpTable);
@@ -1198,7 +1052,7 @@ static void SellMenu_TryToSellItem(void) {
             // LD_A_addr(wItemAttributeValue);
             // AND_A_A;
             // IF_Z goto okay_to_sell;
-            if(!v_CheckTossableItem_Conv(wram->wCurItem)){
+            if(!v_CheckTossableItem(wram->wCurItem)){
                 // LD_HL(mMartCantBuyText);
                 // CALL(aPrintText);
                 PrintText(MartCantBuyText);
@@ -1236,9 +1090,9 @@ static void SellMenu_TryToSellItem(void) {
                     // LD_A_addr(wMartItemID);
                     // LD_HL(wNumItems);
                     // CALL(aTossItem);
-                    TossItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem);
+                    TossItem(GetItemPocket(ITEM_POCKET), wram->wCurItem, wram->wItemQuantityChange);
                     // PREDEF(pPartyMonItemName);
-                    PartyMonItemName_Conv(wram->wCurItem);
+                    PartyMonItemName(wram->wCurItem);
                     // hlcoord(1, 14, wTilemap);
                     // LD_BC((3 << 8) | 18);
                     // CALL(aClearBox);

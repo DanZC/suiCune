@@ -264,7 +264,7 @@ void GetMysteryGiftItem(void){
     // LD_HL(wNumItems);
     // CALL(aReceiveItem);
     // IF_NC goto no_room;
-    if(!ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem, 1)) {
+    if(!ReceiveItem(GetItemPocket(ITEM_POCKET), wram->wCurItem, 1)) {
     // no_room:
         // CALL(aCloseSRAM);
         CloseSRAM();
@@ -402,7 +402,7 @@ bool CheckCoinsAndCoinCase(void){
     // LD_HL(wNumItems);
     // CALL(aCheckItem);
     // IF_NC goto no_coin_case;
-    if(!CheckItem_Conv(COIN_CASE, wram->wItems)) {
+    if(!CheckItem(GetItemPocket(ITEM_POCKET), COIN_CASE)) {
     // no_coin_case:
         // LD_HL(mCheckCoinsAndCoinCase_NoCoinCaseText);
     // print:
@@ -511,7 +511,7 @@ void ResetLuckyNumberShowFlag(void){
 
 void CheckLuckyNumberShowFlag(void){
     // FARCALL(av_CheckLuckyNumberShowFlag);
-    bool flag = v_CheckLuckyNumberShowFlag_Conv();
+    bool flag = v_CheckLuckyNumberShowFlag();
     // JP(mScriptReturnCarry);
     return ScriptReturnCarry_Conv(flag);
 }

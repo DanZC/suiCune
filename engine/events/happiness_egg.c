@@ -53,87 +53,9 @@ void CheckFirstMonIsEgg(void){
     return CopyPokemonName_Buffer1_Buffer3();
 }
 
-void ChangeHappiness(void){
-//  Perform happiness action c on wCurPartyMon
-
-    LD_A_addr(wCurPartyMon);
-    INC_A;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wPartySpecies - 1);
-    ADD_HL_DE;
-    LD_A_hl;
-    CP_A(EGG);
-    RET_Z ;
-
-    PUSH_BC;
-    LD_HL(wPartyMon1Happiness);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    POP_BC;
-
-    LD_D_H;
-    LD_E_L;
-
-    PUSH_DE;
-    LD_A_de;
-    CP_A(HAPPINESS_THRESHOLD_1);
-    LD_E(0);
-    IF_C goto ok;
-    INC_E;
-    CP_A(HAPPINESS_THRESHOLD_2);
-    IF_C goto ok;
-    INC_E;
-
-
-ok:
-    DEC_C;
-    LD_B(0);
-    LD_HL(mHappinessChanges);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    CP_A(0x64);  // why not $80?
-    POP_DE;
-
-    LD_A_de;
-    IF_NC goto negative;
-    ADD_A_hl;
-    IF_NC goto done;
-    LD_A(-1);
-    goto done;
-
-
-negative:
-    ADD_A_hl;
-    IF_C goto done;
-    XOR_A_A;
-
-
-done:
-    LD_de_A;
-    LD_A_addr(wBattleMode);
-    AND_A_A;
-    RET_Z ;
-    LD_A_addr(wCurPartyMon);
-    LD_B_A;
-    LD_A_addr(wPartyMenuCursor);
-    CP_A_B;
-    RET_NZ ;
-    LD_A_de;
-    LD_addr_A(wBattleMonHappiness);
-    RET;
-
-// INCLUDE "data/events/happiness_changes.asm"
-}
-
 
 //  Perform happiness action c on wCurPartyMon
-void ChangeHappiness_Conv(uint8_t c){
+void ChangeHappiness(uint8_t c){
     // LD_A_addr(wCurPartyMon);
     // INC_A;
     // LD_E_A;

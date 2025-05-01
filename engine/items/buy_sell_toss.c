@@ -20,7 +20,7 @@ bool SelectQuantityToToss(void){
 
 bool SelectQuantityToBuy(void){
     // FARCALL(aGetItemPrice);
-    uint16_t price = GetItemPrice_Conv(wram->wCurItem);
+    uint16_t price = GetItemPrice(wram->wCurItem);
     return RooftopSale_SelectQuantityToBuy(price);
 }
 
@@ -40,7 +40,7 @@ bool RooftopSale_SelectQuantityToBuy(uint16_t price){
 
 bool SelectQuantityToSell(void){
     // FARCALL(aGetItemPrice);
-    uint16_t price = GetItemPrice_Conv(wram->wCurItem);
+    uint16_t price = GetItemPrice(wram->wCurItem);
     // LD_A_D;
     // LD_addr_A(wBuySellItemPrice + 0);
     // LD_A_E;

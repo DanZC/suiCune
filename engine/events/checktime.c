@@ -1,25 +1,7 @@
 #include "../../constants.h"
 #include "checktime.h"
 
-void CheckTime(void){
-    // LD_A_addr(wTimeOfDay);
-    // LD_HL(mCheckTime_TimeOfDayTable);
-    // LD_DE(2);
-    // CALL(aIsInArray);
-    // INC_HL;
-    // LD_C_hl;
-    // RET_C ;
-
-    u8_flag_s res = CheckTime_Conv();
-    REG_C = res.a;
-    REG_F_C = res.flag;
-
-    // XOR_A_A;
-    // LD_C_A;
-    // RET;
-}
-
-u8_flag_s CheckTime_Conv(void) {
+u8_flag_s CheckTime(void) {
     static const uint8_t TimeOfDayTable[] = {
         MORN_F, MORN,
         DAY_F, DAY,

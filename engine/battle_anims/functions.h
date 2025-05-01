@@ -1,5 +1,4 @@
-void DoBattleAnimFrame(void);
-void DoBattleAnimFrame_Conv(struct BattleAnim* bc);
+void DoBattleAnimFrame(struct BattleAnim* bc);
 void BattleAnimFunction_Null(struct BattleAnim* bc);
 void BattleAnimFunction_ThrowFromUserToTargetAndDisappear(struct BattleAnim* bc);
 bool BattleAnimFunction_ThrowFromUserToTarget(struct BattleAnim* bc);
@@ -9,8 +8,7 @@ void BattleAnimFunction_MoveFromUserToTarget(struct BattleAnim* bc);
 void BattleAnimFunction_MoveFromUserToTargetAndDisappear(struct BattleAnim* bc);
 void BattleAnimFunction_PokeBall(struct BattleAnim* bc);
 void BattleAnimFunction_PokeBallBlocked(struct BattleAnim* bc);
-void GetBallAnimPal(void);
-void GetBallAnimPal_Conv(struct BattleAnim* bc, item_t item);
+void GetBallAnimPal(struct BattleAnim* bc, item_t item);
 void BattleAnimFunction_Ember(struct BattleAnim* bc);
 void BattleAnimFunction_Drop(struct BattleAnim* bc);
 void BattleAnimFunction_MoveFromUserToTargetSpinAround(struct BattleAnim* bc);

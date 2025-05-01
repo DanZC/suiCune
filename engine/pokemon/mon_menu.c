@@ -38,35 +38,7 @@
 #include "../../data/moves/moves.h"
 #include "../../mobile/mobile_41.h"
 
-void HasNoItems(void){
-    LD_A_addr(wNumItems);
-    AND_A_A;
-    RET_NZ ;
-    LD_A_addr(wNumKeyItems);
-    AND_A_A;
-    RET_NZ ;
-    LD_A_addr(wNumBalls);
-    AND_A_A;
-    RET_NZ ;
-    LD_HL(wTMsHMs);
-    LD_B(NUM_TMS + NUM_HMS);
-
-loop:
-    LD_A_hli;
-    AND_A_A;
-    IF_NZ goto done;
-    DEC_B;
-    IF_NZ goto loop;
-    SCF;
-    RET;
-
-done:
-    AND_A_A;
-    RET;
-
-}
-
-bool HasNoItems_Conv(void){
+bool HasNoItems(void){
     // LD_A_addr(wNumItems);
     // AND_A_A;
     // RET_NZ ;
@@ -106,76 +78,6 @@ bool HasNoItems_Conv(void){
     return true;
 }
 
-void TossItemFromPC(void){
-    PUSH_DE;
-    CALL(aPartyMonItemName);
-    FARCALL(av_CheckTossableItem);
-    LD_A_addr(wItemAttributeValue);
-    AND_A_A;
-    IF_NZ goto key_item;
-    LD_HL(mTossItemFromPC_ItemsTossOutHowManyText);
-    CALL(aMenuTextbox);
-    FARCALL(aSelectQuantityToToss);
-    PUSH_AF;
-    CALL(aCloseWindow);
-    CALL(aExitMenu);
-    POP_AF;
-    IF_C goto quit;
-    LD_HL(mTossItemFromPC_ItemsThrowAwayText);
-    CALL(aMenuTextbox);
-    CALL(aYesNoBox);
-    PUSH_AF;
-    CALL(aExitMenu);
-    POP_AF;
-    IF_C goto quit;
-    POP_HL;
-    LD_A_addr(wCurItemQuantity);
-    CALL(aTossItem);
-    CALL(aPartyMonItemName);
-    LD_HL(mTossItemFromPC_ItemsDiscardedText);
-    CALL(aMenuTextbox);
-    CALL(aExitMenu);
-    AND_A_A;
-    RET;
-
-
-key_item:
-    CALL(aTossItemFromPC_CantToss);
-
-quit:
-    POP_HL;
-    SCF;
-    RET;
-
-
-ItemsTossOutHowManyText:
-    //text_far ['_ItemsTossOutHowManyText']
-    //text_end ['?']
-
-
-ItemsThrowAwayText:
-    //text_far ['_ItemsThrowAwayText']
-    //text_end ['?']
-
-
-ItemsDiscardedText:
-    //text_far ['_ItemsDiscardedText']
-    //text_end ['?']
-
-
-CantToss:
-    LD_HL(mTossItemFromPC_ItemsTooImportantText);
-    CALL(aMenuTextboxBackup);
-    RET;
-
-
-ItemsTooImportantText:
-    //text_far ['_ItemsTooImportantText']
-    //text_end ['?']
-
-    return CantUseItem();
-}
-
 static void TossItemFromPC_CantToss(void) {
     static const txt_cmd_s ItemsTooImportantText[] = {
         text_far(v_ItemsTooImportantText)
@@ -187,7 +89,7 @@ static void TossItemFromPC_CantToss(void) {
     // RET;
 }
 
-bool TossItemFromPC_Conv(item_pocket_s* de){
+bool TossItemFromPC(item_pocket_u * de){
     static const txt_cmd_s ItemsTossOutHowManyText[] = {
         text_far(v_ItemsTossOutHowManyText)
         text_end
@@ -204,12 +106,12 @@ bool TossItemFromPC_Conv(item_pocket_s* de){
     };
     // PUSH_DE;
     // CALL(aPartyMonItemName);
-    PartyMonItemName_Conv(wram->wCurItem);
+    PartyMonItemName(wram->wCurItem);
     // FARCALL(av_CheckTossableItem);
     // LD_A_addr(wItemAttributeValue);
     // AND_A_A;
     // IF_NZ goto key_item;
-    if(!v_CheckTossableItem_Conv(wram->wCurItem)) {
+    if(!v_CheckTossableItem(wram->wCurItem)) {
     // key_item:
         // CALL(aTossItemFromPC_CantToss);
         TossItemFromPC_CantToss();
@@ -248,9 +150,9 @@ bool TossItemFromPC_Conv(item_pocket_s* de){
         // POP_HL;
         // LD_A_addr(wCurItemQuantity);
         // CALL(aTossItem);
-        TossItem_Conv(de, wram->wCurItem);
+        TossItem(de, wram->wCurItem, wram->wItemQuantityChange);
         // CALL(aPartyMonItemName);
-        PartyMonItemName_Conv(wram->wCurItem);
+        PartyMonItemName(wram->wCurItem);
         // LD_HL(mTossItemFromPC_ItemsDiscardedText);
         // CALL(aMenuTextbox);
         MenuTextbox(ItemsDiscardedText);
@@ -284,16 +186,7 @@ const txt_cmd_s ItemsOakWarningText[] = {
     text_end
 };
 
-void PartyMonItemName(void){
-    LD_A_addr(wCurItem);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetItemName);
-    CALL(aCopyName1);
-    RET;
-
-}
-
-void PartyMonItemName_Conv(item_t item){
+void PartyMonItemName(item_t item){
     // LD_A_addr(wCurItem);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
@@ -541,7 +434,7 @@ void TryGiveItemToPartymon(void){
     // CALL(aSpeechTextbox);
     SpeechTextbox();
     // CALL(aPartyMonItemName);
-    PartyMonItemName_Conv(wram->wCurItem);
+    PartyMonItemName(wram->wCurItem);
     // CALL(aGetPartyItemLocation);
     item_t* itm = GetPartyItemLocation();
     // LD_A_hl;
@@ -582,7 +475,7 @@ void TryGiveItemToPartymon(void){
     // LD_HL(mPokemonAskSwapItemText);
     // CALL(aStartMenuYesNo);
     // IF_C goto abort;
-    if(StartMenuYesNo_Conv(PokemonAskSwapItemText)) {
+    if(StartMenuYesNo(PokemonAskSwapItemText)) {
         // CALL(aGiveItemToPokemon);
         GiveItemToPokemon(wram->wCurItem);
         // LD_A_addr(wNamedObjectIndex);
@@ -755,7 +648,7 @@ bool ReceiveItemFromPokemon(item_t item){
     // LD_addr_A(wItemQuantityChange);
     // LD_HL(wNumItems);
     // JP(mReceiveItem);
-    return ReceiveItem_Conv((item_pocket_s*)&wram->wNumItems, item, 1);
+    return ReceiveItem(GetItemPocket(ITEM_POCKET), item, 1);
 }
 
 void GiveItemToPokemon(item_t item){
@@ -764,17 +657,10 @@ void GiveItemToPokemon(item_t item){
     wram->wItemQuantityChange = 1;
     // LD_HL(wNumItems);
     // JP(mTossItem);
-    TossItem_Conv((item_pocket_s*)&wram->wNumItems, item);
+    TossItem(GetItemPocket(ITEM_POCKET), item, 1);
 }
 
-void StartMenuYesNo(void){
-    CALL(aMenuTextbox);
-    CALL(aYesNoBox);
-    JP(mExitMenu);
-
-}
-
-bool StartMenuYesNo_Conv(const struct TextCmd* hl){
+bool StartMenuYesNo(const struct TextCmd* hl){
     // CALL(aMenuTextbox);
     MenuTextbox(hl);
     // CALL(aYesNoBox);
@@ -919,12 +805,12 @@ u8_pair_s MonMailAction(void){
             // LD_HL(mMonMailAction_MailAskSendToPCText);
             // CALL(aStartMenuYesNo);
             // IF_C goto RemoveMailToBag;
-            if(!StartMenuYesNo_Conv(MailAskSendToPCText)) {
+            if(!StartMenuYesNo(MailAskSendToPCText)) {
             // RemoveMailToBag:
                 // LD_HL(mMonMailAction_MailLoseMessageText);
                 // CALL(aStartMenuYesNo);
                 // IF_C goto done;
-                if(StartMenuYesNo_Conv(MailLoseMessageText)) {
+                if(StartMenuYesNo(MailLoseMessageText)) {
                     // CALL(aGetPartyItemLocation);
                     // LD_A_hl;
                     // LD_addr_A(wCurItem);
@@ -1286,68 +1172,6 @@ u8_pair_s MonMenu_SweetScent(void){
     return u8_pair(0x2, 0x4);
 }
 
-void ChooseMoveToDelete(void){
-    LD_HL(wOptions);
-    LD_A_hl;
-    PUSH_AF;
-    SET_hl(NO_TEXT_SCROLL);
-    CALL(aLoadFontsBattleExtra);
-    CALL(aChooseMoveToDelete_ChooseMoveToDelete);
-    POP_BC;
-    LD_A_B;
-    LD_addr_A(wOptions);
-    PUSH_AF;
-    CALL(aClearBGPalettes);
-    POP_AF;
-    RET;
-
-
-ChooseMoveToDelete:
-    CALL(aSetUpMoveScreenBG);
-    LD_DE(mDeleteMoveScreen2DMenuData);
-    CALL(aLoad2DMenuData);
-    CALL(aSetUpMoveList);
-    LD_HL(w2DMenuFlags1);
-    SET_hl(6);
-    goto enter_loop;
-
-
-loop:
-    CALL(aScrollingMenuJoypad);
-    BIT_A(B_BUTTON_F);
-    JP_NZ (mChooseMoveToDelete_b_button);
-    BIT_A(A_BUTTON_F);
-    JP_NZ (mChooseMoveToDelete_a_button);
-
-
-enter_loop:
-    CALL(aPrepareToPlaceMoveData);
-    CALL(aPlaceMoveData);
-    JP(mChooseMoveToDelete_loop);
-
-
-a_button:
-    AND_A_A;
-    goto finish;
-
-
-b_button:
-    SCF;
-
-
-finish:
-    PUSH_AF;
-    XOR_A_A;
-    LD_addr_A(wSwitchMon);
-    LD_HL(w2DMenuFlags1);
-    RES_hl(6);
-    CALL(aClearSprites);
-    CALL(aClearTilemap);
-    POP_AF;
-    RET;
-
-}
-
 static bool ChooseMoveToDelete_ChooseMoveToDelete(void){
     // CALL(aSetUpMoveScreenBG);
     SetUpMoveScreenBG();
@@ -1409,7 +1233,7 @@ static bool ChooseMoveToDelete_ChooseMoveToDelete(void){
     return quit;
 }
 
-u8_flag_s ChooseMoveToDelete_Conv(void){
+u8_flag_s ChooseMoveToDelete(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
@@ -1958,7 +1782,7 @@ void PlaceMoveData(void){
     // LD_B_A;
     // hlcoord(2, 12, wTilemap);
     // PREDEF(pPrintMoveType);
-    PrintMoveType_Conv(coord(2, 12, wram->wTilemap), wram->wCurSpecies);
+    PrintMoveType(coord(2, 12, wram->wTilemap), wram->wCurSpecies);
     // LD_A_addr(wCurSpecies);
     // DEC_A;
     // LD_HL(mMoves + MOVE_POWER);

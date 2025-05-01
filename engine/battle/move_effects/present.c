@@ -102,7 +102,7 @@ void BattleCommand_Present(void){
                 BattleCommand_SwitchTurn();
                 // CALL(av_CheckBattleScene);
                 // IF_NC goto do_animation;
-                if(!CheckBattleScene_Conv()) {
+                if(!CheckBattleScene()) {
                     // CALL(aAnimateFailedMove);
                     AnimateFailedMove();
                     // LD_HL(mPresentFailedText);

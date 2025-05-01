@@ -19,6 +19,6 @@ void UpdateItemDescription(void){
         return;
     // decoord(1, 14, wTilemap);
     // FARCALL(aPrintItemDescription);
-    PrintItemDescription_Conv(coord(1, 14, wram->wTilemap), wram->wCurSpecies);
+    PrintItemDescription(coord(1, 14, wram->wTilemap), wram->wCurSpecies);
     // RET;
 }

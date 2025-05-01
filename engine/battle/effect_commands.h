@@ -247,8 +247,7 @@ void GetMoveByte(void);
 void DisappearUser(void);
 void AppearUserLowerSub(void);
 void AppearUserRaiseSub(void);
-void v_CheckBattleScene(void);
-bool v_CheckBattleScene_Conv(void);
+bool v_CheckBattleScene(void);
 extern struct BattleCmdState gBattleCmdState;
 //#include "data/moves/critical_hit_moves.h"
 //#include "data/battle/critical_hit_chances.h"

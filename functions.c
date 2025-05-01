@@ -999,7 +999,7 @@ void init_function_pointers(void) {
     // CONVERTED(BattleAnimFunction_Curse);
     // CONVERTED(BattleAnimFunction_Bubble);
     // CONVERTED(BattleAnimFunction_AbsorbCircle);
-    REDIRECTED(DoBattleAnimFrame);
+    // CONVERTED(DoBattleAnimFrame);
     REDIRECTED(BattleAnimFunction_AnimObjB0);
     // REDIRECTED(BattleAnim_ScatterHorizontal);
     // CONVERTED(BattleAnimFunction_RazorWind);
@@ -2219,7 +2219,7 @@ void init_function_pointers(void) {
     CONVERTED(PhoneRing_CopyTilemapAtOnce);
     
     // engine/battle/check_battle_scene.c
-    REDIRECTED(CheckBattleScene);
+    // CONVERTED(CheckBattleScene);
 
     // engine/rtc/print_hours_mins.c
     // REDIRECTED(String_PM);
@@ -2475,7 +2475,7 @@ void init_function_pointers(void) {
     REDIRECTED(BattleCommand_SpecialAttackDown2);
     REDIRECTED(BattleCommand_ApplyDamage);
     REDIRECTED(EndRechargeOpp);
-    REDIRECTED(v_CheckBattleScene);
+    // CONVERTED(v_CheckBattleScene);
     REDIRECTED(CheckUserIsCharging);
     REDIRECTED(BattleCommand_Paralyze);
     REDIRECTED(ClearLastMove);
@@ -3766,10 +3766,10 @@ void init_function_pointers(void) {
     REDIRECTED(CalcLevel);
 
     // engine/pokemon/types.c
-    REDIRECTED(PrintMoveType);
-    REDIRECTED(PrintType);
-    REDIRECTED(PrintMonTypes);
-    REDIRECTED(GetTypeName);
+    // CONVERTED(PrintMoveType);
+    // CONVERTED(PrintType);
+    // CONVERTED(PrintMonTypes);
+    // CONVERTED(GetTypeName);
 
     // engine/events/specials.c
     // REDIRECTED(CheckLuckyNumberShowFlag);
@@ -3841,7 +3841,7 @@ void init_function_pointers(void) {
     // REDIRECTED(CheckDirectionalWarp);
     // REDIRECTED(CheckGrassCollision);
     // REDIRECTED(CheckCutCollision);
-    REDIRECTED(GetWarpSFX);
+    // CONVERTED(GetWarpSFX);
     // REDIRECTED(CheckWarpCollision);
     // REDIRECTED(CheckWarpFacingDown);
 
@@ -4008,7 +4008,7 @@ void init_function_pointers(void) {
     // REDIRECTED(DrawGBCOnlyScreen);
 
     // engine/events/checktime.c
-    CONVERTED(CheckTime);
+    // CONVERTED(CheckTime);
 
     // engine/overworld/variables.c
     // REDIRECTED(v_GetVarAction);
@@ -4616,7 +4616,7 @@ void init_function_pointers(void) {
     // REDIRECTED(OverworldWhiteoutScript);
 
     // engine/overworld/spawn_points.c
-    REDIRECTED(IsSpawnPoint);
+    // CONVERTED(IsSpawnPoint);
     // CONVERTED(EnterMapSpawnPoint);
 
     // engine/events/misc_scripts.c
@@ -7097,7 +7097,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Options_UpdateCursorPosition);
 
     // engine/events/checksave.c
-    REDIRECTED(CheckSave);
+    // CONVERTED(CheckSave);
 
     // engine/overworld/decorations.c
     // REDIRECTED(GetDecorationFlag);
@@ -7449,7 +7449,7 @@ void init_function_pointers(void) {
 
     // engine/items/tmhm.c
     // REDIRECTED(Tutorial_TMHMPocket);
-    CONVERTED(TMHMPocket);
+    // CONVERTED(TMHMPocket);
     // REDIRECTED(TMHM_ExitPack);
     // REDIRECTED(TMHM_ExitPocket);
     // REDIRECTED(BootedHMText);
@@ -7540,7 +7540,7 @@ void init_function_pointers(void) {
     // REDIRECTED(StandardMart);
     // REDIRECTED(HerbalLadyNoMoneyText);
     // REDIRECTED(BargainShopFinalPriceText);
-    REDIRECTED(OpenMartDialog);
+    // CONVERTED(OpenMartDialog);
     // REDIRECTED(MartBoughtText);
     // REDIRECTED(MartSellPriceText);
     // REDIRECTED(PharmacyNoMoneyText);
@@ -9242,7 +9242,7 @@ CONVERTED(v_AnimateTileset);
 
     // engine/events/fish.c
     // REDIRECTED(GetFishGroupIndex);
-    CONVERTED(Fish);
+    // CONVERTED(Fish);
 
     // engine/events/shuckle.c
     CONVERTED(ReturnShuckie);

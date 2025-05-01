@@ -1225,7 +1225,7 @@ return_from_capture:
     // LD_addr_A(wItemQuantityChange);
     wram->wItemQuantityChange = 1;
     // JP(mTossItem);
-    TossItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem);
+    TossItem(GetItemPocket(ITEM_POCKET), wram->wCurItem, 1);
 }
 
 //  multiply catch rate by 2
@@ -1930,7 +1930,7 @@ void VitaminEffect(void){
 
     // LD_C(HAPPINESS_USEDITEM);
     // FARCALL(aChangeHappiness);
-    ChangeHappiness_Conv(HAPPINESS_USEDITEM);
+    ChangeHappiness(HAPPINESS_USEDITEM);
 
     // JP(mUseDisposableItem);
     UseDisposableItem();
@@ -2178,7 +2178,7 @@ void HealPowderEffect(void){
     if(res == FALSE) {
         // LD_C(HAPPINESS_BITTERPOWDER);
         // FARCALL(aChangeHappiness);
-        ChangeHappiness_Conv(HAPPINESS_BITTERPOWDER);
+        ChangeHappiness(HAPPINESS_BITTERPOWDER);
         // CALL(aLooksBitterMessage);
         LooksBitterMessage();
 
@@ -2381,7 +2381,7 @@ void RevivalHerbEffect(void){
     if(res == FALSE) {
         // LD_C(HAPPINESS_REVIVALHERB);
         // FARCALL(aChangeHappiness);
-        ChangeHappiness_Conv(HAPPINESS_REVIVALHERB);
+        ChangeHappiness(HAPPINESS_REVIVALHERB);
         // CALL(aLooksBitterMessage);
         LooksBitterMessage();
 
@@ -2581,7 +2581,7 @@ void EnergypowderEnergyRootCommon(uint8_t c){
     // IF_NZ goto skip_happiness;
     if(res == 0) {
         // FARCALL(aChangeHappiness);
-        ChangeHappiness_Conv(c);
+        ChangeHappiness(c);
         // CALL(aLooksBitterMessage);
         LooksBitterMessage();
         // LD_A(0);
@@ -3399,7 +3399,7 @@ void XItemEffect(void){
     wram->wCurPartyMon = wram->wCurBattleMon;
     // LD_C(HAPPINESS_USEDXITEM);
     // FARCALL(aChangeHappiness);
-    ChangeHappiness_Conv(HAPPINESS_USEDXITEM);
+    ChangeHappiness(HAPPINESS_USEDXITEM);
     // RET;
 
 // INCLUDE "data/items/x_stats.asm"
@@ -4043,7 +4043,7 @@ void UseDisposableItem(void){
     // LD_addr_A(wItemQuantityChange);
     wram->wItemQuantityChange = 1;
     // JP(mTossItem);
-    TossItem_Conv((item_pocket_s*)&wram->wNumItems, wram->wCurItem);
+    TossItem(GetItemPocket(ITEM_POCKET), wram->wCurItem, 1);
 }
 
 void UseBallInTrainerBattle(void){

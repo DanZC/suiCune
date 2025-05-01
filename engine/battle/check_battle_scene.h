@@ -1,2 +1,1 @@
-void CheckBattleScene(void);
-bool CheckBattleScene_Conv(void);
+bool CheckBattleScene(void);

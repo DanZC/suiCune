@@ -1,5 +1,4 @@
-void TMHMPocket(void);
-bool TMHMPocket_Conv(void);
+bool TMHMPocket(void);
 void ConvertCurItemIntoCurTMHM(void);
 void GetTMHMItemMove(void);
 move_t GetTMHMItemMove_Conv(item_t item);

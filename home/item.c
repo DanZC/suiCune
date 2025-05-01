@@ -19,31 +19,10 @@ bool CheckTossableItem(item_t item){
     // POP_DE;
     // POP_HL;
     // RET;
-    return v_CheckTossableItem_Conv(item);
+    return v_CheckTossableItem(item);
 }
 
-void TossItem(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(av_TossItem));
-    RST(aBankswitch);
-
-    CALL(av_TossItem);
-
-    POP_BC;
-    LD_A_B;
-    RST(aBankswitch);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-}
-
-bool TossItem_Conv(item_pocket_s* pocket, item_t item){
+bool TossItem(item_pocket_u* pocket, item_t item, uint8_t quantity){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -53,7 +32,7 @@ bool TossItem_Conv(item_pocket_s* pocket, item_t item){
     // RST(aBankswitch);
 
     // CALL(av_TossItem);
-    return v_TossItem_Conv(pocket, item, wram->wItemQuantityChange);
+    return v_TossItem(pocket, item, quantity);
 
     // POP_BC;
     // LD_A_B;
@@ -64,28 +43,7 @@ bool TossItem_Conv(item_pocket_s* pocket, item_t item){
     // RET;
 }
 
-void ReceiveItem(void){
-        PUSH_BC;
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(av_ReceiveItem));
-    RST(aBankswitch);
-    PUSH_HL;
-    PUSH_DE;
-
-    CALL(av_ReceiveItem);
-
-    POP_DE;
-    POP_HL;
-    POP_BC;
-    LD_A_B;
-    RST(aBankswitch);
-    POP_BC;
-    RET;
-
-}
-
-bool ReceiveItem_Conv(item_pocket_s* pocket, item_t item, uint8_t quantity){
+bool ReceiveItem(item_pocket_u* pocket, item_t item, uint8_t quantity){
     // PUSH_BC;
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -95,8 +53,8 @@ bool ReceiveItem_Conv(item_pocket_s* pocket, item_t item, uint8_t quantity){
     // PUSH_DE;
 
     // CALL(av_ReceiveItem);
-    // return v_ReceiveItem_Conv(item, quantity);
-    return v_ReceiveItem_Conv(pocket, item, quantity);
+    // return v_ReceiveItem(item, quantity);
+    return v_ReceiveItem(pocket, item, quantity);
 
     // POP_DE;
     // POP_HL;
@@ -107,28 +65,7 @@ bool ReceiveItem_Conv(item_pocket_s* pocket, item_t item, uint8_t quantity){
     // RET;
 }
 
-void CheckItem(void){
-        PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(av_CheckItem));
-    RST(aBankswitch);
-
-    CALL(av_CheckItem);
-
-    POP_BC;
-    LD_A_B;
-    RST(aBankswitch);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-}
-
-bool CheckItem_Conv(item_t item, item_t* hl){
+bool CheckItem(item_pocket_u *pocket, item_t item){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -136,18 +73,27 @@ bool CheckItem_Conv(item_t item, item_t* hl){
     // PUSH_AF;
     // LD_A(BANK(av_CheckItem));
     // RST(aBankswitch);
-    bank_push(BANK(av_CheckItem));
 
     // CALL(av_CheckItem);
-    bool b = v_CheckItem_Conv(item, hl);
+    bool b = v_CheckItem(pocket, item);
 
     // POP_BC;
     // LD_A_B;
     // RST(aBankswitch);
-    bank_pop;
     // POP_BC;
     // POP_DE;
     // POP_HL;
     // RET;
     return b;
+}
+
+item_pocket_u* GetItemPocket(uint8_t pocket) {
+    switch(pocket) {
+        default:
+        case ITEM_POCKET: return (item_pocket_u*)&wram->wNumItems;
+        case BALL_POCKET: return (item_pocket_u*)&wram->wNumBalls;
+        case KEY_ITEM_POCKET: return (item_pocket_u*)&wram->wNumKeyItems;
+        case TM_HM_POCKET: return (item_pocket_u*)&wram->wTMsHMs;
+        case PC_ITEM_POCKET: return (item_pocket_u*)&wram->wNumPCItems;
+    }
 }
