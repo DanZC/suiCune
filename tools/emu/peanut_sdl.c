@@ -677,14 +677,33 @@ void gb_write(const uint_fast16_t addr, const uint8_t val) {
     (gb.gb_error)(GB_INVALID_WRITE, addr);
 }
 
-void advance_div(uint8_t cycles) {
-    gb.counter.div_count += cycles;
+#if !ENHANCEMENT_USE_PCG
+#include "../../util/hrc.h"
 
-    if (gb.counter.div_count >= DIV_CYCLES) {
+uint64_t gNanoSecsTimestamp;
+
+void advance_div(void) {
+    uint64_t nanosecs = GetNanoseconds();
+    if(nanosecs == UINT64_MAX) {
+        gb.gb_reg.DIV++;
+        return;
+    }
+    uint64_t elapsed = gNanoSecsTimestamp - nanosecs;
+    uint64_t cycles = elapsed * 4;
+    if(gb.cgb.doubleSpeed)
+        cycles *= 2;
+    gb.counter.div_count += (uint16_t)cycles;
+
+    while (gb.counter.div_count >= DIV_CYCLES) {
         gb.gb_reg.DIV++;
         gb.counter.div_count -= DIV_CYCLES;
     }
+
+    gNanoSecsTimestamp = nanosecs;
 }
+#else
+#include "../../lib/pcg/pcg_basic.h"
+#endif
 
 void finish_gb_cycle(void) {
     uint16_t inst_cycles;
@@ -3706,6 +3725,12 @@ int main(int argc, char* argv[]) {
         ret = EXIT_FAILURE;
         goto out;
     }
+
+    #if ENHANCEMENT_USE_PCG
+    pcg32_srandom(time(NULL), (size_t)main);
+    #else
+    gNanoSecsTimestamp = GetNanoseconds();
+    #endif
 
     // Sets the icon for the window. This does not need to be done on Windows due to embedded icon file.
 #if !defined(_WIN32)
