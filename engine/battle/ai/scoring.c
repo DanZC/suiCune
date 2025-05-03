@@ -18,6 +18,95 @@
 #include "../../../data/battle/ai/residual_moves.h"
 #include "../../../data/battle/ai/encore_moves.h"
 
+static void AI_Smart_Sleep(uint8_t* hl);
+static void AI_Smart_LeechHit(uint8_t* hl);
+static void AI_Smart_LockOn(uint8_t* hl);
+static void AI_Smart_Selfdestruct(uint8_t* hl);
+static void AI_Smart_DreamEater(uint8_t* hl);
+static void AI_Smart_EvasionUp(uint8_t* hl);
+static void AI_Smart_AlwaysHit(uint8_t* hl);
+static void AI_Smart_MirrorMove(uint8_t* hl);
+static void AI_Smart_AccuracyDown(uint8_t* hl);
+static void AI_Smart_ResetStats(uint8_t* hl);
+static void AI_Smart_Bide(uint8_t* hl);
+static void AI_Smart_ForceSwitch(uint8_t* hl);
+static void AI_Smart_Heal(uint8_t* hl);
+static void AI_Smart_MorningSun(uint8_t* hl);
+static void AI_Smart_Synthesis(uint8_t* hl);
+static void AI_Smart_Moonlight(uint8_t* hl);
+static void AI_Smart_Toxic(uint8_t* hl);
+static void AI_Smart_LeechSeed(uint8_t* hl);
+static void AI_Smart_LightScreen(uint8_t* hl);
+static void AI_Smart_Reflect(uint8_t* hl);
+static void AI_Smart_Ohko(uint8_t* hl);
+static void AI_Smart_TrapTarget(uint8_t* hl);
+static void AI_Smart_RazorWind(uint8_t* hl);
+static void AI_Smart_Confuse(uint8_t* hl);
+static void AI_Smart_SpDefenseUp2(uint8_t* hl);
+static void AI_Smart_Fly(uint8_t* hl);
+static void AI_Smart_SuperFang(uint8_t* hl);
+static void AI_Smart_Paralyze(uint8_t* hl);
+static void AI_Smart_SpeedDownHit(uint8_t* hl);
+static void AI_Smart_Substitute(uint8_t* hl);
+static void AI_Smart_HyperBeam(uint8_t* hl);
+static void AI_Smart_Rage(uint8_t* hl);
+static void AI_Smart_Mimic(uint8_t* hl);
+static void AI_Smart_Counter(uint8_t* hl);
+static void AI_Smart_Encore(uint8_t* hl);
+static void AI_Smart_PainSplit(uint8_t* hl);
+static void AI_Smart_Snore(uint8_t* hl);
+static void AI_Smart_SleepTalk(uint8_t* hl);
+static void AI_Smart_DefrostOpponent(uint8_t* hl);
+static void AI_Smart_Spite(uint8_t* hl);
+static void AI_Smart_DestinyBond(uint8_t* hl);
+static void AI_Smart_Reversal(uint8_t* hl);
+static void AI_Smart_SkullBash(uint8_t* hl);
+static void AI_Smart_HealBell(uint8_t* hl);
+static void AI_Smart_PriorityHit(uint8_t* hl);
+static void AI_Smart_Thief(uint8_t* hl);
+static void AI_Smart_Conversion2(uint8_t* hl);
+static void AI_Smart_Disable(uint8_t* hl);
+static void AI_Smart_MeanLook(uint8_t* hl);
+static bool AICheckLastPlayerMon(void);
+static void AI_Smart_Nightmare(uint8_t* hl);
+static void AI_Smart_FlameWheel(uint8_t* hl);
+static void AI_Smart_Curse(uint8_t* hl);
+static void AI_Smart_Protect(uint8_t* hl);
+static void AI_Smart_Foresight(uint8_t* hl);
+static void AI_Smart_PerishSong(uint8_t* hl);
+static void AI_Smart_Sandstorm(uint8_t* hl);
+static void AI_Smart_Endure(uint8_t* hl);
+static void AI_Smart_FuryCutter(uint8_t* hl);
+static void AI_Smart_Rollout(uint8_t* hl);
+static void AI_Smart_Swagger(uint8_t* hl);
+static void AI_Smart_Attract(uint8_t* hl);
+static void AI_Smart_Safeguard(uint8_t* hl);
+static void AI_Smart_Magnitude(uint8_t* hl);
+static void AI_Smart_Earthquake(uint8_t* hl);
+static void AI_Smart_BatonPass(uint8_t* hl);
+static void AI_Smart_Pursuit(uint8_t* hl);
+static void AI_Smart_RapidSpin(uint8_t* hl);
+static void AI_Smart_HiddenPower(uint8_t* hl);
+static void AI_Smart_RainDance(uint8_t* hl);
+static void AI_Smart_SunnyDay(uint8_t* hl);
+static void AI_Smart_WeatherMove(uint8_t* hl, const move_t* moves);
+static void AIBadWeatherType(uint8_t* hl);
+static void AIGoodWeatherType(uint8_t* hl);
+static void AI_Smart_BellyDrum(uint8_t* hl);
+static void AI_Smart_PsychUp(uint8_t* hl);
+static void AI_Smart_MirrorCoat(uint8_t* hl);
+static void AI_Smart_Twister(uint8_t* hl);
+static void AI_Smart_Gust(uint8_t* hl);
+static void AI_Smart_FutureSight(uint8_t* hl);
+static void AI_Smart_Stomp(uint8_t* hl);
+static void AI_Smart_Solarbeam(uint8_t* hl);
+static void AI_Smart_Thunder(uint8_t* hl);
+
+static void AIDiscourageMove(uint8_t* hl);
+static const struct Move* AIGetEnemyMove(move_t a);
+static bool AI_80_20(void);
+static bool AI_50_50(void);
+
 void AIScoring(void){
 //  //  used only for BANK(AIScoring)
 
@@ -53,7 +142,7 @@ void AI_Basic(void){
         // INC_DE;
         ++de;
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
@@ -103,7 +192,7 @@ void AI_Basic(void){
 
     // discourage:
         // CALL(aAIDiscourageMove);
-        AIDiscourageMove_Conv(hl);
+        AIDiscourageMove(hl);
         // goto checkmove;
     }
 
@@ -125,7 +214,7 @@ static void AI_Setup_discourage(uint8_t* hl) {
 static void AI_Setup_encourage(uint8_t* hl) {
     // CALL(aAI_50_50);
     // IF_C goto checkmove;
-    if(AI_50_50_Conv())
+    if(AI_50_50())
         return;
 
     // DEC_hl;
@@ -163,7 +252,7 @@ void AI_Setup(void){
         // INC_DE;
         ++de;
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
         uint8_t effect = mv->effect;
@@ -252,7 +341,7 @@ void AI_Types(void){
         // INC_DE;
         de++;
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // PUSH_HL;
         // PUSH_BC;
@@ -272,7 +361,7 @@ void AI_Types(void){
         if(matchup == 0) {
         // immune:
             // CALL(aAIDiscourageMove);
-            AIDiscourageMove_Conv(hl);
+            AIDiscourageMove(hl);
             // goto checkmove;
             continue;
         }
@@ -311,7 +400,7 @@ void AI_Types(void){
                     break;
 
                 // CALL(aAIGetEnemyMove);
-                const struct Move* mv2 = AIGetEnemyMove_Conv(a2);
+                const struct Move* mv2 = AIGetEnemyMove(a2);
                 // LD_A_addr(wEnemyMoveStruct + MOVE_TYPE);
                 // CP_A_D;
                 // IF_Z goto checkmove2;
@@ -382,7 +471,7 @@ void AI_Offensive(void){
 
         // INC_DE;
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
@@ -426,103 +515,94 @@ void AI_Smart(void){
         // PUSH_BC;
         // PUSH_HL;
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
         // LD_HL(mAI_Smart_EffectHandlers);
         // LD_DE(3);
         // CALL(aIsInArray);
         switch(mv->effect) {
-            case EFFECT_SLEEP: AI_Smart_Sleep_Conv(hl); break;
-            case EFFECT_LEECH_HIT: AI_Smart_LeechHit_Conv(hl); break;
-            case EFFECT_SELFDESTRUCT: AI_Smart_Selfdestruct_Conv(hl); break;
-            case EFFECT_DREAM_EATER: AI_Smart_DreamEater_Conv(hl); break;
-            case EFFECT_MIRROR_MOVE: AI_Smart_MirrorMove_Conv(hl); break;
-            case EFFECT_EVASION_UP: AI_Smart_EvasionUp_Conv(hl); break;
-            case EFFECT_ALWAYS_HIT: AI_Smart_AlwaysHit_Conv(hl); break;
-            case EFFECT_ACCURACY_DOWN: AI_Smart_AccuracyDown_Conv(hl); break;
-            case EFFECT_RESET_STATS: AI_Smart_ResetStats_Conv(hl); break;
-            case EFFECT_BIDE: AI_Smart_Bide_Conv(hl); break;
-            case EFFECT_FORCE_SWITCH: AI_Smart_ForceSwitch_Conv(hl); break;
-                //dbw ['EFFECT_HEAL', 'AI_Smart_Heal']
-                //dbw ['EFFECT_TOXIC', 'AI_Smart_Toxic']
-                //dbw ['EFFECT_LIGHT_SCREEN', 'AI_Smart_LightScreen']
-            case EFFECT_OHKO: AI_Smart_Ohko_Conv(hl); break;
+            case EFFECT_SLEEP: AI_Smart_Sleep(hl); break;
+            case EFFECT_LEECH_HIT: AI_Smart_LeechHit(hl); break;
+            case EFFECT_SELFDESTRUCT: AI_Smart_Selfdestruct(hl); break;
+            case EFFECT_DREAM_EATER: AI_Smart_DreamEater(hl); break;
+            case EFFECT_MIRROR_MOVE: AI_Smart_MirrorMove(hl); break;
+            case EFFECT_EVASION_UP: AI_Smart_EvasionUp(hl); break;
+            case EFFECT_ALWAYS_HIT: AI_Smart_AlwaysHit(hl); break;
+            case EFFECT_ACCURACY_DOWN: AI_Smart_AccuracyDown(hl); break;
+            case EFFECT_RESET_STATS: AI_Smart_ResetStats(hl); break;
+            case EFFECT_BIDE: AI_Smart_Bide(hl); break;
+            case EFFECT_FORCE_SWITCH: AI_Smart_ForceSwitch(hl); break;
+            case EFFECT_HEAL: AI_Smart_Heal(hl); break;
+            case EFFECT_TOXIC: AI_Smart_Toxic(hl); break;
+            case EFFECT_LIGHT_SCREEN: AI_Smart_LightScreen(hl); break;
+            case EFFECT_OHKO: AI_Smart_Ohko(hl); break;
             case EFFECT_UNUSED_2B:
-            case EFFECT_RAZOR_WIND: AI_Smart_RazorWind_Conv(hl); break;
-            case EFFECT_SUPER_FANG: AI_Smart_SuperFang_Conv(hl); break;
-            case EFFECT_TRAP_TARGET: AI_Smart_TrapTarget_Conv(hl); break;
+            case EFFECT_RAZOR_WIND: AI_Smart_RazorWind(hl); break;
+            case EFFECT_SUPER_FANG: AI_Smart_SuperFang(hl); break;
+            case EFFECT_TRAP_TARGET: AI_Smart_TrapTarget(hl); break;
                 //dbw ['EFFECT_UNUSED_2B', 'AI_Smart_Unused2B']
-            case EFFECT_CONFUSE: AI_Smart_Confuse_Conv(hl); break;
-            case EFFECT_SP_DEF_UP_2: AI_Smart_SpDefenseUp2_Conv(hl); break;
-            case EFFECT_LIGHT_SCREEN:
-            case EFFECT_REFLECT: AI_Smart_Reflect_Conv(hl); break;
-            case EFFECT_PARALYZE: AI_Smart_Paralyze_Conv(hl); break;
-            case EFFECT_SPEED_DOWN_HIT: AI_Smart_SpeedDownHit_Conv(hl); break;
-            case EFFECT_SUBSTITUTE: AI_Smart_Substitute_Conv(hl); break;
-            case EFFECT_HYPER_BEAM: AI_Smart_HyperBeam_Conv(hl); break;
-            case EFFECT_RAGE: AI_Smart_Rage_Conv(hl); break;
-            case EFFECT_MIMIC: AI_Smart_Mimic_Conv(hl); break;
-            case EFFECT_TOXIC:
-            case EFFECT_LEECH_SEED: AI_Smart_LeechSeed_Conv(hl); break;
-            case EFFECT_DISABLE: AI_Smart_Disable_Conv(hl); break;
-            case EFFECT_COUNTER: AI_Smart_Counter_Conv(hl); break;
-            case EFFECT_ENCORE: AI_Smart_Encore_Conv(hl); break;
-            case EFFECT_PAIN_SPLIT: AI_Smart_PainSplit_Conv(hl); break;
-                //dbw ['EFFECT_SNORE', 'AI_Smart_Snore']
-            case EFFECT_CONVERSION2: AI_Smart_Conversion2_Conv(hl); break;
-            case EFFECT_LOCK_ON: AI_Smart_LockOn_Conv(hl); break;
-            //dbw ['EFFECT_DEFROST_OPPONENT', 'AI_Smart_DefrostOpponent']
-            case EFFECT_SNORE:
-            case EFFECT_SLEEP_TALK: AI_Smart_SleepTalk_Conv(hl); break;
-                //dbw ['EFFECT_DESTINY_BOND', 'AI_Smart_DestinyBond']
-                //dbw ['EFFECT_REVERSAL', 'AI_Smart_Reversal']
-            case EFFECT_SPITE: AI_Smart_Spite_Conv(hl); break;
-            case EFFECT_HEAL_BELL: AI_Smart_HealBell_Conv(hl); break;
-            case EFFECT_PRIORITY_HIT: AI_Smart_PriorityHit_Conv(hl); break;
-            case EFFECT_THIEF: AI_Smart_Thief_Conv(hl); break;
-            case EFFECT_MEAN_LOOK: AI_Smart_MeanLook_Conv(hl); break;
-            case EFFECT_NIGHTMARE: AI_Smart_Nightmare_Conv(hl); break;
-            case EFFECT_FLAME_WHEEL: AI_Smart_FlameWheel_Conv(hl); break;
-            case EFFECT_CURSE: AI_Smart_Curse_Conv(hl); break;
-            case EFFECT_PROTECT: AI_Smart_Protect_Conv(hl); break;
-            case EFFECT_FORESIGHT: AI_Smart_Foresight_Conv(hl); break;
-            case EFFECT_PERISH_SONG: AI_Smart_PerishSong_Conv(hl); break;
-            case EFFECT_SANDSTORM: AI_Smart_Sandstorm_Conv(hl); break;
-            //dbw ['EFFECT_ENDURE', 'AI_Smart_Endure']
-            case EFFECT_ROLLOUT: AI_Smart_Rollout_Conv(hl); break;
-                //dbw ['EFFECT_SWAGGER', 'AI_Smart_Swagger']
-            case EFFECT_FURY_CUTTER: AI_Smart_FuryCutter_Conv(hl); break;
-            case EFFECT_SWAGGER:
-            case EFFECT_ATTRACT: AI_Smart_Attract_Conv(hl); break;
-            case EFFECT_SAFEGUARD: AI_Smart_Safeguard_Conv(hl); break;
-                //dbw ['EFFECT_MAGNITUDE', 'AI_Smart_Magnitude']
-            //dbw ['EFFECT_BATON_PASS', 'AI_Smart_BatonPass']
-            case EFFECT_PURSUIT: AI_Smart_Pursuit_Conv(hl); break;
-            case EFFECT_RAPID_SPIN: AI_Smart_RapidSpin_Conv(hl); break;
-            case EFFECT_HEAL:
-            case EFFECT_MORNING_SUN:
-            case EFFECT_SYNTHESIS:
-            case EFFECT_MOONLIGHT: AI_Smart_Moonlight_Conv(hl); break;
-            case EFFECT_HIDDEN_POWER: AI_Smart_HiddenPower_Conv(hl); break;
-            case EFFECT_RAIN_DANCE: AI_Smart_RainDance_Conv(hl); break;
-            case EFFECT_SUNNY_DAY: AI_Smart_SunnyDay_Conv(hl); break;
-            case EFFECT_BELLY_DRUM: AI_Smart_BellyDrum_Conv(hl); break;
-            case EFFECT_PSYCH_UP: AI_Smart_PsychUp_Conv(hl); break;
-            case EFFECT_MIRROR_COAT: AI_Smart_MirrorCoat_Conv(hl); break;
-            case EFFECT_DESTINY_BOND:
-            case EFFECT_REVERSAL:
-            case EFFECT_SKULL_BASH: AI_Smart_SkullBash_Conv(hl); break;
-                //dbw ['EFFECT_TWISTER', 'AI_Smart_Twister']
-            case EFFECT_MAGNITUDE:
-            case EFFECT_EARTHQUAKE: AI_Smart_Earthquake_Conv(hl); break;
-            case EFFECT_FUTURE_SIGHT: AI_Smart_FutureSight_Conv(hl); break;
-            case EFFECT_TWISTER:
-            case EFFECT_GUST: AI_Smart_Gust_Conv(hl); break;
-            case EFFECT_STOMP: AI_Smart_Stomp_Conv(hl); break;
-            case EFFECT_SOLARBEAM: AI_Smart_Solarbeam_Conv(hl); break;
-            case EFFECT_THUNDER: AI_Smart_Thunder_Conv(hl); break;
-            case EFFECT_FLY: AI_Smart_Fly_Conv(hl); break;
+            case EFFECT_CONFUSE: AI_Smart_Confuse(hl); break;
+            case EFFECT_SP_DEF_UP_2: AI_Smart_SpDefenseUp2(hl); break;
+            case EFFECT_REFLECT: AI_Smart_Reflect(hl); break;
+            case EFFECT_PARALYZE: AI_Smart_Paralyze(hl); break;
+            case EFFECT_SPEED_DOWN_HIT: AI_Smart_SpeedDownHit(hl); break;
+            case EFFECT_SUBSTITUTE: AI_Smart_Substitute(hl); break;
+            case EFFECT_HYPER_BEAM: AI_Smart_HyperBeam(hl); break;
+            case EFFECT_RAGE: AI_Smart_Rage(hl); break;
+            case EFFECT_MIMIC: AI_Smart_Mimic(hl); break;
+            case EFFECT_LEECH_SEED: AI_Smart_LeechSeed(hl); break;
+            case EFFECT_DISABLE: AI_Smart_Disable(hl); break;
+            case EFFECT_COUNTER: AI_Smart_Counter(hl); break;
+            case EFFECT_ENCORE: AI_Smart_Encore(hl); break;
+            case EFFECT_PAIN_SPLIT: AI_Smart_PainSplit(hl); break;
+            case EFFECT_SNORE: AI_Smart_Snore(hl); break;
+            case EFFECT_CONVERSION2: AI_Smart_Conversion2(hl); break;
+            case EFFECT_LOCK_ON: AI_Smart_LockOn(hl); break;
+            case EFFECT_DEFROST_OPPONENT: AI_Smart_DefrostOpponent(hl); break;
+            case EFFECT_SLEEP_TALK: AI_Smart_SleepTalk(hl); break;
+            case EFFECT_DESTINY_BOND: AI_Smart_DestinyBond(hl); break;
+            case EFFECT_REVERSAL: AI_Smart_Reversal(hl); break;
+            case EFFECT_SPITE: AI_Smart_Spite(hl); break;
+            case EFFECT_HEAL_BELL: AI_Smart_HealBell(hl); break;
+            case EFFECT_PRIORITY_HIT: AI_Smart_PriorityHit(hl); break;
+            case EFFECT_THIEF: AI_Smart_Thief(hl); break;
+            case EFFECT_MEAN_LOOK: AI_Smart_MeanLook(hl); break;
+            case EFFECT_NIGHTMARE: AI_Smart_Nightmare(hl); break;
+            case EFFECT_FLAME_WHEEL: AI_Smart_FlameWheel(hl); break;
+            case EFFECT_CURSE: AI_Smart_Curse(hl); break;
+            case EFFECT_PROTECT: AI_Smart_Protect(hl); break;
+            case EFFECT_FORESIGHT: AI_Smart_Foresight(hl); break;
+            case EFFECT_PERISH_SONG: AI_Smart_PerishSong(hl); break;
+            case EFFECT_SANDSTORM: AI_Smart_Sandstorm(hl); break;
+            case EFFECT_ENDURE: AI_Smart_Endure(hl); break;
+            case EFFECT_ROLLOUT: AI_Smart_Rollout(hl); break;
+            case EFFECT_SWAGGER: AI_Smart_Swagger(hl); break;
+            case EFFECT_FURY_CUTTER: AI_Smart_FuryCutter(hl); break;
+            case EFFECT_ATTRACT: AI_Smart_Attract(hl); break;
+            case EFFECT_SAFEGUARD: AI_Smart_Safeguard(hl); break;
+            case EFFECT_MAGNITUDE: AI_Smart_Magnitude(hl); break;
+            case EFFECT_BATON_PASS: AI_Smart_BatonPass(hl); break;
+            case EFFECT_PURSUIT: AI_Smart_Pursuit(hl); break;
+            case EFFECT_RAPID_SPIN: AI_Smart_RapidSpin(hl); break;
+            case EFFECT_MORNING_SUN: AI_Smart_MorningSun(hl); break;
+            case EFFECT_SYNTHESIS: AI_Smart_Synthesis(hl); break;
+            case EFFECT_MOONLIGHT: AI_Smart_Moonlight(hl); break;
+            case EFFECT_HIDDEN_POWER: AI_Smart_HiddenPower(hl); break;
+            case EFFECT_RAIN_DANCE: AI_Smart_RainDance(hl); break;
+            case EFFECT_SUNNY_DAY: AI_Smart_SunnyDay(hl); break;
+            case EFFECT_BELLY_DRUM: AI_Smart_BellyDrum(hl); break;
+            case EFFECT_PSYCH_UP: AI_Smart_PsychUp(hl); break;
+            case EFFECT_MIRROR_COAT: AI_Smart_MirrorCoat(hl); break;
+            case EFFECT_SKULL_BASH: AI_Smart_SkullBash(hl); break;
+            case EFFECT_TWISTER: AI_Smart_Twister(hl); break;
+            case EFFECT_EARTHQUAKE: AI_Smart_Earthquake(hl); break;
+            case EFFECT_FUTURE_SIGHT: AI_Smart_FutureSight(hl); break;
+            case EFFECT_GUST: AI_Smart_Gust(hl); break;
+            case EFFECT_STOMP: AI_Smart_Stomp(hl); break;
+            case EFFECT_SOLARBEAM: AI_Smart_Solarbeam(hl); break;
+            case EFFECT_THUNDER: AI_Smart_Thunder(hl); break;
+            case EFFECT_FLY: AI_Smart_Fly(hl); break;
             default:;
         }
 
@@ -638,32 +718,9 @@ void AI_Smart_EffectHandlers(void){
     //db ['-1'];  // end
 }
 
-void AI_Smart_Sleep(void){
 //  Greatly encourage sleep inducing moves if the enemy has either Dream Eater or Nightmare.
 //  50% chance to greatly encourage sleep inducing moves otherwise.
-
-    LD_B(EFFECT_DREAM_EATER);
-    CALL(aAIHasMoveEffect);
-    IF_C goto encourage;
-
-    LD_B(EFFECT_NIGHTMARE);
-    CALL(aAIHasMoveEffect);
-    RET_NC ;
-
-
-encourage:
-    CALL(aAI_50_50);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-
-//  Greatly encourage sleep inducing moves if the enemy has either Dream Eater or Nightmare.
-//  50% chance to greatly encourage sleep inducing moves otherwise.
-void AI_Smart_Sleep_Conv(uint8_t* hl){
+static void AI_Smart_Sleep(uint8_t* hl){
     // LD_B(EFFECT_DREAM_EATER);
     // CALL(aAIHasMoveEffect);
     // IF_C goto encourage;
@@ -671,11 +728,11 @@ void AI_Smart_Sleep_Conv(uint8_t* hl){
     // LD_B(EFFECT_NIGHTMARE);
     // CALL(aAIHasMoveEffect);
     // RET_NC ;
-    if(AIHasMoveEffect_Conv(EFFECT_DREAM_EATER) || AIHasMoveEffect_Conv(EFFECT_NIGHTMARE)) {
+    if(AIHasMoveEffect(EFFECT_DREAM_EATER) || AIHasMoveEffect(EFFECT_NIGHTMARE)) {
     // encourage:
         // CALL(aAI_50_50);
         // RET_C ;
-        if(!AI_50_50_Conv()) {
+        if(!AI_50_50()) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -685,44 +742,7 @@ void AI_Smart_Sleep_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_LeechHit(void){
-    PUSH_HL;
-    LD_A(1);
-    LDH_addr_A(hBattleTurn);
-    CALLFAR(aBattleCheckTypeMatchup);
-    POP_HL;
-
-//  60% chance to discourage this move if not very effective.
-    LD_A_addr(wTypeMatchup);
-    CP_A(EFFECTIVE);
-    IF_C goto discourage;
-
-//  Do nothing if effectiveness is neutral.
-    RET_Z ;
-
-//  Do nothing if enemy's HP is full.
-    CALL(aAICheckEnemyMaxHP);
-    RET_C ;
-
-//  80% chance to encourage this move otherwise.
-    CALL(aAI_80_20);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-
-discourage:
-    CALL(aRandom);
-    CP_A(39 percent + 1);
-    RET_C ;
-
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_LeechHit_Conv(uint8_t* hl){
+static void AI_Smart_LeechHit(uint8_t* hl){
     // PUSH_HL;
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
@@ -756,134 +776,20 @@ void AI_Smart_LeechHit_Conv(uint8_t* hl){
 //  Do nothing if enemy's HP is full.
     // CALL(aAICheckEnemyMaxHP);
     // RET_C ;
-    if(AICheckEnemyMaxHP_Conv())
+    if(AICheckEnemyMaxHP())
         return;
 
 //  80% chance to encourage this move otherwise.
     // CALL(aAI_80_20);
     // RET_C ;
-    if(!AI_80_20_Conv()) {
+    if(!AI_80_20()) {
         // DEC_hl;
         (*hl)--;
         // RET;
     }
 }
 
-void AI_Smart_LockOn(void){
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_LOCK_ON);
-    IF_NZ goto player_locked_on;
-
-    PUSH_HL;
-    CALL(aAICheckEnemyQuarterHP);
-    IF_NC goto discourage;
-
-    CALL(aAICheckEnemyHalfHP);
-    IF_C goto skip_speed_check;
-
-    CALL(aAICompareSpeed);
-    IF_NC goto discourage;
-
-
-skip_speed_check:
-    LD_A_addr(wPlayerEvaLevel);
-    CP_A(BASE_STAT_LEVEL + 3);
-    IF_NC goto maybe_encourage;
-    CP_A(BASE_STAT_LEVEL + 1);
-    IF_NC goto do_nothing;
-
-    LD_A_addr(wEnemyAccLevel);
-    CP_A(BASE_STAT_LEVEL - 2);
-    IF_C goto maybe_encourage;
-    CP_A(BASE_STAT_LEVEL);
-    IF_C goto do_nothing;
-
-    LD_HL(wEnemyMonMoves);
-    LD_C(NUM_MOVES + 1);
-
-checkmove:
-    DEC_C;
-    IF_Z goto discourage;
-
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto discourage;
-
-    CALL(aAIGetEnemyMove);
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_ACC);
-    CP_A(71 percent - 1);
-    IF_NC goto checkmove;
-
-    LD_A(1);
-    LDH_addr_A(hBattleTurn);
-
-    PUSH_HL;
-    PUSH_BC;
-    FARCALL(aBattleCheckTypeMatchup);
-    LD_A_addr(wTypeMatchup);
-    CP_A(EFFECTIVE);
-    POP_BC;
-    POP_HL;
-    IF_C goto checkmove;
-
-
-do_nothing:
-    POP_HL;
-    RET;
-
-
-discourage:
-    POP_HL;
-    INC_hl;
-    RET;
-
-
-maybe_encourage:
-    POP_HL;
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-player_locked_on:
-    PUSH_HL;
-    LD_HL(wEnemyAIMoveScores - 1);
-    LD_DE(wEnemyMonMoves);
-    LD_C(NUM_MOVES + 1);
-
-
-checkmove2:
-    INC_HL;
-    DEC_C;
-    IF_Z goto dismiss;
-
-    LD_A_de;
-    AND_A_A;
-    IF_Z goto dismiss;
-
-    INC_DE;
-    CALL(aAIGetEnemyMove);
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_ACC);
-    CP_A(71 percent - 1);
-    IF_NC goto checkmove2;
-
-    DEC_hl;
-    DEC_hl;
-    goto checkmove2;
-
-
-dismiss:
-    POP_HL;
-    JP(mAIDiscourageMove);
-
-}
-
-void AI_Smart_LockOn_Conv(uint8_t* hl){
+static void AI_Smart_LockOn(uint8_t* hl){
     // LD_A_addr(wPlayerSubStatus5);
     // BIT_A(SUBSTATUS_LOCK_ON);
     // IF_NZ goto player_locked_on;
@@ -913,7 +819,7 @@ void AI_Smart_LockOn_Conv(uint8_t* hl){
             // INC_DE;
             de++;
             // CALL(aAIGetEnemyMove);
-            const struct Move* mv = AIGetEnemyMove_Conv(a);
+            const struct Move* mv = AIGetEnemyMove(a);
 
             // LD_A_addr(wEnemyMoveStruct + MOVE_ACC);
             // CP_A(71 percent - 1);
@@ -930,7 +836,7 @@ void AI_Smart_LockOn_Conv(uint8_t* hl){
     // dismiss:
         // POP_HL;
         // JP(mAIDiscourageMove);
-        return AIDiscourageMove_Conv(hl);
+        return AIDiscourageMove(hl);
     }
 
     // PUSH_HL;
@@ -939,11 +845,11 @@ void AI_Smart_LockOn_Conv(uint8_t* hl){
 
     // CALL(aAICheckEnemyHalfHP);
     // IF_C goto skip_speed_check;
-    if(!AICheckEnemyHalfHP_Conv()) {
+    if(!AICheckEnemyHalfHP()) {
 
         // CALL(aAICompareSpeed);
         // IF_NC goto discourage;
-        if(!AICompareSpeed_Conv()) {
+        if(!AICompareSpeed()) {
         // discourage:
             // POP_HL;
             // INC_hl;
@@ -992,7 +898,7 @@ void AI_Smart_LockOn_Conv(uint8_t* hl){
             break;
 
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_ACC);
         // CP_A(71 percent - 1);
@@ -1035,7 +941,7 @@ maybe_encourage:
     // POP_HL;
     // CALL(aAI_50_50);
     // RET_C ;
-    if(!AI_50_50_Conv()) {
+    if(!AI_50_50()) {
         // DEC_hl;
         // DEC_hl;
         (*hl) -= 2;
@@ -1044,48 +950,8 @@ maybe_encourage:
     }
 }
 
-void AI_Smart_Selfdestruct(void){
 //  Selfdestruct, Explosion
-
-//  Unless this is the enemy's last Pokemon...
-    PUSH_HL;
-    FARCALL(aFindAliveEnemyMons);
-    POP_HL;
-    IF_NC goto notlastmon;
-
-//  ...greatly discourage this move unless this is the player's last Pokemon too.
-    PUSH_HL;
-    CALL(aAICheckLastPlayerMon);
-    POP_HL;
-    IF_NZ goto discourage;
-
-
-notlastmon:
-//  Greatly discourage this move if enemy's HP is above 50%.
-    CALL(aAICheckEnemyHalfHP);
-    IF_C goto discourage;
-
-//  Do nothing if enemy's HP is below 25%.
-    CALL(aAICheckEnemyQuarterHP);
-    RET_NC ;
-
-//  If enemy's HP is between 25% and 50%,
-//  over 90% chance to greatly discourage this move.
-    CALL(aRandom);
-    CP_A(8 percent);
-    RET_C ;
-
-
-discourage:
-    INC_hl;
-    INC_hl;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Selfdestruct_Conv(uint8_t* hl){
-//  Selfdestruct, Explosion
+static void AI_Smart_Selfdestruct(uint8_t* hl){
 
 //  Unless this is the enemy's last Pokemon...
     // PUSH_HL;
@@ -1098,7 +964,7 @@ void AI_Smart_Selfdestruct_Conv(uint8_t* hl){
         // CALL(aAICheckLastPlayerMon);
         // POP_HL;
         // IF_NZ goto discourage;
-        if(!AICheckLastPlayerMon_Conv()) {
+        if(!AICheckLastPlayerMon()) {
         // discourage:
             // INC_hl;
             // INC_hl;
@@ -1113,7 +979,7 @@ void AI_Smart_Selfdestruct_Conv(uint8_t* hl){
 //  Greatly discourage this move if enemy's HP is above 50%.
     // CALL(aAICheckEnemyHalfHP);
     // IF_C goto discourage;
-    if(!AICheckEnemyHalfHP_Conv()) {
+    if(!AICheckEnemyHalfHP()) {
         *hl += 3;
         // RET;
         return;
@@ -1122,7 +988,7 @@ void AI_Smart_Selfdestruct_Conv(uint8_t* hl){
 //  Do nothing if enemy's HP is below 25%.
     // CALL(aAICheckEnemyQuarterHP);
     // RET_NC ;
-    if(AICheckEnemyQuarterHP_Conv())
+    if(AICheckEnemyQuarterHP())
         return;
 
 //  If enemy's HP is between 25% and 50%,
@@ -1140,24 +1006,10 @@ void AI_Smart_Selfdestruct_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_DreamEater(void){
 //  90% chance to greatly encourage this move.
 //  The AI_Basic layer will make sure that
 //  Dream Eater is only used against sleeping targets.
-    CALL(aRandom);
-    CP_A(10 percent);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-//  90% chance to greatly encourage this move.
-//  The AI_Basic layer will make sure that
-//  Dream Eater is only used against sleeping targets.
-void AI_Smart_DreamEater_Conv(uint8_t* hl){
+static void AI_Smart_DreamEater(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(10 percent);
     // RET_C ;
@@ -1170,139 +1022,19 @@ void AI_Smart_DreamEater_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_EvasionUp(void){
-//  Dismiss this move if enemy's evasion can't raise anymore.
-    LD_A_addr(wEnemyEvaLevel);
-    CP_A(MAX_STAT_LEVEL);
-    JP_NC (mAIDiscourageMove);
-
-//  If enemy's HP is full...
-    CALL(aAICheckEnemyMaxHP);
-    IF_NC goto hp_mismatch_1;
-
-//  ...greatly encourage this move if player is badly poisoned.
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_TOXIC);
-    IF_NZ goto greatly_encourage;
-
-//  ...70% chance to greatly encourage this move if player is not badly poisoned.
-    CALL(aRandom);
-    CP_A(70 percent);
-    IF_NC goto not_encouraged;
-
-
-greatly_encourage:
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-hp_mismatch_1:
-
-//  Greatly discourage this move if enemy's HP is below 25%.
-    CALL(aAICheckEnemyQuarterHP);
-    IF_NC goto hp_mismatch_2;
-
-//  If enemy's HP is above 25% but not full, 4% chance to greatly encourage this move.
-    CALL(aRandom);
-    CP_A(4 percent);
-    IF_C goto greatly_encourage;
-
-//  If enemy's HP is between 25% and 50%,...
-    CALL(aAICheckEnemyHalfHP);
-    IF_NC goto hp_mismatch_3;
-
-//  If enemy's HP is above 50% but not full, 20% chance to greatly encourage this move.
-    CALL(aAI_80_20);
-    IF_C goto greatly_encourage;
-    goto not_encouraged;
-
-
-hp_mismatch_3:
-//  ...50% chance to greatly discourage this move.
-    CALL(aAI_50_50);
-    IF_C goto not_encouraged;
-
-
-hp_mismatch_2:
-    INC_hl;
-    INC_hl;
-
-//  30% chance to end up here if enemy's HP is full and player is not badly poisoned.
-//  77% chance to end up here if enemy's HP is above 50% but not full.
-//  96% chance to end up here if enemy's HP is between 25% and 50%.
-//  100% chance to end up here if enemy's HP is below 25%.
-//  In other words, we only end up here if the move has not been encouraged or dismissed.
-
-not_encouraged:
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_TOXIC);
-    IF_NZ goto maybe_greatly_encourage;
-
-    LD_A_addr(wPlayerSubStatus4);
-    BIT_A(SUBSTATUS_LEECH_SEED);
-    IF_NZ goto maybe_encourage;
-
-//  Discourage this move if enemy's evasion level is higher than player's accuracy level.
-    LD_A_addr(wEnemyEvaLevel);
-    LD_B_A;
-    LD_A_addr(wPlayerAccLevel);
-    CP_A_B;
-    IF_C goto discourage;
-
-//  Greatly encourage this move if the player is in the middle of Fury Cutter or Rollout.
-    LD_A_addr(wPlayerFuryCutterCount);
-    AND_A_A;
-    IF_NZ goto greatly_encourage;
-
-    LD_A_addr(wPlayerSubStatus1);
-    BIT_A(SUBSTATUS_ROLLOUT);
-    IF_NZ goto greatly_encourage;
-
-
-discourage:
-    INC_hl;
-    RET;
-
-//  Player is badly poisoned.
-//  70% chance to greatly encourage this move.
-//  This would counter any previous discouragement.
-
-maybe_greatly_encourage:
-    CALL(aRandom);
-    CP_A(31 percent + 1);
-    RET_C ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-//  Player is seeded.
-//  50% chance to encourage this move.
-//  This would partly counter any previous discouragement.
-
-maybe_encourage:
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_EvasionUp_Conv(uint8_t* hl){
+static void AI_Smart_EvasionUp(uint8_t* hl){
 //  Dismiss this move if enemy's evasion can't raise anymore.
     // LD_A_addr(wEnemyEvaLevel);
     // CP_A(MAX_STAT_LEVEL);
     // JP_NC (mAIDiscourageMove);
     if(wram->wEnemyEvaLevel > MAX_STAT_LEVEL)
-        return AIDiscourageMove_Conv(hl);
+        return AIDiscourageMove(hl);
 
 //  If enemy's HP is full...
     // CALL(aAICheckEnemyMaxHP);
     // IF_NC goto hp_mismatch_1;
 
-    if(AICheckEnemyMaxHP_Conv()) {
+    if(AICheckEnemyMaxHP()) {
     //  ...greatly encourage this move if player is badly poisoned.
         // LD_A_addr(wPlayerSubStatus5);
         // BIT_A(SUBSTATUS_TOXIC);
@@ -1335,7 +1067,7 @@ void AI_Smart_EvasionUp_Conv(uint8_t* hl){
 //  Greatly discourage this move if enemy's HP is below 25%.
     // CALL(aAICheckEnemyQuarterHP);
     // IF_NC goto hp_mismatch_2;
-    if(AICheckEnemyQuarterHP_Conv()) {
+    if(AICheckEnemyQuarterHP()) {
     // hp_mismatch_2:
         // INC_hl;
         // INC_hl;
@@ -1358,11 +1090,11 @@ void AI_Smart_EvasionUp_Conv(uint8_t* hl){
         // CALL(aAICheckEnemyHalfHP);
         // IF_NC goto hp_mismatch_3;
 
-        if(!AICheckEnemyHalfHP_Conv()) {
+        if(!AICheckEnemyHalfHP()) {
         //  If enemy's HP is above 50% but not full, 20% chance to greatly encourage this move.
             // CALL(aAI_80_20);
             // IF_C goto greatly_encourage;
-            if(AI_80_20_Conv()) {
+            if(AI_80_20()) {
             // greatly_encourage:
                 // DEC_hl;
                 // DEC_hl;
@@ -1376,7 +1108,7 @@ void AI_Smart_EvasionUp_Conv(uint8_t* hl){
         //  ...50% chance to greatly discourage this move.
             // CALL(aAI_50_50);
             // IF_C goto not_encouraged;
-            if(AI_50_50_Conv()) {
+            if(AI_50_50()) {
             // hp_mismatch_2:
                 // INC_hl;
                 // INC_hl;
@@ -1424,7 +1156,7 @@ not_encouraged:
         // CALL(aAI_50_50);
         // RET_C ;
 
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
             // DEC_hl;
             (*hl)--;
         }
@@ -1469,31 +1201,7 @@ not_encouraged:
     return;
 }
 
-void AI_Smart_AlwaysHit(void){
-//  80% chance to greatly encourage this move if either...
-
-//  ...enemy's accuracy level has been lowered three or more stages
-    LD_A_addr(wEnemyAccLevel);
-    CP_A(BASE_STAT_LEVEL - 2);
-    IF_C goto encourage;
-
-//  ...or player's evasion level has been raised three or more stages.
-    LD_A_addr(wPlayerEvaLevel);
-    CP_A(BASE_STAT_LEVEL + 3);
-    RET_C ;
-
-
-encourage:
-    CALL(aAI_80_20);
-    RET_C ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_AlwaysHit_Conv(uint8_t* hl){
+static void AI_Smart_AlwaysHit(uint8_t* hl){
 //  80% chance to greatly encourage this move if either...
 
 //  ...enemy's accuracy level has been lowered three or more stages
@@ -1513,7 +1221,7 @@ void AI_Smart_AlwaysHit_Conv(uint8_t* hl){
         // CALL(aAI_80_20);
         // RET_C ;
 
-        if(!AI_80_20_Conv()) {
+        if(!AI_80_20()) {
             // DEC_hl;
             // DEC_hl;
             (*hl)--;
@@ -1522,51 +1230,7 @@ void AI_Smart_AlwaysHit_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_MirrorMove(void){
-//  If the player did not use any move last turn...
-    LD_A_addr(wLastPlayerCounterMove);
-    AND_A_A;
-    IF_NZ goto usedmove;
-
-//  ...do nothing if enemy is slower than player
-    CALL(aAICompareSpeed);
-    RET_NC ;
-
-//  ...or dismiss this move if enemy is faster than player.
-    JP(mAIDiscourageMove);
-
-//  If the player did use a move last turn...
-
-usedmove:
-    PUSH_HL;
-    LD_HL(mUsefulMoves);
-    LD_DE(1);
-    CALL(aIsInArray);
-    POP_HL;
-
-//  ...do nothing if he didn't use a useful move.
-    RET_NC ;
-
-//  If he did, 50% chance to encourage this move...
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-
-//  ...and 90% chance to encourage this move again if the enemy is faster.
-    CALL(aAICompareSpeed);
-    RET_NC ;
-
-    CALL(aRandom);
-    CP_A(10 percent);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_MirrorMove_Conv(uint8_t* hl){
+static void AI_Smart_MirrorMove(uint8_t* hl){
 //  If the player did not use any move last turn...
     // LD_A_addr(wLastPlayerCounterMove);
     // AND_A_A;
@@ -1575,12 +1239,12 @@ void AI_Smart_MirrorMove_Conv(uint8_t* hl){
     //  ...do nothing if enemy is slower than player
         // CALL(aAICompareSpeed);
         // RET_NC ;
-        if(!AICompareSpeed_Conv())
+        if(!AICompareSpeed())
             return;
 
     //  ...or dismiss this move if enemy is faster than player.
         // JP(mAIDiscourageMove);
-        return AIDiscourageMove_Conv(hl);
+        return AIDiscourageMove(hl);
     }
 
 //  If the player did use a move last turn...
@@ -1600,7 +1264,7 @@ void AI_Smart_MirrorMove_Conv(uint8_t* hl){
 //  If he did, 50% chance to encourage this move...
     // CALL(aAI_50_50);
     // RET_C ;
-    if(AI_50_50_Conv()) {
+    if(AI_50_50()) {
         // DEC_hl;
         (*hl)--;
     }
@@ -1612,7 +1276,7 @@ void AI_Smart_MirrorMove_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(10 percent);
     // RET_C ;
-    if(AICompareSpeed_Conv() && Random() >= 10 percent) {
+    if(AICompareSpeed() && Random() >= 10 percent) {
         // DEC_hl;
         (*hl)--;
         // RET;
@@ -1620,122 +1284,7 @@ void AI_Smart_MirrorMove_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_AccuracyDown(void){
-//  If player's HP is full...
-    CALL(aAICheckPlayerMaxHP);
-    IF_NC goto hp_mismatch_1;
-
-//  ...and enemy's HP is above 50%...
-    CALL(aAICheckEnemyHalfHP);
-    IF_NC goto hp_mismatch_1;
-
-//  ...greatly encourage this move if player is badly poisoned.
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_TOXIC);
-    IF_NZ goto greatly_encourage;
-
-//  ...70% chance to greatly encourage this move if player is not badly poisoned.
-    CALL(aRandom);
-    CP_A(70 percent);
-    IF_NC goto not_encouraged;
-
-
-greatly_encourage:
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-hp_mismatch_1:
-
-//  Greatly discourage this move if player's HP is below 25%.
-    CALL(aAICheckPlayerQuarterHP);
-    IF_NC goto hp_mismatch_2;
-
-//  If player's HP is above 25% but not full, 4% chance to greatly encourage this move.
-    CALL(aRandom);
-    CP_A(4 percent);
-    IF_C goto greatly_encourage;
-
-//  If player's HP is between 25% and 50%,...
-    CALL(aAICheckPlayerHalfHP);
-    IF_NC goto hp_mismatch_3;
-
-//  If player's HP is above 50% but not full, 20% chance to greatly encourage this move.
-    CALL(aAI_80_20);
-    IF_C goto greatly_encourage;
-    goto not_encouraged;
-
-//  ...50% chance to greatly discourage this move.
-
-hp_mismatch_3:
-    CALL(aAI_50_50);
-    IF_C goto not_encouraged;
-
-
-hp_mismatch_2:
-    INC_hl;
-    INC_hl;
-
-//  We only end up here if the move has not been already encouraged.
-
-not_encouraged:
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_TOXIC);
-    IF_NZ goto maybe_greatly_encourage;
-
-    LD_A_addr(wPlayerSubStatus4);
-    BIT_A(SUBSTATUS_LEECH_SEED);
-    IF_NZ goto encourage;
-
-//  Discourage this move if enemy's evasion level is higher than player's accuracy level.
-    LD_A_addr(wEnemyEvaLevel);
-    LD_B_A;
-    LD_A_addr(wPlayerAccLevel);
-    CP_A_B;
-    IF_C goto discourage;
-
-//  Greatly encourage this move if the player is in the middle of Fury Cutter or Rollout.
-    LD_A_addr(wPlayerFuryCutterCount);
-    AND_A_A;
-    IF_NZ goto greatly_encourage;
-
-    LD_A_addr(wPlayerSubStatus1);
-    BIT_A(SUBSTATUS_ROLLOUT);
-    IF_NZ goto greatly_encourage;
-
-
-discourage:
-    INC_hl;
-    RET;
-
-//  Player is badly poisoned.
-//  70% chance to greatly encourage this move.
-//  This would counter any previous discouragement.
-
-maybe_greatly_encourage:
-    CALL(aRandom);
-    CP_A(31 percent + 1);
-    RET_C ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-//  Player is seeded.
-//  50% chance to encourage this move.
-//  This would partly counter any previous discouragement.
-
-encourage:
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_AccuracyDown_Conv(uint8_t* hl){
+static void AI_Smart_AccuracyDown(uint8_t* hl){
 //  If player's HP is full...
     // CALL(aAICheckPlayerMaxHP);
     // IF_NC goto hp_mismatch_1;
@@ -1744,7 +1293,7 @@ void AI_Smart_AccuracyDown_Conv(uint8_t* hl){
     // CALL(aAICheckEnemyHalfHP);
     // IF_NC goto hp_mismatch_1;
 
-    if(AICheckPlayerMaxHP_Conv() && !AICheckEnemyHalfHP_Conv()) {
+    if(AICheckPlayerMaxHP() && !AICheckEnemyHalfHP()) {
     //  ...greatly encourage this move if player is badly poisoned.
         // LD_A_addr(wPlayerSubStatus5);
         // BIT_A(SUBSTATUS_TOXIC);
@@ -1774,7 +1323,7 @@ void AI_Smart_AccuracyDown_Conv(uint8_t* hl){
 //  Greatly discourage this move if player's HP is below 25%.
     // CALL(aAICheckPlayerQuarterHP);
     // IF_NC goto hp_mismatch_2;
-    if(!AICheckPlayerQuarterHP_Conv()) {
+    if(!AICheckPlayerQuarterHP()) {
     //  If player's HP is above 25% but not full, 4% chance to greatly encourage this move.
         // CALL(aRandom);
         // CP_A(4 percent);
@@ -1788,11 +1337,11 @@ void AI_Smart_AccuracyDown_Conv(uint8_t* hl){
         // CALL(aAICheckPlayerHalfHP);
         // IF_NC goto hp_mismatch_3;
 
-        if(!AICheckPlayerHalfHP_Conv()) {
+        if(!AICheckPlayerHalfHP()) {
         //  If player's HP is above 50% but not full, 20% chance to greatly encourage this move.
             // CALL(aAI_80_20);
             // IF_C goto greatly_encourage;
-            if(AI_80_20_Conv()) {
+            if(AI_80_20()) {
                 *hl -= 2;
                 return;
             }
@@ -1802,7 +1351,7 @@ void AI_Smart_AccuracyDown_Conv(uint8_t* hl){
     // hp_mismatch_3:
         // CALL(aAI_50_50);
         // IF_C goto not_encouraged;
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
         // hp_mismatch_2:
             // INC_hl;
             // INC_hl;
@@ -1850,7 +1399,7 @@ not_encouraged:
     // encourage:
         // CALL(aAI_50_50);
         // RET_C ;
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
             // DEC_hl;
             (*hl)--;
         }
@@ -1889,55 +1438,8 @@ not_encouraged:
     // RET;
 }
 
-void AI_Smart_ResetStats(void){
 //  85% chance to encourage this move if any of enemy's stat levels is lower than -2.
-    PUSH_HL;
-    LD_HL(wEnemyAtkLevel);
-    LD_C(NUM_LEVEL_STATS);
-
-enemystatsloop:
-    DEC_C;
-    IF_Z goto enemystatsdone;
-    LD_A_hli;
-    CP_A(BASE_STAT_LEVEL - 2);
-    IF_C goto encourage;
-    goto enemystatsloop;
-
-//  85% chance to encourage this move if any of player's stat levels is higher than +2.
-
-enemystatsdone:
-    LD_HL(wPlayerAtkLevel);
-    LD_C(NUM_LEVEL_STATS);
-
-playerstatsloop:
-    DEC_C;
-    IF_Z goto discourage;
-    LD_A_hli;
-    CP_A(BASE_STAT_LEVEL + 3);
-    IF_C goto playerstatsloop;
-
-
-encourage:
-    POP_HL;
-    CALL(aRandom);
-    CP_A(16 percent);
-    RET_C ;
-    DEC_hl;
-    RET;
-
-//  Discourage this move if neither:
-//  Any of enemy's stat levels is    lower than -2.
-//  Any of player's stat levels is higher than +2.
-
-discourage:
-    POP_HL;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_ResetStats_Conv(uint8_t* hl){
-//  85% chance to encourage this move if any of enemy's stat levels is lower than -2.
+static void AI_Smart_ResetStats(uint8_t* hl){
     // PUSH_HL;
     // LD_HL(wEnemyAtkLevel);
     // LD_C(NUM_LEVEL_STATS);
@@ -2012,24 +1514,11 @@ void AI_Smart_ResetStats_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Bide(void){
 //  90% chance to discourage this move unless enemy's HP is full.
-
-    CALL(aAICheckEnemyMaxHP);
-    RET_C ;
-    CALL(aRandom);
-    CP_A(10 percent);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-//  90% chance to discourage this move unless enemy's HP is full.
-void AI_Smart_Bide_Conv(uint8_t* hl){
+static void AI_Smart_Bide(uint8_t* hl){
     // CALL(aAICheckEnemyMaxHP);
     // RET_C ;
-    if(AICheckEnemyMaxHP_Conv())
+    if(AICheckEnemyMaxHP())
         return;
     // CALL(aRandom);
     // CP_A(10 percent);
@@ -2041,26 +1530,8 @@ void AI_Smart_Bide_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_ForceSwitch(void){
 //  Whirlwind, Roar.
-
-//  Discourage this move if the player has not shown
-//  a super-effective move against the enemy.
-//  Consider player's type(s) if its moves are unknown.
-
-    PUSH_HL;
-    CALLFAR(aCheckPlayerMoveTypeMatchups);
-    LD_A_addr(wEnemyAISwitchScore);
-    CP_A(BASE_AI_SWITCH_SCORE);
-    POP_HL;
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-//  Whirlwind, Roar.
-void AI_Smart_ForceSwitch_Conv(uint8_t* hl){
+static void AI_Smart_ForceSwitch(uint8_t* hl){
 //  Discourage this move if the player has not shown
 //  a super-effective move against the enemy.
 //  Consider player's type(s) if its moves are unknown.
@@ -2079,51 +1550,28 @@ void AI_Smart_ForceSwitch_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Heal(void){
-    return AI_Smart_MorningSun();
+static void AI_Smart_Heal(uint8_t* hl){
+    return AI_Smart_MorningSun(hl);
 }
 
-void AI_Smart_MorningSun(void){
-    return AI_Smart_Synthesis();
+static void AI_Smart_MorningSun(uint8_t* hl){
+    return AI_Smart_Synthesis(hl);
 }
 
-void AI_Smart_Synthesis(void){
-    return AI_Smart_Moonlight();
-}
-
-void AI_Smart_Moonlight(void){
-//  90% chance to greatly encourage this move if enemy's HP is below 25%.
-//  Discourage this move if enemy's HP is higher than 50%.
-//  Do nothing otherwise.
-
-    CALL(aAICheckEnemyQuarterHP);
-    IF_NC goto encourage;
-    CALL(aAICheckEnemyHalfHP);
-    RET_NC ;
-    INC_hl;
-    RET;
-
-
-encourage:
-    CALL(aRandom);
-    CP_A(10 percent);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
+static void AI_Smart_Synthesis(uint8_t* hl){
+    return AI_Smart_Moonlight(hl);
 }
 
 //  90% chance to greatly encourage this move if enemy's HP is below 25%.
 //  Discourage this move if enemy's HP is higher than 50%.
 //  Do nothing otherwise.
-void AI_Smart_Moonlight_Conv(uint8_t* hl){
+static void AI_Smart_Moonlight(uint8_t* hl){
     // CALL(aAICheckEnemyQuarterHP);
     // IF_NC goto encourage;
-    if(AICheckEnemyQuarterHP_Conv()) {
+    if(AICheckEnemyQuarterHP()) {
         // CALL(aAICheckEnemyHalfHP);
         // RET_NC ;
-        if(AICheckEnemyHalfHP_Conv()) {
+        if(AICheckEnemyHalfHP()) {
             // INC_hl;
             (*hl)++;
             // RET;
@@ -2143,53 +1591,30 @@ void AI_Smart_Moonlight_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Toxic(void){
-    return AI_Smart_LeechSeed();
-}
-
-void AI_Smart_LeechSeed(void){
-//  Discourage this move if player's HP is below 50%.
-
-    CALL(aAICheckPlayerHalfHP);
-    RET_C ;
-    INC_hl;
-    RET;
-
+static void AI_Smart_Toxic(uint8_t* hl){
+    return AI_Smart_LeechSeed(hl);
 }
 
 //  Discourage this move if player's HP is below 50%.
-void AI_Smart_LeechSeed_Conv(uint8_t* hl){
+static void AI_Smart_LeechSeed(uint8_t* hl){
     // CALL(aAICheckPlayerHalfHP);
     // RET_C ;
-    if(AICheckPlayerHalfHP_Conv()) {
+    if(AICheckPlayerHalfHP()) {
         // INC_hl;
         (*hl)++;
     }
     // RET;
 }
 
-void AI_Smart_LightScreen(void){
-    return AI_Smart_Reflect();
-}
-
-void AI_Smart_Reflect(void){
-//  Over 90% chance to discourage this move unless enemy's HP is full.
-
-    CALL(aAICheckEnemyMaxHP);
-    RET_C ;
-    CALL(aRandom);
-    CP_A(8 percent);
-    RET_C ;
-    INC_hl;
-    RET;
-
+static void AI_Smart_LightScreen(uint8_t* hl){
+    return AI_Smart_Reflect(hl);
 }
 
 //  Over 90% chance to discourage this move unless enemy's HP is full.
-void AI_Smart_Reflect_Conv(uint8_t* hl){
+static void AI_Smart_Reflect(uint8_t* hl){
     // CALL(aAICheckEnemyMaxHP);
     // RET_C ;
-    if(!AICheckEnemyMaxHP_Conv() && Random() >= 8 percent) {
+    if(!AICheckEnemyMaxHP() && Random() >= 8 percent) {
         // CALL(aRandom);
         // CP_A(8 percent);
         // RET_C ;
@@ -2199,86 +1624,27 @@ void AI_Smart_Reflect_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_Ohko(void){
 //  Dismiss this move if player's level is higher than enemy's level.
 //  Else, discourage this move is player's HP is below 50%.
-
-    LD_A_addr(wBattleMonLevel);
-    LD_B_A;
-    LD_A_addr(wEnemyMonLevel);
-    CP_A_B;
-    JP_C (mAIDiscourageMove);
-    CALL(aAICheckPlayerHalfHP);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-//  Dismiss this move if player's level is higher than enemy's level.
-//  Else, discourage this move is player's HP is below 50%.
-void AI_Smart_Ohko_Conv(uint8_t* hl){
+static void AI_Smart_Ohko(uint8_t* hl){
     // LD_A_addr(wBattleMonLevel);
     // LD_B_A;
     // LD_A_addr(wEnemyMonLevel);
     // CP_A_B;
     // JP_C (mAIDiscourageMove);
     if(wram->wEnemyMon.level < wram->wBattleMon.level)
-        return AIDiscourageMove_Conv(hl);
+        return AIDiscourageMove(hl);
     // CALL(aAICheckPlayerHalfHP);
     // RET_C ;
-    if(AICheckPlayerHalfHP_Conv()) {
+    if(AICheckPlayerHalfHP()) {
         // INC_hl;
         (*hl)++;
         // RET;
     }
 }
 
-void AI_Smart_TrapTarget(void){
 //  Bind, Wrap, Fire Spin, Clamp
-
-//  50% chance to discourage this move if the player is already trapped.
-    LD_A_addr(wPlayerWrapCount);
-    AND_A_A;
-    IF_NZ goto discourage;
-
-//  50% chance to greatly encourage this move if player is either
-//  badly poisoned, in love, identified, stuck in Rollout, or has a Nightmare.
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_TOXIC);
-    IF_NZ goto encourage;
-
-    LD_A_addr(wPlayerSubStatus1);
-    AND_A(1 << SUBSTATUS_IN_LOVE | 1 << SUBSTATUS_ROLLOUT | 1 << SUBSTATUS_IDENTIFIED | 1 << SUBSTATUS_NIGHTMARE);
-    IF_NZ goto encourage;
-
-//  Else, 50% chance to greatly encourage this move if it's the player's Pokemon first turn.
-    LD_A_addr(wPlayerTurnsTaken);
-    AND_A_A;
-    IF_Z goto encourage;
-
-//  50% chance to discourage this move otherwise.
-
-discourage:
-    CALL(aAI_50_50);
-    RET_C ;
-    INC_hl;
-    RET;
-
-
-encourage:
-    CALL(aAICheckEnemyQuarterHP);
-    RET_NC ;
-    CALL(aAI_50_50);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-//  Bind, Wrap, Fire Spin, Clamp
-void AI_Smart_TrapTarget_Conv(uint8_t* hl){
+static void AI_Smart_TrapTarget(uint8_t* hl){
 //  50% chance to discourage this move if the player is already trapped.
     // LD_A_addr(wPlayerWrapCount);
     // AND_A_A;
@@ -2304,7 +1670,7 @@ void AI_Smart_TrapTarget_Conv(uint8_t* hl){
         // encourage:
             // CALL(aAICheckEnemyQuarterHP);
             // RET_NC ;
-            if(!AICheckEnemyQuarterHP_Conv() && AI_50_50_Conv()) {
+            if(!AICheckEnemyQuarterHP() && AI_50_50()) {
                 // CALL(aAI_50_50);
                 // RET_C ;
                 // DEC_hl;
@@ -2320,79 +1686,15 @@ void AI_Smart_TrapTarget_Conv(uint8_t* hl){
 // discourage:
     // CALL(aAI_50_50);
     // RET_C ;
-    if(AI_50_50_Conv()) {
+    if(AI_50_50()) {
         // INC_hl;
         (*hl)++;
     }
     // RET;
 }
 
-void AI_Smart_RazorWind(void){
-    return AI_Smart_Unused2B();
-}
-
-void AI_Smart_Unused2B(void){
-    LD_A_addr(wEnemySubStatus1);
-    BIT_A(SUBSTATUS_PERISH);
-    IF_Z goto no_perish_count;
-
-    LD_A_addr(wEnemyPerishCount);
-    CP_A(3);
-    IF_C goto discourage;
-
-
-no_perish_count:
-    PUSH_HL;
-    LD_HL(wPlayerUsedMoves);
-    LD_C(NUM_MOVES);
-
-
-checkmove:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto movesdone;
-
-    CALL(aAIGetEnemyMove);
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
-    CP_A(EFFECT_PROTECT);
-    IF_Z goto dismiss;
-    DEC_C;
-    IF_NZ goto checkmove;
-
-
-movesdone:
-    POP_HL;
-    LD_A_addr(wEnemySubStatus3);
-    BIT_A(SUBSTATUS_CONFUSED);
-    IF_NZ goto maybe_discourage;
-
-    CALL(aAICheckEnemyHalfHP);
-    RET_C ;
-
-
-maybe_discourage:
-    CALL(aRandom);
-    CP_A(79 percent - 1);
-    RET_C ;
-
-
-discourage:
-    INC_hl;
-    RET;
-
-
-dismiss:
-    POP_HL;
-    LD_A_hl;
-    ADD_A(6);
-    LD_hl_A;
-    RET;
-
-}
-
 // razor wind
-void AI_Smart_RazorWind_Conv(uint8_t* hl){
+static void AI_Smart_RazorWind(uint8_t* hl){
     // LD_A_addr(wEnemySubStatus1);
     // BIT_A(SUBSTATUS_PERISH);
     // IF_Z goto no_perish_count;
@@ -2421,7 +1723,7 @@ void AI_Smart_RazorWind_Conv(uint8_t* hl){
             break;
 
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
         // CP_A(EFFECT_PROTECT);
@@ -2449,7 +1751,7 @@ void AI_Smart_RazorWind_Conv(uint8_t* hl){
     // CALL(aAICheckEnemyHalfHP);
     // RET_C ;
 
-    if(bit_test(wram->wEnemySubStatus3, SUBSTATUS_CONFUSED) || AICheckEnemyHalfHP_Conv()) {
+    if(bit_test(wram->wEnemySubStatus3, SUBSTATUS_CONFUSED) || AICheckEnemyHalfHP()) {
     // maybe_discourage:
         // CALL(aRandom);
         // CP_A(79 percent - 1);
@@ -2463,30 +1765,11 @@ void AI_Smart_RazorWind_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_Confuse(void){
-//  90% chance to discourage this move if player's HP is between 25% and 50%.
-    CALL(aAICheckPlayerHalfHP);
-    RET_C ;
-    CALL(aRandom);
-    CP_A(10 percent);
-    IF_C goto skipdiscourage;
-    INC_hl;
-
-
-skipdiscourage:
-//  Discourage again if player's HP is below 25%.
-    CALL(aAICheckPlayerQuarterHP);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Confuse_Conv(uint8_t* hl){
+static void AI_Smart_Confuse(uint8_t* hl){
 //  90% chance to discourage this move if player's HP is between 25% and 50%.
     // CALL(aAICheckPlayerHalfHP);
     // RET_C ;
-    if(!AICheckPlayerHalfHP_Conv())
+    if(!AICheckPlayerHalfHP())
         return;
     // CALL(aRandom);
     // CP_A(10 percent);
@@ -2496,7 +1779,7 @@ void AI_Smart_Confuse_Conv(uint8_t* hl){
     //  Discourage again if player's HP is below 25%.
         // CALL(aAICheckPlayerQuarterHP);
         // RET_C ;
-        if(AICheckPlayerQuarterHP_Conv()) {
+        if(AICheckPlayerQuarterHP()) {
             // INC_hl;
             (*hl)++;
             // RET;
@@ -2505,44 +1788,7 @@ void AI_Smart_Confuse_Conv(uint8_t* hl){
     // INC_hl;
 }
 
-void AI_Smart_SpDefenseUp2(void){
-//  Discourage this move if enemy's HP is lower than 50%.
-    CALL(aAICheckEnemyHalfHP);
-    IF_NC goto discourage;
-
-//  Discourage this move if enemy's special defense level is higher than +3.
-    LD_A_addr(wEnemySDefLevel);
-    CP_A(BASE_STAT_LEVEL + 4);
-    IF_NC goto discourage;
-
-//  80% chance to greatly encourage this move if
-//  enemy's Special Defense level is lower than +2, and the player is of a special type.
-    CP_A(BASE_STAT_LEVEL + 2);
-    RET_NC ;
-
-    LD_A_addr(wBattleMonType1);
-    CP_A(SPECIAL);
-    IF_NC goto encourage;
-    LD_A_addr(wBattleMonType2);
-    CP_A(SPECIAL);
-    RET_C ;
-
-
-encourage:
-    CALL(aAI_80_20);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-discourage:
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_SpDefenseUp2_Conv(uint8_t* hl){
+static void AI_Smart_SpDefenseUp2(uint8_t* hl){
 //  Discourage this move if enemy's HP is lower than 50%.
     // CALL(aAICheckEnemyHalfHP);
     // IF_NC goto discourage;
@@ -2551,7 +1797,7 @@ void AI_Smart_SpDefenseUp2_Conv(uint8_t* hl){
     // LD_A_addr(wEnemySDefLevel);
     // CP_A(BASE_STAT_LEVEL + 4);
     // IF_NC goto discourage;
-    if(AICheckEnemyHalfHP_Conv()
+    if(AICheckEnemyHalfHP()
     || wram->wEnemySDefLevel > BASE_STAT_LEVEL + 3) {
     // discourage:
         // INC_hl;
@@ -2578,7 +1824,7 @@ void AI_Smart_SpDefenseUp2_Conv(uint8_t* hl){
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
-        if(!AI_80_20_Conv()) {
+        if(!AI_80_20()) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -2588,28 +1834,8 @@ void AI_Smart_SpDefenseUp2_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_Fly(void){
 //  Fly, Dig
-
-//  Greatly encourage this move if the player is
-//  flying or underground, and slower than the enemy.
-
-    LD_A_addr(wPlayerSubStatus3);
-    AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
-    RET_Z ;
-
-    CALL(aAICompareSpeed);
-    RET_NC ;
-
-    DEC_hl;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-//  Fly, Dig
-void AI_Smart_Fly_Conv(uint8_t* hl){
+static void AI_Smart_Fly(uint8_t* hl){
 //  Greatly encourage this move if the player is
 //  flying or underground, and slower than the enemy.
 
@@ -2621,7 +1847,7 @@ void AI_Smart_Fly_Conv(uint8_t* hl){
 
     // CALL(aAICompareSpeed);
     // RET_NC ;
-    if(AICompareSpeed_Conv()) {
+    if(AICompareSpeed()) {
         // DEC_hl;
         // DEC_hl;
         // DEC_hl;
@@ -2630,62 +1856,26 @@ void AI_Smart_Fly_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_SuperFang(void){
-//  Discourage this move if player's HP is below 25%.
-
-    CALL(aAICheckPlayerQuarterHP);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_SuperFang_Conv(uint8_t* hl){
+static void AI_Smart_SuperFang(uint8_t* hl){
 //  Discourage this move if player's HP is below 25%.
     // CALL(aAICheckPlayerQuarterHP);
     // RET_C ;
-    if(AICheckPlayerQuarterHP_Conv()) {
+    if(AICheckPlayerQuarterHP()) {
         // INC_hl;
         (*hl)++;
         // RET;
     }
 }
 
-void AI_Smart_Paralyze(void){
-//  50% chance to discourage this move if player's HP is below 25%.
-    CALL(aAICheckPlayerQuarterHP);
-    IF_NC goto discourage;
-
-//  80% chance to greatly encourage this move
-//  if enemy is slower than player and its HP is above 25%.
-    CALL(aAICompareSpeed);
-    RET_C ;
-    CALL(aAICheckEnemyQuarterHP);
-    RET_NC ;
-    CALL(aAI_80_20);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-discourage:
-    CALL(aAI_50_50);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Paralyze_Conv(uint8_t* hl){
+static void AI_Smart_Paralyze(uint8_t* hl){
 //  50% chance to discourage this move if player's HP is below 25%.
     // CALL(aAICheckPlayerQuarterHP);
     // IF_NC goto discourage;
-    if(AICheckPlayerQuarterHP_Conv()) {
+    if(AICheckPlayerQuarterHP()) {
     // discourage:
         // CALL(aAI_50_50);
         // RET_C ;
-        if(AI_50_50_Conv())
+        if(AI_50_50())
             return;
         // INC_hl;
         (*hl)++;
@@ -2701,7 +1891,7 @@ void AI_Smart_Paralyze_Conv(uint8_t* hl){
     // RET_NC ;
     // CALL(aAI_80_20);
     // RET_C ;
-    if(!AICompareSpeed_Conv() && !AICheckEnemyQuarterHP_Conv() && !AI_80_20_Conv()) {
+    if(!AICompareSpeed() && !AICheckEnemyQuarterHP() && !AI_80_20()) {
         // DEC_hl;
         // DEC_hl;
         *hl -= 2;
@@ -2709,36 +1899,8 @@ void AI_Smart_Paralyze_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_SpeedDownHit(void){
 //  Icy Wind
-
-//  Almost 90% chance to greatly encourage this move if the following conditions all meet:
-//  Enemy's HP is higher than 25%.
-//  It's the first turn of player's Pokemon.
-//  Player is faster than enemy.
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_ANIM);
-    CP_A(ICY_WIND);
-    RET_NZ ;
-    CALL(aAICheckEnemyQuarterHP);
-    RET_NC ;
-    LD_A_addr(wPlayerTurnsTaken);
-    AND_A_A;
-    RET_NZ ;
-    CALL(aAICompareSpeed);
-    RET_C ;
-    CALL(aRandom);
-    CP_A(12 percent);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_SpeedDownHit_Conv(uint8_t* hl){
-//  Icy Wind
-
+static void AI_Smart_SpeedDownHit(uint8_t* hl){
 //  Almost 90% chance to greatly encourage this move if the following conditions all meet:
 //  Enemy's HP is higher than 25%.
 //  It's the first turn of player's Pokemon.
@@ -2759,9 +1921,9 @@ void AI_Smart_SpeedDownHit_Conv(uint8_t* hl){
     // CALL(aRandom);
     // CP_A(12 percent);
     // RET_C ;
-    if(!AICheckEnemyQuarterHP_Conv()
+    if(!AICheckEnemyQuarterHP()
     && wram->wPlayerTurnsTaken == 0
-    && !AICompareSpeed_Conv()
+    && !AICompareSpeed()
     && Random() >= 12 percent - 1) {
         // DEC_hl;
         // DEC_hl;
@@ -2770,54 +1932,19 @@ void AI_Smart_SpeedDownHit_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Substitute(void){
 //  Dismiss this move if enemy's HP is below 50%.
-
-    CALL(aAICheckEnemyHalfHP);
-    RET_C ;
-    JP(mAIDiscourageMove);
-
-}
-
-//  Dismiss this move if enemy's HP is below 50%.
-void AI_Smart_Substitute_Conv(uint8_t* hl){
+static void AI_Smart_Substitute(uint8_t* hl){
     // CALL(aAICheckEnemyHalfHP);
     // RET_C ;
     // JP(mAIDiscourageMove);
-    if(AICheckEnemyHalfHP_Conv())
-        return AIDiscourageMove_Conv(hl);
+    if(AICheckEnemyHalfHP())
+        return AIDiscourageMove(hl);
 }
 
-void AI_Smart_HyperBeam(void){
-    CALL(aAICheckEnemyHalfHP);
-    IF_C goto discourage;
-
-//  50% chance to encourage this move if enemy's HP is below 25%.
-    CALL(aAICheckEnemyQuarterHP);
-    RET_C ;
-    CALL(aAI_50_50);
-    RET_C ;
-    DEC_hl;
-    RET;
-
-
-discourage:
-//  If enemy's HP is above 50%, discourage this move at random
-    CALL(aRandom);
-    CP_A(16 percent);
-    RET_C ;
-    INC_hl;
-    CALL(aAI_50_50);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_HyperBeam_Conv(uint8_t* hl){
+static void AI_Smart_HyperBeam(uint8_t* hl){
     // CALL(aAICheckEnemyHalfHP);
     // IF_C goto discourage;
-    if(!AICheckEnemyHalfHP_Conv()) {
+    if(!AICheckEnemyHalfHP()) {
     // discourage:
     //  If enemy's HP is above 50%, discourage this move at random
         // CALL(aRandom);
@@ -2829,7 +1956,7 @@ void AI_Smart_HyperBeam_Conv(uint8_t* hl){
         (*hl)++;
         // CALL(aAI_50_50);
         // RET_C ;
-        if(Random() < AI_50_50_Conv())
+        if(Random() < AI_50_50())
             return;
         // INC_hl;
         (*hl)++;
@@ -2842,57 +1969,14 @@ void AI_Smart_HyperBeam_Conv(uint8_t* hl){
     // RET_C ;
     // CALL(aAI_50_50);
     // RET_C ;
-    if(AICheckEnemyQuarterHP_Conv() && AI_50_50_Conv()) {
+    if(AICheckEnemyQuarterHP() && AI_50_50()) {
         // DEC_hl;
         (*hl)--;
     }
     // RET;
 }
 
-void AI_Smart_Rage(void){
-    LD_A_addr(wEnemySubStatus4);
-    BIT_A(SUBSTATUS_RAGE);
-    IF_Z goto notbuilding;
-
-//  If enemy's Rage is building, 50% chance to encourage this move.
-    CALL(aAI_50_50);
-    IF_C goto skipencourage;
-
-    DEC_hl;
-
-//  Encourage this move based on Rage's counter.
-
-skipencourage:
-    LD_A_addr(wEnemyRageCounter);
-    CP_A(2);
-    RET_C ;
-    DEC_hl;
-    LD_A_addr(wEnemyRageCounter);
-    CP_A(3);
-    RET_C ;
-    DEC_hl;
-    RET;
-
-
-notbuilding:
-//  If enemy's Rage is not building, discourage this move if enemy's HP is below 50%.
-    CALL(aAICheckEnemyHalfHP);
-    IF_NC goto discourage;
-
-//  50% chance to encourage this move otherwise.
-    CALL(aAI_80_20);
-    RET_NC ;
-    DEC_hl;
-    RET;
-
-
-discourage:
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Rage_Conv(uint8_t* hl){
+static void AI_Smart_Rage(uint8_t* hl){
     // LD_A_addr(wEnemySubStatus4);
     // BIT_A(SUBSTATUS_RAGE);
     // IF_Z goto notbuilding;
@@ -2900,7 +1984,7 @@ void AI_Smart_Rage_Conv(uint8_t* hl){
     //  If enemy's Rage is building, 50% chance to encourage this move.
         // CALL(aAI_50_50);
         // IF_C goto skipencourage;
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
             // DEC_hl;
             (*hl)--;
         }
@@ -2930,7 +2014,7 @@ void AI_Smart_Rage_Conv(uint8_t* hl){
 //  If enemy's Rage is not building, discourage this move if enemy's HP is below 50%.
     // CALL(aAICheckEnemyHalfHP);
     // IF_NC goto discourage;
-    if(AICheckEnemyHalfHP_Conv()) {
+    if(AICheckEnemyHalfHP()) {
     // discourage:
         // INC_hl;
         (*hl)++;
@@ -2940,70 +2024,14 @@ void AI_Smart_Rage_Conv(uint8_t* hl){
 //  50% chance to encourage this move otherwise.
     // CALL(aAI_80_20);
     // RET_NC ;
-    if(AI_80_20_Conv()) {
+    if(AI_80_20()) {
         // DEC_hl;
         (*hl)--;
     }
     // RET;
 }
 
-void AI_Smart_Mimic(void){
-//  Discourage this move if the player did not use any move last turn.
-    LD_A_addr(wLastPlayerCounterMove);
-    AND_A_A;
-    IF_Z goto dismiss;
-
-    CALL(aAICheckEnemyHalfHP);
-    IF_NC goto discourage;
-
-    PUSH_HL;
-    LD_A_addr(wLastPlayerCounterMove);
-    CALL(aAIGetEnemyMove);
-
-    LD_A(1);
-    LDH_addr_A(hBattleTurn);
-    CALLFAR(aBattleCheckTypeMatchup);
-
-    LD_A_addr(wTypeMatchup);
-    CP_A(EFFECTIVE);
-    POP_HL;
-    IF_C goto discourage;
-    IF_Z goto skip_encourage;
-
-    CALL(aAI_50_50);
-    IF_C goto skip_encourage;
-
-    DEC_hl;
-
-
-skip_encourage:
-    LD_A_addr(wLastPlayerCounterMove);
-    PUSH_HL;
-    LD_HL(mUsefulMoves);
-    LD_DE(1);
-    CALL(aIsInArray);
-
-    POP_HL;
-    RET_NC ;
-    CALL(aAI_50_50);
-    RET_C ;
-    DEC_hl;
-    RET;
-
-
-dismiss:
-//  Dismiss this move if the enemy is faster than the player.
-    CALL(aAICompareSpeed);
-    JP_C (mAIDiscourageMove);
-
-
-discourage:
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Mimic_Conv(uint8_t* hl){
+static void AI_Smart_Mimic(uint8_t* hl){
 //  Discourage this move if the player did not use any move last turn.
     // LD_A_addr(wLastPlayerCounterMove);
     // AND_A_A;
@@ -3013,15 +2041,15 @@ void AI_Smart_Mimic_Conv(uint8_t* hl){
     //  Dismiss this move if the enemy is faster than the player.
         // CALL(aAICompareSpeed);
         // JP_C (mAIDiscourageMove);
-        if(AICompareSpeed_Conv())
-            return AIDiscourageMove_Conv(hl);
+        if(AICompareSpeed())
+            return AIDiscourageMove(hl);
         (*hl)++;
         return;
     }
 
     // CALL(aAICheckEnemyHalfHP);
     // IF_NC goto discourage;
-    if(AICheckEnemyHalfHP_Conv()) {
+    if(AICheckEnemyHalfHP()) {
         (*hl)++;
         return;
     }
@@ -3029,7 +2057,7 @@ void AI_Smart_Mimic_Conv(uint8_t* hl){
     // PUSH_HL;
     // LD_A_addr(wLastPlayerCounterMove);
     // CALL(aAIGetEnemyMove);
-    AIGetEnemyMove_Conv(wram->wLastPlayerCounterMove);
+    AIGetEnemyMove(wram->wLastPlayerCounterMove);
 
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
@@ -3049,7 +2077,7 @@ void AI_Smart_Mimic_Conv(uint8_t* hl){
     else if(matchup == EFFECTIVE) {}
     // CALL(aAI_50_50);
     // IF_C goto skip_encourage;
-    else if(AI_50_50_Conv()) {
+    else if(AI_50_50()) {
         // DEC_hl;
         (*hl)--;
     }
@@ -3063,7 +2091,7 @@ void AI_Smart_Mimic_Conv(uint8_t* hl){
 
     // POP_HL;
     // RET_NC ;
-    if(IsInMoveArray(UsefulMoves, wram->wLastPlayerCounterMove) && AI_50_50_Conv()) {
+    if(IsInMoveArray(UsefulMoves, wram->wLastPlayerCounterMove) && AI_50_50()) {
         // CALL(aAI_50_50);
         // RET_C ;
         // DEC_hl;
@@ -3083,77 +2111,7 @@ void AI_Smart_Mimic_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Counter(void){
-    PUSH_HL;
-    LD_HL(wPlayerUsedMoves);
-    LD_C(NUM_MOVES);
-    LD_B(0);
-
-
-playermoveloop:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto skipmove;
-
-    CALL(aAIGetEnemyMove);
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
-    AND_A_A;
-    IF_Z goto skipmove;
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_TYPE);
-    CP_A(SPECIAL);
-    IF_NC goto skipmove;
-
-    INC_B;
-
-
-skipmove:
-    DEC_C;
-    IF_NZ goto playermoveloop;
-
-    POP_HL;
-    LD_A_B;
-    AND_A_A;
-    IF_Z goto discourage;
-
-    CP_A(3);
-    IF_NC goto encourage;
-
-    LD_A_addr(wLastPlayerCounterMove);
-    AND_A_A;
-    IF_Z goto done;
-
-    CALL(aAIGetEnemyMove);
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
-    AND_A_A;
-    IF_Z goto done;
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_TYPE);
-    CP_A(SPECIAL);
-    IF_NC goto done;
-
-
-encourage:
-    CALL(aRandom);
-    CP_A(39 percent + 1);
-    IF_C goto done;
-
-    DEC_hl;
-
-
-done:
-    RET;
-
-
-discourage:
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Counter_Conv(uint8_t* hl){
+static void AI_Smart_Counter(uint8_t* hl){
     // PUSH_HL;
     // LD_HL(wPlayerUsedMoves);
     // LD_C(NUM_MOVES);
@@ -3169,7 +2127,7 @@ void AI_Smart_Counter_Conv(uint8_t* hl){
             continue;
 
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
@@ -3213,7 +2171,7 @@ void AI_Smart_Counter_Conv(uint8_t* hl){
             return;
 
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(wram->wLastPlayerCounterMove);
+        const struct Move* mv = AIGetEnemyMove(wram->wLastPlayerCounterMove);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
@@ -3240,69 +2198,10 @@ void AI_Smart_Counter_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Encore(void){
-    CALL(aAICompareSpeed);
-    IF_NC goto discourage;
-
-    LD_A_addr(wLastPlayerMove);
-    AND_A_A;
-    JP_Z (mAIDiscourageMove);
-
-    CALL(aAIGetEnemyMove);
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
-    AND_A_A;
-    IF_Z goto weakmove;
-
-    PUSH_HL;
-    LD_A_addr(wEnemyMoveStruct + MOVE_TYPE);
-    LD_HL(wEnemyMonType1);
-    PREDEF(pCheckTypeMatchup);
-
-    POP_HL;
-    LD_A_addr(wTypeMatchup);
-    CP_A(EFFECTIVE);
-    IF_NC goto weakmove;
-
-    AND_A_A;
-    RET_NZ ;
-    goto encourage;
-
-
-weakmove:
-    PUSH_HL;
-    LD_A_addr(wLastPlayerCounterMove);
-    LD_HL(mEncoreMoves);
-    LD_DE(1);
-    CALL(aIsInArray);
-    POP_HL;
-    IF_NC goto discourage;
-
-
-encourage:
-    CALL(aRandom);
-    CP_A(28 percent - 1);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-discourage:
-    INC_hl;
-    INC_hl;
-    INC_hl;
-    RET;
-
-// INCLUDE "data/battle/ai/encore_moves.asm"
-
-    return AI_Smart_PainSplit();
-}
-
-void AI_Smart_Encore_Conv(uint8_t* hl){
+static void AI_Smart_Encore(uint8_t* hl){
     // CALL(aAICompareSpeed);
     // IF_NC goto discourage;
-    if(!AICompareSpeed_Conv()) {
+    if(!AICompareSpeed()) {
     // discourage:
         // INC_hl;
         // INC_hl;
@@ -3316,10 +2215,10 @@ void AI_Smart_Encore_Conv(uint8_t* hl){
     // AND_A_A;
     // JP_Z (mAIDiscourageMove);
     if(wram->wLastPlayerMove == NO_MOVE)
-        return AIDiscourageMove_Conv(hl);
+        return AIDiscourageMove(hl);
 
     // CALL(aAIGetEnemyMove);
-    const struct Move* mv = AIGetEnemyMove_Conv(wram->wLastPlayerMove);
+    const struct Move* mv = AIGetEnemyMove(wram->wLastPlayerMove);
 
     // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
     // AND_A_A;
@@ -3384,30 +2283,8 @@ void AI_Smart_Encore_Conv(uint8_t* hl){
 // INCLUDE "data/battle/ai/encore_moves.asm"
 }
 
-void AI_Smart_PainSplit(void){
 //  Discourage this move if [enemy's current HP * 2 > player's current HP].
-
-    PUSH_HL;
-    LD_HL(wEnemyMonHP);
-    LD_B_hl;
-    INC_HL;
-    LD_C_hl;
-    SLA_C;
-    RL_B;
-    LD_HL(wBattleMonHP + 1);
-    LD_A_hld;
-    CP_A_C;
-    LD_A_hl;
-    SBC_A_B;
-    POP_HL;
-    RET_NC ;
-    INC_hl;
-    RET;
-
-}
-
-//  Discourage this move if [enemy's current HP * 2 > player's current HP].
-void AI_Smart_PainSplit_Conv(uint8_t* hl){
+static void AI_Smart_PainSplit(uint8_t* hl){
     // PUSH_HL;
     // LD_HL(wEnemyMonHP);
     // LD_B_hl;
@@ -3431,34 +2308,11 @@ void AI_Smart_PainSplit_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Snore(void){
-    return AI_Smart_SleepTalk();
+static void AI_Smart_Snore(uint8_t* hl){
+    return AI_Smart_SleepTalk(hl);
 }
 
-void AI_Smart_SleepTalk(void){
-//  Greatly encourage this move if enemy is fast asleep.
-//  Greatly discourage this move otherwise.
-
-    LD_A_addr(wEnemyMonStatus);
-    AND_A(SLP);
-    CP_A(1);
-    IF_Z goto discourage;
-
-    DEC_hl;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-discourage:
-    INC_hl;
-    INC_hl;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_SleepTalk_Conv(uint8_t* hl){
+static void AI_Smart_SleepTalk(uint8_t* hl){
 //  Greatly encourage this move if enemy is fast asleep.
 //  Greatly discourage this move otherwise.
 
@@ -3484,100 +2338,33 @@ void AI_Smart_SleepTalk_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_DefrostOpponent(void){
 //  Greatly encourage this move if enemy is frozen.
 //  No move has EFFECT_DEFROST_OPPONENT, so this layer is unused.
-
-    LD_A_addr(wEnemyMonStatus);
-    AND_A(1 << FRZ);
-    RET_Z ;
-    DEC_hl;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
+static void AI_Smart_DefrostOpponent(uint8_t* hl){
+    // LD_A_addr(wEnemyMonStatus);
+    // AND_A(1 << FRZ);
+    // RET_Z ;
+    if((wram->wEnemyMon.status[0] & (1 << FRZ)) == 0)
+        return;
+    // DEC_hl;
+    // DEC_hl;
+    // DEC_hl;
+    (*hl) -= 3;
+    // RET;
 }
 
-void AI_Smart_Spite(void){
-    LD_A_addr(wLastPlayerCounterMove);
-    AND_A_A;
-    IF_NZ goto usedmove;
-
-    CALL(aAICompareSpeed);
-    JP_C (mAIDiscourageMove);
-
-    CALL(aAI_50_50);
-    RET_C ;
-    INC_hl;
-    RET;
-
-
-usedmove:
-    PUSH_HL;
-    LD_B_A;
-    LD_C(NUM_MOVES);
-    LD_HL(wBattleMonMoves);
-    LD_DE(wBattleMonPP);
-
-
-moveloop:
-    LD_A_hli;
-    CP_A_B;
-    IF_Z goto foundmove;
-
-    INC_DE;
-    DEC_C;
-    IF_NZ goto moveloop;
-
-    POP_HL;
-    RET;
-
-
-foundmove:
-    POP_HL;
-    LD_A_de;
-    CP_A(6);
-    IF_C goto encourage;
-    CP_A(15);
-    IF_NC goto discourage;
-
-    CALL(aRandom);
-    CP_A(39 percent + 1);
-    RET_NC ;
-
-
-discourage:
-    INC_hl;
-    RET;
-
-
-encourage:
-    CALL(aRandom);
-    CP_A(39 percent + 1);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-dismiss:
-//   //  unreferenced
-    JP(mAIDiscourageMove);
-
-}
-
-void AI_Smart_Spite_Conv(uint8_t* hl){
+static void AI_Smart_Spite(uint8_t* hl){
     // LD_A_addr(wLastPlayerCounterMove);
     // AND_A_A;
     // IF_NZ goto usedmove;
     if(wram->wLastPlayerCounterMove == NO_MOVE) {
         // CALL(aAICompareSpeed);
         // JP_C (mAIDiscourageMove);
-        if(AICompareSpeed_Conv())
-            return AIDiscourageMove_Conv(hl);
+        if(AICompareSpeed())
+            return AIDiscourageMove(hl);
         // CALL(aAI_50_50);
         // RET_C ;
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
             // INC_hl;
             (*hl)++;
         }
@@ -3650,29 +2437,19 @@ void AI_Smart_Spite_Conv(uint8_t* hl){
     // JP(mAIDiscourageMove);
 }
 
-void AI_Smart_DestinyBond(void){
-    return AI_Smart_Reversal();
+static void AI_Smart_DestinyBond(uint8_t* hl){
+    return AI_Smart_Reversal(hl);
 }
 
-void AI_Smart_Reversal(void){
-    return AI_Smart_SkullBash();
-}
-
-void AI_Smart_SkullBash(void){
-//  Discourage this move if enemy's HP is above 25%.
-
-    CALL(aAICheckEnemyQuarterHP);
-    RET_NC ;
-    INC_hl;
-    RET;
-
+static void AI_Smart_Reversal(uint8_t* hl){
+    return AI_Smart_SkullBash(hl);
 }
 
 //  Discourage this move if enemy's HP is above 25%.
-void AI_Smart_SkullBash_Conv(uint8_t* hl){
+static void AI_Smart_SkullBash(uint8_t* hl){
     // CALL(aAICheckEnemyQuarterHP);
     // RET_NC ;
-    if(AICheckEnemyQuarterHP_Conv()) {
+    if(AICheckEnemyQuarterHP()) {
         // INC_hl;
         (*hl)++;
     }
@@ -3680,70 +2457,7 @@ void AI_Smart_SkullBash_Conv(uint8_t* hl){
 
 }
 
-void AI_Smart_HealBell(void){
-//  Dismiss this move if none of the opponent's Pokemon is statused.
-//  Encourage this move if the enemy is statused.
-//  50% chance to greatly encourage this move if the enemy is fast asleep or frozen.
-
-    PUSH_HL;
-    LD_A_addr(wOTPartyCount);
-    LD_B_A;
-    LD_C(0);
-    LD_HL(wOTPartyMon1HP);
-    LD_DE(PARTYMON_STRUCT_LENGTH);
-
-
-loop:
-    PUSH_HL;
-    LD_A_hli;
-    OR_A_hl;
-    IF_Z goto next;
-
-// status
-    DEC_HL;
-    DEC_HL;
-    DEC_HL;
-    LD_A_hl;
-    OR_A_C;
-    LD_C_A;
-
-
-next:
-    POP_HL;
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto loop;
-
-    POP_HL;
-    LD_A_C;
-    AND_A_A;
-    IF_Z goto no_status;
-
-    LD_A_addr(wEnemyMonStatus);
-    AND_A_A;
-    IF_Z goto ok;
-    DEC_hl;
-
-ok:
-    AND_A(1 << FRZ | SLP);
-    RET_Z ;
-    CALL(aAI_50_50);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-no_status:
-    LD_A_addr(wEnemyMonStatus);
-    AND_A_A;
-    RET_NZ ;
-    JP(mAIDiscourageMove);
-
-
-}
-
-void AI_Smart_HealBell_Conv(uint8_t* hl){
+static void AI_Smart_HealBell(uint8_t* hl){
 //  Dismiss this move if none of the opponent's Pokemon is statused.
 //  Encourage this move if the enemy is statused.
 //  50% chance to greatly encourage this move if the enemy is fast asleep or frozen.
@@ -3802,7 +2516,7 @@ void AI_Smart_HealBell_Conv(uint8_t* hl){
         // CALL(aAI_50_50);
         // RET_C ;
         if((wram->wEnemyMon.status[0] & ((1 << FRZ) | SLP))
-        && AI_50_50_Conv()) {
+        && AI_50_50()) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -3816,48 +2530,15 @@ void AI_Smart_HealBell_Conv(uint8_t* hl){
         // AND_A_A;
         // RET_NZ ;
         if(wram->wEnemyMon.status[0] == 0)
-            return AIDiscourageMove_Conv(hl);
+            return AIDiscourageMove(hl);
         // JP(mAIDiscourageMove);
     }
 }
 
-void AI_Smart_PriorityHit(void){
-    CALL(aAICompareSpeed);
-    RET_C ;
-
-//  Dismiss this move if the player is flying or underground.
-    LD_A_addr(wPlayerSubStatus3);
-    AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
-    JP_NZ (mAIDiscourageMove);
-
-//  Greatly encourage this move if it will KO the player.
-    LD_A(1);
-    LDH_addr_A(hBattleTurn);
-    PUSH_HL;
-    CALLFAR(aEnemyAttackDamage);
-    CALLFAR(aBattleCommand_DamageCalc);
-    CALLFAR(aBattleCommand_Stab);
-    POP_HL;
-    LD_A_addr(wCurDamage + 1);
-    LD_C_A;
-    LD_A_addr(wCurDamage);
-    LD_B_A;
-    LD_A_addr(wBattleMonHP + 1);
-    CP_A_C;
-    LD_A_addr(wBattleMonHP);
-    SBC_A_B;
-    RET_NC ;
-    DEC_hl;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_PriorityHit_Conv(uint8_t* hl){
+static void AI_Smart_PriorityHit(uint8_t* hl){
     // CALL(aAICompareSpeed);
     // RET_C ;
-    if(AICompareSpeed_Conv())
+    if(AICompareSpeed())
         return;
 
 //  Dismiss this move if the player is flying or underground.
@@ -3865,7 +2546,7 @@ void AI_Smart_PriorityHit_Conv(uint8_t* hl){
     // AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
     // JP_NZ (mAIDiscourageMove);
     if(wram->wPlayerSubStatus3 & ((1 << SUBSTATUS_FLYING) | (1 << SUBSTATUS_UNDERGROUND)))
-        return AIDiscourageMove_Conv(hl);
+        return AIDiscourageMove(hl);
 
 //  Greatly encourage this move if it will KO the player.
     // LD_A(1);
@@ -3901,17 +2582,7 @@ void AI_Smart_PriorityHit_Conv(uint8_t* hl){
     return;
 }
 
-void AI_Smart_Thief(void){
-//  Don't use Thief unless it's the only move available.
-
-    LD_A_hl;
-    ADD_A(0x1e);
-    LD_hl_A;
-    RET;
-
-}
-
-void AI_Smart_Thief_Conv(uint8_t* hl){
+static void AI_Smart_Thief(uint8_t* hl){
 //  Don't use Thief unless it's the only move available.
 
     // LD_A_hl;
@@ -3921,49 +2592,7 @@ void AI_Smart_Thief_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Conversion2(void){
-    LD_A_addr(wLastPlayerMove);
-    AND_A_A;
-    IF_NZ goto discourage;  // should be jr z
-
-    PUSH_HL;
-    DEC_A;
-    LD_HL(mMoves + MOVE_TYPE);
-    LD_BC(MOVE_LENGTH);
-    CALL(aAddNTimes);
-
-    LD_A(BANK(aMoves));
-    CALL(aGetFarByte);
-    LD_addr_A(wPlayerMoveStruct + MOVE_TYPE);
-
-    XOR_A_A;
-    LDH_addr_A(hBattleTurn);
-
-    CALLFAR(aBattleCheckTypeMatchup);
-
-    LD_A_addr(wTypeMatchup);
-    CP_A(EFFECTIVE);
-    POP_HL;
-    IF_C goto discourage;
-    RET_Z ;
-
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-
-discourage:
-    CALL(aRandom);
-    CP_A(10 percent);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Conversion2_Conv(uint8_t* hl){
+static void AI_Smart_Conversion2(uint8_t* hl){
     // LD_A_addr(wLastPlayerMove);
     // AND_A_A;
     // IF_NZ goto discourage;  // should be jr z
@@ -4026,7 +2655,7 @@ void AI_Smart_Conversion2_Conv(uint8_t* hl){
     else {
         // CALL(aAI_50_50);
         // RET_C ;
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
             // DEC_hl;
             (*hl)--;
         }
@@ -4042,46 +2671,11 @@ void AI_Smart_Conversion2_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Disable(void){
-    CALL(aAICompareSpeed);
-    IF_NC goto discourage;
-
-    PUSH_HL;
-    LD_A_addr(wLastPlayerCounterMove);
-    LD_HL(mUsefulMoves);
-    LD_DE(1);
-    CALL(aIsInArray);
-
-    POP_HL;
-    IF_NC goto notencourage;
-
-    CALL(aRandom);
-    CP_A(39 percent + 1);
-    RET_C ;
-    DEC_hl;
-    RET;
-
-
-notencourage:
-    LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
-    AND_A_A;
-    RET_NZ ;
-
-
-discourage:
-    CALL(aRandom);
-    CP_A(8 percent);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Disable_Conv(uint8_t* hl){
+static void AI_Smart_Disable(uint8_t* hl){
     // CALL(aAICompareSpeed);
     // IF_NC goto discourage;
 
-    if(AICompareSpeed_Conv()) {
+    if(AICompareSpeed()) {
         // PUSH_HL;
         // LD_A_addr(wLastPlayerCounterMove);
         // LD_HL(mUsefulMoves);
@@ -4120,55 +2714,10 @@ void AI_Smart_Disable_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_MeanLook(void){
-    CALL(aAICheckEnemyHalfHP);
-    IF_NC goto discourage;
-
-    PUSH_HL;
-    CALL(aAICheckLastPlayerMon);
-    POP_HL;
-    JP_Z (mAIDiscourageMove);
-
-//  80% chance to greatly encourage this move if the enemy is badly poisoned (buggy).
-//  Should check wPlayerSubStatus5 instead.
-    LD_A_addr(wEnemySubStatus5);
-    BIT_A(SUBSTATUS_TOXIC);
-    IF_NZ goto encourage;
-
-//  80% chance to greatly encourage this move if the player is either
-//  in love, identified, stuck in Rollout, or has a Nightmare.
-    LD_A_addr(wPlayerSubStatus1);
-    AND_A(1 << SUBSTATUS_IN_LOVE | 1 << SUBSTATUS_ROLLOUT | 1 << SUBSTATUS_IDENTIFIED | 1 << SUBSTATUS_NIGHTMARE);
-    IF_NZ goto encourage;
-
-//  Otherwise, discourage this move unless the player only has not very effective moves against the enemy.
-    PUSH_HL;
-    CALLFAR(aCheckPlayerMoveTypeMatchups);
-    LD_A_addr(wEnemyAISwitchScore);
-    CP_A(BASE_AI_SWITCH_SCORE + 1);  // not very effective
-    POP_HL;
-    RET_NC ;
-
-
-discourage:
-    INC_hl;
-    RET;
-
-
-encourage:
-    CALL(aAI_80_20);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_MeanLook_Conv(uint8_t* hl){
+static void AI_Smart_MeanLook(uint8_t* hl){
     // CALL(aAICheckEnemyHalfHP);
     // IF_NC goto discourage;
-    if(AICheckEnemyHalfHP_Conv()) {
+    if(AICheckEnemyHalfHP()) {
         (*hl)++;
         return;
     }
@@ -4177,8 +2726,8 @@ void AI_Smart_MeanLook_Conv(uint8_t* hl){
     // CALL(aAICheckLastPlayerMon);
     // POP_HL;
     // JP_Z (mAIDiscourageMove);
-    if(AICheckLastPlayerMon_Conv()) {
-        return AIDiscourageMove_Conv(hl);
+    if(AICheckLastPlayerMon()) {
+        return AIDiscourageMove(hl);
     }
 
 //  80% chance to greatly encourage this move if the enemy is badly poisoned (buggy).
@@ -4201,7 +2750,7 @@ void AI_Smart_MeanLook_Conv(uint8_t* hl){
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
-        if(!AI_80_20_Conv()) {
+        if(!AI_80_20()) {
             // DEC_hl;
             // DEC_hl;
             // DEC_hl;
@@ -4226,36 +2775,7 @@ void AI_Smart_MeanLook_Conv(uint8_t* hl){
     }
 }
 
-void AICheckLastPlayerMon(void){
-    LD_A_addr(wPartyCount);
-    LD_B_A;
-    LD_C(0);
-    LD_HL(wPartyMon1HP);
-    LD_DE(PARTYMON_STRUCT_LENGTH);
-
-
-loop:
-    LD_A_addr(wCurBattleMon);
-    CP_A_C;
-    IF_Z goto skip;
-
-    LD_A_hli;
-    OR_A_hl;
-    RET_NZ ;
-    DEC_HL;
-
-
-skip:
-    ADD_HL_DE;
-    INC_C;
-    DEC_B;
-    IF_NZ goto loop;
-
-    RET;
-
-}
-
-bool AICheckLastPlayerMon_Conv(void){
+static bool AICheckLastPlayerMon(void){
     // LD_A_addr(wPartyCount);
     // LD_B_A;
     uint8_t b = wram->wPartyCount;
@@ -4292,25 +2812,13 @@ bool AICheckLastPlayerMon_Conv(void){
     return true;
 }
 
-void AI_Smart_Nightmare(void){
 //  50% chance to encourage this move.
 //  The AI_Basic layer will make sure that
 //  Dream Eater is only used against sleeping targets.
-
-    CALL(aAI_50_50);
-    RET_C ;
-    DEC_hl;
-    RET;
-
-}
-
-//  50% chance to encourage this move.
-//  The AI_Basic layer will make sure that
-//  Dream Eater is only used against sleeping targets.
-void AI_Smart_Nightmare_Conv(uint8_t* hl){
+static void AI_Smart_Nightmare(uint8_t* hl){
     // CALL(aAI_50_50);
     // RET_C ;
-    if(AI_50_50_Conv()) {
+    if(AI_50_50()) {
         // DEC_hl;
         (*hl)--;
     }
@@ -4318,20 +2826,7 @@ void AI_Smart_Nightmare_Conv(uint8_t* hl){
 
 }
 
-void AI_Smart_FlameWheel(void){
-//  Use this move if the enemy is frozen.
-
-    LD_A_addr(wEnemyMonStatus);
-    BIT_A(FRZ);
-    RET_Z ;
-    for(int rept = 0; rept < 5; rept++){
-    DEC_hl;
-    }
-    RET;
-
-}
-
-void AI_Smart_FlameWheel_Conv(uint8_t* hl){
+static void AI_Smart_FlameWheel(uint8_t* hl){
 //  Use this move if the enemy is frozen.
 
     // LD_A_addr(wEnemyMonStatus);
@@ -4346,101 +2841,7 @@ void AI_Smart_FlameWheel_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Curse(void){
-    LD_A_addr(wEnemyMonType1);
-    CP_A(GHOST);
-    IF_Z goto ghost_curse;
-    LD_A_addr(wEnemyMonType2);
-    CP_A(GHOST);
-    IF_Z goto ghost_curse;
-
-    CALL(aAICheckEnemyHalfHP);
-    IF_NC goto encourage;
-
-    LD_A_addr(wEnemyAtkLevel);
-    CP_A(BASE_STAT_LEVEL + 4);
-    IF_NC goto encourage;
-    CP_A(BASE_STAT_LEVEL + 2);
-    RET_NC ;
-
-    LD_A_addr(wBattleMonType1);
-    CP_A(GHOST);
-    IF_Z goto greatly_encourage;
-    CP_A(SPECIAL);
-    RET_NC ;
-    LD_A_addr(wBattleMonType2);
-    CP_A(SPECIAL);
-    RET_NC ;
-    CALL(aAI_80_20);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-approve:
-    INC_hl;
-    INC_hl;
-
-greatly_encourage:
-    INC_hl;
-
-encourage:
-    INC_hl;
-    RET;
-
-
-ghost_curse:
-    LD_A_addr(wPlayerSubStatus1);
-    BIT_A(SUBSTATUS_CURSE);
-    JP_NZ (mAIDiscourageMove);
-
-    PUSH_HL;
-    FARCALL(aFindAliveEnemyMons);
-    POP_HL;
-    IF_NC goto notlastmon;
-
-    PUSH_HL;
-    CALL(aAICheckLastPlayerMon);
-    POP_HL;
-    IF_NZ goto approve;
-
-    goto ghost_continue;
-
-
-notlastmon:
-    PUSH_HL;
-    CALL(aAICheckLastPlayerMon);
-    POP_HL;
-    IF_Z goto maybe_greatly_encourage;
-
-
-ghost_continue:
-    CALL(aAICheckEnemyQuarterHP);
-    JP_NC (mAI_Smart_Curse_approve);
-
-    CALL(aAICheckEnemyHalfHP);
-    IF_NC goto greatly_encourage;
-
-    CALL(aAICheckEnemyMaxHP);
-    RET_NC ;
-
-    LD_A_addr(wPlayerTurnsTaken);
-    AND_A_A;
-    RET_NZ ;
-
-
-maybe_greatly_encourage:
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_Curse_Conv(uint8_t* hl){
+static void AI_Smart_Curse(uint8_t* hl){
     // LD_A_addr(wEnemyMonType1);
     // CP_A(GHOST);
     // IF_Z goto ghost_curse;
@@ -4454,7 +2855,7 @@ void AI_Smart_Curse_Conv(uint8_t* hl){
         // BIT_A(SUBSTATUS_CURSE);
         // JP_NZ (mAIDiscourageMove);
         if(bit_test(wram->wPlayerSubStatus1, SUBSTATUS_CURSE))
-            return AIDiscourageMove_Conv(hl);
+            return AIDiscourageMove(hl);
 
         // PUSH_HL;
         // FARCALL(aFindAliveEnemyMons);
@@ -4465,7 +2866,7 @@ void AI_Smart_Curse_Conv(uint8_t* hl){
             // CALL(aAICheckLastPlayerMon);
             // POP_HL;
             // IF_NZ goto approve;
-            if(AICheckLastPlayerMon_Conv()) {
+            if(AICheckLastPlayerMon()) {
                 *hl += 4;
                 return;
             }
@@ -4477,11 +2878,11 @@ void AI_Smart_Curse_Conv(uint8_t* hl){
             // CALL(aAICheckLastPlayerMon);
             // POP_HL;
             // IF_Z goto maybe_greatly_encourage;
-            if(AICheckLastPlayerMon_Conv()) {
+            if(AICheckLastPlayerMon()) {
             // maybe_greatly_encourage:
                 // CALL(aAI_50_50);
                 // RET_C ;
-                if(AI_50_50_Conv()) {
+                if(AI_50_50()) {
                     // DEC_hl;
                     // DEC_hl;
                     *hl -= 2;
@@ -4494,21 +2895,21 @@ void AI_Smart_Curse_Conv(uint8_t* hl){
     // ghost_continue:
         // CALL(aAICheckEnemyQuarterHP);
         // JP_NC (mAI_Smart_Curse_approve);
-        if(AICheckEnemyQuarterHP_Conv()) {
+        if(AICheckEnemyQuarterHP()) {
             *hl += 4;
             return;
         }
 
         // CALL(aAICheckEnemyHalfHP);
         // IF_NC goto greatly_encourage;
-        if(AICheckEnemyHalfHP_Conv()) {
+        if(AICheckEnemyHalfHP()) {
             *hl += 2;
             return;
         }
 
         // CALL(aAICheckEnemyMaxHP);
         // RET_NC ;
-        if(!AICheckEnemyMaxHP_Conv())
+        if(!AICheckEnemyMaxHP())
             return;
 
         // LD_A_addr(wPlayerTurnsTaken);
@@ -4521,7 +2922,7 @@ void AI_Smart_Curse_Conv(uint8_t* hl){
         // CALL(aAI_50_50);
         // RET_C ;
 
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -4532,7 +2933,7 @@ void AI_Smart_Curse_Conv(uint8_t* hl){
     else {
         // CALL(aAICheckEnemyHalfHP);
         // IF_NC goto encourage;
-        if(AICheckEnemyHalfHP_Conv()) {
+        if(AICheckEnemyHalfHP()) {
             (*hl)++;
             return;
         }
@@ -4567,7 +2968,7 @@ void AI_Smart_Curse_Conv(uint8_t* hl){
 
         // CALL(aAI_80_20);
         // RET_C ;
-        if(!AI_80_20_Conv()) {
+        if(!AI_80_20()) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -4588,71 +2989,7 @@ void AI_Smart_Curse_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_Protect(void){
-//  Greatly discourage this move if the enemy already used Protect.
-    LD_A_addr(wEnemyProtectCount);
-    AND_A_A;
-    IF_NZ goto greatly_discourage;
-
-//  Discourage this move if the player is locked on.
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_LOCK_ON);
-    IF_NZ goto discourage;
-
-//  Encourage this move if the player's Fury Cutter is boosted enough.
-    LD_A_addr(wPlayerFuryCutterCount);
-    CP_A(3);
-    IF_NC goto encourage;
-
-//  Encourage this move if the player has charged a two-turn move.
-    LD_A_addr(wPlayerSubStatus3);
-    BIT_A(SUBSTATUS_CHARGED);
-    IF_NZ goto encourage;
-
-//  Encourage this move if the player is affected by Toxic, Leech Seed, or Curse.
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_TOXIC);
-    IF_NZ goto encourage;
-    LD_A_addr(wPlayerSubStatus4);
-    BIT_A(SUBSTATUS_LEECH_SEED);
-    IF_NZ goto encourage;
-    LD_A_addr(wPlayerSubStatus1);
-    BIT_A(SUBSTATUS_CURSE);
-    IF_NZ goto encourage;
-
-//  Discourage this move if the player's Rollout count is not boosted enough.
-    BIT_A(SUBSTATUS_ROLLOUT);
-    IF_Z goto discourage;
-    LD_A_addr(wPlayerRolloutCount);
-    CP_A(3);
-    IF_C goto discourage;
-
-//  80% chance to encourage this move otherwise.
-
-encourage:
-    CALL(aAI_80_20);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-
-greatly_discourage:
-    INC_hl;
-
-
-discourage:
-    CALL(aRandom);
-    CP_A(8 percent);
-    RET_C ;
-
-    INC_hl;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Protect_Conv(uint8_t* hl){
+static void AI_Smart_Protect(uint8_t* hl){
 //  Greatly discourage this move if the enemy already used Protect.
     // LD_A_addr(wEnemyProtectCount);
     // AND_A_A;
@@ -4706,7 +3043,7 @@ void AI_Smart_Protect_Conv(uint8_t* hl){
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
-        if(!AI_80_20_Conv()) {
+        if(!AI_80_20()) {
             // DEC_hl;
             (*hl)--;
         }
@@ -4738,46 +3075,7 @@ void AI_Smart_Protect_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Foresight(void){
-//  60% chance to encourage this move if the enemy's accuracy is sharply lowered.
-    LD_A_addr(wEnemyAccLevel);
-    CP_A(BASE_STAT_LEVEL - 2);
-    IF_C goto encourage;
-
-//  60% chance to encourage this move if the player's evasion is sharply raised.
-    LD_A_addr(wPlayerEvaLevel);
-    CP_A(BASE_STAT_LEVEL + 3);
-    IF_NC goto encourage;
-
-//  60% chance to encourage this move if the player is a Ghost type.
-    LD_A_addr(wBattleMonType1);
-    CP_A(GHOST);
-    IF_Z goto encourage;
-    LD_A_addr(wBattleMonType2);
-    CP_A(GHOST);
-    IF_Z goto encourage;
-
-//  92% chance to discourage this move otherwise.
-    CALL(aRandom);
-    CP_A(8 percent);
-    RET_C ;
-
-    INC_hl;
-    RET;
-
-
-encourage:
-    CALL(aRandom);
-    CP_A(39 percent + 1);
-    RET_C ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_Foresight_Conv(uint8_t* hl){
+static void AI_Smart_Foresight(uint8_t* hl){
 //  60% chance to encourage this move if the enemy's accuracy is sharply lowered.
     // LD_A_addr(wEnemyAccLevel);
     // CP_A(BASE_STAT_LEVEL - 2);
@@ -4823,47 +3121,7 @@ void AI_Smart_Foresight_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_PerishSong(void){
-    PUSH_HL;
-    CALLFAR(aFindAliveEnemyMons);
-    POP_HL;
-    IF_C goto no;
-
-    LD_A_addr(wPlayerSubStatus5);
-    BIT_A(SUBSTATUS_CANT_RUN);
-    IF_NZ goto yes;
-
-    PUSH_HL;
-    CALLFAR(aCheckPlayerMoveTypeMatchups);
-    LD_A_addr(wEnemyAISwitchScore);
-    CP_A(BASE_AI_SWITCH_SCORE);
-    POP_HL;
-    RET_C ;
-
-    CALL(aAI_50_50);
-    RET_C ;
-
-    INC_hl;
-    RET;
-
-
-yes:
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-
-no:
-    LD_A_hl;
-    ADD_A(5);
-    LD_hl_A;
-    RET;
-
-}
-
-void AI_Smart_PerishSong_Conv(uint8_t* hl){
+static void AI_Smart_PerishSong(uint8_t* hl){
     // PUSH_HL;
     // CALLFAR(aFindAliveEnemyMons);
     // POP_HL;
@@ -4885,7 +3143,7 @@ void AI_Smart_PerishSong_Conv(uint8_t* hl){
     // yes:
         // CALL(aAI_50_50);
         // RET_C ;
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
             // DEC_hl;
             (*hl)--;
         }
@@ -4901,7 +3159,7 @@ void AI_Smart_PerishSong_Conv(uint8_t* hl){
     // POP_HL;
     // RET_C ;
 
-    if(score >= BASE_AI_SWITCH_SCORE && AI_50_50_Conv()) {
+    if(score >= BASE_AI_SWITCH_SCORE && AI_50_50()) {
         // CALL(aAI_50_50);
         // RET_C ;
 
@@ -4912,54 +3170,7 @@ void AI_Smart_PerishSong_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_Sandstorm(void){
-//  Greatly discourage this move if the player is immune to Sandstorm damage.
-    LD_A_addr(wBattleMonType1);
-    PUSH_HL;
-    LD_HL(mAI_Smart_Sandstorm_SandstormImmuneTypes);
-    LD_DE(1);
-    CALL(aIsInArray);
-    POP_HL;
-    IF_C goto greatly_discourage;
-
-    LD_A_addr(wBattleMonType2);
-    PUSH_HL;
-    LD_HL(mAI_Smart_Sandstorm_SandstormImmuneTypes);
-    LD_DE(1);
-    CALL(aIsInArray);
-    POP_HL;
-    IF_C goto greatly_discourage;
-
-//  Discourage this move if player's HP is below 50%.
-    CALL(aAICheckPlayerHalfHP);
-    IF_NC goto discourage;
-
-//  50% chance to encourage this move otherwise.
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-
-greatly_discourage:
-    INC_hl;
-
-discourage:
-    INC_hl;
-    RET;
-
-
-SandstormImmuneTypes:
-    //db ['ROCK'];
-    //db ['GROUND'];
-    //db ['STEEL'];
-    //db ['-1'];  // end
-
-    return AI_Smart_Endure();
-}
-
-void AI_Smart_Sandstorm_Conv(uint8_t* hl){
+static void AI_Smart_Sandstorm(uint8_t* hl){
     static const uint8_t SandstormImmuneTypes[] = {
         ROCK,
         GROUND,
@@ -4991,14 +3202,14 @@ void AI_Smart_Sandstorm_Conv(uint8_t* hl){
 //  Discourage this move if player's HP is below 50%.
     // CALL(aAICheckPlayerHalfHP);
     // IF_NC goto discourage;
-    else if(AICheckPlayerHalfHP_Conv()) {
+    else if(AICheckPlayerHalfHP()) {
 
     }
 
 //  50% chance to encourage this move otherwise.
     // CALL(aAI_50_50);
     // RET_C ;
-    else if(AI_50_50_Conv())
+    else if(AI_50_50())
         return;
     else {
         // DEC_hl;
@@ -5016,97 +3227,87 @@ void AI_Smart_Sandstorm_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Endure(void){
+static void AI_Smart_Endure(uint8_t* hl){
 //  Greatly discourage this move if the enemy already used Protect.
-    LD_A_addr(wEnemyProtectCount);
-    AND_A_A;
-    IF_NZ goto greatly_discourage;
+    // LD_A_addr(wEnemyProtectCount);
+    // AND_A_A;
+    // IF_NZ goto greatly_discourage;
 
 //  Greatly discourage this move if the enemy's HP is full.
-    CALL(aAICheckEnemyMaxHP);
-    IF_C goto greatly_discourage;
+    // CALL(aAICheckEnemyMaxHP);
+    // IF_C goto greatly_discourage;
+    if(wram->wEnemyProtectCount != 0 || AICheckEnemyMaxHP()) {
+    // greatly_discourage:
+        // INC_hl;
+    
+    // discourage:
+        // INC_hl;
+        (*hl) += 2;
+        // RET;
+        return;
+    }
 
 //  Discourage this move if the enemy's HP is at least 25%.
-    CALL(aAICheckEnemyQuarterHP);
-    IF_C goto discourage;
+    // CALL(aAICheckEnemyQuarterHP);
+    // IF_C goto discourage;
+    if(AICheckEnemyQuarterHP()) {
+        (*hl)++;
+        return;
+    }
 
 //  If the enemy has Reversal...
-    LD_B(EFFECT_REVERSAL);
-    CALL(aAIHasMoveEffect);
-    IF_NC goto no_reversal;
+    // LD_B(EFFECT_REVERSAL);
+    // CALL(aAIHasMoveEffect);
+    // IF_NC goto no_reversal;
+    if(AIHasMoveEffect(EFFECT_REVERSAL)) {
+    //  ...80% chance to greatly encourage this move.
+        // CALL(aAI_80_20);
+        // RET_C ;
+        if(AI_80_20())
+            return;
 
-//  ...80% chance to greatly encourage this move.
-    CALL(aAI_80_20);
-    RET_C ;
+        // DEC_hl;
+        // DEC_hl;
+        // DEC_hl;
+        (*hl) -= 3;
+        // RET;
+        return;
+    }
 
-    DEC_hl;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-no_reversal:
+// no_reversal:
 //  If the enemy is not locked on, do nothing.
-    LD_A_addr(wEnemySubStatus5);
-    BIT_A(SUBSTATUS_LOCK_ON);
-    RET_Z ;
+    // LD_A_addr(wEnemySubStatus5);
+    // BIT_A(SUBSTATUS_LOCK_ON);
+    // RET_Z ;
+    if(!bit_test(wram->wEnemySubStatus5, SUBSTATUS_LOCK_ON))
+        return;
 
 //  50% chance to greatly encourage this move.
-    CALL(aAI_50_50);
-    RET_C ;
+    // CALL(aAI_50_50);
+    // RET_C ;
+    if(AI_50_50())
+        return;
 
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-greatly_discourage:
-    INC_hl;
-
-discourage:
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_FuryCutter(void){
-//  Encourage this move based on Fury Cutter's count.
-
-    LD_A_addr(wEnemyFuryCutterCount);
-    AND_A_A;
-    JR_Z (mAI_Smart_Rollout);
-    DEC_hl;
-
-    CP_A(2);
-    JR_C (mAI_Smart_Rollout);
-    DEC_hl;
-    DEC_hl;
-
-    CP_A(3);
-    JR_C (mAI_Smart_Rollout);
-    DEC_hl;
-    DEC_hl;
-    DEC_hl;
-
-// fallthrough
-
-    return AI_Smart_Rollout();
+    // DEC_hl;
+    // DEC_hl;
+    (*hl) -= 2;
+    // RET;
 }
 
 //  Encourage this move based on Fury Cutter's count.
-void AI_Smart_FuryCutter_Conv(uint8_t* hl){
+static void AI_Smart_FuryCutter(uint8_t* hl){
     // LD_A_addr(wEnemyFuryCutterCount);
     // AND_A_A;
     // JR_Z (mAI_Smart_Rollout);
     if(wram->wEnemyFuryCutterCount == 0)
-        return AI_Smart_Rollout_Conv(hl);
+        return AI_Smart_Rollout(hl);
     // DEC_hl;
     *hl -= 1;
 
     // CP_A(2);
     // JR_C (mAI_Smart_Rollout);
     if(wram->wEnemyFuryCutterCount < 2)
-        return AI_Smart_Rollout_Conv(hl);
+        return AI_Smart_Rollout(hl);
     // DEC_hl;
     // DEC_hl;
     *hl -= 2;
@@ -5114,7 +3315,7 @@ void AI_Smart_FuryCutter_Conv(uint8_t* hl){
     // CP_A(3);
     // JR_C (mAI_Smart_Rollout);
     if(wram->wEnemyFuryCutterCount < 3)
-        return AI_Smart_Rollout_Conv(hl);
+        return AI_Smart_Rollout(hl);
     // DEC_hl;
     // DEC_hl;
     // DEC_hl;
@@ -5124,52 +3325,7 @@ void AI_Smart_FuryCutter_Conv(uint8_t* hl){
 
 }
 
-void AI_Smart_Rollout(void){
-//  Rollout, Fury Cutter
-
-//  80% chance to discourage this move if the enemy is in love, confused, or paralyzed.
-    LD_A_addr(wEnemySubStatus1);
-    BIT_A(SUBSTATUS_IN_LOVE);
-    IF_NZ goto maybe_discourage;
-
-    LD_A_addr(wEnemySubStatus3);
-    BIT_A(SUBSTATUS_CONFUSED);
-    IF_NZ goto maybe_discourage;
-
-    LD_A_addr(wEnemyMonStatus);
-    BIT_A(PAR);
-    IF_NZ goto maybe_discourage;
-
-//  80% chance to discourage this move if the enemy's HP is below 25%,
-//  or if accuracy or evasion modifiers favour the player.
-    CALL(aAICheckEnemyQuarterHP);
-    IF_NC goto maybe_discourage;
-
-    LD_A_addr(wEnemyAccLevel);
-    CP_A(BASE_STAT_LEVEL);
-    IF_C goto maybe_discourage;
-    LD_A_addr(wPlayerEvaLevel);
-    CP_A(BASE_STAT_LEVEL + 1);
-    IF_NC goto maybe_discourage;
-
-//  80% chance to greatly encourage this move otherwise.
-    CALL(aRandom);
-    CP_A(79 percent - 1);
-    RET_NC ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-maybe_discourage:
-    CALL(aAI_80_20);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Rollout_Conv(uint8_t* hl){
+static void AI_Smart_Rollout(uint8_t* hl){
 //  Rollout, Fury Cutter
 
 //  80% chance to discourage this move if the enemy is in love, confused, or paralyzed.
@@ -5199,13 +3355,13 @@ void AI_Smart_Rollout_Conv(uint8_t* hl){
     if(bit_test(wram->wEnemySubStatus1, SUBSTATUS_IN_LOVE)
     || bit_test(wram->wEnemySubStatus3, SUBSTATUS_CONFUSED)
     || bit_test(wram->wEnemyMon.status[0], PAR)
-    || AICheckEnemyQuarterHP_Conv()
+    || AICheckEnemyQuarterHP()
     || wram->wEnemyAccLevel < BASE_STAT_LEVEL
     || wram->wPlayerEvaLevel > BASE_STAT_LEVEL) {
     // maybe_discourage:
         // CALL(aAI_80_20);
         // RET_C ;
-        if(!AI_80_20_Conv()) {
+        if(!AI_80_20()) {
             // INC_hl;
             (*hl)++;
             // RET;
@@ -5226,36 +3382,13 @@ void AI_Smart_Rollout_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_Swagger(void){
-    return AI_Smart_Attract();
-}
-
-void AI_Smart_Attract(void){
-//  80% chance to encourage this move during the first turn of player's Pokemon.
-//  80% chance to discourage this move otherwise.
-
-    LD_A_addr(wPlayerTurnsTaken);
-    AND_A_A;
-    IF_Z goto first_turn;
-
-    CALL(aAI_80_20);
-    RET_C ;
-    INC_hl;
-    RET;
-
-
-first_turn:
-    CALL(aRandom);
-    CP_A(79 percent - 1);
-    RET_NC ;
-    DEC_hl;
-    RET;
-
+static void AI_Smart_Swagger(uint8_t* hl){
+    return AI_Smart_Attract(hl);
 }
 
 //  80% chance to encourage this move during the first turn of player's Pokemon.
 //  80% chance to discourage this move otherwise.
-void AI_Smart_Attract_Conv(uint8_t* hl){
+static void AI_Smart_Attract(uint8_t* hl){
     // LD_A_addr(wPlayerTurnsTaken);
     // AND_A_A;
     // IF_Z goto first_turn;
@@ -5273,7 +3406,7 @@ void AI_Smart_Attract_Conv(uint8_t* hl){
     else {
         // CALL(aAI_80_20);
         // RET_C ;
-        if(!AI_80_20_Conv()) {
+        if(!AI_80_20()) {
             // INC_hl;
             ++(*hl);
             // RET;
@@ -5281,68 +3414,24 @@ void AI_Smart_Attract_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_Safeguard(void){
 //  80% chance to discourage this move if player's HP is below 50%.
-
-    CALL(aAICheckPlayerHalfHP);
-    RET_C ;
-    CALL(aAI_80_20);
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-//  80% chance to discourage this move if player's HP is below 50%.
-void AI_Smart_Safeguard_Conv(uint8_t* hl){
+static void AI_Smart_Safeguard(uint8_t* hl){
     // CALL(aAICheckPlayerHalfHP);
     // RET_C ;
     // CALL(aAI_80_20);
     // RET_C ;
-    if(AICheckPlayerHalfHP_Conv() && !AI_80_20_Conv()) {
+    if(AICheckPlayerHalfHP() && !AI_80_20()) {
         // INC_hl;
         (*hl)++;
     }
     // RET;
 }
 
-void AI_Smart_Magnitude(void){
-    return AI_Smart_Earthquake();
+static void AI_Smart_Magnitude(uint8_t* hl){
+    return AI_Smart_Earthquake(hl);
 }
 
-void AI_Smart_Earthquake(void){
-//  Greatly encourage this move if the player is underground and the enemy is faster.
-    LD_A_addr(wLastPlayerCounterMove);
-    CP_A(DIG);
-    RET_NZ ;
-
-    LD_A_addr(wPlayerSubStatus3);
-    BIT_A(SUBSTATUS_UNDERGROUND);
-    IF_Z goto could_dig;
-
-    CALL(aAICompareSpeed);
-    RET_NC ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-
-could_dig:
-// Try to predict if the player will use Dig this turn.
-
-// 50% chance to encourage this move if the enemy is slower than the player.
-    CALL(aAICompareSpeed);
-    RET_C ;
-
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_Earthquake_Conv(uint8_t* hl){
+static void AI_Smart_Earthquake(uint8_t* hl){
 //  Greatly encourage this move if the player is underground and the enemy is faster.
     // LD_A_addr(wLastPlayerCounterMove);
     // CP_A(DIG);
@@ -5360,13 +3449,13 @@ void AI_Smart_Earthquake_Conv(uint8_t* hl){
     // 50% chance to encourage this move if the enemy is slower than the player.
         // CALL(aAICompareSpeed);
         // RET_C ;
-        if(AICompareSpeed_Conv())
+        if(AICompareSpeed())
             return;
 
         // CALL(aAI_50_50);
         // RET_C ;
 
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
             // DEC_hl;
             (*hl)--;
             // RET;
@@ -5375,7 +3464,7 @@ void AI_Smart_Earthquake_Conv(uint8_t* hl){
 
     // CALL(aAICompareSpeed);
     // RET_NC ;
-    if(AICompareSpeed_Conv()) {
+    if(AICompareSpeed()) {
         // DEC_hl;
         // DEC_hl;
         (*hl) -= 2;
@@ -5383,52 +3472,33 @@ void AI_Smart_Earthquake_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_BatonPass(void){
 //  Discourage this move if the player hasn't shown super-effective moves against the enemy.
 //  Consider player's type(s) if its moves are unknown.
-
-    PUSH_HL;
-    CALLFAR(aCheckPlayerMoveTypeMatchups);
-    LD_A_addr(wEnemyAISwitchScore);
-    CP_A(BASE_AI_SWITCH_SCORE);
-    POP_HL;
-    RET_C ;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_Pursuit(void){
-//  50% chance to greatly encourage this move if player's HP is below 25%.
-//  80% chance to discourage this move otherwise.
-
-    CALL(aAICheckPlayerQuarterHP);
-    IF_NC goto encourage;
-    CALL(aAI_80_20);
-    RET_C ;
-    INC_hl;
-    RET;
-
-
-encourage:
-    CALL(aAI_50_50);
-    RET_C ;
-    DEC_hl;
-    DEC_hl;
-    RET;
-
+static void AI_Smart_BatonPass(uint8_t* hl){
+    // PUSH_HL;
+    // CALLFAR(aCheckPlayerMoveTypeMatchups);
+    uint8_t score = CheckPlayerMoveTypeMatchups_Conv();
+    // LD_A_addr(wEnemyAISwitchScore);
+    // CP_A(BASE_AI_SWITCH_SCORE);
+    // POP_HL;
+    // RET_C ;
+    if(score < BASE_AI_SWITCH_SCORE)
+        return;
+    // INC_hl;
+    (*hl)++;
+    // RET;
 }
 
 //  50% chance to greatly encourage this move if player's HP is below 25%.
 //  80% chance to discourage this move otherwise.
-void AI_Smart_Pursuit_Conv(uint8_t* hl){
+static void AI_Smart_Pursuit(uint8_t* hl){
     // CALL(aAICheckPlayerQuarterHP);
     // IF_NC goto encourage;
-    if(AICheckPlayerQuarterHP_Conv()) {
+    if(AICheckPlayerQuarterHP()) {
     // encourage:
         // CALL(aAI_50_50);
         // RET_C ;
-        if(AI_50_50_Conv()) {
+        if(AI_50_50()) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -5437,43 +3507,16 @@ void AI_Smart_Pursuit_Conv(uint8_t* hl){
     }
     // CALL(aAI_80_20);
     // RET_C ;
-    if(!AI_80_20_Conv()) {
+    if(!AI_80_20()) {
         // INC_hl;
         (*hl)++;
     }
     // RET;
 }
 
-void AI_Smart_RapidSpin(void){
 //  80% chance to greatly encourage this move if the enemy is
 //  trapped (Bind effect), seeded, or scattered with spikes.
-
-    LD_A_addr(wEnemyWrapCount);
-    AND_A_A;
-    IF_NZ goto encourage;
-
-    LD_A_addr(wEnemySubStatus4);
-    BIT_A(SUBSTATUS_LEECH_SEED);
-    IF_NZ goto encourage;
-
-    LD_A_addr(wEnemyScreens);
-    BIT_A(SCREENS_SPIKES);
-    RET_Z ;
-
-
-encourage:
-    CALL(aAI_80_20);
-    RET_C ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-//  80% chance to greatly encourage this move if the enemy is
-//  trapped (Bind effect), seeded, or scattered with spikes.
-void AI_Smart_RapidSpin_Conv(uint8_t* hl){
+static void AI_Smart_RapidSpin(uint8_t* hl){
     // LD_A_addr(wEnemyWrapCount);
     // AND_A_A;
     // IF_NZ goto encourage;
@@ -5491,7 +3534,7 @@ void AI_Smart_RapidSpin_Conv(uint8_t* hl){
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
-        if(!AI_80_20_Conv()) {
+        if(!AI_80_20()) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -5500,49 +3543,7 @@ void AI_Smart_RapidSpin_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_HiddenPower(void){
-    PUSH_HL;
-    LD_A(1);
-    LDH_addr_A(hBattleTurn);
-
-//  Calculate Hidden Power's type and base power based on enemy's DVs.
-    CALLFAR(aHiddenPowerDamage);
-    CALLFAR(aBattleCheckTypeMatchup);
-    POP_HL;
-
-//  Discourage Hidden Power if not very effective.
-    LD_A_addr(wTypeMatchup);
-    CP_A(EFFECTIVE);
-    IF_C goto bad;
-
-//  Discourage Hidden Power if its base power    is lower than 50.
-    LD_A_D;
-    CP_A(50);
-    IF_C goto bad;
-
-//  Encourage Hidden Power if super-effective.
-    LD_A_addr(wTypeMatchup);
-    CP_A(EFFECTIVE + 1);
-    IF_NC goto good;
-
-//  Encourage Hidden Power if its base power is 70.
-    LD_A_D;
-    CP_A(70);
-    RET_C ;
-
-
-good:
-    DEC_hl;
-    RET;
-
-
-bad:
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_HiddenPower_Conv(uint8_t* hl){
+static void AI_Smart_HiddenPower(uint8_t* hl){
     // PUSH_HL;
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
@@ -5590,138 +3591,69 @@ void AI_Smart_HiddenPower_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_RainDance(void){
 //  Greatly discourage this move if it would favour the player type-wise.
 //  Particularly, if the player is a Water-type.
-    LD_A_addr(wBattleMonType1);
-    CP_A(WATER);
-    JR_Z (mAIBadWeatherType);
-    CP_A(FIRE);
-    JR_Z (mAIGoodWeatherType);
-
-    LD_A_addr(wBattleMonType2);
-    CP_A(WATER);
-    JR_Z (mAIBadWeatherType);
-    CP_A(FIRE);
-    JR_Z (mAIGoodWeatherType);
-
-    PUSH_HL;
-    LD_HL(mRainDanceMoves);
-    JR(mAI_Smart_WeatherMove);
-
-// INCLUDE "data/battle/ai/rain_dance_moves.asm"
-
-    return AI_Smart_SunnyDay();
-}
-
-//  Greatly discourage this move if it would favour the player type-wise.
-//  Particularly, if the player is a Water-type.
-void AI_Smart_RainDance_Conv(uint8_t* hl){
+static void AI_Smart_RainDance(uint8_t* hl){
     // LD_A_addr(wBattleMonType1);
     // CP_A(WATER);
     // JR_Z (mAIBadWeatherType);
     if(wram->wBattleMon.type1 == WATER)
-        return AIBadWeatherType_Conv(hl);
+        return AIBadWeatherType(hl);
     // CP_A(FIRE);
     // JR_Z (mAIGoodWeatherType);
     if(wram->wBattleMon.type1 == FIRE)
-        return AIGoodWeatherType_Conv(hl);
+        return AIGoodWeatherType(hl);
 
     // LD_A_addr(wBattleMonType2);
     // CP_A(WATER);
     // JR_Z (mAIBadWeatherType);
     if(wram->wBattleMon.type2 == WATER)
-        return AIBadWeatherType_Conv(hl);
+        return AIBadWeatherType(hl);
     // CP_A(FIRE);
     // JR_Z (mAIGoodWeatherType);
     if(wram->wBattleMon.type2 == FIRE)
-        return AIGoodWeatherType_Conv(hl);
+        return AIGoodWeatherType(hl);
 
     // PUSH_HL;
     // LD_HL(mRainDanceMoves);
     // JR(mAI_Smart_WeatherMove);
 
 // INCLUDE "data/battle/ai/rain_dance_moves.asm"
-    return AI_Smart_WeatherMove_Conv(hl, RainDanceMoves);
-}
-
-void AI_Smart_SunnyDay(void){
-//  Greatly discourage this move if it would favour the player type-wise.
-//  Particularly, if the player is a Fire-type.
-    LD_A_addr(wBattleMonType1);
-    CP_A(FIRE);
-    JR_Z (mAIBadWeatherType);
-    CP_A(WATER);
-    JR_Z (mAIGoodWeatherType);
-
-    LD_A_addr(wBattleMonType2);
-    CP_A(FIRE);
-    JR_Z (mAIBadWeatherType);
-    CP_A(WATER);
-    JR_Z (mAIGoodWeatherType);
-
-    PUSH_HL;
-    LD_HL(mSunnyDayMoves);
-
-// fallthrough
-
-    return AI_Smart_WeatherMove();
+    return AI_Smart_WeatherMove(hl, RainDanceMoves);
 }
 
 //  Greatly discourage this move if it would favour the player type-wise.
 //  Particularly, if the player is a Fire-type.
-void AI_Smart_SunnyDay_Conv(uint8_t* hl){
+static void AI_Smart_SunnyDay(uint8_t* hl){
     // LD_A_addr(wBattleMonType1);
     // CP_A(FIRE);
     // JR_Z (mAIBadWeatherType);
     if(wram->wBattleMon.type1 == FIRE)
-        return AIBadWeatherType_Conv(hl);
+        return AIBadWeatherType(hl);
     // CP_A(WATER);
     // JR_Z (mAIGoodWeatherType);
     if(wram->wBattleMon.type1 == WATER)
-        return AIGoodWeatherType_Conv(hl);
+        return AIGoodWeatherType(hl);
 
     // LD_A_addr(wBattleMonType2);
     // CP_A(FIRE);
     // JR_Z (mAIBadWeatherType);
     if(wram->wBattleMon.type2 == FIRE)
-        return AIBadWeatherType_Conv(hl);
+        return AIBadWeatherType(hl);
     // CP_A(WATER);
     // JR_Z (mAIGoodWeatherType);
     if(wram->wBattleMon.type2 == WATER)
-        return AIGoodWeatherType_Conv(hl);
+        return AIGoodWeatherType(hl);
 
     // PUSH_HL;
     // LD_HL(mSunnyDayMoves);
 
 // fallthrough
 
-    return AI_Smart_WeatherMove_Conv(hl, SunnyDayMoves);
+    return AI_Smart_WeatherMove(hl, SunnyDayMoves);
 }
 
-void AI_Smart_WeatherMove(void){
-//  Rain Dance, Sunny Day
-
-//  Greatly discourage this move if the enemy doesn't have
-//  one of the useful Rain Dance or Sunny Day moves.
-    CALL(aAIHasMoveInArray);
-    POP_HL;
-    JR_NC (mAIBadWeatherType);
-
-//  Greatly discourage this move if player's HP is below 50%.
-    CALL(aAICheckPlayerHalfHP);
-    JR_NC (mAIBadWeatherType);
-
-//  50% chance to encourage this move otherwise.
-    CALL(aAI_50_50);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_WeatherMove_Conv(uint8_t* hl, const move_t* moves){
+static void AI_Smart_WeatherMove(uint8_t* hl, const move_t* moves){
 //  Rain Dance, Sunny Day
 
 //  Greatly discourage this move if the enemy doesn't have
@@ -5729,34 +3661,26 @@ void AI_Smart_WeatherMove_Conv(uint8_t* hl, const move_t* moves){
     // CALL(aAIHasMoveInArray);
     // POP_HL;
     // JR_NC (mAIBadWeatherType);
-    if(!AIHasMoveInArray_Conv(moves))
-        return AIBadWeatherType_Conv(hl);
+    if(!AIHasMoveInArray(moves))
+        return AIBadWeatherType(hl);
 
 //  Greatly discourage this move if player's HP is below 50%.
     // CALL(aAICheckPlayerHalfHP);
     // JR_NC (mAIBadWeatherType);
-    if(AICheckPlayerHalfHP_Conv())
-        return AIBadWeatherType_Conv(hl);
+    if(AICheckPlayerHalfHP())
+        return AIBadWeatherType(hl);
 
 //  50% chance to encourage this move otherwise.
     // CALL(aAI_50_50);
     // RET_C ;
-    if(AI_50_50_Conv()) {
+    if(AI_50_50()) {
         // DEC_hl;
         (*hl)--;
         // RET;
     }
 }
 
-void AIBadWeatherType(void){
-    INC_hl;
-    INC_hl;
-    INC_hl;
-    RET;
-
-}
-
-void AIBadWeatherType_Conv(uint8_t* hl){
+static void AIBadWeatherType(uint8_t* hl){
     // INC_hl;
     // INC_hl;
     // INC_hl;
@@ -5764,42 +3688,13 @@ void AIBadWeatherType_Conv(uint8_t* hl){
     // RET;
 }
 
-void AIGoodWeatherType(void){
-//  Rain Dance, Sunny Day
-
-//  Greatly encourage this move if it would disfavour the player type-wise and player's HP is above 50%...
-    CALL(aAICheckPlayerHalfHP);
-    RET_NC ;
-
-//  ...as long as one of the following conditions meet:
-//  It's the first turn of the player's Pokemon.
-    LD_A_addr(wPlayerTurnsTaken);
-    AND_A_A;
-    IF_Z goto good;
-
-//  Or it's the first turn of the enemy's Pokemon.
-    LD_A_addr(wEnemyTurnsTaken);
-    AND_A_A;
-    RET_NZ ;
-
-
-good:
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-// INCLUDE "data/battle/ai/sunny_day_moves.asm"
-
-    return AI_Smart_BellyDrum();
-}
-
-void AIGoodWeatherType_Conv(uint8_t* hl){
+static void AIGoodWeatherType(uint8_t* hl){
 //  Rain Dance, Sunny Day
 
 //  Greatly encourage this move if it would disfavour the player type-wise and player's HP is above 50%...
     // CALL(aAICheckPlayerHalfHP);
     // RET_NC ;
-    if(AICheckPlayerHalfHP_Conv())
+    if(AICheckPlayerHalfHP())
         return;
 
 //  ...as long as one of the following conditions meet:
@@ -5823,48 +3718,23 @@ void AIGoodWeatherType_Conv(uint8_t* hl){
 // INCLUDE "data/battle/ai/sunny_day_moves.asm"
 }
 
-void AI_Smart_BellyDrum(void){
 //  Dismiss this move if enemy's attack is higher than +2 or if enemy's HP is below 50%.
 //  Else, discourage this move if enemy's HP is not full.
-
-    LD_A_addr(wEnemyAtkLevel);
-    CP_A(BASE_STAT_LEVEL + 3);
-    IF_NC goto discourage;
-
-    CALL(aAICheckEnemyMaxHP);
-    RET_C ;
-
-    INC_hl;
-
-    CALL(aAICheckEnemyHalfHP);
-    RET_C ;
-
-
-discourage:
-    LD_A_hl;
-    ADD_A(5);
-    LD_hl_A;
-    RET;
-
-}
-
-//  Dismiss this move if enemy's attack is higher than +2 or if enemy's HP is below 50%.
-//  Else, discourage this move if enemy's HP is not full.
-void AI_Smart_BellyDrum_Conv(uint8_t* hl){
+static void AI_Smart_BellyDrum(uint8_t* hl){
     // LD_A_addr(wEnemyAtkLevel);
     // CP_A(BASE_STAT_LEVEL + 3);
     // IF_NC goto discourage;
     if(wram->wEnemyAtkLevel < BASE_STAT_LEVEL + 3) {
         // CALL(aAICheckEnemyMaxHP);
         // RET_C ;
-        if(!AICheckEnemyMaxHP_Conv()) {
+        if(!AICheckEnemyMaxHP()) {
             // INC_hl;
             (*hl)++;
         }
 
         // CALL(aAICheckEnemyHalfHP);
         // RET_C ;
-        if(!AICheckEnemyHalfHP_Conv())
+        if(!AICheckEnemyHalfHP())
             return;
     }
 
@@ -5876,69 +3746,7 @@ void AI_Smart_BellyDrum_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_PsychUp(void){
-    PUSH_HL;
-    LD_HL(wEnemyAtkLevel);
-    LD_B(NUM_LEVEL_STATS);
-    LD_C(100);
-
-//  Calculate the sum of all enemy's stat level modifiers. Add 100 first to prevent underflow.
-//  Put the result in c. c will range between 58 and 142.
-
-enemy_loop:
-    LD_A_hli;
-    SUB_A(BASE_STAT_LEVEL);
-    ADD_A_C;
-    LD_C_A;
-    DEC_B;
-    IF_NZ goto enemy_loop;
-
-//  Calculate the sum of all player's stat level modifiers. Add 100 first to prevent underflow.
-//  Put the result in d. d will range between 58 and 142.
-    LD_HL(wPlayerAtkLevel);
-    LD_B(NUM_LEVEL_STATS);
-    LD_D(100);
-
-
-player_loop:
-    LD_A_hli;
-    SUB_A(BASE_STAT_LEVEL);
-    ADD_A_D;
-    LD_D_A;
-    DEC_B;
-    IF_NZ goto player_loop;
-
-//  Greatly discourage this move if enemy's stat levels are higher than player's (if c>=d).
-    LD_A_C;
-    SUB_A_D;
-    POP_HL;
-    IF_NC goto discourage;
-
-//  Else, 80% chance to encourage this move unless player's accuracy level is lower than -1...
-    LD_A_addr(wPlayerAccLevel);
-    CP_A(BASE_STAT_LEVEL - 1);
-    RET_C ;
-
-//  ...or enemy's evasion level is higher than +0.
-    LD_A_addr(wEnemyEvaLevel);
-    CP_A(BASE_STAT_LEVEL + 1);
-    RET_NC ;
-
-    CALL(aAI_80_20);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-
-discourage:
-    INC_hl;
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_PsychUp_Conv(uint8_t* hl){
+static void AI_Smart_PsychUp(uint8_t* hl){
     // PUSH_HL;
     // LD_HL(wEnemyAtkLevel);
     // LD_B(NUM_LEVEL_STATS);
@@ -6003,83 +3811,14 @@ void AI_Smart_PsychUp_Conv(uint8_t* hl){
     // RET_C ;
     if(wram->wPlayerAccLevel >= BASE_STAT_LEVEL - 1 
     && wram->wEnemyEvaLevel  <  BASE_STAT_LEVEL + 1
-    && !AI_80_20_Conv()) {
+    && !AI_80_20()) {
         // DEC_hl;
         (*hl)--;
         // RET;
     }
 }
 
-void AI_Smart_MirrorCoat(void){
-    PUSH_HL;
-    LD_HL(wPlayerUsedMoves);
-    LD_C(NUM_MOVES);
-    LD_B(0);
-
-
-playermoveloop:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto skipmove;
-
-    CALL(aAIGetEnemyMove);
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
-    AND_A_A;
-    IF_Z goto skipmove;
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_TYPE);
-    CP_A(SPECIAL);
-    IF_C goto skipmove;
-
-    INC_B;
-
-
-skipmove:
-    DEC_C;
-    IF_NZ goto playermoveloop;
-
-    POP_HL;
-    LD_A_B;
-    AND_A_A;
-    IF_Z goto discourage;
-
-    CP_A(3);
-    IF_NC goto encourage;
-
-    LD_A_addr(wLastPlayerCounterMove);
-    AND_A_A;
-    IF_Z goto done;
-
-    CALL(aAIGetEnemyMove);
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
-    AND_A_A;
-    IF_Z goto done;
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_TYPE);
-    CP_A(SPECIAL);
-    IF_C goto done;
-
-
-encourage:
-    CALL(aRandom);
-    CP_A(39 percent + 1);
-    IF_C goto done;
-    DEC_hl;
-
-
-done:
-    RET;
-
-
-discourage:
-    INC_hl;
-    RET;
-
-}
-
-void AI_Smart_MirrorCoat_Conv(uint8_t* hl){
+static void AI_Smart_MirrorCoat(uint8_t* hl){
     // PUSH_HL;
     // LD_HL(wPlayerUsedMoves);
     // LD_C(NUM_MOVES);
@@ -6096,7 +3835,7 @@ void AI_Smart_MirrorCoat_Conv(uint8_t* hl){
             continue;
 
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
@@ -6139,7 +3878,7 @@ void AI_Smart_MirrorCoat_Conv(uint8_t* hl){
             return;
 
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(wram->wLastPlayerCounterMove);
+        const struct Move* mv = AIGetEnemyMove(wram->wLastPlayerCounterMove);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
@@ -6164,43 +3903,12 @@ void AI_Smart_MirrorCoat_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Twister(void){
-    return AI_Smart_Gust();
-}
-
-void AI_Smart_Gust(void){
-//  Greatly encourage this move if the player is flying and the enemy is faster.
-    LD_A_addr(wLastPlayerCounterMove);
-    CP_A(FLY);
-    RET_NZ ;
-
-    LD_A_addr(wPlayerSubStatus3);
-    BIT_A(SUBSTATUS_FLYING);
-    IF_Z goto couldFly;
-
-    CALL(aAICompareSpeed);
-    RET_NC ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-//  Try to predict if the player will use Fly this turn.
-
-couldFly:
-
-//  50% chance to encourage this move if the enemy is slower than the player.
-    CALL(aAICompareSpeed);
-    RET_C ;
-    CALL(aAI_50_50);
-    RET_C ;
-    DEC_hl;
-    RET;
-
+static void AI_Smart_Twister(uint8_t* hl){
+    return AI_Smart_Gust(hl);
 }
 
 //  Greatly encourage this move if the player is flying and the enemy is faster.
-void AI_Smart_Gust_Conv(uint8_t* hl){
+static void AI_Smart_Gust(uint8_t* hl){
     // LD_A_addr(wLastPlayerCounterMove);
     // CP_A(FLY);
     // RET_NZ ;
@@ -6212,7 +3920,7 @@ void AI_Smart_Gust_Conv(uint8_t* hl){
             // CALL(aAICompareSpeed);
             // RET_NC ;
 
-            if(AICompareSpeed_Conv()) {
+            if(AICompareSpeed()) {
                 // DEC_hl;
                 // DEC_hl;
                 *hl -= 2;
@@ -6229,7 +3937,7 @@ void AI_Smart_Gust_Conv(uint8_t* hl){
             // RET_C ;
             // CALL(aAI_50_50);
             // RET_C ;
-            if(!AICompareSpeed_Conv() && !AI_50_50_Conv()) {
+            if(!AICompareSpeed() && !AI_50_50()) {
                 // DEC_hl;
                 (*hl)--;
                 // RET;
@@ -6239,26 +3947,9 @@ void AI_Smart_Gust_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_FutureSight(void){
 //  Greatly encourage this move if the player is
 //  flying or underground, and slower than the enemy.
-
-    CALL(aAICompareSpeed);
-    RET_NC ;
-
-    LD_A_addr(wPlayerSubStatus3);
-    AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
-    RET_Z ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-//  Greatly encourage this move if the player is
-//  flying or underground, and slower than the enemy.
-void AI_Smart_FutureSight_Conv(uint8_t* hl){
+static void AI_Smart_FutureSight(uint8_t* hl){
     // CALL(aAICompareSpeed);
     // RET_NC ;
 
@@ -6266,7 +3957,7 @@ void AI_Smart_FutureSight_Conv(uint8_t* hl){
     // AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
     // RET_Z ;
 
-    if(AICompareSpeed_Conv() && (wram->wPlayerSubStatus3 & ((1 << SUBSTATUS_FLYING) | (1 << SUBSTATUS_UNDERGROUND)))) {
+    if(AICompareSpeed() && (wram->wPlayerSubStatus3 & ((1 << SUBSTATUS_FLYING) | (1 << SUBSTATUS_UNDERGROUND)))) {
         // DEC_hl;
         // DEC_hl;
         *hl -= 2;
@@ -6274,23 +3965,8 @@ void AI_Smart_FutureSight_Conv(uint8_t* hl){
     // RET;
 }
 
-void AI_Smart_Stomp(void){
 //  80% chance to encourage this move if the player has used Minimize.
-
-    LD_A_addr(wPlayerMinimized);
-    AND_A_A;
-    RET_Z ;
-
-    CALL(aAI_80_20);
-    RET_C ;
-
-    DEC_hl;
-    RET;
-
-}
-
-//  80% chance to encourage this move if the player has used Minimize.
-void AI_Smart_Stomp_Conv(uint8_t* hl){
+static void AI_Smart_Stomp(uint8_t* hl){
     // LD_A_addr(wPlayerMinimized);
     // AND_A_A;
     // RET_Z ;
@@ -6299,47 +3975,16 @@ void AI_Smart_Stomp_Conv(uint8_t* hl){
     // RET_C ;
 
     
-    if(wram->wPlayerMinimized && !AI_80_20_Conv()) {
+    if(wram->wPlayerMinimized && !AI_80_20()) {
         // DEC_hl;
         // RET;
         (*hl)--;
     }
 }
 
-void AI_Smart_Solarbeam(void){
 //  80% chance to encourage this move when it's sunny.
 //  90% chance to discourage this move when it's raining.
-
-    LD_A_addr(wBattleWeather);
-    CP_A(WEATHER_SUN);
-    IF_Z goto encourage;
-
-    CP_A(WEATHER_RAIN);
-    RET_NZ ;
-
-    CALL(aRandom);
-    CP_A(10 percent);
-    RET_C ;
-
-    INC_hl;
-    INC_hl;
-    RET;
-
-
-encourage:
-    CALL(aAI_80_20);
-    RET_C ;
-
-    DEC_hl;
-    DEC_hl;
-    RET;
-
-}
-
-void AI_Smart_Solarbeam_Conv(uint8_t* hl){
-//  80% chance to encourage this move when it's sunny.
-//  90% chance to discourage this move when it's raining.
-
+static void AI_Smart_Solarbeam(uint8_t* hl){
     // LD_A_addr(wBattleWeather);
     // CP_A(WEATHER_SUN);
     // IF_Z goto encourage;
@@ -6347,7 +3992,7 @@ void AI_Smart_Solarbeam_Conv(uint8_t* hl){
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
-        if(!AI_80_20_Conv()) {
+        if(!AI_80_20()) {
             // DEC_hl;
             // DEC_hl;
             *hl -= 2;
@@ -6373,24 +4018,8 @@ void AI_Smart_Solarbeam_Conv(uint8_t* hl){
     }
 }
 
-void AI_Smart_Thunder(void){
 //  90% chance to discourage this move when it's sunny.
-
-    LD_A_addr(wBattleWeather);
-    CP_A(WEATHER_SUN);
-    RET_NZ ;
-
-    CALL(aRandom);
-    CP_A(10 percent);
-    RET_C ;
-
-    INC_hl;
-    RET;
-
-}
-
-//  90% chance to discourage this move when it's sunny.
-void AI_Smart_Thunder_Conv(uint8_t* hl){
+static void AI_Smart_Thunder(uint8_t* hl){
     // LD_A_addr(wBattleWeather);
     // CP_A(WEATHER_SUN);
     // RET_NZ ;
@@ -6406,25 +4035,8 @@ void AI_Smart_Thunder_Conv(uint8_t* hl){
     }
 }
 
-void AICompareSpeed(void){
 //  Return carry if enemy is faster than player.
-
-    PUSH_BC;
-    LD_A_addr(wEnemyMonSpeed + 1);
-    LD_B_A;
-    LD_A_addr(wBattleMonSpeed + 1);
-    CP_A_B;
-    LD_A_addr(wEnemyMonSpeed);
-    LD_B_A;
-    LD_A_addr(wBattleMonSpeed);
-    SBC_A_B;
-    POP_BC;
-    RET;
-
-}
-
-//  Return carry if enemy is faster than player.
-bool AICompareSpeed_Conv(void){
+bool AICompareSpeed(void){
     // PUSH_BC;
     uint16_t eSpeed = (wram->wEnemyMon.speed[0] << 8) | wram->wEnemyMon.speed[1];
     uint16_t pSpeed = (wram->wBattleMon.speed[0] << 8) | wram->wBattleMon.speed[1];
@@ -6441,38 +4053,17 @@ bool AICompareSpeed_Conv(void){
     return eSpeed > pSpeed;
 }
 
-void AICheckPlayerMaxHP(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LD_DE(wBattleMonHP);
-    LD_HL(wBattleMonMaxHP);
-    JR(mAICheckMaxHP);
-
-}
-
-bool AICheckPlayerMaxHP_Conv(void){
+bool AICheckPlayerMaxHP(void){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
     // LD_DE(wBattleMonHP);
     // LD_HL(wBattleMonMaxHP);
     // JR(mAICheckMaxHP);
-    return AICheckMaxHP_Conv(wram->wBattleMon.hp, wram->wBattleMon.maxHP);
+    return AICheckMaxHP(wram->wBattleMon.hp, wram->wBattleMon.maxHP);
 }
 
-void AICheckEnemyMaxHP(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LD_DE(wEnemyMonHP);
-    LD_HL(wEnemyMonMaxHP);
-// fallthrough
-
-    return AICheckMaxHP();
-}
-
-bool AICheckEnemyMaxHP_Conv(void){
+bool AICheckEnemyMaxHP(void){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -6480,40 +4071,11 @@ bool AICheckEnemyMaxHP_Conv(void){
     // LD_HL(wEnemyMonMaxHP);
 // fallthrough
 
-    return AICheckMaxHP_Conv(wram->wEnemyMon.hp, wram->wEnemyMon.maxHP);
-}
-
-void AICheckMaxHP(void){
-//  Return carry if hp at de matches max hp at hl.
-
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    IF_NZ goto not_max;
-
-    INC_HL;
-    LD_A_de;
-    CP_A_hl;
-    IF_NZ goto not_max;
-
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    SCF;
-    RET;
-
-
-not_max:
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    AND_A_A;
-    RET;
-
+    return AICheckMaxHP(wram->wEnemyMon.hp, wram->wEnemyMon.maxHP);
 }
 
 //  Return carry if hp at de matches max hp at hl.
-bool AICheckMaxHP_Conv(uint16_t hp, uint16_t maxHP){
+bool AICheckMaxHP(uint16_t hp, uint16_t maxHP){
     // LD_A_de;
     // INC_DE;
     // CP_A_hl;
@@ -6539,26 +4101,7 @@ bool AICheckMaxHP_Conv(uint16_t hp, uint16_t maxHP){
     // RET;
 }
 
-void AICheckPlayerHalfHP(void){
-    PUSH_HL;
-    LD_HL(wBattleMonHP);
-    LD_B_hl;
-    INC_HL;
-    LD_C_hl;
-    SLA_C;
-    RL_B;
-    INC_HL;
-    INC_HL;
-    LD_A_hld;
-    CP_A_C;
-    LD_A_hl;
-    SBC_A_B;
-    POP_HL;
-    RET;
-
-}
-
-bool AICheckPlayerHalfHP_Conv(void){
+bool AICheckPlayerHalfHP(void){
     // PUSH_HL;
     // LD_HL(wBattleMonHP);
     // LD_B_hl;
@@ -6579,30 +4122,7 @@ bool AICheckPlayerHalfHP_Conv(void){
     return (hp * 2) < maxHP;
 }
 
-void AICheckEnemyHalfHP(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LD_HL(wEnemyMonHP);
-    LD_B_hl;
-    INC_HL;
-    LD_C_hl;
-    SLA_C;
-    RL_B;
-    INC_HL;
-    INC_HL;
-    LD_A_hld;
-    CP_A_C;
-    LD_A_hl;
-    SBC_A_B;
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-}
-
-bool AICheckEnemyHalfHP_Conv(void){
+bool AICheckEnemyHalfHP(void){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -6627,32 +4147,7 @@ bool AICheckEnemyHalfHP_Conv(void){
     return (hp * 2) < maxHP;
 }
 
-void AICheckEnemyQuarterHP(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LD_HL(wEnemyMonHP);
-    LD_B_hl;
-    INC_HL;
-    LD_C_hl;
-    SLA_C;
-    RL_B;
-    SLA_C;
-    RL_B;
-    INC_HL;
-    INC_HL;
-    LD_A_hld;
-    CP_A_C;
-    LD_A_hl;
-    SBC_A_B;
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-}
-
-bool AICheckEnemyQuarterHP_Conv(void){
+bool AICheckEnemyQuarterHP(void){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -6679,28 +4174,7 @@ bool AICheckEnemyQuarterHP_Conv(void){
     return (hp * 4) < maxHP;
 }
 
-void AICheckPlayerQuarterHP(void){
-    PUSH_HL;
-    LD_HL(wBattleMonHP);
-    LD_B_hl;
-    INC_HL;
-    LD_C_hl;
-    SLA_C;
-    RL_B;
-    SLA_C;
-    RL_B;
-    INC_HL;
-    INC_HL;
-    LD_A_hld;
-    CP_A_C;
-    LD_A_hl;
-    SBC_A_B;
-    POP_HL;
-    RET;
-
-}
-
-bool AICheckPlayerQuarterHP_Conv(void){
+bool AICheckPlayerQuarterHP(void){
     // PUSH_HL;
     // LD_HL(wBattleMonHP);
     // LD_B_hl;
@@ -6723,44 +4197,8 @@ bool AICheckPlayerQuarterHP_Conv(void){
     return (hp * 4) < maxHP;
 }
 
-void AIHasMoveEffect(void){
 //  Return carry if the enemy has move b.
-
-    PUSH_HL;
-    LD_HL(wEnemyMonMoves);
-    LD_C(NUM_MOVES);
-
-
-checkmove:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto no;
-
-    CALL(aAIGetEnemyMove);
-
-    LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
-    CP_A_B;
-    IF_Z goto yes;
-
-    DEC_C;
-    IF_NZ goto checkmove;
-
-
-no:
-    POP_HL;
-    AND_A_A;
-    RET;
-
-
-yes:
-    POP_HL;
-    SCF;
-    RET;
-
-}
-
-//  Return carry if the enemy has move b.
-bool AIHasMoveEffect_Conv(uint8_t b){
+bool AIHasMoveEffect(uint8_t b){
     // PUSH_HL;
     // LD_HL(wEnemyMonMoves);
     // LD_C(NUM_MOVES);
@@ -6775,7 +4213,7 @@ bool AIHasMoveEffect_Conv(uint8_t b){
             return false;
 
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
         // CP_A_B;
@@ -6799,47 +4237,8 @@ bool AIHasMoveEffect_Conv(uint8_t b){
     // RET;
 }
 
-void AIHasMoveInArray(void){
 //  Return carry if the enemy has a move in array hl.
-
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-
-
-next:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto done;
-
-    LD_B_A;
-    LD_C(NUM_MOVES + 1);
-    LD_DE(wEnemyMonMoves);
-
-
-check:
-    DEC_C;
-    IF_Z goto next;
-
-    LD_A_de;
-    INC_DE;
-    CP_A_B;
-    IF_NZ goto check;
-
-    SCF;
-
-
-done:
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-// INCLUDE "data/battle/ai/useful_moves.asm"
-}
-
-//  Return carry if the enemy has a move in array hl.
-bool AIHasMoveInArray_Conv(const move_t* hl){
+bool AIHasMoveInArray(const move_t* hl){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -6888,18 +4287,18 @@ void AI_Opportunist(void){
 //  Do nothing if enemy's HP is above 50%.
     // CALL(aAICheckEnemyHalfHP);
     // RET_C ;
-    if(!AICheckEnemyHalfHP_Conv())
+    if(!AICheckEnemyHalfHP())
         return;
 
 //  Discourage stall moves if enemy's HP is below 25%.
     // CALL(aAICheckEnemyQuarterHP);
     // IF_NC goto lowhp;
-    if(!AICheckEnemyQuarterHP_Conv()) {
+    if(!AICheckEnemyQuarterHP()) {
 
     //  50% chance to discourage stall moves if enemy's HP is between 25% and 50%.
         // CALL(aAI_50_50);
         // RET_C ;
-        if(AI_50_50_Conv())
+        if(AI_50_50())
             return;
     }
 
@@ -6983,7 +4382,7 @@ void AI_Aggressive(void){
         // PUSH_DE;
         // PUSH_BC;
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
         // IF_Z goto nodamage;
@@ -7053,7 +4452,7 @@ void AI_Aggressive(void){
                 continue;
 
             // CALL(aAIGetEnemyMove);
-            const struct Move* mv = AIGetEnemyMove_Conv(a2);
+            const struct Move* mv = AIGetEnemyMove(a2);
 
         //  Ignore this move if its power is 0 or 1.
         //  Moves such as Seismic Toss, Hidden Power,
@@ -7198,7 +4597,7 @@ void AI_Status(void){
 
         // INC_DE;
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
         // CP_A(EFFECT_TOXIC);
@@ -7216,7 +4615,7 @@ void AI_Status(void){
             if(wram->wBattleMon.type1 == POISON || wram->wBattleMon.type2 == POISON) {
             // immune:
                 // CALL(aAIDiscourageMove);
-                AIDiscourageMove_Conv(hl + i);
+                AIDiscourageMove(hl + i);
                 continue;
             }
         }
@@ -7256,7 +4655,7 @@ void AI_Status(void){
         if(matchup == 0) {
         // immune:
             // CALL(aAIDiscourageMove);
-            AIDiscourageMove_Conv(hl + i);
+            AIDiscourageMove(hl + i);
             continue;
         }
         // goto checkmove;
@@ -7291,7 +4690,7 @@ void AI_Risky(void){
         // PUSH_BC;
         // PUSH_HL;
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove_Conv(a);
+        const struct Move* mv = AIGetEnemyMove(a);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
@@ -7308,7 +4707,7 @@ void AI_Risky(void){
         if(IsInU8Array(RiskyEffects, mv->effect)) {
             // CALL(aAICheckEnemyMaxHP);
             // IF_C goto nextmove;
-            if(AICheckEnemyMaxHP_Conv())
+            if(AICheckEnemyMaxHP())
                 continue;
 
         //  Else, 80% chance to exclude them.
@@ -7358,15 +4757,7 @@ void AI_None(void){
     // RET;
 }
 
-void AIDiscourageMove(void){
-    LD_A_hl;
-    ADD_A(10);
-    LD_hl_A;
-    RET;
-
-}
-
-void AIDiscourageMove_Conv(uint8_t* hl){
+static void AIDiscourageMove(uint8_t* hl){
     // LD_A_hl;
     // ADD_A(10);
     // LD_hl_A;
@@ -7374,30 +4765,8 @@ void AIDiscourageMove_Conv(uint8_t* hl){
     // RET;
 }
 
-void AIGetEnemyMove(void){
 //  Load attributes of move a into ram
-
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    DEC_A;
-    LD_HL(mMoves);
-    LD_BC(MOVE_LENGTH);
-    CALL(aAddNTimes);
-
-    LD_DE(wEnemyMoveStruct);
-    LD_A(BANK(aMoves));
-    CALL(aFarCopyBytes);
-
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-}
-
-//  Load attributes of move a into ram
-const struct Move* AIGetEnemyMove_Conv(move_t a){
+static const struct Move* AIGetEnemyMove(move_t a){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -7418,32 +4787,18 @@ const struct Move* AIGetEnemyMove_Conv(move_t a){
     return &wram->wEnemyMoveStruct;
 }
 
-void AI_80_20(void){
-    CALL(aRandom);
-    CP_A(20 percent - 1);
-    RET;
-
-}
-
 // 20% chance to return carry/true.
 // 80% chance to return nc/false
-bool AI_80_20_Conv(void){
+static bool AI_80_20(void){
     // CALL(aRandom);
     // CP_A(20 percent - 1);
     // RET;
     return Random() < 20 percent - 1;
 }
 
-void AI_50_50(void){
-    CALL(aRandom);
-    CP_A(50 percent + 1);
-    RET;
-
-}
-
 // 50% chance to return carry/true.
 // 50% chance to return nc/false
-bool AI_50_50_Conv(void){
+static bool AI_50_50(void){
     // CALL(aRandom);
     // CP_A(50 percent + 1);
     // RET;

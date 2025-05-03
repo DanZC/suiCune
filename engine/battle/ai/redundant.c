@@ -271,7 +271,7 @@ bool AI_Redundant_Conv(uint8_t c){
         // FARCALL(aAICheckEnemyMaxHP);
         // IF_NC return false;
         // return true;
-        return AICheckEnemyMaxHP_Conv();
+        return AICheckEnemyMaxHP();
     //dbw ['EFFECT_LIGHT_SCREEN', '.LightScreen']
     case EFFECT_LIGHT_SCREEN:
     // LightScreen:

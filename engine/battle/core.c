@@ -14301,7 +14301,7 @@ void GetBattleMonBackpic(void){
     // LD_HL(mBattleAnimCmd_RaiseSub);
     // JR_NZ (mGetBattleMonBackpic_DoAnim);  // substitute
     if(bit_test(wram->wPlayerSubStatus4, SUBSTATUS_SUBSTITUTE)) {
-        return GetBattleMonBackpic_DoAnim_Conv(BattleAnimCmd_RaiseSub);
+        return GetBattleMonBackpic_DoAnim_Conv(BattleAnimCmd_RaiseSub_Conv);
     }
 
     return DropPlayerSub();
@@ -14313,7 +14313,7 @@ void DropPlayerSub(void){
     // LD_HL(mBattleAnimCmd_MinimizeOpp);
     // JR_NZ (mGetBattleMonBackpic_DoAnim);
     if(wram->wPlayerMinimized != 0)
-        return GetBattleMonBackpic_DoAnim_Conv(BattleAnimCmd_MinimizeOpp);
+        return GetBattleMonBackpic_DoAnim_Conv(BattleAnimCmd_MinimizeOpp_Conv);
     // LD_A_addr(wCurPartySpecies);
     // PUSH_AF;
     species_t species = wram->wCurPartySpecies;

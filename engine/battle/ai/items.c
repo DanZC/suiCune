@@ -312,11 +312,11 @@ static bool AI_Items_HealItem(uint8_t bc){
     // CheckHalfOrQuarterHP:
         // CALLFAR(aAICheckEnemyHalfHP);
         // JP_C (mAI_Items_DontUse);
-        if(!AICheckEnemyHalfHP_Conv())
+        if(!AICheckEnemyHalfHP())
             return AI_Items_DontUse();
         // CALLFAR(aAICheckEnemyQuarterHP);
         // JP_NC (mAI_Items_UseHealItem);
-        if(AICheckEnemyQuarterHP_Conv())
+        if(AICheckEnemyQuarterHP())
             return AI_Items_Use();
         // CALL(aRandom);
         // CP_A(20 percent - 1);
@@ -330,7 +330,7 @@ static bool AI_Items_HealItem(uint8_t bc){
     }
     // CALLFAR(aAICheckEnemyHalfHP);
     // JP_C (mAI_Items_DontUse);
-    if(!AICheckEnemyHalfHP_Conv())
+    if(!AICheckEnemyHalfHP())
         return AI_Items_DontUse();
     // LD_A_bc;
     // BIT_A(UNKNOWN_USE_F);
@@ -339,7 +339,7 @@ static bool AI_Items_HealItem(uint8_t bc){
     // CheckQuarterHP:
         // CALLFAR(aAICheckEnemyQuarterHP);
         // JP_C (mAI_Items_DontUse);
-        if(!AICheckEnemyQuarterHP_Conv())
+        if(!AICheckEnemyQuarterHP())
             return AI_Items_DontUse();
         // CALL(aRandom);
         // CP_A(20 percent - 1);
@@ -351,7 +351,7 @@ static bool AI_Items_HealItem(uint8_t bc){
     }
     // CALLFAR(aAICheckEnemyQuarterHP);
     // JP_NC (mAI_Items_UseHealItem);
-    if(!AICheckEnemyQuarterHP_Conv())
+    if(!AICheckEnemyQuarterHP())
         return AI_Items_DontUse();
     // CALL(aRandom);
     // CP_A(50 percent + 1);

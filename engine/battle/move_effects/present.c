@@ -69,7 +69,7 @@ void BattleCommand_Present(void){
             // AND_A_A;
             // IF_Z goto got_hp_fn_pointer;
             // LD_HL(mAICheckEnemyMaxHP);
-            bool (*fn)(void) = (hram->hBattleTurn == TURN_PLAYER)? AICheckPlayerMaxHP_Conv: AICheckEnemyMaxHP_Conv;
+            bool (*fn)(void) = (hram->hBattleTurn == TURN_PLAYER)? AICheckPlayerMaxHP: AICheckEnemyMaxHP;
 
         // got_hp_fn_pointer:
             // LD_A(BANK(aAICheckPlayerMaxHP));  // aka BANK(AICheckEnemyMaxHP)
