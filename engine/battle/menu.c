@@ -5,19 +5,6 @@
 
 static void PrintParkBallsRemaining(void);
 
-void LoadBattleMenu(void){
-    LD_HL(mBattleMenuHeader);
-    CALL(aLoadMenuHeader);
-    LD_A_addr(wBattleMenuCursorPosition);
-    LD_addr_A(wMenuCursorPosition);
-    CALL(aInterpretBattleMenu);
-    LD_A_addr(wMenuCursorPosition);
-    LD_addr_A(wBattleMenuCursorPosition);
-    CALL(aExitMenu);
-    RET;
-
-}
-
 const struct MenuHeader BattleMenuHeader = {
     .flags = MENU_BACKUP_TILES,
     .coord = menu_coords(8, 12, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
@@ -38,7 +25,7 @@ const struct MenuHeader BattleMenuHeader = {
     }
 };
 
-bool LoadBattleMenu_Conv(void){
+bool LoadBattleMenu(void){
     // LD_HL(mBattleMenuHeader);
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(&BattleMenuHeader);

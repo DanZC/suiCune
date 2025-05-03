@@ -31,7 +31,7 @@ void BattleCommand_Substitute(void){
     // already_has_sub:
         // CALL(aCheckUserIsCharging);
         // CALL_NZ (aBattleCommand_RaiseSub);
-        if(CheckUserIsCharging_Conv())
+        if(CheckUserIsCharging())
             BattleCommand_RaiseSub();
         // LD_HL(mHasSubstituteText);
         // goto jp_stdbattletextbox;
@@ -64,7 +64,7 @@ void BattleCommand_Substitute(void){
     // too_weak_to_sub:
         // CALL(aCheckUserIsCharging);
         // CALL_NZ (aBattleCommand_RaiseSub);
-        if(CheckUserIsCharging_Conv())
+        if(CheckUserIsCharging())
             BattleCommand_RaiseSub();
         // LD_HL(mTooWeakSubText);
 
@@ -113,7 +113,7 @@ void BattleCommand_Substitute(void){
         wram->wBattleAnimParam = 0;
         // LD_A(SUBSTITUTE);
         // CALL(aLoadAnim);
-        LoadAnim_Conv(SUBSTITUTE);
+        LoadAnim(SUBSTITUTE);
         // goto finish;
     }
     else {

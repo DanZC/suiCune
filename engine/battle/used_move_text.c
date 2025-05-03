@@ -6,6 +6,8 @@
 #include "../../data/text/battle.h"
 #include "effect_commands.h"
 
+static void UpdateUsedMoves(move_t a);
+
 void DisplayUsedMoveText(void){
     // LD_HL(mUsedMoveText);
     // CALL(aBattleTextbox);
@@ -26,7 +28,7 @@ void UsedMoveText_Function(struct TextCmdState* state) {
     if(hram->hBattleTurn == TURN_PLAYER) {
         // LD_A_addr(wPlayerMoveStruct + MOVE_ANIM);
         // CALL(aUpdateUsedMoves);
-        UpdateUsedMoves_Conv(wram->wPlayerMoveStruct.animation);
+        UpdateUsedMoves(wram->wPlayerMoveStruct.animation);
     }
 
 // start:
@@ -49,7 +51,7 @@ void UsedMoveText_Function(struct TextCmdState* state) {
     // FARCALL(aCheckUserIsCharging);
     // POP_HL;
     // IF_NZ goto grammar;
-    if(!CheckUserIsCharging_Conv()) {
+    if(!CheckUserIsCharging()) {
 
     // update last move
         // LD_A_addr(wMoveGrammar);
@@ -233,71 +235,11 @@ end:
 
 // INCLUDE "data/moves/grammar.asm"
 
-    return UpdateUsedMoves();
-}
-
-void UpdateUsedMoves(void){
-//  append move a to wPlayerUsedMoves unless it has already been used
-
-    PUSH_BC;
-//  start of list
-    LD_HL(wPlayerUsedMoves);
-//  get move id
-    LD_B_A;
-//  next count
-    LD_C(NUM_MOVES);
-
-
-loop:
-//  get move from the list
-    LD_A_hli;
-//  not used yet?
-    AND_A_A;
-    IF_Z goto add;
-//  already used?
-    CP_A_B;
-    IF_Z goto quit;
-//  next byte
-    DEC_C;
-    IF_NZ goto loop;
-
-//  if the list is full and the move hasn't already been used
-//  shift the list back one byte, deleting the first move used
-//  this can occur with struggle or a new learned move
-    LD_HL(wPlayerUsedMoves + 1);
-//  1 = 2
-    LD_A_hld;
-    LD_hli_A;
-//  2 = 3
-    INC_HL;
-    LD_A_hld;
-    LD_hli_A;
-//  3 = 4
-    INC_HL;
-    LD_A_hld;
-    LD_hl_A;
-//  4 = new move
-    LD_A_B;
-    LD_addr_A(wPlayerUsedMoves + 3);
-    goto quit;
-
-
-add:
-//  go back to the byte we just inced from
-    DEC_HL;
-//  add the new move
-    LD_hl_B;
-
-
-quit:
-//  list updated
-    POP_BC;
-    RET;
-
+    // return UpdateUsedMoves();
 }
 
 //  append move a to wPlayerUsedMoves unless it has already been used
-void UpdateUsedMoves_Conv(move_t a){
+static void UpdateUsedMoves(move_t a){
     // PUSH_BC;
 //  start of list
     // LD_HL(wPlayerUsedMoves);

@@ -13,7 +13,7 @@ void BattleCommand_LockOn(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // IF_NZ goto fail;
-    if(CheckSubstituteOpp_Conv() || wram->wAttackMissed) {
+    if(CheckSubstituteOpp() || wram->wAttackMissed) {
     // fail:
         // CALL(aAnimateFailedMove);
         AnimateFailedMove();

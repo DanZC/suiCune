@@ -36,7 +36,7 @@ void BattleCommand_Counter(void){
 
     // CALL(aCheckOpponentWentFirst);
     // RET_Z ;
-    if(wram->wTypeMatchup == 0 || !CheckOpponentWentFirst_Conv())
+    if(wram->wTypeMatchup == 0 || !CheckOpponentWentFirst())
         return;
 
     struct Move temp;
@@ -45,7 +45,7 @@ void BattleCommand_Counter(void){
     // DEC_A;
     // LD_DE(wStringBuffer1);
     // CALL(aGetMoveData);
-    GetMoveData_Conv(&temp, move - 1);
+    GetMoveData(&temp, move - 1);
 
     // LD_A_addr(wStringBuffer1 + MOVE_POWER);
     // AND_A_A;

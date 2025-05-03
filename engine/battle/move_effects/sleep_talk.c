@@ -177,7 +177,7 @@ void BattleCommand_SleepTalk(void){
     *move = e;
     // CALL(aCheckUserIsCharging);
     // IF_NZ goto charging;
-    if(!CheckUserIsCharging_Conv()) {
+    if(!CheckUserIsCharging()) {
         // LD_A_addr(wBattleAnimParam);
         uint8_t param = wram->wBattleAnimParam;
         // PUSH_AF;

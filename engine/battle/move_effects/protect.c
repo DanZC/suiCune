@@ -114,7 +114,7 @@ bool ProtectChance_Conv(void){
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_SUBSTITUTE);
     // IF_NZ goto failed;
-    if(!CheckOpponentWentFirst_Conv() && !bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_SUBSTITUTE)) {
+    if(!CheckOpponentWentFirst() && !bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS4), SUBSTATUS_SUBSTITUTE)) {
     //  Halve the chance of a successful Protect for each consecutive use.
         // LD_B(0xff);
         uint8_t b = 0xff;

@@ -17,7 +17,7 @@ void BattleCommand_Attract(void){
     // IF_NZ goto failed;
     if(!wram->wAttackMissed
     && CheckOppositeGender_Conv(wram->wCurBattleMon)
-    && !CheckHiddenOpponent_Conv()) {
+    && !CheckHiddenOpponent()) {
         // LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
         // CALL(aGetBattleVarAddr);
         uint8_t* hl = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1_OPP);

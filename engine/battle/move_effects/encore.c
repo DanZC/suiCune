@@ -77,7 +77,7 @@ void BattleCommand_Encore(void){
     *de = (v_BattleRandom_Conv() & 0x3) + 3;
     // CALL(aCheckOpponentWentFirst);
     // IF_NZ goto finish_move;
-    if(!CheckOpponentWentFirst_Conv()) {
+    if(!CheckOpponentWentFirst()) {
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_Z goto force_last_enemy_move;
@@ -125,7 +125,7 @@ void BattleCommand_Encore(void){
             // DEC_A;
             // LD_DE(wPlayerMoveStruct);
             // CALL(aGetMoveData);
-            GetMoveData_Conv(&wram->wPlayerMoveStruct, pmove);
+            GetMoveData(&wram->wPlayerMoveStruct, pmove);
             // goto finish_move;
         }
         else {
@@ -173,7 +173,7 @@ void BattleCommand_Encore(void){
             // DEC_A;
             // LD_DE(wEnemyMoveStruct);
             // CALL(aGetMoveData);
-            GetMoveData_Conv(&wram->wEnemyMoveStruct, emove);
+            GetMoveData(&wram->wEnemyMoveStruct, emove);
         }
     }
 

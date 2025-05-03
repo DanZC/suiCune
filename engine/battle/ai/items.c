@@ -1236,7 +1236,7 @@ void EnemyUsedXItem(item_t item, uint8_t b){
     PrintText_UsedItemOn();
     // POP_BC;
     // FARCALL(aRaiseStat);
-    RaiseStat_Conv(b);
+    RaiseStat(b);
     // JP(mAIUpdateHUD);
     AIUpdateHUD();
 }

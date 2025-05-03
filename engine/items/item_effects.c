@@ -706,10 +706,10 @@ void PokeBallEffect(void){
 #if BUGFIX_HELD_ITEM_CATCH_CHANCE
         // ld b, a
             // FARCALL(aGetItemHeldEffect);
-            uint16_t held_effect = GetItemHeldEffect_Conv(wram->wBattleMon.item);
+            uint16_t held_effect = GetItemHeldEffect(wram->wBattleMon.item);
 #else
             // FARCALL(aGetItemHeldEffect);
-            uint16_t held_effect = GetItemHeldEffect_Conv(b);
+            uint16_t held_effect = GetItemHeldEffect(b);
 #endif
             // LD_A_B;
             // CP_A(HELD_CATCH_CHANCE);
@@ -3385,7 +3385,7 @@ void XItemEffect(void){
     // LD_addr_A(wEffectFailed);
     wram->wEffectFailed = FALSE;
     // FARCALL(aRaiseStat);
-    RaiseStat_Conv(hl->stat);
+    RaiseStat(hl->stat);
     // CALL(aWaitSFX);
     WaitSFX();
 

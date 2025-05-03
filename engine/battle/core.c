@@ -844,10 +844,10 @@ bool DetermineMoveOrder(void){
         // CALL(aSetPlayerTurn);
         SetPlayerTurn();
         // CALLFAR(aGetUserItem);
-        userEff = GetUserItem_Conv(&userItem);
+        userEff = GetUserItem(&userItem);
         // PUSH_BC;
         // CALLFAR(aGetOpponentItem);
-        enemyEff = GetOpponentItem_Conv(&enemyItem);
+        enemyEff = GetOpponentItem(&enemyItem);
         // POP_DE;
         // LD_A_D;
         // CP_A(HELD_QUICK_CLAW);
@@ -2407,7 +2407,7 @@ static void HandleLeftovers_do_it(void) {
     item_t item;
     // CALLFAR(aGetUserItem);
     // LD_A_hl;
-    uint16_t effect = GetUserItem_Conv(&item);
+    uint16_t effect = GetUserItem(&item);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
     GetItemName(item);
@@ -2482,7 +2482,7 @@ void HandleLeftovers(void){
 static void HandleMysteryberry_do_it(void){
     item_t userItem;
     // CALLFAR(aGetUserItem);
-    uint16_t itemEffect = GetUserItem_Conv(&userItem);
+    uint16_t itemEffect = GetUserItem(&userItem);
     // LD_A_B;
     // CP_A(HELD_RESTORE_PP);
     // IF_NZ goto quit;
@@ -4398,7 +4398,7 @@ void WinTrainerBattle(void){
     if(wram->wLinkMode == 0x0)
         PlayVictoryMusic();
     // CALLFAR(aBattle_GetTrainerName);
-    Battle_GetTrainerName_Conv();
+    Battle_GetTrainerName();
     // LD_HL(mBattleText_EnemyWasDefeated);
     // CALL(aStdBattleTextbox);
     StdBattleTextbox(BattleText_EnemyWasDefeated);
@@ -6010,7 +6010,7 @@ void LookUpTheEffectivenessOfEveryMove(uint8_t b){
         // CALL(aSetEnemyTurn);
         SetEnemyTurn();
         // CALLFAR(aBattleCheckTypeMatchup);
-        matchup = BattleCheckTypeMatchup_Conv();
+        matchup = BattleCheckTypeMatchup();
         // POP_BC;
         // POP_DE;
         // POP_HL;
@@ -6055,7 +6055,7 @@ void IsThePlayerMonTypesEffectiveAgainstOTMon(uint8_t b){
     // CALL(aSetPlayerTurn);
     SetPlayerTurn();
     // CALLFAR(aBattleCheckTypeMatchup);
-    uint8_t matchup = BattleCheckTypeMatchup_Conv();
+    uint8_t matchup = BattleCheckTypeMatchup();
     // LD_A_addr(wTypeMatchup);
     // CP_A(EFFECTIVE + 1);
     // IF_NC goto super_effective;
@@ -6064,7 +6064,7 @@ void IsThePlayerMonTypesEffectiveAgainstOTMon(uint8_t b){
         // LD_addr_A(wPlayerMoveStruct + MOVE_TYPE);
         wram->wPlayerMoveStruct.type = wram->wBattleMon.type2;
         // CALLFAR(aBattleCheckTypeMatchup);
-        matchup = BattleCheckTypeMatchup_Conv();
+        matchup = BattleCheckTypeMatchup();
         // LD_A_addr(wTypeMatchup);
         // CP_A(EFFECTIVE + 1);
         // IF_NC goto super_effective;
@@ -6420,7 +6420,7 @@ bool OfferSwitch_Conv(void){
     // PUSH_AF;
     uint8_t cur = wram->wCurPartyMon;
     // CALLFAR(aBattle_GetTrainerName);
-    Battle_GetTrainerName_Conv();
+    Battle_GetTrainerName();
     // LD_HL(mBattleText_EnemyIsAboutToUseWillPlayerChangeMon);
     // CALL(aStdBattleTextbox);
     StdBattleTextbox(BattleText_EnemyIsAboutToUseWillPlayerChangeMon);
@@ -6515,7 +6515,7 @@ void ClearEnemyMonBox_Conv(void){
 void ShowBattleTextEnemySentOut(void){
     PEEK("");
     // CALLFAR(aBattle_GetTrainerName);
-    Battle_GetTrainerName_Conv();
+    Battle_GetTrainerName();
     // LD_HL(mBattleText_EnemySentOut);
     // CALL(aStdBattleTextbox);
     StdBattleTextbox(BattleText_EnemySentOut);
@@ -7184,7 +7184,7 @@ bool TryToRunAwayFromBattle_Conv(const struct BattleMon* hl, const struct Battle
     // LD_addr_A(wNamedObjectIndex);
     // LD_B_A;
     // CALLFAR(aGetItemHeldEffect);
-    uint16_t effect = GetItemHeldEffect_Conv(wram->wBattleMon.item);
+    uint16_t effect = GetItemHeldEffect(wram->wBattleMon.item);
     // LD_A_B;
     // CP_A(HELD_ESCAPE);
     // POP_DE;
@@ -7966,7 +7966,7 @@ void HandleHealingItems(void){
 void HandleHPHealingItem(void){
     item_t item;
     // CALLFAR(aGetOpponentItem);
-    uint16_t itemEffect = GetOpponentItem_Conv(&item);
+    uint16_t itemEffect = GetOpponentItem(&item);
     // LD_A_B;
     // CP_A(HELD_BERRY);
     // RET_NZ ;
@@ -8075,7 +8075,7 @@ void UseOpponentItem(void){
     // CALL(aRefreshBattleHuds);
     RefreshBattleHuds();
     // CALLFAR(aGetOpponentItem);
-    GetOpponentItem_Conv(&item);
+    GetOpponentItem(&item);
     // LD_A_hl;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);
@@ -8115,7 +8115,7 @@ void ItemRecoveryAnim(void){
 
 bool UseHeldStatusHealingItem(void){
     // CALLFAR(aGetOpponentItem);
-    uint16_t item_effect = GetOpponentItem_Conv(NULL);
+    uint16_t item_effect = GetOpponentItem(NULL);
     // LD_HL(mHeldStatusHealingEffects);
     const uint8_t* hl = HeldStatusHealingEffects;
 
@@ -8214,7 +8214,7 @@ void UseConfusionHealingItem(void){
         return;
     // CALLFAR(aGetOpponentItem);
     item_t item;
-    uint16_t effect = GetOpponentItem_Conv(&item);
+    uint16_t effect = GetOpponentItem(&item);
     // LD_A_B;
     // CP_A(HELD_HEAL_CONFUSION);
     // IF_Z goto heal_status;
@@ -8282,7 +8282,7 @@ static void HandleStatBoostingHeldItems_HandleItem(item_t* hl, item_t* bc, uint8
     // LD_A_bc;
     // LD_B_A;
     // CALLFAR(aGetItemHeldEffect);
-    uint16_t effect = HIGH(GetItemHeldEffect_Conv(*bc));
+    uint16_t effect = HIGH(GetItemHeldEffect(*bc));
     // LD_HL(mHeldStatUpItems);
     const struct EffectFunc* list = HeldStatUpItems;
 
@@ -9507,7 +9507,7 @@ bool LoadBattleMenu2(void){
     // IF_Z goto mobile;
     if(!IsMobileBattle_Conv()) {
         // FARCALL(aLoadBattleMenu);
-        LoadBattleMenu_Conv();
+        LoadBattleMenu();
         // AND_A_A;
         // RET;
         return false;
@@ -10042,7 +10042,7 @@ void CheckAmuletCoin_Conv(void){
     // LD_A_B;
     // CP_A(HELD_AMULET_COIN);
     // RET_NZ ;
-    if(HIGH(GetItemHeldEffect_Conv(wram->wBattleMon.item)) == HELD_AMULET_COIN) {
+    if(HIGH(GetItemHeldEffect(wram->wBattleMon.item)) == HELD_AMULET_COIN) {
         // LD_A(1);
         // LD_addr_A(wAmuletCoin);
         wram->wAmuletCoin = TRUE;
@@ -11136,7 +11136,7 @@ InitDVs:
 //  All trainers have preset DVs, determined by class
 //  See GetTrainerDVs for more on that
     // FARCALL(aGetTrainerDVs);
-    uint16_t bc = GetTrainerDVs_Conv(wram->wOtherTrainerClass);
+    uint16_t bc = GetTrainerDVs(wram->wOtherTrainerClass);
 //  These are the DVs we'll use if we're actually in a trainer battle
     // LD_A_addr(wBattleMode);
     // DEC_A;
@@ -14509,15 +14509,15 @@ void BattleIntro(void){
     // LDH_addr_A(hMapAnims);
     hram->hMapAnims = FALSE;
     // FARCALL(aPlayBattleMusic);
-    PlayBattleMusic_Conv();
+    PlayBattleMusic();
     // FARCALL(aShowLinkBattleParticipants);
-    ShowLinkBattleParticipants_Conv();
+    ShowLinkBattleParticipants();
     // FARCALL(aFindFirstAliveMonAndStartBattle);
     FindFirstAliveMonAndStartBattle();
     // CALL(aDisableSpriteUpdates);
     DisableSpriteUpdates();
     // FARCALL(aClearBattleRAM);
-    ClearBattleRAM_Conv();
+    ClearBattleRAM();
     // CALL(aInitEnemy);
     InitEnemy();
     // CALL(aBackUpBGMap2);
@@ -14695,7 +14695,7 @@ void InitEnemyTrainer_Conv(uint8_t tclass){
     // LD_addr_A(wTempEnemyMonSpecies);
     wram->wTempEnemyMonSpecies = 0;
     // CALLFAR(aGetTrainerAttributes);
-    GetTrainerAttributes_Conv(tclass);
+    GetTrainerAttributes(tclass);
     // CALLFAR(aReadTrainerParty);
     ReadTrainerParty();
 
@@ -16153,7 +16153,7 @@ void BattleStartMessage(void){
         DelayFrames(20);
 
         // FARCALL(aBattle_GetTrainerName);
-        Battle_GetTrainerName_Conv();
+        Battle_GetTrainerName();
 
         // LD_HL(mWantsToBattleText);
         // goto PlaceBattleStartText;

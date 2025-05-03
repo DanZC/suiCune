@@ -11,7 +11,7 @@ void BattleCommand_LeechSeed(void){
     // IF_NZ goto evaded;
     // CALL(aCheckSubstituteOpp);
     // IF_NZ goto evaded;
-    if(wram->wAttackMissed || CheckSubstituteOpp_Conv())
+    if(wram->wAttackMissed || CheckSubstituteOpp())
         goto evaded;
 
     // LD_DE(wEnemyMonType1);

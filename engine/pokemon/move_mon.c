@@ -669,7 +669,7 @@ bool GeneratePartyMonStats_Conv(struct PartyMon* hl, species_t species, uint8_t 
     else {
         // PUSH_HL;
         // FARCALL(aGetTrainerDVs);
-        bc = GetTrainerDVs_Conv(wram->wOtherTrainerClass);
+        bc = GetTrainerDVs(wram->wOtherTrainerClass);
         // POP_HL;
         // goto initializeDVs;
     }

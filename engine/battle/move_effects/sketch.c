@@ -26,7 +26,7 @@ void BattleCommand_Sketch(void){
 //  If the opponent has a substitute up, fail.
     // CALL(aCheckSubstituteOpp);
     // JP_NZ (mBattleCommand_Sketch_fail);
-    if(CheckSubstituteOpp_Conv())
+    if(CheckSubstituteOpp())
         goto fail;
 #if BUGFIX_TRANSFORM_SKETCH
 //  If the user is transformed, fail.
@@ -119,7 +119,7 @@ void BattleCommand_Sketch(void){
     // DEC_A;
     // LD_HL(mMoves + MOVE_PP);
     // CALL(aGetMoveAttr);
-    const struct Move* data = GetMoveAttr_Conv(b-1);
+    const struct Move* data = GetMoveAttr(b-1);
     // POP_HL;
     // LD_BC(wBattleMonPP - wBattleMonMoves);
     // ADD_HL_BC;

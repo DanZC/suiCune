@@ -50,7 +50,7 @@ void BattleCommand_FutureSight(void){
 
     // CALL(aCheckUserIsCharging);
     // IF_NZ goto AlreadyChargingFutureSight;
-    if(!CheckUserIsCharging_Conv()) {
+    if(!CheckUserIsCharging()) {
         // LD_A(BATTLE_VARS_MOVE_ANIM);
         // CALL(aGetBattleVar);
         // LD_B_A;

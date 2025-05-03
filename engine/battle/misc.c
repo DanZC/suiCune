@@ -13,11 +13,11 @@ struct PicCoords {
     uint8_t c;
 };
 
-static struct PicCoords GetEnemyFrontpicCoords_Conv(void) {
+static struct PicCoords GetEnemyFrontpicCoords(void) {
     return (struct PicCoords){.hl = coord(12, 0, wram->wTilemap), .b = 7, .c = 7};
 }
 
-static struct PicCoords GetPlayerBackpicCoords_Conv(void){
+static struct PicCoords GetPlayerBackpicCoords(void){
     return (struct PicCoords){.hl = coord(2, 6, wram->wTilemap), .b = 6, .c = 6};
 }
 
@@ -32,12 +32,12 @@ void v_DisappearUser(void){
     if(hram->hBattleTurn != TURN_PLAYER) {
         // CALL(aGetEnemyFrontpicCoords);
         // goto okay;
-        ccoords = GetEnemyFrontpicCoords_Conv();
+        ccoords = GetEnemyFrontpicCoords();
     }
     else {
     // player:
         // CALL(aGetPlayerBackpicCoords);
-        ccoords = GetPlayerBackpicCoords_Conv();
+        ccoords = GetPlayerBackpicCoords();
     }
 
 // okay:
@@ -72,7 +72,7 @@ void AppearUser(void){
     uint8_t a;
     if(hram->hBattleTurn != TURN_PLAYER) {
         // CALL(aGetEnemyFrontpicCoords);
-        ccoords = GetEnemyFrontpicCoords_Conv();
+        ccoords = GetEnemyFrontpicCoords();
         // XOR_A_A;
         a = 0;
         // goto okay;
@@ -80,7 +80,7 @@ void AppearUser(void){
     else {
     // player:
         // CALL(aGetPlayerBackpicCoords);
-        ccoords = GetPlayerBackpicCoords_Conv();
+        ccoords = GetPlayerBackpicCoords();
         // LD_A(0x31);
         a = 0x31;
     }
@@ -99,19 +99,19 @@ void FinishAppearDisappearUser(void){
     // RET;
 }
 
-void GetEnemyFrontpicCoords(void){
-    hlcoord(12, 0, wTilemap);
-    LD_BC((7 << 8) | 7);
-    RET;
+// void GetEnemyFrontpicCoords(void){
+//     hlcoord(12, 0, wTilemap);
+//     LD_BC((7 << 8) | 7);
+//     RET;
 
-}
+// }
 
-void GetPlayerBackpicCoords(void){
-    hlcoord(2, 6, wTilemap);
-    LD_BC((6 << 8) | 6);
-    RET;
+// void GetPlayerBackpicCoords(void){
+//     hlcoord(2, 6, wTilemap);
+//     LD_BC((6 << 8) | 6);
+//     RET;
 
-}
+// }
 
 static void DoWeatherModifiers_ApplyModifier(const uint8_t* de) {
     // XOR_A_A;

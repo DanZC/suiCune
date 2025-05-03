@@ -24,7 +24,7 @@ void BattleCommand_Nightmare(void){
     // CALL(aGetBattleVarAddr);
     // AND_A(SLP);
     // IF_Z goto failed;
-    if(CheckHiddenOpponent_Conv() || CheckSubstituteOpp_Conv() || (GetBattleVar(BATTLE_VARS_STATUS_OPP) & SLP) == 0)
+    if(CheckHiddenOpponent() || CheckSubstituteOpp() || (GetBattleVar(BATTLE_VARS_STATUS_OPP) & SLP) == 0)
         goto failed;
 
 //  Bail if the opponent is already having a nightmare.

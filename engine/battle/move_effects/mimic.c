@@ -28,7 +28,7 @@ void BattleCommand_Mimic(void){
 // player_turn:
     // CALL(aCheckHiddenOpponent);
     // IF_NZ goto fail;
-    if(CheckHiddenOpponent_Conv())
+    if(CheckHiddenOpponent())
         return FailMimic();
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);

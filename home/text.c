@@ -513,7 +513,7 @@ void PlaceEnemysName(struct TextPrintState* state) {
     PlaceString(&temp, state->hl);
     // PUSH_BC;
     // CALLFAR(aBattle_GetTrainerName);
-    uint8_t* s = Battle_GetTrainerName_Conv();
+    uint8_t* s = Battle_GetTrainerName();
     // POP_HL;
     // LD_DE(wStringBuffer1);
     // JR(mPlaceCommandCharacter);

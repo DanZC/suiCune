@@ -84,7 +84,7 @@ void BattleCommand_PainSplit(void){
     // JP_NZ (mBattleCommand_PainSplit_ButItFailed);
     // CALL(aCheckSubstituteOpp);
     // JP_NZ (mBattleCommand_PainSplit_ButItFailed);
-    if(wram->wAttackMissed || CheckSubstituteOpp_Conv()) {
+    if(wram->wAttackMissed || CheckSubstituteOpp()) {
     // ButItFailed:
         // JP(mPrintDidntAffect2);
         return PrintDidntAffect2();

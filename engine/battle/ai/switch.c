@@ -234,7 +234,7 @@ static void CheckPlayerMoveTypeMatchups_CheckEnemyMoveMatchups(uint8_t matchup) 
         // CALL(aGetMoveByte);
         // LD_HL(wBattleMonType1);
         // CALL(aCheckTypeMatchup);
-        uint8_t matchup2 = CheckTypeMatchup_Conv(Moves[a].type, wram->wBattleMon.types);
+        uint8_t matchup2 = CheckTypeMatchup(Moves[a].type, wram->wBattleMon.types);
 
         // LD_A_addr(wTypeMatchup);
     // immune
@@ -334,7 +334,7 @@ uint8_t CheckPlayerMoveTypeMatchups_Conv(void){
         uint8_t type = wram->wBattleMon.type1;
         // LD_HL(wEnemyMonType1);
         // CALL(aCheckTypeMatchup);
-        matchup = CheckTypeMatchup_Conv(type, wram->wEnemyMon.types);
+        matchup = CheckTypeMatchup(type, wram->wEnemyMon.types);
         // LD_A_addr(wTypeMatchup);
         // CP_A(EFFECTIVE + 1);  // 1.0 + 0.1
         // IF_C goto ok;
@@ -351,7 +351,7 @@ uint8_t CheckPlayerMoveTypeMatchups_Conv(void){
         // CP_A(EFFECTIVE + 1);  // 1.0 + 0.1
         // IF_C goto ok2;
         if(wram->wBattleMon.type2 != type
-        && (matchup = CheckTypeMatchup_Conv(wram->wBattleMon.type2, wram->wEnemyMon.types), matchup >= EFFECTIVE + 1)) {
+        && (matchup = CheckTypeMatchup(wram->wBattleMon.type2, wram->wEnemyMon.types), matchup >= EFFECTIVE + 1)) {
             // CALL(aCheckPlayerMoveTypeMatchups_DecreaseScore);
             --wram->wEnemyAISwitchScore;
         }
@@ -404,7 +404,7 @@ uint8_t CheckPlayerMoveTypeMatchups_Conv(void){
             uint8_t type = Moves[a].type;
             // LD_HL(wEnemyMonType);
             // CALL(aCheckTypeMatchup);
-            matchup = CheckTypeMatchup_Conv(type, wram->wEnemyMon.types);
+            matchup = CheckTypeMatchup(type, wram->wEnemyMon.types);
             // LD_A_addr(wTypeMatchup);
             // CP_A(EFFECTIVE + 1);  // 1.0 + 0.1
             // IF_NC goto super_effective;
@@ -987,7 +987,7 @@ uint8_t FindEnemyMonsImmuneToLastCounterMove_Conv(void){
                 // DEC_A;
                 // LD_HL(mMoves + MOVE_POWER);
                 // CALL(aGetMoveAttr);
-                const struct Move* move = GetMoveAttr_Conv(wram->wLastPlayerCounterMove);
+                const struct Move* move = GetMoveAttr(wram->wLastPlayerCounterMove);
                 // AND_A_A;
                 // IF_Z goto next;
                 if(move->power != 0) {
@@ -996,7 +996,7 @@ uint8_t FindEnemyMonsImmuneToLastCounterMove_Conv(void){
                     // CALL(aGetMoveByte);
                     // LD_HL(wBaseType);
                     // CALL(aCheckTypeMatchup);
-                    uint8_t matchup = CheckTypeMatchup_Conv(move->type, wram->wBaseType);
+                    uint8_t matchup = CheckTypeMatchup(move->type, wram->wBaseType);
                     // LD_A_addr(wTypeMatchup);
                     // AND_A_A;
                     // IF_NZ goto next;
@@ -1271,7 +1271,7 @@ uint8_t FindEnemyMonsWithASuperEffectiveMove_Conv(uint8_t c){
                 // DEC_A;
                 // LD_HL(mMoves + MOVE_POWER);
                 // CALL(aGetMoveAttr);
-                const struct Move* move = GetMoveAttr_Conv(hl->mon.moves[i]);
+                const struct Move* move = GetMoveAttr(hl->mon.moves[i]);
                 // AND_A_A;
                 // IF_Z goto nope;
                 if(move->power == 0)
@@ -1282,7 +1282,7 @@ uint8_t FindEnemyMonsWithASuperEffectiveMove_Conv(uint8_t c){
                 // CALL(aGetMoveByte);
                 // LD_HL(wBattleMonType1);
                 // CALL(aCheckTypeMatchup);
-                uint8_t matchup = CheckTypeMatchup_Conv(move->type, wram->wBattleMon.types);
+                uint8_t matchup = CheckTypeMatchup(move->type, wram->wBattleMon.types);
 
             // if immune or not very effective: continue
                 // LD_A_addr(wTypeMatchup);
@@ -1479,10 +1479,10 @@ uint8_t FindEnemyMonsThatResistPlayer_Conv(uint8_t c){
         // CALL(aGetMoveAttr);
         // AND_A_A;
         // IF_Z goto skip_move;
-        if(wram->wLastPlayerCounterMove != NO_MOVE && GetMoveAttr_Conv(wram->wLastPlayerCounterMove)->power != 0) {
+        if(wram->wLastPlayerCounterMove != NO_MOVE && GetMoveAttr(wram->wLastPlayerCounterMove)->power != 0) {
             // INC_HL;
             // CALL(aGetMoveByte);
-            type = GetMoveAttr_Conv(wram->wLastPlayerCounterMove)->type;
+            type = GetMoveAttr(wram->wLastPlayerCounterMove)->type;
             // goto check_type;
         }
         else {
@@ -1490,7 +1490,7 @@ uint8_t FindEnemyMonsThatResistPlayer_Conv(uint8_t c){
             // LD_A_addr(wBattleMonType1);
             // LD_HL(wBaseType);
             // CALL(aCheckTypeMatchup);
-            uint8_t matchup = CheckTypeMatchup_Conv(wram->wBattleMon.type1, wram->wBaseType);
+            uint8_t matchup = CheckTypeMatchup(wram->wBattleMon.type1, wram->wBaseType);
             // LD_A_addr(wTypeMatchup);
             // CP_A(10 + 1);
             // IF_NC goto dont_choose_mon;
@@ -1503,7 +1503,7 @@ uint8_t FindEnemyMonsThatResistPlayer_Conv(uint8_t c){
     // check_type:
         // LD_HL(wBaseType);
         // CALL(aCheckTypeMatchup);
-        uint8_t matchup = CheckTypeMatchup_Conv(type, wram->wBaseType);
+        uint8_t matchup = CheckTypeMatchup(type, wram->wBaseType);
         // LD_A_addr(wTypeMatchup);
         // CP_A(EFFECTIVE + 1);
         // IF_NC goto dont_choose_mon;

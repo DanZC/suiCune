@@ -6,6 +6,11 @@
 #include "../../data/moves/moves.h"
 #include "../pokemon/move_mon.h"
 
+static void TrainerType1(const struct TrainerParty* de);
+static void TrainerType2(const struct TrainerParty* de);
+static void TrainerType3(const struct TrainerParty* de);
+static void TrainerType4(const struct TrainerParty* de);
+
 void ReadTrainerParty(void){
     PEEK("");
     // LD_A_addr(wInBattleTowerBattle);
@@ -58,7 +63,7 @@ void ReadTrainerParty(void){
         uint8_t size = 0;
         for(; size < 6 && moves[size].species != 0xff && moves[size].level != 0xff; size++) {}
         struct TrainerParty p = {.pmoves = moves, .size = size};
-        TrainerType2_Conv(&p);
+        TrainerType2(&p);
         // CALL(aCloseSRAM);
         CloseSRAM();
         // goto done;
@@ -116,10 +121,10 @@ void ReadTrainerParty(void){
         // JP_hl;
         switch(de->trainer_type)
         {
-            case TRAINERTYPE_NORMAL: TrainerType1_Conv(de); break;
-            case TRAINERTYPE_MOVES: TrainerType2_Conv(de); break;
-            case TRAINERTYPE_ITEM: TrainerType3_Conv(de); break;
-            case TRAINERTYPE_ITEM_MOVES: TrainerType4_Conv(de); break;
+            case TRAINERTYPE_NORMAL: TrainerType1(de); break;
+            case TRAINERTYPE_MOVES: TrainerType2(de); break;
+            case TRAINERTYPE_ITEM: TrainerType3(de); break;
+            case TRAINERTYPE_ITEM_MOVES: TrainerType4(de); break;
             default: printf("Bad trainer type %d.\n", de->trainer_type); break;
         }
     }
@@ -129,47 +134,15 @@ done:
     return;
 }
 
-// void TrainerTypes(void){
-    //dw ['TrainerType1'];  // level, species
-    //dw ['TrainerType2'];  // level, species, moves
-    //dw ['TrainerType3'];  // level, species, item
-    //dw ['TrainerType4'];  // level, species, item, moves
-
-    // return TrainerType1();
-// }
-
 //  entries correspond to TRAINERTYPE_* constants
-void (*const TrainerTypes[])(void) = {
-    [TRAINERTYPE_NORMAL] = TrainerType1,
-    [TRAINERTYPE_MOVES] = TrainerType2,
-    [TRAINERTYPE_ITEM] = TrainerType3,
-    [TRAINERTYPE_ITEM_MOVES] = TrainerType4,
-};
+// void (*const TrainerTypes[])(void) = {
+    // [TRAINERTYPE_NORMAL] = TrainerType1,
+    // [TRAINERTYPE_MOVES] = TrainerType2,
+    // [TRAINERTYPE_ITEM] = TrainerType3,
+    // [TRAINERTYPE_ITEM_MOVES] = TrainerType4,
+// };
 
-void TrainerType1(void){
-//  normal (level, species)
-    LD_H_D;
-    LD_L_E;
-
-loop:
-    LD_A_hli;
-    CP_A(0xff);
-    RET_Z ;
-
-    LD_addr_A(wCurPartyLevel);
-    LD_A_hli;
-    LD_addr_A(wCurPartySpecies);
-    LD_A(OTPARTYMON);
-    LD_addr_A(wMonType);
-    PUSH_HL;
-    PREDEF(pTryAddMonToParty);
-    POP_HL;
-    goto loop;
-
-    return TrainerType2();
-}
-
-void TrainerType1_Conv(const struct TrainerParty* de){
+void TrainerType1(const struct TrainerParty* de){
 //  normal (level, species)
     // LD_H_D;
     // LD_L_E;
@@ -201,90 +174,7 @@ void TrainerType1_Conv(const struct TrainerParty* de){
     // return TrainerType2();
 }
 
-void TrainerType2(void){
-//  moves
-    LD_H_D;
-    LD_L_E;
-
-loop:
-    LD_A_hli;
-    CP_A(0xff);
-    RET_Z ;
-
-    LD_addr_A(wCurPartyLevel);
-    LD_A_hli;
-    LD_addr_A(wCurPartySpecies);
-    LD_A(OTPARTYMON);
-    LD_addr_A(wMonType);
-
-    PUSH_HL;
-    PREDEF(pTryAddMonToParty);
-    LD_A_addr(wOTPartyCount);
-    DEC_A;
-    LD_HL(wOTPartyMon1Moves);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-
-    LD_B(NUM_MOVES);
-
-copy_moves:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto copy_moves;
-
-    PUSH_HL;
-
-    LD_A_addr(wOTPartyCount);
-    DEC_A;
-    LD_HL(wOTPartyMon1Species);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    LD_HL(MON_PP);
-    ADD_HL_DE;
-    PUSH_HL;
-    LD_HL(MON_MOVES);
-    ADD_HL_DE;
-    POP_DE;
-
-    LD_B(NUM_MOVES);
-
-copy_pp:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto copied_pp;
-
-    PUSH_HL;
-    PUSH_BC;
-    DEC_A;
-    LD_HL(mMoves + MOVE_PP);
-    LD_BC(MOVE_LENGTH);
-    CALL(aAddNTimes);
-    LD_A(BANK(aMoves));
-    CALL(aGetFarByte);
-    POP_BC;
-    POP_HL;
-
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto copy_pp;
-
-copied_pp:
-
-    POP_HL;
-    goto loop;
-
-    return TrainerType3();
-}
-
-void TrainerType2_Conv(const struct TrainerParty* de){
+void TrainerType2(const struct TrainerParty* de){
 //  moves
     // LD_H_D;
     // LD_L_E;
@@ -380,40 +270,8 @@ void TrainerType2_Conv(const struct TrainerParty* de){
     // return TrainerType3();
 }
 
-void TrainerType3(void){
 //  item
-    LD_H_D;
-    LD_L_E;
-
-loop:
-    LD_A_hli;
-    CP_A(0xff);
-    RET_Z ;
-
-    LD_addr_A(wCurPartyLevel);
-    LD_A_hli;
-    LD_addr_A(wCurPartySpecies);
-    LD_A(OTPARTYMON);
-    LD_addr_A(wMonType);
-    PUSH_HL;
-    PREDEF(pTryAddMonToParty);
-    LD_A_addr(wOTPartyCount);
-    DEC_A;
-    LD_HL(wOTPartyMon1Item);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    LD_A_hli;
-    LD_de_A;
-    goto loop;
-
-    return TrainerType4();
-}
-
-//  item
-void TrainerType3_Conv(const struct TrainerParty* de){
+void TrainerType3(const struct TrainerParty* de){
     // LD_H_D;
     // LD_L_E;
 
@@ -451,105 +309,7 @@ void TrainerType3_Conv(const struct TrainerParty* de){
     // return TrainerType4();
 }
 
-void TrainerType4(void){
-//  item + moves
-    LD_H_D;
-    LD_L_E;
-
-loop:
-    LD_A_hli;
-    CP_A(0xff);
-    RET_Z ;
-
-    LD_addr_A(wCurPartyLevel);
-    LD_A_hli;
-    LD_addr_A(wCurPartySpecies);
-
-    LD_A(OTPARTYMON);
-    LD_addr_A(wMonType);
-
-    PUSH_HL;
-    PREDEF(pTryAddMonToParty);
-    LD_A_addr(wOTPartyCount);
-    DEC_A;
-    LD_HL(wOTPartyMon1Item);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-
-    LD_A_hli;
-    LD_de_A;
-
-    PUSH_HL;
-    LD_A_addr(wOTPartyCount);
-    DEC_A;
-    LD_HL(wOTPartyMon1Moves);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-
-    LD_B(NUM_MOVES);
-
-copy_moves:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto copy_moves;
-
-    PUSH_HL;
-
-    LD_A_addr(wOTPartyCount);
-    DEC_A;
-    LD_HL(wOTPartyMon1);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    LD_HL(MON_PP);
-    ADD_HL_DE;
-
-    PUSH_HL;
-    LD_HL(MON_MOVES);
-    ADD_HL_DE;
-    POP_DE;
-
-    LD_B(NUM_MOVES);
-
-copy_pp:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto copied_pp;
-
-    PUSH_HL;
-    PUSH_BC;
-    DEC_A;
-    LD_HL(mMoves + MOVE_PP);
-    LD_BC(MOVE_LENGTH);
-    CALL(aAddNTimes);
-    LD_A(BANK(aMoves));
-    CALL(aGetFarByte);
-    POP_BC;
-    POP_HL;
-
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto copy_pp;
-
-copied_pp:
-
-    POP_HL;
-    goto loop;
-
-    return ComputeTrainerReward();
-}
-
-void TrainerType4_Conv(const struct TrainerParty* de){
+void TrainerType4(const struct TrainerParty* de){
 //  item + moves
     // LD_H_D;
     // LD_L_E;
@@ -690,27 +450,13 @@ void ComputeTrainerReward(void){
 
 }
 
-void Battle_GetTrainerName(void){
-    LD_A_addr(wInBattleTowerBattle);
-    BIT_A(0);
-    LD_HL(wOTPlayerName);
-    JP_NZ (mCopyTrainerName);
-
-    LD_A_addr(wOtherTrainerID);
-    LD_B_A;
-    LD_A_addr(wOtherTrainerClass);
-    LD_C_A;
-
-    return GetTrainerName();
-}
-
-uint8_t* Battle_GetTrainerName_Conv(void){
+uint8_t* Battle_GetTrainerName(void){
     // LD_A_addr(wInBattleTowerBattle);
     // BIT_A(0);
     // LD_HL(wOTPlayerName);
     // JP_NZ (mCopyTrainerName);
     if(bit_test(wram->wInBattleTowerBattle, 0))
-        return CopyTrainerName_Conv(wram->wOTPlayerName);
+        return CopyTrainerName(wram->wOTPlayerName);
 
     // LD_A_addr(wOtherTrainerID);
     // LD_B_A;
@@ -719,56 +465,10 @@ uint8_t* Battle_GetTrainerName_Conv(void){
     // LD_C_A;
     uint8_t c = wram->wOtherTrainerClass;
 
-    return GetTrainerName_Conv(b - 1, c);
+    return GetTrainerName(b - 1, c);
 }
 
-void GetTrainerName(void){
-    LD_A_C;
-    CP_A(CAL);
-    IF_NZ goto not_cal2;
-
-    LD_A(BANK(asMysteryGiftTrainerHouseFlag));
-    CALL(aOpenSRAM);
-    LD_A_addr(sMysteryGiftTrainerHouseFlag);
-    AND_A_A;
-    CALL(aCloseSRAM);
-    IF_Z goto not_cal2;
-
-    LD_A(BANK(asMysteryGiftPartnerName));
-    CALL(aOpenSRAM);
-    LD_HL(sMysteryGiftPartnerName);
-    CALL(aCopyTrainerName);
-    JP(mCloseSRAM);
-
-
-not_cal2:
-    DEC_C;
-    PUSH_BC;
-    LD_B(0);
-    LD_HL(mTrainerGroups);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    POP_BC;
-
-
-loop:
-    DEC_B;
-    JR_Z (mCopyTrainerName);
-
-
-skip:
-    LD_A_hli;
-    CP_A(0xff);
-    IF_NZ goto skip;
-    goto loop;
-
-    return CopyTrainerName();
-}
-
-uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
+uint8_t* GetTrainerName(uint8_t tid, uint8_t tclass){
     PEEK("");
     printf("GetTrainerName: class:%d, id:%d\n", tclass, tid);
     // LD_A_C;
@@ -791,7 +491,7 @@ uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
             // LD_HL(sMysteryGiftPartnerName);
             // CALL(aCopyTrainerName);
             // JP(mCloseSRAM);
-            uint8_t* name = CopyTrainerName_Conv(GBToRAMAddr(sMysteryGiftPartnerName));
+            uint8_t* name = CopyTrainerName(GBToRAMAddr(sMysteryGiftPartnerName));
             CloseSRAM();
             return name;
         }
@@ -828,8 +528,8 @@ uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
         // goto loop;
     // }
 
-    // CopyTrainerName_Conv(GBToRAMAddr(REG_HL));
-    CopyTrainerName_Conv(U82C(TrainerGroups[tclass - 1].parties[tid].name));
+    // CopyTrainerName(GBToRAMAddr(REG_HL));
+    CopyTrainerName(U82C(TrainerGroups[tclass - 1].parties[tid].name));
 
     // POP_HL;
     // POP_DE;
@@ -840,17 +540,7 @@ uint8_t* GetTrainerName_Conv(uint8_t tid, uint8_t tclass){
     return wram->wStringBuffer1;
 }
 
-void CopyTrainerName(void){
-    LD_DE(wStringBuffer1);
-    PUSH_DE;
-    LD_BC(NAME_LENGTH);
-    CALL(aCopyBytes);
-    POP_DE;
-    RET;
-
-}
-
-uint8_t* CopyTrainerName_Conv(const uint8_t* hl){
+uint8_t* CopyTrainerName(const uint8_t* hl){
     // LD_DE(wStringBuffer1);
     // PUSH_DE;
     // LD_BC(NAME_LENGTH);

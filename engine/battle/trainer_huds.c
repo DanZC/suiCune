@@ -6,6 +6,10 @@
 #include "../../home/text.h"
 #include "../../home/tilemap.h"
 
+static void StageBallTilesData(uint8_t count, const struct PartyMon* hl);
+static void PlaceHUDBorderTiles(tile_t* hl, int16_t de);
+static void LoadTrainerHudOAM(struct SpriteOAM* hl, uint8_t y, uint8_t x, int8_t dir);
+
 void BattleStart_TrainerHuds(void){
     // LD_A(0xe4);
     // LDH_addr_A(rOBP0);
@@ -39,7 +43,7 @@ void ShowPlayerMonsRemaining(void){
     // LD_HL(wPartyMon1HP);
     // LD_DE(wPartyCount);
     // CALL(aStageBallTilesData);
-    StageBallTilesData_Conv(wram->wPartyCount, wram->wPartyMon);
+    StageBallTilesData(wram->wPartyCount, wram->wPartyMon);
 // ldpixel wPlaceBallsX, 12, 12
     // LD_A(12 * 8);
     uint8_t a = 12 * 8;
@@ -50,7 +54,7 @@ void ShowPlayerMonsRemaining(void){
     // LD_addr_A(wPlaceBallsDirection);
     // LD_HL(wVirtualOAMSprite00);
     // JP(mLoadTrainerHudOAM);
-    return LoadTrainerHudOAM_Conv(wram->wVirtualOAMSprite, a, a, 8);
+    return LoadTrainerHudOAM(wram->wVirtualOAMSprite, a, a, 8);
 }
 
 void ShowOTTrainerMonsRemaining(void){
@@ -59,7 +63,7 @@ void ShowOTTrainerMonsRemaining(void){
     // LD_HL(wOTPartyMon1HP);
     // LD_DE(wOTPartyCount);
     // CALL(aStageBallTilesData);
-    StageBallTilesData_Conv(wram->wOTPartyCount, wram->wOTPartyMon);
+    StageBallTilesData(wram->wOTPartyCount, wram->wOTPartyMon);
 // ldpixel wPlaceBallsX, 9, 4
     // LD_HL(wPlaceBallsX);
     // LD_A(9 * 8);
@@ -69,70 +73,7 @@ void ShowOTTrainerMonsRemaining(void){
     // LD_addr_A(wPlaceBallsDirection);
     // LD_HL(wVirtualOAMSprite00 + PARTY_LENGTH * SPRITEOAMSTRUCT_LENGTH);
     // JP(mLoadTrainerHudOAM);
-    return LoadTrainerHudOAM_Conv(wram->wVirtualOAMSprite + PARTY_LENGTH, 4 * 8, 9 * 8, -8);
-}
-
-void StageBallTilesData(void){
-    LD_A_de;
-    PUSH_AF;
-    LD_DE(wBattleHUDTiles);
-    LD_C(PARTY_LENGTH);
-    LD_A(0x34);  // empty slot
-
-loop1:
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop1;
-    POP_AF;
-
-    LD_DE(wBattleHUDTiles);
-
-loop2:
-    PUSH_AF;
-    CALL(aStageBallTilesData_GetHUDTile);
-    INC_DE;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop2;
-    RET;
-
-
-GetHUDTile:
-    LD_A_hli;
-    AND_A_A;
-    IF_NZ goto got_hp;
-    LD_A_hl;
-    AND_A_A;
-    LD_B(0x33);  // fainted
-    IF_Z goto fainted;
-
-
-got_hp:
-    DEC_HL;
-    DEC_HL;
-    DEC_HL;
-    LD_A_hl;
-    AND_A_A;
-    LD_B(0x32);  // statused
-    IF_NZ goto load;
-    DEC_B;  // normal
-    goto load;
-
-
-fainted:
-    DEC_HL;
-    DEC_HL;
-    DEC_HL;
-
-
-load:
-    LD_A_B;
-    LD_de_A;
-    LD_BC(PARTYMON_STRUCT_LENGTH + MON_HP - MON_STATUS);
-    ADD_HL_BC;
-    RET;
-
+    return LoadTrainerHudOAM(wram->wVirtualOAMSprite + PARTY_LENGTH, 4 * 8, 9 * 8, -8);
 }
 
 static const struct PartyMon* StageBallTilesData_GetHUDTile(tile_t* de, const struct PartyMon* hl) {
@@ -179,7 +120,7 @@ static const struct PartyMon* StageBallTilesData_GetHUDTile(tile_t* de, const st
     return hl;
 }
 
-void StageBallTilesData_Conv(uint8_t count, const struct PartyMon* hl){
+static void StageBallTilesData(uint8_t count, const struct PartyMon* hl){
     // LD_A_de;
     // PUSH_AF;
     // LD_DE(wBattleHUDTiles);
@@ -203,7 +144,7 @@ void StageBallTilesData_Conv(uint8_t count, const struct PartyMon* hl){
     de = wram->wBattleHUDTiles;
     if(count > PARTY_LENGTH) count = PARTY_LENGTH;
 
-    do {
+    while(count-- != 0) {
     // loop2:
         // PUSH_AF;
         // CALL(aStageBallTilesData_GetHUDTile);
@@ -213,7 +154,7 @@ void StageBallTilesData_Conv(uint8_t count, const struct PartyMon* hl){
         // POP_AF;
         // DEC_A;
         // IF_NZ goto loop2;
-    } while(--count != 0);
+    }
     // RET;
 }
 
@@ -232,7 +173,7 @@ void DrawPlayerHUDBorder(void){
     // hlcoord(18, 10, wTilemap);
     // LD_DE(-1);  // start on right
     // JR(mPlaceHUDBorderTiles);
-    return PlaceHUDBorderTiles_Conv(coord(18, 10, wram->wTilemap), -1);
+    return PlaceHUDBorderTiles(coord(18, 10, wram->wTilemap), -1);
 // tiles_end:
 }
 
@@ -251,7 +192,7 @@ void DrawPlayerPartyIconHUDBorder(void){
     // hlcoord(18, 10, wTilemap);
     // LD_DE(-1);  // start on right
     // JR(mPlaceHUDBorderTiles);
-    return PlaceHUDBorderTiles_Conv(coord(18, 10, wram->wTilemap), -1);
+    return PlaceHUDBorderTiles(coord(18, 10, wram->wTilemap), -1);
 
 // tiles_end:
 }
@@ -271,7 +212,7 @@ void DrawEnemyHUDBorder(void){
     // hlcoord(1, 2, wTilemap);
     // LD_DE(1);  // start on left
     // CALL(aPlaceHUDBorderTiles);
-    PlaceHUDBorderTiles_Conv(coord(1, 2, wram->wTilemap), 1);
+    PlaceHUDBorderTiles(coord(1, 2, wram->wTilemap), 1);
     // LD_A_addr(wBattleMode);
     // DEC_A;
     // RET_NZ ;
@@ -292,29 +233,7 @@ void DrawEnemyHUDBorder(void){
 
 }
 
-void PlaceHUDBorderTiles(void){
-    LD_A_addr(wTrainerHUDTiles + 0);
-    LD_hl_A;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    LD_A_addr(wTrainerHUDTiles + 1);
-    LD_hl_A;
-    LD_B(8);
-
-loop:
-    ADD_HL_DE;
-    LD_A_addr(wTrainerHUDTiles + 3);
-    LD_hl_A;
-    DEC_B;
-    IF_NZ goto loop;
-    ADD_HL_DE;
-    LD_A_addr(wTrainerHUDTiles + 2);
-    LD_hl_A;
-    RET;
-
-}
-
-void PlaceHUDBorderTiles_Conv(tile_t* hl, int16_t de){
+static void PlaceHUDBorderTiles(tile_t* hl, int16_t de){
     // LD_A_addr(wTrainerHUDTiles + 0);
     // LD_hl_A;
     *hl = wram->wTrainerHUDTiles[0];
@@ -351,7 +270,7 @@ void LinkBattle_TrainerHuds(void){
     // LD_HL(wPartyMon1HP);
     // LD_DE(wPartyCount);
     // CALL(aStageBallTilesData);
-    StageBallTilesData_Conv(wram->wPartyCount, wram->wPartyMon);
+    StageBallTilesData(wram->wPartyCount, wram->wPartyMon);
     // LD_HL(wPlaceBallsX);
     // LD_A(10 * 8);
     // LD_hli_A;
@@ -360,47 +279,22 @@ void LinkBattle_TrainerHuds(void){
     // LD_addr_A(wPlaceBallsDirection);
     // LD_HL(wVirtualOAMSprite00);
     // CALL(aLoadTrainerHudOAM);
-    LoadTrainerHudOAM_Conv(wram->wVirtualOAMSprite, 8 * 8, 10 * 8, 8);
+    LoadTrainerHudOAM(wram->wVirtualOAMSprite, 8 * 8, 10 * 8, 8);
 
     // LD_HL(wOTPartyMon1HP);
     // LD_DE(wOTPartyCount);
     // CALL(aStageBallTilesData);
-    StageBallTilesData_Conv(wram->wOTPartyCount, wram->wOTPartyMon);
+    StageBallTilesData(wram->wOTPartyCount, wram->wOTPartyMon);
     // LD_HL(wPlaceBallsX);
     // LD_A(10 * 8);
     // LD_hli_A;
     // LD_hl(13 * 8);
     // LD_HL(wVirtualOAMSprite00 + PARTY_LENGTH * SPRITEOAMSTRUCT_LENGTH);
     // JP(mLoadTrainerHudOAM);
-    LoadTrainerHudOAM_Conv(wram->wVirtualOAMSprite + PARTY_LENGTH, 13 * 8, 10 * 8, 8);
+    LoadTrainerHudOAM(wram->wVirtualOAMSprite + PARTY_LENGTH, 13 * 8, 10 * 8, 8);
 }
 
-void LoadTrainerHudOAM(void){
-    LD_DE(wBattleHUDTiles);
-    LD_C(PARTY_LENGTH);
-
-loop:
-    LD_A_addr(wPlaceBallsY);
-    LD_hli_A;  // y
-    LD_A_addr(wPlaceBallsX);
-    LD_hli_A;  // x
-    LD_A_de;
-    LD_hli_A;  // tile id
-    LD_A(PAL_BATTLE_OB_YELLOW);
-    LD_hli_A;  // attributes
-    LD_A_addr(wPlaceBallsX);
-    LD_B_A;
-    LD_A_addr(wPlaceBallsDirection);
-    ADD_A_B;
-    LD_addr_A(wPlaceBallsX);
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void LoadTrainerHudOAM_Conv(struct SpriteOAM* hl, uint8_t y, uint8_t x, int8_t dir){
+static void LoadTrainerHudOAM(struct SpriteOAM* hl, uint8_t y, uint8_t x, int8_t dir){
     // LD_DE(wBattleHUDTiles);
     // LD_C(PARTY_LENGTH);
 

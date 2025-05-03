@@ -43,7 +43,7 @@ void BattleCommand_Curse(void){
         // CALL(aGetBattleVarAddr);
         // BIT_hl(SUBSTATUS_CURSE);
         // IF_NZ goto failed;
-        if(CheckHiddenOpponent_Conv() || CheckSubstituteOpp_Conv() || bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS1_OPP), SUBSTATUS_CURSE)) {
+        if(CheckHiddenOpponent() || CheckSubstituteOpp() || bit_test(GetBattleVar(BATTLE_VARS_SUBSTATUS1_OPP), SUBSTATUS_CURSE)) {
         // failed:
             // CALL(aAnimateFailedMove);
             AnimateFailedMove();
@@ -88,7 +88,7 @@ void BattleCommand_Curse(void){
 
                 // LD_B(ABILITY + 1);
                 // CALL(aGetStatName);
-                GetStatName_Conv(ABILITY + 1);
+                GetStatName(ABILITY + 1);
                 // CALL(aAnimateFailedMove);
                 AnimateFailedMove();
                 // LD_HL(mWontRiseAnymoreText);
@@ -108,7 +108,7 @@ void BattleCommand_Curse(void){
         AnimateCurrentMove();
         // LD_A(SPEED);
         // CALL(aLowerStat);
-        LowerStat_Conv(SPEED);
+        LowerStat(SPEED);
         // CALL(aBattleCommand_SwitchTurn);
         BattleCommand_SwitchTurn();
         // CALL(aBattleCommand_StatDownMessage);

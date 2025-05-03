@@ -1774,14 +1774,14 @@ static void PeoplePlaces4(void){
     } while(IsInU8Array(hl, a));
     // PUSH_BC;
     // CALLFAR(aGetTrainerClassName);
-    GetTrainerClassName_Conv(a);
+    GetTrainerClassName(a);
     // LD_DE(wStringBuffer1);
     // CALL(aCopyName1);
     CopyName1(wram->wStringBuffer1);
     // POP_BC;
     // LD_B(1);
     // CALLFAR(aGetTrainerName);
-    GetTrainerName_Conv(1, a);
+    GetTrainerName(1, a);
     // LD_HL(mPnP_Text4);
     // LD_A(PLACES_AND_PEOPLE_5);
     // JP(mNextRadioLine);

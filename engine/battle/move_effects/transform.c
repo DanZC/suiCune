@@ -20,7 +20,7 @@ void BattleCommand_Transform(void){
         return BattleEffect_ButItFailed();
     // CALL(aCheckHiddenOpponent);
     // JP_NZ (mBattleEffect_ButItFailed);
-    if(CheckHiddenOpponent_Conv())
+    if(CheckHiddenOpponent())
         return BattleEffect_ButItFailed();
     // XOR_A_A;
     // LD_addr_A(wNumHits);
@@ -37,10 +37,10 @@ void BattleCommand_Transform(void){
     // IF_Z goto mimic_substitute;
     // CALL(aCheckUserIsCharging);
     // IF_NZ goto mimic_substitute;
-    if(bit_test(ss4, SUBSTATUS_SUBSTITUTE) && !CheckUserIsCharging_Conv()) {
+    if(bit_test(ss4, SUBSTATUS_SUBSTITUTE) && !CheckUserIsCharging()) {
         // LD_A(SUBSTITUTE);
         // CALL(aLoadAnim);
-        LoadAnim_Conv(SUBSTITUTE);
+        LoadAnim(SUBSTITUTE);
     }
 
 // mimic_substitute:
@@ -206,7 +206,7 @@ void BattleCommand_Transform(void){
     // LD_A(SUBSTITUTE);
     // CALL_NZ (aLoadAnim);
     if(bit_test(ss4, SUBSTATUS_SUBSTITUTE))
-        LoadAnim_Conv(SUBSTITUTE);
+        LoadAnim(SUBSTITUTE);
     // LD_HL(mTransformedText);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox(TransformedText);

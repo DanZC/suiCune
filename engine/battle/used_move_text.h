@@ -13,6 +13,5 @@ extern const txt_cmd_s EndUsedMove3Text[];
 extern const txt_cmd_s EndUsedMove4Text[];
 extern const txt_cmd_s EndUsedMove5Text[];
 void GetMoveGrammar(void);
-void UpdateUsedMoves(void);
-void UpdateUsedMoves_Conv(move_t a);
+// void UpdateUsedMoves(move_t a);
 //#include "data/moves/grammar.h"

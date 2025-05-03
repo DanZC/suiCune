@@ -157,7 +157,7 @@ void LoadContestantName(uint8_t a){
     // LD_DE(wBugContestWinnerName);
     // LD_BC(TRAINER_CLASS_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBugContestWinnerName, GetTrainerClassName_Conv(contestant->tclass), TRAINER_CLASS_NAME_LENGTH);
+    CopyBytes(wram->wBugContestWinnerName, GetTrainerClassName(contestant->tclass), TRAINER_CLASS_NAME_LENGTH);
     // LD_HL(wBugContestWinnerName);
     uint8_t* hl = wram->wBugContestWinnerName;
 //  Delete the trailing terminator and replace it with a space.
@@ -190,7 +190,7 @@ void LoadContestantName(uint8_t a){
     // LD_BC(NAME_LENGTH - 1);
     // JP(mCopyBytes);
 
-    return CopyBytes(hl, GetTrainerName_Conv(contestant->tid, contestant->tclass), NAME_LENGTH - 1);
+    return CopyBytes(hl, GetTrainerName(contestant->tid, contestant->tclass), NAME_LENGTH - 1);
 // INCLUDE "data/events/bug_contest_winners.asm"
 }
 

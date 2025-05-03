@@ -21,7 +21,7 @@ void BattleCommand_Metronome(void){
     // CALL(aCheckUserIsCharging);
     // IF_NZ goto charging;
 
-    if(!CheckUserIsCharging_Conv()) {
+    if(!CheckUserIsCharging()) {
         // LD_A_addr(wBattleAnimParam);
         // PUSH_AF;
         uint8_t param = wram->wBattleAnimParam;
@@ -60,7 +60,7 @@ void BattleCommand_Metronome(void){
         // LD_A_B;
         // CALL(aCheckUserMove);
         // IF_Z goto GetMove;
-    } while(b >= NUM_ATTACKS + 1 || IsInMoveArray(MetronomeExcepts, b) || CheckUserMove_Conv(b));
+    } while(b >= NUM_ATTACKS + 1 || IsInMoveArray(MetronomeExcepts, b) || CheckUserMove(b));
 
     // LD_A(BATTLE_VARS_MOVE);
     // CALL(aGetBattleVarAddr);

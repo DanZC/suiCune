@@ -37,7 +37,7 @@ void ConsumeHeldItem(void){
     // LD_B_A;
     item_t item = bmon->item;
     // FARCALL(aGetItemHeldEffect);
-    uint8_t effect = HIGH(GetItemHeldEffect_Conv(item));
+    uint8_t effect = HIGH(GetItemHeldEffect(item));
     // LD_HL(mConsumableEffects);
     const uint8_t* hl = ConsumableEffects;
 

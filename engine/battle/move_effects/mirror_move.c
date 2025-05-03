@@ -26,7 +26,7 @@ void BattleCommand_MirrorMove(void){
     // CALL(aCheckUserMove);
     // IF_NZ goto use;
     if(a == NO_MOVE
-    || CheckUserMove_Conv(a)) {
+    || CheckUserMove(a)) {
     // failed:
         // CALL(aAnimateFailedMove);
         AnimateFailedMove();
@@ -55,13 +55,13 @@ void BattleCommand_MirrorMove(void){
 
     // DEC_A;
     // CALL(aGetMoveData);
-    GetMoveData_Conv(de, a);
+    GetMoveData(de, a);
     // CALL(aGetMoveName);
     // CALL(aCopyName1);
     CopyName1(GetMoveName(a));
     // CALL(aCheckUserIsCharging);
     // IF_NZ goto done;
-    if(!CheckUserIsCharging_Conv()) {
+    if(!CheckUserIsCharging()) {
         // LD_A_addr(wBattleAnimParam);
         uint8_t param = wram->wBattleAnimParam;
         // PUSH_AF;

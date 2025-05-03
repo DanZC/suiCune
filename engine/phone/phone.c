@@ -966,7 +966,7 @@ void GetCallerName(uint8_t* hl, struct TrainerId c){
     }
 
     // CALL(aPhone_GetTrainerName);
-    uint8_t* name = GetTrainerName_Conv(c.trainerId, c.trainerClass);
+    uint8_t* name = GetTrainerName(c.trainerId, c.trainerClass);
     // PUSH_HL;
     // PUSH_BC;
     // CALL(aPlaceString);
@@ -982,7 +982,7 @@ void GetCallerName(uint8_t* hl, struct TrainerId c){
     hl += SCREEN_WIDTH + 3;
     // CALL(aPhone_GetTrainerClassName);
     // CALL(aPlaceString);
-    PlaceStringSimple(GetTrainerClassName_Conv(c.trainerClass), hl);
+    PlaceStringSimple(GetTrainerClassName(c.trainerClass), hl);
     // RET;
 }
 

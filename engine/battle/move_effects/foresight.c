@@ -21,7 +21,7 @@ void BattleCommand_Foresight(void){
     // BIT_hl(SUBSTATUS_IDENTIFIED);
     // IF_NZ goto failed;
     if(wram->wAttackMissed
-    || CheckHiddenOpponent_Conv()
+    || CheckHiddenOpponent()
     || ((ss1_opp = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1_OPP)), bit_test(*ss1_opp, SUBSTATUS_IDENTIFIED))) {
     // failed:
         // JP(mFailMove);

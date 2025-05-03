@@ -78,7 +78,7 @@ void BattleCommand_Conversion2(void){
         // LD_hl_A;
         *moveType = type;
         // CALL(aBattleCheckTypeMatchup);
-        BattleCheckTypeMatchup_Conv();
+        BattleCheckTypeMatchup();
         // POP_HL;
         // POP_AF;
         // LD_hl_A;

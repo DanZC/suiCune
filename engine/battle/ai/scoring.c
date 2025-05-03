@@ -350,7 +350,7 @@ void AI_Types(void){
         // LDH_addr_A(hBattleTurn);
         hram->hBattleTurn = TURN_ENEMY;
         // CALLFAR(aBattleCheckTypeMatchup);
-        uint8_t matchup = BattleCheckTypeMatchup_Conv();
+        uint8_t matchup = BattleCheckTypeMatchup();
         // POP_DE;
         // POP_BC;
         // POP_HL;
@@ -748,7 +748,7 @@ static void AI_Smart_LeechHit(uint8_t* hl){
     // LDH_addr_A(hBattleTurn);
     hram->hBattleTurn = TURN_ENEMY;
     // CALLFAR(aBattleCheckTypeMatchup);
-    uint8_t matchup = BattleCheckTypeMatchup_Conv();
+    uint8_t matchup = BattleCheckTypeMatchup();
     // POP_HL;
 
 //  60% chance to discourage this move if not very effective.
@@ -913,7 +913,7 @@ static void AI_Smart_LockOn(uint8_t* hl){
         // PUSH_HL;
         // PUSH_BC;
         // FARCALL(aBattleCheckTypeMatchup);
-        uint8_t matchup = BattleCheckTypeMatchup_Conv();
+        uint8_t matchup = BattleCheckTypeMatchup();
         // LD_A_addr(wTypeMatchup);
         // CP_A(EFFECTIVE);
         // POP_BC;
@@ -2063,7 +2063,7 @@ static void AI_Smart_Mimic(uint8_t* hl){
     // LDH_addr_A(hBattleTurn);
     hram->hBattleTurn = TURN_ENEMY;
     // CALLFAR(aBattleCheckTypeMatchup);
-    uint8_t matchup = BattleCheckTypeMatchup_Conv();
+    uint8_t matchup = BattleCheckTypeMatchup();
 
     // LD_A_addr(wTypeMatchup);
     // CP_A(EFFECTIVE);
@@ -2235,7 +2235,7 @@ static void AI_Smart_Encore(uint8_t* hl){
     // IF_NC goto weakmove;
     uint8_t matchup;
     if(mv->power == 0
-    || (matchup = CheckTypeMatchup_Conv(mv->type, wram->wEnemyMon.types), matchup >= EFFECTIVE)) {
+    || (matchup = CheckTypeMatchup(mv->type, wram->wEnemyMon.types), matchup >= EFFECTIVE)) {
     // weakmove:
         // PUSH_HL;
         // LD_A_addr(wLastPlayerCounterMove);
@@ -2630,7 +2630,7 @@ static void AI_Smart_Conversion2(uint8_t* hl){
     hram->hBattleTurn = TURN_PLAYER;
 
     // CALLFAR(aBattleCheckTypeMatchup);
-    uint8_t matchup = BattleCheckTypeMatchup_Conv();
+    uint8_t matchup = BattleCheckTypeMatchup();
 
     // LD_A_addr(wTypeMatchup);
     // CP_A(EFFECTIVE);
@@ -3557,7 +3557,7 @@ static void AI_Smart_HiddenPower(uint8_t* hl){
 
 //  Discourage Hidden Power if not very effective.
     // LD_A_addr(wTypeMatchup);
-    uint8_t matchup = BattleCheckTypeMatchup_Conv();
+    uint8_t matchup = BattleCheckTypeMatchup();
     // CP_A(EFFECTIVE);
     // IF_C goto bad;
 
@@ -4644,7 +4644,7 @@ void AI_Status(void){
         // LDH_addr_A(hBattleTurn);
         hram->hBattleTurn = TURN_ENEMY;
         // CALLFAR(aBattleCheckTypeMatchup);
-        uint8_t matchup = BattleCheckTypeMatchup_Conv();
+        uint8_t matchup = BattleCheckTypeMatchup();
         // POP_DE;
         // POP_BC;
         // POP_HL;

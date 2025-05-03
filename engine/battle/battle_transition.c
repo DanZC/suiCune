@@ -31,7 +31,7 @@ static void DoBattleTransition_InitGFX(void) {
     if(wram->wLinkMode == LINK_MOBILE) {
     // mobile:
         // CALL(aLoadTrainerBattlePokeballTiles);
-        LoadTrainerBattlePokeballTiles_Conv();
+        LoadTrainerBattlePokeballTiles();
     }
     else {
         // FARCALL(aReanchorBGMap_NoOAMUpdate);
@@ -41,7 +41,7 @@ static void DoBattleTransition_InitGFX(void) {
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDoBattleTransition_NonMobile_LoadPokeballTiles);
-        LoadTrainerBattlePokeballTiles_Conv();
+        LoadTrainerBattlePokeballTiles();
         // CALL(aBattleStart_CopyTilemapAtOnce);
         CopyTilemapAtOnce();
         // goto resume;
@@ -64,7 +64,7 @@ static void DoBattleTransition_InitGFX(void) {
     // LD_hl_A;
     wram->wBattleTransitionSpinQuadrant = 0;
     // CALL(aWipeLYOverrides);
-    WipeLYOverrides_Conv();
+    WipeLYOverrides();
     // RET;
 
 
@@ -155,35 +155,9 @@ void DoBattleTransition(void){
     // RET;
 }
 
+//  Load the tiles used in the Pokeball Graphic that fills the screen
+//  at the start of every Trainer battle.
 void LoadTrainerBattlePokeballTiles(void){
-//  Load the tiles used in the Pokeball Graphic that fills the screen
-//  at the start of every Trainer battle.
-    LD_DE(mTrainerBattlePokeballTiles);
-    LD_HL(vTiles0 + LEN_2BPP_TILE * BATTLETRANSITION_SQUARE);
-    LD_B(BANK(aTrainerBattlePokeballTiles));
-    LD_C(2);
-    CALL(aRequest2bpp);
-
-    LDH_A_addr(rVBK);
-    PUSH_AF;
-    LD_A(0x1);
-    LDH_addr_A(rVBK);
-
-    LD_DE(mTrainerBattlePokeballTiles);
-    LD_HL(vTiles3 + LEN_2BPP_TILE * BATTLETRANSITION_SQUARE);
-    LD_B(BANK(aTrainerBattlePokeballTiles));
-    LD_C(2);
-    CALL(aRequest2bpp);
-
-    POP_AF;
-    LDH_addr_A(rVBK);
-    RET;
-
-}
-
-//  Load the tiles used in the Pokeball Graphic that fills the screen
-//  at the start of every Trainer battle.
-void LoadTrainerBattlePokeballTiles_Conv(void){
     // LD_DE(mTrainerBattlePokeballTiles);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * BATTLETRANSITION_SQUARE);
     // LD_B(BANK(aTrainerBattlePokeballTiles));
@@ -567,7 +541,7 @@ void StartTrainerBattle_SineWave(void){
     }
     // CALL(aStartTrainerBattle_SineWave_DoSineWave);
     StartTrainerBattle_DoSineWave();
-    DelayFrame(); // Needed since without it, the animation is too fast.
+    DelayFrames(2); // Needed since without it, the animation is too fast.
     // RET;
 }
 
@@ -875,6 +849,7 @@ void StartTrainerBattle_SpeckleToBlack(void){
         // DEC_C;
         // IF_NZ goto loop;
     } while(--c != 0);
+    DelayFrames(2);
     // RET;
 
 }
@@ -1121,34 +1096,6 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
 }
 
 void WipeLYOverrides(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awLYOverrides));
-    LDH_addr_A(rSVBK);
-
-    LD_HL(wLYOverrides);
-    CALL(aWipeLYOverrides_wipe);
-    LD_HL(wLYOverridesBackup);
-    CALL(aWipeLYOverrides_wipe);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-
-wipe:
-    XOR_A_A;
-    LD_C(SCREEN_HEIGHT_PX);
-
-loop:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void WipeLYOverrides_Conv(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awLYOverrides));
