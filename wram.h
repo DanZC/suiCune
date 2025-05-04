@@ -1194,6 +1194,7 @@ struct wram_s
                                 uint8_t wccb9[1];
                                 uint8_t wccba[90];
                             };
+                            uint8_t wcc60_arr[180];
                             char wcc60_str[180];
                         };
                         // if

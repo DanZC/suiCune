@@ -39,15 +39,15 @@ startproject "suiCune"
 
 	filter "Release"
 		defines "NDEBUG"
-		optimize "debug"
-		runtime "debug"
-		symbols "on"
+		optimize "On"
+		runtime "Release"
+		symbols "Off"
 
 	filter "Debug"
 		defines "DEBUG"
-		optimize "debug"
-		runtime "debug"
-		symbols "on"
+		optimize "Debug"
+		runtime "Debug"
+		symbols "On"
 
 	filter "platforms:x86"
 		architecture "x86"
@@ -99,6 +99,8 @@ startproject "suiCune"
 		removefiles {
 			".\\lib\\libmobile\\**.c",
 			".\\lib\\libmobile\\**.h",
+			".\\lib\\pcg\\**.c",
+			".\\lib\\pcg\\**.h",
 			".\\maps\\**.c",
 			".\\maps\\**.h",
 			".\\test\\**.c",
@@ -106,6 +108,32 @@ startproject "suiCune"
 			".\\engine\\battle\\move_effects\\**.c",
 			".\\engine\\battle\\move_effects\\**.h",
 		}
+		
+		newoption {
+			trigger = "bugfix",
+			description = "Force bugfixes"
+		}
+
+		newoption {
+			trigger = "pcg",
+			description = "Use PCG random number generator"
+		}
+		
+		newoption {
+			trigger = "fastbg",
+			description = "Draws BG Map in single frame"
+		}
+		
+		filter { "options:bugfix" }
+			defines { "BUGFIX=1" }
+		
+		filter { "options:pcg" }
+			defines { "ENHANCEMENT_USE_PCG=1" }
+		
+		filter { "options:fastbg" }
+			defines { "ENHANCEMENT_DRAW_BG_IN_ONE_FRAME=1" }
+		
+		filter {}
 		
 		cdialect "gnu99"
 		

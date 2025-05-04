@@ -1456,6 +1456,9 @@ int Network_SendByte(uint8_t byte) {
     if(socket_send(state->linkSocket, &byte, 1, &state->linkAddr) <= 0)
         return NETWORK_XCHG_ERROR_SEND;
 #endif
+#if DEBUG
+    printf("Send $%02x (%d)\n", byte, byte);
+#endif
     return NETWORK_XCHG_OK;
 }
 
@@ -1470,6 +1473,9 @@ int Network_TryRecvByte(uint8_t* dest) {
         int error = SDLNet_TCP_Recv(linkSocket, dest, 1);
         if(error <= 0)
             return NETWORK_XCHG_ERROR_RECV;
+#if DEBUG
+        printf("Recv $%02x (%d)\n", *dest, *dest);
+#endif
         return NETWORK_XCHG_OK;
     }
 #else
@@ -1857,7 +1863,7 @@ void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg
                 continue;
             
             memset(cfg->popServer, 0, sizeof(cfg->popServer));
-            strncpy(cfg->popServer, s->string, sizeof(cfg->popServer));
+            memcpy(cfg->popServer, s->string, sizeof(cfg->popServer));
         }
         if(strcmp(it->name->string, "mail_host") == 0) {
             json_string_t *s = json_value_as_string(it->value);
@@ -1868,7 +1874,7 @@ void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg
                 continue;
             
             memset(cfg->smtpServer, 0, sizeof(cfg->smtpServer));
-            strncpy(cfg->smtpServer, s->string, sizeof(cfg->smtpServer));
+            memcpy(cfg->smtpServer, s->string, sizeof(cfg->smtpServer));
         }
         else if(strcmp(it->name->string, "login_name") == 0) {
             json_string_t *s = json_value_as_string(it->value);

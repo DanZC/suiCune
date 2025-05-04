@@ -1216,7 +1216,7 @@ void Function1704e1_JumptableLoop(void){
             // LD_BC(22);
             // CALL(aCopyBytes);
             CopyBytes(wram->wStringBuffer3, GBToRAMAddr(s5_a89c), 22);
-            wram->wStringBuffer3[22] = 0x50;
+            wram->wStringBuffer4[22-STRING_BUFFER_LENGTH] = 0x50;
 
             // LD_HL(s5_a8b2);
             // LD_DE(wc608);

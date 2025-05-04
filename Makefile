@@ -6,8 +6,26 @@ CC	:= cc
 OBJEXT	:= o
 RM	:= rm -f
 EXEOUT	:= -o
-EXTRA_CFLAGS := -Wall -Wextra -Werror -Wno-unused-label -Og -g# -Og -g3
+EXTRA_CFLAGS := -Wall -Wextra -Werror -Wno-unused-label
 EXE	:= $(NAME)
+
+ifeq ($(RELEASE), 1)
+	EXTRA_CFLAGS += -O2
+else
+	EXTRA_CFLAGS += -Og -g -DDEBUG=1
+endif
+
+ifeq ($(BUGFIX), 1)
+	EXTRA_CFLAGS += -DBUGFIX=1
+endif
+
+ifeq ($(FASTBG), 1)
+	EXTRA_CFLAGS += -DENHANCEMENT_DRAW_BG_IN_ONE_FRAME=1
+endif
+
+ifeq ($(USE_PCG), 1)
+	EXTRA_CFLAGS += -DENHANCEMENT_USE_PCG=1
+endif
 
 # File extension ".exe" is automatically appended on MinGW and MSVC builds, even
 # if we don't ask for it.

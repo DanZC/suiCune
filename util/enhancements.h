@@ -9,5 +9,5 @@
 
 #ifndef ENHANCEMENT_USE_PCG
 // Replaces Crystal's random number generator with PCG
-#define ENHANCEMENT_USE_PCG 0
+#define ENHANCEMENT_USE_PCG 1
 #endif

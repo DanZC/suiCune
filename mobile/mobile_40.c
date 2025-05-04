@@ -335,7 +335,7 @@ void Function1000fa(void){
     wram->wLinkMode = LINK_NULL;
     // LD_A(0x04);
     // LD_addr_A(wc314 + 5);
-    wram->wc314[5] = 0x04;
+    wram->wc319 = 0x04;
     // FARCALL(aFunction11619d);
     Function11619d();
     // LD_HL(wcd29);
@@ -978,14 +978,14 @@ bool Function100406(void){
     // LD_A_hld;
     // CP_A_D;
     // IF_NZ goto asm_100426;
-    if((wram->wcc61[bc] | (wram->wcc61[bc+1] << 8)) != de) {
+    if((wram->wcc60_arr[bc+1] | (wram->wcc60_arr[bc+2] << 8)) != de) {
     // asm_100426:
         // LD_A(0xf4);
         // LD_addr_A(wcd2b);
         wram->wcd2b = 0xf4;
         printf("Failed packet checksum! Checksums does not match! Expected %d, Got %d.\n",
             de,
-            (wram->wcc61[bc] | (wram->wcc61[bc+1] << 8)));
+            (wram->wcc60_arr[bc+1] | (wram->wcc60_arr[bc+2] << 8)));
         // goto asm_100432;
     }
     // DEC_HL;

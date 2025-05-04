@@ -677,7 +677,10 @@ void gb_write(const uint_fast16_t addr, const uint8_t val) {
     (gb.gb_error)(GB_INVALID_WRITE, addr);
 }
 
-#if !ENHANCEMENT_USE_PCG
+#include "../../util/enhancements.h"
+#if ENHANCEMENT_USE_PCG
+#include "../../lib/pcg/pcg_basic.h"
+#else
 #include "../../util/hrc.h"
 
 uint64_t gNanoSecsTimestamp;
@@ -701,8 +704,6 @@ void advance_div(void) {
 
     gNanoSecsTimestamp = nanosecs;
 }
-#else
-#include "../../lib/pcg/pcg_basic.h"
 #endif
 
 void finish_gb_cycle(void) {

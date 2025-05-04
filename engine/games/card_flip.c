@@ -875,13 +875,13 @@ void CardFlip_ShiftDigitsUpOnePixel(void){
     // LD_HL(vTiles0 + LEN_2BPP_TILE * CHAR_0 + 2);
     // LD_BC(10 * LEN_2BPP_TILE - 2);
     // CALL(aCopyBytes);
-    CopyBytes(vram->vTiles0 + LEN_2BPP_TILE * CHAR_0, vram->vTiles0 + LEN_2BPP_TILE * CHAR_0 + 2, 10 * LEN_2BPP_TILE - 2);
+    CopyBytes(vram->vTilesB0 + LEN_2BPP_TILE * CHAR_0, vram->vTilesB0 + LEN_2BPP_TILE * CHAR_0 + 2, 10 * LEN_2BPP_TILE - 2);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * CHAR_9 + 1 * LEN_2BPP_TILE - 2);
     // XOR_A_A;
     // LD_hli_A;
-    vram->vTiles0[LEN_2BPP_TILE * CHAR_9 + 1 * LEN_2BPP_TILE - 2] = 0;
+    vram->vTilesB0[LEN_2BPP_TILE * CHAR_9 + 1 * LEN_2BPP_TILE - 2] = 0;
     // LD_hl_A;
-    vram->vTiles0[LEN_2BPP_TILE * CHAR_9 + 1 * LEN_2BPP_TILE - 1] = 0;
+    vram->vTilesB0[LEN_2BPP_TILE * CHAR_9 + 1 * LEN_2BPP_TILE - 1] = 0;
     // RET;
 }
 

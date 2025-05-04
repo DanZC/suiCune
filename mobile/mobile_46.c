@@ -3205,12 +3205,12 @@ void Function118e06(void){
             // LD_A_hli;
             // CP_A(0xd);
             // IF_NZ goto asm_118e0f;
-            if(wram->w3_d000[hl++] != '\r')
+            if(wram->wram3[hl++] != '\r')
                 continue;
             // LD_A_hli;
             // CP_A(0xa);
             // IF_NZ goto asm_118e0f;
-        } while(wram->w3_d000[hl++] != '\n');
+        } while(wram->wram3[hl++] != '\n');
     }
 
 // asm_118e1d:
@@ -3230,21 +3230,21 @@ void Function118e06(void){
         // LD_A_hli;
         // CP_A(0xd);
         // IF_NZ goto asm_118e25;
-        if(wram->w3_d000[hl++] != '\r')
+        if(wram->wram3[hl++] != '\r')
             continue;
         // LD_A_hli;
         // CP_A(0xa);
         // IF_NZ goto asm_118e25;
-    } while(wram->w3_d000[hl++] != '\n');
+    } while(wram->wram3[hl++] != '\n');
     // DEC_HL;
     hl -= 2;
     // XOR_A_A;
     // LD_hld_A;
-    wram->w3_d000[hl + 1] = 0;
+    wram->wram3[hl + 1] = 0;
     // LD_hl_A;
-    wram->w3_d000[hl + 0] = 0;
+    wram->wram3[hl + 0] = 0;
     // JR(masm_118e3e);
-    return asm_118e3e((const char*)wram->w3_d000 + hl);
+    return asm_118e3e((const char*)wram->wram3 + hl);
 }
 
 void Function118e39(const char* hl){
@@ -3817,7 +3817,7 @@ void Function1190ec(void){
     // LD_C_A;
     // LD_A_addr(w3_d000 + 1);
     // LD_B_A;
-    uint16_t bc = wram->w3_d000[0] | (wram->w3_d000[1] << 8);
+    uint16_t bc = wram->wram3[0] | (wram->wram3[1] << 8);
     // LD_HL(wd002);
     // LD_DE(s6_a000);
     // CALL(aFunction119192);
