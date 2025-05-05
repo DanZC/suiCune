@@ -107,7 +107,7 @@ void LoadPartyMenuGFX(void){
     // CALL(aLoadFontsBattleExtra);
     LoadFontsBattleExtra();
     // CALLFAR(aInitPartyMenuPalettes);
-    InitPartyMenuPalettes_Conv();
+    InitPartyMenuPalettes();
     // CALLFAR(aClearSpriteAnims2);
     ClearSpriteAnims2();
     // RET;
@@ -920,7 +920,7 @@ void InitPartyMenuGFX(void){
         // LD_A(BANK(aLoadMenuMonIcon));
         // LD_E(MONICON_PARTYMENU);
         // RST(aFarCall);
-        LoadMenuMonIcon_Conv(MONICON_PARTYMENU);
+        LoadMenuMonIcon(MONICON_PARTYMENU);
         // LDH_A_addr(hObjectStructIndex);
         // INC_A;
         // LDH_addr_A(hObjectStructIndex);

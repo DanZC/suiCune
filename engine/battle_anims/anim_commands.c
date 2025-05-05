@@ -2022,10 +2022,10 @@ void BattleAnimCmd_Transform_Conv(void){
         wram->wCurPartySpecies = wram->wTempBattleMonSpecies;
         // LD_HL(wBattleMonDVs);
         // PREDEF(pGetUnownLetter);
-        GetUnownLetter_Conv(wram->wBattleMon.dvs);
+        GetUnownLetter(wram->wBattleMon.dvs);
         // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
         // PREDEF(pGetMonFrontpic);
-        GetMonFrontpic_Conv(vram->vTiles0 + LEN_2BPP_TILE * 0x00);
+        GetMonFrontpic(vram->vTiles0 + LEN_2BPP_TILE * 0x00);
         // goto done;
     }
     else {
@@ -2035,10 +2035,10 @@ void BattleAnimCmd_Transform_Conv(void){
         wram->wCurPartySpecies = wram->wTempEnemyMonSpecies;
         // LD_HL(wEnemyMonDVs);
         // PREDEF(pGetUnownLetter);
-        GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+        GetUnownLetter(wram->wEnemyMon.dvs);
         // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
         // PREDEF(pGetMonBackpic);
-        GetMonFrontpic_Conv(vram->vTiles0 + LEN_2BPP_TILE * 0x00);
+        GetMonFrontpic(vram->vTiles0 + LEN_2BPP_TILE * 0x00);
     }
 
 // done:
@@ -2484,20 +2484,20 @@ void BattleAnimCmd_BeatUp_Conv(void){
     if(hram->hBattleTurn != TURN_PLAYER) {
         // LD_HL(wBattleMonDVs);
         // PREDEF(pGetUnownLetter);
-        GetUnownLetter_Conv(wram->wBattleMon.dvs);
+        GetUnownLetter(wram->wBattleMon.dvs);
         // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
         // PREDEF(pGetMonFrontpic);
-        GetMonFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
+        GetMonFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
         // goto done;
     }
     else {
     // player:
         // LD_HL(wEnemyMonDVs);
         // PREDEF(pGetUnownLetter);
-        GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+        GetUnownLetter(wram->wEnemyMon.dvs);
         // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
         // PREDEF(pGetMonBackpic);
-        GetMonBackpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x31, wram->wCurPartySpecies);
+        GetMonBackpic(vram->vTiles2 + LEN_2BPP_TILE * 0x31, wram->wCurPartySpecies);
     }
 
 // done:

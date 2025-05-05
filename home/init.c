@@ -202,7 +202,7 @@ void Init(void) {
     hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
 
     // FARCALL(aInitCGBPals);
-    InitCGBPals_Conv();
+    InitCGBPals();
 
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);

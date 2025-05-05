@@ -437,7 +437,7 @@ void LoadMapGraphics(void){
     // CALL(aLoadFontsExtra);
     LoadFontsExtra();
     // FARCALL(aLoadOverworldFont);
-    LoadOverworldFont_Conv();
+    LoadOverworldFont();
     // RET;
 }
 

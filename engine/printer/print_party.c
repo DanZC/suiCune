@@ -312,7 +312,7 @@ void PrintPartyMonPage1(void){
     PlaceGenderAndShininess();
     // LD_HL(wTempMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wTempMon.mon.DVs);
+    GetUnownLetter(wram->wTempMon.mon.DVs);
     // LD_HL(wBoxAlignment);
     // XOR_A_A;
     // LD_hl_A;
@@ -475,7 +475,7 @@ void PlaceGenderAndShininess(void){
     // LD_BC(wTempMonDVs);
     // FARCALL(aCheckShininess);
     // RET_NC ;
-    if(CheckShininess_Conv(wram->wTempMon.mon.DVs)) {
+    if(CheckShininess(wram->wTempMon.mon.DVs)) {
         // hlcoord(18, 2, wTilemap);
         // LD_hl(0x3f);
         *coord(18, 2, wram->wTilemap) = CHAR_SHINY_ICON;

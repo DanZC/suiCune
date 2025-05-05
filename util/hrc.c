@@ -1,3 +1,4 @@
+#include "enhancements.h"
 #if !ENHANCEMENT_USE_PCG
 #include <stdint.h>
 #include <stdio.h>

@@ -1375,10 +1375,10 @@ void GetEggFrontpic(tile_t* de, species_t a){
     GetBaseData(a);
     // LD_HL(wBattleMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wBattleMon.dvs);
+    GetUnownLetter(wram->wBattleMon.dvs);
     // POP_DE;
     // PREDEF_JUMP(pGetMonFrontpic);
-    GetMonFrontpic_Conv(de);
+    GetMonFrontpic(de);
 }
 
 void GetHatchlingFrontpic(tile_t* de, species_t a){
@@ -1391,10 +1391,10 @@ void GetHatchlingFrontpic(tile_t* de, species_t a){
     GetBaseData(a);
     // LD_HL(wBattleMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wBattleMon.dvs);
+    GetUnownLetter(wram->wBattleMon.dvs);
     // POP_DE;
     // PREDEF_JUMP(pGetAnimatedFrontpic);
-    GetAnimatedFrontpic_Conv(de, 0);
+    GetAnimatedFrontpic(de, 0);
 }
 
 void Hatch_UpdateFrontpicBGMapCenter(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
@@ -1418,7 +1418,7 @@ void Hatch_UpdateFrontpicBGMapCenter(tile_t* hl, uint8_t b, uint8_t c, uint8_t a
     hram->hGraphicStartTile = c;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(hl, 7, 7);
+    PlaceGraphicYStagger(hl, 7, 7);
     // POP_AF;
     // CALL(aHatch_LoadFrontpicPal);
     Hatch_LoadFrontpicPal(a);
@@ -1574,7 +1574,7 @@ void EggHatch_AnimationSequence(void){
     // LD_D(0x0);
     // LD_E(ANIM_MON_HATCH);
     // PREDEF(pAnimateFrontpic);
-    AnimateFrontpic_Conv(coord(6, 3, wram->wTilemap), 0x0, ANIM_MON_HATCH);
+    AnimateFrontpic(coord(6, 3, wram->wTilemap), 0x0, ANIM_MON_HATCH);
     // POP_AF;
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = curSpecies;

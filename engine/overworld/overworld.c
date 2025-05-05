@@ -635,7 +635,7 @@ struct SpriteLoadData GetMonSprite_Conv(uint8_t a){
     // IF_Z goto NoBreedmon;
     if(e != 0) {
         // FARCALL(aLoadOverworldMonIcon);
-        struct IconData icn = LoadOverworldMonIcon_Conv(e);
+        struct IconData icn = LoadOverworldMonIcon(e);
 
         // LD_L(WALKING_SPRITE);
         // LD_H(0);

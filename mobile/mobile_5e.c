@@ -89,7 +89,7 @@ void Function17a6a8(uint8_t* de, uint8_t c){
     // CALL(aFunction17ac0c);
     Function17ac0c();
     // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
-    HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+    HDMATransferAttrmapAndTilemapToWRAMBank3();
     // CALL(aFunction17abcf);
     Function17abcf();
     // FARCALL(aLoadOW_BGPal7);
@@ -284,13 +284,13 @@ void Function17a78f(void){
     // asm_17a79f:
         bit_reset(wram->wd088, 7);
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // RET;
     }
     else {
         bit_reset(wram->wd088, 7);
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
-        HDMATransferTilemapToWRAMBank3_Conv();
+        HDMATransferTilemapToWRAMBank3();
         // RET;
     }
 }

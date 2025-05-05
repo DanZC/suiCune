@@ -44,7 +44,7 @@ static void EvolutionAnimation_LoadFrontpic(species_t species){
     wram->wBoxAlignment = 0x1;
     // LD_DE(vTiles2);
     // PREDEF(pGetAnimatedFrontpic);
-    GetAnimatedFrontpic_Conv(vram->vTiles2, 0);
+    GetAnimatedFrontpic(vram->vTiles2, 0);
     // XOR_A_A;
     // LD_addr_A(wBoxAlignment);
     wram->wBoxAlignment = 0x0;
@@ -492,7 +492,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
     // LD_D(0x0);
     // LD_E(ANIM_MON_EVOLVE);
     // PREDEF(pAnimateFrontpic);
-    AnimateFrontpic_Conv(coord(7, 2, wram->wTilemap), 0x0, ANIM_MON_EVOLVE);
+    AnimateFrontpic(coord(7, 2, wram->wTilemap), 0x0, ANIM_MON_EVOLVE);
 
     // POP_AF;
     // LD_addr_A(wCurPartySpecies);

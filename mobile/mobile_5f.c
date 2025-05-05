@@ -145,7 +145,7 @@ void Function17c000(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 
@@ -674,7 +674,7 @@ void Function17d1f1(void){
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aAddNTimes);
         // PREDEF(pGetUnownLetter);
-        unown_letter_t letter = GetUnownLetter_Conv(wram->wPartyMon[wram->wPartyCount - 1].mon.DVs);
+        unown_letter_t letter = GetUnownLetter(wram->wPartyMon[wram->wPartyCount - 1].mon.DVs);
         // CALLFAR(aUpdateUnownDex);
         UpdateUnownDex_Conv(letter);
         // LD_A_addr(wFirstUnownSeen);
@@ -1066,7 +1066,7 @@ void Function17d370(void){
     // CALL(aClearScreen);
     ClearScreen();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // CALL(aDisableLCD);
     DisableLCD();
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0xee);
@@ -1128,7 +1128,7 @@ void Function17d3f6(void){
     // CALL(aClearScreen);
     ClearScreen();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
 
     return Function17d405();
 }
@@ -1192,7 +1192,7 @@ void Function17d45a(void){
         // CALL(aFunction17d474);
         Function17d474();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // goto asm_17d45a;
     }
 
@@ -1493,7 +1493,7 @@ void Function17d48d(void){
     // CALL(aFunction17e5af);
     Function17e5af();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // JP(mFunction17e438);
     return Function17e438();
 }
@@ -2273,7 +2273,7 @@ void Function17d93a(void){
     // LD_E_L;
     // LD_D_H;
     // FARCALL(aHOF_AnimateFrontpic);
-    HOF_AnimateFrontpic_Conv(coord(0, 0, wram->wTilemap) + de, c);
+    HOF_AnimateFrontpic(coord(0, 0, wram->wTilemap) + de, c);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aFunction17e349);
@@ -2317,13 +2317,13 @@ void Function17d98b(void){
     uint16_t de = wram->wc708 | (wram->wc709 << 8);
     // LD_DE(vTiles2);
     // FARCALL(aGetTrainerPic);
-    GetTrainerPic_Conv(vram->vTiles2, wram->wTrainerClass);
+    GetTrainerPic(vram->vTiles2, wram->wTrainerClass);
     // POP_HL;
     // decoord(0, 0, wTilemap);
     // ADD_HL_DE;
     // LD_BC(0x707);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(0, 0, wram->wTilemap) + de, 7, 7);
+    PlaceGraphicYStagger(coord(0, 0, wram->wTilemap) + de, 7, 7);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aFunction17e349);
@@ -6317,7 +6317,7 @@ void DisplayMobileError(void){
         if(bit_test(wram->wc303, 7))
             break;
         // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
-        HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+        HDMATransferAttrmapAndTilemapToWRAMBank3();
         // goto loop;
     }
 
@@ -6342,7 +6342,7 @@ void Function17f5d2(void){
     // CALL(aFunction17f5e4);
     Function17f5e4();
     // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
-    HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+    HDMATransferAttrmapAndTilemapToWRAMBank3();
     // CALL(aSetPalettes);
     SetPalettes();
     // LD_A(0x1);

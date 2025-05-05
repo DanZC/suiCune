@@ -129,21 +129,21 @@ void UpdatePlayerSprite(void) {
 void LoadStandardFont(void) {
     // FARCALL(av_LoadStandardFont);
     // RET;
-    return v_LoadStandardFont_Conv();
+    return v_LoadStandardFont();
 }
 
 void LoadFontsBattleExtra(void) {
     // FARCALL(av_LoadFontsBattleExtra);
     // RET;
-    return v_LoadFontsBattleExtra_Conv();
+    return v_LoadFontsBattleExtra();
 }
 
 void LoadFontsExtra(void) {
     // FARCALL(av_LoadFontsExtra1);
     // FARCALL(av_LoadFontsExtra2);
     // RET;
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
 }
 
 void LoadFontsExtra2(void) {

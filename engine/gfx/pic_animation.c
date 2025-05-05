@@ -54,6 +54,41 @@ static const uint8_t* lPokeAnimPointer;
 static uint8_t* lPokeAnimCoord;
 static const uint8_t* lPokeAnimPointerAddr;
 
+static void PokeAnim_SetWait(void);
+static void PokeAnim_Wait(void);
+static void PokeAnim_Setup(void);
+static void PokeAnim_Setup2(void);
+static void PokeAnim_Idle(void);
+static void PokeAnim_Play(void);
+static void PokeAnim_Play2(void);
+static void PokeAnim_BasePic(void);
+static void PokeAnim_Finish(void);
+static void PokeAnim_Cry(void);
+static void PokeAnim_CryNoWait(void);
+static void PokeAnim_StereoCry(void);
+static void PokeAnim_DeinitFrames(void);
+
+static bool AnimateMon_CheckIfPokemon(void);
+static void PokeAnim_InitPicAttributes(const uint8_t* bc, uint8_t* hl, uint8_t d);
+static void PokeAnim_InitAnim(uint8_t b, uint8_t c);
+static void PokeAnim_DoAnimScript(void);
+static void PokeAnim_End(void);
+static uint8_t PokeAnim_GetDuration(uint8_t a);
+static void PokeAnim_GetFrame(void);
+static void PokeAnim_StartWaitAnim(void);
+static void PokeAnim_StopWaitAnim(void);
+static bool PokeAnim_IsUnown(species_t a);
+static bool PokeAnim_IsEgg(void);
+
+static void PokeAnim_GetPointer(void);
+static void PokeAnim_PlaceGraphic(void);
+static void PokeAnim_SetVBank1(void);
+static void PokeAnim_SetVBank0(void);
+static uint8_t* PokeAnim_GetAttrmapCoord(void);
+static void GetMonAnimPointer(void);
+static uint8_t PokeAnim_GetFrontpicDims(void);
+static uint8_t PokeAnim_GetSpeciesOrUnown(species_t a);
+
 void Unused_AnimateMon_Slow_Normal(void){
     hlcoord(12, 0, wTilemap);
     LD_A_addr(wBattleMode);
@@ -86,7 +121,7 @@ void AnimateMon_Menu_Conv(uint8_t* hl){
     // LD_D(0x0);
     // CALL(aAnimateFrontpic);
     // RET;
-    return AnimateFrontpic_Conv(hl, 0x0, ANIM_MON_MENU);
+    return AnimateFrontpic(hl, 0x0, ANIM_MON_MENU);
 }
 
 void AnimateMon_Trade(void){
@@ -102,7 +137,7 @@ void AnimateMon_Trade_Conv(uint8_t* hl){
     // LD_D(0x0);
     // CALL(aAnimateFrontpic);
     // RET;
-    return AnimateFrontpic_Conv(hl, 0x0, ANIM_MON_TRADE);
+    return AnimateFrontpic(hl, 0x0, ANIM_MON_TRADE);
 }
 
 void AnimateMon_Evolve(void){
@@ -118,7 +153,7 @@ void AnimateMon_Evolve_Conv(uint8_t* hl){
     // LD_D(0x0);
     // CALL(aAnimateFrontpic);
     // RET;
-    return AnimateFrontpic_Conv(hl, 0x0, ANIM_MON_EVOLVE);
+    return AnimateFrontpic(hl, 0x0, ANIM_MON_EVOLVE);
 }
 
 void AnimateMon_Hatch(void){
@@ -134,7 +169,7 @@ void AnimateMon_Hatch_Conv(uint8_t* hl){
     // LD_D(0x0);
     // CALL(aAnimateFrontpic);
     // RET;
-    return AnimateFrontpic_Conv(hl, 0x0, ANIM_MON_HATCH);
+    return AnimateFrontpic(hl, 0x0, ANIM_MON_HATCH);
 }
 
 void AnimateMon_HOF(void){
@@ -254,60 +289,29 @@ const uint8_t* PokeAnims[] = {
 //     return AnimateFrontpic();
 // }
 
-void AnimateFrontpic(void){
-    CALL(aAnimateMon_CheckIfPokemon);
-    RET_C ;
-    CALL(aLoadMonAnimation);
-
-loop:
-    CALL(aSetUpPokeAnim);
-    PUSH_AF;
-    FARCALL(aHDMATransferTilemapToWRAMBank3);
-    POP_AF;
-    IF_NC goto loop;
-    RET;
-
-}
-
-void AnimateFrontpic_Conv(uint8_t* hl, uint8_t d, uint8_t e){
+void AnimateFrontpic(uint8_t* hl, uint8_t d, uint8_t e){
     // CALL(aAnimateMon_CheckIfPokemon);
     // RET_C ;
-    if(!AnimateMon_CheckIfPokemon_Conv())
+    if(!AnimateMon_CheckIfPokemon())
         return;
     // CALL(aLoadMonAnimation);
-    LoadMonAnimation_Conv(hl, d, e);
+    LoadMonAnimation(hl, d, e);
 
     bool done = false;
     do {
     // loop:
         // CALL(aSetUpPokeAnim);
-        done = SetUpPokeAnim_Conv();
+        done = SetUpPokeAnim();
         // PUSH_AF;
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
         // POP_AF;
-        HDMATransferTilemapToWRAMBank3_Conv();
+        HDMATransferTilemapToWRAMBank3();
         // IF_NC goto loop;
     } while(!done);
     // RET;
 }
 
-void LoadMonAnimation(void){
-    PUSH_HL;
-    LD_C_E;
-    LD_B(0);
-    LD_HL(mPokeAnims);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_B_hl;
-    LD_C_A;
-    POP_HL;
-    CALL(aPokeAnim_InitPicAttributes);
-    RET;
-
-}
-
-void LoadMonAnimation_Conv(uint8_t* hl, uint8_t d, uint8_t e){
+void LoadMonAnimation(uint8_t* hl, uint8_t d, uint8_t e){
     // PUSH_HL;
     // LD_C_E;
     // LD_B(0);
@@ -320,44 +324,11 @@ void LoadMonAnimation_Conv(uint8_t* hl, uint8_t d, uint8_t e){
     const uint8_t* bc = PokeAnims[e];
     // POP_HL;
     // CALL(aPokeAnim_InitPicAttributes);
-    PokeAnim_InitPicAttributes_Conv(bc, hl, d);
+    PokeAnim_InitPicAttributes(bc, hl, d);
     // RET;
 }
 
-void SetUpPokeAnim(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awPokeAnimStruct));
-    LDH_addr_A(rSVBK);
-    LD_A_addr(wPokeAnimSceneIndex);
-    LD_C_A;
-    LD_B(0);
-    LD_HL(wPokeAnimPointer);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(mPokeAnim_SetupCommands);
-    RST(aJumpTable);
-    LD_A_addr(wPokeAnimSceneIndex);
-    LD_C_A;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    LD_A_C;
-    AND_A(0x80);
-    RET_Z ;
-    SCF;
-    RET;
-
-// add_setup_command: MACRO
-// \1_SetupCommand:
-//     dw \1
-// ENDM
-
-}
-
-bool SetUpPokeAnim_Conv(void){
+bool SetUpPokeAnim(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wPokeAnimStruct));
@@ -386,7 +357,7 @@ bool SetUpPokeAnim_Conv(void){
     return (pokeAnim->sceneIndex & 0x80) != 0;
 }
 
-void PokeAnim_SetWait(void){
+static void PokeAnim_SetWait(void){
     // LD_A(18);
     // LD_addr_A(wPokeAnimWaitCounter);
     pokeAnim->waitCounter = 18;
@@ -398,7 +369,7 @@ void PokeAnim_SetWait(void){
     return PokeAnim_Wait();
 }
 
-void PokeAnim_Wait(void){
+static void PokeAnim_Wait(void){
     // LD_HL(wPokeAnimWaitCounter);
     // DEC_hl;
     // RET_NZ ;
@@ -415,9 +386,9 @@ void PokeAnim_Setup(void){
     // LD_C(FALSE);
     // LD_B(0);
     // CALL(aPokeAnim_InitAnim);
-    PokeAnim_InitAnim_Conv(0, FALSE);
+    PokeAnim_InitAnim(0, FALSE);
     // CALL(aPokeAnim_SetVBank1);
-    PokeAnim_SetVBank1_Conv();
+    PokeAnim_SetVBank1();
     // LD_A_addr(wPokeAnimSceneIndex);
     // INC_A;
     // LD_addr_A(wPokeAnimSceneIndex);
@@ -425,13 +396,13 @@ void PokeAnim_Setup(void){
     // RET;
 }
 
-void PokeAnim_Setup2(void){
+static void PokeAnim_Setup2(void){
     // LD_C(FALSE);
     // LD_B(4);
     // CALL(aPokeAnim_InitAnim);
-    PokeAnim_InitAnim_Conv(4, FALSE);
+    PokeAnim_InitAnim(4, FALSE);
     // CALL(aPokeAnim_SetVBank1);
-    PokeAnim_SetVBank1_Conv();
+    PokeAnim_SetVBank1();
     // LD_A_addr(wPokeAnimSceneIndex);
     // INC_A;
     // LD_addr_A(wPokeAnimSceneIndex);
@@ -439,13 +410,13 @@ void PokeAnim_Setup2(void){
     // RET;
 }
 
-void PokeAnim_Idle(void){
+static void PokeAnim_Idle(void){
     // LD_C(TRUE);
     // LD_B(0);
     // CALL(aPokeAnim_InitAnim);
-    PokeAnim_InitAnim_Conv(0, TRUE);
+    PokeAnim_InitAnim(0, TRUE);
     // CALL(aPokeAnim_SetVBank1);
-    PokeAnim_SetVBank1_Conv();
+    PokeAnim_SetVBank1();
     // LD_A_addr(wPokeAnimSceneIndex);
     // INC_A;
     // LD_addr_A(wPokeAnimSceneIndex);
@@ -453,16 +424,16 @@ void PokeAnim_Idle(void){
     // RET;
 }
 
-void PokeAnim_Play(void){
+static void PokeAnim_Play(void){
     // CALL(aPokeAnim_DoAnimScript);
-    PokeAnim_DoAnimScript_Conv();
+    PokeAnim_DoAnimScript();
     // LD_A_addr(wPokeAnimJumptableIndex);
     // BIT_A(7);
     // RET_Z ;
     if(!bit_test(pokeAnim->jumptableIndex, 7))
         return;
     // CALL(aPokeAnim_PlaceGraphic);
-    PokeAnim_PlaceGraphic_Conv();
+    PokeAnim_PlaceGraphic();
     // LD_A_addr(wPokeAnimSceneIndex);
     // INC_A;
     // LD_addr_A(wPokeAnimSceneIndex);
@@ -470,9 +441,9 @@ void PokeAnim_Play(void){
     // RET;
 }
 
-void PokeAnim_Play2(void){
+static void PokeAnim_Play2(void){
     // CALL(aPokeAnim_DoAnimScript);
-    PokeAnim_DoAnimScript_Conv();
+    PokeAnim_DoAnimScript();
     // LD_A_addr(wPokeAnimJumptableIndex);
     // BIT_A(7);
     // RET_Z ;
@@ -485,7 +456,7 @@ void PokeAnim_Play2(void){
     // RET;
 }
 
-void PokeAnim_BasePic(void){
+static void PokeAnim_BasePic(void){
     // CALL(aPokeAnim_DeinitFrames);
     PokeAnim_DeinitFrames();
     // LD_A_addr(wPokeAnimSceneIndex);
@@ -495,7 +466,7 @@ void PokeAnim_BasePic(void){
     // RET;
 }
 
-void PokeAnim_Finish(void){
+static void PokeAnim_Finish(void){
     // CALL(aPokeAnim_DeinitFrames);
     PokeAnim_DeinitFrames();
     // LD_HL(wPokeAnimSceneIndex);
@@ -504,7 +475,7 @@ void PokeAnim_Finish(void){
     // RET;
 }
 
-void PokeAnim_Cry(void){
+static void PokeAnim_Cry(void){
     // LD_A_addr(wPokeAnimSpecies);
     // CALL(av_PlayMonCry);
     v_PlayMonCry(pokeAnim->species);
@@ -515,7 +486,7 @@ void PokeAnim_Cry(void){
     // RET;
 }
 
-void PokeAnim_CryNoWait(void){
+static void PokeAnim_CryNoWait(void){
     // LD_A_addr(wPokeAnimSpecies);
     // CALL(aPlayMonCry2);
     PlayMonCry2(pokeAnim->species);
@@ -526,7 +497,7 @@ void PokeAnim_CryNoWait(void){
     // RET;
 }
 
-void PokeAnim_StereoCry(void){
+static void PokeAnim_StereoCry(void){
     // LD_A(0xf);
     // LD_addr_A(wCryTracks);
     wram->wCryTracks = 0xf;
@@ -540,42 +511,26 @@ void PokeAnim_StereoCry(void){
     // RET;
 }
 
-void PokeAnim_DeinitFrames(void){
+static void PokeAnim_DeinitFrames(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wPokeAnimCoord));
     // LDH_addr_A(rSVBK);
-    GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
+    GetAnimatedFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
     // CALL(aPokeAnim_PlaceGraphic);
-    PokeAnim_PlaceGraphic_Conv();
+    PokeAnim_PlaceGraphic();
     // FARCALL(aHDMATransferTilemapToWRAMBank3);
-    HDMATransferTilemapToWRAMBank3_Conv();
+    HDMATransferTilemapToWRAMBank3();
     // CALL(aPokeAnim_SetVBank0);
-    PokeAnim_SetVBank0_Conv();
+    PokeAnim_SetVBank0();
     // FARCALL(aHDMATransferAttrmapToWRAMBank3);
-    HDMATransferTilemapToWRAMBank3_Conv();
+    HDMATransferTilemapToWRAMBank3();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
 }
 
-void AnimateMon_CheckIfPokemon(void){
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    IF_Z goto fail;
-    CALL(aIsAPokemon);
-    IF_C goto fail;
-    AND_A_A;
-    RET;
-
-
-fail:
-    SCF;
-    RET;
-
-}
-
-bool AnimateMon_CheckIfPokemon_Conv(void){
+static bool AnimateMon_CheckIfPokemon(void){
     // LD_A_addr(wCurPartySpecies);
     // CP_A(EGG);
     // IF_Z goto fail;
@@ -592,61 +547,7 @@ bool AnimateMon_CheckIfPokemon_Conv(void){
     // RET;
 }
 
-void PokeAnim_InitPicAttributes(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awPokeAnimStruct));
-    LDH_addr_A(rSVBK);
-
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
-    LD_HL(wPokeAnimStruct);
-    LD_BC(wPokeAnimStructEnd - wPokeAnimStruct);
-    XOR_A_A;
-    CALL(aByteFill);
-    POP_HL;
-    POP_DE;
-    POP_BC;
-
-//  bc contains anim pointer
-    LD_A_C;
-    LD_addr_A(wPokeAnimPointer);
-    LD_A_B;
-    LD_addr_A(wPokeAnimPointer + 1);
-//  hl contains tilemap coords
-    LD_A_L;
-    LD_addr_A(wPokeAnimCoord);
-    LD_A_H;
-    LD_addr_A(wPokeAnimCoord + 1);
-//  d = start tile
-    LD_A_D;
-    LD_addr_A(wPokeAnimGraphicStartTile);
-
-    LD_A(MBANK(awCurPartySpecies));
-    LD_HL(wCurPartySpecies);
-    CALL(aGetFarWRAMByte);
-    LD_addr_A(wPokeAnimSpecies);
-
-    LD_A(MBANK(awUnownLetter));
-    LD_HL(wUnownLetter);
-    CALL(aGetFarWRAMByte);
-    LD_addr_A(wPokeAnimUnownLetter);
-
-    CALL(aPokeAnim_GetSpeciesOrUnown);
-    LD_addr_A(wPokeAnimSpeciesOrUnown);
-
-    CALL(aPokeAnim_GetFrontpicDims);
-    LD_A_C;
-    LD_addr_A(wPokeAnimFrontpicHeight);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-void PokeAnim_InitPicAttributes_Conv(const uint8_t* bc, uint8_t* hl, uint8_t d){
+static void PokeAnim_InitPicAttributes(const uint8_t* bc, uint8_t* hl, uint8_t d){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wPokeAnimStruct));
@@ -695,43 +596,19 @@ void PokeAnim_InitPicAttributes_Conv(const uint8_t* bc, uint8_t* hl, uint8_t d){
 
     // CALL(aPokeAnim_GetSpeciesOrUnown);
     // LD_addr_A(wPokeAnimSpeciesOrUnown);
-    pokeAnim->speciesOrUnown = PokeAnim_GetSpeciesOrUnown_Conv(pokeAnim->species);
+    pokeAnim->speciesOrUnown = PokeAnim_GetSpeciesOrUnown(pokeAnim->species);
 
     // CALL(aPokeAnim_GetFrontpicDims);
     // LD_A_C;
     // LD_addr_A(wPokeAnimFrontpicHeight);
-    pokeAnim->frontpicHeight = PokeAnim_GetFrontpicDims_Conv();
+    pokeAnim->frontpicHeight = PokeAnim_GetFrontpicDims();
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
 }
 
-void PokeAnim_InitAnim(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awPokeAnimIdleFlag));
-    LDH_addr_A(rSVBK);
-    PUSH_BC;
-    LD_HL(wPokeAnimIdleFlag);
-    LD_BC(wPokeAnimStructEnd - wPokeAnimIdleFlag);
-    XOR_A_A;
-    CALL(aByteFill);
-    POP_BC;
-    LD_A_B;
-    LD_addr_A(wPokeAnimSpeed);
-    LD_A_C;
-    LD_addr_A(wPokeAnimIdleFlag);
-    CALL(aGetMonAnimPointer);
-    CALL(aGetMonFramesPointer);
-    CALL(aGetMonBitmaskPointer);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-void PokeAnim_InitAnim_Conv(uint8_t b, uint8_t c){
+static void PokeAnim_InitAnim(uint8_t b, uint8_t c){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wPokeAnimIdleFlag));
@@ -752,7 +629,7 @@ void PokeAnim_InitAnim_Conv(uint8_t b, uint8_t c){
     // LD_addr_A(wPokeAnimIdleFlag);
     pokeAnim->idleFlag = c;
     // CALL(aGetMonAnimPointer);
-    GetMonAnimPointer_Conv();
+    GetMonAnimPointer();
     // CALL(aGetMonFramesPointer);
     // CALL(aGetMonBitmaskPointer);
     // POP_AF;
@@ -760,68 +637,7 @@ void PokeAnim_InitAnim_Conv(uint8_t b, uint8_t c){
     // RET;
 }
 
-void PokeAnim_DoAnimScript(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-
-loop:
-    LD_A_addr(wPokeAnimJumptableIndex);
-    AND_A(0x7f);
-    LD_HL(mPokeAnim_DoAnimScript_Jumptable);
-    RST(aJumpTable);
-    RET;
-
-
-Jumptable:
-    //dw ['.RunAnim'];
-    //dw ['.WaitAnim'];
-
-
-RunAnim:
-    CALL(aPokeAnim_GetPointer);
-    LD_A_addr(wPokeAnimCommand);
-    CP_A(endanim_command);
-    JR_Z (mPokeAnim_End);
-    CP_A(setrepeat_command);
-    IF_Z goto SetRepeat;
-    CP_A(dorepeat_command);
-    IF_Z goto DoRepeat;
-    CALL(aPokeAnim_GetFrame);
-    LD_A_addr(wPokeAnimParameter);
-    CALL(aPokeAnim_GetDuration);
-    LD_addr_A(wPokeAnimWaitCounter);
-    CALL(aPokeAnim_StartWaitAnim);
-
-WaitAnim:
-    LD_A_addr(wPokeAnimWaitCounter);
-    DEC_A;
-    LD_addr_A(wPokeAnimWaitCounter);
-    RET_NZ ;
-    CALL(aPokeAnim_StopWaitAnim);
-    RET;
-
-
-SetRepeat:
-    LD_A_addr(wPokeAnimParameter);
-    LD_addr_A(wPokeAnimRepeatTimer);
-    goto loop;
-
-
-DoRepeat:
-    LD_A_addr(wPokeAnimRepeatTimer);
-    AND_A_A;
-    RET_Z ;
-    DEC_A;
-    LD_addr_A(wPokeAnimRepeatTimer);
-    RET_Z ;
-    LD_A_addr(wPokeAnimParameter);
-    LD_addr_A(wPokeAnimFrame);
-    goto loop;
-
-    return PokeAnim_End();
-}
-
-void PokeAnim_DoAnimScript_Conv(void){
+static void PokeAnim_DoAnimScript(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -843,7 +659,7 @@ void PokeAnim_DoAnimScript_Conv(void){
             case 0:
             // RunAnim:
                 // CALL(aPokeAnim_GetPointer);
-                PokeAnim_GetPointer_Conv();
+                PokeAnim_GetPointer();
                 // LD_A_addr(wPokeAnimCommand);
                 a = pokeAnim->command;
                 // CP_A(endanim_command);
@@ -883,7 +699,7 @@ void PokeAnim_DoAnimScript_Conv(void){
                 // LD_A_addr(wPokeAnimParameter);
                 // CALL(aPokeAnim_GetDuration);
                 // LD_addr_A(wPokeAnimWaitCounter);
-                pokeAnim->waitCounter = PokeAnim_GetDuration_Conv(pokeAnim->parameter);
+                pokeAnim->waitCounter = PokeAnim_GetDuration(pokeAnim->parameter);
                 // CALL(aPokeAnim_StartWaitAnim);
                 PokeAnim_StartWaitAnim();
                 // fallthrough
@@ -904,35 +720,15 @@ void PokeAnim_DoAnimScript_Conv(void){
     // return PokeAnim_End();
 }
 
-void PokeAnim_End(void){
+static void PokeAnim_End(void){
     // LD_HL(wPokeAnimJumptableIndex);
     // SET_hl(7);
     // RET;
     pokeAnim->jumptableIndex |= (1 << 7);
 }
 
-void PokeAnim_GetDuration(void){
 //  a * (1 + [wPokeAnimSpeed] / 16)
-    LD_C_A;
-    LD_B(0);
-    LD_HL(0);
-    LD_A_addr(wPokeAnimSpeed);
-    CALL(aAddNTimes);
-    LD_A_H;
-    SWAP_A;
-    AND_A(0xf0);
-    LD_H_A;
-    LD_A_L;
-    SWAP_A;
-    AND_A(0xf);
-    OR_A_H;
-    ADD_A_C;
-    RET;
-
-}
-
-//  a * (1 + [wPokeAnimSpeed] / 16)
-uint8_t PokeAnim_GetDuration_Conv(uint8_t a){
+static uint8_t PokeAnim_GetDuration(uint8_t a){
     // LD_C_A;
     // LD_B(0);
     // LD_HL(0);
@@ -951,9 +747,9 @@ uint8_t PokeAnim_GetDuration_Conv(uint8_t a){
     return a * (1 + pokeAnim->speed / 16);
 }
 
-void PokeAnim_GetFrame(void){
+static void PokeAnim_GetFrame(void){
     // CALL(aPokeAnim_PlaceGraphic);
-    PokeAnim_PlaceGraphic_Conv();
+    PokeAnim_PlaceGraphic();
     // LD_A_addr(wPokeAnimCommand);
     // AND_A_A;
     // RET_Z ;
@@ -964,12 +760,12 @@ void PokeAnim_GetFrame(void){
     // CALL(aPokeAnim_CopyBitmaskToBuffer);
     // POP_HL;
     // CALL(aPokeAnim_ConvertAndApplyBitmask);
-    GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00, pokeAnim->command);
+    GetAnimatedFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00, pokeAnim->command);
     // RET;
 
 }
 
-void PokeAnim_StartWaitAnim(void){
+static void PokeAnim_StartWaitAnim(void){
     // LD_A_addr(wPokeAnimJumptableIndex);
     // INC_A;
     // LD_addr_A(wPokeAnimJumptableIndex);
@@ -977,7 +773,7 @@ void PokeAnim_StartWaitAnim(void){
     // RET;
 }
 
-void PokeAnim_StopWaitAnim(void){
+static void PokeAnim_StopWaitAnim(void){
     // LD_A_addr(wPokeAnimJumptableIndex);
     // DEC_A;
     // LD_addr_A(wPokeAnimJumptableIndex);
@@ -985,59 +781,21 @@ void PokeAnim_StopWaitAnim(void){
     // RET;
 }
 
-void PokeAnim_IsUnown(void){
-    LD_A_addr(wPokeAnimSpecies);
-    CP_A(UNOWN);
-    RET;
-
-}
-
-bool PokeAnim_IsUnown_Conv(species_t a){
+static bool PokeAnim_IsUnown(species_t a){
     // LD_A_addr(wPokeAnimSpecies);
     // CP_A(UNOWN);
     // RET;
     return a == UNOWN;
 }
 
-void PokeAnim_IsEgg(void){
-    LD_A_addr(wPokeAnimSpecies);
-    CP_A(EGG);
-    RET;
-
-}
-
-bool PokeAnim_IsEgg_Conv(void){
+static bool PokeAnim_IsEgg(void){
     // LD_A_addr(wPokeAnimSpecies);
     // CP_A(EGG);
     // RET;
     return pokeAnim->species == EGG;
 }
 
-void PokeAnim_GetPointer(void){
-    PUSH_HL;
-    LD_A_addr(wPokeAnimFrame);
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wPokeAnimPointerAddr);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_addr(wPokeAnimPointerBank);
-    CALL(aGetFarWord);
-    LD_A_L;
-    LD_addr_A(wPokeAnimCommand);
-    LD_A_H;
-    LD_addr_A(wPokeAnimParameter);
-    LD_HL(wPokeAnimFrame);
-    INC_hl;
-    POP_HL;
-    RET;
-
-}
-
-void PokeAnim_GetPointer_Conv(void){
+static void PokeAnim_GetPointer(void){
     // PUSH_HL;
     // LD_A_addr(wPokeAnimFrame);
     // LD_E_A;
@@ -1063,27 +821,7 @@ void PokeAnim_GetPointer_Conv(void){
     // RET;
 }
 
-void PokeAnim_GetBitmaskIndex(void){
-    LD_A_addr(wPokeAnimCommand);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    LD_HL(wPokeAnimFramesAddr);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_addr(wPokeAnimFramesBank);
-    CALL(aGetFarWord);
-    LD_A_addr(wPokeAnimFramesBank);
-    CALL(aGetFarByte);
-    LD_addr_A(wPokeAnimCurBitmask);
-    INC_HL;
-    RET;
-}
-
-uint16_t PokeAnim_GetBitmaskIndex_Conv(void) {
+uint16_t PokeAnim_GetBitmaskIndex(void) {
     // LD_A_addr(wPokeAnimCommand);
     // DEC_A;
     // LD_C_A;
@@ -1402,64 +1140,6 @@ no_carry:
 
 }
 
-void PokeAnim_PlaceGraphic(void){
-    CALL(aPokeAnim_PlaceGraphic_ClearBox);
-    LD_A_addr(wBoxAlignment);
-    AND_A_A;
-    IF_NZ goto flipped;
-    LD_DE(1);
-    LD_BC(0);
-    goto okay;
-
-
-flipped:
-    LD_DE(-1);
-    LD_BC(6);
-
-
-okay:
-    LD_HL(wPokeAnimCoord);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    ADD_HL_BC;
-    LD_C(7);
-    LD_B(7);
-    LD_A_addr(wPokeAnimGraphicStartTile);
-
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    PUSH_DE;
-    LD_DE(SCREEN_WIDTH);
-
-loop2:
-    LD_hl_A;
-    INC_A;
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto loop2;
-    POP_DE;
-    POP_HL;
-    ADD_HL_DE;
-    POP_BC;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-ClearBox:
-    LD_HL(wPokeAnimCoord);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_B(7);
-    LD_C(7);
-    CALL(aClearBox);
-    RET;
-
-}
-
 static void PokeAnim_PlaceGraphic_ClearBox(void) {
     // LD_HL(wPokeAnimCoord);
     // LD_A_hli;
@@ -1472,7 +1152,7 @@ static void PokeAnim_PlaceGraphic_ClearBox(void) {
     return ClearBox(lPokeAnimCoord, 7, 7);
 }
 
-void PokeAnim_PlaceGraphic_Conv(void){
+static void PokeAnim_PlaceGraphic(void){
     // CALL(aPokeAnim_PlaceGraphic_ClearBox);
     PokeAnim_PlaceGraphic_ClearBox();
     // LD_A_addr(wBoxAlignment);
@@ -1534,50 +1214,10 @@ void PokeAnim_PlaceGraphic_Conv(void){
     // RET;
 }
 
-void PokeAnim_SetVBank1(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wPokeAnimCoord));
-    LDH_addr_A(rSVBK);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aPokeAnim_SetVBank1_SetFlag);
-    FARCALL(aHDMATransferAttrmapToWRAMBank3);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-
-SetFlag:
-    CALL(aPokeAnim_GetAttrmapCoord);
-    LD_B(7);
-    LD_C(7);
-    LD_DE(SCREEN_WIDTH);
-
-row:
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    LD_A_hl;
-    OR_A(8);
-    LD_hl_A;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    INC_HL;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-
-}
-
 static void PokeAnim_SetVBank1_SetFlag(void) {
 // SetFlag:
     // CALL(aPokeAnim_GetAttrmapCoord);
-    uint8_t* hl = PokeAnim_GetAttrmapCoord_Conv();
+    uint8_t* hl = PokeAnim_GetAttrmapCoord();
     // LD_B(7);
     uint8_t b = 7;
     // LD_C(7);
@@ -1613,7 +1253,7 @@ static void PokeAnim_SetVBank1_SetFlag(void) {
     // RET;
 }
 
-void PokeAnim_SetVBank1_Conv(void){
+static void PokeAnim_SetVBank1(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wPokeAnimCoord));
@@ -1625,41 +1265,15 @@ void PokeAnim_SetVBank1_Conv(void){
     PokeAnim_SetVBank1_SetFlag();
 
     // FARCALL(aHDMATransferAttrmapToWRAMBank3);
-    HDMATransferAttrmapToWRAMBank3_Conv();
+    HDMATransferAttrmapToWRAMBank3();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
 }
 
-void PokeAnim_SetVBank0(void){
-    CALL(aPokeAnim_GetAttrmapCoord);
-    LD_B(7);
-    LD_C(7);
-    LD_DE(SCREEN_WIDTH);
-
-row:
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    LD_A_hl;
-    AND_A(0xf7);
-    LD_hl_A;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    INC_HL;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-
-}
-
-void PokeAnim_SetVBank0_Conv(void){
+static void PokeAnim_SetVBank0(void){
     // CALL(aPokeAnim_GetAttrmapCoord);
-    uint8_t* hl = PokeAnim_GetAttrmapCoord_Conv();
+    uint8_t* hl = PokeAnim_GetAttrmapCoord();
     // LD_B(7);
     // LD_C(7);
     // LD_DE(SCREEN_WIDTH);
@@ -1689,18 +1303,7 @@ void PokeAnim_SetVBank0_Conv(void){
     // RET;
 }
 
-void PokeAnim_GetAttrmapCoord(void){
-    LD_HL(wPokeAnimCoord);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wAttrmap - wTilemap);
-    ADD_HL_DE;
-    RET;
-
-}
-
-uint8_t* PokeAnim_GetAttrmapCoord_Conv(void){
+static uint8_t* PokeAnim_GetAttrmapCoord(void){
     // LD_HL(wPokeAnimCoord);
     // LD_A_hli;
     // LD_H_hl;
@@ -1711,70 +1314,10 @@ uint8_t* PokeAnim_GetAttrmapCoord_Conv(void){
     return lPokeAnimCoord + (wAttrmap - wTilemap);
 }
 
-void GetMonAnimPointer(void){
-    CALL(aPokeAnim_IsEgg);
-    IF_Z goto egg;
-
-    LD_C(BANK(aUnownAnimationPointers));  // aka BANK(UnownAnimationIdlePointers)
-    LD_HL(mUnownAnimationPointers);
-    LD_DE(mUnownAnimationIdlePointers);
-    CALL(aPokeAnim_IsUnown);
-    IF_Z goto unown;
-    LD_C(BANK(aAnimationPointers));  // aka BANK(AnimationIdlePointers)
-    LD_HL(mAnimationPointers);
-    LD_DE(mAnimationIdlePointers);
-
-unown:
-
-    LD_A_addr(wPokeAnimIdleFlag);
-    AND_A_A;
-    IF_Z goto idles;
-    LD_H_D;
-    LD_L_E;
-
-idles:
-
-    LD_A_addr(wPokeAnimSpeciesOrUnown);
-    DEC_A;
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_C;
-    LD_addr_A(wPokeAnimPointerBank);
-    CALL(aGetFarWord);
-    LD_A_L;
-    LD_addr_A(wPokeAnimPointerAddr);
-    LD_A_H;
-    LD_addr_A(wPokeAnimPointerAddr + 1);
-    RET;
-
-
-egg:
-    LD_HL(mEggAnimation);
-    LD_C(BANK(aEggAnimation));
-    LD_A_addr(wPokeAnimIdleFlag);
-    AND_A_A;
-    IF_Z goto idles_egg;
-    LD_HL(mEggAnimationIdle);
-    LD_C(BANK(aEggAnimationIdle));
-
-idles_egg:
-
-    LD_A_C;
-    LD_addr_A(wPokeAnimPointerBank);
-    LD_A_L;
-    LD_addr_A(wPokeAnimPointerAddr);
-    LD_A_H;
-    LD_addr_A(wPokeAnimPointerAddr + 1);
-    RET;
-
-}
-
-void GetMonAnimPointer_Conv(void){
+static void GetMonAnimPointer(void){
     // CALL(aPokeAnim_IsEgg);
     // IF_Z goto egg;
-    if(PokeAnim_IsEgg_Conv()) {
+    if(PokeAnim_IsEgg()) {
     // egg:
         // LD_HL(mEggAnimation);
         // LD_C(BANK(aEggAnimation));
@@ -1809,7 +1352,7 @@ void GetMonAnimPointer_Conv(void){
     // IF_Z goto unown;
     const uint8_t** hl;
     const uint8_t** de;
-    if(PokeAnim_IsUnown_Conv(pokeAnim->species)) {
+    if(PokeAnim_IsUnown(pokeAnim->species)) {
         hl = UnownAnimationPointers;
         de = UnownAnimationIdlePointers;
     }
@@ -1850,24 +1393,7 @@ void GetMonAnimPointer_Conv(void){
     // RET;
 }
 
-void PokeAnim_GetFrontpicDims(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wCurPartySpecies));
-    LDH_addr_A(rSVBK);
-    LD_A_addr(wCurPartySpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_A_addr(wBasePicSize);
-    AND_A(0xf);
-    LD_C_A;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-uint8_t PokeAnim_GetFrontpicDims_Conv(void){
+static uint8_t PokeAnim_GetFrontpicDims(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wCurPartySpecies));
@@ -1977,20 +1503,7 @@ egg:
 
 }
 
-void PokeAnim_GetSpeciesOrUnown(void){
-    CALL(aPokeAnim_IsUnown);
-    IF_Z goto unown;
-    LD_A_addr(wPokeAnimSpecies);
-    RET;
-
-
-unown:
-    LD_A_addr(wPokeAnimUnownLetter);
-    RET;
-
-}
-
-uint8_t PokeAnim_GetSpeciesOrUnown_Conv(species_t a){
+static uint8_t PokeAnim_GetSpeciesOrUnown(species_t a){
     // CALL(aPokeAnim_IsUnown);
     // IF_Z goto unown;
     // LD_A_addr(wPokeAnimSpecies);
@@ -2000,48 +1513,21 @@ uint8_t PokeAnim_GetSpeciesOrUnown_Conv(species_t a){
 // unown:
     // LD_A_addr(wPokeAnimUnownLetter);
     // RET;
-    return PokeAnim_IsUnown_Conv(a)? pokeAnim->unownLetter: pokeAnim->species;
+    return PokeAnim_IsUnown(a)? pokeAnim->unownLetter: pokeAnim->species;
 }
 
-void Unused_HOF_AnimateAlignedFrontpic(void){
-    LD_A(0x1);
-    LD_addr_A(wBoxAlignment);
+void Unused_HOF_AnimateAlignedFrontpic(uint8_t* de, uint8_t c){
+    // LD_A(0x1);
+    // LD_addr_A(wBoxAlignment);
+    wram->wBoxAlignment = 0x1;
 
-    return HOF_AnimateFrontpic();
+    return HOF_AnimateFrontpic(de, c);
 }
 
-void HOF_AnimateFrontpic(void){
-    CALL(aAnimateMon_CheckIfPokemon);
-    IF_C goto fail;
-    LD_H_D;
-    LD_L_E;
-    PUSH_BC;
-    PUSH_HL;
-    LD_DE(vTiles2);
-    PREDEF(pGetAnimatedFrontpic);
-    POP_HL;
-    POP_BC;
-    LD_D(0);
-    LD_E_C;
-    CALL(aAnimateFrontpic);
-    XOR_A_A;
-    LD_addr_A(wBoxAlignment);
-    RET;
-
-
-fail:
-    XOR_A_A;
-    LD_addr_A(wBoxAlignment);
-    INC_A;
-    LD_addr_A(wCurPartySpecies);
-    RET;
-
-}
-
-void HOF_AnimateFrontpic_Conv(uint8_t* de, uint8_t c){
+void HOF_AnimateFrontpic(uint8_t* de, uint8_t c){
     // CALL(aAnimateMon_CheckIfPokemon);
     // IF_C goto fail;
-    if(!AnimateMon_CheckIfPokemon_Conv()) {
+    if(!AnimateMon_CheckIfPokemon()) {
     // fail:
         // XOR_A_A;
         // LD_addr_A(wBoxAlignment);
@@ -2058,13 +1544,13 @@ void HOF_AnimateFrontpic_Conv(uint8_t* de, uint8_t c){
     // PUSH_HL;
     // LD_DE(vTiles2);
     // PREDEF(pGetAnimatedFrontpic);
-    GetAnimatedFrontpic_Conv(vram->vTiles2, 0);
+    GetAnimatedFrontpic(vram->vTiles2, 0);
     // POP_HL;
     // POP_BC;
     // LD_D(0);
     // LD_E_C;
     // CALL(aAnimateFrontpic);
-    AnimateFrontpic_Conv(de, 0, c);
+    AnimateFrontpic(de, 0, c);
     // XOR_A_A;
     // LD_addr_A(wBoxAlignment);
     wram->wBoxAlignment = 0x0;

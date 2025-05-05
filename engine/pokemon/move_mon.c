@@ -856,7 +856,7 @@ initstats:
         // CALL(aAddNTimes);
         // PREDEF(pGetUnownLetter);
         // CALLFAR(aUpdateUnownDex);
-        UpdateUnownDex_Conv(GetUnownLetter_Conv(hl->mon.DVs));
+        UpdateUnownDex_Conv(GetUnownLetter(hl->mon.DVs));
     }
 
 // done:
@@ -1111,7 +1111,7 @@ bool AddTempmonToParty_Conv(void){
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aAddNTimes);
         // PREDEF(pGetUnownLetter);
-        unown_letter_t letter = GetUnownLetter_Conv(wram->wPartyMon[c - 1].mon.DVs);
+        unown_letter_t letter = GetUnownLetter(wram->wPartyMon[c - 1].mon.DVs);
         // CALLFAR(aUpdateUnownDex);
         UpdateUnownDex_Conv(letter);
         // LD_A_addr(wFirstUnownSeen);
@@ -2510,7 +2510,7 @@ bool SendMonIntoBox_Conv(void){
         // LD_HL(sBoxMon1DVs);
         // PREDEF(pGetUnownLetter);
         // CALLFAR(aUpdateUnownDex);
-        UpdateUnownDex_Conv(GetUnownLetter_Conv(boxmon->DVs));
+        UpdateUnownDex_Conv(GetUnownLetter(boxmon->DVs));
     }
 
 // not_unown:

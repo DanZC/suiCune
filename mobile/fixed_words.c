@@ -598,7 +598,7 @@ static void EZChat_EditMenu_InitKanaMode(void){
     // CALL(aEnableLCD);
     EnableLCD();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // FARCALL(aLoadPokemonData);
@@ -726,7 +726,7 @@ void EZChat_MasterLoop(void){
         // FARCALL(aPlaySpriteAnimations);
         PlaySpriteAnimations();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // goto loop;
     }
 
@@ -1435,7 +1435,7 @@ void Function11c4be(void){
     // CALL(aByteFill);
     ByteFill(coord(0, 14, wram->wAttrmap), 0x28, 0x7);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 
@@ -1849,7 +1849,7 @@ void Function11c618(void){
     // CALL(aByteFill);
     ByteFill(coord(0, 6, wram->wAttrmap), 0xc8, 0x2);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 
@@ -3521,7 +3521,7 @@ void Function11c9ab(void){
     // CALL(aByteFill);
     ByteFill(coord(0, 6, wram->wAttrmap), 0xc8, 0x7);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 
@@ -3668,7 +3668,7 @@ void Function11ca19(void){
         // IF_NZ goto asm_11ca22;
     } while(--c != 0);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 

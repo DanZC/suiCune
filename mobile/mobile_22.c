@@ -161,7 +161,7 @@ void Function891ab(void){
     // CALL(aMobile22_SetBGMapMode1);
     Mobile22_SetBGMapMode1();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // CALL(aMobile22_SetBGMapMode0);
     Mobile22_SetBGMapMode0();
     // RET;
@@ -1708,7 +1708,7 @@ void Function897af(uint8_t* bc){
     wram->wCurPartySpecies = 0;
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x37);
     // FARCALL(aGetTrainerPic);
-    GetTrainerPic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x37, wram->wTrainerClass);
+    GetTrainerPic(vram->vTiles2 + LEN_2BPP_TILE * 0x37, wram->wTrainerClass);
     // POP_BC;
     // RET;
 }
@@ -1725,7 +1725,7 @@ void Function897d5(const uint8_t* bc){
         // hlcoord(12, 3, wTilemap);
         // LD_BC((7 << 8) | 7);
         // PREDEF(pPlaceGraphic);
-        PlaceGraphicYStagger_Conv(coord(12, 3, wram->wTilemap), 7, 7);
+        PlaceGraphicYStagger(coord(12, 3, wram->wTilemap), 7, 7);
         // CALL(aFunction8963d);
         Function8963d();
         // POP_BC;
@@ -3074,7 +3074,7 @@ u8_flag_s Function89d75(void (*const func)(void)){
     // CALL(av_hl_);
     func();
     // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     // POP_HL;
     // JR(masm_89d90);
     return asm_89d90(func);

@@ -246,7 +246,7 @@ void GetSGBLayout(uint8_t b) {
     // IF_NZ goto sgb;
     if(hram->hCGB != 0) {
         // PREDEF_JUMP(pLoadSGBLayout);
-        LoadSGBLayoutCGB_Conv(b);
+        LoadSGBLayoutCGB(b);
         return;
     }
 

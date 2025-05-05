@@ -601,7 +601,7 @@ void Function1161d5(void){
     // LDH_addr_A(rSVBK);
 
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // LD_A(0x8);
     // LD_addr_A(wMusicFade);
     wram->wMusicFade = 0x8;
@@ -833,7 +833,7 @@ void Function11636e(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // LD_A(0x8);
     // LD_addr_A(wMusicFade);
     wram->wMusicFade = 0x8;
@@ -892,7 +892,7 @@ void Function1163c0(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_MOBILE);
     // IF_Z goto asm_11642a;
@@ -935,7 +935,7 @@ void Function116441(void){
     // LDH_addr_A(hWY);
     hram->hWY = 0x90;
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // LD_A(0x8);
     // LD_addr_A(wMusicFade);
     wram->wMusicFade = 0x8;

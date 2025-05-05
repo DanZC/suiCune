@@ -6280,7 +6280,7 @@ void LoadEnemyMonToSwitchTo_Conv(uint8_t b){
         // PREDEF(pGetUnownLetter);
         // LD_A_addr(wUnownLetter);
         // LD_addr_A(wFirstUnownSeen);
-        wram->wFirstUnownSeen = GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+        wram->wFirstUnownSeen = GetUnownLetter(wram->wEnemyMon.dvs);
     }
 
 // skip_unown:
@@ -6554,7 +6554,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
 
     // CALL(aBattleCheckEnemyShininess);
     // IF_NC goto not_shiny;
-    if(BattleCheckEnemyShininess_Conv()) {
+    if(BattleCheckEnemyShininess()) {
         // LD_A(1);  // shiny anim
         // LD_addr_A(wBattleAnimParam);
         wram->wBattleAnimParam = 1;
@@ -6576,7 +6576,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
             // LD_D(0x0);
             // LD_E(ANIM_MON_SLOW);
             // PREDEF(pAnimateFrontpic);
-            AnimateFrontpic_Conv(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_SLOW);
+            AnimateFrontpic(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_SLOW);
             // goto skip_cry;
         }
         else {
@@ -7358,44 +7358,24 @@ void InitBattleMon(void){
     // RET;
 }
 
-void BattleCheckPlayerShininess(void){
-    CALL(aGetPartyMonDVs);
-    JR(mBattleCheckShininess);
-
-}
-
-bool BattleCheckPlayerShininess_Conv(void){
+bool BattleCheckPlayerShininess(void){
     // CALL(aGetPartyMonDVs);
     // JR(mBattleCheckShininess);
-    return BattleCheckShininess_Conv(GetPartyMonDVs_Conv());
+    return BattleCheckShininess(GetPartyMonDVs_Conv());
 }
 
-void BattleCheckEnemyShininess(void){
-    CALL(aGetEnemyMonDVs);
-
-    return BattleCheckShininess();
-}
-
-bool BattleCheckEnemyShininess_Conv(void){
+bool BattleCheckEnemyShininess(void){
     // CALL(aGetEnemyMonDVs);
 
-    return BattleCheckShininess_Conv(GetEnemyMonDVs_Conv());
+    return BattleCheckShininess(GetEnemyMonDVs_Conv());
 }
 
-void BattleCheckShininess(void){
-    LD_B_H;
-    LD_C_L;
-    CALLFAR(aCheckShininess);
-    RET;
-
-}
-
-bool BattleCheckShininess_Conv(uint16_t dvs){
+bool BattleCheckShininess(uint16_t dvs){
     // LD_B_H;
     // LD_C_L;
     // CALLFAR(aCheckShininess);
     // RET;
-    return CheckShininess_Conv(dvs);
+    return CheckShininess(dvs);
 }
 
 void GetPartyMonDVs(void){
@@ -7583,7 +7563,7 @@ void SwitchPlayerMon(void){
 void SendOutPlayerMon(void){
     // LD_HL(wBattleMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wBattleMon.dvs);
+    GetUnownLetter(wram->wBattleMon.dvs);
     // hlcoord(1, 5, wTilemap);
     // LD_B(7);
     // LD_C(8);
@@ -7632,7 +7612,7 @@ void SendOutPlayerMon(void){
     Call_PlayBattleAnim_Conv(ANIM_SEND_OUT_MON);
     // CALL(aBattleCheckPlayerShininess);
     // IF_NC goto not_shiny;
-    if(BattleCheckPlayerShininess_Conv()) {
+    if(BattleCheckPlayerShininess()) {
         // LD_A(1);
         // LD_addr_A(wBattleAnimParam);
         wram->wBattleAnimParam = 1;
@@ -9343,7 +9323,7 @@ BattleMenu_begin:
                     while(1) {
                     // loop:
                         // FARCALL(aFreezeMonIcons);
-                        FreezeMonIcons_Conv();
+                        FreezeMonIcons();
                         // CALL(aBattleMenuPKMN_Loop_GetMenu);
                         // IF_C goto PressedB;
                         if(BattleMenu_PKMN_GetMenu())
@@ -11246,7 +11226,7 @@ InitDVs:
         //  Get letter based on DVs
             // LD_HL(wEnemyMonDVs);
             // PREDEF(pGetUnownLetter);
-            unown_letter_t letter = GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+            unown_letter_t letter = GetUnownLetter(wram->wEnemyMon.dvs);
         //  Can't use any letters that haven't been unlocked
         //  If combined with forced shiny battletype, causes an infinite loop
             // CALL(aCheckUnownLetter);
@@ -11845,7 +11825,7 @@ void BattleWinSlideInEnemyTrainerFrontpic(void){
     wram->wTrainerClass = wram->wOtherTrainerClass;
     // LD_DE(vTiles2);
     // CALLFAR(aGetTrainerPic);
-    GetTrainerPic_Conv(vram->vTiles2, wram->wTrainerClass);
+    GetTrainerPic(vram->vTiles2, wram->wTrainerClass);
     // hlcoord(19, 0, wTilemap);
     tile_t* hl = coord(19, 0, wram->wTilemap);
     // LD_C(0);
@@ -12523,7 +12503,7 @@ uint8_t BoostStat_Conv(uint8_t* hl){
 
 void v_LoadBattleFontsHPBar(void){
     // CALLFAR(aLoadBattleFontsHPBar);
-    LoadBattleFontsHPBar_Conv();
+    LoadBattleFontsHPBar();
     // RET;
 }
 
@@ -12536,7 +12516,7 @@ void v_LoadHPBar(void){
 void v_LoadHPBar_Conv(void){
     // CALLFAR(aLoadHPBar);
     // RET;
-    return LoadHPBar_Conv();
+    return LoadHPBar();
 }
 
 void LoadHPExpBarGFX(void){
@@ -14322,10 +14302,10 @@ void DropPlayerSub(void){
     wram->wCurPartySpecies = wram->wBattleMon.species;
     // LD_HL(wBattleMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wBattleMon.dvs);
+    GetUnownLetter(wram->wBattleMon.dvs);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
     // PREDEF(pGetMonBackpic);
-    GetMonBackpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x31, wram->wCurPartySpecies);
+    GetMonBackpic(vram->vTiles2 + LEN_2BPP_TILE * 0x31, wram->wCurPartySpecies);
     // POP_AF;
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = species;
@@ -14393,10 +14373,10 @@ void DropEnemySub(void){
     GetBaseData(wram->wEnemyMon.species);
     // LD_HL(wEnemyMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+    GetUnownLetter(wram->wEnemyMon.dvs);
     // LD_DE(vTiles2);
     // PREDEF(pGetAnimatedFrontpic);
-    GetAnimatedFrontpic_Conv(vram->vTiles2, 0);
+    GetAnimatedFrontpic(vram->vTiles2, 0);
     // POP_AF;
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = species;
@@ -14713,7 +14693,7 @@ void InitEnemyTrainer_Conv(uint8_t tclass){
 // ok:
     // LD_DE(vTiles2);
     // CALLFAR(aGetTrainerPic);
-    GetTrainerPic_Conv(vram->vTiles2, tclass);
+    GetTrainerPic(vram->vTiles2, tclass);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
     hram->hGraphicStartTile = 0;
@@ -14723,7 +14703,7 @@ void InitEnemyTrainer_Conv(uint8_t tclass){
     // hlcoord(12, 0, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(12, 0, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(12, 0, wram->wTilemap), 7, 7);
     // LD_A(-1);
     // LD_addr_A(wCurOTMon);
     wram->wCurOTMon = 0xff;
@@ -14792,7 +14772,7 @@ void InitEnemyWildmon(void){
     CopyBytes(wram->wWildMonPP, wram->wEnemyMon.pp, NUM_MOVES);
     // LD_HL(wEnemyMonDVs);
     // PREDEF(pGetUnownLetter);
-    uint8_t letter = GetUnownLetter_Conv(wram->wEnemyMon.dvs);
+    uint8_t letter = GetUnownLetter(wram->wEnemyMon.dvs);
     // LD_A_addr(wCurPartySpecies);
     // CP_A(UNOWN);
     // IF_NZ goto skip_unown;
@@ -14808,7 +14788,7 @@ void InitEnemyWildmon(void){
 // skip_unown:
     // LD_DE(vTiles2);
     // PREDEF(pGetAnimatedFrontpic);
-    GetAnimatedFrontpic_Conv(vram->vTiles2, 0);
+    GetAnimatedFrontpic(vram->vTiles2, 0);
     // XOR_A_A;
     // LD_addr_A(wTrainerClass);
     wram->wTrainerClass = 0;
@@ -14817,7 +14797,7 @@ void InitEnemyWildmon(void){
     // hlcoord(12, 0, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(12, 0, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(12, 0, wram->wTilemap), 7, 7);
     // RET;
 }
 
@@ -15984,7 +15964,7 @@ void InitBattleDisplay(void){
     // hlcoord(2, 6, wTilemap);
     // LD_BC((6 << 8) | 6);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphic_Conv(coord(2, 6, wram->wTilemap), 6, 6);
+    PlaceGraphic(coord(2, 6, wram->wTilemap), 6, 6);
     // XOR_A_A;
     // LDH_addr_A(hWY);
     hram->hWY = 0;
@@ -16132,7 +16112,7 @@ void CopyBackpic(void){
     // hlcoord(2, 6, wTilemap);
     // LD_BC((6 << 8) | 6);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphic_Conv(coord(2, 6, wram->wTilemap), 6, 6);
+    PlaceGraphic(coord(2, 6, wram->wTilemap), 6, 6);
     // RET;
 }
 
@@ -16163,7 +16143,7 @@ void BattleStartMessage(void){
     // wild:
         // CALL(aBattleCheckEnemyShininess);
         // IF_NC goto not_shiny;
-        if(BattleCheckEnemyShininess_Conv()) {
+        if(BattleCheckEnemyShininess()) {
             // XOR_A_A;
             // LD_addr_A(wNumHits);
             wram->wNumHits = 0;
@@ -16189,7 +16169,7 @@ void BattleStartMessage(void){
                 // LD_D(0x0);
                 // LD_E(ANIM_MON_NORMAL);
                 // PREDEF(pAnimateFrontpic);
-                AnimateFrontpic_Conv(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_NORMAL);
+                AnimateFrontpic(coord(12, 0, wram->wTilemap), 0x0, ANIM_MON_NORMAL);
                 // goto skip_cry;  // cry is played during the animation
             }
             else {

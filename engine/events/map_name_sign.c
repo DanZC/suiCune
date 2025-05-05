@@ -237,7 +237,7 @@ void InitMapNameSign_Conv(void){
         // CALL(aInitMapNameFrame);
         InitMapNameFrame_Conv();
         // FARCALL(aHDMATransfer_OnlyTopFourRows);
-        HDMATransfer_OnlyTopFourRows_Conv();
+        HDMATransfer_OnlyTopFourRows();
         // RET;
         return;
     }
@@ -311,7 +311,7 @@ void PlaceMapNameSign_Conv(void){
             // CALL(aPlaceMapNameCenterAlign);
             PlaceMapNameCenterAlign_Conv();
             // FARCALL(aHDMATransfer_OnlyTopFourRows);
-            HDMATransfer_OnlyTopFourRows_Conv();
+            HDMATransfer_OnlyTopFourRows();
         }
 
     // already_initialized:

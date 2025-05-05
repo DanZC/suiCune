@@ -144,7 +144,7 @@ void LoadGenderScreenPal(void){
     // CALL(aFarCopyWRAM);
     CopyBytes(wram->wBGPals1, Palette, 1 * PALETTE_SIZE);
     // FARCALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // RET;
 // INCLUDE "gfx/new_game/gender_screen.pal"
 }

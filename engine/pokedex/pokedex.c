@@ -3441,7 +3441,7 @@ void Pokedex_LoadSelectedMonTiles(void){
     GetBaseData(wram->wCurPartySpecies);
     // LD_DE(vTiles2);
     // PREDEF(pGetMonFrontpic);
-    GetMonFrontpic_Conv(vram->vTiles2);
+    GetMonFrontpic(vram->vTiles2);
     // RET;
 }
 
@@ -3623,7 +3623,7 @@ void Pokedex_LoadUnownFrontpicTiles(void){
     GetBaseData(UNOWN);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // PREDEF(pGetMonFrontpic);
-    GetMonFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
+    GetMonFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
     // POP_AF;
     // LD_addr_A(wUnownLetter);
     wram->wUnownLetter = letter;
@@ -3673,7 +3673,7 @@ void v_NewPokedexEntry(void){
     GetBaseData(wram->wTempSpecies);
     // LD_DE(vTiles2);
     // PREDEF(pGetMonFrontpic);
-    GetMonFrontpic_Conv(vram->vTiles2);
+    GetMonFrontpic(vram->vTiles2);
     // LD_A(SCGB_POKEDEX);
     // CALL(aPokedex_GetSGBLayout);
     Pokedex_GetSGBLayout(SCGB_POKEDEX);

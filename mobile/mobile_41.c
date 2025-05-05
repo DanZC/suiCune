@@ -1470,7 +1470,7 @@ void Function106464(void){
     // LD_B(0x0f);  // no graphics at 0f:40b0// JP leftover???
     // CALL(aGet2bpp);
     // FARCALL(aLoadFrame);
-    LoadFrame_Conv();
+    LoadFrame();
     // RET;
 }
 

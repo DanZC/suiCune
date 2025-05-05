@@ -88,7 +88,7 @@ void AppearUser(void){
     // LDH_addr_A(hGraphicStartTile);
     hram->hGraphicStartTile = a;
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(ccoords.hl, ccoords.b, ccoords.c);
+    PlaceGraphicYStagger(ccoords.hl, ccoords.b, ccoords.c);
     return FinishAppearDisappearUser();
 }
 

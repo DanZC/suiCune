@@ -108,7 +108,7 @@ void Function117699(void){
     // FARCALL(aFunction171c87);
     Function171c87();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // RET;
@@ -130,7 +130,7 @@ void Function1176ee(void){
         // FARCALL(aPlaySpriteAnimations);
         PlaySpriteAnimations();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // goto loop;
     }
 
@@ -520,7 +520,7 @@ void Function1178aa(void){
     // CALL(aMenuBoxCoord2Tile);
     MenuBoxCoord2Tile();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // hlcoord(16, 8, wTilemap);
     // LD_DE(mYessNoString_1179c5);
     // CALL(aPlaceString);
@@ -683,7 +683,7 @@ void Function117984(void){
     // CALL(aMenuBoxCoord2Tile);
     MenuBoxCoord2Tile();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // hlcoord(1, 14, wTilemap);
     // LD_DE(mNotAPokemonPasswordString);
     // CALL(aPlaceString);
@@ -806,7 +806,7 @@ void Function117a94(void){
     // FARCALL(aFunction172e78);
     Function172e78();
     // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
-    HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+    HDMATransferAttrmapAndTilemapToWRAMBank3();
     // RET;
 }
 
@@ -820,7 +820,7 @@ void Function117ab4(void){
     // FARCALL(aFunction172eb9);
     Function172eb9();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 
@@ -836,7 +836,7 @@ void Function117acd(void){
         // CALL(aFunction117ae9);
         Function117ae9();
         // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
-        HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+        HDMATransferAttrmapAndTilemapToWRAMBank3();
         // JR(mFunction117acd);
     }
 
@@ -928,7 +928,7 @@ void Function117b4f(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_A(0x80);
         // LD_addr_A(wJumptableIndex);
         wram->wJumptableIndex = 0x80;
@@ -951,7 +951,7 @@ void Function117b4f(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // JP(mMobileStudium_JumptableIncrement);
         return MobileStudium_JumptableIncrement();
     }
@@ -1120,7 +1120,7 @@ void Function117c4a(void){
     // CALL(aMenuBoxCoord2Tile);
     MenuBoxCoord2Tile();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // LD_HL(mMobileStadiumSuccessText);
     // CALL(aPrintText);
     PrintText(MobileStadiumSuccessText);

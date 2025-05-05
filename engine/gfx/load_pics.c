@@ -7,60 +7,13 @@
 #include "../../data/pokemon/unown_pic_pointers.h"
 #include "../../data/trainers/pic_pointers.h"
 
-void GetUnownLetter(void){
-//  Return Unown letter in wUnownLetter based on DVs at hl
-
-//  Take the middle 2 bits of each DV and place them in order:
-//     atk  def  spd  spc
-//     .ww..xx.  .yy..zz.
-
-// atk
-    LD_A_hl;
-    AND_A(0b01100000);
-    SLA_A;
-    LD_B_A;
-// def
-    LD_A_hli;
-    AND_A(0b00000110);
-    SWAP_A;
-    SRL_A;
-    OR_A_B;
-    LD_B_A;
-
-// spd
-    LD_A_hl;
-    AND_A(0b01100000);
-    SWAP_A;
-    SLA_A;
-    OR_A_B;
-    LD_B_A;
-// spc
-    LD_A_hl;
-    AND_A(0b00000110);
-    SRL_A;
-    OR_A_B;
-
-//  Divide by 10 to get 0-25
-    LDH_addr_A(hDividend + 3);
-    XOR_A_A;
-    LDH_addr_A(hDividend);
-    LDH_addr_A(hDividend + 1);
-    LDH_addr_A(hDividend + 2);
-    LD_A(0xff / NUM_UNOWN + 1);
-    LDH_addr_A(hDivisor);
-    LD_B(4);
-    CALL(aDivide);
-
-//  Increment to get 1-26
-    LDH_A_addr(hQuotient + 3);
-    INC_A;
-    LD_addr_A(wUnownLetter);
-    RET;
-
-}
+static void LoadFrontpicTiles(uint8_t* hl, uint8_t* de, uint8_t c);
+static void FixBackpicAlignment(uint8_t* hl, uint8_t c);
+static void PadFrontpic(uint8_t* hl, uint8_t* de, uint8_t b);
+static void LoadOrientedFrontpic(uint8_t** hl, uint8_t** de, uint8_t c);
 
 //  Return Unown letter in wUnownLetter based on DVs at hl
-uint8_t GetUnownLetter_Conv(uint16_t dvs){
+uint8_t GetUnownLetter(uint16_t dvs){
 //  Take the middle 2 bits of each DV and place them in order:
 //     atk  def  spd  spc
 //     .ww..xx.  .yy..zz.
@@ -114,21 +67,7 @@ uint8_t GetUnownLetter_Conv(uint16_t dvs){
     return quot + 1;
 }
 
-void GetMonFrontpic(void){
-    LD_A_addr(wCurPartySpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aIsAPokemon);
-    RET_C ;
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    CALL(av_GetFrontpic);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-void GetMonFrontpic_Conv(uint8_t* de){
+void GetMonFrontpic(uint8_t* de){
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
@@ -140,31 +79,14 @@ void GetMonFrontpic_Conv(uint8_t* de){
     // PUSH_AF;
     uint8_t svbk = gb_read(rSVBK);
     // CALL(av_GetFrontpic);
-    v_GetFrontpic_Conv(de, 0);
+    v_GetFrontpic(de, 0);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, svbk);
     // RET;
 }
 
-void GetAnimatedFrontpic(void){
-    LD_A_addr(wCurPartySpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aIsAPokemon);
-    RET_C ;
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(av_GetFrontpic);
-    CALL(aGetAnimatedEnemyFrontpic);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-void GetAnimatedFrontpic_Conv(uint8_t* de, uint8_t frame){
+void GetAnimatedFrontpic(uint8_t* de, uint8_t frame){
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
@@ -179,45 +101,16 @@ void GetAnimatedFrontpic_Conv(uint8_t* de, uint8_t frame){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // CALL(av_GetFrontpic);
-    v_GetFrontpic_Conv(de, frame);
+    v_GetFrontpic(de, frame);
     // CALL(aGetAnimatedEnemyFrontpic);
-    GetAnimatedEnemyFrontpic_Conv(de);
+    GetAnimatedEnemyFrontpic(de);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, svbk);
     // RET;
 }
 
-void v_GetFrontpic(void){
-    PUSH_DE;
-    CALL(aGetBaseData);
-    LD_A_addr(wBasePicSize);
-    AND_A(0xf);
-    LD_B_A;
-    PUSH_BC;
-    CALL(aGetFrontpicPointer);
-    LD_A(MBANK(awDecompressEnemyFrontpic));
-    LDH_addr_A(rSVBK);
-    LD_A_B;
-    LD_DE(wDecompressEnemyFrontpic);
-    CALL(aFarDecompress);
-    POP_BC;
-    LD_HL(wDecompressScratch);
-    LD_DE(wDecompressEnemyFrontpic);
-    CALL(aPadFrontpic);
-    POP_HL;
-    PUSH_HL;
-    LD_DE(wDecompressScratch);
-    LD_C(7 * 7);
-    LDH_A_addr(hROMBank);
-    LD_B_A;
-    CALL(aGet2bpp);
-    POP_HL;
-    RET;
-
-}
-
-void v_GetFrontpic_Conv(uint8_t* de, uint8_t frame){
+void v_GetFrontpic(uint8_t* de, uint8_t frame){
     // PUSH_DE;
     // CALL(aGetBaseData);
     GetBaseData(wram->wCurSpecies);
@@ -228,7 +121,7 @@ void v_GetFrontpic_Conv(uint8_t* de, uint8_t frame){
     uint8_t c = (wram->wBasePicSize & 0xf0) >> 4;
     // PUSH_BC;
     // CALL(aGetFrontpicPointer);
-    const char* de2 = GetFrontpicPointer_Conv();
+    const char* de2 = GetFrontpicPointer();
     // LD_A(BANK(wDecompressEnemyFrontpic));
     // LDH_addr_A(rSVBK);
     // LD_A_B;
@@ -241,7 +134,7 @@ void v_GetFrontpic_Conv(uint8_t* de, uint8_t frame){
     // LD_HL(wDecompressScratch);
     // LD_DE(wDecompressEnemyFrontpic);
     // CALL(aPadFrontpic);
-    PadFrontpic_Conv(wram->wDecompressScratch, wram->wDecompressEnemyFrontpic, b);
+    PadFrontpic(wram->wDecompressScratch, wram->wDecompressEnemyFrontpic, b);
     // POP_HL;
     // PUSH_HL;
     // LD_DE(wDecompressScratch);
@@ -254,38 +147,7 @@ void v_GetFrontpic_Conv(uint8_t* de, uint8_t frame){
     CopyBytes(de, wram->wDecompressScratch, 7 * 7 * LEN_2BPP_TILE);
 }
 
-void GetFrontpicPointer(void){
-    LD_A_addr(wCurPartySpecies);
-    CP_A(UNOWN);
-    IF_Z goto unown;
-    LD_A_addr(wCurPartySpecies);
-    LD_D(BANK(aPokemonPicPointers));
-    goto ok;
-
-unown:
-    LD_A_addr(wUnownLetter);
-    LD_D(BANK(aUnownPicPointers));
-
-ok:
-// These are assumed to be at the same address in their respective banks.
-    //assert ['PokemonPicPointers == UnownPicPointers'];
-    LD_HL(mPokemonPicPointers);
-    DEC_A;
-    LD_BC(6);
-    CALL(aAddNTimes);
-    LD_A_D;
-    CALL(aGetFarByte);
-    CALL(aFixPicBank);
-    PUSH_AF;
-    INC_HL;
-    LD_A_D;
-    CALL(aGetFarWord);
-    POP_BC;
-    RET;
-
-}
-
-const char* GetFrontpicPointer_Conv(void){
+const char* GetFrontpicPointer(void){
     // LD_A_addr(wCurPartySpecies);
     // CP_A(UNOWN);
     // IF_Z goto unown;
@@ -326,52 +188,7 @@ const char* GetFrontpicPointer_Conv(void){
     return p;
 }
 
-void GetAnimatedEnemyFrontpic(void){
-    LD_A(MBANK(avTiles3));
-    LDH_addr_A(rVBK);
-    PUSH_HL;
-    LD_DE(wDecompressScratch);
-    LD_C(7 * 7);
-    LDH_A_addr(hROMBank);
-    LD_B_A;
-    CALL(aGet2bpp);
-    POP_HL;
-    LD_DE(7 * 7 * LEN_2BPP_TILE);
-    ADD_HL_DE;
-    PUSH_HL;
-    LD_A(MBANK(awBasePicSize));
-    LD_HL(wBasePicSize);
-    CALL(aGetFarWRAMByte);
-    POP_HL;
-    AND_A(0xf);
-    LD_DE(wDecompressEnemyFrontpic + 5 * 5 * LEN_2BPP_TILE);
-    LD_C(5 * 5);
-    CP_A(5);
-    IF_Z goto got_dims;
-    LD_DE(wDecompressEnemyFrontpic + 6 * 6 * LEN_2BPP_TILE);
-    LD_C(6 * 6);
-    CP_A(6);
-    IF_Z goto got_dims;
-    LD_DE(wDecompressEnemyFrontpic + 7 * 7 * LEN_2BPP_TILE);
-    LD_C(7 * 7);
-
-got_dims:
-    PUSH_HL;
-    PUSH_BC;
-    CALL(aLoadFrontpicTiles);
-    POP_BC;
-    POP_HL;
-    LD_DE(wDecompressScratch);
-    LDH_A_addr(hROMBank);
-    LD_B_A;
-    CALL(aGet2bpp);
-    XOR_A_A;
-    LDH_addr_A(rVBK);
-    RET;
-
-}
-
-void GetAnimatedEnemyFrontpic_Conv(uint8_t* hl){
+void GetAnimatedEnemyFrontpic(uint8_t* hl){
     // LD_A(BANK(vTiles3));
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, MBANK(vTiles3));
@@ -382,7 +199,7 @@ void GetAnimatedEnemyFrontpic_Conv(uint8_t* hl){
     // LDH_A_addr(hROMBank);
     // LD_B_A;
     // CALL(aGet2bpp);
-    // LoadPNG2bppAssetSectionToVRAM(wram->wDecompressScratch, GetFrontpicPointer_Conv(), 0, 7 * 7);
+    // LoadPNG2bppAssetSectionToVRAM(wram->wDecompressScratch, GetFrontpicPointer(), 0, 7 * 7);
     CopyBytes(hl, wram->wDecompressScratch, 7 * 7 * LEN_2BPP_TILE);
     // POP_HL;
     // LD_DE(7 * 7 * LEN_2BPP_TILE);
@@ -424,7 +241,7 @@ void GetAnimatedEnemyFrontpic_Conv(uint8_t* hl){
     // PUSH_HL;
     // PUSH_BC;
     // CALL(aLoadFrontpicTiles);
-    LoadFrontpicTiles_Conv(wram->wDecompressScratch, de, c);
+    LoadFrontpicTiles(wram->wDecompressScratch, de, c);
     // POP_BC;
     // POP_HL;
     // LD_DE(wDecompressScratch);
@@ -439,31 +256,7 @@ void GetAnimatedEnemyFrontpic_Conv(uint8_t* hl){
 
 }
 
-void LoadFrontpicTiles(void){
-    LD_HL(wDecompressScratch);
-    SWAP_C;
-    LD_A_C;
-    AND_A(0xf);
-    LD_B_A;
-    LD_A_C;
-    AND_A(0xf0);
-    LD_C_A;
-    PUSH_BC;
-    CALL(aLoadOrientedFrontpic);
-    POP_BC;
-
-loop:
-    PUSH_BC;
-    LD_C(0);
-    CALL(aLoadOrientedFrontpic);
-    POP_BC;
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void LoadFrontpicTiles_Conv(uint8_t* hl, uint8_t* de, uint8_t c){
+static void LoadFrontpicTiles(uint8_t* hl, uint8_t* de, uint8_t c){
     // LD_HL(wDecompressScratch);
     // SWAP_C;
     // LD_A_C;
@@ -475,7 +268,7 @@ void LoadFrontpicTiles_Conv(uint8_t* hl, uint8_t* de, uint8_t c){
     // LD_C_A;
     // PUSH_BC;
     // CALL(aLoadOrientedFrontpic);
-    LoadOrientedFrontpic_Conv(&hl, &de, (c & 0xf0));
+    LoadOrientedFrontpic(&hl, &de, (c & 0xf0));
     // POP_BC;
 
     do {
@@ -483,7 +276,7 @@ void LoadFrontpicTiles_Conv(uint8_t* hl, uint8_t* de, uint8_t c){
         // PUSH_BC;
         // LD_C(0);
         // CALL(aLoadOrientedFrontpic);
-        LoadOrientedFrontpic_Conv(&hl, &de, 0);
+        LoadOrientedFrontpic(&hl, &de, 0);
         // POP_BC;
         // DEC_B;
         // IF_NZ goto loop;
@@ -491,63 +284,7 @@ void LoadFrontpicTiles_Conv(uint8_t* hl, uint8_t* de, uint8_t c){
     // RET;
 }
 
-void GetMonBackpic(void){
-    LD_A_addr(wCurPartySpecies);
-    CALL(aIsAPokemon);
-    RET_C ;
-
-    LD_A_addr(wCurPartySpecies);
-    LD_B_A;
-    LD_A_addr(wUnownLetter);
-    LD_C_A;
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
-    PUSH_DE;
-
-// These are assumed to be at the same address in their respective banks.
-    //assert ['PokemonPicPointers == UnownPicPointers'];
-    LD_HL(mPokemonPicPointers);
-    LD_A_B;
-    LD_D(BANK(aPokemonPicPointers));
-    CP_A(UNOWN);
-    IF_NZ goto ok;
-    LD_A_C;
-    LD_D(BANK(aUnownPicPointers));
-
-ok:
-    DEC_A;
-    LD_BC(6);
-    CALL(aAddNTimes);
-    LD_BC(3);
-    ADD_HL_BC;
-    LD_A_D;
-    CALL(aGetFarByte);
-    CALL(aFixPicBank);
-    PUSH_AF;
-    INC_HL;
-    LD_A_D;
-    CALL(aGetFarWord);
-    LD_DE(wDecompressScratch);
-    POP_AF;
-    CALL(aFarDecompress);
-    LD_HL(wDecompressScratch);
-    LD_C(6 * 6);
-    CALL(aFixBackpicAlignment);
-    POP_HL;
-    LD_DE(wDecompressScratch);
-    LDH_A_addr(hROMBank);
-    LD_B_A;
-    CALL(aGet2bpp);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-void GetMonBackpic_Conv(uint8_t* de, species_t species){
-    (void)de;
+void GetMonBackpic(uint8_t* de, species_t species){
     // LD_A_addr(wCurPartySpecies);
     // CALL(aIsAPokemon);
     // RET_C ;
@@ -599,7 +336,7 @@ void GetMonBackpic_Conv(uint8_t* de, species_t species){
     // LD_HL(wDecompressScratch);
     // LD_C(6 * 6);
     // CALL(aFixBackpicAlignment);
-    FixBackpicAlignment_Conv(wram->wDecompressScratch, 6 * 6);
+    FixBackpicAlignment(wram->wDecompressScratch, 6 * 6);
     // POP_HL;
     // LD_DE(wDecompressScratch);
     // LDH_A_addr(hROMBank);
@@ -680,51 +417,7 @@ void GSIntro_GetMonFrontpic(void){
 
 }
 
-void GetTrainerPic(void){
-    LD_A_addr(wTrainerClass);
-    AND_A_A;
-    RET_Z ;
-    CP_A(NUM_TRAINER_CLASSES + 1);
-    RET_NC ;
-    CALL(aWaitBGMap);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_HL(mTrainerPicPointers);
-    LD_A_addr(wTrainerClass);
-    DEC_A;
-    LD_BC(3);
-    CALL(aAddNTimes);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
-    PUSH_DE;
-    LD_A(BANK(aTrainerPicPointers));
-    CALL(aGetFarByte);
-    CALL(aFixPicBank);
-    PUSH_AF;
-    INC_HL;
-    LD_A(BANK(aTrainerPicPointers));
-    CALL(aGetFarWord);
-    POP_AF;
-    LD_DE(wDecompressScratch);
-    CALL(aFarDecompress);
-    POP_HL;
-    LD_DE(wDecompressScratch);
-    LD_C(7 * 7);
-    LDH_A_addr(hROMBank);
-    LD_B_A;
-    CALL(aGet2bpp);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    CALL(aWaitBGMap);
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
-}
-
-void GetTrainerPic_Conv(uint8_t* de, uint8_t tclass){
+void GetTrainerPic(uint8_t* de, uint8_t tclass){
     // LD_A_addr(wTrainerClass);
     // AND_A_A;
     // RET_Z ;
@@ -801,48 +494,7 @@ void DecompressGet2bpp(void){
 
 }
 
-void FixBackpicAlignment(void){
-    PUSH_DE;
-    PUSH_BC;
-    LD_A_addr(wBoxAlignment);
-    AND_A_A;
-    IF_Z goto keep_dims;
-    LD_A_C;
-    CP_A(7 * 7);
-    LD_DE(7 * 7 * LEN_2BPP_TILE);
-    IF_Z goto got_dims;
-    CP_A(6 * 6);
-    LD_DE(6 * 6 * LEN_2BPP_TILE);
-    IF_Z goto got_dims;
-    LD_DE(5 * 5 * LEN_2BPP_TILE);
-
-
-got_dims:
-    LD_A_hl;
-    LD_B(0);
-    LD_C(8);
-
-loop:
-    RRA;
-    RL_B;
-    DEC_C;
-    IF_NZ goto loop;
-    LD_A_B;
-    LD_hli_A;
-    DEC_DE;
-    LD_A_E;
-    OR_A_D;
-    IF_NZ goto got_dims;
-
-
-keep_dims:
-    POP_BC;
-    POP_DE;
-    RET;
-
-}
-
-void FixBackpicAlignment_Conv(uint8_t* hl, uint8_t c){
+static void FixBackpicAlignment(uint8_t* hl, uint8_t c){
     // PUSH_DE;
     // PUSH_BC;
     // LD_A_addr(wBoxAlignment);
@@ -907,66 +559,6 @@ void FixBackpicAlignment_Conv(uint8_t* hl, uint8_t c){
     // RET;
 }
 
-void PadFrontpic(void){
-//  pads frontpic to fill 7x7 box
-    LD_A_B;
-    CP_A(6);
-    IF_Z goto six;
-    CP_A(5);
-    IF_Z goto five;
-
-
-seven_loop:
-    LD_C(7 << 4);
-    CALL(aLoadOrientedFrontpic);
-    DEC_B;
-    IF_NZ goto seven_loop;
-    RET;
-
-
-six:
-    LD_C(7 << 4);
-    XOR_A_A;
-    CALL(aPadFrontpic_Fill);
-
-six_loop:
-    LD_C((7 - 6) << 4);
-    XOR_A_A;
-    CALL(aPadFrontpic_Fill);
-    LD_C(6 << 4);
-    CALL(aLoadOrientedFrontpic);
-    DEC_B;
-    IF_NZ goto six_loop;
-    RET;
-
-
-five:
-    LD_C(7 << 4);
-    XOR_A_A;
-    CALL(aPadFrontpic_Fill);
-
-five_loop:
-    LD_C((7 - 5) << 4);
-    XOR_A_A;
-    CALL(aPadFrontpic_Fill);
-    LD_C(5 << 4);
-    CALL(aLoadOrientedFrontpic);
-    DEC_B;
-    IF_NZ goto five_loop;
-    LD_C(7 << 4);
-    XOR_A_A;
-    CALL(aPadFrontpic_Fill);
-    RET;
-
-
-Fill:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto Fill;
-    RET;
-
-}
-
 static uint8_t* PadFrontpic_Fill(uint8_t* hl, uint8_t c, uint8_t a) {
     do {
         // LD_hli_A;
@@ -979,7 +571,7 @@ static uint8_t* PadFrontpic_Fill(uint8_t* hl, uint8_t c, uint8_t a) {
 }
 
 //  pads frontpic to fill 7x7 box
-void PadFrontpic_Conv(uint8_t* hl, uint8_t* de, uint8_t b){
+static void PadFrontpic(uint8_t* hl, uint8_t* de, uint8_t b){
     // LD_A_B;
     // CP_A(6);
     // IF_Z goto six;
@@ -998,7 +590,7 @@ void PadFrontpic_Conv(uint8_t* hl, uint8_t* de, uint8_t b){
             hl = PadFrontpic_Fill(hl, (7 - 6) << 4, 0);
             // LD_C(6 << 4);
             // CALL(aLoadOrientedFrontpic);
-            LoadOrientedFrontpic_Conv(&hl, &de, 6 << 4);
+            LoadOrientedFrontpic(&hl, &de, 6 << 4);
             // DEC_B;
             // IF_NZ goto six_loop;
         } while(--b != 0);
@@ -1023,7 +615,7 @@ void PadFrontpic_Conv(uint8_t* hl, uint8_t* de, uint8_t b){
             hl = PadFrontpic_Fill(hl, (7 - 6) << 4, 0);
             // LD_C(5 << 4);
             // CALL(aLoadOrientedFrontpic);
-            LoadOrientedFrontpic_Conv(&hl, &de, 5 << 4);
+            LoadOrientedFrontpic(&hl, &de, 5 << 4);
             
             hl = PadFrontpic_Fill(hl, (7 - 6) << 4, 0);
             // DEC_B;
@@ -1040,7 +632,7 @@ void PadFrontpic_Conv(uint8_t* hl, uint8_t* de, uint8_t b){
     // seven_loop:
         // LD_C(7 << 4);
         // CALL(aLoadOrientedFrontpic);
-        LoadOrientedFrontpic_Conv(&hl, &de, 7 << 4);
+        LoadOrientedFrontpic(&hl, &de, 7 << 4);
         // DEC_B;
         // IF_NZ goto seven_loop;
     } while(--b != 0);
@@ -1048,41 +640,7 @@ void PadFrontpic_Conv(uint8_t* hl, uint8_t* de, uint8_t b){
     return;
 }
 
-void LoadOrientedFrontpic(void){
-    LD_A_addr(wBoxAlignment);
-    AND_A_A;
-    IF_NZ goto x_flip;
-
-left_loop:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto left_loop;
-    RET;
-
-
-x_flip:
-    PUSH_BC;
-
-right_loop:
-    LD_A_de;
-    INC_DE;
-    LD_B_A;
-    XOR_A_A;
-    for(int rept = 0; rept < 8; rept++){
-    RR_B;
-    RLA;
-    }
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto right_loop;
-    POP_BC;
-    RET;
-
-}
-
-void LoadOrientedFrontpic_Conv(uint8_t** hl, uint8_t** de, uint8_t c){
+static void LoadOrientedFrontpic(uint8_t** hl, uint8_t** de, uint8_t c){
     // LD_A_addr(wBoxAlignment);
     // AND_A_A;
     // IF_NZ goto x_flip;

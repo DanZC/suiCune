@@ -6922,7 +6922,7 @@ bool Function119f98(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_A_addr(wMobileInactivityTimerSeconds);
         // LD_addr_A(wcf66);
         wram->wcf66 = wram->wMobileInactivityTimerSeconds;
@@ -6951,7 +6951,7 @@ bool Function119f98(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // FARCALL(aFunction115dc3);
         Function115dc3();
         // LD_A_addr(wcd33);
@@ -6977,7 +6977,7 @@ bool Function119f98(void){
     // LD_addr_A(wc314);
     wram->wc314[0] = 0x1;
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // AND_A_A;
     // RET;
     return false;
@@ -7084,7 +7084,7 @@ void Function11a00e(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // FARCALL(aFunction115d99);
         Function115d99();
         // LD_C(0x0);
@@ -7124,7 +7124,7 @@ void Function11a0ca(void){
     // CALL(aExitMenu);
     ExitMenu();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // FARCALL(aFunction115d99);
     Function115d99();
     // LD_C(0x0);
@@ -7257,7 +7257,7 @@ bool Function11a192(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // CALL(aFunction11a63c);
         Function11a63c();
         // hlcoord(4, 2, wTilemap);
@@ -7273,7 +7273,7 @@ bool Function11a192(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_A_addr(wMobileInactivityTimerSeconds);
         // LD_addr_A(wcf66);
         wram->wcf66 = wram->wMobileInactivityTimerSeconds;
@@ -7395,7 +7395,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_A_addr(wMobileInactivityTimerFrames);
         // CP_A(0x0);
         // IF_Z goto asm_11a2b4;
@@ -7427,7 +7427,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // AND_A_A;
         // RET;
         return false;
@@ -7577,7 +7577,7 @@ bool Function11a33a(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // FARCALL(aFunction115dc3);
         Function115dc3();
         // AND_A_A;
@@ -7649,7 +7649,7 @@ bool Function11a38d(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // CALL(aFunction11a63c);
         Function11a63c();
         // hlcoord(4, 2, wTilemap);
@@ -7665,7 +7665,7 @@ bool Function11a38d(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_A_addr(wMobileInactivityTimerSeconds);
         // LD_addr_A(wcf66);
         // LD_addr_A(wcd80);
@@ -7760,7 +7760,7 @@ bool Function11a41b(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // CALL(aFunction11a63c);
         Function11a63c();
         // hlcoord(4, 2, wTilemap);
@@ -7776,7 +7776,7 @@ bool Function11a41b(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_A(0x1c);
         // LD_addr_A(wcf66);
         // LD_addr_A(wcd80);
@@ -7863,7 +7863,7 @@ bool Function11a49e(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // CALL(aFunction11a63c);
         Function11a63c();
         // hlcoord(4, 2, wTilemap);
@@ -7882,7 +7882,7 @@ bool Function11a49e(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_A_addr(wMobileInactivityTimerFrames);
         // LD_addr_A(wcf66);
         // LD_addr_A(wcd80);
@@ -7934,7 +7934,7 @@ bool Function11a4fe(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // CALL(aFunction11a63c);
         Function11a63c();
         // hlcoord(4, 2, wTilemap);
@@ -7950,7 +7950,7 @@ bool Function11a4fe(void){
         // CALL(aExitMenu);
         ExitMenu();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_A_addr(wMobileInactivityTimerSeconds);
         // LD_addr_A(wcf66);
         wram->wcf66 = wram->wMobileInactivityTimerSeconds;
@@ -8054,7 +8054,7 @@ bool Function11a536(void){
             // CALL(aExitMenu);
             ExitMenu();
             // FARCALL(aReloadMapPart);
-            ReloadMapPart_Conv();
+            ReloadMapPart();
         }
     }
 
@@ -8098,7 +8098,7 @@ void Function11a5b9(void){
     // CALL(aFunction3eea);
     Function3eea(coord(0, 0, wram->wTilemap), 0x4, 0x12);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // CALL(aUpdateSprites);
     UpdateSprites();
     // LD_C(0x0);
@@ -8146,7 +8146,7 @@ void Function11a5f5(void){
     // LD_hl_A;
     *coord(15, 7, wram->wTilemap) = 0xed;
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 
@@ -8895,7 +8895,7 @@ void Function11ac51(void){
         // FARCALL(aDoNextFrameForAllSprites);
         DoNextFrameForAllSprites();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // goto loop;
     }
 
@@ -9033,12 +9033,12 @@ void Function11ad1b(void){
     // LD_A(BANK(aLoadMenuMonIcon));
     // LD_E(MONICON_MOBILE1);
     // RST(aFarCall);
-    LoadMenuMonIcon_Conv(MONICON_MOBILE1);
+    LoadMenuMonIcon(MONICON_MOBILE1);
     // LD_HL(mLoadMenuMonIcon);
     // LD_A(BANK(aLoadMenuMonIcon));
     // LD_E(MONICON_MOBILE2);
     // RST(aFarCall);
-    LoadMenuMonIcon_Conv(MONICON_MOBILE2);
+    LoadMenuMonIcon(MONICON_MOBILE2);
     // LD_HL(wPokedexOrder);
     // LD_BC(0x0115);
     // XOR_A_A;
@@ -9118,7 +9118,7 @@ void Function11ad95(void){
     // CALL(aFunction11afd6);
     Function11afd6(coord(8, 10, wram->wAttrmap), 8, 10);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // CALL(aFunction11ad8a);
     Function11ad8a();
     // LD_A(0x1);
@@ -9240,7 +9240,7 @@ void Function11adc4(void){
     // CALL(aExitMenu);
     ExitMenu();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 
@@ -9285,7 +9285,7 @@ void Function11ae4e(void){
     // CALL(aFunction11afd6);
     Function11afd6(coord(7, 12, wram->wAttrmap), 6, 13);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // CALL(aFunction11ad8a);
     Function11ad8a();
     // LD_A(0x1);
@@ -9392,7 +9392,7 @@ void Function11ae98(void){
     // CALL(aExitMenu);
     ExitMenu();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 
@@ -9424,7 +9424,7 @@ void Function11af04(void){
     // CALL(aFunction11afd6);
     Function11afd6(coord(7, 12, wram->wAttrmap), 6, 13);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // CALL(aFunction11ad8a);
     Function11ad8a();
     // LD_A(0x2);
@@ -9531,7 +9531,7 @@ void Function11af4e(void){
     // CALL(aExitMenu);
     ExitMenu();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // RET;
 }
 
@@ -10298,7 +10298,7 @@ void Function11b295(void){
         // ADD_HL_BC;
         // LD_E_hl;
         // FARCALL(aFlyFunction_GetMonIcon);
-        FlyFunction_GetMonIcon_Conv(bc[0x0003]);
+        FlyFunction_GetMonIcon(bc[0x0003]);
         // hlcoord(4, 14, wTilemap);
         // PUSH_HL;
         hl = coord(8, 4, wram->wTilemap);

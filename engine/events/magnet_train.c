@@ -222,7 +222,7 @@ void MagnetTrain_LoadGFX_PlayMusic(void){
     // LD_A(BANK(wPlayerGender));
     // LDH_addr_A(rSVBK);
     // FARCALL(aGetPlayerIcon);
-    const char* icon_path = GetPlayerIcon_Conv2();
+    const char* icon_path = GetPlayerIcon();
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_HL(vTiles0);

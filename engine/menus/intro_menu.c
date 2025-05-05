@@ -1331,7 +1331,7 @@ void OakSpeech(void) {
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = 0x0;
     // FARCALL(aDrawIntroPlayerPic);
-    DrawIntroPlayerPic_Conv();
+    DrawIntroPlayerPic();
 
     // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
@@ -1408,7 +1408,7 @@ void NamePlayer(void) {
     static const char Kris[] = "KRIS@@@@@@@";
 
     // FARCALL(aMovePlayerPicRight);
-    MovePlayerPicRight_Conv();
+    MovePlayerPicRight();
     // FARCALL(aShowPlayerNamingChoices);
     ShowPlayerNamingChoices();
     // LD_A_addr(wMenuCursorY);
@@ -1420,7 +1420,7 @@ void NamePlayer(void) {
         // FARCALL(aApplyMonOrTrainerPals);
         ApplyMonOrTrainerPals(0);
         // FARCALL(aMovePlayerPicLeft);
-        MovePlayerPicLeft_Conv();
+        MovePlayerPicLeft();
         // RET;
         return;
     }
@@ -1445,7 +1445,7 @@ void NamePlayer(void) {
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = 0x0;
         // FARCALL(aDrawIntroPlayerPic);
-        DrawIntroPlayerPic_Conv();
+        DrawIntroPlayerPic();
 
         // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
         // CALL(aGetSGBLayout);
@@ -1626,14 +1626,14 @@ void Intro_WipeInFrontpic(void) {
 void Intro_PrepTrainerPic(uint8_t tclass) {
     // LD_DE(vTiles2);
     // FARCALL(aGetTrainerPic);
-    GetTrainerPic_Conv(vram->vTiles2, tclass);
+    GetTrainerPic(vram->vTiles2, tclass);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
     hram->hGraphicStartTile = 0x0;
     // hlcoord(6, 4, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(6, 4, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(6, 4, wram->wTilemap), 7, 7);
     // RET;
 }
 
@@ -1661,7 +1661,7 @@ void ShrinkFrame_Conv(const char* path) {
     // hlcoord(6, 4, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(6, 4, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(6, 4, wram->wTilemap), 7, 7);
     // RET;
 }
 
@@ -1736,7 +1736,7 @@ void Intro_PlacePlayerSprite_Conv(void){
     // LD_C(12);
     // LD_HL(vTiles0);
     // CALL(aRequest2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0, GetPlayerIcon_Conv2(), 0, 12);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0, GetPlayerIcon(), 0, 12);
 
     // LD_HL(wVirtualOAMSprite00);
     // LD_DE(mIntro_PlacePlayerSprite_sprites);

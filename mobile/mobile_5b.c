@@ -247,7 +247,7 @@ static void MobileSystemSplashScreen_InitGFX_LoadPals(void) {
     LoadPaletteAssetToBuffer(wram->wBGPals1, sizeof(wram->wBGPals1) / sizeof(uint16_t), MobileSplashScreenPalettes, 2);
     // CALL(aFarCopyWRAM);
     // FARCALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // RET;
 }
 
@@ -460,7 +460,7 @@ bool Function16c943(void){
         // IF_NZ goto asm_16c969;
     } while(e != 0x8);
     // FARCALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // CALL(aSetPalettes);
     SetPalettes();
     // LDH_A_addr(rSVBK);
@@ -497,7 +497,7 @@ bool Function16ca11(void){
     // IF_NZ goto asm_16ca1d;
     if(wram->wd003 == 0) {
         // FARCALL(aApplyPals);
-        ApplyPals_Conv();
+        ApplyPals();
     }
 
 // asm_16ca1d:
@@ -607,7 +607,7 @@ bool Function16ca11(void){
         // IF_NZ goto asm_16ca28;
     } while(e != 0x8);
     // FARCALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // CALL(aSetPalettes);
     SetPalettes();
     // LDH_A_addr(rSVBK);
@@ -927,7 +927,7 @@ void Function16cbd1(void){
     // CALL(aFarCopyWRAM);
     CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 1 + PAL_COLOR_SIZE * 2, Unknown_16cfa3 + Unknown_16cbfb[wram->wd1f3], PAL_COLOR_SIZE);
     // FARCALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;

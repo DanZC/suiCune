@@ -63,7 +63,7 @@ void CloseText(void){
     // FARCALL(aInitMapNameSign);
     InitMapNameSign_Conv();
     // FARCALL(aLoadOverworldFont);
-    LoadOverworldFont_Conv();
+    LoadOverworldFont();
     // RET;
 
     // POP_AF;
@@ -107,7 +107,7 @@ void v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap(void){
     hram->hOAMUpdate = 0x1;
 
     // FARCALL(aOpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
 
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);

@@ -228,7 +228,7 @@ static void v_UnownPrinter_UpdateUnownFrontpic(void){
     wram->wBoxAlignment = 0x0;
     // LD_DE(vTiles2);
     // PREDEF(pGetMonFrontpic);
-    GetMonFrontpic_Conv(vram->vTiles2);
+    GetMonFrontpic(vram->vTiles2);
     // CALL(av_UnownPrinter_Load2bppToSRAM);
     v_UnownPrinter_Load2bppToSRAM();
     // hlcoord(1, 6, wTilemap);
@@ -237,7 +237,7 @@ static void v_UnownPrinter_UpdateUnownFrontpic(void){
     hram->hGraphicStartTile = 0x0;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(1, 6, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(1, 6, wram->wTilemap), 7, 7);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
     // FARCALL(aRotateUnownFrontpic);
     RotateUnownFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x31);
@@ -319,6 +319,6 @@ void PlaceUnownPrinterFrontpic(void){
     hram->hGraphicStartTile = 0x31;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(7, 11, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(7, 11, wram->wTilemap), 7, 7);
     // RET;
 }

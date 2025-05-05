@@ -5306,7 +5306,7 @@ void Script_reloadmappart_Conv(script_s* s){
     // CALL(aGetMovementPermissions);
     GetMovementPermissions();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // CALL(aUpdateSprites);
     UpdateSprites();
     // RET;

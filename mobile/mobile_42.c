@@ -458,7 +458,7 @@ void MobileTradeAnim_GetFrontpic(uint8_t* de, species_t species, uint16_t dvs){
     // PUSH_DE;
     // PUSH_AF;
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(dvs);
+    GetUnownLetter(dvs);
     // POP_AF;
     // LD_addr_A(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
@@ -467,7 +467,7 @@ void MobileTradeAnim_GetFrontpic(uint8_t* de, species_t species, uint16_t dvs){
     GetBaseData(species);
     // POP_DE;
     // PREDEF(pGetMonFrontpic);
-    GetMonFrontpic_Conv(de);
+    GetMonFrontpic(de);
     // RET;
 }
 
@@ -475,7 +475,7 @@ void Function108201(uint8_t* de, species_t species, uint16_t dvs){
     // PUSH_DE;
     // PUSH_AF;
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(dvs);
+    GetUnownLetter(dvs);
     // POP_AF;
     // LD_addr_A(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
@@ -484,7 +484,7 @@ void Function108201(uint8_t* de, species_t species, uint16_t dvs){
     GetBaseData(species);
     // POP_DE;
     // PREDEF(pGetAnimatedFrontpic);
-    GetAnimatedFrontpic_Conv(de, 0);
+    GetAnimatedFrontpic(de, 0);
     // RET;
 }
 
@@ -506,7 +506,7 @@ void Function108229(species_t species){
     // LD_D(0x0);
     // LD_E(ANIM_MON_TRADE);
     // PREDEF(pLoadMonAnimation);
-    LoadMonAnimation_Conv(coord(7, 2, wram->wTilemap), 0x0, ANIM_MON_TRADE);
+    LoadMonAnimation(coord(7, 2, wram->wTilemap), 0x0, ANIM_MON_TRADE);
     // RET;
 }
 
@@ -641,9 +641,9 @@ void Function1082db(void){
         // FARCALL(aPlaySpriteAnimations);
         PlaySpriteAnimations();
         // FARCALL(aSetUpPokeAnim);
-        done = SetUpPokeAnim_Conv();
+        done = SetUpPokeAnim();
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
-        HDMATransferTilemapToWRAMBank3_Conv();
+        HDMATransferTilemapToWRAMBank3();
         // IF_NC goto loop;
     } while(!done);
     // RET;
@@ -1799,7 +1799,7 @@ void asm_108966(const uint8_t* de){
     hram->hGraphicStartTile = 0;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(7, 2, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(7, 2, wram->wTilemap), 7, 7);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // RET;
@@ -1820,7 +1820,7 @@ void Function10898a(species_t species, uint16_t dvs){
     hram->hGraphicStartTile = 0;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(7, 2, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(7, 2, wram->wTilemap), 7, 7);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // RET;

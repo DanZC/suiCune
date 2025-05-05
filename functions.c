@@ -3078,37 +3078,37 @@ void init_function_pointers(void) {
     REDIRECTED(LoadFrame);
 
     // engine/gfx/place_graphic.c
-    REDIRECTED(PlaceGraphic);
+    // CONVERTED(PlaceGraphic);
 
     // engine/gfx/load_overworld_font.c
-    REDIRECTED(LoadOverworldFont);
+    CONVERTED(LoadOverworldFont);
 
     // engine/gfx/mon_icons.c
-    REDIRECTED(MoveList_InitAnimatedMonIcon);
-    REDIRECTED(LoadOverworldMonIcon);
-    REDIRECTED(FreezeMonIcons);
-    REDIRECTED(UnfreezeMonIcons);
-    REDIRECTED(GetMonIconDE);
-    REDIRECTED(GetIcon_de);
-    REDIRECTED(GetGFXUnlessMobile);
-    REDIRECTED(PartyMenu_InitAnimatedMonIcon);
-    REDIRECTED(GetSpeciesIcon);
-    REDIRECTED(LoadMenuMonIcon);
+    // CONVERTED(MoveList_InitAnimatedMonIcon);
+    // CONVERTED(LoadOverworldMonIcon);
+    // CONVERTED(FreezeMonIcons);
+    // CONVERTED(UnfreezeMonIcons);
+    // CONVERTED(GetMonIconDE);
+    // CONVERTED(GetIcon_de);
+    // CONVERTED(GetGFXUnlessMobile);
+    // CONVERTED(PartyMenu_InitAnimatedMonIcon);
+    // CONVERTED(GetSpeciesIcon);
+    // CONVERTED(LoadMenuMonIcon);
     // REDIRECTED(HeldItemIcons);
-    REDIRECTED(GetIconGFX);
-    REDIRECTED(HoldSwitchmonIcon);
-    REDIRECTED(Unused_GetPartyMenuMonIcon);
-    REDIRECTED(SetPartyMonIconAnimSpeed);
-    REDIRECTED(Trade_LoadMonIconGFX);
-    REDIRECTED(GetIcon);
-    REDIRECTED(Mobile_InitAnimatedMonIcon);
-    REDIRECTED(FlyFunction_GetMonIcon);
-    REDIRECTED(NamingScreen_InitAnimatedMonIcon);
-    REDIRECTED(Mobile_InitPartyMenuBGPal71);
-    REDIRECTED(GetMemIconGFX);
-    REDIRECTED(GetIcon_a);
-    REDIRECTED(InitPartyMenuIcon);
-    REDIRECTED(ReadMonMenuIcon);
+    // CONVERTED(GetIconGFX);
+    // CONVERTED(HoldSwitchmonIcon);
+    // CONVERTED(Unused_GetPartyMenuMonIcon);
+    // CONVERTED(SetPartyMonIconAnimSpeed);
+    // CONVERTED(Trade_LoadMonIconGFX);
+    // CONVERTED(GetIcon);
+    // CONVERTED(Mobile_InitAnimatedMonIcon);
+    // CONVERTED(FlyFunction_GetMonIcon);
+    // CONVERTED(NamingScreen_InitAnimatedMonIcon);
+    // CONVERTED(Mobile_InitPartyMenuBGPal71);
+    // CONVERTED(GetMemIconGFX);
+    // CONVERTED(GetIcon_a);
+    // CONVERTED(InitPartyMenuIcon);
+    // CONVERTED(ReadMonMenuIcon);
 
     // engine/pokemon/mail_2.c
     // REDIRECTED(Mail_Place14TileAlternatingRow);
@@ -3359,21 +3359,21 @@ void init_function_pointers(void) {
     REDIRECTED(CopyMonToTempMon);
 
     // engine/gfx/load_pics.c
-    REDIRECTED(GetAnimatedFrontpic);
-    REDIRECTED(LoadFrontpicTiles);
-    REDIRECTED(GetAnimatedEnemyFrontpic);
-    REDIRECTED(PadFrontpic);
-    REDIRECTED(GSIntro_GetMonFrontpic);
-    REDIRECTED(DecompressGet2bpp);
-    REDIRECTED(LoadOrientedFrontpic);
-    REDIRECTED(GetUnownLetter);
-    REDIRECTED(FixPicBank);
-    REDIRECTED(GetMonFrontpic);
-    REDIRECTED(GetMonBackpic);
-    REDIRECTED(GetTrainerPic);
-    REDIRECTED(v_GetFrontpic);
-    REDIRECTED(GetFrontpicPointer);
-    REDIRECTED(FixBackpicAlignment);
+    // CONVERTED(GetAnimatedFrontpic);
+    // CONVERTED(LoadFrontpicTiles);
+    // CONVERTED(GetAnimatedEnemyFrontpic);
+    // CONVERTED(PadFrontpic);
+    // CONVERTED(GSIntro_GetMonFrontpic);
+    // CONVERTED(DecompressGet2bpp);
+    // CONVERTED(LoadOrientedFrontpic);
+    // CONVERTED(GetUnownLetter);
+    // CONVERTED(FixPicBank);
+    // CONVERTED(GetMonFrontpic);
+    // CONVERTED(GetMonBackpic);
+    // CONVERTED(GetTrainerPic);
+    // CONVERTED(v_GetFrontpic);
+    // CONVERTED(GetFrontpicPointer);
+    // CONVERTED(FixBackpicAlignment);
 
     // engine/pokemon/bills_pc.c
     // REDIRECTED(PCMonInfo);

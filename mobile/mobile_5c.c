@@ -544,7 +544,7 @@ void Function1719ed(void){
     // FARCALL(aFunction171d2b);
     Function171d2b();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // RET;
@@ -566,7 +566,7 @@ void Function171a11(void){
         // FARCALL(aPlaySpriteAnimations);
         PlaySpriteAnimations();
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // goto loop;
     }
 
@@ -936,7 +936,7 @@ void Function171beb(void){
     MenuBox();
     // CALL(aMenuBoxCoord2Tile);
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // hlcoord(1, 14, wTilemap);
     // LD_DE(mString_171c73);
     // CALL(aPlaceString);

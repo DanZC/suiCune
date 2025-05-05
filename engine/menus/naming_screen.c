@@ -431,7 +431,7 @@ static void NamingScreen_GetNamingScreenSetup(void) {
             // LD_A(BANK(aLoadMenuMonIcon));
             // LD_E(MONICON_NAMINGSCREEN);
             // RST(aFarCall);
-            LoadMenuMonIcon_Conv(MONICON_NAMINGSCREEN);
+            LoadMenuMonIcon(MONICON_NAMINGSCREEN);
             // LD_A_addr(wCurPartySpecies);
             // LD_addr_A(wNamedObjectIndex);
             // CALL(aGetPokemonName);
@@ -477,7 +477,7 @@ static void NamingScreen_GetNamingScreenSetup(void) {
             static const char PlayerNameString[] = "YOUR NAME?@";
             // FARCALL(aGetPlayerIcon);
             // CALL(aNamingScreen_LoadSprite);
-            NamingScreen_LoadSprite(GetPlayerIcon_Conv2());
+            NamingScreen_LoadSprite(GetPlayerIcon());
             // hlcoord(5, 2, wTilemap);
             // LD_DE(mNamingScreen_PlayerNameString);
             // CALL(aPlaceString);

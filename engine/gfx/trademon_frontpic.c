@@ -14,7 +14,7 @@ void GetTrademonFrontpic(void){
     // PUSH_DE;
     // PUSH_AF;
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wOTTrademon.dvs);
+    GetUnownLetter(wram->wOTTrademon.dvs);
     // POP_AF;
     // LD_addr_A(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
@@ -23,7 +23,7 @@ void GetTrademonFrontpic(void){
     GetBaseData(wram->wOTTrademon.species);
     // POP_DE;
     // PREDEF(pGetAnimatedFrontpic);
-    GetAnimatedFrontpic_Conv(vram->vTiles2, 0);
+    GetAnimatedFrontpic(vram->vTiles2, 0);
     // RET;
 }
 
@@ -58,6 +58,6 @@ void AnimateTrademonFrontpic(void){
     // LD_D(0x0);
     // LD_E(ANIM_MON_TRADE);
     // PREDEF(pAnimateFrontpic);
-    AnimateFrontpic_Conv(coord(7, 2, wram->wTilemap), 0x0, ANIM_MON_TRADE);
+    AnimateFrontpic(coord(7, 2, wram->wTilemap), 0x0, ANIM_MON_TRADE);
     // RET;
 }

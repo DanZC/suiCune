@@ -199,7 +199,7 @@ u8_pair_s CancelPokemonAction(void){
     // FARCALL(aInitPartyMenuWithCancel);
     InitPartyMenuWithCancel();
     // FARCALL(aUnfreezeMonIcons);
-    UnfreezeMonIcons_Conv();
+    UnfreezeMonIcons();
     // LD_A(1);
     // RET;
     return u8_pair(0x1, 0x0);
@@ -268,7 +268,7 @@ u8_pair_s SwitchPartyMons(void){
         wram->wSwitchMon = wram->wCurPartyMon + 1;
 
         // FARCALL(aHoldSwitchmonIcon);
-        HoldSwitchmonIcon_Conv();
+        HoldSwitchmonIcon();
         // FARCALL(aInitPartyMenuNoCancel);
         InitPartyMenuNoCancel();
 
@@ -1645,7 +1645,7 @@ void SetUpMoveScreenBG(void){
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aLoadStatsScreenPageTilesGFX);
-    LoadStatsScreenPageTilesGFX_Conv();
+    LoadStatsScreenPageTilesGFX();
     // FARCALL(aClearSpriteAnims2);
     ClearSpriteAnims2();
     // LD_A_addr(wCurPartyMon);
@@ -1658,7 +1658,7 @@ void SetUpMoveScreenBG(void){
     wram->wTempIconSpecies = wram->wPartySpecies[wram->wCurPartyMon];
     // LD_E(MONICON_MOVES);
     // FARCALL(aLoadMenuMonIcon);
-    LoadMenuMonIcon_Conv(MONICON_MOVES);
+    LoadMenuMonIcon(MONICON_MOVES);
     // hlcoord(0, 1, wTilemap);
     // LD_B(9);
     // LD_C(18);

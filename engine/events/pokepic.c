@@ -41,7 +41,7 @@ void Pokepic(void){
     GetBaseData(wram->wCurPartySpecies);
     // LD_DE(vTiles1);
     // PREDEF(pGetMonFrontpic);
-    GetMonFrontpic_Conv(vram->vTiles1);
+    GetMonFrontpic(vram->vTiles1);
     // LD_A_addr(wMenuBorderTopCoord);
     // INC_A;
     // LD_B_A;
@@ -55,7 +55,7 @@ void Pokepic(void){
     hram->hGraphicStartTile = 0x80;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(hl, 7, 7);
+    PlaceGraphicYStagger(hl, 7, 7);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // RET;

@@ -43,7 +43,7 @@ void MonSubmenu(void){
     // CALL(aGetMonSubmenuItems);
     GetMonSubmenuItems();
     // FARCALL(aFreezeMonIcons);
-    FreezeMonIcons_Conv();
+    FreezeMonIcons();
     // LD_HL(mMonSubmenu_MenuHeader);
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(&MonSubmenu_MenuHeader);

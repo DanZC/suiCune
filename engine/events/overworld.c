@@ -939,7 +939,7 @@ static bool FlyFunction_FlyScript(script_s* s) {
         // CALL(aUpdatePlayerSprite);
         UpdatePlayerSprite();
         // FARCALL(aLoadOverworldFont);
-        LoadOverworldFont_Conv();
+        LoadOverworldFont();
         // RET;
     }
     s_end

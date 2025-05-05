@@ -929,7 +929,7 @@ void Function48304(void){
     // LD_addr_A(wMenuScrollPosition);
     wram->wMenuScrollPosition = a;
     // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
 
     bool cont = true;
     do {
@@ -972,7 +972,7 @@ void Function48304(void){
     // CALL(aFunction48187);
     Function48187();
     // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     // JP(mFunction4840c);
 }
 

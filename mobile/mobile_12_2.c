@@ -572,7 +572,7 @@ void Function4aad3(void){
         // PUSH_HL;
         // LD_E(MONICON_PARTYMENU);
         // FARCALL(aLoadMenuMonIcon);
-        LoadMenuMonIcon_Conv(MONICON_PARTYMENU);
+        LoadMenuMonIcon(MONICON_PARTYMENU);
         // LDH_A_addr(hObjectStructIndex);
         // INC_A;
         // LDH_addr_A(hObjectStructIndex);
@@ -894,7 +894,7 @@ void Function4ac58(void){
     // CALL(aClearBox);
     ClearBox(coord(1, 15, wram->wTilemap), 18, 2);
     // FARCALL(aFreezeMonIcons);
-    FreezeMonIcons_Conv();
+    FreezeMonIcons();
     // LD_HL(mMenuHeader_0x4aca2);
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(&MenuHeader_0x4aca2);

@@ -363,7 +363,7 @@ void Function100144(void){
         // RES_hl(6);
         bit_reset(wram->wcd29, 6);
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
-        HDMATransferTilemapToWRAMBank3_Conv();
+        HDMATransferTilemapToWRAMBank3();
         // RET;
         return;
     }
@@ -687,7 +687,7 @@ void Function1002ed(void){
     // FARCALL(aLoadOW_BGPal7);
     LoadOW_BGPal7();
     // FARCALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
@@ -719,7 +719,7 @@ void Function100301(void){
 void Function100320(void){
     // FARCALL(aMobile_ReloadMapPart);
     // RET;
-    return Mobile_ReloadMapPart_Conv();
+    return Mobile_ReloadMapPart();
 }
 
 void Function100327(void){
@@ -2224,7 +2224,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
         // CALL(aPlaySFX);
         PlaySFX(SFX_TWO_PC_BEEPS);
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_C(0x3c);
         // CALL(aDelayFrames);
         DelayFrames(60);
@@ -2241,7 +2241,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
         // CALL(aPlaySFX);
         PlaySFX(SFX_4_NOTE_DITTY);
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // LD_C(120);
         // CALL(aDelayFrames);
         DelayFrames(120);
@@ -2274,7 +2274,7 @@ void Function100989(void){
     // CALL(aFunction1009ae);
     Function1009ae();
     // FARCALL(aReloadMapPart);
-    ReloadMapPart_Conv();
+    ReloadMapPart();
     // LD_HL(w3_dd68);
     // decoord(0, 0, wAttrmap);
     // CALL(aFunction1009a5);
@@ -2671,7 +2671,7 @@ bool Function100b45(void){
         c = MobileMenuJoypad_Conv();
         // PUSH_BC;
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
-        HDMATransferTilemapToWRAMBank3_Conv();
+        HDMATransferTilemapToWRAMBank3();
         // CALL(aFunction100e2d);
         // POP_BC;
         // IF_C goto asm_100b6b;
@@ -2760,7 +2760,7 @@ Top:
             uint8_t c = MobileMenuJoypad_Conv();
             // PUSH_BC;
             // FARCALL(aHDMATransferTilemapToWRAMBank3);
-            HDMATransferTilemapToWRAMBank3_Conv();
+            HDMATransferTilemapToWRAMBank3();
             // CALL(aFunction100e2d);
             // POP_BC;
             // IF_C goto b_button;
@@ -2960,7 +2960,7 @@ bool Mobile_PartyMenuSelect(void){
         // FARCALL(aPlaySpriteAnimations);
         PlaySpriteAnimations();
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
-        HDMATransferTilemapToWRAMBank3_Conv();
+        HDMATransferTilemapToWRAMBank3();
         // CALL(aMobileComms_CheckInactivityTimer);
         // POP_BC;
         // IF_C goto done;
@@ -3043,7 +3043,7 @@ bool MobileBattleMonMenu(void){
         // FARCALL(aPlaySpriteAnimations);
         PlaySpriteAnimations();
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
-        HDMATransferTilemapToWRAMBank3_Conv();
+        HDMATransferTilemapToWRAMBank3();
         // CALL(aMobileComms_CheckInactivityTimer);
         // POP_BC;
         // IF_C goto asm_100d54;
@@ -3415,7 +3415,7 @@ void Function100eca(bool isMobile){
 
 void Function100ed4(void){
     // FARCALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
@@ -4399,7 +4399,7 @@ void Function1013c0(void){
 void Function1013d6(void){
     // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
     // RET;
-    return HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+    return HDMATransferAttrmapAndTilemapToWRAMBank3();
 }
 
 // Mobile_CGBOnly_CopyTilemapAtOnce
@@ -7301,7 +7301,7 @@ bool Function10224b(void){
     // RES_hl(2);
     wram->wcd4b &= ~((1 << 1) | (1 << 2));
     // FARCALL(aMobile_ReloadMapPart);
-    Mobile_ReloadMapPart_Conv();
+    Mobile_ReloadMapPart();
     // SCF;
     // RET;
     return true;
@@ -9498,7 +9498,7 @@ void Function102d48(void){
         // LD_HL(wPartyMon1DVs);
         // CALL(aAddNTimes);
         // PREDEF(pGetUnownLetter);
-        unown_letter_t letter = GetUnownLetter_Conv(wram->wPartyMon[wram->wcd4c - 1].mon.DVs);
+        unown_letter_t letter = GetUnownLetter(wram->wPartyMon[wram->wcd4c - 1].mon.DVs);
         // FARCALL(aUpdateUnownDex);
         UpdateUnownDex_Conv(letter);
         // LD_A_addr(wFirstUnownSeen);
@@ -9528,7 +9528,7 @@ void Function102d9a(void){
     // CALL(aByteFill);
     ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x07);
     // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
-    HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+    HDMATransferAttrmapAndTilemapToWRAMBank3();
     // RET;
 }
 
@@ -10244,7 +10244,7 @@ void Function103309(void){
     // CALL(aUpdateSprites);
     UpdateSprites();
     // FARCALL(aHDMATransferAttrmapAndTilemapToWRAMBank3);
-    HDMATransferAttrmapAndTilemapToWRAMBank3_Conv();
+    HDMATransferAttrmapAndTilemapToWRAMBank3();
     // LD_A(0x01);
     // LD_addr_A(wd1f0);
     wram->wd1f0 = 0x1;
@@ -10266,7 +10266,7 @@ bool Function103362(void){
         // CALL(aFunction10342c);
         Function10342c();
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
-        HDMATransferTilemapToWRAMBank3_Conv();
+        HDMATransferTilemapToWRAMBank3();
         // LD_A_addr(wd1eb);
         // BIT_A(7);
         // IF_Z goto asm_103362;

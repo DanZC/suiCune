@@ -425,7 +425,7 @@ entry:
     // CALL(aPlaceString);
     PlaceStringSimple(U82C(Strings_4a23d[wram->wMenuCursorY - 1]), coord(1, 14, wram->wTilemap));
     // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+    Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
     // CALL(aSetPalettes);
     SetPalettes();
     // CALL(aStaticMenuJoypad);
@@ -657,7 +657,7 @@ bool Function4a28a(void){
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(String_4a34b), coord(14, 1, wram->wTilemap));
         // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-        Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+        Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
         // CALL(aFunction4a118);
         Function4a118();
         // CALL(aScrollingMenuJoypad);
@@ -689,7 +689,7 @@ bool Function4a28a(void){
             // CALL(aTextbox);
             Textbox(coord(14, 7, wram->wTilemap), 3, 4);
             // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-            Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+            Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
             // LD_HL(mDeletePassword_YesNo_MenuHeader);
             // CALL(aLoadMenuHeader);
             LoadMenuHeader(&DeletePassword_YesNo_MenuHeader);
@@ -726,7 +726,7 @@ bool Function4a28a(void){
             // CALL(aCall_ExitMenu);
             ExitMenu();
             // FARCALL(aMobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
-            Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Conv();
+            Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
             // XOR_A_A;
             // RET;
             return false;

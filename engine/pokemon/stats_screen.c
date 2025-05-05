@@ -129,7 +129,7 @@ void StatsScreenInit_Common(void (*hl)(void)){
     // CALL(aUpdateSprites);
     UpdateSprites();
     // FARCALL(aStatsScreen_LoadFont);
-    StatsScreen_LoadFont_Conv();
+    StatsScreen_LoadFont();
     // POP_HL;
     // CALL(av_hl_);
     hl();
@@ -265,7 +265,7 @@ void StatsScreen_WaitAnim(void){
     // try_anim:
         // FARCALL(aSetUpPokeAnim);
         // IF_NC goto finish;
-        if(SetUpPokeAnim_Conv()) {
+        if(SetUpPokeAnim()) {
             // LD_HL(wStatsScreenFlags);
             // RES_hl(6);
             bit_reset(wram->wStatsScreenFlags, 6);
@@ -285,7 +285,7 @@ void StatsScreen_WaitAnim(void){
     // RES_hl(5);
     bit_reset(wram->wStatsScreenFlags, 5);
     // FARCALL(aHDMATransferTilemapToWRAMBank3);
-    HDMATransferTilemapToWRAMBank3_Conv();
+    HDMATransferTilemapToWRAMBank3();
     // RET;
 }
 
@@ -323,7 +323,7 @@ void MonStatsInit(void){
     // CALL(aClearTilemap);
     ClearTilemap();
     // FARCALL(aHDMATransferTilemapToWRAMBank3);
-    HDMATransferTilemapToWRAMBank3_Conv();
+    HDMATransferTilemapToWRAMBank3();
     // CALL(aStatsScreen_CopyToTempMon);
     StatsScreen_CopyToTempMon_Conv();
     // LD_A_addr(wCurPartySpecies);
@@ -1014,7 +1014,7 @@ void StatsScreen_PlaceShinyIcon(void){
     // LD_BC(wTempMonDVs);
     // FARCALL(aCheckShininess);
     // RET_NC ;
-    if(!CheckShininess_Conv(wram->wTempMon.mon.DVs))
+    if(!CheckShininess(wram->wTempMon.mon.DVs))
         return;
     // hlcoord(19, 0, wTilemap);
     // LD_hl(0x3f);
@@ -1040,7 +1040,7 @@ static void StatsScreen_LoadGFX_LoadPals(void) {
     // maskbits(NUM_STAT_PAGES, 0);
     // LD_C_A;
     // FARCALL(aLoadStatsScreenPals);
-    LoadStatsScreenPals_Conv(wram->wStatsScreenFlags & NUM_STAT_PAGES);
+    LoadStatsScreenPals(wram->wStatsScreenFlags & NUM_STAT_PAGES);
 
     // CALL(aDelayFrame);
     DelayFrame();
@@ -1466,12 +1466,12 @@ static void StatsScreen_PlaceFrontpic_get_animation(void) {
     StatsScreen_LoadTextboxSpaceGFX();
     //  LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     //  PREDEF(pGetAnimatedFrontpic);
-    GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
+    GetAnimatedFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
     //  hlcoord(0, 0, wTilemap);
     //  LD_D(0x0);
     //  LD_E(ANIM_MON_MENU);
     //  PREDEF(pLoadMonAnimation);
-    LoadMonAnimation_Conv(coord(0, 0, wram->wTilemap), 0x0, ANIM_MON_MENU);
+    LoadMonAnimation(coord(0, 0, wram->wTilemap), 0x0, ANIM_MON_MENU);
     // LD_HL(wStatsScreenFlags);
     // SET_hl(6);
     bit_set(wram->wStatsScreenFlags, 6);
@@ -1502,7 +1502,7 @@ void StatsScreen_PlaceFrontpic_AnimateEgg(void) {
 void StatsScreen_PlaceFrontpic(void){
     // LD_HL(wTempMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wTempMon.mon.DVs);
+    GetUnownLetter(wram->wTempMon.mon.DVs);
     // CALL(aStatsScreen_GetAnimationParam);
     u8_flag_s res = StatsScreen_GetAnimationParam_Conv();
     // IF_C goto egg;
@@ -1905,7 +1905,7 @@ void EggStatsScreen(void){
     // CALL(aPrepMonFrontpic);
     PrepMonFrontpic(coord(0, 0, wram->wTilemap));
     // FARCALL(aHDMATransferTilemapToWRAMBank3);
-    HDMATransferTilemapToWRAMBank3_Conv();
+    HDMATransferTilemapToWRAMBank3();
     // CALL(aStatsScreen_AnimateEgg);
     StatsScreen_AnimateEgg();
 
@@ -2017,12 +2017,12 @@ void StatsScreen_AnimateEgg(void){
     StatsScreen_LoadTextboxSpaceGFX();
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // PREDEF(pGetAnimatedFrontpic);
-    GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
+    GetAnimatedFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
     // POP_DE;
     // hlcoord(0, 0, wTilemap);
     // LD_D(0x0);
     // PREDEF(pLoadMonAnimation);
-    LoadMonAnimation_Conv(coord(0, 0, wram->wTilemap), 0x0, e);
+    LoadMonAnimation(coord(0, 0, wram->wTilemap), 0x0, e);
     // LD_HL(wStatsScreenFlags);
     // SET_hl(6);
     bit_set(wram->wStatsScreenFlags, 6);

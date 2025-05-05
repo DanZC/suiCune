@@ -1315,7 +1315,7 @@ void Function1704e1_JumptableLoop(void){
             break;
         }
         // FARCALL(aReloadMapPart);
-        ReloadMapPart_Conv();
+        ReloadMapPart();
         // goto loop;
     }
 

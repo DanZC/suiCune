@@ -17,50 +17,11 @@
 #define SHINY_SPD_VAL (10)
 #define SHINY_SPC_VAL (10)
 
-void CheckShininess(void){
-//  Check if a mon is shiny by DVs at bc.
-//  Return carry if shiny.
-
-    LD_L_C;
-    LD_H_B;
-
-//  Attack
-    LD_A_hl;
-    AND_A(1 << SHINY_ATK_BIT);
-    IF_Z goto not_shiny;
-
-//  Defense
-    LD_A_hli;
-    AND_A(0xf);
-    CP_A(SHINY_DEF_VAL);
-    IF_NZ goto not_shiny;
-
-//  Speed
-    LD_A_hl;
-    AND_A(0xf0);
-    CP_A(SHINY_SPD_VAL << 4);
-    IF_NZ goto not_shiny;
-
-//  Special
-    LD_A_hl;
-    AND_A(0xf);
-    CP_A(SHINY_SPC_VAL);
-    IF_NZ goto not_shiny;
-
-//  shiny
-    SCF;
-    RET;
-
-
-not_shiny:
-    AND_A_A;
-    RET;
-
-}
+static uint16_t* GetMonPalettePointer(uint16_t* dest, uint8_t a);
 
 //  Check if a mon is shiny by DVs at bc.
 //  Return true if shiny.
-bool CheckShininess_Conv(uint16_t bc){
+bool CheckShininess(uint16_t bc){
     // LD_L_C;
     // LD_H_B;
     uint16_t hl = bc;
@@ -169,17 +130,9 @@ void SGB_ApplyCreditsPals(void){
 }
 
 void InitPartyMenuPalettes(void){
-    LD_HL(mPalPacket_PartyMenu + 1);
-    CALL(aCopyFourPalettes);
-    CALL(aInitPartyMenuOBPals);
-    CALL(aWipeAttrmap);
-    RET;
-}
-
-void InitPartyMenuPalettes_Conv(void){
     // LD_HL(mPalPacket_PartyMenu + 1);
     // CALL(aCopyFourPalettes);
-    CopyFourPalettes_Conv((const uint8_t*)PalPacket_PartyMenu.colors);
+    CopyFourPalettes((const uint8_t*)PalPacket_PartyMenu.colors);
     // CALL(aInitPartyMenuOBPals);
     InitPartyMenuOBPals();
     // CALL(aWipeAttrmap);
@@ -341,7 +294,7 @@ void LoadTrainerClassPaletteAsNthBGPal(uint8_t e){
     uint16_t buffer[NUM_PAL_COLORS];
     // LD_A_addr(wTrainerClass);
     // CALL(aGetTrainerPalettePointer);
-    GetTrainerPalettePointer_Conv(buffer, wram->wTrainerClass);
+    GetTrainerPalettePointer(buffer, wram->wTrainerClass);
     // LD_A_E;
     // JR(mLoadNthMiddleBGPal);
     LoadNthMiddleBGPal(buffer, e);
@@ -351,7 +304,7 @@ void LoadMonPaletteAsNthBGPal(uint8_t e){
     uint16_t buffer[NUM_PAL_COLORS];
     // LD_A_addr(wCurPartySpecies);
     // CALL(av_GetMonPalettePointer);
-    GetMonPalettePointer_Conv(buffer, wram->wCurPartySpecies);
+    GetMonPalettePointer(buffer, wram->wCurPartySpecies);
     // LD_A_E;
     // BIT_A(7);
     // JR_Z (mLoadNthMiddleBGPal);
@@ -386,7 +339,7 @@ void LoadNthMiddleBGPal(uint16_t* hl, uint8_t a){
     uint8_t* de = wram->wBGPals1 + (PALETTE_SIZE * a);
     // POP_HL;
     // CALL(aLoadPalette_White_Col1_Col2_Black);
-    LoadPalette_White_Col1_Col2_Black_Conv((uint16_t*)de, hl);
+    LoadPalette_White_Col1_Col2_Black((uint16_t*)de, hl);
     // RET;
 }
 
@@ -430,7 +383,7 @@ void ApplyMonOrTrainerPals(uint8_t e){
     uint16_t buffer[NUM_PAL_COLORS];
     // CALL(aCheckCGB);
     // RET_Z ;
-    if(!CheckCGB_Conv())
+    if(!CheckCGB())
         return;
     // LD_A_E;
     // AND_A_A;
@@ -439,25 +392,25 @@ void ApplyMonOrTrainerPals(uint8_t e){
     // get_trainer:
         // LD_A_addr(wTrainerClass);
         // CALL(aGetTrainerPalettePointer);
-        GetTrainerPalettePointer_Conv(buffer, wram->wTrainerClass);
+        GetTrainerPalettePointer(buffer, wram->wTrainerClass);
     }
     else {
         // LD_A_addr(wCurPartySpecies);
         // CALL(aGetMonPalettePointer);
-        GetMonPalettePointer_Conv(buffer, wram->wCurPartySpecies);
+        GetMonPalettePointer(buffer, wram->wCurPartySpecies);
         // goto load_palettes;
     }
 
 // load_palettes:
     // LD_DE(wBGPals1);
     // CALL(aLoadPalette_White_Col1_Col2_Black);
-    LoadPalette_White_Col1_Col2_Black_Conv((uint16_t*)wram_ptr(wBGPals1), buffer);
+    LoadPalette_White_Col1_Col2_Black((uint16_t*)wram_ptr(wBGPals1), buffer);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // CALL(aApplyAttrmap);
-    ApplyAttrmap_Conv();
+    ApplyAttrmap();
     // CALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // RET;
 }
 
@@ -520,7 +473,7 @@ void ApplyHPBarPals(uint8_t c){
         // LD_BC((2 << 8) | 8);
         // LD_A_E;
         // CALL(aFillBoxCGB);
-        FillBoxCGB_Conv(hl, 2, 8, c + 1);
+        FillBoxCGB(hl, 2, 8, c + 1);
         // RET;
     } return;
 
@@ -529,33 +482,7 @@ void ApplyHPBarPals(uint8_t c){
     }
 }
 
-void LoadStatsScreenPals(void){
-    CALL(aCheckCGB);
-    RET_Z ;
-    LD_HL(mStatsScreenPals);
-    LD_B(0);
-    DEC_C;
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awBGPals1));
-    LDH_addr_A(rSVBK);
-    LD_A_hli;
-    LD_addr_A(wBGPals1 + PALETTE_SIZE * 0);
-    LD_addr_A(wBGPals1 + PALETTE_SIZE * 2);
-    LD_A_hl;
-    LD_addr_A(wBGPals1 + PALETTE_SIZE * 0 + 1);
-    LD_addr_A(wBGPals1 + PALETTE_SIZE * 2 + 1);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    CALL(aApplyPals);
-    LD_A(0x1);
-    RET;
-
-}
-
-bool LoadStatsScreenPals_Conv(uint8_t c){
+bool LoadStatsScreenPals(uint8_t c){
     // CALL(aCheckCGB);
     // RET_Z ;
     if(hram->hCGB == 0)
@@ -585,7 +512,7 @@ bool LoadStatsScreenPals_Conv(uint8_t c){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // LD_A(0x1);
     // RET;
     return true;
@@ -614,7 +541,7 @@ void LoadMailPalettes(uint8_t e){
     const uint16_t* hl = MailPals + (e * 4);
     // CALL(aCheckCGB);
     // IF_NZ goto cgb;
-    if(CheckCGB_Conv()) {
+    if(CheckCGB()) {
     // cgb:
         // LD_DE(wBGPals1);
         // LD_BC(1 * PALETTE_SIZE);
@@ -622,11 +549,11 @@ void LoadMailPalettes(uint8_t e){
         // CALL(aFarCopyWRAM);
         CopyBytes(wram->wBGPals1, hl, 1 * PALETTE_SIZE);
         // CALL(aApplyPals);
-        ApplyPals_Conv();
+        ApplyPals();
         // CALL(aWipeAttrmap);
         WipeAttrmap();
         // CALL(aApplyAttrmap);
-        ApplyAttrmap_Conv();
+        ApplyAttrmap();
         // RET;
         return;
     }
@@ -661,38 +588,14 @@ void LoadMailPalettes(uint8_t e){
     // return CopyFourPalettes();
 }
 
-void CopyFourPalettes(void){
-    LD_DE(wBGPals1);
-    LD_C(4);
-
-    return CopyPalettes();
-}
-
-void CopyFourPalettes_Conv(const uint8_t* pal){
+void CopyFourPalettes(const uint8_t* pal){
     // LD_DE(wBGPals1);
     // LD_C(4);
 
-    return CopyPalettes_Conv((uint16_t*)&((struct wram_s*)gb.wram)->wBGPals1, pal, 4);
+    return CopyPalettes((uint16_t*)&((struct wram_s*)gb.wram)->wBGPals1, pal, 4);
 }
 
-void CopyPalettes(void){
-
-loop:
-    PUSH_BC;
-    LD_A_hli;
-    PUSH_HL;
-    CALL(aGetPredefPal);
-    CALL(aLoadHLPaletteIntoDE);
-    POP_HL;
-    INC_HL;
-    POP_BC;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void CopyPalettes_Conv(uint16_t* de, const uint8_t* hl, uint8_t c){
+void CopyPalettes(uint16_t* de, const uint8_t* hl, uint8_t c){
     do {
     // loop:
         // PUSH_BC;
@@ -700,9 +603,9 @@ void CopyPalettes_Conv(uint16_t* de, const uint8_t* hl, uint8_t c){
         uint8_t a = *(hl++);
         // PUSH_HL;
         // CALL(aGetPredefPal);
-        const uint16_t* pal = GetPredefPal_Conv(a);
+        const uint16_t* pal = GetPredefPal(a);
         // CALL(aLoadHLPaletteIntoDE);
-        LoadHLPaletteIntoDE_Conv(de, pal);
+        LoadHLPaletteIntoDE(de, pal);
         de += NUM_PAL_COLORS;
         // POP_HL;
         // INC_HL;
@@ -714,19 +617,7 @@ void CopyPalettes_Conv(uint16_t* de, const uint8_t* hl, uint8_t c){
     // RET;
 }
 
-void GetPredefPal(void){
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_BC(mPredefPals);
-    ADD_HL_BC;
-    RET;
-
-}
-
-const uint16_t* GetPredefPal_Conv(uint8_t a){
+const uint16_t* GetPredefPal(uint8_t a){
     // LD_L_A;
     // LD_H(0);
     // ADD_HL_HL;
@@ -738,26 +629,7 @@ const uint16_t* GetPredefPal_Conv(uint8_t a){
     return PredefPals[a];
 }
 
-void LoadHLPaletteIntoDE(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wOBPals1));
-    LDH_addr_A(rSVBK);
-    LD_C(1 * PALETTE_SIZE);
-
-loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-void LoadHLPaletteIntoDE_Conv(void* de, const uint16_t* hl){
+void LoadHLPaletteIntoDE(void* de, const uint16_t* hl){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wOBPals1));
@@ -780,41 +652,7 @@ void LoadHLPaletteIntoDE_Conv(void* de, const uint16_t* hl){
     // RET;
 }
 
-void LoadPalette_White_Col1_Col2_Black(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wBGPals1));
-    LDH_addr_A(rSVBK);
-
-    LD_A(LOW(PALRGB_WHITE));
-    LD_de_A;
-    INC_DE;
-    LD_A(HIGH(PALRGB_WHITE));
-    LD_de_A;
-    INC_DE;
-
-    LD_C(2 * PAL_COLOR_SIZE);
-
-loop:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop;
-
-    XOR_A_A;
-    LD_de_A;
-    INC_DE;
-    LD_de_A;
-    INC_DE;
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
-
-uint16_t* LoadPalette_White_Col1_Col2_Black_Conv(uint16_t* de, const uint16_t* hl){
+uint16_t* LoadPalette_White_Col1_Col2_Black(uint16_t* de, const uint16_t* hl){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wBGPals1));
@@ -855,27 +693,7 @@ uint16_t* LoadPalette_White_Col1_Col2_Black_Conv(uint16_t* de, const uint16_t* h
     return de;
 }
 
-void FillBoxCGB(void){
-
-row:
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-
-}
-
-tile_t* FillBoxCGB_Conv(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
+tile_t* FillBoxCGB(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
 
     for(uint8_t y = 0; y < b; y++) {
     // row:
@@ -901,45 +719,6 @@ tile_t* FillBoxCGB_Conv(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
 }
 
 void ResetBGPals(void){
-    PUSH_AF;
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
-
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wBGPals1));
-    LDH_addr_A(rSVBK);
-
-    LD_HL(wBGPals1);
-    LD_C(1 * PALETTE_SIZE);
-
-loop:
-    LD_A(0xff);
-    LD_hli_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hli_A;
-    XOR_A_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto loop;
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-
-    POP_HL;
-    POP_DE;
-    POP_BC;
-    POP_AF;
-    RET;
-
-}
-
-void ResetBGPals_Conv(void){
     // PUSH_AF;
     // PUSH_BC;
     // PUSH_DE;
@@ -998,16 +777,6 @@ void WipeAttrmap(void){
 }
 
 void ApplyPals(void){
-    LD_HL(wBGPals1);
-    LD_DE(wBGPals2);
-    LD_BC(16 * PALETTE_SIZE);
-    LD_A(BANK(wGBCPalettes));
-    CALL(aFarCopyWRAM);
-    RET;
-
-}
-
-void ApplyPals_Conv(void){
     // LD_HL(wBGPals1);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
@@ -1018,53 +787,6 @@ void ApplyPals_Conv(void){
 }
 
 void ApplyAttrmap(void){
-    LDH_A_addr(rLCDC);
-    BIT_A(rLCDC_ENABLE);
-    IF_Z goto UpdateVBank1;
-    LDH_A_addr(hBGMapMode);
-    PUSH_AF;
-    LD_A(0x2);
-    LDH_addr_A(hBGMapMode);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-    POP_AF;
-    LDH_addr_A(hBGMapMode);
-    RET;
-
-
-UpdateVBank1:
-    hlcoord(0, 0, wAttrmap);
-    debgcoord(0, 0, vBGMap0);
-    LD_B(SCREEN_HEIGHT);
-    LD_A(0x1);
-    LDH_addr_A(rVBK);
-
-row:
-    LD_C(SCREEN_WIDTH);
-
-col:
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto col;
-    LD_A(BG_MAP_WIDTH - SCREEN_WIDTH);
-    ADD_A_E;
-    IF_NC goto okay;
-    INC_D;
-
-okay:
-    LD_E_A;
-    DEC_B;
-    IF_NZ goto row;
-    LD_A(0x0);
-    LDH_addr_A(rVBK);
-    RET;
-}
-
-void ApplyAttrmap_Conv(void){
     // LDH_A_addr(rLCDC);
     // BIT_A(rLCDC_ENABLE);
     // IF_Z goto UpdateVBank1;
@@ -1123,36 +845,6 @@ void ApplyAttrmap_Conv(void){
 
 //  CGB layout for SCGB_PARTY_MENU_HP_BARS
 void CGB_ApplyPartyMenuHPPals(void){
-    LD_HL(wHPPals);
-    LD_A_addr(wSGBPals);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-    LD_A_de;
-    INC_A;
-    LD_E_A;
-    hlcoord(11, 2, wAttrmap);
-    LD_BC(2 * SCREEN_WIDTH);
-    LD_A_addr(wSGBPals);
-
-loop:
-    AND_A_A;
-    IF_Z goto done;
-    ADD_HL_BC;
-    DEC_A;
-    goto loop;
-
-done:
-    LD_BC((2 << 8) | 8);
-    LD_A_E;
-    CALL(aFillBoxCGB);
-    RET;
-
-}
-
-void CGB_ApplyPartyMenuHPPals_Conv(void){
     // LD_HL(wHPPals);
     // LD_A_addr(wSGBPals);
     // LD_E_A;
@@ -1180,7 +872,7 @@ void CGB_ApplyPartyMenuHPPals_Conv(void){
     // LD_BC((2 << 8) | 8);
     // LD_A_E;
     // CALL(aFillBoxCGB);
-    FillBoxCGB_Conv(hl, 2, 8, e);
+    FillBoxCGB(hl, 2, 8, e);
     // RET;
 }
 
@@ -1196,19 +888,7 @@ void InitPartyMenuOBPals(void){
     // RET;
 }
 
-void GetBattlemonBackpicPalettePointer(void){
-    PUSH_DE;
-    FARCALL(aGetPartyMonDVs);
-    LD_C_L;
-    LD_B_H;
-    LD_A_addr(wTempBattleMonSpecies);
-    CALL(aGetPlayerOrMonPalettePointer);
-    POP_DE;
-    RET;
-
-}
-
-uint16_t* GetBattlemonBackpicPalettePointer_Conv(uint16_t* dest){
+uint16_t* GetBattlemonBackpicPalettePointer(uint16_t* dest){
     // PUSH_DE;
     // FARCALL(aGetPartyMonDVs);
     // LD_C_L;
@@ -1217,22 +897,10 @@ uint16_t* GetBattlemonBackpicPalettePointer_Conv(uint16_t* dest){
     // CALL(aGetPlayerOrMonPalettePointer);
     // POP_DE;
     // RET;
-    return GetPlayerOrMonPalettePointer_Conv(dest, wram->wTempBattleMonSpecies, GetPartyMonDVs_Conv());
+    return GetPlayerOrMonPalettePointer(dest, wram->wTempBattleMonSpecies, GetPartyMonDVs_Conv());
 }
 
-void GetEnemyFrontpicPalettePointer(void){
-    PUSH_DE;
-    FARCALL(aGetEnemyMonDVs);
-    LD_C_L;
-    LD_B_H;
-    LD_A_addr(wTempEnemyMonSpecies);
-    CALL(aGetFrontpicPalettePointer);
-    POP_DE;
-    RET;
-
-}
-
-uint16_t* GetEnemyFrontpicPalettePointer_Conv(uint16_t* dest){
+uint16_t* GetEnemyFrontpicPalettePointer(uint16_t* dest){
     // PUSH_DE;
     // FARCALL(aGetEnemyMonDVs);
     // LD_C_L;
@@ -1241,32 +909,13 @@ uint16_t* GetEnemyFrontpicPalettePointer_Conv(uint16_t* dest){
     // CALL(aGetFrontpicPalettePointer);
     // POP_DE;
     // RET;
-    return GetFrontpicPalettePointer_Conv(dest, wram->wTempEnemyMonSpecies, GetEnemyMonDVs_Conv());
-}
-
-void GetPlayerOrMonPalettePointer(void){
-    AND_A_A;
-    JP_NZ (mGetMonNormalOrShinyPalettePointer);
-    LD_A_addr(wPlayerSpriteSetupFlags);
-    BIT_A(PLAYERSPRITESETUP_FEMALE_TO_MALE_F);
-    IF_NZ goto male;
-    LD_A_addr(wPlayerGender);
-    AND_A_A;
-    IF_Z goto male;
-    LD_HL(mKrisPalette);
-    RET;
-
-
-male:
-    LD_HL(mPlayerPalette);
-    RET;
-
+    return GetFrontpicPalettePointer(dest, wram->wTempEnemyMonSpecies, GetEnemyMonDVs_Conv());
 }
 
 const char PlayerPalette[] = "gfx/trainers/cal.png";
 const char KrisPalette[] = "gfx/trainers/falkner.png";
 
-uint16_t* GetPlayerOrMonPalettePointer_Conv(uint16_t* dest, uint8_t a, uint16_t bc){
+uint16_t* GetPlayerOrMonPalettePointer(uint16_t* dest, uint8_t a, uint16_t bc){
     // AND_A_A;
     // JP_NZ (mGetMonNormalOrShinyPalettePointer);
     if(a != 0) {
@@ -1296,36 +945,17 @@ uint16_t* GetPlayerOrMonPalettePointer_Conv(uint16_t* dest, uint8_t a, uint16_t 
     // RET;
 }
 
-void GetFrontpicPalettePointer(void){
-    AND_A_A;
-    JP_NZ (mGetMonNormalOrShinyPalettePointer);
-    LD_A_addr(wTrainerClass);
-
-    return GetTrainerPalettePointer();
-}
-
-uint16_t* GetFrontpicPalettePointer_Conv(uint16_t* dest, uint8_t a, uint16_t bc){
+uint16_t* GetFrontpicPalettePointer(uint16_t* dest, uint8_t a, uint16_t bc){
     // AND_A_A;
     // JP_NZ (mGetMonNormalOrShinyPalettePointer);
     if(a != 0)
         return GetMonNormalOrShinyPalettePointer_Conv(dest, a, bc);
     // LD_A_addr(wTrainerClass);
 
-    return GetTrainerPalettePointer_Conv(dest, wram->wTrainerClass);
+    return GetTrainerPalettePointer(dest, wram->wTrainerClass);
 }
 
-void GetTrainerPalettePointer(void){
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_BC(mTrainerPalettes);
-    ADD_HL_BC;
-    RET;
-
-}
-
-uint16_t* GetTrainerPalettePointer_Conv(uint16_t* dest, uint8_t a){
+uint16_t* GetTrainerPalettePointer(uint16_t* dest, uint8_t a){
     // LD_L_A;
     // LD_H(0);
     // ADD_HL_HL;
@@ -1340,13 +970,7 @@ uint16_t* GetTrainerPalettePointer_Conv(uint16_t* dest, uint8_t a){
     return dest;
 }
 
-void GetMonPalettePointer(void){
-    CALL(av_GetMonPalettePointer);
-    RET;
-
-}
-
-uint16_t* GetMonPalettePointer_Conv(uint16_t* dest, uint8_t a){
+static uint16_t* GetMonPalettePointer(uint16_t* dest, uint8_t a){
     // CALL(av_GetMonPalettePointer);
     // RET;
     ExtractPaletteFromPNGAssetToBuffer(dest, v_GetMonPalettePointer_Conv(a));
@@ -1505,7 +1129,7 @@ uint16_t* GetMonNormalOrShinyPalettePointer_Conv(uint16_t* dest, species_t a, ui
     // CALL(aCheckShininess);
     // POP_HL;
     // RET_NC ;
-    if(!CheckShininess_Conv(bc)) {
+    if(!CheckShininess(bc)) {
     // for(int rept = 0; rept < 4; rept++){
     // INC_HL;
     // }
@@ -1621,68 +1245,6 @@ skip:
 
 }
 
-void InitCGBPals(void){
-    CALL(aCheckCGB);
-    RET_Z ;
-
-//  CGB only
-    LD_A(MBANK(avTiles3));
-    LDH_addr_A(rVBK);
-    LD_HL(vTiles3);
-    LD_BC(0x200 * LEN_2BPP_TILE);
-    XOR_A_A;
-    CALL(aByteFill);
-    LD_A(MBANK(avTiles0));
-    LDH_addr_A(rVBK);
-    LD_A(1 << rBGPI_AUTO_INCREMENT);
-    LDH_addr_A(rBGPI);
-    LD_C(4 * 8);
-
-bgpals_loop:
-    LD_A(LOW(PALRGB_WHITE));
-    LDH_addr_A(rBGPD);
-    LD_A(HIGH(PALRGB_WHITE));
-    LDH_addr_A(rBGPD);
-    DEC_C;
-    IF_NZ goto bgpals_loop;
-    LD_A(1 << rOBPI_AUTO_INCREMENT);
-    LDH_addr_A(rOBPI);
-    LD_C(4 * 8);
-
-obpals_loop:
-    LD_A(LOW(PALRGB_WHITE));
-    LDH_addr_A(rOBPD);
-    LD_A(HIGH(PALRGB_WHITE));
-    LDH_addr_A(rOBPD);
-    DEC_C;
-    IF_NZ goto obpals_loop;
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(BANK(wBGPals1));
-    LDH_addr_A(rSVBK);
-    LD_HL(wBGPals1);
-    CALL(aInitCGBPals_LoadWhitePals);
-    LD_HL(wBGPals2);
-    CALL(aInitCGBPals_LoadWhitePals);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-
-LoadWhitePals:
-    LD_C(4 * 16);
-
-loop:
-    LD_A(LOW(PALRGB_WHITE));
-    LD_hli_A;
-    LD_A(HIGH(PALRGB_WHITE));
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
 static void InitCGBPals_LoadWhitePals(uint16_t* hl) {
     // LD_C(4 * 16);
     uint8_t c = 4 * 16;
@@ -1700,10 +1262,10 @@ static void InitCGBPals_LoadWhitePals(uint16_t* hl) {
     // RET;
 }
 
-void InitCGBPals_Conv(void){
+void InitCGBPals(void){
     // CALL(aCheckCGB);
     // RET_Z ;
-    if(!CheckCGB_Conv())
+    if(!CheckCGB())
         return;
 
 //  CGB only

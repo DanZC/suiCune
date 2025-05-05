@@ -394,7 +394,7 @@ static void Pokegear_LoadGFX(void){
     // uint16_t iconptr;
     // uint8_t iconbank;
     // GetPlayerIcon_Conv(&iconptr, &iconbank);
-    const char* iconpath = GetPlayerIcon_Conv2();
+    const char* iconpath = GetPlayerIcon();
 // standing sprite
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x10, iconpath, 0, 4);
 // walking sprite
@@ -3568,7 +3568,7 @@ static const char* GetPlayerOrFastShipIcon(void){
     }
     // FARCALL(aGetPlayerIcon);
     // RET;
-    return GetPlayerIcon_Conv2();
+    return GetPlayerIcon();
 }
 
 static void PlaceString_MonsNest(species_t species) {
@@ -4138,7 +4138,7 @@ static struct SpriteAnim* TownMapMon(void){
 //  Get FlyMon icon
     // LD_E(0x08);  // starting tile in VRAM
     // FARCALL(aGetSpeciesIcon);
-    GetSpeciesIcon_Conv(0x08);
+    GetSpeciesIcon(0x08);
 //  Animation/palette
     //depixel ['0', '0']
     // depixel2(0, 0);
@@ -4161,7 +4161,7 @@ static struct SpriteAnim* TownMapPlayerIcon(uint8_t location){
 //  Draw the player icon at town map location in a
     // PUSH_AF;
     // FARCALL(aGetPlayerIcon);
-    const char* path = GetPlayerIcon_Conv2();
+    const char* path = GetPlayerIcon();
 //  Standing icon
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x10);
     // LD_C(4);  // # tiles

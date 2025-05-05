@@ -1875,12 +1875,12 @@ void PCMonInfo(void){
     // LD_addr_A(wCurSpecies);
     // LD_HL(wTempMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wTempMon.mon.DVs);
+    GetUnownLetter(wram->wTempMon.mon.DVs);
     // CALL(aGetBaseData);
     GetBaseData(species);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // PREDEF(pGetMonFrontpic);
-    GetMonFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
+    GetMonFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
     // XOR_A_A;
     // LD_addr_A(wBillsPC_MonHasMail);
     wram->wBillsPC_MonHasMail = FALSE;
@@ -2993,7 +2993,7 @@ void StatsScreenDPad_Conv(void){
         wram->wCurSpecies = wram->wTempSpecies;
         // LD_HL(wTempMonDVs);
         // PREDEF(pGetUnownLetter);
-        GetUnownLetter_Conv(wram->wTempMon.mon.DVs);
+        GetUnownLetter(wram->wTempMon.mon.DVs);
         // CALL(aGetBaseData);
         GetBaseData(wram->wCurSpecies);
         // CALL(aBillsPC_CopyMon);

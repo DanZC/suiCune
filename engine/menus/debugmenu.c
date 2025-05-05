@@ -617,8 +617,8 @@ void DebugMenu_GFXTest(void) {
     ByteFill(vram->vTiles0, 2048, 0);
     ByteFill(vram->vTiles1, 2048, 0);
     ByteFill(vram->vTiles2, 2048, 0);
-    v_LoadStandardFont_Conv();
-    StatsScreen_LoadFont_Conv();
+    v_LoadStandardFont();
+    StatsScreen_LoadFont();
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, "gfx/pokemon/charizard/front.png", 0, 7 * 7);
     PlaceStringSimple(U82C("--0123456789ABCDEF--"), coord(0, 0, wram->wTilemap));
     for(int i = 0; i < 10; i++) {
@@ -641,7 +641,7 @@ void DebugMenu_GFXTest(void) {
             break;
         if(hram->hJoyPressed & (A_BUTTON))  {
             hram->hGraphicStartTile = 0;
-            PlaceGraphic_Conv(coord(0, 0, wram->wTilemap), 7, 7);
+            PlaceGraphic(coord(0, 0, wram->wTilemap), 7, 7);
         }
         DelayFrame();
     }
@@ -650,9 +650,9 @@ void DebugMenu_GFXTest(void) {
     ByteFill(vram->vTiles0, 2048, 0);
     ByteFill(vram->vTiles1, 2048, 0);
     ByteFill(vram->vTiles2, 2048, 0);
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
     DelayFrame();
 }
 
@@ -672,9 +672,9 @@ void DebugMenu_Stats(void) {
 
     DebugMenu_RestoreAttrmap();
     ClearScreen();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
     SetPalettes();
     // TextboxPalette(wram->wTilemap, SCREEN_WIDTH, SCREEN_HEIGHT);
     WaitBGMap2();
@@ -699,28 +699,28 @@ static void DebugMenu_Pics_DoAnim(species_t sp) {
 
     wram->wUnownLetter = UNOWN_A;
     wram->wCurPartySpecies = sp;
-    GetAnimatedFrontpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
-    LoadMonAnimation_Conv(coord(2, 4, wram->wTilemap), 0x0, ANIM_MON_MENU);
-    GetPlayerOrMonPalettePointer_Conv(palbuf, wram->wCurSpecies, wram->wTempMon.mon.DVs);
-    LoadPalette_White_Col1_Col2_Black_Conv((uint16_t*)wram->wBGPals1 + 4, palbuf);
+    GetAnimatedFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
+    LoadMonAnimation(coord(2, 4, wram->wTilemap), 0x0, ANIM_MON_MENU);
+    GetPlayerOrMonPalettePointer(palbuf, wram->wCurSpecies, wram->wTempMon.mon.DVs);
+    LoadPalette_White_Col1_Col2_Black((uint16_t*)wram->wBGPals1 + 4, palbuf);
     SetPalettes();
 
-    while(!SetUpPokeAnim_Conv()) {
-        HDMATransferTilemapToWRAMBank3_Conv();
+    while(!SetUpPokeAnim()) {
+        HDMATransferTilemapToWRAMBank3();
     }
 }
 
 static void DebugMenu_Pics_SetLayout(void) {
-    FillBoxCGB_Conv(coord(2, 4, wram->wAttrmap), 8, SCREEN_WIDTH, 0x1);
+    FillBoxCGB(coord(2, 4, wram->wAttrmap), 8, SCREEN_WIDTH, 0x1);
 }
 
 void DebugMenu_Pics(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
     ClearScreen();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
 
     DebugMenu_Pics_SetLayout();
     
@@ -742,14 +742,14 @@ void DebugMenu_Pics(void) {
             if(s == BULBASAUR) s = CELEBI;
             else s--;
             DebugMenu_Pics_PlaceStrings(&s);
-            HDMATransferTilemapToWRAMBank3_Conv();
+            HDMATransferTilemapToWRAMBank3();
             continue;
         }
         else if(dir > 0) {
             if(s == CELEBI) s = BULBASAUR;
             else s++;
             DebugMenu_Pics_PlaceStrings(&s);
-            HDMATransferTilemapToWRAMBank3_Conv();
+            HDMATransferTilemapToWRAMBank3();
             continue;
         }
 
@@ -761,9 +761,9 @@ void DebugMenu_Pics(void) {
 
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
     TextboxPalette(wram->wTilemap, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 2);
     ClearScreen();
     WaitBGMap2();
@@ -793,9 +793,9 @@ static const txt_cmd_s DebugMenu_TestText_No[] = {
 
 void DebugMenu_Scripting(void) {
     ClearScreen();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
     WaitBGMap();
 
     PrintText(DebugMenu_TestText);
@@ -811,9 +811,9 @@ void DebugMenu_Scripting(void) {
     ByteFill(vram->vTiles0, 2048, 0);
     ByteFill(vram->vTiles1, 2048, 0);
     ByteFill(vram->vTiles2, 2048, 0);
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
     TextboxPalette(wram->wTilemap, SCREEN_WIDTH - 2, SCREEN_HEIGHT - 2);
     WaitBGMap();
     DelayFrame();
@@ -837,9 +837,9 @@ void DebugMenu_Link(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
     ClearScreen();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
     WaitBGMap();
 
     OpenSRAM(MBANK(asPlayerData));
@@ -868,9 +868,9 @@ void DebugMenu_Link(void) {
     DelayFrames(4);
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
 }
 
 void DebugMenu_TradeAnim(void) {
@@ -890,9 +890,9 @@ void DebugMenu_TradeAnim(void) {
     TradeAnimation();
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
 }
 
 static void DebugMenu_BattleAnim_PlaceText(uint16_t move) {
@@ -952,10 +952,10 @@ void DebugMenu_BattleAnim(void) {
     wram->wTempEnemyMonSpecies = wram->wOTPartySpecies[0];
     GetSGBLayout(SCGB_BATTLE_COLORS);
     hram->hGraphicStartTile = 0x31;
-    PlaceGraphicYStagger_Conv(coord(2, 6, wram->wTilemap), 6, 6);
+    PlaceGraphicYStagger(coord(2, 6, wram->wTilemap), 6, 6);
     GetEnemyMonFrontpic();
     hram->hGraphicStartTile = 0;
-    PlaceGraphicYStagger_Conv(coord(12, 0, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(12, 0, wram->wTilemap), 7, 7);
     SpeechTextbox();
     DebugMenu_BattleAnim_PlaceText(anim);
     ApplyTilemap();
@@ -1027,9 +1027,9 @@ void DebugMenu_BattleAnim(void) {
     DelayFrames(4);
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
 }
 
 void DebugMenu_Credits(void) {
@@ -1061,9 +1061,9 @@ void DebugMenu_TradeTest(void) {
     InitTradeMenuDisplay();
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
 }
 
 void DebugMenu_MysteryGift(void) {
@@ -1084,9 +1084,9 @@ void DebugMenu_MysteryGift(void) {
 
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
 }
 
 const txt_cmd_s Text_NewsMenuTop[] = {
@@ -1174,9 +1174,9 @@ loop:
 
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
     DelayFrames(4);
 }
 
@@ -1188,7 +1188,7 @@ void DebugMenu_MobileTradeAnim(void) {
     Function108026();
     DebugMenu_RestoreTilemap();
     DebugMenu_RestoreAttrmap();
-    v_LoadFontsExtra1_Conv();
-    v_LoadFontsExtra2_Conv();
-    v_LoadStandardFont_Conv();
+    v_LoadFontsExtra1();
+    v_LoadFontsExtra2();
+    v_LoadStandardFont();
 }

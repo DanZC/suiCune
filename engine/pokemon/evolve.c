@@ -468,7 +468,7 @@ MasterLoop:
             // LD_HL(wTempMonDVs);
             // PREDEF(pGetUnownLetter);
             // CALLFAR(aUpdateUnownDex);
-            UpdateUnownDex_Conv(GetUnownLetter_Conv(wram->wTempMon.mon.DVs));
+            UpdateUnownDex_Conv(GetUnownLetter(wram->wTempMon.mon.DVs));
         }
 
     // skip_unown:

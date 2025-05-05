@@ -1246,7 +1246,7 @@ void TradeAnim_GetFrontpic(uint8_t* de, uint16_t dvs, species_t species){
     // PUSH_DE;
     // PUSH_AF;
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(dvs);
+    GetUnownLetter(dvs);
     // POP_AF;
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = species;
@@ -1255,7 +1255,7 @@ void TradeAnim_GetFrontpic(uint8_t* de, uint16_t dvs, species_t species){
     GetBaseData(species);
     // POP_DE;
     // PREDEF(pGetMonFrontpic);
-    GetMonFrontpic_Conv(de);
+    GetMonFrontpic(de);
     // RET;
 }
 
@@ -1300,7 +1300,7 @@ void TradeAnim_ShowFrontpic(const uint8_t* de){
     hram->hGraphicStartTile = 0x0;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(7, 2, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(7, 2, wram->wTilemap), 7, 7);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // RET;
@@ -2038,7 +2038,7 @@ void LoadTradeBubbleGFX(void){
     DelayFrame();
     // LD_E(MONICON_TRADE);
     // CALLFAR(aLoadMenuMonIcon);
-    LoadMenuMonIcon_Conv(MONICON_TRADE);
+    LoadMenuMonIcon(MONICON_TRADE);
     // LD_DE(mTradeBubbleGFX);
     // LD_HL(vTiles0 + LEN_2BPP_TILE * 0x72);
     // LD_BC((BANK(aTradeBubbleGFX) << 8) | 4);

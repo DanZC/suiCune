@@ -46,76 +46,22 @@ got_class:
 }
 
 void MovePlayerPicRight(void){
-    hlcoord(6, 4, wTilemap);
-    LD_DE(1);
-    JR(mMovePlayerPic);
-
-}
-
-void MovePlayerPicRight_Conv(void){
     // hlcoord(6, 4, wTilemap);
     // LD_DE(1);
     // JR(mMovePlayerPic);
-    return MovePlayerPic_Conv(wram->wTilemap + coordidx(6, 4), 1);
+    return MovePlayerPic(wram->wTilemap + coordidx(6, 4), 1);
 }
 
 void MovePlayerPicLeft(void){
-    hlcoord(13, 4, wTilemap);
-    LD_DE(-1);
-// fallthrough
-
-    return MovePlayerPic();
-}
-
-void MovePlayerPicLeft_Conv(void){
     // hlcoord(13, 4, wTilemap);
     // LD_DE(-1);
 // fallthrough
 
-    return MovePlayerPic_Conv(wram->wTilemap + coordidx(13, 4), -1);
+    return MovePlayerPic(wram->wTilemap + coordidx(13, 4), -1);
 }
 
 //  Move player pic at hl by de * 7 tiles.
-void MovePlayerPic(void){
-    LD_C(0x8);
-
-loop:
-    PUSH_BC;
-    PUSH_HL;
-    PUSH_DE;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_BC((7 << 8) | 7);
-    PREDEF(pPlaceGraphic);
-    XOR_A_A;
-    LDH_addr_A(hBGMapThird);
-    CALL(aWaitBGMap);
-    CALL(aDelayFrame);
-    POP_DE;
-    POP_HL;
-    ADD_HL_DE;
-    POP_BC;
-    DEC_C;
-    RET_Z ;
-    PUSH_HL;
-    PUSH_BC;
-    LD_A_L;
-    SUB_A_E;
-    LD_L_A;
-    LD_A_H;
-    SBC_A_D;
-    LD_H_A;
-    LD_BC((7 << 8) | 7);
-    CALL(aClearBox);
-    POP_BC;
-    POP_HL;
-    goto loop;
-
-    return ShowPlayerNamingChoices();
-}
-
-//  Move player pic at hl by de * 7 tiles.
-void MovePlayerPic_Conv(uint8_t* hl, int16_t de){
+void MovePlayerPic(uint8_t* hl, int16_t de){
     // LD_C(0x8);
     uint8_t c = 0x8;
 
@@ -129,7 +75,7 @@ void MovePlayerPic_Conv(uint8_t* hl, int16_t de){
         hram->hBGMapMode = BGMAPMODE_NONE;
         // LD_BC((7 << 8) | 7);
         // PREDEF(pPlaceGraphic);
-        PlaceGraphicYStagger_Conv(hl, 7, 7);
+        PlaceGraphicYStagger(hl, 7, 7);
         // XOR_A_A;
         // LDH_addr_A(hBGMapThird);
         hram->hBGMapThird = 0;
@@ -202,33 +148,7 @@ got_array:
 
 }
 
-void GetPlayerIcon(void){
-    LD_DE(mChrisSpriteGFX);
-    LD_B(BANK(aChrisSpriteGFX));
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto got_gfx;
-    LD_DE(mKrisSpriteGFX);
-    LD_B(BANK(aKrisSpriteGFX));
-
-got_gfx:
-    RET;
-
-}
-
-void GetPlayerIcon_Conv(uint16_t* ptr, uint8_t* bank){
-    *ptr = mChrisSpriteGFX;
-    *bank = BANK(aChrisSpriteGFX);
-    uint8_t a = gb_read(wPlayerGender);
-    if((a & (1 << 0)) != 0)
-    {
-        // Load Kris graphics
-        *ptr = mKrisSpriteGFX;
-        *bank = BANK(aKrisSpriteGFX);
-    }
-}
-
-const char* GetPlayerIcon_Conv2(void){
+const char* GetPlayerIcon(void){
     if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
     {
         // Load Kris graphics
@@ -330,45 +250,8 @@ void HOF_LoadTrainerFrontpic(void){
     // RET;
 }
 
+//  Draw the player pic at (6,4).
 void DrawIntroPlayerPic(void){
-//  Draw the player pic at (6,4).
-
-//  Get class
-    LD_E(CHRIS);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto got_class;
-    LD_E(KRIS);
-
-got_class:
-    LD_A_E;
-    LD_addr_A(wTrainerClass);
-
-//  Load pic
-    LD_DE(mChrisPic);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto got_pic;
-    LD_DE(mKrisPic);
-
-got_pic:
-    LD_HL(vTiles2);
-    LD_B(BANK(aChrisPic));  // aka BANK(KrisPic)
-    LD_C(7 * 7);  // dimensions
-    CALL(aGet2bpp);
-
-//  Draw
-    XOR_A_A;
-    LDH_addr_A(hGraphicStartTile);
-    hlcoord(6, 4, wTilemap);
-    LD_BC((7 << 8) | 7);
-    PREDEF(pPlaceGraphic);
-    RET;
-
-}
-
-//  Draw the player pic at (6,4).
-void DrawIntroPlayerPic_Conv(void){
 //  Get class
     // LD_E(CHRIS);
     // LD_A_addr(wPlayerGender);
@@ -403,7 +286,7 @@ void DrawIntroPlayerPic_Conv(void){
     // hlcoord(6, 4, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(6, 4, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(6, 4, wram->wTilemap), 7, 7);
     // RET;
 }
 

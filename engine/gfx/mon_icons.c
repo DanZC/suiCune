@@ -14,30 +14,27 @@
 
     // return GetIcon_de();
 // }
+static struct SpriteAnim* Mobile_InitAnimatedMonIcon(void);
+static void Mobile_InitPartyMenuBGPal71(void);
+static struct SpriteAnim* PartyMenu_InitAnimatedMonIcon(void);
+static struct SpriteAnim* InitPartyMenuIcon(void);
+static void SetPartyMonIconAnimSpeed(struct SpriteAnim* bc);
+static void NamingScreen_InitAnimatedMonIcon(void);
+static void MoveList_InitAnimatedMonIcon(void);
+static void Trade_LoadMonIconGFX(void);
+
+static void GetMemIconGFX(void);
+static void GetIconGFX(uint8_t a);
+static uint8_t* GetIcon_a(uint8_t a);
+static uint8_t* GetIcon(uint16_t hl);
+static uint8_t ReadMonMenuIcon(species_t a);
 
 static const char *HeldItemIcons[] = {
     "gfx/icons/mail.png",
     "gfx/icons/item.png"
 };
 
-void LoadOverworldMonIcon(void){
-    LD_A_E;
-    CALL(aReadMonMenuIcon);
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    LD_DE(mIconPointers);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_E_A;
-    LD_D_hl;
-    LD_B(BANK(aIcons));
-    LD_C(8);
-    RET;
-
-}
-
-struct IconData LoadOverworldMonIcon_Conv(species_t e){
+struct IconData LoadOverworldMonIcon(species_t e){
     // LD_A_E;
     // CALL(aReadMonMenuIcon);
     // LD_L_A;
@@ -51,45 +48,10 @@ struct IconData LoadOverworldMonIcon_Conv(species_t e){
     // LD_B(BANK(aIcons));
     // LD_C(8);
     // RET;
-    return (struct IconData){.path=IconPointers[ReadMonMenuIcon_Conv(e)], 8};
+    return (struct IconData){.path=IconPointers[ReadMonMenuIcon(e)], 8};
 }
 
-void LoadMenuMonIcon(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    CALL(aLoadMenuMonIcon_LoadIcon);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-
-LoadIcon:
-    LD_D(0);
-    LD_HL(mLoadMenuMonIcon_Jumptable);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
-
-
-Jumptable:
-//  entries correspond to MONICON_* constants
-    //dw ['PartyMenu_InitAnimatedMonIcon'];  // MONICON_PARTYMENU
-    //dw ['NamingScreen_InitAnimatedMonIcon'];  // MONICON_NAMINGSCREEN
-    //dw ['MoveList_InitAnimatedMonIcon'];  // MONICON_MOVES
-    //dw ['Trade_LoadMonIconGFX'];  // MONICON_TRADE
-    //dw ['Mobile_InitAnimatedMonIcon'];  // MONICON_MOBILE1
-    //dw ['Mobile_InitPartyMenuBGPal71'];  // MONICON_MOBILE2
-    //dw ['Unused_GetPartyMenuMonIcon'];  // MONICON_UNUSED
-
-    return Unused_GetPartyMenuMonIcon();
-}
-
-void LoadMenuMonIcon_Conv(uint8_t e){
+void LoadMenuMonIcon(uint8_t e){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -100,12 +62,12 @@ void LoadMenuMonIcon_Conv(uint8_t e){
     // RET;
 
     switch(e) {
-        case MONICON_PARTYMENU: PartyMenu_InitAnimatedMonIcon_Conv(); return;
-        case MONICON_NAMINGSCREEN: NamingScreen_InitAnimatedMonIcon_Conv(); return;
-        case MONICON_MOVES: MoveList_InitAnimatedMonIcon_Conv(); return;
-        case MONICON_TRADE: Trade_LoadMonIconGFX_Conv(); return;
-        case MONICON_MOBILE1: Mobile_InitAnimatedMonIcon_Conv(); return;
-        case MONICON_MOBILE2: Mobile_InitPartyMenuBGPal71_Conv(); return;
+        case MONICON_PARTYMENU: PartyMenu_InitAnimatedMonIcon(); return;
+        case MONICON_NAMINGSCREEN: NamingScreen_InitAnimatedMonIcon(); return;
+        case MONICON_MOVES: MoveList_InitAnimatedMonIcon(); return;
+        case MONICON_TRADE: Trade_LoadMonIconGFX(); return;
+        case MONICON_MOBILE1: Mobile_InitAnimatedMonIcon(); return;
+        case MONICON_MOBILE2: Mobile_InitPartyMenuBGPal71(); return;
         case MONICON_UNUSED: return;
     }
 
@@ -174,27 +136,9 @@ got_tile:
 
 }
 
-void Mobile_InitAnimatedMonIcon(void){
-    CALL(aPartyMenu_InitAnimatedMonIcon);
-    LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
-    ADD_HL_BC;
-    LD_A(SPRITE_ANIM_SEQ_NULL);
-    LD_hl_A;
-    LD_HL(SPRITEANIMSTRUCT_XCOORD);
-    ADD_HL_BC;
-    LD_A(9 * 8);
-    LD_hl_A;
-    LD_HL(SPRITEANIMSTRUCT_YCOORD);
-    ADD_HL_BC;
-    LD_A(9 * 8);
-    LD_hl_A;
-    RET;
-
-}
-
-struct SpriteAnim* Mobile_InitAnimatedMonIcon_Conv(void){
+static struct SpriteAnim* Mobile_InitAnimatedMonIcon(void){
     // CALL(aPartyMenu_InitAnimatedMonIcon);
-    struct SpriteAnim* bc = PartyMenu_InitAnimatedMonIcon_Conv();
+    struct SpriteAnim* bc = PartyMenu_InitAnimatedMonIcon();
     // LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
     // ADD_HL_BC;
     // LD_A(SPRITE_ANIM_SEQ_NULL);
@@ -214,34 +158,11 @@ struct SpriteAnim* Mobile_InitAnimatedMonIcon_Conv(void){
     return bc;
 }
 
-void Mobile_InitPartyMenuBGPal71(void){
-    CALL(aInitPartyMenuIcon);
-    CALL(aSetPartyMonIconAnimSpeed);
-    LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
-    ADD_HL_BC;
-    LD_A(SPRITE_ANIM_SEQ_NULL);
-    LD_hl_A;
-    LD_HL(SPRITEANIMSTRUCT_XCOORD);
-    ADD_HL_BC;
-    LD_A(3 * 8);
-    LD_hl_A;
-    LD_HL(SPRITEANIMSTRUCT_YCOORD);
-    ADD_HL_BC;
-    LD_A(12 * 8);
-    LD_hl_A;
-    LD_A_C;
-    LD_addr_A(wc608);
-    LD_A_B;
-    LD_addr_A(wc608 + 1);
-    RET;
-
-}
-
-void Mobile_InitPartyMenuBGPal71_Conv(void){
+static void Mobile_InitPartyMenuBGPal71(void){
     // CALL(aInitPartyMenuIcon);
-    struct SpriteAnim* bc = InitPartyMenuIcon_Conv();
+    struct SpriteAnim* bc = InitPartyMenuIcon();
     // CALL(aSetPartyMonIconAnimSpeed);
-    SetPartyMonIconAnimSpeed_Conv(bc);
+    SetPartyMonIconAnimSpeed(bc);
     // LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
     // ADD_HL_BC;
     // LD_A(SPRITE_ANIM_SEQ_NULL);
@@ -267,46 +188,7 @@ void Mobile_InitPartyMenuBGPal71_Conv(void){
     // RET;
 }
 
-void PartyMenu_InitAnimatedMonIcon(void){
-    CALL(aInitPartyMenuIcon);
-    CALL(aPartyMenu_InitAnimatedMonIcon_SpawnItemIcon);
-    CALL(aSetPartyMonIconAnimSpeed);
-    RET;
-
-
-SpawnItemIcon:
-    PUSH_BC;
-    LDH_A_addr(hObjectStructIndex);
-    LD_HL(wPartyMon1Item);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    POP_BC;
-    LD_A_hl;
-    AND_A_A;
-    RET_Z ;
-    PUSH_HL;
-    PUSH_BC;
-    LD_D_A;
-    CALLFAR(aItemIsMail);
-    POP_BC;
-    POP_HL;
-    IF_C goto mail;
-    LD_A(SPRITE_ANIM_FRAMESET_PARTY_MON_WITH_ITEM);
-    goto okay;
-
-
-mail:
-    LD_A(SPRITE_ANIM_FRAMESET_PARTY_MON_WITH_MAIL);
-
-okay:
-    LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-
-}
-
-static void PartyMenu_InitAnimatedMonIcon_SpawnItemIcon_Conv(struct SpriteAnim* bc) {
+static void PartyMenu_InitAnimatedMonIcon_SpawnItemIcon(struct SpriteAnim* bc) {
     // PUSH_BC;
     // LDH_A_addr(hObjectStructIndex);
     // LD_HL(wPartyMon1Item);
@@ -343,51 +225,18 @@ static void PartyMenu_InitAnimatedMonIcon_SpawnItemIcon_Conv(struct SpriteAnim* 
         // RET;
 }
 
-struct SpriteAnim* PartyMenu_InitAnimatedMonIcon_Conv(void){
+static struct SpriteAnim* PartyMenu_InitAnimatedMonIcon(void){
     // CALL(aInitPartyMenuIcon);
-    struct SpriteAnim* bc = InitPartyMenuIcon_Conv();
+    struct SpriteAnim* bc = InitPartyMenuIcon();
     // CALL(aPartyMenu_InitAnimatedMonIcon_SpawnItemIcon);
-    PartyMenu_InitAnimatedMonIcon_SpawnItemIcon_Conv(bc);
+    PartyMenu_InitAnimatedMonIcon_SpawnItemIcon(bc);
     // CALL(aSetPartyMonIconAnimSpeed);
-    SetPartyMonIconAnimSpeed_Conv(bc);
+    SetPartyMonIconAnimSpeed(bc);
     // RET;
     return bc;
 }
 
-void InitPartyMenuIcon(void){
-    LD_A_addr(wCurIconTile);
-    PUSH_AF;
-    LDH_A_addr(hObjectStructIndex);
-    LD_HL(wPartySpecies);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    CALL(aReadMonMenuIcon);
-    LD_addr_A(wCurIcon);
-    CALL(aGetMemIconGFX);
-    LDH_A_addr(hObjectStructIndex);
-//  y coord
-    ADD_A_A;
-    ADD_A_A;
-    ADD_A_A;
-    ADD_A_A;
-    ADD_A(0x1c);
-    LD_D_A;
-//  x coord
-    LD_E(0x10);
-//  type is partymon icon
-    LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
-    CALL(av_InitSpriteAnimStruct);
-    POP_AF;
-    LD_HL(SPRITEANIMSTRUCT_TILE_ID);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-
-}
-
-struct SpriteAnim* InitPartyMenuIcon_Conv(void){
+static struct SpriteAnim* InitPartyMenuIcon(void){
     // LD_A_addr(wCurIconTile);
     // PUSH_AF;
     uint8_t curTile = wram->wCurIconTile;
@@ -400,9 +249,9 @@ struct SpriteAnim* InitPartyMenuIcon_Conv(void){
     species_t a = wram->wPartySpecies[hram->hObjectStructIndex];
     // CALL(aReadMonMenuIcon);
     // LD_addr_A(wCurIcon);
-    wram->wCurIcon = ReadMonMenuIcon_Conv(a);
+    wram->wCurIcon = ReadMonMenuIcon(a);
     // CALL(aGetMemIconGFX);
-    GetMemIconGFX_Conv();
+    GetMemIconGFX();
     // LDH_A_addr(hObjectStructIndex);
 //  y coord
     // ADD_A_A;
@@ -428,44 +277,7 @@ struct SpriteAnim* InitPartyMenuIcon_Conv(void){
     return bc;
 }
 
-void SetPartyMonIconAnimSpeed(void){
-    PUSH_BC;
-    LDH_A_addr(hObjectStructIndex);
-    LD_B_A;
-    CALL(aSetPartyMonIconAnimSpeed_getspeed);
-    LD_A_B;
-    POP_BC;
-    LD_HL(SPRITEANIMSTRUCT_DURATIONOFFSET);
-    ADD_HL_BC;
-    LD_hl_A;
-    RLCA;
-    RLCA;
-    LD_HL(SPRITEANIMSTRUCT_VAR2);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-
-
-getspeed:
-    FARCALL(aPlacePartymonHPBar);
-    CALL(aGetHPPal);
-    LD_E_D;
-    LD_D(0);
-    LD_HL(mSetPartyMonIconAnimSpeed_speeds);
-    ADD_HL_DE;
-    LD_B_hl;
-    RET;
-
-
-speeds:
-    //db ['0x00'];  // HP_GREEN
-    //db ['0x40'];  // HP_YELLOW
-    //db ['0x80'];  // HP_RED
-
-    return NamingScreen_InitAnimatedMonIcon();
-}
-
-void SetPartyMonIconAnimSpeed_Conv(struct SpriteAnim* bc){
+static void SetPartyMonIconAnimSpeed(struct SpriteAnim* bc){
     static const uint8_t speeds[] = {
         0x00,  // HP_GREEN
         0x40,  // HP_YELLOW
@@ -506,30 +318,14 @@ void SetPartyMonIconAnimSpeed_Conv(struct SpriteAnim* bc){
     // RET;
 }
 
-void NamingScreen_InitAnimatedMonIcon(void){
-    LD_A_addr(wTempIconSpecies);
-    CALL(aReadMonMenuIcon);
-    LD_addr_A(wCurIcon);
-    XOR_A_A;
-    CALL(aGetIconGFX);
-    depixel4(4, 4, 4, 0);
-    LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
-    CALL(av_InitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
-    ADD_HL_BC;
-    LD_hl(SPRITE_ANIM_SEQ_NULL);
-    RET;
-
-}
-
-void NamingScreen_InitAnimatedMonIcon_Conv(void){
+static void NamingScreen_InitAnimatedMonIcon(void){
     // LD_A_addr(wTempIconSpecies);
     // CALL(aReadMonMenuIcon);
     // LD_addr_A(wCurIcon);
-    wram->wCurIcon = ReadMonMenuIcon_Conv(wram->wTempIconSpecies);
+    wram->wCurIcon = ReadMonMenuIcon(wram->wTempIconSpecies);
     // XOR_A_A;
     // CALL(aGetIconGFX);
-    GetIconGFX_Conv(0);
+    GetIconGFX(0);
     // depixel4(4, 4, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
     // CALL(av_InitSpriteAnimStruct);
@@ -541,31 +337,14 @@ void NamingScreen_InitAnimatedMonIcon_Conv(void){
     bc->animSeqID = SPRITE_ANIM_SEQ_NULL;
 }
 
-void MoveList_InitAnimatedMonIcon(void){
-    LD_A_addr(wTempIconSpecies);
-    CALL(aReadMonMenuIcon);
-    LD_addr_A(wCurIcon);
-    XOR_A_A;
-    CALL(aGetIconGFX);
-    LD_D(3 * 8 + 2);  // depixel 3, 4, 2, 4
-    LD_E(4 * 8 + 4);
-    LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
-    CALL(av_InitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
-    ADD_HL_BC;
-    LD_hl(SPRITE_ANIM_SEQ_NULL);
-    RET;
-
-}
-
-void MoveList_InitAnimatedMonIcon_Conv(void){
+static void MoveList_InitAnimatedMonIcon(void){
     // LD_A_addr(wTempIconSpecies);
     // CALL(aReadMonMenuIcon);
     // LD_addr_A(wCurIcon);
-    wram->wCurIcon = ReadMonMenuIcon_Conv(wram->wTempIconSpecies);
+    wram->wCurIcon = ReadMonMenuIcon(wram->wTempIconSpecies);
     // XOR_A_A;
     // CALL(aGetIconGFX);
-    GetIconGFX_Conv(0);
+    GetIconGFX(0);
     // LD_D(3 * 8 + 2);  // depixel 3, 4, 2, 4
     // LD_E(4 * 8 + 4);
     // LD_A(SPRITE_ANIM_INDEX_PARTY_MON);
@@ -578,79 +357,43 @@ void MoveList_InitAnimatedMonIcon_Conv(void){
     // RET;
 }
 
-void Trade_LoadMonIconGFX(void){
-    LD_A_addr(wTempIconSpecies);
-    CALL(aReadMonMenuIcon);
-    LD_addr_A(wCurIcon);
-    LD_A(0x62);
-    LD_addr_A(wCurIconTile);
-    CALL(aGetMemIconGFX);
-    RET;
-
-}
-
-void Trade_LoadMonIconGFX_Conv(void){
+static void Trade_LoadMonIconGFX(void){
     // LD_A_addr(wTempIconSpecies);
     // CALL(aReadMonMenuIcon);
     // LD_addr_A(wCurIcon);
-    wram->wCurIcon = ReadMonMenuIcon_Conv(wram->wTempIconSpecies);
+    wram->wCurIcon = ReadMonMenuIcon(wram->wTempIconSpecies);
     // LD_A(0x62);
     // LD_addr_A(wCurIconTile);
     wram->wCurIconTile = 0x62;
     // CALL(aGetMemIconGFX);
     // RET;
-    GetMemIconGFX_Conv();
-}
-
-void GetSpeciesIcon(void){
-//  Load species icon into VRAM at tile a
-    PUSH_DE;
-    LD_A_addr(wTempIconSpecies);
-    CALL(aReadMonMenuIcon);
-    LD_addr_A(wCurIcon);
-    POP_DE;
-    LD_A_E;
-    CALL(aGetIconGFX);
-    RET;
-
+    GetMemIconGFX();
 }
 
 //  Load species icon into VRAM at tile a
-void GetSpeciesIcon_Conv(uint16_t de){
+void GetSpeciesIcon(uint16_t de){
     // PUSH_DE;
     // LD_A_addr(wTempIconSpecies);
     // CALL(aReadMonMenuIcon);
     // LD_addr_A(wCurIcon);
-    wram->wCurIcon = ReadMonMenuIcon_Conv(wram->wTempIconSpecies);
+    wram->wCurIcon = ReadMonMenuIcon(wram->wTempIconSpecies);
     // POP_DE;
     // LD_A_E;
     // CALL(aGetIconGFX);
     // RET;
-    GetIconGFX_Conv(LOW(de));
+    GetIconGFX(LOW(de));
 }
 
-void FlyFunction_GetMonIcon(void){
-    PUSH_DE;
-    LD_A_addr(wTempIconSpecies);
-    CALL(aReadMonMenuIcon);
-    LD_addr_A(wCurIcon);
-    POP_DE;
-    LD_A_E;
-    CALL(aGetIcon_a);
-    RET;
-
-}
-
-uint8_t* FlyFunction_GetMonIcon_Conv(uint16_t de){
+uint8_t* FlyFunction_GetMonIcon(uint16_t de){
     // PUSH_DE;
     // LD_A_addr(wTempIconSpecies);
     // CALL(aReadMonMenuIcon);
     // LD_addr_A(wCurIcon);
-    wram->wCurIcon = ReadMonMenuIcon_Conv(wram->wTempIconSpecies);
+    wram->wCurIcon = ReadMonMenuIcon(wram->wTempIconSpecies);
     // POP_DE;
     // LD_A_E;
     // CALL(aGetIcon_a);
-    return GetIcon_a_Conv(LOW(de));
+    return GetIcon_a(LOW(de));
     // RET;
 }
 
@@ -666,41 +409,22 @@ void GetMonIconDE(void){
 
 }
 
-void GetMemIconGFX(void){
-    LD_A_addr(wCurIconTile);
-    return GetIconGFX();
-}
-
-void GetMemIconGFX_Conv(void){
+static void GetMemIconGFX(void){
     // LD_A_addr(wCurIconTile);
     // return GetIconGFX();
-    return GetIconGFX_Conv(wram->wCurIconTile);
+    return GetIconGFX(wram->wCurIconTile);
 }
 
-void GetIconGFX(void){
-    CALL(aGetIcon_a);
-    LD_DE(8 * LEN_2BPP_TILE);
-    ADD_HL_DE;
-    LD_DE(mHeldItemIcons);
-    LD_BC((BANK(aHeldItemIcons) << 8) | 2);
-    CALL(aGetGFXUnlessMobile);
-    LD_A_addr(wCurIconTile);
-    ADD_A(10);
-    LD_addr_A(wCurIconTile);
-    RET;
-
-}
-
-void GetIconGFX_Conv(uint8_t a){
+static void GetIconGFX(uint8_t a){
     // CALL(aGetIcon_a);
     // LD_DE(8 * LEN_2BPP_TILE);
     // ADD_HL_DE;
-    uint8_t* hl = GetIcon_a_Conv(a) + 8 * LEN_2BPP_TILE;
+    uint8_t* hl = GetIcon_a(a) + 8 * LEN_2BPP_TILE;
     // LD_DE(mHeldItemIcons);
     // LD_BC((BANK(aHeldItemIcons) << 8) | 2);
     // CALL(aGetGFXUnlessMobile);
-    GetGFXUnlessMobile_Conv(hl,                 HeldItemIcons[0], 1);
-    GetGFXUnlessMobile_Conv(hl + LEN_2BPP_TILE, HeldItemIcons[1], 1);
+    GetGFXUnlessMobile(hl,                 HeldItemIcons[0], 1);
+    GetGFXUnlessMobile(hl + LEN_2BPP_TILE, HeldItemIcons[1], 1);
     // LD_A_addr(wCurIconTile);
     // ADD_A(10);
     // LD_addr_A(wCurIconTile);
@@ -708,74 +432,24 @@ void GetIconGFX_Conv(uint8_t a){
     // RET;
 }
 
-void GetIcon_de(void){
 //  Load icon graphics into VRAM starting from tile de.
-    LD_L_E;
-    LD_H_D;
-    JR(mGetIcon);
-
-}
-
-//  Load icon graphics into VRAM starting from tile de.
-uint8_t* GetIcon_de_Conv(uint16_t de){
+uint8_t* GetIcon_de(uint16_t de){
     // LD_L_A;
     // LD_H(0);
 
-    return GetIcon_Conv(de);
-}
-
-void GetIcon_a(void){
-//  Load icon graphics into VRAM starting from tile a.
-    LD_L_A;
-    LD_H(0);
-
-    return GetIcon();
+    return GetIcon(de);
 }
 
 //  Load icon graphics into VRAM starting from tile a.
-uint8_t* GetIcon_a_Conv(uint8_t a){
+static uint8_t* GetIcon_a(uint8_t a){
     // LD_L_A;
     // LD_H(0);
 
-    return GetIcon_Conv((uint16_t)a);
-}
-
-void GetIcon(void){
-//  Load icon graphics into VRAM starting from tile hl.
-
-//  One tile is 16 bytes long.
-    for(int rept = 0; rept < 4; rept++){
-    ADD_HL_HL;
-    }
-
-    LD_DE(vTiles0);
-    ADD_HL_DE;
-    PUSH_HL;
-
-//  The icons are contiguous, in order and of the same
-//  size, so the pointer table is somewhat redundant.
-    LD_A_addr(wCurIcon);
-    PUSH_HL;
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    LD_DE(mIconPointers);
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_E_A;
-    LD_D_hl;
-    POP_HL;
-
-    LD_BC((BANK(aIcons) << 8) | 8);
-    CALL(aGetGFXUnlessMobile);
-
-    POP_HL;
-    RET;
-
+    return GetIcon((uint16_t)a);
 }
 
 //  Load icon graphics into VRAM starting from tile hl.
-uint8_t* GetIcon_Conv(uint16_t hl){
+static uint8_t* GetIcon(uint16_t hl){
 //  One tile is 16 bytes long.
     // for(int rept = 0; rept < 4; rept++){
     // ADD_HL_HL;
@@ -803,22 +477,14 @@ uint8_t* GetIcon_Conv(uint16_t hl){
 
     // LD_BC((BANK(aIcons) << 8) | 8);
     // CALL(aGetGFXUnlessMobile);
-    GetGFXUnlessMobile_Conv(hl_, de, 8);
+    GetGFXUnlessMobile(hl_, de, 8);
 
     // POP_HL;
     // RET;
     return hl_;
 }
 
-void GetGFXUnlessMobile(void){
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_MOBILE);
-    JP_NZ (mRequest2bpp);
-    JP(mGet2bppViaHDMA);
-
-}
-
-void GetGFXUnlessMobile_Conv(uint8_t* hl, const char* de, uint8_t c){
+void GetGFXUnlessMobile(uint8_t* hl, const char* de, uint8_t c){
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_MOBILE);
     // JP_NZ (mRequest2bpp);
@@ -830,45 +496,6 @@ void GetGFXUnlessMobile_Conv(uint8_t* hl, const char* de, uint8_t c){
 }
 
 void FreezeMonIcons(void){
-    LD_HL(wSpriteAnimationStructs);
-    LD_E(PARTY_LENGTH);
-    LD_A_addr(wMenuCursorY);
-    LD_D_A;
-
-loop:
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next;
-    CP_A_D;
-    IF_Z goto loadwithtwo;
-    LD_A(SPRITE_ANIM_SEQ_NULL);
-    goto ok;
-
-
-loadwithtwo:
-    LD_A(SPRITE_ANIM_SEQ_PARTY_MON_SWITCH);
-
-
-ok:
-    PUSH_HL;
-    LD_C_L;
-    LD_B_H;
-    LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
-    ADD_HL_BC;
-    LD_hl_A;
-    POP_HL;
-
-
-next:
-    LD_BC(0x10);
-    ADD_HL_BC;
-    DEC_E;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void FreezeMonIcons_Conv(void){
     // LD_HL(wSpriteAnimationStructs);
     struct SpriteAnim* hl = wram->wSpriteAnim;
     // LD_E(PARTY_LENGTH);
@@ -917,31 +544,6 @@ void FreezeMonIcons_Conv(void){
 }
 
 void UnfreezeMonIcons(void){
-    LD_HL(wSpriteAnimationStructs);
-    LD_E(PARTY_LENGTH);
-
-loop:
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next;
-    PUSH_HL;
-    LD_C_L;
-    LD_B_H;
-    LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
-    ADD_HL_BC;
-    LD_hl(SPRITE_ANIM_SEQ_PARTY_MON);
-    POP_HL;
-
-next:
-    LD_BC(0x10);
-    ADD_HL_BC;
-    DEC_E;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void UnfreezeMonIcons_Conv(void){
     // LD_HL(wSpriteAnimationStructs);
     struct SpriteAnim* hl = wram->wSpriteAnim;
     // LD_E(PARTY_LENGTH);
@@ -973,43 +575,6 @@ void UnfreezeMonIcons_Conv(void){
 }
 
 void HoldSwitchmonIcon(void){
-    LD_HL(wSpriteAnimationStructs);
-    LD_E(PARTY_LENGTH);
-    LD_A_addr(wSwitchMon);
-    LD_D_A;
-
-loop:
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next;
-    CP_A_D;
-    IF_Z goto is_switchmon;
-    LD_A(SPRITE_ANIM_SEQ_PARTY_MON_SELECTED);
-    goto join_back;
-
-
-is_switchmon:
-    LD_A(SPRITE_ANIM_SEQ_PARTY_MON_SWITCH);
-
-join_back:
-    PUSH_HL;
-    LD_C_L;
-    LD_B_H;
-    LD_HL(SPRITEANIMSTRUCT_ANIM_SEQ_ID);
-    ADD_HL_BC;
-    LD_hl_A;
-    POP_HL;
-
-next:
-    LD_BC(0x10);
-    ADD_HL_BC;
-    DEC_E;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void HoldSwitchmonIcon_Conv(void){
     // LD_HL(wSpriteAnimationStructs);
     struct SpriteAnim* hl = wram->wSpriteAnim;
     // LD_E(PARTY_LENGTH);
@@ -1057,30 +622,7 @@ void HoldSwitchmonIcon_Conv(void){
     // RET;
 }
 
-void ReadMonMenuIcon(void){
-    CP_A(EGG);
-    IF_Z goto egg;
-    DEC_A;
-    LD_HL(mMonMenuIcons);
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    RET;
-
-egg:
-    LD_A(ICON_EGG);
-    RET;
-
-// INCLUDE "data/pokemon/menu_icons.asm"
-
-// INCLUDE "data/icon_pointers.asm"
-
-// INCLUDE "gfx/icons.asm"
-
-}
-
-uint8_t ReadMonMenuIcon_Conv(species_t a){
+static uint8_t ReadMonMenuIcon(species_t a){
     // CP_A(EGG);
     // IF_Z goto egg;
     if(a == EGG) {

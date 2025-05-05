@@ -159,7 +159,7 @@ static void AnimateHallOfFame_DisplayNewHallOfFamer(struct HOFMon* hl){
     // decoord(6, 5, wTilemap);
     // LD_C(ANIM_MON_HOF);
     // PREDEF(pHOF_AnimateFrontpic);
-    HOF_AnimateFrontpic_Conv(coord(6, 5, wram->wTilemap), ANIM_MON_HOF);
+    HOF_AnimateFrontpic(coord(6, 5, wram->wTilemap), ANIM_MON_HOF);
     // LD_C(60);
     // CALL(aDelayFrames);
     DelayFrames(60);
@@ -359,7 +359,7 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     wram->wTempMon.mon.DVs = mon->DVs;
     // LD_HL(wTempMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(mon->DVs);
+    GetUnownLetter(mon->DVs);
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
@@ -367,14 +367,14 @@ void AnimateHOFMonEntrance(struct HOFMon* mon){
     ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x31);
     // PREDEF(pGetMonBackpic);
-    GetMonBackpic_Conv(vram->vTiles2 + LEN_2BPP_TILE * 0x31, mon->species);
+    GetMonBackpic(vram->vTiles2 + LEN_2BPP_TILE * 0x31, mon->species);
     // LD_A(0x31);
     // LDH_addr_A(hGraphicStartTile);
     hram->hGraphicStartTile = 0x31;
     // hlcoord(6, 6, wTilemap);
     // LD_BC((6 << 8) | 6);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(6, 6, wram->wTilemap), 6, 6);
+    PlaceGraphicYStagger(coord(6, 6, wram->wTilemap), 6, 6);
     // LD_A(0xd0);
     // LDH_addr_A(hSCY);
     hram->hSCY = 0xd0;
@@ -527,7 +527,7 @@ static bool v_HallOfFamePC_DisplayMonAndStrings(uint8_t counter){
     // decoord(6, 5, wTilemap);
     // LD_C(ANIM_MON_HOF);
     // PREDEF(pHOF_AnimateFrontpic);
-    HOF_AnimateFrontpic_Conv(coord(6, 5, wram->wTilemap), ANIM_MON_HOF);
+    HOF_AnimateFrontpic(coord(6, 5, wram->wTilemap), ANIM_MON_HOF);
     // AND_A_A;
     // RET;
     return false;
@@ -697,7 +697,7 @@ void DisplayHOFMon(const struct HOFMon* mon){
     species_t species = wram->wTempMon.mon.species;
     // LD_HL(wTempMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter_Conv(wram->wTempMon.mon.DVs);
+    GetUnownLetter(wram->wTempMon.mon.DVs);
     // XOR_A_A;
     // LD_addr_A(wBoxAlignment);
     wram->wBoxAlignment = 0x0;
@@ -795,7 +795,7 @@ void HOF_AnimatePlayerPic(void){
     // hlcoord(6, 6, wTilemap);
     // LD_BC((6 << 8) | 6);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(6, 6, wram->wTilemap), 6, 6);
+    PlaceGraphicYStagger(coord(6, 6, wram->wTilemap), 6, 6);
     // LD_A(0xd0);
     // LDH_addr_A(hSCY);
     hram->hSCY = 0xd0;
@@ -832,7 +832,7 @@ void HOF_AnimatePlayerPic(void){
     // hlcoord(12, 5, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
-    PlaceGraphicYStagger_Conv(coord(12, 5, wram->wTilemap), 7, 7);
+    PlaceGraphicYStagger(coord(12, 5, wram->wTilemap), 7, 7);
     // LD_A(0xc0);
     // LDH_addr_A(hSCX);
     hram->hSCX = 0xc0;

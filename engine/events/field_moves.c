@@ -707,7 +707,7 @@ void FlyFunction_InitGFX(void){
     wram->wTempIconSpecies = wram->wPartySpecies[wram->wCurPartyMon];
     // LD_E(FIELDMOVE_FLY);
     // FARCALL(aFlyFunction_GetMonIcon);
-    FlyFunction_GetMonIcon_Conv(FIELDMOVE_FLY);
+    FlyFunction_GetMonIcon(FIELDMOVE_FLY);
     // XOR_A_A;
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = 0;

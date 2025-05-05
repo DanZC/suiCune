@@ -37,7 +37,7 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
     // FARCALL(aLoadOW_BGPal7);
     LoadOW_BGPal7();
     // FARCALL(aApplyPals);
-    ApplyPals_Conv();
+    ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram->hCGBPalUpdate = TRUE;
