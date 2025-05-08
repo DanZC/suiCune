@@ -33,6 +33,16 @@
 #include "../../data/items/catch_rate_items.h"
 #include "../../util/network.h"
 
+static void ClearLinkData(void);
+static void FixDataForLinkTransfer(void);
+static void Link_PrepPartyData_Gen2(void);
+
+static void Link_CopyMailPreamble(uint8_t* de, uint8_t a);
+static void Link_CopyOTData(void* de_, const void* hl_, uint16_t bc);
+static void Link_CopyRandomNumbers(void);
+static const void* Link_FindFirstNonControlCharacter_SkipZero(const void* hl_);
+static const void* Link_FindFirstNonControlCharacter_AllowZero(const void* hl_);
+
 #define USE_NETWORK_XCHG_BYTES 1
 
 void LinkCommunications(void){
@@ -73,7 +83,7 @@ void LinkCommunications(void){
     // LD_D_H;
     // LD_E_L;
     // FARCALL(aLinkTextbox2);
-    LinkTextbox2_Conv(coord(3, 8, wram->wTilemap), 2, 12);
+    LinkTextbox2(coord(3, 8, wram->wTilemap), 2, 12);
     // hlcoord(4, 10, wTilemap);
     // LD_DE(mString_PleaseWait);
     // CALL(aPlaceString);
@@ -375,7 +385,7 @@ void Gen2ToGen2LinkComms(void){
     // LD_DE(wLinkData);
     // LD_BC(NAME_LENGTH + 1 + PARTY_LENGTH + 1 + 2 + (PARTYMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH);
     // CALL(aLink_CopyOTData);
-    Link_CopyOTData_Conv(wram->wLinkData, Link_FindFirstNonControlCharacter_SkipZero(wram->wOTPlayerName), 
+    Link_CopyOTData(wram->wLinkData, Link_FindFirstNonControlCharacter_SkipZero(wram->wOTPlayerName), 
         NAME_LENGTH + 1 + PARTY_LENGTH + 1 + 2 + (PARTYMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH);
 
     // LD_DE(wPlayerTrademon);
@@ -764,7 +774,7 @@ void LinkTimeout(void){
     // LD_D_H;
     // LD_E_L;
     // FARCALL(aLinkTextbox2);
-    LinkTextbox2_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+    LinkTextbox2(coord(0, 12, wram->wTilemap), 4, 18);
     // POP_DE;
     // POP_HL;
     // bccoord(1, 14, wTilemap);
@@ -877,7 +887,7 @@ void ExchangeBytes_Conv(void* de_, const void* hl_, uint16_t bc){
 
 const char String_PleaseWait[] = "PLEASE WAIT!@";
 
-void ClearLinkData(void){
+static void ClearLinkData(void){
     // LD_HL(wLinkData);
     // LD_BC(wLinkDataEnd - wLinkData);
     static_assert(sizeof(wram->wLinkData) == wLinkDataEnd - wLinkData, "");
@@ -895,7 +905,7 @@ void ClearLinkData(void){
     // RET;
 }
 
-void FixDataForLinkTransfer(void){
+static void FixDataForLinkTransfer(void){
     // LD_HL(wLinkBattleRNPreamble);
     // LD_A(SERIAL_PREAMBLE_BYTE);
     // LD_B(SERIAL_RN_PREAMBLE_LENGTH);
@@ -1204,7 +1214,7 @@ done_steel:
 
 }
 
-void Link_PrepPartyData_Gen2(void){
+static void Link_PrepPartyData_Gen2(void){
     // LD_DE(wLinkData);
     uint8_t* de = wram->wLinkData;
     // LD_A(SERIAL_PREAMBLE_BYTE);
@@ -1271,7 +1281,7 @@ void Link_PrepPartyData_Gen2(void){
     // LD_DE(wLinkPlayerMailPreamble);
     // LD_A(SERIAL_MAIL_PREAMBLE_BYTE);
     // CALL(aLink_CopyMailPreamble);
-    Link_CopyMailPreamble_Conv(wram->wLinkPlayerMailPreamble, SERIAL_MAIL_PREAMBLE_BYTE);
+    Link_CopyMailPreamble(wram->wLinkPlayerMailPreamble, SERIAL_MAIL_PREAMBLE_BYTE);
 
 //  Copy all the mail messages to wLinkPlayerMailMessages
     // LD_A(BANK(sPartyMail));
@@ -1430,20 +1440,7 @@ void Link_PrepPartyData_Gen2(void){
     // RET;
 }
 
-void Link_CopyMailPreamble(void){
-//  fill 5 bytes with the value of a, starting at de
-    LD_C(SERIAL_MAIL_PREAMBLE_LENGTH);
-
-loop:
-    LD_de_A;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void Link_CopyMailPreamble_Conv(uint8_t* de, uint8_t a){
+static void Link_CopyMailPreamble(uint8_t* de, uint8_t a){
 //  fill 5 bytes with the value of a, starting at de
     // LD_C(SERIAL_MAIL_PREAMBLE_LENGTH);
     for(uint32_t i = 0; i < SERIAL_MAIL_PREAMBLE_LENGTH; ++i) {
@@ -1609,37 +1606,7 @@ ConvertToGen2:
 
 }
 
-void TimeCapsule_ReplaceTeruSama(void){
-    LD_A_B;
-    AND_A_A;
-    RET_Z ;
-    PUSH_HL;
-    LD_HL(mTimeCapsule_CatchRateItems);
-
-loop:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto end;
-    CP_A_B;
-    IF_Z goto found;
-    INC_HL;
-    goto loop;
-
-
-found:
-    LD_B_hl;
-
-
-end:
-    POP_HL;
-    RET;
-
-// INCLUDE "data/items/catch_rate_items.asm"
-
-    return Link_CopyOTData();
-}
-
-item_t TimeCapsule_ReplaceTeruSama_Conv(item_t item){
+item_t TimeCapsule_ReplaceTeruSama(item_t item){
     // LD_A_B;
     // AND_A_A;
     // RET_Z ;
@@ -1671,23 +1638,7 @@ item_t TimeCapsule_ReplaceTeruSama_Conv(item_t item){
 // INCLUDE "data/items/catch_rate_items.asm"
 }
 
-void Link_CopyOTData(void){
-
-loop:
-    LD_A_hli;
-    CP_A(SERIAL_NO_DATA_BYTE);
-    IF_Z goto loop;
-    LD_de_A;
-    INC_DE;
-    DEC_BC;
-    LD_A_B;
-    OR_A_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void Link_CopyOTData_Conv(void* de_, const void* hl_, uint16_t bc){
+static void Link_CopyOTData(void* de_, const void* hl_, uint16_t bc){
     uint8_t* de = de_;
     const uint8_t* hl = hl_;
     uint8_t a;
@@ -1710,7 +1661,7 @@ void Link_CopyOTData_Conv(void* de_, const void* hl_, uint16_t bc){
     // RET;
 }
 
-void Link_CopyRandomNumbers(void){
+static void Link_CopyRandomNumbers(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // RET_Z ;
@@ -1744,7 +1695,7 @@ void Link_CopyRandomNumbers(void){
     // RET;
 }
 
-const void* Link_FindFirstNonControlCharacter_SkipZero(const void* hl_){
+static const void* Link_FindFirstNonControlCharacter_SkipZero(const void* hl_){
     const uint8_t* hl = hl_;
     uint8_t a;
     do {
@@ -1763,7 +1714,7 @@ const void* Link_FindFirstNonControlCharacter_SkipZero(const void* hl_){
     return hl - 1;
 }
 
-const void* Link_FindFirstNonControlCharacter_AllowZero(const void* hl_){
+static const void* Link_FindFirstNonControlCharacter_AllowZero(const void* hl_){
     const uint8_t* hl = hl_;
     uint8_t a;
 
@@ -1913,7 +1864,7 @@ LinkTrade_TradeStatsMenu:
     // LD_B(1);
     // LD_C(18);
     // CALL(aLinkTextboxAtHL);
-    LinkTextboxAtHL_Conv(coord(0, 15, wram->wTilemap), 1, 18);
+    LinkTextboxAtHL(coord(0, 15, wram->wTilemap), 1, 18);
     // hlcoord(2, 16, wTilemap);
     // LD_DE(mLinkTrade_TradeStatsMenu_String_Stats_Trade);
     // CALL(aPlaceString);
@@ -2068,7 +2019,7 @@ joy_loop:
     DelayFrames(100);
     // FARCALL(aValidateOTTrademon);
     // IF_C goto abnormal;
-    if(!ValidateOTTrademon_Conv(wram->wCurOTTradePartyMon)) {
+    if(!ValidateOTTrademon(wram->wCurOTTradePartyMon)) {
     // abnormal:
         // XOR_A_A;
         // LD_addr_A(wUnusedLinkAction);
@@ -2086,7 +2037,7 @@ joy_loop:
         // LD_B(4);
         // LD_C(18);
         // CALL(aLinkTextboxAtHL);
-        LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+        LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
         // FARCALL(aLink_WaitBGMap);
         Link_WaitBGMap();
         // LD_HL(mLinkTrade_TradeStatsMenu_LinkAbnormalMonText);
@@ -2097,7 +2048,7 @@ joy_loop:
     else {
         // FARCALL(aCheckAnyOtherAliveMonsForTrade);
         // JP_NC (mLinkTrade);
-        if(CheckAnyOtherAliveMonsForTrade_Conv(wram->wCurTradePartyMon))
+        if(CheckAnyOtherAliveMonsForTrade(wram->wCurTradePartyMon))
             return LinkTrade();
         // XOR_A_A;
         // LD_addr_A(wUnusedLinkAction);
@@ -2108,7 +2059,7 @@ joy_loop:
         // LD_B(4);
         // LD_C(18);
         // CALL(aLinkTextboxAtHL);
-        LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+        LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
         // FARCALL(aLink_WaitBGMap);
         Link_WaitBGMap();
         // LD_HL(mLinkTrade_TradeStatsMenu_LinkTradeCantBattleText);
@@ -2123,7 +2074,7 @@ joy_loop:
     // LD_B(4);
     // LD_C(18);
     // CALL(aLinkTextboxAtHL);
-    LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+    LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
     // hlcoord(1, 14, wTilemap);
     // LD_DE(mString_TooBadTheTradeWasCanceled);
     // CALL(aPlaceString);
@@ -2142,7 +2093,7 @@ joy_loop:
 LinkTradeOTPartymonMenuLoop:
     // FARCALL(aLinkTradeMenu);
     // LD_A_D;
-    ctl = LinkTradeMenu_Conv();
+    ctl = LinkTradeMenu();
     // AND_A_A;
     // JP_Z (mLinkTradePartiesMenuMasterLoop);
     if(ctl == 0)
@@ -2201,7 +2152,7 @@ LinkTradeOTPartymonMenuLoop:
 LinkTradePartymonMenuLoop:
     // FARCALL(aLinkTradeMenu);
     // LD_A_D;
-    ctl = LinkTradeMenu_Conv();
+    ctl = LinkTradeMenu();
     // AND_A_A;
     // IF_NZ goto check_joypad;
     if(ctl == 0)
@@ -2389,7 +2340,7 @@ void LinkTrade_OTPartyMenu(void){
 void LinkTradeOTPartymonMenuLoop(void){
     // FARCALL(aLinkTradeMenu);
     // LD_A_D;
-    uint8_t ctl = LinkTradeMenu_Conv();
+    uint8_t ctl = LinkTradeMenu();
     // AND_A_A;
     // JP_Z (mLinkTradePartiesMenuMasterLoop);
     if(ctl == 0)
@@ -2488,7 +2439,7 @@ void LinkTrade_PlayerPartyMenu(void){
 void LinkTradePartymonMenuLoop(void){
     // FARCALL(aLinkTradeMenu);
     // LD_A_D;
-    uint8_t ctl = LinkTradeMenu_Conv();
+    uint8_t ctl = LinkTradeMenu();
     // AND_A_A;
     // IF_NZ goto check_joypad;
     if(ctl == 0)
@@ -2590,7 +2541,7 @@ void LinkTrade_TradeStatsMenu(void){
     // LD_B(1);
     // LD_C(18);
     // CALL(aLinkTextboxAtHL);
-    LinkTextboxAtHL_Conv(coord(0, 15, wram->wTilemap), 1, 18);
+    LinkTextboxAtHL(coord(0, 15, wram->wTilemap), 1, 18);
     // hlcoord(2, 16, wTilemap);
     // LD_DE(mLinkTrade_TradeStatsMenu_String_Stats_Trade);
     // CALL(aPlaceString);
@@ -2745,7 +2696,7 @@ joy_loop:
     DelayFrames(100);
     // FARCALL(aValidateOTTrademon);
     // IF_C goto abnormal;
-    if(!ValidateOTTrademon_Conv(wram->wCurOTTradePartyMon)) {
+    if(!ValidateOTTrademon(wram->wCurOTTradePartyMon)) {
     // abnormal:
         // XOR_A_A;
         // LD_addr_A(wUnusedLinkAction);
@@ -2763,7 +2714,7 @@ joy_loop:
         // LD_B(4);
         // LD_C(18);
         // CALL(aLinkTextboxAtHL);
-        LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+        LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
         // FARCALL(aLink_WaitBGMap);
         Link_WaitBGMap();
         // LD_HL(mLinkTrade_TradeStatsMenu_LinkAbnormalMonText);
@@ -2774,7 +2725,7 @@ joy_loop:
     else {
         // FARCALL(aCheckAnyOtherAliveMonsForTrade);
         // JP_NC (mLinkTrade);
-        if(CheckAnyOtherAliveMonsForTrade_Conv(wram->wCurTradePartyMon))
+        if(CheckAnyOtherAliveMonsForTrade(wram->wCurTradePartyMon))
             return LinkTrade();
         // XOR_A_A;
         // LD_addr_A(wUnusedLinkAction);
@@ -2785,7 +2736,7 @@ joy_loop:
         // LD_B(4);
         // LD_C(18);
         // CALL(aLinkTextboxAtHL);
-        LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+        LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
         // FARCALL(aLink_WaitBGMap);
         Link_WaitBGMap();
         // LD_HL(mLinkTrade_TradeStatsMenu_LinkTradeCantBattleText);
@@ -2800,7 +2751,7 @@ joy_loop:
     // LD_B(4);
     // LD_C(18);
     // CALL(aLinkTextboxAtHL);
-    LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+    LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
     // hlcoord(1, 14, wTilemap);
     // LD_DE(mString_TooBadTheTradeWasCanceled);
     // CALL(aPlaceString);
@@ -3017,7 +2968,7 @@ void LinkTrade(void){
     // LD_B(4);
     // LD_C(18);
     // CALL(aLinkTextboxAtHL);
-    LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+    LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
     // FARCALL(aLink_WaitBGMap);
     Link_WaitBGMap();
     // LD_A_addr(wCurTradePartyMon);
@@ -3055,7 +3006,7 @@ void LinkTrade(void){
     // LD_B(3);
     // LD_C(7);
     // CALL(aLinkTextboxAtHL);
-    LinkTextboxAtHL_Conv(coord(10, 7, wram->wTilemap), 3, 7);
+    LinkTextboxAtHL(coord(10, 7, wram->wTilemap), 3, 7);
     // LD_DE(mString_TradeCancel);
     // hlcoord(12, 8, wTilemap);
     // CALL(aPlaceString);
@@ -3109,7 +3060,7 @@ void LinkTrade(void){
         // LD_B(4);
         // LD_C(18);
         // CALL(aLinkTextboxAtHL);
-        LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+        LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
         // hlcoord(1, 14, wTilemap);
         // LD_DE(mString_TooBadTheTradeWasCanceled);
         // CALL(aPlaceString);
@@ -3138,7 +3089,7 @@ void LinkTrade(void){
             // LD_B(4);
             // LD_C(18);
             // CALL(aLinkTextboxAtHL);
-            LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+            LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
             // hlcoord(1, 14, wTilemap);
             // LD_DE(mString_TooBadTheTradeWasCanceled);
             // CALL(aPlaceString);
@@ -3462,7 +3413,7 @@ void LinkTrade(void){
         // LD_B(4);
         // LD_C(18);
         // CALL(aLinkTextboxAtHL);
-        LinkTextboxAtHL_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+        LinkTextboxAtHL(coord(0, 12, wram->wTilemap), 4, 18);
         // hlcoord(1, 14, wTilemap);
         // LD_DE(mString_TradeCompleted);
         // CALL(aPlaceString);
@@ -3504,19 +3455,11 @@ const char String_TradeCompleted[] = "Trade completed!@";
 const char String_TooBadTheTradeWasCanceled[] = "Too bad! The trade"
     t_next "was canceled!@";
 
-void LinkTextboxAtHL(void){
-    LD_D_H;
-    LD_E_L;
-    FARCALL(aLinkTextbox);
-    RET;
-
-}
-
-void LinkTextboxAtHL_Conv(tile_t* hl, uint8_t b, uint8_t c){
+void LinkTextboxAtHL(tile_t* hl, uint8_t b, uint8_t c){
     // LD_D_H;
     // LD_E_L;
     // FARCALL(aLinkTextbox);
-    LinkTextbox_Conv(hl, b, c);
+    LinkTextbox(hl, b, c);
     // RET;
 }
 
@@ -4133,7 +4076,7 @@ void CheckBothSelectedSameRoom(void){
     PEEK("");
     // LD_A_addr(wChosenCableClubRoom);
     // CALL(aLink_EnsureSync);
-    uint8_t byte = Link_EnsureSync_Conv(wram->wChosenCableClubRoom);
+    uint8_t byte = Link_EnsureSync(wram->wChosenCableClubRoom);
     // PUSH_AF;
     // CALL(aLinkDataReceived);
     LinkDataReceived();
@@ -4232,7 +4175,7 @@ void FailedLinkToPast(void){
     DelayFrames(40);
     // LD_A(0xe);
     // JP(mLink_EnsureSync);
-    Link_EnsureSync_Conv(0xe);
+    Link_EnsureSync(0xe);
 }
 
 void Link_ResetSerialRegistersAfterLinkClosure(void){
@@ -4253,39 +4196,7 @@ void Link_ResetSerialRegistersAfterLinkClosure(void){
     // RET;
 }
 
-void Link_EnsureSync(void){
-    ADD_A(0xd0);
-    LD_addr_A(wLinkPlayerSyncBuffer);
-    LD_addr_A(wLinkPlayerSyncBuffer + 1);
-    LD_A(0x2);
-    LDH_addr_A(hVBlank);
-    CALL(aDelayFrame);
-    CALL(aDelayFrame);
-
-receive_loop:
-    CALL(aSerial_ExchangeSyncBytes);
-    LD_A_addr(wLinkReceivedSyncBuffer);
-    LD_B_A;
-    AND_A(0xf0);
-    CP_A(0xd0);
-    IF_Z goto done;
-    LD_A_addr(wLinkReceivedSyncBuffer + 1);
-    LD_B_A;
-    AND_A(0xf0);
-    CP_A(0xd0);
-    IF_NZ goto receive_loop;
-
-
-done:
-    XOR_A_A;
-    LDH_addr_A(hVBlank);
-    LD_A_B;
-    AND_A(0xf);
-    RET;
-
-}
-
-uint8_t Link_EnsureSync_Conv(uint8_t a){
+uint8_t Link_EnsureSync(uint8_t a){
     printf("%s:\n", __func__);
     Network_FlushPendingPacketsAndSync();
     // ADD_A(0xd0);

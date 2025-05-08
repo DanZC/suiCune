@@ -7904,7 +7904,7 @@ void Function10250c(void){
         }
         // FARCALL(aCheckAnyOtherAliveMonsForTrade);
         // IF_C goto asm_102568;
-        else if(!CheckAnyOtherAliveMonsForTrade_Conv(wram->wCurTradePartyMon)) {
+        else if(!CheckAnyOtherAliveMonsForTrade(wram->wCurTradePartyMon)) {
         // asm_102568:
             // CALL(aFunction102ff5);
             Function102ff5();
@@ -8459,7 +8459,7 @@ void Function1027eb(void){
     // LD_D_H;
     // LD_E_L;
     // FARCALL(av_LinkTextbox);
-    v_LinkTextbox_Conv(coord(0, 14, wram->wTilemap), 2, 18);
+    v_LinkTextbox(coord(0, 14, wram->wTilemap), 2, 18);
     // LD_DE(mFunction1027eb_Stats_Trade);
     // hlcoord(2, 16, wTilemap);
     // CALL(aPlaceString);
@@ -8878,7 +8878,7 @@ u8_flag_s Function1029cf(void){
     // LD_D_H;
     // LD_E_L;
     // FARCALL(av_LinkTextbox);
-    v_LinkTextbox_Conv(coord(10, 7, wram->wTilemap), 3, 8);
+    v_LinkTextbox(coord(10, 7, wram->wTilemap), 3, 8);
     // LD_DE(mString_102a26);
     // hlcoord(12, 8, wTilemap);
     // CALL(aPlaceString);
@@ -9551,7 +9551,7 @@ void Function102dc3(void){
     // LD_D_H;
     // LD_E_L;
     // FARCALL(av_LinkTextbox);
-    v_LinkTextbox_Conv(coord(0, 12, wram->wTilemap), 4, 18);
+    v_LinkTextbox(coord(0, 12, wram->wTilemap), 4, 18);
     // RET;
 }
 
@@ -9611,7 +9611,7 @@ static const char waiting[] = "Waiting...!@";
         // LD_D_H;
         // LD_E_L;
         // FARCALL(av_LinkTextbox);
-        v_LinkTextbox_Conv(coord(3, 10, wram->wTilemap), 1, 11);
+        v_LinkTextbox(coord(3, 10, wram->wTilemap), 1, 11);
     }
 
 // okay:

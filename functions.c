@@ -2206,7 +2206,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BetaTimesOfDay);
 
     // engine/math/print_num.c
-    REDIRECTED(v_PrintNum);
+    // CONVERTED(v_PrintNum);
 
     // engine/math/math.c
     REDIRECTED(v_Multiply);

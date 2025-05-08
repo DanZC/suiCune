@@ -239,7 +239,7 @@ void CopyDataUntil(void* de, const void* hl, const void* bc) {
 //  Bit 7: print leading zeros if set
 uint16_t PrintNum_GB(uint16_t hl, uint16_t de, uint8_t b, uint8_t c) {
     bank_push(BANK(av_PrintNum));
-    hl = v_PrintNum_Conv(hl, de, b, c);
+    hl = v_PrintNum_GB(hl, de, b, c);
     bank_pop;
     return hl;
 }
@@ -255,7 +255,7 @@ uint16_t PrintNum_GB(uint16_t hl, uint16_t de, uint8_t b, uint8_t c) {
 //  Bit 7: print leading zeros if set
 uint8_t* PrintNum(uint8_t* hl, const void* de, uint8_t b, uint8_t c) {
     // bank_push(BANK(av_PrintNum));
-    hl = v_PrintNum_Conv2(hl, de, b, c);
+    hl = v_PrintNum(hl, de, b, c);
     // bank_pop;
     return hl;
 }

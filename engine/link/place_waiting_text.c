@@ -19,7 +19,7 @@ void PlaceWaitingText(void){
     } else {
     // notinbattle:
         // PREDEF(pLinkTextboxAtHL);
-        LinkTextboxAtHL_Conv(coord(3, 10, wram->wTilemap), 1, 11);
+        LinkTextboxAtHL(coord(3, 10, wram->wTilemap), 1, 11);
     }
 
 // proceed:

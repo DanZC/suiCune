@@ -48,84 +48,6 @@ void Link_WaitBGMap(void){
     // RET;
 }
 
-void LinkTextbox2(void){
-    LD_H_D;
-    LD_L_E;
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aLinkTextbox2_PlaceBorder);
-    POP_HL;
-    POP_BC;
-
-    LD_DE(wAttrmap - wTilemap);
-    ADD_HL_DE;
-    INC_B;
-    INC_B;
-    INC_C;
-    INC_C;
-    LD_A(PAL_BG_TEXT);
-
-row:
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-
-
-PlaceBorder:
-    PUSH_HL;
-    LD_A(0x76);
-    LD_hli_A;
-    INC_A;
-    CALL(aLinkTextbox2_PlaceRow);
-    INC_A;
-    LD_hl_A;
-    POP_HL;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-
-loop:
-    PUSH_HL;
-    LD_A(0x79);
-    LD_hli_A;
-    LD_A(0x7f);
-    CALL(aLinkTextbox2_PlaceRow);
-    LD_hl(0x7a);
-    POP_HL;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto loop;
-
-    LD_A(0x7b);
-    LD_hli_A;
-    LD_A(0x7c);
-    CALL(aLinkTextbox2_PlaceRow);
-    LD_hl(0x7d);
-    RET;
-
-
-PlaceRow:
-    LD_D_C;
-
-row_loop:
-    LD_hli_A;
-    DEC_D;
-    IF_NZ goto row_loop;
-    RET;
-
-}
-
 static tile_t* LinkTextbox2_PlaceRow(tile_t* hl, uint8_t c, uint8_t a) {
     // LD_D_C;
 
@@ -189,7 +111,7 @@ static void LinkTextbox2_PlaceBorder(tile_t* hl, uint8_t b, uint8_t c) {
 }
 
 
-void LinkTextbox2_Conv(tile_t* de, uint8_t b, uint8_t c){
+void LinkTextbox2(tile_t* de, uint8_t b, uint8_t c){
     // LD_H_D;
     // LD_L_E;
     // PUSH_BC;
@@ -201,7 +123,7 @@ void LinkTextbox2_Conv(tile_t* de, uint8_t b, uint8_t c){
 
     // LD_DE(wAttrmap - wTilemap);
     // ADD_HL_DE;
-    tile_t* hl = de + (wAttrmap - wTilemap);
+    uint8_t* hl = wram->wAttrmap + (de - wram->wTilemap);
     // INC_B;
     // INC_B;
     b += 2;
@@ -215,7 +137,7 @@ void LinkTextbox2_Conv(tile_t* de, uint8_t b, uint8_t c){
         // PUSH_BC;
         uint8_t c2 = c;
         // PUSH_HL;
-        tile_t* hl2 = hl;
+        uint8_t* hl2 = hl;
 
         do {
         // col:

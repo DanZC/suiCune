@@ -6,78 +6,9 @@
 
 //  These functions seem to be related to backwards compatibility
 
-void ValidateOTTrademon(void){
-    LD_A_addr(wCurOTTradePartyMon);
-    LD_HL(wOTPartyMon1Species);
-    CALL(aGetPartyLocation);
-    PUSH_HL;
-    LD_A_addr(wCurOTTradePartyMon);
-    INC_A;
-    LD_C_A;
-    LD_B(0);
-    LD_HL(wOTPartyCount);
-    ADD_HL_BC;
-    LD_A_hl;
-    POP_HL;
-    CP_A(EGG);
-    IF_Z goto matching_or_egg;
-    CP_A_hl;
-    IF_NZ goto abnormal;
-
-
-matching_or_egg:
-    LD_B_H;
-    LD_C_L;
-    LD_HL(MON_LEVEL);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(MAX_LEVEL + 1);
-    IF_NC goto abnormal;
-    LD_A_addr(wLinkMode);
-    CP_A(LINK_TIMECAPSULE);
-    IF_NZ goto normal;
-    LD_HL(wOTPartySpecies);
-    LD_A_addr(wCurOTTradePartyMon);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_hl;
-
-// Magnemite and Magneton's types changed
-// from Electric to Electric/Steel.
-    CP_A(MAGNEMITE);
-    IF_Z goto normal;
-    CP_A(MAGNETON);
-    IF_Z goto normal;
-
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_HL(wLinkOTPartyMonTypes);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_addr(wBaseType1);
-    CP_A_hl;
-    IF_NZ goto abnormal;
-    INC_HL;
-    LD_A_addr(wBaseType2);
-    CP_A_hl;
-    IF_NZ goto abnormal;
-
-
-normal:
-    AND_A_A;
-    RET;
-
-
-abnormal:
-    SCF;
-    RET;
-
-}
-
 // Returns true (nc) if the trade mon is valid.
 // Returns false (c) if the trade mon is abnormal.
-bool ValidateOTTrademon_Conv(uint8_t mon){
+bool ValidateOTTrademon(uint8_t mon){
     // LD_A_addr(wCurOTTradePartyMon);
     // LD_HL(wOTPartyMon1Species);
     // CALL(aGetPartyLocation);
@@ -161,51 +92,10 @@ bool ValidateOTTrademon_Conv(uint8_t mon){
     // RET;
 }
 
-void CheckAnyOtherAliveMonsForTrade(void){
-    LD_A_addr(wCurTradePartyMon);
-    LD_D_A;
-    LD_A_addr(wPartyCount);
-    LD_B_A;
-    LD_C(0);
-
-loop:
-    LD_A_C;
-    CP_A_D;
-    IF_Z goto next;
-    PUSH_BC;
-    LD_A_C;
-    LD_HL(wPartyMon1HP);
-    CALL(aGetPartyLocation);
-    POP_BC;
-    LD_A_hli;
-    OR_A_hl;
-    IF_NZ goto done;
-
-
-next:
-    INC_C;
-    DEC_B;
-    IF_NZ goto loop;
-    LD_A_addr(wCurOTTradePartyMon);
-    LD_HL(wOTPartyMon1HP);
-    CALL(aGetPartyLocation);
-    LD_A_hli;
-    OR_A_hl;
-    IF_NZ goto done;
-    SCF;
-    RET;
-
-
-done:
-    AND_A_A;
-    RET;
-
-}
-
 // Returns true (nc) if any other alive mons are available
 // for trade.
 // Returns false (c) otherwise.
-bool CheckAnyOtherAliveMonsForTrade_Conv(uint8_t mon){
+bool CheckAnyOtherAliveMonsForTrade(uint8_t mon){
     // LD_A_addr(wCurTradePartyMon);
     // LD_D_A;
     // LD_A_addr(wPartyCount);

@@ -1299,7 +1299,7 @@ static uint8_t* LoadGreenPage_GetItemName(void) {
         return U82C("---@");
     // LD_B_A;
     // FARCALL(aTimeCapsule_ReplaceTeruSama);
-    item_t item = TimeCapsule_ReplaceTeruSama_Conv(wram->wTempMon.mon.item);
+    item_t item = TimeCapsule_ReplaceTeruSama(wram->wTempMon.mon.item);
     // LD_A_B;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetItemName);

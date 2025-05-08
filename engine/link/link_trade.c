@@ -59,84 +59,6 @@ const char MobileTradeBorderTilemap[] = "gfx/trade/border_mobile.tilemap";
 const char CableTradeBorderTopTilemap[] = "gfx/trade/border_cable_top.tilemap";
 const char CableTradeBorderBottomTilemap[] = "gfx/trade/border_cable_bottom.tilemap";
 
-void v_LinkTextbox(void){
-    LD_H_D;
-    LD_L_E;
-    PUSH_BC;
-    PUSH_HL;
-    CALL(av_LinkTextbox_PlaceBorder);
-    POP_HL;
-    POP_BC;
-
-    LD_DE(wAttrmap - wTilemap);
-    ADD_HL_DE;
-    INC_B;
-    INC_B;
-    INC_C;
-    INC_C;
-    LD_A(PAL_BG_TEXT);
-
-row:
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-
-
-PlaceBorder:
-    PUSH_HL;
-    LD_A(0x30);
-    LD_hli_A;
-    INC_A;
-    CALL(av_LinkTextbox_PlaceRow);
-    INC_A;
-    LD_hl_A;
-    POP_HL;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-
-loop:
-    PUSH_HL;
-    LD_A(0x33);
-    LD_hli_A;
-    LD_A(0x7f);
-    CALL(av_LinkTextbox_PlaceRow);
-    LD_hl(0x34);
-    POP_HL;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto loop;
-
-    LD_A(0x35);
-    LD_hli_A;
-    LD_A(0x36);
-    CALL(av_LinkTextbox_PlaceRow);
-    LD_hl(0x37);
-    RET;
-
-
-PlaceRow:
-    LD_D_C;
-
-row_loop:
-    LD_hli_A;
-    DEC_D;
-    IF_NZ goto row_loop;
-    RET;
-
-}
-
 static tile_t* v_LinkTextbox_PlaceRow(tile_t* hl, uint8_t c, uint8_t a) {
     // LD_D_C;
 
@@ -200,7 +122,7 @@ static void v_LinkTextbox_PlaceBorder(tile_t* hl, uint8_t b, uint8_t c) {
     // RET;
 }
 
-void v_LinkTextbox_Conv(tile_t* de, uint8_t b, uint8_t c){
+void v_LinkTextbox(tile_t* de, uint8_t b, uint8_t c){
     // LD_H_D;
     // LD_L_E;
     // PUSH_BC;
@@ -302,16 +224,10 @@ void LoadCableTradeBorderTilemap(void){
     // RET;
 }
 
-void LinkTextbox(void){
-    CALL(av_LinkTextbox);
-    RET;
-
-}
-
-void LinkTextbox_Conv(tile_t* de, uint8_t b, uint8_t c){
+void LinkTextbox(tile_t* de, uint8_t b, uint8_t c){
     // CALL(av_LinkTextbox);
     // RET;
-    return v_LinkTextbox_Conv(de, b, c);
+    return v_LinkTextbox(de, b, c);
 }
 
 static void PrintWaitingTextAndSyncAndExchangeNybble_PrintWaitingText(void) {
@@ -320,7 +236,7 @@ static void PrintWaitingTextAndSyncAndExchangeNybble_PrintWaitingText(void) {
     // LD_B(1);
     // LD_C(10);
     // PREDEF(pLinkTextboxAtHL);
-    LinkTextboxAtHL_Conv(coord(4, 10, wram->wTilemap), 1, 10);
+    LinkTextboxAtHL(coord(4, 10, wram->wTilemap), 1, 10);
     // hlcoord(5, 11, wTilemap);
     // LD_DE(mPrintWaitingTextAndSyncAndExchangeNybble_Waiting);
     // CALL(aPlaceString);
@@ -575,157 +491,7 @@ static void LinkTradeMenu_MenuAction(void) {
     // RET;
 }
 
-void LinkTradeMenu(void){
-    CALL(aLinkTradeMenu_MenuAction);
-    CALL(aLinkTradeMenu_GetJoypad);
-    RET;
-
-
-loop:
-    CALL(aLinkTradeMenu_UpdateCursor);
-    CALL(aLinkTradeMenu_UpdateBGMapAndOAM);
-    CALL(aLinkTradeMenu_loop2);
-    IF_NC goto done;
-    FARCALL(av_2DMenuInterpretJoypad);
-    IF_C goto done;
-    LD_A_addr(w2DMenuFlags1);
-    BIT_A(7);
-    IF_NZ goto done;
-    CALL(aLinkTradeMenu_GetJoypad);
-    LD_B_A;
-    LD_A_addr(wMenuJoypadFilter);
-    AND_A_B;
-    IF_Z goto loop;
-
-
-done:
-    RET;
-
-
-UpdateBGMapAndOAM:
-    LDH_A_addr(hOAMUpdate);
-    PUSH_AF;
-    LD_A(0x1);
-    LDH_addr_A(hOAMUpdate);
-    CALL(aWaitBGMap);
-    POP_AF;
-    LDH_addr_A(hOAMUpdate);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    RET;
-
-
-loop2:
-    CALL(aUpdateTimeAndPals);
-    CALL(aLinkTradeMenu_TryAnims);
-    RET_C ;
-    LD_A_addr(w2DMenuFlags1);
-    BIT_A(7);
-    IF_Z goto loop2;
-    AND_A_A;
-    RET;
-
-
-UpdateCursor:
-    LD_HL(wCursorCurrentTile);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_hl;
-    CP_A(0x1f);
-    IF_NZ goto not_currently_selected;
-    LD_A_addr(wCursorOffCharacter);
-    LD_hl_A;
-    PUSH_HL;
-    PUSH_BC;
-    LD_BC(MON_NAME_LENGTH);
-    ADD_HL_BC;
-    LD_hl_A;
-    POP_BC;
-    POP_HL;
-
-
-not_currently_selected:
-    LD_A_addr(w2DMenuCursorInitY);
-    LD_B_A;
-    LD_A_addr(w2DMenuCursorInitX);
-    LD_C_A;
-    CALL(aCoord2Tile);
-    LD_A_addr(w2DMenuCursorOffsets);
-    SWAP_A;
-    AND_A(0xf);
-    LD_C_A;
-    LD_A_addr(wMenuCursorY);
-    LD_B_A;
-    XOR_A_A;
-    DEC_B;
-    IF_Z goto skip;
-
-loop3:
-    ADD_A_C;
-    DEC_B;
-    IF_NZ goto loop3;
-
-
-skip:
-    LD_C(SCREEN_WIDTH);
-    CALL(aAddNTimes);
-    LD_A_addr(w2DMenuCursorOffsets);
-    AND_A(0xf);
-    LD_C_A;
-    LD_A_addr(wMenuCursorX);
-    LD_B_A;
-    XOR_A_A;
-    DEC_B;
-    IF_Z goto skip2;
-
-loop4:
-    ADD_A_C;
-    DEC_B;
-    IF_NZ goto loop4;
-
-
-skip2:
-    LD_C_A;
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(0x1f);
-    IF_Z goto cursor_already_there;
-    LD_addr_A(wCursorOffCharacter);
-    LD_hl(0x1f);
-    PUSH_HL;
-    PUSH_BC;
-    LD_BC(MON_NAME_LENGTH);
-    ADD_HL_BC;
-    LD_hl(0x1f);
-    POP_BC;
-    POP_HL;
-
-cursor_already_there:
-    LD_A_L;
-    LD_addr_A(wCursorCurrentTile);
-    LD_A_H;
-    LD_addr_A(wCursorCurrentTile + 1);
-    RET;
-
-
-TryAnims:
-    LD_A_addr(w2DMenuFlags1);
-    BIT_A(6);
-    IF_Z goto skip_anims;
-    FARCALL(aPlaySpriteAnimationsAndDelayFrame);
-
-skip_anims:
-    CALL(aJoyTextDelay);
-    CALL(aLinkTradeMenu_GetJoypad);
-    AND_A_A;
-    RET_Z ;
-    SCF;
-    RET;
-
-}
-
-uint8_t LinkTradeMenu_Conv(void){
+uint8_t LinkTradeMenu(void){
     // CALL(aLinkTradeMenu_MenuAction);
     LinkTradeMenu_MenuAction();
     // CALL(aLinkTradeMenu_GetJoypad);
