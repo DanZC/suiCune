@@ -7586,7 +7586,7 @@ void BattleCommand_ForceSwitch(void){
             // LD_A_addr(wEnemyGoesFirst);
             // AND_A_A;
             // IF_Z goto switch_fail;
-            if(FindAliveEnemyMons_Conv().flag || !wram->wEnemyGoesFirst) {
+            if(FindAliveEnemyMons().flag || !wram->wEnemyGoesFirst) {
             switch_fail:
                 // JP(mBattleCommand_ForceSwitch_fail);
                 goto fail;

@@ -10,7 +10,7 @@ void BattleCommand_Protect(void){
 //  protect
     // CALL(aProtectChance);
     // RET_C ;
-    if(!ProtectChance_Conv())
+    if(!ProtectChance())
         return;
 
     // LD_A(BATTLE_VARS_SUBSTATUS1);
@@ -27,76 +27,7 @@ void BattleCommand_Protect(void){
 
 }
 
-void ProtectChance(void){
-    LD_DE(wPlayerProtectCount);
-    LDH_A_addr(hBattleTurn);
-    AND_A_A;
-    IF_Z goto got_count;
-    LD_DE(wEnemyProtectCount);
-
-got_count:
-
-    CALL(aCheckOpponentWentFirst);
-    IF_NZ goto failed;
-
-//  Can't have a substitute.
-
-    LD_A(BATTLE_VARS_SUBSTATUS4);
-    CALL(aGetBattleVar);
-    BIT_A(SUBSTATUS_SUBSTITUTE);
-    IF_NZ goto failed;
-
-//  Halve the chance of a successful Protect for each consecutive use.
-
-    LD_B(0xff);
-    LD_A_de;
-    LD_C_A;
-
-loop:
-    LD_A_C;
-    AND_A_A;
-    IF_Z goto done;
-    DEC_C;
-
-    SRL_B;
-    LD_A_B;
-    AND_A_A;
-    IF_NZ goto loop;
-    goto failed;
-
-done:
-
-
-rand:
-    CALL(aBattleRandom);
-    AND_A_A;
-    IF_Z goto rand;
-
-    DEC_A;
-    CP_A_B;
-    IF_NC goto failed;
-
-//  Another consecutive Protect use.
-
-    LD_A_de;
-    INC_A;
-    LD_de_A;
-
-    AND_A_A;
-    RET;
-
-
-failed:
-    XOR_A_A;
-    LD_de_A;
-    CALL(aAnimateFailedMove);
-    CALL(aPrintButItFailed);
-    SCF;
-    RET;
-
-}
-
-bool ProtectChance_Conv(void){
+bool ProtectChance(void){
     // LD_DE(wPlayerProtectCount);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;

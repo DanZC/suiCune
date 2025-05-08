@@ -7,6 +7,8 @@
 #include "../../../home/names.h"
 #include "../../../data/text/battle.h"
 
+static void BattleSideCopy(void* hl, void* de, uint16_t bc);
+
 void BattleCommand_Transform(void){
 //  transform
 

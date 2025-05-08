@@ -12,7 +12,7 @@ void BattleCommand_Endure(void){
 
     // CALL(aProtectChance);
     // RET_C ;
-    if(!ProtectChance_Conv())
+    if(!ProtectChance())
         return;
 
     // LD_A(BATTLE_VARS_SUBSTATUS1);

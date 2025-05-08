@@ -159,7 +159,7 @@ void AI_Basic(void){
         // POP_DE;
         // POP_HL;
         // IF_NZ goto discourage;
-        if(!AI_Redundant_Conv(mv->effect)) {
+        if(!AI_Redundant(mv->effect)) {
         //  Dismiss status-only moves if the player can't be statused.
             // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
             // PUSH_HL;
@@ -958,7 +958,7 @@ static void AI_Smart_Selfdestruct(uint8_t* hl){
     // FARCALL(aFindAliveEnemyMons);
     // POP_HL;
     // IF_NC goto notlastmon;
-    if(FindAliveEnemyMons_Conv().flag) {
+    if(FindAliveEnemyMons().flag) {
     //  ...greatly discourage this move unless this is the player's last Pokemon too.
         // PUSH_HL;
         // CALL(aAICheckLastPlayerMon);
@@ -1538,7 +1538,7 @@ static void AI_Smart_ForceSwitch(uint8_t* hl){
 
     // PUSH_HL;
     // CALLFAR(aCheckPlayerMoveTypeMatchups);
-    uint8_t score = CheckPlayerMoveTypeMatchups_Conv();
+    uint8_t score = CheckPlayerMoveTypeMatchups();
     // LD_A_addr(wEnemyAISwitchScore);
     // CP_A(BASE_AI_SWITCH_SCORE);
     // POP_HL;
@@ -2762,7 +2762,7 @@ static void AI_Smart_MeanLook(uint8_t* hl){
 //  Otherwise, discourage this move unless the player only has not very effective moves against the enemy.
     // PUSH_HL;
     // CALLFAR(aCheckPlayerMoveTypeMatchups);
-    uint8_t score = CheckPlayerMoveTypeMatchups_Conv();
+    uint8_t score = CheckPlayerMoveTypeMatchups();
     // LD_A_addr(wEnemyAISwitchScore);
     // CP_A(BASE_AI_SWITCH_SCORE + 1);  // not very effective
     // POP_HL;
@@ -2861,7 +2861,7 @@ static void AI_Smart_Curse(uint8_t* hl){
         // FARCALL(aFindAliveEnemyMons);
         // POP_HL;
         // IF_NC goto notlastmon;
-        if(FindAliveEnemyMons_Conv().flag) {
+        if(FindAliveEnemyMons().flag) {
             // PUSH_HL;
             // CALL(aAICheckLastPlayerMon);
             // POP_HL;
@@ -3126,7 +3126,7 @@ static void AI_Smart_PerishSong(uint8_t* hl){
     // CALLFAR(aFindAliveEnemyMons);
     // POP_HL;
     // IF_C goto no;
-    if(FindAliveEnemyMons_Conv().flag) {
+    if(FindAliveEnemyMons().flag) {
     // no:
         // LD_A_hl;
         // ADD_A(5);
@@ -3153,7 +3153,7 @@ static void AI_Smart_PerishSong(uint8_t* hl){
 
     // PUSH_HL;
     // CALLFAR(aCheckPlayerMoveTypeMatchups);
-    uint8_t score = CheckPlayerMoveTypeMatchups_Conv();
+    uint8_t score = CheckPlayerMoveTypeMatchups();
     // LD_A_addr(wEnemyAISwitchScore);
     // CP_A(BASE_AI_SWITCH_SCORE);
     // POP_HL;
@@ -3477,7 +3477,7 @@ static void AI_Smart_Earthquake(uint8_t* hl){
 static void AI_Smart_BatonPass(uint8_t* hl){
     // PUSH_HL;
     // CALLFAR(aCheckPlayerMoveTypeMatchups);
-    uint8_t score = CheckPlayerMoveTypeMatchups_Conv();
+    uint8_t score = CheckPlayerMoveTypeMatchups();
     // LD_A_addr(wEnemyAISwitchScore);
     // CP_A(BASE_AI_SWITCH_SCORE);
     // POP_HL;

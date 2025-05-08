@@ -83,7 +83,7 @@ bool DontSwitch(void){
 
 bool SwitchOften(void){
     // CALLFAR(aCheckAbleToSwitch);
-    CheckAbleToSwitch_Conv();
+    CheckAbleToSwitch();
     // LD_A_addr(wEnemySwitchMonParam);
     // AND_A(0xf0);
     uint8_t param = (wram->wEnemySwitchMonParam & 0xf0);
@@ -135,7 +135,7 @@ bool SwitchOften(void){
 
 bool SwitchRarely(void){
     // CALLFAR(aCheckAbleToSwitch);
-    CheckAbleToSwitch_Conv();
+    CheckAbleToSwitch();
     // LD_A_addr(wEnemySwitchMonParam);
     // AND_A(0xf0);
     uint8_t param = (wram->wEnemySwitchMonParam & 0xf0);
@@ -186,7 +186,7 @@ bool SwitchRarely(void){
 
 bool SwitchSometimes(void){
     // CALLFAR(aCheckAbleToSwitch);
-    CheckAbleToSwitch_Conv();
+    CheckAbleToSwitch();
     // LD_A_addr(wEnemySwitchMonParam);
     // AND_A(0xf0);
     uint8_t param = (wram->wEnemySwitchMonParam & 0xf0);

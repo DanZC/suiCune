@@ -16,7 +16,7 @@ void BattleCommand_Attract(void){
     // CALL(aCheckHiddenOpponent);
     // IF_NZ goto failed;
     if(!wram->wAttackMissed
-    && CheckOppositeGender_Conv(wram->wCurBattleMon)
+    && CheckOppositeGender(wram->wCurBattleMon)
     && !CheckHiddenOpponent()) {
         // LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
         // CALL(aGetBattleVarAddr);
@@ -42,68 +42,9 @@ void BattleCommand_Attract(void){
 
 }
 
-void CheckOppositeGender(void){
-    LD_A(MON_SPECIES);
-    CALL(aBattlePartyAttr);
-    LD_A_hl;
-    LD_addr_A(wCurPartySpecies);
-
-    LD_A_addr(wCurBattleMon);
-    LD_addr_A(wCurPartyMon);
-    XOR_A_A;
-    LD_addr_A(wMonType);
-
-    FARCALL(aGetGender);
-    IF_C goto genderless_samegender;
-
-    LD_B(1);
-    IF_NZ goto got_gender;
-    DEC_B;
-
-
-got_gender:
-    PUSH_BC;
-    LD_A_addr(wTempEnemyMonSpecies);
-    LD_addr_A(wCurPartySpecies);
-    LD_HL(wEnemyMonDVs);
-    LD_A_addr(wEnemySubStatus5);
-    BIT_A(SUBSTATUS_TRANSFORMED);
-    IF_Z goto not_transformed;
-    LD_HL(wEnemyBackupDVs);
-
-not_transformed:
-    LD_A_hli;
-    LD_addr_A(wTempMonDVs);
-    LD_A_hl;
-    LD_addr_A(wTempMonDVs + 1);
-    LD_A(3);
-    LD_addr_A(wMonType);
-    FARCALL(aGetGender);
-    POP_BC;
-    IF_C goto genderless_samegender;
-
-    LD_A(1);
-    IF_NZ goto got_enemy_gender;
-    DEC_A;
-
-
-got_enemy_gender:
-    XOR_A_B;
-    IF_Z goto genderless_samegender;
-
-    AND_A_A;
-    RET;
-
-
-genderless_samegender:
-    SCF;
-    RET;
-
-}
-
 // Returns c (false) if genders match or one of the mons is genderless.
 // Returns nc (true) otherwise.
-bool CheckOppositeGender_Conv(uint8_t battleMon){
+bool CheckOppositeGender(uint8_t battleMon){
     // LD_A(MON_SPECIES);
     // CALL(aBattlePartyAttr);
     // LD_A_hl;

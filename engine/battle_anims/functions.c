@@ -116,7 +116,7 @@ void BattleAnimFunction_Null(struct BattleAnim* bc) {
     case 1:
     // one:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         fallthrough;
 
     default:
@@ -134,7 +134,7 @@ void BattleAnimFunction_ThrowFromUserToTargetAndDisappear(struct BattleAnim* bc)
     if(BattleAnimFunction_ThrowFromUserToTarget(bc))
         return;
     // CALL(aDeinitBattleAnimation);
-    DeinitBattleAnimation_Conv(bc);
+    DeinitBattleAnimation(bc);
     // RET;
 }
 
@@ -189,7 +189,7 @@ void BattleAnimFunction_MoveWaveToTarget(struct BattleAnim* bc) {
     // IF_C goto move;
     if(bc->xCoord >= 0x88) {
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -315,7 +315,7 @@ void BattleAnimFunction_MoveFromUserToTarget(struct BattleAnim* bc) {
     case 1:
     // one:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
 
@@ -349,7 +349,7 @@ void BattleAnimFunction_MoveFromUserToTargetAndDisappear(struct BattleAnim* bc) 
     if(bc->xCoord >= 0x84) {
     // done:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -540,7 +540,7 @@ void BattleAnimFunction_PokeBall(struct BattleAnim* bc) {
     case 11:
     // eleven:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -594,7 +594,7 @@ void BattleAnimFunction_PokeBallBlocked(struct BattleAnim* bc) {
         if(bc->yCoord >= 0x80) {
         // done:
             // CALL(aDeinitBattleAnimation);
-            DeinitBattleAnimation_Conv(bc);
+            DeinitBattleAnimation(bc);
             // RET;
             return;
         }
@@ -692,7 +692,7 @@ void BattleAnimFunction_Ember(struct BattleAnim* bc) {
     case 2:
     // two:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
 
@@ -777,7 +777,7 @@ void BattleAnimFunction_Drop(struct BattleAnim* bc) {
 
     // done:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -930,7 +930,7 @@ void BattleAnimFunction_MoveFromUserToTargetSpinAround(struct BattleAnim* bc) {
         // IF_C goto retain;
         if(bc->xCoord >= 0xb0) {
             // CALL(aDeinitBattleAnimation);
-            DeinitBattleAnimation_Conv(bc);
+            DeinitBattleAnimation(bc);
             // RET;
             return;
         }
@@ -1010,7 +1010,7 @@ void BattleAnimFunction_Shake(struct BattleAnim* bc) {
     case 2:
     // two:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -1111,7 +1111,7 @@ void BattleAnimFunction_FireBlast(struct BattleAnim* bc) {
     case 9:
     // nine:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
 
@@ -1278,7 +1278,7 @@ void BattleAnimFunction_RazorLeaf(struct BattleAnim* bc) {
         // IF_NZ goto sine_cosine_2;
         if(bc->yOffset == 0x20) {
             // CALL(aDeinitBattleAnimation);
-            DeinitBattleAnimation_Conv(bc);
+            DeinitBattleAnimation(bc);
             // RET;
             return;
         }
@@ -1474,7 +1474,7 @@ void BattleAnimFunction_RockSmash(struct BattleAnim* bc) {
         // IF_NC goto sine_cosine;
         if(bc->var1 < 0x30) {
             // CALL(aDeinitBattleAnimation);
-            DeinitBattleAnimation_Conv(bc);
+            DeinitBattleAnimation(bc);
             // RET;
             return;
         }
@@ -1763,7 +1763,7 @@ void BattleAnimFunction_Surf(struct BattleAnim* bc) {
     case 4:
     // four:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -1799,7 +1799,7 @@ void BattleAnimFunction_Sing(struct BattleAnim* bc) {
         // IF_C goto move;
         if(bc->xCoord >= 0xb8) {
             // CALL(aDeinitBattleAnimation);
-            DeinitBattleAnimation_Conv(bc);
+            DeinitBattleAnimation(bc);
             // RET;
             return;
         }
@@ -1926,7 +1926,7 @@ void BattleAnimFunction_Powder(struct BattleAnim* bc) {
     // IF_C goto move;
     if(bc->yOffset >= 0x38) {
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -2009,7 +2009,7 @@ void BattleAnimFunction_Recover(struct BattleAnim* bc) {
         // IF_NZ goto move;
         if(bc->var2 == 0) {
             // CALL(aDeinitBattleAnimation);
-            DeinitBattleAnimation_Conv(bc);
+            DeinitBattleAnimation(bc);
             // RET;
             return;
         }
@@ -2086,7 +2086,7 @@ void BattleAnimFunction_ThunderWave(struct BattleAnim* bc) {
     case 3:
     // three:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -2384,7 +2384,7 @@ void BattleAnimFunction_SolarBeam(struct BattleAnim* bc) {
         if(bc->var1 == 0) {
         // zero_radius:
             // CALL(aDeinitBattleAnimation);
-            DeinitBattleAnimation_Conv(bc);
+            DeinitBattleAnimation(bc);
             // RET;
             return;
         }
@@ -2561,7 +2561,7 @@ void BattleAnimFunction_Gust(struct BattleAnim* bc) {
         if(bc->xCoord < 0xb8)
             break;
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -2598,7 +2598,7 @@ void BattleAnimFunction_Absorb(struct BattleAnim* bc) {
     // IF_NC goto move;
     if(bc->xCoord < 0x30) {
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -3196,7 +3196,7 @@ void BattleAnimFunction_Egg(struct BattleAnim* bc) {
     // five:
         // Clears Egg Bomb object via anim_incobj
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
 
@@ -3326,7 +3326,7 @@ void BattleAnimFunction_MoveUp(struct BattleAnim* bc) {
         return;
     }
     // CALL(aDeinitBattleAnimation);
-    DeinitBattleAnimation_Conv(bc);
+    DeinitBattleAnimation(bc);
     // RET;
 }
 
@@ -3437,7 +3437,7 @@ void BattleAnimFunction_Sound(struct BattleAnim* bc) {
 
     // done_anim:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -3691,7 +3691,7 @@ void BattleAnimFunction_Amnesia(struct BattleAnim* bc) {
     // two:
         // anim_incobj forces obj to deinit
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -3939,7 +3939,7 @@ void BattleAnimFunction_SpiralDescent(struct BattleAnim* bc) {
 
 // delete :
     // CALL(aDeinitBattleAnimation);
-    DeinitBattleAnimation_Conv(bc);
+    DeinitBattleAnimation(bc);
     // RET;
 }
 
@@ -3993,7 +3993,7 @@ void BattleAnimFunction_PetalDance(struct BattleAnim* bc) {
 
 // end:
     // CALL(aDeinitBattleAnimation);
-    DeinitBattleAnimation_Conv(bc);
+    DeinitBattleAnimation(bc);
     // RET;
 }
 
@@ -4105,7 +4105,7 @@ void BattleAnimFunction_SmokeFlameWheel(struct BattleAnim* bc) {
 
 // done:
     // CALL(aDeinitBattleAnimation);
-    DeinitBattleAnimation_Conv(bc);
+    DeinitBattleAnimation(bc);
     // RET;
 }
 
@@ -4162,7 +4162,7 @@ void BattleAnimFunction_SacredFire(struct BattleAnim* bc) {
     }
 // done:
     // CALL(aDeinitBattleAnimation);
-    DeinitBattleAnimation_Conv(bc);
+    DeinitBattleAnimation(bc);
     // RET;
 }
 
@@ -4250,7 +4250,7 @@ void BattleAnimFunction_PresentSmokescreen(struct BattleAnim* bc) {
     case 2:
     // two:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -4311,7 +4311,7 @@ void BattleAnimFunction_Horn(struct BattleAnim* bc) {
         // IF_C goto three;
         if(bc->var2 >= 0x20) {
             // CALL(aDeinitBattleAnimation);
-            DeinitBattleAnimation_Conv(bc);
+            DeinitBattleAnimation(bc);
             // RET;
             return;
         }
@@ -4412,7 +4412,7 @@ void BattleAnimFunction_Needle(struct BattleAnim* bc) {
         // IF_C goto move_to_target;
         if(bc->xCoord >= 0x84) {
             // CALL(aDeinitBattleAnimation);
-            DeinitBattleAnimation_Conv(bc);
+            DeinitBattleAnimation(bc);
             // RET;
             return;
         }
@@ -4581,7 +4581,7 @@ void BattleAnimFunction_AbsorbCircle(struct BattleAnim* bc) {
 
 // end:
     // CALL(aDeinitBattleAnimation);
-    DeinitBattleAnimation_Conv(bc);
+    DeinitBattleAnimation(bc);
     // RET;
 }
 
@@ -4634,7 +4634,7 @@ void BattleAnimFunction_Conversion(struct BattleAnim* bc) {
     if(bc->var1-- != 0)
         return;
     // CALL(aDeinitBattleAnimation);
-    DeinitBattleAnimation_Conv(bc);
+    DeinitBattleAnimation(bc);
     // RET;
 }
 
@@ -4856,7 +4856,7 @@ void BattleAnimFunction_SkyAttack(struct BattleAnim* bc) {
 
     // done:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -5001,7 +5001,7 @@ void BattleAnimFunction_StrengthSeismicToss(struct BattleAnim* bc) {
 
     // done:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -5149,7 +5149,7 @@ void BattleAnimFunction_MetronomeSparkleSketch(struct BattleAnim* bc) {
     // IF_C goto do_move;
     if(bc->yOffset >= 0x20) {
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -5208,7 +5208,7 @@ void BattleAnimFunction_Agility(struct BattleAnim* bc) {
     case 1:
     // one:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -5336,7 +5336,7 @@ void BattleAnimFunction_LockOnMindReader(struct BattleAnim* bc) {
         if(bc->var1-- != 0)
             return;
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -5403,7 +5403,7 @@ void BattleAnimFunction_HealBellNotes(struct BattleAnim* bc) {
 
     // done:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -5492,7 +5492,7 @@ void BattleAnimFunction_EncoreBellyDrum(struct BattleAnim* bc) {
 
 // done:
     // CALL(aDeinitBattleAnimation);
-    DeinitBattleAnimation_Conv(bc);
+    DeinitBattleAnimation(bc);
     // RET;
     return;
 }
@@ -5592,7 +5592,7 @@ void BattleAnimFunction_HiddenPower(struct BattleAnim* bc) {
 
     // done:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
 
@@ -5637,7 +5637,7 @@ void BattleAnimFunction_Curse(struct BattleAnim* bc) {
 
     // done:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         fallthrough;
 
     case 0:
@@ -5694,7 +5694,7 @@ void BattleAnimFunction_RapidSpin(struct BattleAnim* bc) {
     if(bc->yOffset == 0xd0) {
     // done:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }
@@ -5759,7 +5759,7 @@ void BattleAnimFunction_BetaPursuit(struct BattleAnim* bc) {
     case 3:
     // three:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
 
@@ -5985,7 +5985,7 @@ void BattleAnimFunction_AncientPower(struct BattleAnim* bc) {
     if(bc->var1 >= 0x20) {
     // done:
         // CALL(aDeinitBattleAnimation);
-        DeinitBattleAnimation_Conv(bc);
+        DeinitBattleAnimation(bc);
         // RET;
         return;
     }

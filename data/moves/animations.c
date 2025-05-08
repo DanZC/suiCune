@@ -5759,4 +5759,5 @@ const battleanim_func BattleAnimations[] = {
     [ANIM_SHAKE]            = BattleAnim_Shake,
     [ANIM_HIT_CONFUSION]    = BattleAnim_HitConfusion,
 };
+
 static_assert(lengthof(BattleAnimations) == NUM_BATTLE_ANIMS + 1, "");

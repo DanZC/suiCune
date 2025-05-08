@@ -9,6 +9,8 @@
 #include "../../../home/pokemon.h"
 #include "../../../data/text/battle.h"
 
+static struct PartyMon* GetBeatupMonLocation(void);
+
 void BattleCommand_BeatUp(void){
 //  beatup
 
@@ -314,7 +316,7 @@ void BattleCommand_BeatUpFailText(void){
 
 }
 
-struct PartyMon* GetBeatupMonLocation(void) {
+static struct PartyMon* GetBeatupMonLocation(void) {
     // PUSH_BC;
     // LD_C_A;
     // LD_B(0);

@@ -9,6 +9,14 @@
 #include "../../../home/menu.h"
 #include "../../../home/text.h"
 
+static void BatonPass_LinkPlayerSwitch(void);
+static void BatonPass_LinkEnemySwitch(void);
+static void FailedBatonPass(void);
+static void ResetBatonPassStatus(void);
+static bool CheckAnyOtherAlivePartyMons(void);
+static bool CheckAnyOtherAliveEnemyMons(void);
+static bool CheckAnyOtherAliveMons(struct PartyMon* party, uint8_t count, uint8_t curMon);
+
 void BattleCommand_BatonPass(void){
 //  batonpass
 
@@ -20,7 +28,7 @@ void BattleCommand_BatonPass(void){
     //  Need something to switch to
         // CALL(aCheckAnyOtherAlivePartyMons);
         // JP_Z (mFailedBatonPass);
-        if(!CheckAnyOtherAlivePartyMons_Conv())
+        if(!CheckAnyOtherAlivePartyMons())
             return FailedBatonPass();
 
         // CALL(aUpdateBattleMonInParty);
@@ -88,7 +96,7 @@ void BattleCommand_BatonPass(void){
 
         // CALL(aCheckAnyOtherAliveEnemyMons);
         // JP_Z (mFailedBatonPass);
-        if(!CheckAnyOtherAliveEnemyMons_Conv())
+        if(!CheckAnyOtherAliveEnemyMons())
             return FailedBatonPass();
 
         // CALL(aUpdateEnemyMonInParty);
@@ -130,7 +138,7 @@ void BattleCommand_BatonPass(void){
     }
 }
 
-void BatonPass_LinkPlayerSwitch(void){
+static void BatonPass_LinkPlayerSwitch(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // RET_Z ;
@@ -155,7 +163,7 @@ void BatonPass_LinkPlayerSwitch(void){
     // RET;
 }
 
-void BatonPass_LinkEnemySwitch(void){
+static void BatonPass_LinkEnemySwitch(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // RET_Z ;
@@ -190,14 +198,14 @@ void BatonPass_LinkEnemySwitch(void){
     return CloseWindow();
 }
 
-void FailedBatonPass(void){
+static void FailedBatonPass(void){
     // CALL(aAnimateFailedMove);
     // JP(mPrintButItFailed);
     AnimateFailedMove();
     return PrintButItFailed();
 }
 
-void ResetBatonPassStatus(void){
+static void ResetBatonPassStatus(void){
 //  Reset status changes that aren't passed by Baton Pass.
 
 // Nightmare isn't passed.
@@ -250,39 +258,17 @@ void ResetBatonPassStatus(void){
 
 }
 
-void CheckAnyOtherAlivePartyMons(void){
-    LD_HL(wPartyMon1HP);
-    LD_A_addr(wPartyCount);
-    LD_D_A;
-    LD_A_addr(wCurBattleMon);
-    LD_E_A;
-    JR(mCheckAnyOtherAliveMons);
-
-}
-
-bool CheckAnyOtherAlivePartyMons_Conv(void){
+static bool CheckAnyOtherAlivePartyMons(void){
     // LD_HL(wPartyMon1HP);
     // LD_A_addr(wPartyCount);
     // LD_D_A;
     // LD_A_addr(wCurBattleMon);
     // LD_E_A;
     // JR(mCheckAnyOtherAliveMons);
-    return CheckAnyOtherAliveMons_Conv(wram->wPartyMon, wram->wPartyCount, wram->wCurBattleMon);
+    return CheckAnyOtherAliveMons(wram->wPartyMon, wram->wPartyCount, wram->wCurBattleMon);
 }
 
-void CheckAnyOtherAliveEnemyMons(void){
-    LD_HL(wOTPartyMon1HP);
-    LD_A_addr(wOTPartyCount);
-    LD_D_A;
-    LD_A_addr(wCurOTMon);
-    LD_E_A;
-
-// fallthrough
-
-    return CheckAnyOtherAliveMons();
-}
-
-bool CheckAnyOtherAliveEnemyMons_Conv(void){
+static bool CheckAnyOtherAliveEnemyMons(void){
     // LD_HL(wOTPartyMon1HP);
     // LD_A_addr(wOTPartyCount);
     // LD_D_A;
@@ -291,51 +277,10 @@ bool CheckAnyOtherAliveEnemyMons_Conv(void){
 
 // fallthrough
 
-    return CheckAnyOtherAliveMons_Conv(wram->wOTPartyMon, wram->wOTPartyCount, wram->wCurOTMon);
+    return CheckAnyOtherAliveMons(wram->wOTPartyMon, wram->wOTPartyCount, wram->wCurOTMon);
 }
 
-void CheckAnyOtherAliveMons(void){
-//  Check for nonzero HP starting from partymon
-//  HP at hl for d partymons, besides current mon e.
-
-//  Return nz if any are alive.
-
-    XOR_A_A;
-    LD_B_A;
-    LD_C_A;
-
-loop:
-    LD_A_C;
-    CP_A_D;
-    IF_Z goto done;
-    CP_A_E;
-    IF_Z goto next;
-
-    LD_A_hli;
-    OR_A_B;
-    LD_B_A;
-    LD_A_hld;
-    OR_A_B;
-    LD_B_A;
-
-
-next:
-    PUSH_BC;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    ADD_HL_BC;
-    POP_BC;
-    INC_C;
-    goto loop;
-
-
-done:
-    LD_A_B;
-    AND_A_A;
-    RET;
-
-}
-
-bool CheckAnyOtherAliveMons_Conv(struct PartyMon* party, uint8_t count, uint8_t curMon){
+static bool CheckAnyOtherAliveMons(struct PartyMon* party, uint8_t count, uint8_t curMon){
 //  Check for nonzero HP starting from partymon
 //  HP at hl for d partymons, besides current mon e.
 
