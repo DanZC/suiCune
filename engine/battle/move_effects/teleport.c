@@ -60,7 +60,7 @@ void BattleCommand_Teleport(void){
                 do {
                 // loop_player:
                     // CALL(aBattleRandom);
-                    a = v_BattleRandom_Conv();
+                    a = v_BattleRandom();
                     // CP_A_C;
                     // IF_NC goto loop_player;
                 } while(a >= c);
@@ -102,7 +102,7 @@ void BattleCommand_Teleport(void){
                 do {
                 // loop_enemy:
                     // CALL(aBattleRandom);
-                    a = v_BattleRandom_Conv();
+                    a = v_BattleRandom();
                     // CP_A_C;
                     // IF_NC goto loop_enemy;
                 } while(a >= c);

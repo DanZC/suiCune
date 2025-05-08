@@ -43,7 +43,7 @@ void BattleCommand_Present(void){
     // PUSH_BC;
     // CALL(aBattleRandom);
     // LD_B_A;
-    uint8_t b = v_BattleRandom_Conv();
+    uint8_t b = v_BattleRandom();
     // LD_HL(mPresentPower);
     const uint8_t* hl = PresentPower;
     // LD_C(0);
@@ -79,12 +79,12 @@ void BattleCommand_Present(void){
             if(!fn()) {
                 // LD_HL(mGetQuarterMaxHP);
                 // CALL(aCallBattleCore);
-                uint16_t hp = GetQuarterMaxHP_Conv();
+                uint16_t hp = GetQuarterMaxHP();
                 // CALL(aBattleCommand_SwitchTurn);
                 BattleCommand_SwitchTurn();
                 // LD_HL(mRestoreHP);
                 // CALL(aCallBattleCore);
-                RestoreHP_Conv(hp);
+                RestoreHP(hp);
                 // CALL(aBattleCommand_SwitchTurn);
                 BattleCommand_SwitchTurn();
                 // LD_HL(mRegainedHealthText);

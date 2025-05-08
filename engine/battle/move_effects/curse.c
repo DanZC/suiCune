@@ -59,7 +59,7 @@ void BattleCommand_Curse(void){
         // CALL(aCallBattleCore);
         // LD_HL(mSubtractHPFromUser);
         // CALL(aCallBattleCore);
-        SubtractHPFromUser_Conv(GetHalfMaxHP_Conv());
+        SubtractHPFromUser(GetHalfMaxHP());
         // CALL(aUpdateUserInParty);
         UpdateUserInParty();
         // LD_HL(mPutACurseText);

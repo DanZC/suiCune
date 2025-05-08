@@ -41,7 +41,7 @@ void BattleCommand_Metronome(void){
     do {
     // GetMove:
         // CALL(aBattleRandom);
-        b = v_BattleRandom_Conv();
+        b = v_BattleRandom();
 
     //  No invalid moves.
         // CP_A(NUM_ATTACKS + 1);

@@ -21,7 +21,7 @@ void BattleCommand_MirrorCoat(void){
 
     // LD_B_A;
     // CALLFAR(aGetMoveEffect);
-    uint8_t effect = GetMoveEffect_Conv(b);
+    uint8_t effect = GetMoveEffect(b);
     // LD_A_B;
     // CP_A(EFFECT_MIRROR_COAT);
     // RET_Z ;

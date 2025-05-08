@@ -143,7 +143,7 @@ void PlayBattleMusic(void){
         // LD_DE(MUSIC_KANTO_GYM_LEADER_BATTLE);
         // FARCALL(aIsKantoGymLeader);
         // IF_C goto done;
-        else if(IsKantoGymLeader_Conv(wram->wOtherTrainerClass)) {
+        else if(IsKantoGymLeader(wram->wOtherTrainerClass)) {
             de = MUSIC_KANTO_GYM_LEADER_BATTLE;
         }
 
@@ -152,7 +152,7 @@ void PlayBattleMusic(void){
         // LD_DE(MUSIC_JOHTO_GYM_LEADER_BATTLE);
         // FARCALL(aIsGymLeader);
         // IF_C goto done;
-        else if(IsGymLeader_Conv(wram->wOtherTrainerClass)) {
+        else if(IsGymLeader(wram->wOtherTrainerClass)) {
             de = MUSIC_JOHTO_GYM_LEADER_BATTLE;
         }
 
@@ -307,7 +307,7 @@ void ClearBattleRAM(void){
     ByteFill(&wram->wEnemyMoveStruct.animation, wBattleEnd - wBattle, 0);
 
     // CALLFAR(aResetEnemyStatLevels);
-    ResetEnemyStatLevels_Conv();
+    ResetEnemyStatLevels();
 
     // CALL(aClearWindowData);
     ClearWindowData();

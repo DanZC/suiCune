@@ -52,7 +52,7 @@ void BattleCommand_Conversion2(void){
         // loop:
             // CALL(aBattleRandom);
             // maskbits(TYPES_END, 0);
-            a = v_BattleRandom_Conv();
+            a = v_BattleRandom();
             // CP_A(UNUSED_TYPES);
             // IF_C goto okay;
             if(a < UNUSED_TYPES)

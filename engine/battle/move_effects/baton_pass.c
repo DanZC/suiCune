@@ -65,7 +65,7 @@ void BattleCommand_BatonPass(void){
     //  Mobile link battles handle entrances differently
         // FARCALL(aCheckMobileBattleError);
         // JP_C (mEndMoveEffect);
-        if(CheckMobileBattleError_Conv())
+        if(CheckMobileBattleError())
             return EndMoveEffect();
 
         // LD_HL(mPassedBattleMonEntrance);
@@ -101,7 +101,7 @@ void BattleCommand_BatonPass(void){
     //  Mobile link battles handle entrances differently
         // FARCALL(aCheckMobileBattleError);
         // JP_C (mEndMoveEffect);
-        if(CheckMobileBattleError_Conv())
+        if(CheckMobileBattleError())
             return EndMoveEffect();
 
     //  Passed enemy PartyMon entrance

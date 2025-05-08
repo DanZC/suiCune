@@ -31,7 +31,7 @@ static void NewPokedexEntry_ReturnFromDexRegistration(void) {
     // LD_addr_A(wTempMonDVs);
     // LD_A_hl;
     // LD_addr_A(wTempMonDVs + 1);
-    wram->wTempMon.mon.DVs = GetEnemyMonDVs_Conv();
+    wram->wTempMon.mon.DVs = GetEnemyMonDVs();
     // LD_B(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);
     // CALL(aGetSGBLayout);
     GetSGBLayout(SCGB_TRAINER_OR_MON_FRONTPIC_PALS);

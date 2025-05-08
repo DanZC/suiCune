@@ -49,9 +49,9 @@ void BattleCommand_Selfdestruct(void){
     if(CheckBattleScene())
         return;
     // FARCALL(aDrawPlayerHUD);
-    DrawPlayerHUD_Conv();
+    DrawPlayerHUD();
     // FARCALL(aDrawEnemyHUD);
-    DrawEnemyHUD_Conv();
+    DrawEnemyHUD();
     // CALL(aWaitBGMap);
     WaitBGMap();
     // JP(mRefreshBattleHuds);

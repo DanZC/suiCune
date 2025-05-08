@@ -66,7 +66,7 @@ void BattleCommand_Spite(void){
     // INC_A;
     // INC_A;
     // LD_B_A;
-    uint8_t b = (v_BattleRandom_Conv() & 0b11) + 2;
+    uint8_t b = (v_BattleRandom() & 0b11) + 2;
     // LD_A_hl;
     // AND_A(PP_MASK);
     // CP_A_B;

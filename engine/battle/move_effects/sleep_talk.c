@@ -11,7 +11,7 @@ static bool BattleCommand_SleepTalk_check_two_turn_move(move_t b) {
 
     // LD_B_A;
     // CALLFAR(aGetMoveEffect);
-    uint8_t effect = GetMoveEffect_Conv(b);
+    uint8_t effect = GetMoveEffect(b);
     // LD_A_B;
 
     // POP_BC;
@@ -145,7 +145,7 @@ void BattleCommand_SleepTalk(void){
         // LD_B(0);
         // ADD_HL_BC;
         // LD_A_hl;
-        e = mon->moves[v_BattleRandom_Conv() & 3];
+        e = mon->moves[v_BattleRandom() & 3];
         // POP_HL;
         // AND_A_A;
         // IF_Z goto sample_move;

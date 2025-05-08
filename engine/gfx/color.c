@@ -897,7 +897,7 @@ uint16_t* GetBattlemonBackpicPalettePointer(uint16_t* dest){
     // CALL(aGetPlayerOrMonPalettePointer);
     // POP_DE;
     // RET;
-    return GetPlayerOrMonPalettePointer(dest, wram->wTempBattleMonSpecies, GetPartyMonDVs_Conv());
+    return GetPlayerOrMonPalettePointer(dest, wram->wTempBattleMonSpecies, GetPartyMonDVs());
 }
 
 uint16_t* GetEnemyFrontpicPalettePointer(uint16_t* dest){
@@ -909,7 +909,7 @@ uint16_t* GetEnemyFrontpicPalettePointer(uint16_t* dest){
     // CALL(aGetFrontpicPalettePointer);
     // POP_DE;
     // RET;
-    return GetFrontpicPalettePointer(dest, wram->wTempEnemyMonSpecies, GetEnemyMonDVs_Conv());
+    return GetFrontpicPalettePointer(dest, wram->wTempEnemyMonSpecies, GetEnemyMonDVs());
 }
 
 const char PlayerPalette[] = "gfx/trainers/cal.png";

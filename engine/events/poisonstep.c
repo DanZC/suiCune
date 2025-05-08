@@ -82,7 +82,7 @@ static void Script_MonFaintedToPoison_CheckWhitedOut(void) {
     // PREDEF(pCheckPlayerPartyForFitMon);
     // LD_A_D;
     // LD_addr_A(wScriptVar);
-    wram->wScriptVar = CheckPlayerPartyForFitMon_Conv()? TRUE: FALSE;
+    wram->wScriptVar = CheckPlayerPartyForFitMon()? TRUE: FALSE;
     // RET;
 }
 

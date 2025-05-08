@@ -21,7 +21,7 @@ void BattleCommand_Counter(void){
 
     // LD_B_A;
     // CALLFAR(aGetMoveEffect);
-    uint8_t effect = GetMoveEffect_Conv(move);
+    uint8_t effect = GetMoveEffect(move);
     // LD_A_B;
     // CP_A(EFFECT_COUNTER);
     // RET_Z ;

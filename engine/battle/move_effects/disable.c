@@ -77,7 +77,7 @@ void BattleCommand_Disable(void){
     // loop2:
         // CALL(aBattleRandom);
         // AND_A(7);
-        a = v_BattleRandom_Conv() & 7;
+        a = v_BattleRandom() & 7;
         // IF_Z goto loop2;
     } while(a == 0);
     // INC_A;

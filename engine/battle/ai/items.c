@@ -29,7 +29,7 @@ bool AI_SwitchOrTryItem(void){
 
     // FARCALL(aCheckEnemyLockedIn);
     // RET_NZ ;
-    if(wram->wLinkMode != LINK_NULL || CheckEnemyLockedIn_Conv())
+    if(wram->wLinkMode != LINK_NULL || CheckEnemyLockedIn())
         return false;
 
     // LD_A_addr(wPlayerSubStatus5);
@@ -1061,9 +1061,9 @@ bool AI_Switch(void){
     // LD_addr_A(wBattleHasJustStarted);
     wram->wBattleHasJustStarted = 1;
     // CALLFAR(aNewEnemyMonStatus);
-    NewEnemyMonStatus_Conv();
+    NewEnemyMonStatus();
     // CALLFAR(aResetEnemyStatLevels);
-    ResetEnemyStatLevels_Conv();
+    ResetEnemyStatLevels();
     // LD_HL(wPlayerSubStatus1);
     // RES_hl(SUBSTATUS_IN_LOVE);
     bit_reset(wram->wPlayerSubStatus1, SUBSTATUS_IN_LOVE);

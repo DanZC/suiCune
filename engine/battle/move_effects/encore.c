@@ -74,7 +74,7 @@ void BattleCommand_Encore(void){
     // INC_A;
     // INC_A;
     // LD_de_A;
-    *de = (v_BattleRandom_Conv() & 0x3) + 3;
+    *de = (v_BattleRandom() & 0x3) + 3;
     // CALL(aCheckOpponentWentFirst);
     // IF_NZ goto finish_move;
     if(!CheckOpponentWentFirst()) {

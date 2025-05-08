@@ -696,7 +696,7 @@ void Gen2ToGen2LinkComms(void){
 
     // LET'S DO THIS
         // PREDEF(pStartBattle);
-        StartBattle_Conv();
+        StartBattle();
 
         // LDH_A_addr(rIF);
         // LD_H_A;

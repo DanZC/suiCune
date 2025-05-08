@@ -470,7 +470,7 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     // }
     TryAddMonToParty_Conv(DRAGONITE, 100);
     wbank_push(MBANK(awInBattleTowerBattle));
-    StartBattle_Conv();
+    StartBattle();
 
     bit_reset(wram->wDebugFlags, DEBUG_BATTLE_F);
 
@@ -942,7 +942,7 @@ void DebugMenu_BattleAnim(void) {
     wram->wCurPartyMon = 0;
     wram->wCurOTMon = 0;
 
-    LoadEnemyMonToSwitchTo_Conv(0);
+    LoadEnemyMonToSwitchTo(0);
     UpdateEnemyHUD();
     InitBattleMon();
     UpdatePlayerHUD();

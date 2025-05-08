@@ -1506,7 +1506,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ParsePlayerAction);
     // REDIRECTED(IsGymLeaderCommon);
     // REDIRECTED(AddBattleMoneyToAccount);
-    REDIRECTED(StartBattle);
+    // CONVERTED(StartBattle);
     CONVERTED(Battle_EnemyFirst);
     CONVERTED(InitBattleMon);
     // REDIRECTED(IsMobileBattle);
@@ -1529,7 +1529,7 @@ void init_function_pointers(void) {
     // REDIRECTED(HandlePlayerMonFaint);
     // REDIRECTED(GoMonText);
     // REDIRECTED(ResidualDamage);
-    CONVERTED(BattleStartMessage);
+    // CONVERTED(BattleStartMessage);
     // CONVERTED(EnemySwitch);
     CONVERTED(BattleTurn);
     CONVERTED(EnemyTurn_EndOpponentProtectEndureDestinyBond);
@@ -1586,7 +1586,7 @@ void init_function_pointers(void) {
     // CONVERTED(NewBattleMonStatus);
     CONVERTED(AddBattleParticipant);
     // REDIRECTED(LoadEnemyMonToSwitchTo);
-    REDIRECTED(InitEnemyTrainer);
+    // CONVERTED(InitEnemyTrainer);
     // REDIRECTED(UpdateHPBarBattleHuds);
     CONVERTED(LoadEnemyMon);
     // REDIRECTED(LoadBattleMenu2);
@@ -1603,7 +1603,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BoostExp);
     // REDIRECTED(ApplyPrzEffectOnSpeed);
     CONVERTED(Battle_PlayerFirst);
-    CONVERTED(FaintEnemyPokemon);
+    // CONVERTED(FaintEnemyPokemon);
     // REDIRECTED(ApplyStatusEffectOnEnemyStats);
     // REDIRECTED(HandleMysteryberry);
     // REDIRECTED(RestoreHP);
@@ -1683,7 +1683,7 @@ void init_function_pointers(void) {
     // REDIRECTED(Stubbed_Increments5_a89a);
     // REDIRECTED(BattleCheckEnemyShininess);
     // REDIRECTED(MonFaintedAnimation);
-    REDIRECTED(WinTrainerBattle);
+    // CONVERTED(WinTrainerBattle);
     // REDIRECTED(EnemyTriesToFlee);
     // REDIRECTED(CheckFaint_EnemyThenPlayer);
     // REDIRECTED(TryToRunAwayFromBattle);
@@ -1698,7 +1698,7 @@ void init_function_pointers(void) {
     // REDIRECTED(FaintYourPokemon);
     // REDIRECTED(LookUpTheEffectivenessOfEveryMove);
     CONVERTED(UpdatePlayerHUD);
-    REDIRECTED(HandleEnemyMonFaint);
+    CONVERTED(HandleEnemyMonFaint);
     // REDIRECTED(UpdateEnemyHUD);
     // REDIRECTED(GetMovePriority);
     // REDIRECTED(CalcExpBar);

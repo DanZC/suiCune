@@ -67,7 +67,7 @@ uint8_t BattleRandom(void){
     // RST(aBankswitch);
     // LD_A_addr(wPredefHL + 1);
     // RET;
-    return v_BattleRandom_Conv();
+    return v_BattleRandom();
 }
 
 //  Return a random number between 0 and a (non-inclusive).

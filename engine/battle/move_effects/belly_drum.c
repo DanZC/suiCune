@@ -11,7 +11,7 @@ void BattleCommand_BellyDrum(void){
 //  before checking that it has enough HP to use the move.
 //  Swap the order of these two blocks to fix.
 #if BUGFIX_BELLYDRUM
-    if(!CheckUserHasEnoughHP_Conv(GetHalfMaxHP_Conv()) || (BattleCommand_AttackUp2(), wram->wAttackMissed))
+    if(!CheckUserHasEnoughHP(GetHalfMaxHP()) || (BattleCommand_AttackUp2(), wram->wAttackMissed))
 #else
     // CALL(aBattleCommand_AttackUp2);
     // LD_A_addr(wAttackMissed);
@@ -21,7 +21,7 @@ void BattleCommand_BellyDrum(void){
     // CALLFAR(aGetHalfMaxHP);
     // CALLFAR(aCheckUserHasEnoughHP);
     // IF_NC goto failed;
-    if((BattleCommand_AttackUp2(), wram->wAttackMissed) || !CheckUserHasEnoughHP_Conv(GetHalfMaxHP_Conv()))
+    if((BattleCommand_AttackUp2(), wram->wAttackMissed) || !CheckUserHasEnoughHP(GetHalfMaxHP()))
 #endif
     {
     // failed:
@@ -37,7 +37,7 @@ void BattleCommand_BellyDrum(void){
     AnimateCurrentMove();
     // POP_BC;
     // CALLFAR(aSubtractHPFromUser);
-    SubtractHPFromUser_Conv(GetHalfMaxHP_Conv());
+    SubtractHPFromUser(GetHalfMaxHP());
     // CALL(aUpdateUserInParty);
     UpdateUserInParty();
     // LD_A(MAX_STAT_LEVEL - BASE_STAT_LEVEL - 1);

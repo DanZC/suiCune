@@ -139,7 +139,7 @@ void BattleCommand_UnleashEnergy(void){
     // INC_A;
     // INC_A;
     // LD_bc_A;
-    *bc = (v_BattleRandom_Conv() & 1) + 2;
+    *bc = (v_BattleRandom() & 1) + 2;
     // LD_A(1);
     // LD_addr_A(wBattleAnimParam);
     wram->wBattleAnimParam = 1;

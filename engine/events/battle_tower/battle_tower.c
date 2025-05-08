@@ -418,7 +418,7 @@ void RunBattleTowerTrainer(void){
     Clears5_a89a();
 
     // PREDEF(pStartBattle);
-    StartBattle_Conv();
+    StartBattle();
     Function170c06();
 
     // FARCALL(aLoadPokemonData);

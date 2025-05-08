@@ -7,11 +7,11 @@ void v_UpdateBattleHUDs(void){
     // FARCALL(aDrawPlayerHUD);
     // LD_HL(wPlayerHPPal);
     // CALL(aSetHPPal);
-    SetHPPal(&wram->wPlayerHPPal, DrawPlayerHUD_Conv());
+    SetHPPal(&wram->wPlayerHPPal, DrawPlayerHUD());
     // FARCALL(aDrawEnemyHUD);
     // LD_HL(wEnemyHPPal);
     // CALL(aSetHPPal);
-    SetHPPal(&wram->wEnemyHPPal, DrawEnemyHUD_Conv());
+    SetHPPal(&wram->wEnemyHPPal, DrawEnemyHUD());
     // FARCALL(aFinishBattleAnim);
     FinishBattleAnim();
     // RET;

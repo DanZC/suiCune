@@ -114,7 +114,7 @@ void BattleCommand_Conversion(void){
         // CALL(aBattleRandom);
         // maskbits(NUM_MOVES, 0);
         // LD_C_A;
-        c = v_BattleRandom_Conv() & 3;
+        c = v_BattleRandom() & 3;
         // LD_B(0);
         // LD_HL(wStringBuffer1);
         // ADD_HL_BC;

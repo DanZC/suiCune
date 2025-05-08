@@ -144,7 +144,7 @@ bool ProtectChance_Conv(void){
             do {
             // rand:
                 // CALL(aBattleRandom);
-                a = v_BattleRandom_Conv();
+                a = v_BattleRandom();
                 // AND_A_A;
                 // IF_Z goto rand;
             } while(a == 0);

@@ -12,7 +12,7 @@ void BattleCommand_GetMagnitude(void){
     // PUSH_BC;
     // CALL(aBattleRandom);
     // LD_B_A;
-    uint8_t b = v_BattleRandom_Conv();
+    uint8_t b = v_BattleRandom();
     // LD_HL(mMagnitudePower);
     const uint8_t (*hl)[3] = MagnitudePower;
 

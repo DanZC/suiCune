@@ -407,7 +407,7 @@ void BattleCommand_CheckTurn(void){
             // CALL(aBattleRandom);
             // CP_A(50 percent + 1);
             // IF_NC goto not_confused;
-            if(v_BattleRandom_Conv() < 50 percent + 1) {
+            if(v_BattleRandom() < 50 percent + 1) {
             // clear confusion-dependent substatus
                 // LD_HL(wPlayerSubStatus3);
                 // LD_A_hl;
@@ -447,7 +447,7 @@ void BattleCommand_CheckTurn(void){
         // CP_A(50 percent + 1);
         // IF_C goto not_infatuated;
 
-        if(v_BattleRandom_Conv() >= 50 percent + 1) {
+        if(v_BattleRandom() >= 50 percent + 1) {
             // LD_HL(mInfatuationText);
             // CALL(aStdBattleTextbox);
             StdBattleTextbox(InfatuationText);
@@ -490,7 +490,7 @@ void BattleCommand_CheckTurn(void){
         // CP_A(25 percent);
         // RET_NC ;
 
-        if(v_BattleRandom_Conv() < 25 percent) {
+        if(v_BattleRandom() < 25 percent) {
             // LD_HL(mFullyParalyzedText);
             // CALL(aStdBattleTextbox);
             StdBattleTextbox(FullyParalyzedText);
@@ -720,7 +720,7 @@ void CheckEnemyTurn(void){
             // CP_A(50 percent + 1);
             // IF_NC goto not_confused;
 
-            if(v_BattleRandom_Conv() < 50 percent + 1) {
+            if(v_BattleRandom() < 50 percent + 1) {
             // clear confusion-dependent substatus
                 // LD_HL(wEnemySubStatus3);
                 // LD_A_hl;
@@ -797,7 +797,7 @@ void CheckEnemyTurn(void){
         // CP_A(50 percent + 1);
         // IF_C goto not_infatuated;
 
-        if(v_BattleRandom_Conv() >= 50 percent + 1) {
+        if(v_BattleRandom() >= 50 percent + 1) {
             // LD_HL(mInfatuationText);
             // CALL(aStdBattleTextbox);
             StdBattleTextbox(InfatuationText);
@@ -844,7 +844,7 @@ void CheckEnemyTurn(void){
         // CP_A(25 percent);
         // RET_NC ;
 
-        if(v_BattleRandom_Conv() < 25 percent) {
+        if(v_BattleRandom() < 25 percent) {
             // LD_HL(mFullyParalyzedText);
             // CALL(aStdBattleTextbox);
             StdBattleTextbox(FullyParalyzedText);
@@ -1058,7 +1058,7 @@ void BattleCommand_CheckObedience(void){
     do {
     // rand1:
         // CALL(aBattleRandom);
-        a = v_BattleRandom_Conv();
+        a = v_BattleRandom();
         // SWAP_A;
         a = (a >> 4) | (a << 4);
         // CP_A_B;
@@ -1084,7 +1084,7 @@ void BattleCommand_CheckObedience(void){
     do {
     // rand2:
         // CALL(aBattleRandom);
-        a = v_BattleRandom_Conv();
+        a = v_BattleRandom();
         // CP_A_B;
         // IF_NC goto rand2;
     } while(a >= b);
@@ -1174,7 +1174,7 @@ void BattleCommand_CheckObedience(void){
         // RandomMove:
             // CALL(aBattleRandom);
             // maskbits(NUM_MOVES, 0);
-            a = v_BattleRandom_Conv() & 3;
+            a = v_BattleRandom() & 3;
 
             // CP_A_B;
             // IF_NC goto RandomMove;
@@ -1233,7 +1233,7 @@ void BattleCommand_CheckObedience(void){
 
     //  The chance of napping is the difference out of 256.
         // CALL(aBattleRandom);
-        a = v_BattleRandom_Conv();
+        a = v_BattleRandom();
         // SWAP_A;
         a = (a << 4) | (a >> 4);
         // SUB_A_B;
@@ -1250,7 +1250,7 @@ void BattleCommand_CheckObedience(void){
             // 4 random choices
                 // CALL(aBattleRandom);
                 // AND_A(0b11);
-                a = v_BattleRandom_Conv() & 0b11;
+                a = v_BattleRandom() & 0b11;
 
                 switch(a) {
                 // LD_HL(mLoafingAroundText);
@@ -1298,7 +1298,7 @@ void BattleCommand_CheckObedience(void){
             do {
             // Nap:
                 // CALL(aBattleRandom);
-                a = v_BattleRandom_Conv() << 1;
+                a = v_BattleRandom() << 1;
                 // ADD_A_A;
                 // SWAP_A;
                 a = (a >> 4) | (a << 4);
@@ -1757,7 +1757,7 @@ void BattleCommand_Critical(void){
     // CALL(aBattleRandom);
     // CP_A_hl;
     // RET_NC ;
-    if(v_BattleRandom_Conv() < chance) {
+    if(v_BattleRandom() < chance) {
         // LD_A(1);
         // LD_addr_A(wCriticalHit);
         wram->wCriticalHit = TRUE;
@@ -2199,7 +2199,7 @@ void BattleCommand_DamageVariation(void){
     do {
     // loop:
         // CALL(aBattleRandom);
-        a = v_BattleRandom_Conv();
+        a = v_BattleRandom();
         // RRCA;
         a = (a >> 1) | (a << 7);
         // CP_A(85 percent + 1);
@@ -2629,7 +2629,7 @@ void BattleCommand_CheckHit(void){
     // CALL(aBattleRandom);
     // CP_A_B;
     // IF_NC goto Miss;
-    if(v_BattleRandom_Conv() < b)
+    if(v_BattleRandom() < b)
         return;
 
 
@@ -2684,9 +2684,9 @@ void BattleCommand_EffectChance(void){
     // POP_HL;
     // RET_C ;
 #if BUGFIX_EFFECTCHANCE
-    if(v_BattleRandom_Conv() <= chance)
+    if(v_BattleRandom() <= chance)
 #else
-    if(v_BattleRandom_Conv() <  chance)
+    if(v_BattleRandom() <  chance)
 #endif
         return;
 
@@ -3160,7 +3160,7 @@ void BattleCommand_ApplyDamage(void){
             // CALL(aBattleCommand_FalseSwipe);
             // LD_B(0);
             // IF_NC goto damage;
-            if(v_BattleRandom_Conv() < LOW(item_effect) 
+            if(v_BattleRandom() < LOW(item_effect) 
             && CheckFalseSwipe()) {
                 // LD_B(2);
                 b = 2;
@@ -4619,7 +4619,7 @@ void BattleCommand_ConstantDamage(void){
             do {
             // psywave_loop:
                 // CALL(aBattleRandom);
-                a = v_BattleRandom_Conv();
+                a = v_BattleRandom();
                 // AND_A_A;
                 // IF_Z goto psywave_loop;
                 // CP_A_B;
@@ -5225,7 +5225,7 @@ static bool BattleCommand_SleepTarget_CheckAIRandomFail(void) {
     && wram->wLinkMode == 0
     && wram->wInBattleTowerBattle == 0
     && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)
-    && v_BattleRandom_Conv() < 25 percent + 1) {
+    && v_BattleRandom() < 25 percent + 1) {
         return true;
     }
 
@@ -5308,7 +5308,7 @@ void BattleCommand_SleepTarget(void){
     do {
     // random_loop:
         // CALL(aBattleRandom);
-        a = v_BattleRandom_Conv() & b;
+        a = v_BattleRandom() & b;
         // AND_A_B;
         // IF_Z goto random_loop;
         // CP_A(SLP);
@@ -5519,7 +5519,7 @@ void BattleCommand_Poison(void){
     && wram->wLinkMode == 0
     && wram->wInBattleTowerBattle == 0
     && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)
-    && v_BattleRandom_Conv() < 25 percent + 1) {
+    && v_BattleRandom() < 25 percent + 1) {
     // failed:
         // PUSH_HL;
         // CALL(aAnimateFailedMove);
@@ -5822,7 +5822,7 @@ void BattleCommand_BurnTarget(void){
     UpdateOpponentInParty();
     // LD_HL(mApplyBrnEffectOnAttack);
     // CALL(aCallBattleCore);
-    ApplyBrnEffectOnAttack_Conv(hram->hBattleTurn);
+    ApplyBrnEffectOnAttack(hram->hBattleTurn);
     // LD_DE(ANIM_BRN);
     // CALL(aPlayOpponentBattleAnim);
     PlayOpponentBattleAnim(ANIM_BRN);
@@ -6002,7 +6002,7 @@ void BattleCommand_ParalyzeTarget(void){
     UpdateOpponentInParty();
     // LD_HL(mApplyPrzEffectOnSpeed);
     // CALL(aCallBattleCore);
-    ApplyPrzEffectOnSpeed();
+    ApplyPrzEffectOnSpeed(hram->hBattleTurn);
     // LD_DE(ANIM_PAR);
     // CALL(aPlayOpponentBattleAnim);
     PlayOpponentBattleAnim(ANIM_PAR);
@@ -6568,7 +6568,7 @@ void BattleCommand_StatDown(void){
         && wram->wInBattleTowerBattle == 0
         && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)
         && GetBattleVar(BATTLE_VARS_MOVE_EFFECT) != EFFECT_ACCURACY_DOWN_HIT
-        && v_BattleRandom_Conv() < 25 percent + 1)
+        && v_BattleRandom() < 25 percent + 1)
     || CheckSubstituteOpp()
     || wram->wAttackMissed
     || wram->wEffectFailed) {
@@ -7080,7 +7080,7 @@ void BattleCommand_TriStatusChance(void){
     // loop:
     // 1/3 chance of each status
         // CALL(aBattleRandom);
-        a = v_BattleRandom_Conv();
+        a = v_BattleRandom();
         // SWAP_A;
         a = (a >> 4) | (a << 4);
         // AND_A(0b11);
@@ -7175,11 +7175,11 @@ void CalcPlayerStats(void){
 
     // LD_HL(mApplyPrzEffectOnSpeed);
     // CALL(aCallBattleCore);
-    ApplyPrzEffectOnSpeed_Conv(hram->hBattleTurn);
+    ApplyPrzEffectOnSpeed(hram->hBattleTurn);
 
     // LD_HL(mApplyBrnEffectOnAttack);
     // CALL(aCallBattleCore);
-    ApplyBrnEffectOnAttack_Conv(hram->hBattleTurn);
+    ApplyBrnEffectOnAttack(hram->hBattleTurn);
 
     // JP(mBattleCommand_SwitchTurn);
     BattleCommand_SwitchTurn();
@@ -7199,11 +7199,11 @@ void CalcEnemyStats(void){
 
     // LD_HL(mApplyPrzEffectOnSpeed);
     // CALL(aCallBattleCore);
-    ApplyPrzEffectOnSpeed_Conv(hram->hBattleTurn);
+    ApplyPrzEffectOnSpeed(hram->hBattleTurn);
 
     // LD_HL(mApplyBrnEffectOnAttack);
     // CALL(aCallBattleCore);
-    ApplyBrnEffectOnAttack_Conv(hram->hBattleTurn);
+    ApplyBrnEffectOnAttack(hram->hBattleTurn);
 
     // JP(mBattleCommand_SwitchTurn);
     BattleCommand_SwitchTurn();
@@ -7345,7 +7345,7 @@ void BattleCommand_CheckRampage(void){
             // INC_A;
             // INC_DE;  // ConfuseCount
             // LD_de_A;
-            *de2 = (v_BattleRandom_Conv() & 0b00000001) + 2;
+            *de2 = (v_BattleRandom() & 0b00000001) + 2;
         }
     }
 
@@ -7384,7 +7384,7 @@ void BattleCommand_Rampage(void){
     // AND_A(0b00000001);
     // INC_A;
     // LD_de_A;
-    *de = (v_BattleRandom_Conv() & 1) + 1;
+    *de = (v_BattleRandom() & 1) + 1;
     // LD_A(1);
     // LD_addr_A(wSomeoneIsRampaging);
     wram->wSomeoneIsRampaging = TRUE;
@@ -7464,7 +7464,7 @@ void BattleCommand_ForceSwitch(void){
                 do {
                 // wild_random_loop_playeristarget:
                     // CALL(aBattleRandom);
-                    a = v_BattleRandom_Conv();
+                    a = v_BattleRandom();
                     // CP_A_C;
                     // IF_NC goto wild_random_loop_playeristarget;
                 } while(a >= c);
@@ -7536,7 +7536,7 @@ void BattleCommand_ForceSwitch(void){
             // random_loop_trainer_playeristarget:
                 // CALL(aBattleRandom);
                 // AND_A(0x7);
-                a = v_BattleRandom_Conv() & 0x7;
+                a = v_BattleRandom() & 0x7;
                 // CP_A_B;
                 // IF_NC goto random_loop_trainer_playeristarget;
 
@@ -7621,7 +7621,7 @@ void BattleCommand_ForceSwitch(void){
             // random_loop_trainer:
                 // CALL(aBattleRandom);
                 // AND_A(0x7);
-                a = v_BattleRandom_Conv() & 0x7;
+                a = v_BattleRandom() & 0x7;
                 // CP_A_B;
                 // IF_NC goto random_loop_trainer;
                 // CP_A_C;
@@ -7668,7 +7668,7 @@ void BattleCommand_ForceSwitch(void){
                 do {
                 // random_loop_wild:
                     // CALL(aBattleRandom);
-                    a = v_BattleRandom_Conv();
+                    a = v_BattleRandom();
                     // CP_A_C;
                     // IF_NC goto random_loop_wild;
                 } while(a >= c);
@@ -7882,7 +7882,7 @@ void BattleCommand_EndLoop(void){
             // reject_triple_kick_sample:
                 // CALL(aBattleRandom);
                 // AND_A(0x3);
-                a = v_BattleRandom_Conv() & 0x3;
+                a = v_BattleRandom() & 0x3;
                 // IF_Z goto reject_triple_kick_sample;
             } while(a == 0);
             // DEC_A;
@@ -7897,13 +7897,13 @@ void BattleCommand_EndLoop(void){
         // not_triple_kick:
             // CALL(aBattleRandom);
             // AND_A(0x3);
-            a = v_BattleRandom_Conv() & 0x3;
+            a = v_BattleRandom() & 0x3;
             // CP_A(2);
             // IF_C goto got_number_hits;
             if(a >= 2) {
                 // CALL(aBattleRandom);
                 // AND_A(0x3);
-                a = v_BattleRandom_Conv() & 0x3;
+                a = v_BattleRandom() & 0x3;
             }
 
         // got_number_hits:
@@ -8100,7 +8100,7 @@ void BattleCommand_HeldFlinch(void){
     // CALL(aBattleRandom);
     // CP_A_C;
     // RET_NC ;
-    if(v_BattleRandom_Conv() >= LOW(effect))
+    if(v_BattleRandom() >= LOW(effect))
         return;
     // CALL(aEndRechargeOpp);
     EndRechargeOpp();
@@ -8458,7 +8458,7 @@ void BattleCommand_TrapTarget(void){
     // INC_A;
     // INC_A;
     // LD_hl_A;
-    *hl = (v_BattleRandom_Conv() & 0b11) + 3;
+    *hl = (v_BattleRandom() & 0b11) + 3;
     // LD_A(BATTLE_VARS_MOVE_ANIM);
     // CALL(aGetBattleVar);
     uint8_t b = GetBattleVar(BATTLE_VARS_MOVE_ANIM);
@@ -8685,7 +8685,7 @@ void BattleCommand_FinishConfusingTarget(uint8_t* hl){
     // INC_A;
     // INC_A;
     // LD_bc_A;
-    *bc = (v_BattleRandom_Conv() & 0b11) + 2;
+    *bc = (v_BattleRandom() & 0b11) + 2;
 
     // LD_A(BATTLE_VARS_MOVE_EFFECT);
     // CALL(aGetBattleVar);
@@ -8809,7 +8809,7 @@ void BattleCommand_Paralyze(void){
         // CALL(aBattleRandom);
         // CP_A(25 percent + 1);  // 25% chance AI fails
         // IF_C goto failed;
-        if(v_BattleRandom_Conv() < 25 percent + 1)
+        if(v_BattleRandom() < 25 percent + 1)
             goto failed;
     }
 
@@ -8843,7 +8843,7 @@ void BattleCommand_Paralyze(void){
         UpdateOpponentInParty();
         // LD_HL(mApplyPrzEffectOnSpeed);
         // CALL(aCallBattleCore);
-        ApplyPrzEffectOnSpeed();
+        ApplyPrzEffectOnSpeed(hram->hBattleTurn);
         // CALL(aUpdateBattleHuds);
         UpdateBattleHuds();
         // CALL(aPrintParalyze);
@@ -9131,14 +9131,14 @@ void BattleCommand_Heal(void){
     // restore_full_hp:
         // LD_HL(mGetMaxHP);
         // CALL(aCallBattleCore);
-        bc = GetMaxHP_Conv();
+        bc = GetMaxHP();
     }
     else {
     // not_rest:
         // IF_Z goto restore_full_hp;
         // LD_HL(mGetHalfMaxHP);
         // CALL(aCallBattleCore);
-        bc = GetHalfMaxHP_Conv();
+        bc = GetHalfMaxHP();
         // goto finish;
     }
 
@@ -9149,7 +9149,7 @@ void BattleCommand_Heal(void){
     BattleCommand_SwitchTurn();
     // LD_HL(mRestoreHP);
     // CALL(aCallBattleCore);
-    RestoreHP_Conv(bc);
+    RestoreHP(bc);
     // CALL(aBattleCommand_SwitchTurn);
     BattleCommand_SwitchTurn();
     // CALL(aUpdateUserInParty);
@@ -9625,10 +9625,10 @@ void BattleCommand_TimeBasedHealContinue(uint8_t b){
 //  Time- and weather-sensitive heal.
 
     static uint16_t (*const Multipliers[])(void) = {
-        &GetEighthMaxHP_Conv,
-        &GetQuarterMaxHP_Conv,
-        &GetHalfMaxHP_Conv,
-        &GetMaxHP_Conv
+        &GetEighthMaxHP,
+        &GetQuarterMaxHP,
+        &GetHalfMaxHP,
+        &GetMaxHP
     };
 
     // LD_HL(wBattleMonMaxHP);
@@ -9715,7 +9715,7 @@ void BattleCommand_TimeBasedHealContinue(uint8_t b){
     BattleCommand_SwitchTurn();
 
     // CALLFAR(aRestoreHP);
-    RestoreHP_Conv(bc);
+    RestoreHP(bc);
 
     // CALL(aBattleCommand_SwitchTurn);
     BattleCommand_SwitchTurn();

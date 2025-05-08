@@ -2878,7 +2878,7 @@ void Script_startbattle_Conv(script_s* s){
     // CALL(aBufferScreen);
     BufferScreen();
     // PREDEF(pStartBattle);
-    StartBattle_Conv();
+    StartBattle();
     // LD_A_addr(wBattleResult);
     // AND_A(~BATTLERESULT_BITMASK);
     // LD_addr_A(wScriptVar);

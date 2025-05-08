@@ -46,7 +46,7 @@ void AIChooseMove(void){
 //  No use picking a move if there's no choice.
     // FARCALL(aCheckEnemyLockedIn);
     // RET_NZ ;
-    if(CheckEnemyLockedIn_Conv())
+    if(CheckEnemyLockedIn())
         return;
 
 //  The default score is 20. Unusable moves are given a score of 80.

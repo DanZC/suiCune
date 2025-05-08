@@ -97,7 +97,7 @@ void CatchTutorial(void){
             // CALL(aStartAutoInput);
             StartAutoInput(AutoInput);
             // CALLFAR(aStartBattle);
-            StartBattle_Conv();
+            StartBattle();
             // CALL(aStopAutoInput);
             StopAutoInput();
             // POP_AF;

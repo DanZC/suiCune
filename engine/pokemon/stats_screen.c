@@ -1279,7 +1279,7 @@ void LoadPinkPage(void){
     // LD_B_A;
     // LD_DE(wTempMonExp + 2);
     // PREDEF(pFillInExpBar);
-    FillInExpBar_Conv(coord(11, 16, wram->wTilemap), wram->wTempMon.mon.level, wram->wTempMon.mon.exp + 2);
+    FillInExpBar(coord(11, 16, wram->wTilemap), wram->wTempMon.mon.level, wram->wTempMon.mon.exp + 2);
     // hlcoord(10, 16, wTilemap);
     // LD_hl(0x40);  // left exp bar end cap
     *coord(10, 16, wram->wTilemap) = 0x40;
