@@ -843,7 +843,7 @@ void Function89455(void){
     // LD_A(BANK(aCardLargeSpriteAndFolderGFX));
     // CALL(aFarCopyBytes);
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x0c, CardLargeSpriteGFX, 0, 8);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x14, CardFolderGFX, 0, 65);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x14, CardFolderGFX, 0, 69);
     // RET;
 }
 
@@ -2004,7 +2004,7 @@ void Function89915(tile_t* hl){
         *hl2 = *de;
         // LD_A(0x4);
         // CALL(aFunction89215);
-        Function89215(hl, 0x4);
+        Function89215(hl2, 0x4);
         // INC_HL;
         hl2++;
         // INC_DE;
@@ -2013,6 +2013,7 @@ void Function89915(tile_t* hl){
         // IF_NZ goto asm_8991c;
     } while(--c != 0);
     // POP_HL;
+#if defined(_CRYSTAL_JP) // places the japanese accent things, no longer needed
     // LD_B(0x4);
     // LD_C(0x2b);
     // LD_A(0x8);
@@ -2040,12 +2041,17 @@ void Function89915(tile_t* hl){
         // DEC_A;
         // IF_NZ goto asm_89932;
     } while(--a != 0);
+#endif
     // POP_BC;
     // RET;
 }
 
 const uint8_t Unknown_89942[] = {
+#if !defined(_CRYSTAL_JP)
+    0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b
+#else
     0x24, 0x25, 0x26, ' ', 0x27, 0x28, 0x29, 0x2a
+#endif
 };
 
 const uint8_t Unknown_8994a[] = {
@@ -4692,10 +4698,11 @@ void Function8a53d(tile_t* hl){
     // LD_DE(0x14);
     // CALL(aFunction8a573);
     hl2 = Function8a573(hl2, 0x15, 0x8);
+    hl2 = Function8a573(hl2, 0x55, 0x2);
     // LD_A(0x1d);
     // LD_C(0x9);
     // CALL(aFunction8a57c);
-    hl2 = Function8a57c(hl2, 0x1d, 0x9);
+    hl2 = Function8a57c(hl2, 0x1d, 0x7);
     // INC_A;
     // LD_hl_A;
     *hl2 = 0x1e;
@@ -4716,11 +4723,12 @@ void Function8a53d(tile_t* hl){
     // LD_A(0x26);
     // LD_C(0x1);
     // CALL(aFunction8a57c);
-    hl2 = Function8a57c(hl2, 0x26, 0x1);
+    // hl2 = Function8a57c(hl2, 0x26, 0x1);
+    hl2 = Function8a573(hl2, 0x57, 0x2);
     // LD_A(0x52);
     // LD_C(0x3);
     // CALL(aFunction8a573);
-    hl2 = Function8a573(hl2, 0x52, 0x3);
+    hl2 = Function8a573(hl2, 0x53, 0x2);
     // LD_A(0x27);
     // LD_C(0x6);
     Function8a573(hl2, 0x27, 0x6);

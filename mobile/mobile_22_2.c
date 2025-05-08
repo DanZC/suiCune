@@ -873,19 +873,19 @@ void Function8b690(void){
     // LD_BC(0x16 * LEN_2BPP_TILE);
     // LD_A(BANK(aMobileCardListGFX));
     // CALL(aFarCopyBytes);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, MobileCardListGFX, 0, 0x16);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, MobileCardListGFX, 0, 0x22);
     // LD_HL(mMobileCardListGFX + LEN_2BPP_TILE * 0x15);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x61);
     // LD_BC(1 * LEN_2BPP_TILE);
     // LD_A(BANK(aMobileCardListGFX));
     // CALL(aFarCopyBytes);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x61, MobileCardListGFX, 0x15, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x61, MobileCardListGFX, 0x1b, 1);
     // LD_HL(mMobileCardListGFX + LEN_2BPP_TILE * 0x16);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0xee);
     // LD_BC(1 * LEN_2BPP_TILE);
     // LD_A(BANK(aMobileCardListGFX));
     // CALL(aFarCopyBytes);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0xee, MobileCardListGFX, 0x16, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0xee, MobileCardListGFX, 0x1c, 1);
     // RET;
 }
 
@@ -942,13 +942,13 @@ void Function8b703(tile_t* hl, uint8_t b, uint8_t c){
     tile_t* hl2 = hl;
     // LD_A(0xc);
     // LD_hli_A;
-    *(hl2++) = 0xc;
+    *(hl2++) = 0x12;
     // INC_A;
     // CALL(aFunction8b73e);
-    hl2 = Function8b73e(hl2, 0xd, c);
+    hl2 = Function8b73e(hl2, 0x13, c);
     // INC_A;
     // LD_hl_A;
-    *hl2 = 0xe;
+    *hl2 = 0x14;
     // POP_HL;
     // PUSH_HL;
     // PUSH_BC;
@@ -963,13 +963,13 @@ void Function8b703(tile_t* hl, uint8_t b, uint8_t c){
         tile_t* hl3 = hl2;
         // LD_A(0xf);
         // LD_hli_A;
-        *(hl3++) = 0xf;
+        *(hl3++) = 0x15;
         // LD_A(0x7f);
         // CALL(aFunction8b73e);
         hl3 = Function8b73e(hl3, 0x7f, c);
         // LD_A(0x11);
         // LD_hl_A;
-        *hl3 = 0x11;
+        *hl3 = 0x17;
         // POP_HL;
         // LD_DE(SCREEN_WIDTH);
         // ADD_HL_DE;
@@ -988,13 +988,13 @@ void Function8b703(tile_t* hl, uint8_t b, uint8_t c){
 void Function8b732(tile_t* hl, uint8_t c){
     // LD_A(0x12);
     // LD_hli_A;
-    *(hl++) = 0x12;
+    *(hl++) = 0x18;
     // LD_A(0x13);
     // CALL(aFunction8b73e);
-    hl = Function8b73e(hl, 0x13, c);
+    hl = Function8b73e(hl, 0x19, c);
     // LD_A(0x14);
     // LD_hl_A;
-    *hl = 0x14;
+    *hl = 0x1a;
     // RET;
 }
 
@@ -1070,7 +1070,7 @@ void Function8b75d(void){
     // LD_A(0x4);
     uint8_t a = 0x4;
     // LD_E(0x8);
-    uint8_t e = 0x8;
+    uint8_t e = 0xc;
 
     do {
     // asm_8b780:
@@ -1129,9 +1129,9 @@ void Function8b79e(void){
     // LD_hli_A;
     *coord(0, 1, wram->wAttrmap) = 0x1;
     // hlcoord(9, 1, wAttrmap);
-    uint8_t* hl = coord(9, 1, wram->wAttrmap);
+    uint8_t* hl = coord(13, 1, wram->wAttrmap);
     // LD_E(0xb);
-    uint8_t e = 0xb;
+    uint8_t e = 0x8;
 
     do {
     // asm_8b7a9:
@@ -1437,11 +1437,11 @@ void Function8b8c8(void){
     // hlcoord(0, 13, wTilemap);
     // LD_A(0xf);
     // LD_hl_A;
-    *coord(0, 13, wram->wTilemap) = 0xf;
+    *coord(0, 13, wram->wTilemap) = 0x15;
     // hlcoord(19, 13, wTilemap);
     // LD_A(0x11);
     // LD_hl_A;
-    *coord(19, 13, wram->wTilemap) = 0x11;
+    *coord(19, 13, wram->wTilemap) = 0x17;
     // LD_A_addr(wMenuScrollPosition);
     // CP_A(0x24);
     // RET_C ;
