@@ -1411,7 +1411,7 @@ const struct MenuData MenuData_1005ba = {
     },
 };
 
-// Call/Cancel Menu Jumptable
+// Call/Wait Menu Jumptable
 void Function1005c3(void){
     // LD_A_addr(wcd26);
     // LD_HL(mJumptable_1005cb);
@@ -1433,7 +1433,7 @@ void Jumptable_1005cb(void){
 void Function1005cf(void){
     // LD_HL(mMenuHeader_1005fc);
     // CALL(aLoadMenuHeader);
-    LoadMenuHeader(&MenuHeader_1005fc);
+    LoadMenuHeader(&MenuHeader_1005fc); // CALL/WAIT Menu
     // LD_A(0);
     // LD_addr_A(wcd28);
     wram->wcd28 = 0;
@@ -1486,7 +1486,7 @@ const struct MenuData MenuData_100604 = {
         .count = 2,
         .options = (const char*[]) {
             "CALL",     // "かける@"
-            "CANCEL",   // "まつ@"
+            "WAIT",   // "まつ@"
         },
     },
 };
@@ -10450,7 +10450,7 @@ void Function10343c(void){
         // LD_C(0x12);
         // LD_B(0x02);
         // CALL(aFunction1034e0);
-        Function1034e0(Function1034f7(-19), 0x02, 0x12);
+        Function1034e0(Function1034f7(-19), 0x02, 0x01);
     }
 
 // asm_10345f:
@@ -10475,7 +10475,7 @@ void Function10343c(void){
     const char* opt = Function10350f(bc);
     // LD_BC(11);
     // CALL(aFunction103487);
-    Function103487(opt, 11);
+    Function103487(opt, 14);
     // RET;
 }
 
@@ -10510,11 +10510,11 @@ void Function1034a7(void){
     // LD_BC(10);
     // CALL(aFunction1034f7);
     // LD_hl(0x7f);
-    wram->wTilemap[Function1034f7(10)] = 0x7f;
+    wram->wTilemap[Function1034f7(1)] = 0x7f;
     // LD_BC(10);
     // CALL(aFunction1034f1);
     // LD_hl(0xed);
-    wram->wTilemap[Function1034f1(10)] = 0xed;
+    wram->wTilemap[Function1034f1(1)] = 0xed;
     // RET;
 }
 
