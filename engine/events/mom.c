@@ -161,11 +161,11 @@ void BankOfMom(void){
                 // CALL(aCopyMenuHeader);
                 CopyMenuHeader(&BankOfMom_MenuHeader);
                 // CALL(aVerticalMenu);
-                bool nocancel = VerticalMenu();
+                bool cancel = VerticalMenu();
                 // CALL(aCloseWindow);
                 CloseWindow();
                 // IF_C goto cancel;
-                if(!nocancel)
+                if(!cancel)
                     goto cancel;
                 // LD_A_addr(wMenuCursorY);
                 // CP_A(0x1);

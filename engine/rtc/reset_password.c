@@ -65,7 +65,7 @@ void v_ResetClock(void){
     // LD_A_addr(wMenuCursorY);
     // CP_A(1);
     // RET_Z ;
-    if(!VerticalMenu() || wram->wMenuCursorY == 1)
+    if(VerticalMenu() || wram->wMenuCursorY == 1)
         return;
 // TODO: Actually convert clock reset password system.
 // For now, the system is automatically bypassed.

@@ -382,7 +382,7 @@ u8_pair_s GiveTakePartyMonItem(void){
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(&GiveTakeItemMenuData);
     // CALL(aVerticalMenu);
-    bool quit = !VerticalMenu();
+    bool quit = VerticalMenu();
     // CALL(aExitMenu);
     ExitMenu();
     // IF_C goto cancel;
@@ -783,7 +783,7 @@ u8_pair_s MonMailAction(void){
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(&MonMailAction_MenuHeader);
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     // CALL(aExitMenu);
     ExitMenu();
 

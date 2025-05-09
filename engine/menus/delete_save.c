@@ -52,12 +52,12 @@ void v_DeleteSaveData(void){
     CopyMenuHeader(&NoYesMenuHeader);
     // CALL(aVerticalMenu);
     // RET_C ;
-    if(VerticalMenu() && wram->wMenuCursorY != 1) {
-        // LD_A_addr(wMenuCursorY);
-        // CP_A(1);
-        // RET_Z ;
-        // FARCALL(aEmptyAllSRAMBanks);
-        EmptyAllSRAMBanks();
-        // RET;
-    }
+    // LD_A_addr(wMenuCursorY);
+    // CP_A(1);
+    // RET_Z ;
+    if(VerticalMenu() || wram->wMenuCursorY == 1)
+        return;
+    // FARCALL(aEmptyAllSRAMBanks);
+    EmptyAllSRAMBanks();
+    // RET;
 }

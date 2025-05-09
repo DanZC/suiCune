@@ -10732,7 +10732,7 @@ void AskMobileOrCable(void){
 
 // skip_load:
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     // CALL(aCloseWindow);
     CloseWindow();
     // IF_C goto pressed_b;
@@ -10863,7 +10863,7 @@ void Mobile_SelectThreeMons(void){
             // CALL(aLoadMenuHeader);
             LoadMenuHeader(&MenuHeader_103747);
             // CALL(aVerticalMenu);
-            bool quit = !VerticalMenu();
+            bool quit = VerticalMenu();
             // CALL(aExitMenu);
             ExitMenu();
             // IF_C goto asm_1036f4;

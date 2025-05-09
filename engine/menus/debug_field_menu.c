@@ -137,7 +137,7 @@ const struct MenuHeader DebugMobileConnection_Menu = {
 
 static void DebugMobileConnection(void) {
     LoadMenuHeader(&DebugMobileConnection_Menu);
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     if(!cancel && wram->wMenuCursorY != DEBUGMOBILE_COUNT) {
         switch(wram->wMenuCursorY - 1) {
             case DEBUGMOBILE_DOWNLOAD_NEWS: Function17d2b6(); break;
@@ -222,49 +222,50 @@ const struct MenuHeader MenuHeader = {
     LoadFonts_NoOAMUpdate();
     UpdateTimePals();
 
-loop:
-    bool no_cancel = VerticalMenu();
+    loop: {
+        bool cancel = VerticalMenu();
 
-    if(no_cancel) {
-        switch(wram->wMenuCursorY - 1) {
-        case DEBUGFIELDITEM_TELEPORT: {
-            FadeToMenu();
-            hram->hMapAnims = 0;
-            ClearSprites();
-            LoadStandardMenuHeader();
-            uint8_t spawn = EntireFlyMap();
-            if(spawn == 0xff || spawn >= NUM_SPAWNS) {
+        if(!cancel) {
+            switch(wram->wMenuCursorY - 1) {
+            case DEBUGFIELDITEM_TELEPORT: {
+                FadeToMenu();
+                hram->hMapAnims = 0;
+                ClearSprites();
+                LoadStandardMenuHeader();
+                uint8_t spawn = EntireFlyMap();
+                if(spawn == 0xff || spawn >= NUM_SPAWNS) {
+                    CloseWindow();
+                    // WaitBGMap();
+                    ExitAllMenus();
+                    break;
+                }
+                gQueuedScriptAddr = DebugTeleportScript;
+                wram->wDefaultSpawnpoint = spawn;
                 CloseWindow();
-                // WaitBGMap();
+                hram->hMenuReturn = HMENURETURN_SCRIPT;
                 ExitAllMenus();
+            } break;
+            case DEBUGFIELDITEM_FLAG:
+                DebugFlagMenu();
+                goto loop;
+            case DEBUGFIELDITEM_PHONE:
+                DebugPhoneCall();
+                break;
+            case DEBUGFIELDITEM_TUTORIAL:
+                DebugShowCatchTutorial();
+                break;
+            case DEBUGFIELDITEM_UNOWN:
+                DebugUnownPrinter();
+                goto loop;
+            case DEBUGFIELDITEM_WILD_BATTLE:
+                DebugWildBattle(CHARIZARD, 45);
+                break;
+            case DEBUGFIELDITEM_MOBILE:
+                DebugMobileConnection();
+                goto loop;
+            case DEBUGFIELDITEM_EXIT:
                 break;
             }
-            gQueuedScriptAddr = DebugTeleportScript;
-            wram->wDefaultSpawnpoint = spawn;
-            CloseWindow();
-            hram->hMenuReturn = HMENURETURN_SCRIPT;
-            ExitAllMenus();
-        } break;
-        case DEBUGFIELDITEM_FLAG:
-            DebugFlagMenu();
-            goto loop;
-        case DEBUGFIELDITEM_PHONE:
-            DebugPhoneCall();
-            break;
-        case DEBUGFIELDITEM_TUTORIAL:
-            DebugShowCatchTutorial();
-            break;
-        case DEBUGFIELDITEM_UNOWN:
-            DebugUnownPrinter();
-            goto loop;
-        case DEBUGFIELDITEM_WILD_BATTLE:
-            DebugWildBattle(CHARIZARD, 45);
-            break;
-        case DEBUGFIELDITEM_MOBILE:
-            DebugMobileConnection();
-            goto loop;
-        case DEBUGFIELDITEM_EXIT:
-            break;
         }
     }
     uint8_t oamUpdate = hram->hOAMUpdate;

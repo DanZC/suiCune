@@ -27,7 +27,7 @@ static bool AskRememberPassword_DoMenu(void){
     // CALL(aPushWindow);
     PushWindow();
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     // PUSH_AF;
     // LD_C(15);
     // CALL(aDelayFrames);

@@ -786,7 +786,7 @@ bool CheckPreviousBattleTowerStreakData(void){
 void Function17d246(void){
     // CALL(aVerticalMenu);
     // IF_C goto Exit;
-    if(!VerticalMenu()){
+    if(VerticalMenu()){
     // Exit:
         // LD_A(0x4);
         // LD_addr_A(wScriptVar);

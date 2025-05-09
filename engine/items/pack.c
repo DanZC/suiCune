@@ -325,7 +325,7 @@ void Pack_RunJumptable(void) {
             // CALL(aLoadMenuHeader);
             LoadMenuHeader(hl);
             // CALL(aVerticalMenu);
-            bool quit = !VerticalMenu();
+            bool quit = VerticalMenu();
             // CALL(aExitMenu);
             ExitMenu();
             // POP_HL;
@@ -482,7 +482,7 @@ static void Pack_ItemBallsKey_LoadSubmenu(void){
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(hl);
     // CALL(aVerticalMenu);
-    bool quit = !VerticalMenu();
+    bool quit = VerticalMenu();
     // CALL(aExitMenu);
     ExitMenu();
     // POP_HL;
@@ -1236,7 +1236,7 @@ void TMHMSubmenu(uint8_t a){
         // CALL(aLoadMenuHeader);
         LoadMenuHeader(&UsableMenuHeader);
         // CALL(aVerticalMenu);
-        bool quit = !VerticalMenu();
+        bool quit = VerticalMenu();
         // CALL(aExitMenu);
         ExitMenu();
         // POP_HL;
@@ -1347,7 +1347,7 @@ void TMHMSubmenu(uint8_t a){
         // CALL(aLoadMenuHeader);
         LoadMenuHeader(&UnusableMenuHeader);
         // CALL(aVerticalMenu);
-        bool quit = !VerticalMenu();
+        bool quit = VerticalMenu();
         // CALL(aExitMenu);
         ExitMenu();
         // POP_HL;

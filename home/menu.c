@@ -559,7 +559,7 @@ void Call_ExitMenu(void) {
     RET;
 }
 
-// Displays a vertical menu. Returns false if the player cancels out of the menu.
+// Displays a vertical menu. Returns true if the player cancels out of the menu.
 bool VerticalMenu(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -578,7 +578,7 @@ bool VerticalMenu(void) {
     // BIT_A(7);
     // IF_Z goto cancel;
     if(!bit_test(data->flags, 7))
-        return false;
+        return true;
     // CALL(aInitVerticalMenuCursor);
     InitVerticalMenuCursor(data);
     // CALL(aStaticMenuJoypad);
@@ -587,7 +587,7 @@ bool VerticalMenu(void) {
     MenuClickSound(a);
     // BIT_A(1);
     // IF_Z goto okay;
-    return !bit_test(a, 1);
+    return bit_test(a, 1);
 
 // cancel:
     // SCF;
@@ -610,7 +610,7 @@ u8_flag_s GetMenu2_Conv(const struct MenuHeader* hl) {
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(hl);
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     // CALL(aCloseWindow);
     CloseWindow();
     // LD_A_addr(wMenuCursorY);
@@ -702,7 +702,7 @@ bool v_YesNoBox(uint8_t b, uint8_t c) {
 
 bool InterpretTwoOptionMenu(void) {
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     // PUSH_AF;
     // LD_C(0xf);
     // CALL(aDelayFrames);

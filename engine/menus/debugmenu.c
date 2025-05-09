@@ -1148,7 +1148,7 @@ loop:
     PrintText(Text_NewsMenuTop);
     LoadMenuHeader(&Menu_NewsMenu);
 
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     ExitMenu();
     if(!cancel) {
         switch(wram->wMenuCursorY) {

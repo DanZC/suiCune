@@ -239,7 +239,7 @@ static void v_DepositPKMN_RunJumptable(void) {
         // CALL(aStoreMenuCursorPosition);
         StoreMenuCursorPosition(wram->wMenuCursorY);
         // CALL(aVerticalMenu);
-        bool cancel = !VerticalMenu();
+        bool cancel = VerticalMenu();
         // JP_C (mBillsPCDepositFuncCancel);
         if(cancel) {
             return BillsPCDepositFuncCancel();
@@ -666,9 +666,9 @@ void BillsPC_Withdraw(void){
     // CALL(aStoreMenuCursorPosition);
     StoreMenuCursorPosition(wram->wMenuCursorY);
     // CALL(aVerticalMenu);
-    bool ok = VerticalMenu();
+    bool cancel = VerticalMenu();
     // JP_C (mBillsPC_Withdraw_cancel);
-    if(!ok)
+    if(cancel)
         goto cancel;
     // LD_A_addr(wMenuCursorY);
     // DEC_A;
@@ -1052,9 +1052,9 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // CALL(aStoreMenuCursorPosition);
         StoreMenuCursorPosition(wram->wMenuCursorY);
         // CALL(aVerticalMenu);
-        bool ok = VerticalMenu();
+        bool cancel = VerticalMenu();
         // JP_C (mv_MovePKMNWithoutMail_Cancel);
-        if(!ok)
+        if(cancel)
             goto Cancel;
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
@@ -4283,7 +4283,7 @@ void BillsPC_ChangeBoxSubmenu(void){
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(&BillsPC_ChangeBoxSubmenu_MenuHeader);
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     // CALL(aExitMenu);
     ExitMenu();
     // RET_C ;

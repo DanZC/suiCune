@@ -69,9 +69,9 @@ void LANConnection(void) {
     LoadStandardMenuHeader();
     PrintText(Text_AskHostOrJoin);
     LoadMenuHeader(&Menu_HostOrJoin);
-    bool noCancel = VerticalMenu();
+    bool cancel = VerticalMenu();
     CloseWindow();
-    if(noCancel) {
+    if(!cancel) {
         switch(wram->wMenuCursorY) {
             case 1: return LANConnection_Host();
             case 2: return LANConnection_Join();

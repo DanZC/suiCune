@@ -1019,7 +1019,7 @@ void Script_verticalmenu_Conv(script_s* s){
     // LD_A_addr(wScriptBank);
     // LD_HL(mVerticalMenu);
     // RST(aFarCall);
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     // LD_A_addr(wMenuCursorY);
     // IF_NC goto ok;
     // XOR_A_A;

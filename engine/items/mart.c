@@ -261,8 +261,9 @@ static uint8_t StandardMart_TopMenu(void){
     // CALL(aCopyMenuHeader);
     CopyMenuHeader(&MenuHeader_BuySell);
     // CALL(aVerticalMenu);
+    bool quit = VerticalMenu();
     // IF_C goto quit;
-    if(!VerticalMenu())
+    if(quit)
         return STANDARDMART_QUIT;
     // LD_A_addr(wMenuCursorY);
     // CP_A(0x1);

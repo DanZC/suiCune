@@ -694,7 +694,7 @@ bool Function4a28a(void){
             // CALL(aLoadMenuHeader);
             LoadMenuHeader(&DeletePassword_YesNo_MenuHeader);
             // CALL(aVerticalMenu);
-            bool cancel = !VerticalMenu();
+            bool cancel = VerticalMenu();
             // BIT_A(B_BUTTON_F);
             // IF_NZ goto dont_delete_password;
             // LD_A_addr(wMenuCursorY);

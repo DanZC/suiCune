@@ -2589,7 +2589,7 @@ bool Slots_AskBet(void){
         // CALL(aLoadMenuHeader);
         LoadMenuHeader(&Slots_AskBet_MenuHeader);
         // CALL(aVerticalMenu);
-        bool cancel = !VerticalMenu();
+        bool cancel = VerticalMenu();
         // CALL(aCloseWindow);
         CloseWindow();
         // RET_C ;

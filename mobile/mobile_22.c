@@ -390,7 +390,7 @@ bool Function89261(uint8_t a, uint8_t b, uint8_t c){
     // CALL(aMobile_EnableSpriteUpdates);
     Mobile_EnableSpriteUpdates();
     // CALL(aVerticalMenu);
-    bool cancel = !VerticalMenu();
+    bool cancel = VerticalMenu();
     // PUSH_AF;
     // LD_C(0xa);
     // CALL(aDelayFrames);
