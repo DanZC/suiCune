@@ -88,7 +88,7 @@ static void RestartClock_PrintTime(void) {
     // LD_A_addr(wRestartClockDay);
     // LD_B_A;
     // FARCALL(aPrintDayOfWeek);
-    PrintDayOfWeek_Conv(coord(1, 8, wram->wTilemap), wram->wRestartClockDay);
+    PrintDayOfWeek(coord(1, 8, wram->wTilemap), wram->wRestartClockDay);
     // LD_A_addr(wRestartClockHour);
     // LD_B_A;
     // LD_A_addr(wRestartClockMin);

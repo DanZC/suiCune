@@ -26,9 +26,12 @@ struct OptionRes {
     uint8_t e;
 };
 
+static bool Options_TextSpeed(void);
 static bool GetOptionPointer(void);
-static struct OptionRes GetTextSpeed_Conv(void);
-static struct OptionRes GetPrinterSetting_Conv(void);
+static struct OptionRes GetTextSpeed(void);
+static struct OptionRes GetPrinterSetting(void);
+static bool Options_Cancel(void);
+static bool OptionsControl(void);
 
 void v_Option(void){
 #if BUGFIX_OPTIONS_MENU_JOYPAD
@@ -102,7 +105,7 @@ void v_Option(void){
             break;
         // CALL(aOptionsControl);
         // IF_C goto dpad;
-        if(OptionsControl_Conv() || !GetOptionPointer()) {
+        if(OptionsControl() || !GetOptionPointer()) {
         // dpad:
             // CALL(aOptions_UpdateCursorPosition);
             Options_UpdateCursorPosition();
@@ -160,7 +163,7 @@ static bool GetOptionPointer(void){
     // Pointers:
     //  entries correspond to OPT_* constants
         //dw ['Options_TextSpeed'];
-        case OPT_TEXT_SPEED: return Options_TextSpeed_Conv();
+        case OPT_TEXT_SPEED: return Options_TextSpeed();
         //dw ['Options_BattleScene'];
         case OPT_BATTLE_SCENE: return Options_BattleScene();
         //dw ['Options_BattleStyle'];
@@ -175,7 +178,7 @@ static bool GetOptionPointer(void){
         case OPT_FRAME: return Options_Frame();
         //dw ['Options_Cancel'];
         default:
-        case OPT_CANCEL: return Options_Cancel_Conv();
+        case OPT_CANCEL: return Options_Cancel();
     }
 }
 
@@ -186,79 +189,7 @@ enum {
     OPT_TEXT_SPEED_INSTANT,  // 3
 };
 
-void Options_TextSpeed(void){
-    CALL(aGetTextSpeed);
-    LDH_A_addr(hJoyPressed);
-    BIT_A(D_LEFT_F);
-    IF_NZ goto LeftPressed;
-    BIT_A(D_RIGHT_F);
-    IF_Z goto NonePressed;
-    LD_A_C;  // right pressed
-    CP_A(OPT_TEXT_SPEED_SLOW);
-    IF_C goto Increase;
-    LD_C(OPT_TEXT_SPEED_FAST - 1);
-
-
-Increase:
-    INC_C;
-    LD_A_E;
-    goto Save;
-
-
-LeftPressed:
-    LD_A_C;
-    AND_A_A;
-    IF_NZ goto Decrease;
-    LD_C(OPT_TEXT_SPEED_SLOW + 1);
-
-
-Decrease:
-    DEC_C;
-    LD_A_D;
-
-
-Save:
-    LD_B_A;
-    LD_A_addr(wOptions);
-    AND_A(0xf0);
-    OR_A_B;
-    LD_addr_A(wOptions);
-
-
-NonePressed:
-    LD_B(0);
-    LD_HL(mOptions_TextSpeed_Strings);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    hlcoord(11, 3, wTilemap);
-    CALL(aPlaceString);
-    AND_A_A;
-    RET;
-
-
-Strings:
-//  entries correspond to OPT_TEXT_SPEED_* constants
-    //dw ['.Fast'];
-    //dw ['.Mid'];
-    //dw ['.Slow'];
-
-
-Fast:
-// db "FAST@"
-
-Mid:
-//  db "MID @"
-
-Slow:
-// db "SLOW@"
-
-    return GetTextSpeed();
-}
-
-bool Options_TextSpeed_Conv(void){
+static bool Options_TextSpeed(void){
     static const char* Strings[] = {
     //  entries correspond to OPT_TEXT_SPEED_* constants
         //dw ['.Fast'];
@@ -273,7 +204,7 @@ bool Options_TextSpeed_Conv(void){
         [OPT_TEXT_SPEED_INSTANT]    = "INSTANT@",
     };
     // CALL(aGetTextSpeed);
-    struct OptionRes res = GetTextSpeed_Conv();
+    struct OptionRes res = GetTextSpeed();
     // LDH_A_addr(hJoyPressed);
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
@@ -336,37 +267,9 @@ bool Options_TextSpeed_Conv(void){
     return false;
 }
 
-void GetTextSpeed(void){
 //  converts TEXT_DELAY_* value in a to OPT_TEXT_SPEED_* value in c,
 //  with previous/next TEXT_DELAY_* values in d/e
-    LD_A_addr(wOptions);
-    AND_A(TEXT_DELAY_MASK);
-    CP_A(TEXT_DELAY_SLOW);
-    IF_Z goto slow;
-    CP_A(TEXT_DELAY_FAST);
-    IF_Z goto fast;
-// none of the above
-    LD_C(OPT_TEXT_SPEED_MED);
-    LD_DE((TEXT_DELAY_FAST << 8) | TEXT_DELAY_SLOW);
-    RET;
-
-
-slow:
-    LD_C(OPT_TEXT_SPEED_SLOW);
-    LD_DE((TEXT_DELAY_MED << 8) | TEXT_DELAY_FAST);
-    RET;
-
-
-fast:
-    LD_C(OPT_TEXT_SPEED_FAST);
-    LD_DE((TEXT_DELAY_SLOW << 8) | TEXT_DELAY_MED);
-    RET;
-
-}
-
-//  converts TEXT_DELAY_* value in a to OPT_TEXT_SPEED_* value in c,
-//  with previous/next TEXT_DELAY_* values in d/e
-static struct OptionRes GetTextSpeed_Conv(void){
+static struct OptionRes GetTextSpeed(void){
     // LD_A_addr(wOptions);
     // AND_A(TEXT_DELAY_MASK);
     // CP_A(TEXT_DELAY_SLOW);
@@ -571,7 +474,7 @@ bool Options_Print(void){
         [OPT_PRINT_DARKEST] = "DARKEST @",
     };
     // CALL(aGetPrinterSetting);
-    struct OptionRes res = GetPrinterSetting_Conv();
+    struct OptionRes res = GetPrinterSetting();
     // LDH_A_addr(hJoyPressed);
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
@@ -634,52 +537,9 @@ bool Options_Print(void){
     return false;
 }
 
-void GetPrinterSetting(void){
 //  converts GBPRINTER_* value in a to OPT_PRINT_* value in c,
 //  with previous/next GBPRINTER_* values in d/e
-    LD_A_addr(wGBPrinterBrightness);
-    AND_A_A;
-    IF_Z goto IsLightest;
-    CP_A(GBPRINTER_LIGHTER);
-    IF_Z goto IsLight;
-    CP_A(GBPRINTER_DARKER);
-    IF_Z goto IsDark;
-    CP_A(GBPRINTER_DARKEST);
-    IF_Z goto IsDarkest;
-// none of the above
-    LD_C(OPT_PRINT_NORMAL);
-    LD_DE((GBPRINTER_LIGHTER << 8) | GBPRINTER_DARKER);
-    RET;
-
-
-IsLightest:
-    LD_C(OPT_PRINT_LIGHTEST);
-    LD_DE((GBPRINTER_DARKEST << 8) | GBPRINTER_LIGHTER);
-    RET;
-
-
-IsLight:
-    LD_C(OPT_PRINT_LIGHTER);
-    LD_DE((GBPRINTER_LIGHTEST << 8) | GBPRINTER_NORMAL);
-    RET;
-
-
-IsDark:
-    LD_C(OPT_PRINT_DARKER);
-    LD_DE((GBPRINTER_NORMAL << 8) | GBPRINTER_DARKEST);
-    RET;
-
-
-IsDarkest:
-    LD_C(OPT_PRINT_DARKEST);
-    LD_DE((GBPRINTER_DARKER << 8) | GBPRINTER_LIGHTEST);
-    RET;
-
-}
-
-//  converts GBPRINTER_* value in a to OPT_PRINT_* value in c,
-//  with previous/next GBPRINTER_* values in d/e
-static struct OptionRes GetPrinterSetting_Conv(void){
+static struct OptionRes GetPrinterSetting(void){
     // LD_A_addr(wGBPrinterBrightness);
     switch(wram->wGBPrinterBrightness) {
     // AND_A_A;
@@ -821,21 +681,7 @@ bool UpdateFrame(void){
     return false;
 }
 
-void Options_Cancel(void){
-    LDH_A_addr(hJoyPressed);
-    AND_A(A_BUTTON);
-    IF_NZ goto Exit;
-    AND_A_A;
-    RET;
-
-
-Exit:
-    SCF;
-    RET;
-
-}
-
-bool Options_Cancel_Conv(void){
+static bool Options_Cancel(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // IF_NZ goto Exit;
@@ -850,64 +696,7 @@ bool Options_Cancel_Conv(void){
     return false;
 }
 
-void OptionsControl(void){
-    LD_HL(wJumptableIndex);
-    LDH_A_addr(hJoyLast);
-    CP_A(D_DOWN);
-    IF_Z goto DownPressed;
-    CP_A(D_UP);
-    IF_Z goto UpPressed;
-    AND_A_A;
-    RET;
-
-
-DownPressed:
-    LD_A_hl;
-    CP_A(OPT_CANCEL);  // maximum option index
-    IF_NZ goto CheckMenuAccount;
-    LD_hl(OPT_TEXT_SPEED);  // first option
-    SCF;
-    RET;
-
-
-CheckMenuAccount:
-//   //  I have no idea why this exists...
-    CP_A(OPT_MENU_ACCOUNT);
-    IF_NZ goto Increase;
-    LD_hl(OPT_MENU_ACCOUNT);
-
-
-Increase:
-    INC_hl;
-    SCF;
-    RET;
-
-
-UpPressed:
-    LD_A_hl;
-
-//  Another thing where I'm not sure why it exists
-    CP_A(OPT_FRAME);
-    IF_NZ goto NotFrame;
-    LD_hl(OPT_MENU_ACCOUNT);
-    SCF;
-    RET;
-
-
-NotFrame:
-    AND_A_A;  // OPT_TEXT_SPEED, minimum option index
-    IF_NZ goto Decrease;
-    LD_hl(NUM_OPTIONS);  // decrements to OPT_CANCEL, maximum option index
-
-
-Decrease:
-    DEC_hl;
-    SCF;
-    RET;
-
-}
-
-bool OptionsControl_Conv(void){
+static bool OptionsControl(void){
     // LD_HL(wJumptableIndex);
     // LDH_A_addr(hJoyLast);
     // CP_A(D_DOWN);

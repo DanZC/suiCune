@@ -9000,7 +9000,7 @@ void Function102a3b(void){
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wPlayerTrademonCaughtData);
-    wram->wPlayerTrademon.caughtData = GetCaughtGender_Conv(&hl->mon);
+    wram->wPlayerTrademon.caughtData = GetCaughtGender(&hl->mon);
     // LD_HL(wOTPlayerName);
     // LD_DE(wOTTrademonSenderName);
     // LD_BC(NAME_LENGTH);
@@ -9052,7 +9052,7 @@ void Function102a3b(void){
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wOTTrademonCaughtData);
-    wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&hl->mon);
+    wram->wOTTrademon.caughtData = GetCaughtGender(&hl->mon);
     // RET;
 }
 

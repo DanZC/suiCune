@@ -1,13 +1,9 @@
 void MomTriesToBuySomething(void);
-void CheckBalance_MomItem2(void);
-bool CheckBalance_MomItem2_Conv(void);
-void MomBuysItem_DeductFunds(void);
-void Mom_GiveItemOrDoll(void);
-bool Mom_GiveItemOrDoll_Conv(void);
-void Mom_GetScriptPointer(void);
-Script_fn_t Mom_GetScriptPointer_Conv(void);
-void GetItemFromMom(void);
-const struct MomPhoneItem* GetItemFromMom_Conv(void);
+// bool CheckBalance_MomItem2(void);
+// void MomBuysItem_DeductFunds(void);
+// bool Mom_GiveItemOrDoll(void);
+// Script_fn_t Mom_GetScriptPointer(void);
+// const struct MomPhoneItem* GetItemFromMom(void);
 // void MomHiHowAreYouText(void);
 // void MomFoundAnItemText(void);
 // void MomBoughtWithYourMoneyText(void);

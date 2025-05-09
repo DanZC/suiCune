@@ -381,7 +381,7 @@ void HandleMapBackground(void){
     // FARCALL(aScrollScreen);
     ScrollScreen();
     // FARCALL(aPlaceMapNameSign);
-    PlaceMapNameSign_Conv();
+    PlaceMapNameSign();
     // RET;
 }
 
@@ -2469,7 +2469,7 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
     // LD_C_A;
     // FARCALL(aCheckFacingTileForStdScript);
     // IF_C goto done;
-    if(!CheckFacingTileForStdScript_Conv(cid.tileId)) {
+    if(!CheckFacingTileForStdScript(cid.tileId)) {
         // CALL(aCheckCutTreeTile);
         // IF_NZ goto whirlpool;
         if(CheckCutTreeTile(cid.tileId)) {

@@ -387,7 +387,7 @@ void CutDownTreeOrGrass(void){
     // LD_A_addr(wCutWhirlpoolAnimationType);
     // LD_E_A;
     // FARCALL(aOWCutAnimation);
-    OWCutAnimation_Conv(sFieldMoveData.cutWhirlpoolAnimationType);
+    OWCutAnimation(sFieldMoveData.cutWhirlpoolAnimationType);
     // CALL(aBufferScreen);
     BufferScreen();
     // CALL(aGetMovementPermissions);
@@ -505,7 +505,7 @@ static uint8_t FlashFunction_CheckUseFlash(void) {
     // FARCALL(aSpecialAerodactylChamber);
     // POP_HL;
     // IF_C goto useflash;
-    if(!SpecialAerodactylChamber_Conv() && wram->wTimeOfDayPalset != DARKNESS_PALSET) {
+    if(!SpecialAerodactylChamber() && wram->wTimeOfDayPalset != DARKNESS_PALSET) {
         // LD_A_addr(wTimeOfDayPalset);
         // CP_A(DARKNESS_PALSET);
         // IF_NZ goto notadarkcave;
@@ -1276,7 +1276,7 @@ static uint8_t EscapeRopeOrDig_DoDig(void){
 
 // escaperope:
     // FARCALL(aSpecialKabutoChamber);
-    SpecialKabutoChamber_Conv();
+    SpecialKabutoChamber();
     // LD_HL(mEscapeRopeOrDig_UsedEscapeRopeScript);
     // CALL(aQueueScript);
     QueueScript(EscapeRopeOrDig_UsedEscapeRopeScript);

@@ -4,39 +4,10 @@
 #include "../../data/collision/collision_stdscripts.h"
 #include "../../util/scripting.h"
 
-void CheckFacingTileForStdScript(void){
-//  Checks to see if the tile you're facing has a std script associated with it.  If so, executes the script and returns carry.
-    LD_A_C;
-    LD_DE(3);
-    LD_HL(mTileCollisionStdScripts);
-    CALL(aIsInArray);
-    IF_NC goto notintable;
-
-    // LD_A(jumpstd_command);
-    LD_addr_A(wJumpStdScriptBuffer);
-    INC_HL;
-    LD_A_hli;
-    LD_addr_A(wJumpStdScriptBuffer + 1);
-    LD_A_hli;
-    LD_addr_A(wJumpStdScriptBuffer + 2);
-    LD_A(BANK(aScript_JumpStdFromRAM));
-    LD_HL(mScript_JumpStdFromRAM);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-notintable:
-    XOR_A_A;
-    RET;
-
-// INCLUDE "data/collision/collision_stdscripts.asm"
-}
-
 static uint16_t sJumpStdScriptBuffer;
 
 //  Checks to see if the tile you're facing has a std script associated with it.  If so, executes the script and returns carry.
-bool CheckFacingTileForStdScript_Conv(uint8_t c){
+bool CheckFacingTileForStdScript(uint8_t c){
     // LD_A_C;
     // LD_DE(3);
     // LD_HL(mTileCollisionStdScripts);

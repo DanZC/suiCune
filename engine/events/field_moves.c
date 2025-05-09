@@ -20,6 +20,10 @@
 static const char CutTreeGFX[] = "gfx/overworld/cut_tree.png";
 static const char CutGrassGFX[] = "gfx/overworld/cut_grass.png";
 
+static struct SpriteAnim* Cut_SpawnLeaf(uint16_t de, uint8_t a);
+static uint16_t Cut_GetLeafSpawnCoords(void);
+static uint16_t Cut_Headbutt_GetPixelFacing(void);
+
 void PlayWhirlpoolSound(void){
     // CALL(aWaitSFX);
     WaitSFX();
@@ -69,7 +73,7 @@ void ShakeHeadbuttTree(void){
     // CALL(aCut_Headbutt_GetPixelFacing);
     // LD_A(SPRITE_ANIM_INDEX_HEADBUTT);
     // CALL(aInitSpriteAnimStruct);
-    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_HEADBUTT, Cut_Headbutt_GetPixelFacing_Conv());
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_HEADBUTT, Cut_Headbutt_GetPixelFacing());
     // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
     // ADD_HL_BC;
     // LD_hl(FIELDMOVE_TREE);
@@ -176,48 +180,6 @@ void HideHeadbuttTree(void){
     // RET;
 }
 
-void OWCutAnimation(void){
-// Animation index in e
-// 0: Split tree in half
-// 1: Mow the lawn
-    LD_A_E;
-    AND_A(1);
-    LD_addr_A(wJumptableIndex);
-    CALL(aOWCutAnimation_LoadCutGFX);
-    CALL(aWaitSFX);
-    LD_DE(SFX_PLACE_PUZZLE_PIECE_DOWN);
-    CALL(aPlaySFX);
-
-loop:
-    LD_A_addr(wJumptableIndex);
-    BIT_A(7);
-    IF_NZ goto finish;
-    LD_A(36 * SPRITEOAMSTRUCT_LENGTH);
-    LD_addr_A(wCurSpriteOAMAddr);
-    CALLFAR(aDoNextFrameForAllSprites);
-    CALL(aOWCutJumptable);
-    CALL(aDelayFrame);
-    goto loop;
-
-
-finish:
-    RET;
-
-
-LoadCutGFX:
-    CALLFAR(aClearSpriteAnims);  // pointless to farcall
-    LD_DE(mCutGrassGFX);
-    LD_HL(vTiles0 + LEN_2BPP_TILE * FIELDMOVE_GRASS);
-    LD_BC((BANK(aCutGrassGFX) << 8) | 4);
-    CALL(aRequest2bpp);
-    LD_DE(mCutTreeGFX);
-    LD_HL(vTiles0 + LEN_2BPP_TILE * FIELDMOVE_TREE);
-    LD_BC((BANK(aCutTreeGFX) << 8) | 4);
-    CALL(aRequest2bpp);
-    RET;
-
-}
-
 static void OWCutAnimation_LoadCutGFX(void) {
     // CALLFAR(aClearSpriteAnims);  // pointless to farcall
     ClearSpriteAnims();
@@ -237,7 +199,7 @@ static void OWCutAnimation_LoadCutGFX(void) {
 // Animation index in e
 // 0: Split tree in half
 // 1: Mow the lawn
-void OWCutAnimation_Conv(uint8_t e){
+void OWCutAnimation(uint8_t e){
     // LD_A_E;
     // AND_A(1);
     // LD_addr_A(wJumptableIndex);
@@ -286,7 +248,7 @@ void OWCutJumptable(void){
 
 void Cut_SpawnAnimateTree(void){
     // CALL(aCut_Headbutt_GetPixelFacing);
-    uint16_t pixel = Cut_Headbutt_GetPixelFacing_Conv();
+    uint16_t pixel = Cut_Headbutt_GetPixelFacing();
     // LD_A(SPRITE_ANIM_INDEX_CUT_TREE);  // cut tree
     // CALL(aInitSpriteAnimStruct);
     struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_CUT_TREE, pixel);
@@ -307,19 +269,19 @@ void Cut_SpawnAnimateTree(void){
 
 void Cut_SpawnAnimateLeaves(void){
     // CALL(aCut_GetLeafSpawnCoords);
-    uint16_t pixel = Cut_GetLeafSpawnCoords_Conv();
+    uint16_t pixel = Cut_GetLeafSpawnCoords();
     // XOR_A_A;
     // CALL(aCut_SpawnLeaf);
-    Cut_SpawnLeaf_Conv(pixel, 0);
+    Cut_SpawnLeaf(pixel, 0);
     // LD_A(0x10);
     // CALL(aCut_SpawnLeaf);
-    Cut_SpawnLeaf_Conv(pixel, 0x10);
+    Cut_SpawnLeaf(pixel, 0x10);
     // LD_A(0x20);
     // CALL(aCut_SpawnLeaf);
-    Cut_SpawnLeaf_Conv(pixel, 0x20);
+    Cut_SpawnLeaf(pixel, 0x20);
     // LD_A(0x30);
     // CALL(aCut_SpawnLeaf);
-    Cut_SpawnLeaf_Conv(pixel, 0x30);
+    Cut_SpawnLeaf(pixel, 0x30);
     // LD_A(32);  // frames
     // LD_addr_A(wFrameCounter);
     wram->wFrameCounter = 32;
@@ -361,27 +323,7 @@ void Cut_WaitAnimSFX(void){
     // RET;
 }
 
-void Cut_SpawnLeaf(void){
-    PUSH_DE;
-    PUSH_AF;
-    LD_A(SPRITE_ANIM_INDEX_LEAF);  // leaf
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_TILE_ID);
-    ADD_HL_BC;
-    LD_hl(FIELDMOVE_GRASS);
-    LD_HL(SPRITEANIMSTRUCT_VAR3);
-    ADD_HL_BC;
-    LD_hl(0x4);
-    POP_AF;
-    LD_HL(SPRITEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_hl_A;
-    POP_DE;
-    RET;
-
-}
-
-struct SpriteAnim* Cut_SpawnLeaf_Conv(uint16_t de, uint8_t a){
+static struct SpriteAnim* Cut_SpawnLeaf(uint16_t de, uint8_t a){
     // PUSH_DE;
     // PUSH_AF;
     // LD_A(SPRITE_ANIM_INDEX_LEAF);  // leaf
@@ -405,58 +347,7 @@ struct SpriteAnim* Cut_SpawnLeaf_Conv(uint16_t de, uint8_t a){
     return bc;
 }
 
-void Cut_GetLeafSpawnCoords(void){
-    LD_DE(0);
-    LD_A_addr(wMetatileStandingX);
-    BIT_A(0);
-    IF_Z goto left_side;
-    SET_E(0);
-
-left_side:
-    LD_A_addr(wMetatileStandingY);
-    BIT_A(0);
-    IF_Z goto top_side;
-    SET_E(1);
-
-top_side:
-    LD_A_addr(wPlayerDirection);
-    AND_A(0b00001100);
-    ADD_A_E;
-    LD_E_A;
-    LD_HL(mCut_GetLeafSpawnCoords_Coords);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    RET;
-
-
-Coords:
-    //dbpixel ['11', '12']  // facing down,  top left
-    //dbpixel ['9', '12']  // facing down,  top right
-    //dbpixel ['11', '14']  // facing down,  bottom left
-    //dbpixel ['9', '14']  // facing down,  bottom right
-
-    //dbpixel ['11', '8']  // facing up,    top left
-    //dbpixel ['9', '8']  // facing up,    top right
-    //dbpixel ['11', '10']  // facing up,    bottom left
-    //dbpixel ['9', '10']  // facing up,    bottom right
-
-    //dbpixel ['7', '12']  // facing left,  top left
-    //dbpixel ['9', '12']  // facing left,  top right
-    //dbpixel ['7', '10']  // facing left,  bottom left
-    //dbpixel ['9', '10']  // facing left,  bottom right
-
-    //dbpixel ['11', '12']  // facing right, top left
-    //dbpixel ['13', '12']  // facing right, top right
-    //dbpixel ['11', '10']  // facing right, bottom left
-    //dbpixel ['13', '10']  // facing right, bottom right
-
-    return Cut_Headbutt_GetPixelFacing();
-}
-
-uint16_t Cut_GetLeafSpawnCoords_Conv(void){
+static uint16_t Cut_GetLeafSpawnCoords(void){
     static const uint8_t Coords[] = {
         dbpixel2(11, 12),  // facing down,  top left
         dbpixel2(9, 12),  // facing down,  top right
@@ -509,28 +400,7 @@ uint16_t Cut_GetLeafSpawnCoords_Conv(void){
     return Coords[e * 2] | (Coords[(e * 2) + 1] << 8);
 }
 
-void Cut_Headbutt_GetPixelFacing(void){
-    LD_A_addr(wPlayerDirection);
-    AND_A(0b00001100);
-    SRL_A;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mCut_Headbutt_GetPixelFacing_Coords);
-    ADD_HL_DE;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    RET;
-
-
-// Coords:
-    //dbpixel 10, 13
-    //dbpixel 10, 9
-    //dbpixel 8, 11
-    //dbpixel 12, 11
-}
-
-uint16_t Cut_Headbutt_GetPixelFacing_Conv(void){
+static uint16_t Cut_Headbutt_GetPixelFacing(void){
     static const uint8_t Coords[] = {
         dbpixel2(10, 13),
         dbpixel2(10, 9),

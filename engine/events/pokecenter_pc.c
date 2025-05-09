@@ -43,6 +43,10 @@ enum {
     PCPCITEM_TURN_OFF,  // 4
 };
 
+static void PC_WaitPlaySFX(uint16_t sfx);
+static void PC_DisplayTextWaitMenu(const txt_cmd_s* hl);
+static void PC_DisplayText(const txt_cmd_s* hl);
+
 static uint8_t PokemonCenterPC_ChooseWhichPCListToUse(void) {
     // CALL(aCheckReceivedDex);
     // IF_NZ goto got_dex;
@@ -137,10 +141,10 @@ void PokemonCenterPC(void){
     PC_PlayBootSound();
     // LD_HL(mPokecenterPCTurnOnText);
     // CALL(aPC_DisplayText);
-    PC_DisplayText_Conv(PokecenterPCTurnOnText);
+    PC_DisplayText(PokecenterPCTurnOnText);
     // LD_HL(mPokecenterPCWhoseText);
     // CALL(aPC_DisplayTextWaitMenu);
-    PC_DisplayTextWaitMenu_Conv(PokecenterPCWhoseText);
+    PC_DisplayTextWaitMenu(PokecenterPCWhoseText);
     // LD_HL(mPokemonCenterPC_TopMenu);
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(&PokemonCenterPC_TopMenu);
@@ -193,7 +197,7 @@ bool PC_CheckPartyForPokemon(void){
     PlaySFX(SFX_CHOOSE_PC_OPTION);
     // LD_HL(mPC_CheckPartyForPokemon_PokecenterPCCantUseText);
     // CALL(aPC_DisplayText);
-    PC_DisplayText_Conv(PokecenterPCCantUseText);
+    PC_DisplayText(PokecenterPCCantUseText);
     // SCF;
     // RET;
     return false;
@@ -221,7 +225,7 @@ u8_flag_s BillsPC(void){
     PC_PlayChoosePCSound();
     // LD_HL(mPokecenterBillsPCText);
     // CALL(aPC_DisplayText);
-    PC_DisplayText_Conv(PokecenterBillsPCText);
+    PC_DisplayText(PokecenterBillsPCText);
     // FARCALL(av_BillsPC);
     v_BillsPC();
     // AND_A_A;
@@ -234,7 +238,7 @@ u8_flag_s PlayersPC(void){
     PC_PlayChoosePCSound();
     // LD_HL(mPokecenterPlayersPCText);
     // CALL(aPC_DisplayText);
-    PC_DisplayText_Conv(PokecenterPlayersPCText);
+    PC_DisplayText(PokecenterPlayersPCText);
     // LD_B(PLAYERSPC_NORMAL);
     // CALL(av_PlayersPC);
     u8_flag_s res = v_PlayersPC(PLAYERSPC_NORMAL);
@@ -248,7 +252,7 @@ u8_flag_s OaksPC(void){
     PC_PlayChoosePCSound();
     // LD_HL(mPokecenterOaksPCText);
     // CALL(aPC_DisplayText);
-    PC_DisplayText_Conv(PokecenterOaksPCText);
+    PC_DisplayText(PokecenterOaksPCText);
     // FARCALL(aProfOaksPC);
     ProfOaksPC();
     // AND_A_A;
@@ -282,13 +286,13 @@ u8_flag_s TurnOffPC(void){
 void PC_PlayBootSound(void){
     // LD_DE(SFX_BOOT_PC);
     // JR(mPC_WaitPlaySFX);
-    return PC_WaitPlaySFX_Conv(SFX_BOOT_PC);
+    return PC_WaitPlaySFX(SFX_BOOT_PC);
 }
 
 void PC_PlayShutdownSound(void){
     // LD_DE(SFX_SHUT_DOWN_PC);
     // CALL(aPC_WaitPlaySFX);
-    PC_WaitPlaySFX_Conv(SFX_SHUT_DOWN_PC);
+    PC_WaitPlaySFX(SFX_SHUT_DOWN_PC);
     // CALL(aWaitSFX);
     WaitSFX();
     // RET;
@@ -297,28 +301,19 @@ void PC_PlayShutdownSound(void){
 void PC_PlayChoosePCSound(void){
     // LD_DE(SFX_CHOOSE_PC_OPTION);
     // JR(mPC_WaitPlaySFX);
-    return PC_WaitPlaySFX_Conv(SFX_CHOOSE_PC_OPTION);
+    return PC_WaitPlaySFX(SFX_CHOOSE_PC_OPTION);
 }
 
 void PC_PlaySwapItemsSound(void){
     // LD_DE(SFX_SWITCH_POKEMON);
     // CALL(aPC_WaitPlaySFX);
-    PC_WaitPlaySFX_Conv(SFX_SWITCH_POKEMON);
+    PC_WaitPlaySFX(SFX_SWITCH_POKEMON);
     // LD_DE(SFX_SWITCH_POKEMON);
 
-    return PC_WaitPlaySFX_Conv(SFX_SWITCH_POKEMON);
+    return PC_WaitPlaySFX(SFX_SWITCH_POKEMON);
 }
 
-void PC_WaitPlaySFX(void){
-    PUSH_DE;
-    CALL(aWaitSFX);
-    POP_DE;
-    CALL(aPlaySFX);
-    RET;
-
-}
-
-void PC_WaitPlaySFX_Conv(uint16_t sfx){
+static void PC_WaitPlaySFX(uint16_t sfx){
     // PUSH_DE;
     // CALL(aWaitSFX);
     WaitSFX();
@@ -333,7 +328,7 @@ bool v_PlayersHousePC(void){
     PC_PlayBootSound();
     // LD_HL(mPlayersPCTurnOnText);
     // CALL(aPC_DisplayText);
-    PC_DisplayText_Conv(PlayersPCTurnOnText);
+    PC_DisplayText(PlayersPCTurnOnText);
     // LD_B(PLAYERSPC_HOUSE);
     // CALL(av_PlayersPC);
     // AND_A_A;
@@ -407,7 +402,7 @@ u8_flag_s v_PlayersPC(uint8_t b){
     wram->wWhichIndexSet = b;
     // LD_HL(mPlayersPCAskWhatDoText);
     // CALL(aPC_DisplayTextWaitMenu);
-    PC_DisplayTextWaitMenu_Conv(PlayersPCAskWhatDoText);
+    PC_DisplayTextWaitMenu(PlayersPCAskWhatDoText);
     // CALL(av_PlayersPC_PlayersPC);
     u8_flag_s res = v_PlayersPC_PlayersPC();
     // CALL(aExitMenu);
@@ -498,19 +493,7 @@ const struct MenuHeader PlayersPCMenuData = {
     //db ['-1'];  // end
 };
 
-void PC_DisplayTextWaitMenu(void){
-    LD_A_addr(wOptions);
-    PUSH_AF;
-    SET_A(NO_TEXT_SCROLL);
-    LD_addr_A(wOptions);
-    CALL(aMenuTextbox);
-    POP_AF;
-    LD_addr_A(wOptions);
-    RET;
-
-}
-
-void PC_DisplayTextWaitMenu_Conv(const txt_cmd_s* hl){
+static void PC_DisplayTextWaitMenu(const txt_cmd_s* hl){
     // LD_A_addr(wOptions);
     // PUSH_AF;
     uint8_t options = wram->wOptions;
@@ -996,7 +979,7 @@ bool PCItemsJoypad(void){
             if(joypad == A_BUTTON) {
             // a_1:
                 // FARCALL(aScrollingMenu_ClearLeftColumn);
-                ScrollingMenu_ClearLeftColumn_Conv();
+                ScrollingMenu_ClearLeftColumn();
                 // CALL(aPlaceHollowCursor);
                 PlaceHollowCursor();
                 // AND_A_A;
@@ -1024,14 +1007,7 @@ bool PCItemsJoypad(void){
     }
 }
 
-void PC_DisplayText(void){
-    CALL(aMenuTextbox);
-    CALL(aExitMenu);
-    RET;
-
-}
-
-void PC_DisplayText_Conv(const struct TextCmd* hl) {
+static void PC_DisplayText(const txt_cmd_s* hl) {
     // CALL(aMenuTextbox);
     MenuTextbox(hl);
     // CALL(aExitMenu);

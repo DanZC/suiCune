@@ -44,6 +44,9 @@ const struct Rating OakRatings[] = {
     {255, SFX_DEX_FANFARE_230_PLUS,     OakRating19},
 };
 
+static uint16_t Rate(void);
+static void FindOakRating(uint8_t caught, uint16_t* sfx, const txt_cmd_s** txt);
+
 void ProfOaksPC(void){
     // LD_HL(mOakPCText1);
     // CALL(aMenuTextbox);
@@ -125,7 +128,7 @@ static void Rate_UpdateRatingBuffers(uint8_t seen, uint8_t caught) {
     // RET;
 }
 
-uint16_t Rate(void){
+static uint16_t Rate(void){
 //  calculate Seen/Owned
     // LD_HL(wPokedexSeen);
     // LD_B(wEndPokedexSeen - wPokedexSeen);
@@ -162,7 +165,7 @@ uint16_t Rate(void){
 
 //  return sound effect in de
 //  return text pointer in hl
-void FindOakRating(uint8_t caught, uint16_t* sfx, const txt_cmd_s** txt){
+static void FindOakRating(uint8_t caught, uint16_t* sfx, const txt_cmd_s** txt){
     // NOP;
     // LD_C_A;
 

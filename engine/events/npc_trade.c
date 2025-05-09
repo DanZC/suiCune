@@ -248,7 +248,7 @@ void DoNPCTrade(void){
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wPlayerTrademonCaughtData);
-    wram->wPlayerTrademon.caughtData = GetCaughtGender_Conv(&wram->wPartyMon[wram->wCurPartyMon].mon);
+    wram->wPlayerTrademon.caughtData = GetCaughtGender(&wram->wPartyMon[wram->wCurPartyMon].mon);
 
     // LD_E(NPCTRADE_DIALOG);
     // CALL(aGetTradeAttr);

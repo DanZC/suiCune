@@ -28,11 +28,11 @@ uint8_t ScrollingMenu(void){
     // RST(aBankswitch);
 
     // CALL(av_InitScrollingMenu);
-    v_InitScrollingMenu_Conv(data);
+    v_InitScrollingMenu(data);
     // CALL(aScrollingMenu_UpdatePalettes);
     ScrollingMenu_UpdatePalettes();
     // CALL(av_ScrollingMenu);
-    v_ScrollingMenu_Conv(data);
+    v_ScrollingMenu(data);
 
     // POP_AF;
     // RST(aBankswitch);

@@ -645,7 +645,7 @@ void Script_special_Conv(script_s* s, uint16_t de){
     // LD_D_A;
     // FARCALL(aSpecial);
     // RET;
-    Special_Conv(de);
+    Special(de);
 }
 
 void Script_memcallasm(void){

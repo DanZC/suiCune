@@ -58,6 +58,11 @@ static const txt_cmd_s NameRaterNamedText[] = {
     text_end
 };
 
+static bool CheckIfMonIsYourOT(uint8_t partyMon);
+static bool IsNewNameEmpty(void);
+static bool CompareNewToOld(uint8_t curPartyMon);
+static uint8_t GetNicknamenameLength(const uint8_t* hl);
+
 void v_NameRater(void){
 //  Introduce himself
     // LD_HL(mNameRaterHelloText);
@@ -88,7 +93,7 @@ void v_NameRater(void){
     GetCurNickname();
     // CALL(aCheckIfMonIsYourOT);
     // IF_C goto traded;
-    if(!CheckIfMonIsYourOT_Conv(wram->wCurPartyMon))
+    if(!CheckIfMonIsYourOT(wram->wCurPartyMon))
         return PrintText(NameRaterPerfectNameText);
 //  This name is good, but we can do better.  How about it?
     // LD_HL(mNameRaterBetterNameText);
@@ -124,7 +129,7 @@ void v_NameRater(void){
     // LD_HL(mNameRaterSameNameText);
     // IF_C goto samename;
     const txt_cmd_s* txt = NameRaterSameNameText;
-    if(!IsNewNameEmpty_Conv() && !CompareNewToOld_Conv(wram->wCurPartyMon)) {
+    if(!IsNewNameEmpty() && !CompareNewToOld(wram->wCurPartyMon)) {
     //  Copy the new name from wStringBuffer2
         // LD_HL(wPartyMonNicknames);
         // LD_BC(MON_NAME_LENGTH);
@@ -170,44 +175,8 @@ void v_NameRater(void){
     // RET;
 }
 
-void CheckIfMonIsYourOT(void){
-//  Checks to see if the partymon loaded in [wCurPartyMon] has the different OT as you.  Returns carry if not.
-    LD_HL(wPartyMonOTs);
-    LD_BC(NAME_LENGTH);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    LD_DE(wPlayerName);
-    LD_C(NAME_LENGTH);
-    CALL(aCheckIfMonIsYourOT_loop);
-    IF_C goto nope;
-
-    LD_HL(wPartyMon1ID);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    LD_DE(wPlayerID);
-    LD_C(2);  // number of bytes in which your ID is stored
-
-loop:
-    LD_A_de;
-    CP_A_hl;
-    IF_NZ goto nope;
-    INC_HL;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    AND_A_A;
-    RET;
-
-
-nope:
-    SCF;
-    RET;
-
-}
-
 //  Checks to see if the partymon loaded in [wCurPartyMon] has the different OT as you.  Returns false (c) if not.
-bool CheckIfMonIsYourOT_Conv(uint8_t partyMon){
+static bool CheckIfMonIsYourOT(uint8_t partyMon){
     // LD_HL(wPartyMonOTs);
     // LD_BC(NAME_LENGTH);
     // LD_A_addr(wCurPartyMon);
@@ -247,34 +216,8 @@ bool CheckIfMonIsYourOT_Conv(uint8_t partyMon){
     // RET;
 }
 
-void IsNewNameEmpty(void){
 //  Checks to see if the nickname loaded in wStringBuffer2 is empty.  If so, return carry.
-    LD_HL(wStringBuffer2);
-    LD_C(MON_NAME_LENGTH - 1);
-
-loop:
-    LD_A_hli;
-    CP_A(0x50);
-    IF_Z goto terminator;
-    CP_A(0x7f);
-    IF_NZ goto nonspace;
-    DEC_C;
-    IF_NZ goto loop;
-
-
-terminator:
-    SCF;
-    RET;
-
-
-nonspace:
-    AND_A_A;
-    RET;
-
-}
-
-//  Checks to see if the nickname loaded in wStringBuffer2 is empty.  If so, return carry.
-bool IsNewNameEmpty_Conv(void){
+static bool IsNewNameEmpty(void){
     // LD_HL(wStringBuffer2);
     uint8_t* hl = wram->wStringBuffer2;
     // LD_C(MON_NAME_LENGTH - 1);
@@ -308,47 +251,8 @@ bool IsNewNameEmpty_Conv(void){
     return true;
 }
 
-void CompareNewToOld(void){
 //  Compares the nickname in wStringBuffer2 to the previous nickname.  If they are the same, return carry.
-    LD_HL(wPartyMonNicknames);
-    LD_BC(MON_NAME_LENGTH);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    PUSH_HL;
-    CALL(aGetNicknamenameLength);
-    LD_B_C;
-    LD_HL(wStringBuffer2);
-    CALL(aGetNicknamenameLength);
-    POP_HL;
-    LD_A_C;
-    CP_A_B;
-    IF_NZ goto different;
-    LD_DE(wStringBuffer2);
-
-loop:
-    LD_A_de;
-    CP_A(0x50);
-    IF_Z goto terminator;
-    CP_A_hl;
-    IF_NZ goto different;
-    INC_HL;
-    INC_DE;
-    goto loop;
-
-
-different:
-    AND_A_A;
-    RET;
-
-
-terminator:
-    SCF;
-    RET;
-
-}
-
-//  Compares the nickname in wStringBuffer2 to the previous nickname.  If they are the same, return carry.
-bool CompareNewToOld_Conv(uint8_t curPartyMon){
+static bool CompareNewToOld(uint8_t curPartyMon){
     // LD_HL(wPartyMonNicknames);
     // LD_BC(MON_NAME_LENGTH);
     // LD_A_addr(wCurPartyMon);
@@ -356,11 +260,11 @@ bool CompareNewToOld_Conv(uint8_t curPartyMon){
     uint8_t* hl = wram->wPartyMonNickname[curPartyMon];
     // PUSH_HL;
     // CALL(aGetNicknamenameLength);
-    uint8_t b = GetNicknamenameLength_Conv(hl);
+    uint8_t b = GetNicknamenameLength(hl);
     // LD_B_C;
     // LD_HL(wStringBuffer2);
     // CALL(aGetNicknamenameLength);
-    uint8_t c = GetNicknamenameLength_Conv(wram->wStringBuffer2);
+    uint8_t c = GetNicknamenameLength(wram->wStringBuffer2);
     // POP_HL;
     // LD_A_C;
     // CP_A_B;
@@ -396,24 +300,8 @@ bool CompareNewToOld_Conv(uint8_t curPartyMon){
     return true;
 }
 
-void GetNicknamenameLength(void){
 //  Gets the length of the name starting at hl and returns it in c.
-    LD_C(0);
-
-loop:
-    LD_A_hli;
-    CP_A(0x50);
-    RET_Z ;
-    INC_C;
-    LD_A_C;
-    CP_A(MON_NAME_LENGTH - 1);
-    IF_NZ goto loop;
-    RET;
-
-}
-
-//  Gets the length of the name starting at hl and returns it in c.
-uint8_t GetNicknamenameLength_Conv(const uint8_t* hl){
+static uint8_t GetNicknamenameLength(const uint8_t* hl){
     // LD_C(0);
     uint8_t c = 0;
 

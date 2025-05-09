@@ -518,35 +518,7 @@ const txt_cmd_s SeerImpressedText[] = {
     text_end
 };
 
-void GetCaughtGender(void){
-    LD_HL(MON_CAUGHTGENDER);
-    ADD_HL_BC;
-
-    LD_A_hl;
-    AND_A(CAUGHT_LOCATION_MASK);
-    IF_Z goto genderless;
-    CP_A(LANDMARK_EVENT);
-    IF_Z goto genderless;
-
-    LD_A_hl;
-    AND_A(CAUGHT_GENDER_MASK);
-    IF_NZ goto male;
-    LD_C(CAUGHT_BY_GIRL);
-    RET;
-
-
-male:
-    LD_C(CAUGHT_BY_BOY);
-    RET;
-
-
-genderless:
-    LD_C(CAUGHT_BY_UNKNOWN);
-    RET;
-
-}
-
-uint8_t GetCaughtGender_Conv(struct BoxMon* mon){
+uint8_t GetCaughtGender(struct BoxMon* mon){
     // LD_HL(MON_CAUGHTGENDER);
     // ADD_HL_BC;
 

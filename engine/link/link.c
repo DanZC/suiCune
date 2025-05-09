@@ -3206,7 +3206,7 @@ void LinkTrade(void){
         // FARCALL(aGetCaughtGender);
         // LD_A_C;
         // LD_addr_A(wPlayerTrademonCaughtData);
-        wram->wPlayerTrademon.caughtData = GetCaughtGender_Conv(&wram->wPartyMon[wram->wCurTradePartyMon].mon);
+        wram->wPlayerTrademon.caughtData = GetCaughtGender(&wram->wPartyMon[wram->wCurTradePartyMon].mon);
 
     //  Buffer other player data
     //  nickname
@@ -3260,7 +3260,7 @@ void LinkTrade(void){
         // FARCALL(aGetCaughtGender);
         // LD_A_C;
         // LD_addr_A(wOTTrademonCaughtData);
-        wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&wram->wOTPartyMon[wram->wCurOTTradePartyMon].mon);
+        wram->wOTTrademon.caughtData = GetCaughtGender(&wram->wOTPartyMon[wram->wCurOTTradePartyMon].mon);
 
         // LD_A_addr(wCurTradePartyMon);
         // LD_addr_A(wCurPartyMon);

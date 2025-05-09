@@ -1,12 +1,8 @@
 void v_NameRater(void);
-void CheckIfMonIsYourOT(void);
-bool CheckIfMonIsYourOT_Conv(uint8_t partyMon);
-void IsNewNameEmpty(void);
-bool IsNewNameEmpty_Conv(void);
-void CompareNewToOld(void);
-bool CompareNewToOld_Conv(uint8_t curPartyMon);
-void GetNicknamenameLength(void);
-uint8_t GetNicknamenameLength_Conv(const uint8_t* hl);
+// bool CheckIfMonIsYourOT(uint8_t partyMon);
+// bool IsNewNameEmpty(void);
+// bool CompareNewToOld(uint8_t curPartyMon);
+// uint8_t GetNicknamenameLength(const uint8_t* hl);
 // void NameRaterHelloText(void);
 // void NameRaterWhichMonText(void);
 // void NameRaterBetterNameText(void);

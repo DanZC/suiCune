@@ -14,6 +14,11 @@
 #include "../../mobile/mobile_menu.h"
 #include "../../charmap.h"
 
+static uint8_t MainMenu_GetWhichMenu(void);
+static bool MainMenuJoypadLoop(void);
+static void MainMenu_PrintCurrentTimeAndDay(void);
+static void ClearTilemapEtc(void);
+
 #define SHOW_DEBUG_MENU 1
 void DebugMenu(void);
 
@@ -99,7 +104,7 @@ void MainMenu(void){
         // LD_addr_A(wDisableTextAcceleration);
         wram->wDisableTextAcceleration = 0;
         // CALL(aClearTilemapEtc);
-        ClearTilemapEtc_Conv();
+        ClearTilemapEtc();
         // LD_B(SCGB_DIPLOMA);
         // CALL(aGetSGBLayout);
         GetSGBLayout(SCGB_DIPLOMA);
@@ -110,14 +115,14 @@ void MainMenu(void){
         bit_reset(wram->wGameTimerPaused, GAME_TIMER_PAUSED_F);
         // CALL(aMainMenu_GetWhichMenu);
         // LD_addr_A(wWhichIndexSet);
-        wram->wWhichIndexSet = MainMenu_GetWhichMenu_Conv();
+        wram->wWhichIndexSet = MainMenu_GetWhichMenu();
         // CALL(aMainMenu_PrintCurrentTimeAndDay);
-        MainMenu_PrintCurrentTimeAndDay_Conv();
+        MainMenu_PrintCurrentTimeAndDay();
         // LD_HL(mMainMenu_MenuHeader);
         // CALL(aLoadMenuHeader);
         LoadMenuHeader(&MainMenu_MenuHeader);
         // CALL(aMainMenuJoypadLoop);
-        bool q = MainMenuJoypadLoop_Conv();
+        bool q = MainMenuJoypadLoop();
         // CALL(aCloseWindow);
         CloseWindow();
         // IF_C goto quit;
@@ -295,64 +300,7 @@ const uint8_t* MainMenuItems[] = {
     },
 };
 
-void MainMenu_GetWhichMenu(void){
-    NOP;
-    NOP;
-    NOP;
-    LD_A_addr(wSaveFileExists);
-    AND_A_A;
-    IF_NZ goto next;
-    LD_A(MAINMENU_NEW_GAME);
-    RET;
-
-
-next:
-    LDH_A_addr(hCGB);
-    CP_A(TRUE);
-    LD_A(MAINMENU_CONTINUE);
-    RET_NZ ;
-    LD_A(MBANK(asNumDailyMysteryGiftPartnerIDs));
-    CALL(aOpenSRAM);
-    LD_A_addr(sNumDailyMysteryGiftPartnerIDs);
-    CP_A(-1);  // locked?
-    CALL(aCloseSRAM);
-    IF_NZ goto mystery_gift;
-// This check makes no difference.
-    LD_A_addr(wStatusFlags);
-    BIT_A(STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F);
-    LD_A(MAINMENU_MYSTERY); // MAINMENU_CONTINUE
-    IF_Z goto ok;
-    goto ok;
-
-
-ok:
-    goto ok2;
-
-
-ok2:
-    LD_A(MAINMENU_MYSTERY); // MAINMENU_CONTINUE
-    RET;
-
-
-mystery_gift:
-// This check makes no difference.
-    LD_A_addr(wStatusFlags);
-    BIT_A(STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F);
-    IF_Z goto ok3;
-    goto ok3;
-
-
-ok3:
-    goto ok4;
-
-
-ok4:
-    LD_A(MAINMENU_MYSTERY);
-    RET;
-
-}
-
-uint8_t MainMenu_GetWhichMenu_Conv(void){
+static uint8_t MainMenu_GetWhichMenu(void){
     // NOP;
     // NOP;
     // NOP;
@@ -425,36 +373,7 @@ uint8_t MainMenu_GetWhichMenu_Conv(void){
     }
 }
 
-void MainMenuJoypadLoop(void){
-    CALL(aSetUpMenu);
-
-loop:
-    CALL(aMainMenu_PrintCurrentTimeAndDay);
-    LD_A_addr(w2DMenuFlags1);
-    SET_A(5);
-    LD_addr_A(w2DMenuFlags1);
-    CALL(aGetScrollingMenuJoypad);
-    LD_A_addr(wMenuJoypad);
-    CP_A(B_BUTTON);
-    IF_Z goto b_button;
-    CP_A(A_BUTTON);
-    IF_Z goto a_button;
-    goto loop;
-
-
-a_button:
-    CALL(aPlayClickSFX);
-    AND_A_A;
-    RET;
-
-
-b_button:
-    SCF;
-    RET;
-
-}
-
-bool MainMenuJoypadLoop_Conv(void){
+static bool MainMenuJoypadLoop(void){
     // CALL(aSetUpMenu);
     SetUpMenu();
 
@@ -462,7 +381,7 @@ bool MainMenuJoypadLoop_Conv(void){
     while(1)
     {
         // CALL(aMainMenu_PrintCurrentTimeAndDay);
-        MainMenu_PrintCurrentTimeAndDay_Conv();
+        MainMenu_PrintCurrentTimeAndDay();
         // LD_A_addr(w2DMenuFlags1);
         // SET_A(5);
         // LD_addr_A(w2DMenuFlags1);
@@ -491,120 +410,6 @@ bool MainMenuJoypadLoop_Conv(void){
         // goto loop;
     }
 
-}
-
-void MainMenu_PrintCurrentTimeAndDay(void){
-    MainMenu_PrintCurrentTimeAndDay_Conv();
-    RET;
-    LD_A_addr(wSaveFileExists);
-    AND_A_A;
-    RET_Z ;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aMainMenu_PrintCurrentTimeAndDay_PlaceBox);
-    LD_HL(wOptions);
-    LD_A_hl;
-    PUSH_AF;
-    SET_hl(NO_TEXT_SCROLL);
-    CALL(aMainMenu_PrintCurrentTimeAndDay_PlaceTime);
-    POP_AF;
-    LD_addr_A(wOptions);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    RET;
-
-
-PlaceBox:
-    CALL(aCheckRTCStatus);
-    AND_A(0b10000000);  // Day count exceeded 16383
-    IF_NZ goto TimeFail;
-    hlcoord(0, 14, wTilemap);
-    LD_B(2);
-    LD_C(18);
-    CALL(aTextbox);
-    RET;
-
-
-TimeFail:
-    CALL(aSpeechTextbox);
-    RET;
-
-
-PlaceTime:
-    LD_A_addr(wSaveFileExists);
-    AND_A_A;
-    RET_Z ;
-    CALL(aCheckRTCStatus);
-    AND_A(0x80);
-    JP_NZ (mMainMenu_PrintCurrentTimeAndDay_PrintTimeNotSet);
-    CALL(aUpdateTime);
-    CALL(aGetWeekday);
-    LD_B_A;
-    decoord(1, 15, wTilemap);
-    CALL(aMainMenu_PrintCurrentTimeAndDay_PrintDayOfWeek);
-    decoord(4, 16, wTilemap);
-    LDH_A_addr(hHours);
-    LD_C_A;
-    FARCALL(aPrintHour);
-    LD_hl(0x9c);
-    INC_HL;
-    LD_DE(hMinutes);
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    CALL(aPrintNum);
-    RET;
-
-
-minString:
-//   //  unreferenced
-    //db ['"min.@"'];
-
-
-PrintTimeNotSet:
-    hlcoord(1, 14, wTilemap);
-    LD_DE(mMainMenu_PrintCurrentTimeAndDay_TimeNotSetString);
-    CALL(aPlaceString);
-    RET;
-
-
-TimeNotSetString:
-    //db ['"TIME NOT SET@"'];
-
-
-MainMenuTimeUnknownText:
-//   //  unreferenced
-    //text_far ['_MainMenuTimeUnknownText']
-    //text_end ['?']
-
-
-PrintDayOfWeek:
-    PUSH_DE;
-    LD_HL(mMainMenu_PrintCurrentTimeAndDay_Days);
-    LD_A_B;
-    CALL(aGetNthString);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    CALL(aPlaceString);
-    LD_H_B;
-    LD_L_C;
-    LD_DE(mMainMenu_PrintCurrentTimeAndDay_Day);
-    CALL(aPlaceString);
-    RET;
-
-
-Days:
-    //db ['"SUN@"'];
-    //db ['"MON@"'];
-    //db ['"TUES@"'];
-    //db ['"WEDNES@"'];
-    //db ['"THURS@"'];
-    //db ['"FRI@"'];
-    //db ['"SATUR@"'];
-
-Day:
-    //db ['"DAY@"'];
-
-    return ClearTilemapEtc();
 }
 
 static void MainMenu_PrintCurrentTimeAndDay_PlaceBox(void) {
@@ -729,7 +534,7 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
     //text_end ['?']
 }
 
-void MainMenu_PrintCurrentTimeAndDay_Conv(void){
+static void MainMenu_PrintCurrentTimeAndDay(void){
     // LD_A_addr(wSaveFileExists);
     // AND_A_A;
     // RET_Z ;
@@ -757,18 +562,7 @@ void MainMenu_PrintCurrentTimeAndDay_Conv(void){
     // RET;
 }
 
-void ClearTilemapEtc(void){
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);
-    CALL(aClearTilemap);
-    CALL(aLoadFontsExtra);
-    CALL(aLoadStandardFont);
-    CALL(aClearWindowData);
-    RET;
-
-}
-
-void ClearTilemapEtc_Conv(void){
+static void ClearTilemapEtc(void){
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
     hram->hMapAnims = 0;
@@ -792,7 +586,7 @@ bool MainMenu_NewGame(void){
 
 bool MainMenu_Option(void){
     // FARCALL(aOption);
-    Option_Conv();
+    Option();
     // RET;
     return false;
 }

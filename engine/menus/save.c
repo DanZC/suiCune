@@ -50,7 +50,7 @@ bool SaveMenu(void){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader();
     // FARCALL(aDisplaySaveInfoOnSave);
-    DisplaySaveInfoOnSave_Conv();
+    DisplaySaveInfoOnSave();
     // CALL(aSpeechTextbox);
     SpeechTextbox();
     // CALL(aUpdateSprites);

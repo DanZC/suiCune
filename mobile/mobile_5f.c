@@ -503,7 +503,7 @@ void Function17d0f3(void){
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wOTTrademonCaughtData);
-    wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&wram->wMobileMon.mon);
+    wram->wOTTrademon.caughtData = GetCaughtGender(&wram->wMobileMon.mon);
     // CALL(aSpeechTextbox);
     SpeechTextbox();
     // CALL(aFadeToMenu);

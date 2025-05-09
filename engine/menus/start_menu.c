@@ -50,6 +50,16 @@ enum {
     STARTMENURET_RETURN_REDRAW,
 };
 
+static uint8_t StartMenu_Exit(void);
+static uint8_t StartMenu_Quit(void);
+static uint8_t StartMenu_Save(void);
+static uint8_t StartMenu_Option(void);
+static uint8_t StartMenu_Status(void);
+static uint8_t StartMenu_Pokedex(void);
+static uint8_t StartMenu_Pokegear(void);
+static uint8_t StartMenu_Pack(void);
+static uint8_t StartMenu_Pokemon(void);
+
 static uint8_t* StartMenu_FillMenuList(void) {
     // XOR_A_A;
     // LD_HL(wMenuItemsList);
@@ -396,15 +406,15 @@ static const char QuitDesc[] =
 
 static const struct StartMenuItem Items[] = {
 //  entries correspond to STARTMENUITEM_* constants
-    [STARTMENUITEM_POKEDEX] = {StartMenu_Pokedex_Conv, "#DEX@", PokedexDesc},
-    [STARTMENUITEM_POKEMON] = {StartMenu_Pokemon_Conv, "#MON@", PartyDesc},
-    [STARTMENUITEM_PACK]    = {StartMenu_Pack_Conv, "PACK@", PackDesc},
-    [STARTMENUITEM_STATUS]  = {StartMenu_Status_Conv, "<PLAYER>@", StatusDesc},
-    [STARTMENUITEM_SAVE]    = {StartMenu_Save_Conv, "SAVE@", SaveDesc},
-    [STARTMENUITEM_OPTION]  = {StartMenu_Option_Conv, "OPTION@", OptionDesc},
-    [STARTMENUITEM_EXIT]    = {StartMenu_Exit_Conv, "EXIT@", ExitDesc},
-    [STARTMENUITEM_POKEGEAR]= {StartMenu_Pokegear_Conv, "<POKE>GEAR@", PokegearDesc},
-    [STARTMENUITEM_QUIT]    = {StartMenu_Quit_Conv, "QUIT@", QuitDesc},
+    [STARTMENUITEM_POKEDEX] = {StartMenu_Pokedex, "#DEX@", PokedexDesc},
+    [STARTMENUITEM_POKEMON] = {StartMenu_Pokemon, "#MON@", PartyDesc},
+    [STARTMENUITEM_PACK]    = {StartMenu_Pack, "PACK@", PackDesc},
+    [STARTMENUITEM_STATUS]  = {StartMenu_Status, "<PLAYER>@", StatusDesc},
+    [STARTMENUITEM_SAVE]    = {StartMenu_Save, "SAVE@", SaveDesc},
+    [STARTMENUITEM_OPTION]  = {StartMenu_Option, "OPTION@", OptionDesc},
+    [STARTMENUITEM_EXIT]    = {StartMenu_Exit, "EXIT@", ExitDesc},
+    [STARTMENUITEM_POKEGEAR]= {StartMenu_Pokegear, "<POKE>GEAR@", PokegearDesc},
+    [STARTMENUITEM_QUIT]    = {StartMenu_Quit, "QUIT@", QuitDesc},
 };
 
 static const uint8_t* sMenuItemsList[] = {
@@ -612,40 +622,13 @@ static const struct MenuHeader menuHeader = {
 
 }
 
-void StartMenu_Exit(void){
 //  Exit the menu.
-    LD_A(STARTMENURET_EXIT);
-    RET;
-}
-
-//  Exit the menu.
-uint8_t StartMenu_Exit_Conv(void) {
+static uint8_t StartMenu_Exit(void) {
     return STARTMENURET_EXIT;
 }
 
 //  Retire from the bug catching contest.
-void StartMenu_Quit(void){
-    // static const txt_cmd_s StartMenuContestEndText[] = {
-    //     text_far(v_StartMenuContestEndText)
-    //     text_end
-    // };
-    LD_HL(mStartMenu_Quit_StartMenuContestEndText);
-    CALL(aStartMenuYesNo);
-    IF_C goto DontEndContest;
-    LD_A(BANK(aBugCatchingContestReturnToGateScript));
-    LD_HL(mBugCatchingContestReturnToGateScript);
-    CALL(aFarQueueScript);
-    LD_A(STARTMENURET_EXIT_MENU_RUN_SCRIPT);
-    RET;
-
-
-DontEndContest:
-    LD_A(STARTMENURET_REOPEN);
-    RET;
-}
-
-//  Retire from the bug catching contest.
-uint8_t StartMenu_Quit_Conv(void) {
+static uint8_t StartMenu_Quit(void) {
     static const txt_cmd_s StartMenuContestEndText[] = {
         text_far(v_StartMenuContestEndText)
         text_end
@@ -669,24 +652,8 @@ uint8_t StartMenu_Quit_Conv(void) {
     return STARTMENURET_REOPEN;
 }
 
-void StartMenu_Save(void){
 //  Save the game.
-
-    CALL(aBufferScreen);
-    FARCALL(aSaveMenu);
-    IF_NC goto saved;
-    LD_A(STARTMENURET_REOPEN);
-    RET;
-
-
-saved:
-    LD_A(STARTMENURET_EXIT);
-    RET;
-
-}
-
-//  Save the game.
-uint8_t StartMenu_Save_Conv(void) {
+static uint8_t StartMenu_Save(void) {
     // CALL(aBufferScreen);
     BufferScreen();
     // FARCALL(aSaveMenu);
@@ -702,40 +669,19 @@ uint8_t StartMenu_Save_Conv(void) {
     return STARTMENURET_REOPEN;
 }
 
-void StartMenu_Option(void){
 //  Game options.
-
-    CALL(aFadeToMenu);
-    FARCALL(aOption);
-    LD_A(STARTMENURET_RETURN_REDRAW);
-    RET;
-
-}
-
-//  Game options.
-uint8_t StartMenu_Option_Conv(void) {
+static uint8_t StartMenu_Option(void) {
     // CALL(aFadeToMenu);
     FadeToMenu();
     // FARCALL(aOption);
-    Option_Conv();
+    Option();
     // LD_A(STARTMENURET_RETURN_REDRAW);
     // RET;
     return STARTMENURET_RETURN_REDRAW;
 }
 
-void StartMenu_Status(void){
 //  Player status.
-
-    CALL(aFadeToMenu);
-    FARCALL(aTrainerCard);
-    CALL(aCloseSubmenu);
-    LD_A(STARTMENURET_REOPEN);
-    RET;
-
-}
-
-//  Player status.
-uint8_t StartMenu_Status_Conv(void) {
+static uint8_t StartMenu_Status(void) {
     // CALL(aFadeToMenu);
     FadeToMenu();
     // FARCALL(aTrainerCard);
@@ -747,24 +693,8 @@ uint8_t StartMenu_Status_Conv(void) {
     return STARTMENURET_REOPEN;
 }
 
-void StartMenu_Pokedex(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    IF_Z goto empty;
-
-    CALL(aFadeToMenu);
-    FARCALL(aPokedex);
-    CALL(aCloseSubmenu);
-
-
-empty:
-    LD_A(STARTMENURET_REOPEN);
-    RET;
-
-}
-
 //  Pokedex
-uint8_t StartMenu_Pokedex_Conv(void) {
+static uint8_t StartMenu_Pokedex(void) {
     if(wram->wPartyCount == 0)
         return STARTMENURET_REOPEN;
     FadeToMenu();
@@ -773,17 +703,8 @@ uint8_t StartMenu_Pokedex_Conv(void) {
     return STARTMENURET_REOPEN;
 }
 
-void StartMenu_Pokegear(void){
-    CALL(aFadeToMenu);
-    FARCALL(aPokeGear);
-    CALL(aCloseSubmenu);
-    LD_A(STARTMENURET_REOPEN);
-    RET;
-
-}
-
 //  Pokegear
-uint8_t StartMenu_Pokegear_Conv(void) {
+static uint8_t StartMenu_Pokegear(void) {
     // CALL(aFadeToMenu);
     FadeToMenu();
     // FARCALL(aPokeGear);
@@ -795,25 +716,7 @@ uint8_t StartMenu_Pokegear_Conv(void) {
     return STARTMENURET_REOPEN;
 }
 
-void StartMenu_Pack(void){
-    CALL(aFadeToMenu);
-    FARCALL(aPack);
-    LD_A_addr(wPackUsedItem);
-    AND_A_A;
-    IF_NZ goto used_item;
-    CALL(aCloseSubmenu);
-    LD_A(STARTMENURET_REOPEN);
-    RET;
-
-
-used_item:
-    CALL(aExitAllMenus);
-    LD_A(STARTMENURET_EXIT_MENU_RUN_SCRIPT);
-    RET;
-
-}
-
-uint8_t StartMenu_Pack_Conv(void) {
+static uint8_t StartMenu_Pack(void) {
     // CALL(aFadeToMenu);
     FadeToMenu();
     // FARCALL(aPack);
@@ -837,62 +740,7 @@ uint8_t StartMenu_Pack_Conv(void) {
     return STARTMENURET_EXIT_MENU_RUN_SCRIPT;
 }
 
-void StartMenu_Pokemon(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    IF_Z goto l_return;
-
-    CALL(aFadeToMenu);
-
-
-choosemenu:
-    XOR_A_A;
-    LD_addr_A(wPartyMenuActionText);  // Choose a POKéMON.
-    CALL(aClearBGPalettes);
-
-
-menu:
-    FARCALL(aLoadPartyMenuGFX);
-    FARCALL(aInitPartyMenuWithCancel);
-    FARCALL(aInitPartyMenuGFX);
-
-
-menunoreload:
-    FARCALL(aWritePartyMenuTilemap);
-    FARCALL(aPrintPartyMenuText);
-    CALL(aWaitBGMap);
-    CALL(aSetPalettes);  // load regular palettes?
-    CALL(aDelayFrame);
-    FARCALL(aPartyMenuSelect);
-    IF_C goto l_return;  // if cancelled or pressed B
-
-    CALL(aPokemonActionSubmenu);
-    CP_A(3);
-    IF_Z goto menu;
-    CP_A(0);
-    IF_Z goto choosemenu;
-    CP_A(1);
-    IF_Z goto menunoreload;
-    CP_A(2);
-    IF_Z goto quit;
-
-
-l_return:
-    CALL(aCloseSubmenu);
-    LD_A(STARTMENURET_REOPEN);
-    RET;
-
-
-quit:
-    LD_A_B;
-    PUSH_AF;
-    CALL(aExitAllMenus);
-    POP_AF;
-    RET;
-
-}
-
-uint8_t StartMenu_Pokemon_Conv(void) {
+static uint8_t StartMenu_Pokemon(void) {
     u8_flag_s res;
     u8_pair_s submenu_res;
     // LD_A_addr(wPartyCount);

@@ -8,6 +8,8 @@
 #include "../pokemon/party_menu.h"
 #include "../../data/events/happiness_probabilities.h"
 
+static void HaircutOrGrooming(const uint8_t (*hl)[3]);
+
 void BillsGrandfather(void){
     // FARCALL(aSelectMonFromParty);
     // IF_C goto cancel;
@@ -33,76 +35,23 @@ void BillsGrandfather(void){
 void OlderHaircutBrother(void){
     // LD_HL(mHappinessData_OlderHaircutBrother);
     // JR(mHaircutOrGrooming);
-    return HaircutOrGrooming_Conv(HappinessData_OlderHaircutBrother);
+    return HaircutOrGrooming(HappinessData_OlderHaircutBrother);
 }
 
 void YoungerHaircutBrother(void){
     // LD_HL(mHappinessData_YoungerHaircutBrother);
     // JR(mHaircutOrGrooming);
-    return HaircutOrGrooming_Conv(HappinessData_YoungerHaircutBrother);
+    return HaircutOrGrooming(HappinessData_YoungerHaircutBrother);
 }
 
 void DaisysGrooming(void){
     // LD_HL(mHappinessData_DaisysGrooming);
 // fallthrough
 
-    return HaircutOrGrooming_Conv(HappinessData_DaisysGrooming);
+    return HaircutOrGrooming(HappinessData_DaisysGrooming);
 }
 
-void HaircutOrGrooming(void){
-    PUSH_HL;
-    FARCALL(aSelectMonFromParty);
-    POP_HL;
-    IF_C goto nope;
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    IF_Z goto egg;
-    PUSH_HL;
-    CALL(aGetCurNickname);
-    CALL(aCopyPokemonName_Buffer1_Buffer3);
-    POP_HL;
-    CALL(aRandom);
-//  Bug: Subtracting $ff from $ff fails to set c.
-//  This can result in overflow into the next data array.
-//  In the case of getting a grooming from Daisy, we bleed
-//  into CopyPokemonName_Buffer1_Buffer3, which passes
-//  $d0 to ChangeHappiness and returns $73 to the script.
-//  The end result is that there is a 0.4% chance your
-//  Pokemon's happiness will not change at all.
-
-loop:
-    SUB_A_hl;
-    IF_C goto ok;
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    goto loop;
-
-
-ok:
-    INC_HL;
-    LD_A_hli;
-    LD_addr_A(wScriptVar);
-    LD_C_hl;
-    CALL(aChangeHappiness);
-    RET;
-
-
-nope:
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
-
-
-egg:
-    LD_A(1);
-    LD_addr_A(wScriptVar);
-    RET;
-
-// INCLUDE "data/events/happiness_probabilities.asm"
-}
-
-void HaircutOrGrooming_Conv(const uint8_t (*hl)[3]){
+static void HaircutOrGrooming(const uint8_t (*hl)[3]){
     // PUSH_HL;
     // FARCALL(aSelectMonFromParty);
     u8_flag_s res = SelectMonFromParty();
@@ -180,6 +129,6 @@ void CopyPokemonName_Buffer1_Buffer3(void){
 }
 
 void DummyPredef1(void){
-    RET;
+    // RET;
 
 }

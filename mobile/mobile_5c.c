@@ -55,7 +55,7 @@ void Function170000(void){
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wPlayerTrademonCaughtData);
-    wram->wPlayerTrademon.caughtData = GetCaughtGender_Conv(&wram->wOfferMon.mon);
+    wram->wPlayerTrademon.caughtData = GetCaughtGender(&wram->wOfferMon.mon);
     // LD_A_addr(wcd81);
     // LD_addr_A(wc74e);
     wram->wc74e[0] = wram->wcd81[0];
@@ -108,7 +108,7 @@ void Function17005a(void){
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wOTTrademonCaughtData);
-    wram->wOTTrademon.caughtData = GetCaughtGender_Conv(&offer->mon.mon);
+    wram->wOTTrademon.caughtData = GetCaughtGender(&offer->mon.mon);
     // LD_A_addr(wcd81);
     // LD_addr_A(wc74e);
     wram->wc74e[0] = wram->wcd81[0];

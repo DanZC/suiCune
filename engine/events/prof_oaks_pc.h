@@ -1,8 +1,8 @@
 void ProfOaksPC(void);
 void ProfOaksPCBoot(void);
 void ProfOaksPCRating(void);
-uint16_t Rate(void);
-void FindOakRating(uint8_t caught, uint16_t* sfx, const txt_cmd_s** txt);
+// uint16_t Rate(void);
+// void FindOakRating(uint8_t caught, uint16_t* sfx, const txt_cmd_s** txt);
 extern const txt_cmd_s OakPCText1[];
 extern const txt_cmd_s OakPCText2[];
 extern const txt_cmd_s OakPCText3[];

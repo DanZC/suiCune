@@ -30,5 +30,4 @@ extern const txt_cmd_s SeerMoreConfidentText[];
 extern const txt_cmd_s SeerMuchStrengthText[];
 extern const txt_cmd_s SeerMightyText[];
 extern const txt_cmd_s SeerImpressedText[];
-void GetCaughtGender(void);
-uint8_t GetCaughtGender_Conv(struct BoxMon* mon);
+uint8_t GetCaughtGender(struct BoxMon* mon);

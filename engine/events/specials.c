@@ -29,28 +29,8 @@
 #include "../../home/pokedex_flags.h"
 #include "../../data/text/common.h"
 
-void Special(void){
 //  Run script special de.
-    LD_HL(mSpecialsPointers);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_B_hl;
-    INC_HL;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_B;
-    RST(aFarCall);
-    RET;
-
-// INCLUDE "data/events/special_pointers.asm"
-
-    return UnusedDummySpecial();
-}
-
-void Special_Conv(uint16_t de){
-//  Run script special de.
+void Special(uint16_t de){
     // LD_HL(mSpecialsPointers);
     // ADD_HL_DE;
     // ADD_HL_DE;
@@ -74,7 +54,7 @@ void Special_Conv(uint16_t de){
 }
 
 void UnusedDummySpecial(void){
-    RET;
+    // RET;
 
 }
 

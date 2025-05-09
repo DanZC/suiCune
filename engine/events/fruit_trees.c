@@ -7,6 +7,14 @@
 #include "../../home/flag.h"
 #include "../../mobile/mobile_41.h"
 
+static void GetCurTreeFruit(void);
+static void TryResetFruitTrees(void);
+static void CheckFruitTree(void);
+static void PickedFruitTree(void);
+static void ResetFruitTrees(void);
+static uint8_t GetFruitTreeFlag(uint8_t b, uint8_t tree);
+static item_t GetFruitTreeItem(uint8_t a);
+
 bool FruitTreeScript(script_s* s){
     SCRIPT_BEGIN
     GetCurTreeFruit();
@@ -47,16 +55,16 @@ end:
     SCRIPT_END
 }
 
-void GetCurTreeFruit(void){
+static void GetCurTreeFruit(void){
     // LD_A_addr(wCurFruitTree);
     // DEC_A;
     // CALL(aGetFruitTreeItem);
     // LD_addr_A(wCurFruit);
     // RET;
-    wram->wCurFruit = GetFruitTreeItem_Conv(wram->wCurFruitTree);
+    wram->wCurFruit = GetFruitTreeItem(wram->wCurFruitTree);
 }
 
-void TryResetFruitTrees(void){
+static void TryResetFruitTrees(void){
     // LD_HL(wDailyFlags1);
     // BIT_hl(DAILYFLAGS1_ALL_FRUIT_TREES_F);
     // RET_NZ ;
@@ -66,24 +74,24 @@ void TryResetFruitTrees(void){
     return ResetFruitTrees();
 }
 
-void CheckFruitTree(void){
+static void CheckFruitTree(void){
     // LD_B(CHECK_FLAG);
     // CALL(aGetFruitTreeFlag);
     // LD_A_C;
     // LD_addr_A(wScriptVar);
     // RET;
-    wram->wScriptVar = GetFruitTreeFlag_Conv(CHECK_FLAG, wram->wCurFruitTree);
+    wram->wScriptVar = GetFruitTreeFlag(CHECK_FLAG, wram->wCurFruitTree);
 }
 
-void PickedFruitTree(void){
+static void PickedFruitTree(void){
     // FARCALL(aStubbedTrainerRankings_FruitPicked);
     StubbedTrainerRankings_FruitPicked();
     // LD_B(1);
     // JP(mGetFruitTreeFlag);
-    GetFruitTreeFlag_Conv(SET_FLAG, wram->wCurFruitTree);
+    GetFruitTreeFlag(SET_FLAG, wram->wCurFruitTree);
 }
 
-void ResetFruitTrees(void){
+static void ResetFruitTrees(void){
     // XOR_A_A;
     // LD_HL(wFruitTreeFlags);
     // LD_hli_A;
@@ -97,21 +105,7 @@ void ResetFruitTrees(void){
     // RET;
 }
 
-void GetFruitTreeFlag(void){
-    // PUSH_HL;
-    // PUSH_DE;
-    // LD_A_addr(wCurFruitTree);
-    // DEC_A;
-    // LD_E_A;
-    // LD_D(0);
-    // LD_HL(wFruitTreeFlags);
-    // CALL(aFlagAction);
-    // POP_DE;
-    // POP_HL;
-    // RET;
-}
-
-uint8_t GetFruitTreeFlag_Conv(uint8_t b, uint8_t tree){
+static uint8_t GetFruitTreeFlag(uint8_t b, uint8_t tree){
     // PUSH_HL;
     // PUSH_DE;
     // LD_A_addr(wCurFruitTree);
@@ -126,23 +120,7 @@ uint8_t GetFruitTreeFlag_Conv(uint8_t b, uint8_t tree){
     return FlagAction(wram->wFruitTreeFlags, tree - 1, b);
 }
 
-void GetFruitTreeItem(void){
-    // PUSH_HL;
-    // PUSH_DE;
-    // LD_E_A;
-    // LD_D(0);
-    // LD_HL(mFruitTreeItems);
-    // ADD_HL_DE;
-    // LD_A_hl;
-    // POP_DE;
-    // POP_HL;
-    // RET;
-
-// INCLUDE "data/items/fruit_trees.asm"
-
-}
-
-item_t GetFruitTreeItem_Conv(uint8_t a){
+static item_t GetFruitTreeItem(uint8_t a){
     // PUSH_HL;
     // PUSH_DE;
     // LD_E_A;

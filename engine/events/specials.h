@@ -1,5 +1,4 @@
-void Special(void);
-void Special_Conv(uint16_t de);
+void Special(uint16_t de);
 void UnusedDummySpecial(void);
 void SetPlayerPalette(void);
 void GameCornerPrizeMonCheckDex(void);

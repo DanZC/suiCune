@@ -57,7 +57,54 @@
 #include "../link/lan.h"
 #include "../../util/intro_jumptable.h"
 
-void Intro_MainMenu() {
+static void NewGame_ClearTilemapEtc(void);
+static void AreYouABoyOrAreYouAGirl(void);
+
+static void ResetWRAM(void);
+static void v_ResetWRAM(void);
+static void SetDefaultBoxNames(void);
+static void InitializeMagikarpHouse(void);
+static void InitializeNPCNames(void);
+static void InitializeWorld(void);
+
+static void SpawnAfterRed(void);
+static void PostCreditsSpawn(void);
+
+static void Continue_MobileAdapterMenu(void);
+static bool ConfirmContinue(void);
+static bool Continue_CheckRTC_RestartClock(void);
+static void DisplaySaveInfoOnContinue(void);
+static void DisplayNormalContinueData(uint8_t d, uint8_t e);
+static void DisplayContinueDataWithRTCError(uint8_t d, uint8_t e);
+static void Continue_LoadMenuHeader(uint8_t d, uint8_t e);
+static tile_t* Continue_DisplayBadgesDexPlayerName(void);
+static void Continue_PrintGameTime(tile_t* hl);
+static void Continue_UnknownGameTime(tile_t* hl);
+static tile_t* Continue_DisplayBadgeCount(tile_t* hl);
+static tile_t* Continue_DisplayPokedexNumCaught(tile_t* hl);
+static void Continue_DisplayGameTime(tile_t* hl);
+
+static void OakSpeech(void);
+static void NamePlayer(void);
+static void StorePlayerName(void);
+static void ShrinkPlayer(void);
+static void Intro_RotatePalettesLeftFrontpic(void);
+static void Intro_WipeInFrontpic(void);
+static void Intro_PrepTrainerPic(uint8_t tclass);
+static void ShrinkFrame(const char* path);
+static void Intro_PlacePlayerSprite(void);
+
+static bool RunTitleScreen(void);
+static void TitleScreenScene(uint8_t a);
+static void TitleScreenEntrance(void);
+static void TitleScreenTimer(void);
+static void TitleScreenMain(void);
+static void TitleScreenEnd(void);
+
+static void DeleteSaveData(void);
+static void ResetClock(void);
+
+void Intro_MainMenu(void) {
     PlayMusic(MUSIC_NONE);
     // CALL(aDelayFrame);
     DelayFrame();
@@ -70,28 +117,7 @@ void Intro_MainMenu() {
     // JP(mStartTitleScreen);
 }
 
-void PrintDayOfWeek(void) {
-    PUSH_DE;
-    LD_HL(mPrintDayOfWeek_Days);
-    LD_A_B;
-    CALL(aGetNthString);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    CALL(aPlaceString);
-    LD_H_B;
-    LD_L_C;
-    LD_DE(mPrintDayOfWeek_Day);
-    CALL(aPlaceString);
-    RET;
-
-Day:
-    //db ['"DAY@"'];
-
-    return NewGame_ClearTilemapEtc();
-}
-
-void PrintDayOfWeek_Conv(tile_t* de, uint8_t b) {
+void PrintDayOfWeek(tile_t* de, uint8_t b) {
     static const char* days[] = {
         "SUN",
         "MON",
@@ -122,7 +148,7 @@ void PrintDayOfWeek_Conv(tile_t* de, uint8_t b) {
     // RET;
 }
 
-void NewGame_ClearTilemapEtc(void) {
+static void NewGame_ClearTilemapEtc(void) {
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
     hram->hMapAnims = 0x0;
@@ -159,12 +185,6 @@ void MysteryGift(void) {
 }
 
 void Option(void) {
-    FARCALL(av_Option);
-    RET;
-
-}
-
-void Option_Conv(void) {
     // FARCALL(av_Option);
     // RET;
     return v_Option();
@@ -200,7 +220,7 @@ void NewGame(void) {
     return Intro_SetJumptableIndex(INTRO_CONTINUE);
 }
 
-void AreYouABoyOrAreYouAGirl(void) {
+static void AreYouABoyOrAreYouAGirl(void) {
     // FARCALL(aMobile_AlwaysReturnNotCarry);  // mobile
     u8_flag_s res = Mobile_AlwaysReturnNotCarry();
     // IF_C goto ok;
@@ -220,10 +240,10 @@ void AreYouABoyOrAreYouAGirl(void) {
 
 void DebugRoom(void) {
     //FARCALL(_DebugRoom);
-    RET;
+    // RET;
 }
 
-void ResetWRAM(void) {
+static void ResetWRAM(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -254,7 +274,7 @@ static void v_ResetWRAM_InitItemList(item_pocket_u* hl){
     // RET;
 }
 
-void v_ResetWRAM(void) {
+static void v_ResetWRAM(void) {
     // LD_HL(wVirtualOAM);
     // LD_BC(wOptions - wVirtualOAM);
     // XOR_A_A;
@@ -432,7 +452,7 @@ void v_ResetWRAM(void) {
     // RET;
 }
 
-void SetDefaultBoxNames(void) {
+static void SetDefaultBoxNames(void) {
     // LD_HL(wBoxNames);
     uint8_t* hl = wram->wBoxNames;
     // LD_C(0);
@@ -480,7 +500,7 @@ void SetDefaultBoxNames(void) {
     //db ['"BOX@"'];
 }
 
-void InitializeMagikarpHouse(void) {
+static void InitializeMagikarpHouse(void) {
     // LD_HL(wBestMagikarpLengthFeet);
     // LD_A(0x3);
     // LD_hli_A;
@@ -497,7 +517,7 @@ void InitializeMagikarpHouse(void) {
     //db ['"RALPH@"'];
 }
 
-void InitializeNPCNames(void) {
+static void InitializeNPCNames(void) {
     // LD_HL(mInitializeNPCNames_Rival);
     // LD_DE(wRivalName);
     // CALL(aInitializeNPCNames_Copy);
@@ -537,7 +557,7 @@ void InitializeNPCNames(void) {
 
 }
 
-void InitializeWorld(void) {
+static void InitializeWorld(void) {
     // CALL(aShrinkPlayer);
     ShrinkPlayer();
     // FARCALL(aSpawnPlayer);
@@ -597,7 +617,7 @@ bool Continue(void) {
         // CALL(aLoadStandardMenuHeader);
         LoadStandardMenuHeader();
         // CALL(aDisplaySaveInfoOnContinue);
-        DisplaySaveInfoOnContinue_Conv();
+        DisplaySaveInfoOnContinue();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
         hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
@@ -606,7 +626,7 @@ bool Continue(void) {
         DelayFrames(20);
         // CALL(aConfirmContinue);
         // IF_NC goto Check1Pass;
-        if(ConfirmContinue_Conv() && !Continue_CheckRTC_RestartClock()) {
+        if(ConfirmContinue() && !Continue_CheckRTC_RestartClock()) {
         // Check1Pass:
             // CALL(aContinue_CheckRTC_RestartClock);
             // IF_NC goto Check2Pass;
@@ -673,7 +693,7 @@ bool Continue(void) {
     return false;
 }
 
-void SpawnAfterRed(void) {
+static void SpawnAfterRed(void) {
     // LD_A(SPAWN_MT_SILVER);
     // LD_addr_A(wDefaultSpawnpoint);
     wram->wDefaultSpawnpoint = SPAWN_MT_SILVER;
@@ -681,7 +701,7 @@ void SpawnAfterRed(void) {
     return PostCreditsSpawn();
 }
 
-void PostCreditsSpawn(void) {
+static void PostCreditsSpawn(void) {
     // XOR_A_A;
     // LD_addr_A(wSpawnAfterChampion);
     wram->wSpawnAfterChampion = 0;
@@ -691,7 +711,7 @@ void PostCreditsSpawn(void) {
     // RET;
 }
 
-void Continue_MobileAdapterMenu(void) {
+static void Continue_MobileAdapterMenu(void) {
     // FARCALL(aMobile_AlwaysReturnNotCarry);  // mobile check
     u8_flag_s res = Mobile_AlwaysReturnNotCarry();
     // RET_NC;
@@ -735,28 +755,9 @@ void Continue_MobileAdapterMenu(void) {
     // RET;
 }
 
-void ConfirmContinue(void) {
-
-loop:
-    CALL(aDelayFrame);
-    CALL(aGetJoypad);
-    LD_HL(hJoyPressed);
-    BIT_hl(A_BUTTON_F);
-    IF_NZ goto PressA;
-    BIT_hl(B_BUTTON_F);
-    IF_Z goto loop;
-    SCF;
-    RET;
-
-
-PressA:
-    RET;
-
-}
-
 // Returns true if the player confirmed the continue.
 // Returns false if cancelled.
-bool ConfirmContinue_Conv(void) {
+static bool ConfirmContinue(void) {
 
     do {
     // loop:
@@ -780,7 +781,7 @@ bool ConfirmContinue_Conv(void) {
     // RET;
 }
 
-bool Continue_CheckRTC_RestartClock(void) {
+static bool Continue_CheckRTC_RestartClock(void) {
     // CALL(aCheckRTCStatus);
     // AND_A(0b10000000);  // Day count exceeded 16383
     // IF_Z goto pass;
@@ -836,23 +837,7 @@ void FinishContinueFunction(void) {
     }
 }
 
-void DisplaySaveInfoOnContinue(void) {
-    CALL(aCheckRTCStatus);
-    AND_A(0b10000000);
-    IF_Z goto clock_ok;
-    LD_DE((4 << 8) | 8);
-    CALL(aDisplayContinueDataWithRTCError);
-    RET;
-
-
-clock_ok:
-    LD_DE((4 << 8) | 8);
-    CALL(aDisplayNormalContinueData);
-    RET;
-
-}
-
-void DisplaySaveInfoOnContinue_Conv(void) {
+static void DisplaySaveInfoOnContinue(void) {
     // CALL(aCheckRTCStatus);
     // AND_A(0b10000000);
     // IF_Z goto clock_ok;
@@ -860,46 +845,30 @@ void DisplaySaveInfoOnContinue_Conv(void) {
         // LD_DE((4 << 8) | 8);
         // CALL(aDisplayContinueDataWithRTCError);
         // RET;
-        return DisplayContinueDataWithRTCError_Conv(4, 8);
+        return DisplayContinueDataWithRTCError(4, 8);
     }
     else {
     // clock_ok:
         // LD_DE((4 << 8) | 8);
         // CALL(aDisplayNormalContinueData);
         // RET;
-        return DisplayNormalContinueData_Conv(4, 8);
+        return DisplayNormalContinueData(4, 8);
     }
 }
 
 void DisplaySaveInfoOnSave(void) {
-    LD_DE((4 << 8) | 0);
-    JR(mDisplayNormalContinueData);
-
-}
-
-void DisplaySaveInfoOnSave_Conv(void) {
     // LD_DE((4 << 8) | 0);
     // JR(mDisplayNormalContinueData);
-    return DisplayNormalContinueData_Conv(4, 0);
+    return DisplayNormalContinueData(4, 0);
 }
 
-void DisplayNormalContinueData(void) {
-    CALL(aContinue_LoadMenuHeader);
-    CALL(aContinue_DisplayBadgesDexPlayerName);
-    CALL(aContinue_PrintGameTime);
-    CALL(aLoadFontsExtra);
-    CALL(aUpdateSprites);
-    RET;
-
-}
-
-void DisplayNormalContinueData_Conv(uint8_t d, uint8_t e) {
+static void DisplayNormalContinueData(uint8_t d, uint8_t e) {
     // CALL(aContinue_LoadMenuHeader);
-    Continue_LoadMenuHeader_Conv(d, e);
+    Continue_LoadMenuHeader(d, e);
     // CALL(aContinue_DisplayBadgesDexPlayerName);
-    tile_t* hl = Continue_DisplayBadgesDexPlayerName_Conv();
+    tile_t* hl = Continue_DisplayBadgesDexPlayerName();
     // CALL(aContinue_PrintGameTime);
-    Continue_PrintGameTime_Conv(hl);
+    Continue_PrintGameTime(hl);
     // CALL(aLoadFontsExtra);
     LoadFontsExtra();
     // CALL(aUpdateSprites);
@@ -907,21 +876,11 @@ void DisplayNormalContinueData_Conv(uint8_t d, uint8_t e) {
     // RET;
 }
 
-void DisplayContinueDataWithRTCError(void) {
-    CALL(aContinue_LoadMenuHeader);
-    CALL(aContinue_DisplayBadgesDexPlayerName);
-    CALL(aContinue_UnknownGameTime);
-    CALL(aLoadFontsExtra);
-    CALL(aUpdateSprites);
-    RET;
-
-}
-
-void DisplayContinueDataWithRTCError_Conv(uint8_t d, uint8_t e) {
+static void DisplayContinueDataWithRTCError(uint8_t d, uint8_t e) {
     // CALL(aContinue_LoadMenuHeader);
-    Continue_LoadMenuHeader_Conv(d, e);
+    Continue_LoadMenuHeader(d, e);
     // CALL(aContinue_DisplayBadgesDexPlayerName);
-    tile_t* hl = Continue_DisplayBadgesDexPlayerName_Conv();
+    tile_t* hl = Continue_DisplayBadgesDexPlayerName();
     // CALL(aContinue_UnknownGameTime);
     Continue_UnknownGameTime(hl);
     // CALL(aLoadFontsExtra);
@@ -929,57 +888,6 @@ void DisplayContinueDataWithRTCError_Conv(uint8_t d, uint8_t e) {
     // CALL(aUpdateSprites);
     UpdateSprites();
     // RET;
-}
-
-void Continue_LoadMenuHeader(void) {
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_HL(mContinue_LoadMenuHeader_MenuHeader_Dex);
-    LD_A_addr(wStatusFlags);
-    BIT_A(STATUSFLAGS_POKEDEX_F);
-    IF_NZ goto show_menu;
-    LD_HL(mContinue_LoadMenuHeader_MenuHeader_NoDex);
-
-
-show_menu:
-    CALL(av_OffsetMenuHeader);
-    CALL(aMenuBox);
-    CALL(aPlaceVerticalMenuItems);
-    RET;
-
-
-MenuHeader_Dex:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '0', '15', '9'];
-    //dw ['.MenuData_Dex'];
-    //db ['1'];  // default option
-
-
-MenuData_Dex:
-    //db ['0'];  // flags
-    //db ['4'];  // items
-    //db ['"PLAYER@"'];
-    //db ['"BADGES@"'];
-    //db ['"#DEX@"'];
-    //db ['"TIME@"'];
-
-
-MenuHeader_NoDex:
-    //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '0', '15', '9'];
-    //dw ['.MenuData_NoDex'];
-    //db ['1'];  // default option
-
-
-MenuData_NoDex:
-    //db ['0'];  // flags
-    //db ['4'];  // items
-    //db ['"PLAYER <PLAYER>@"'];
-    //db ['"BADGES@"'];
-    //db ['" @"'];
-    //db ['"TIME@"'];
-
-    return Continue_DisplayBadgesDexPlayerName();
 }
 
 static const struct MenuHeader MenuHeader_Dex = {
@@ -1020,7 +928,7 @@ static const struct MenuHeader MenuHeader_NoDex = {
     .defaultOption = 1,  // default option
 };
 
-void Continue_LoadMenuHeader_Conv(uint8_t d, uint8_t e) {
+static void Continue_LoadMenuHeader(uint8_t d, uint8_t e) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -1058,34 +966,7 @@ void Continue_LoadMenuHeader_Conv(uint8_t d, uint8_t e) {
     //db ['"TIME@"'];
 }
 
-void Continue_DisplayBadgesDexPlayerName(void) {
-    CALL(aMenuBoxCoord2Tile);
-    PUSH_HL;
-    decoord(13, 4, 0);
-    ADD_HL_DE;
-    CALL(aContinue_DisplayBadgeCount);
-    POP_HL;
-    PUSH_HL;
-    decoord(12, 6, 0);
-    ADD_HL_DE;
-    CALL(aContinue_DisplayPokedexNumCaught);
-    POP_HL;
-    PUSH_HL;
-    decoord(8, 2, 0);
-    ADD_HL_DE;
-    LD_DE(mContinue_DisplayBadgesDexPlayerName_Player);
-    CALL(aPlaceString);
-    POP_HL;
-    RET;
-
-
-Player:
-    //db ['"<PLAYER>@"'];
-
-    return Continue_PrintGameTime();
-}
-
-tile_t* Continue_DisplayBadgesDexPlayerName_Conv(void) {
+static tile_t* Continue_DisplayBadgesDexPlayerName(void) {
     static const char Player[] = "<PLAYER>@";
     uint8_t buf[16];
     // CALL(aMenuBoxCoord2Tile);
@@ -1094,13 +975,13 @@ tile_t* Continue_DisplayBadgesDexPlayerName_Conv(void) {
     // decoord(13, 4, 0);
     // ADD_HL_DE;
     // CALL(aContinue_DisplayBadgeCount);
-    Continue_DisplayBadgeCount_Conv(hl + coord(13, 4, 0));
+    Continue_DisplayBadgeCount(hl + coord(13, 4, 0));
     // POP_HL;
     // PUSH_HL;
     // decoord(12, 6, 0);
     // ADD_HL_DE;
     // CALL(aContinue_DisplayPokedexNumCaught);
-    Continue_DisplayBadgeCount_Conv(hl + coord(12, 6, 0));
+    Continue_DisplayPokedexNumCaught(hl + coord(12, 6, 0));
     // POP_HL;
     // PUSH_HL;
     // decoord(8, 2, 0);
@@ -1113,23 +994,15 @@ tile_t* Continue_DisplayBadgesDexPlayerName_Conv(void) {
     return hl;
 }
 
-void Continue_PrintGameTime(void) {
-    decoord(9, 8, 0);
-    ADD_HL_DE;
-    CALL(aContinue_DisplayGameTime);
-    RET;
-
-}
-
-void Continue_PrintGameTime_Conv(tile_t* hl) {
+static void Continue_PrintGameTime(tile_t* hl) {
     // decoord(9, 8, 0);
     // ADD_HL_DE;
     // CALL(aContinue_DisplayGameTime);
-    Continue_DisplayGameTime_Conv(hl + coord(9, 8, 0));
+    Continue_DisplayGameTime(hl + coord(9, 8, 0));
     // RET;
 }
 
-void Continue_UnknownGameTime(tile_t* hl) {
+static void Continue_UnknownGameTime(tile_t* hl) {
     // decoord(9, 8, 0);
     // ADD_HL_DE;
     // LD_DE(mContinue_UnknownGameTime_three_question_marks);
@@ -1141,19 +1014,7 @@ void Continue_UnknownGameTime(tile_t* hl) {
     //db ['" ???@"'];
 }
 
-void Continue_DisplayBadgeCount(void) {
-    PUSH_HL;
-    LD_HL(wJohtoBadges);
-    LD_B(2);
-    CALL(aCountSetBits);
-    POP_HL;
-    LD_DE(wNumSetBits);
-    LD_BC((1 << 8) | 2);
-    JP(mPrintNum);
-
-}
-
-tile_t* Continue_DisplayBadgeCount_Conv(tile_t* hl) {
+static tile_t* Continue_DisplayBadgeCount(tile_t* hl) {
     // PUSH_HL;
     // LD_HL(wJohtoBadges);
     // LD_B(2);
@@ -1166,25 +1027,7 @@ tile_t* Continue_DisplayBadgeCount_Conv(tile_t* hl) {
     return PrintNum(hl, &count, 1, 2);
 }
 
-void Continue_DisplayPokedexNumCaught(void) {
-    LD_A_addr(wStatusFlags);
-    BIT_A(STATUSFLAGS_POKEDEX_F);
-    RET_Z;
-    PUSH_HL;
-    LD_HL(wPokedexCaught);
-    if (NUM_POKEMON % 8)
-        LD_B(NUM_POKEMON / 8 + 1);
-    else
-        LD_B(NUM_POKEMON / 8);
-    CALL(aCountSetBits);
-    POP_HL;
-    LD_DE(wNumSetBits);
-    LD_BC((1 << 8) | 3);
-    JP(mPrintNum);
-
-}
-
-tile_t* Continue_DisplayPokedexNumCaught_Conv(tile_t* hl) {
+static tile_t* Continue_DisplayPokedexNumCaught(tile_t* hl) {
     // LD_A_addr(wStatusFlags);
     // BIT_A(STATUSFLAGS_POKEDEX_F);
     // RET_Z;
@@ -1205,19 +1048,7 @@ tile_t* Continue_DisplayPokedexNumCaught_Conv(tile_t* hl) {
     return PrintNum(hl, &count, 1, 3);
 }
 
-void Continue_DisplayGameTime(void) {
-    LD_DE(wGameTimeHours);
-    LD_BC((2 << 8) | 3);
-    CALL(aPrintNum);
-    LD_hl(0x6d);
-    INC_HL;
-    LD_DE(wGameTimeMinutes);
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    JP(mPrintNum);
-
-}
-
-void Continue_DisplayGameTime_Conv(tile_t* hl) {
+static void Continue_DisplayGameTime(tile_t* hl) {
     // LD_DE(wGameTimeHours);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
@@ -1231,7 +1062,7 @@ void Continue_DisplayGameTime_Conv(tile_t* hl) {
     PrintNum(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
 }
 
-void OakSpeech(void) {
+static void OakSpeech(void) {
     // FARCALL(aInitClock);
     InitClock();
     // CALL(aRotateFourPalettesLeft);
@@ -1398,7 +1229,7 @@ const txt_cmd_s OakText7[] = {
     text_end
 };
 
-void NamePlayer(void) {
+static void NamePlayer(void) {
 // Chris:
     //db ['"CHRIS@@@@@@"'];
     static const char Chris[] = "CHRIS@@@@@@";
@@ -1485,7 +1316,7 @@ void GSShowPlayerNamingChoices(void) {
 
 }
 
-void StorePlayerName(void) {
+static void StorePlayerName(void) {
     // LD_A(0x50);
     // LD_BC(NAME_LENGTH);
     // LD_HL(wPlayerName);
@@ -1498,7 +1329,7 @@ void StorePlayerName(void) {
     // RET;
 }
 
-void ShrinkPlayer(void) {
+static void ShrinkPlayer(void) {
     PEEK("");
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -1526,7 +1357,7 @@ void ShrinkPlayer(void) {
     // LD_HL(mShrink1Pic);
     // LD_B(BANK(aShrink1Pic));
     // CALL(aShrinkFrame);
-    ShrinkFrame_Conv(Shrink1Pic);
+    ShrinkFrame(Shrink1Pic);
 
     // LD_C(8);
     // CALL(aDelayFrames);
@@ -1535,7 +1366,7 @@ void ShrinkPlayer(void) {
     // LD_HL(mShrink2Pic);
     // LD_B(BANK(aShrink2Pic));
     // CALL(aShrinkFrame);
-    ShrinkFrame_Conv(Shrink2Pic);
+    ShrinkFrame(Shrink2Pic);
 
     // LD_C(8);
     // CALL(aDelayFrames);
@@ -1552,7 +1383,7 @@ void ShrinkPlayer(void) {
     DelayFrames(3);
 
     // CALL(aIntro_PlacePlayerSprite);
-    Intro_PlacePlayerSprite_Conv();
+    Intro_PlacePlayerSprite();
     // CALL(aLoadFontsExtra);
     LoadFontsExtra();
 
@@ -1569,7 +1400,7 @@ void ShrinkPlayer(void) {
 
 #define dc(a, b, c, d) ((a & 0x3) << 6) | ((b & 0x3) << 4) | ((c & 0x3) << 2) | (d & 0x3)
 
-void Intro_RotatePalettesLeftFrontpic(void) {
+static void Intro_RotatePalettesLeftFrontpic(void) {
     static const uint8_t IntroFadePalettes[] = {
         dc(1, 1, 1, 0),
         dc(2, 2, 2, 0),
@@ -1597,7 +1428,7 @@ void Intro_RotatePalettesLeftFrontpic(void) {
     // RET;
 }
 
-void Intro_WipeInFrontpic(void) {
+static void Intro_WipeInFrontpic(void) {
     // LD_A(0x77);
     // LDH_addr_A(hWX);
     hram->hWX = 0x77;
@@ -1623,7 +1454,7 @@ void Intro_WipeInFrontpic(void) {
     }
 }
 
-void Intro_PrepTrainerPic(uint8_t tclass) {
+static void Intro_PrepTrainerPic(uint8_t tclass) {
     // LD_DE(vTiles2);
     // FARCALL(aGetTrainerPic);
     GetTrainerPic(vram->vTiles2, tclass);
@@ -1637,20 +1468,7 @@ void Intro_PrepTrainerPic(uint8_t tclass) {
     // RET;
 }
 
-void ShrinkFrame(void) {
-    LD_DE(vTiles2);
-    LD_C(7 * 7);
-    PREDEF(pDecompressGet2bpp);
-    XOR_A_A;
-    LDH_addr_A(hGraphicStartTile);
-    hlcoord(6, 4, wTilemap);
-    LD_BC((7 << 8) | 7);
-    PREDEF(pPlaceGraphic);
-    RET;
-
-}
-
-void ShrinkFrame_Conv(const char* path) {
+static void ShrinkFrame(const char* path) {
     // LD_DE(vTiles2);
     // LD_C(7 * 7);
     // PREDEF(pDecompressGet2bpp);
@@ -1665,60 +1483,7 @@ void ShrinkFrame_Conv(const char* path) {
     // RET;
 }
 
-void Intro_PlacePlayerSprite(void){
-    FARCALL(aGetPlayerIcon);
-    LD_C(12);
-    LD_HL(vTiles0);
-    CALL(aRequest2bpp);
-
-    LD_HL(wVirtualOAMSprite00);
-    LD_DE(mIntro_PlacePlayerSprite_sprites);
-    LD_A_de;
-    INC_DE;
-
-    LD_C_A;
-
-loop:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;  // y
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;  // x
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;  // tile id
-
-    LD_B(PAL_OW_RED);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto male;
-    LD_B(PAL_OW_BLUE);
-
-male:
-    LD_A_B;
-
-    LD_hli_A;  // attributes
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-sprites:
-    //db ['4'];
-// y pxl, x pxl, tile offset
-    //db ['9 * 8 + 4', '9 * 8', '0'];
-    //db ['9 * 8 + 4', '10 * 8', '1'];
-    //db ['10 * 8 + 4', '9 * 8', '2'];
-    //db ['10 * 8 + 4', '10 * 8', '3'];
-
-
-
-
-    return IntroSequence();
-}
-
-void Intro_PlacePlayerSprite_Conv(void){
+static void Intro_PlacePlayerSprite(void){
     static const struct {
         int8_t y;
         int8_t x;
@@ -1820,7 +1585,7 @@ void StartTitleScreen(void){
     // loop:
         // CALL(aRunTitleScreen);
         // IF_NC goto loop;
-    } while(!RunTitleScreen_Conv());
+    } while(!RunTitleScreen());
 
     // CALL(aClearSprites);
     ClearSprites();
@@ -1888,24 +1653,7 @@ void StartTitleScreen(void){
     //dw ['ResetClock'];
 }
 
-void RunTitleScreen(void){
-    LD_A_addr(wJumptableIndex);
-    BIT_A(7);
-    IF_NZ goto done_title;
-    CALL(aTitleScreenScene);
-    FARCALL(aSuicuneFrameIterator);
-    CALL(aDelayFrame);
-    AND_A_A;
-    RET;
-
-
-done_title:
-    SCF;
-    RET;
-
-}
-
-bool RunTitleScreen_Conv(void){
+static bool RunTitleScreen(void){
     // LD_A_addr(wJumptableIndex);
     // BIT_A(7);
     // IF_NZ goto done_title;
@@ -1917,7 +1665,7 @@ bool RunTitleScreen_Conv(void){
     }
 
     // CALL(aTitleScreenScene);
-    TitleScreenScene_Conv(wram->wJumptableIndex);
+    TitleScreenScene(wram->wJumptableIndex);
     // FARCALL(aSuicuneFrameIterator);
     SuicuneFrameIterator();
     // CALL(aDelayFrame);
@@ -1942,33 +1690,7 @@ void UnusedTitlePerspectiveScroll(void){
 
 }
 
-void TitleScreenScene(void){
-    // LD_E_A;
-    // LD_D(0);
-    // LD_HL(mTitleScreenScene_scenes);
-    // ADD_HL_DE;
-    // ADD_HL_DE;
-    // LD_A_hli;
-    // LD_H_hl;
-    // LD_L_A;
-    // JP_hl;
-// scenes:
-    //dw ['TitleScreenEntrance'];
-    //dw ['TitleScreenTimer'];
-    //dw ['TitleScreenMain'];
-    //dw ['TitleScreenEnd'];
-
-    switch(REG_A) {
-        default:
-        case 0: TitleScreenEntrance_Conv(); break;
-        case 1: TitleScreenTimer_Conv(); break;
-        case 2: TitleScreenMain_Conv(); break;
-        case 3: TitleScreenEnd_Conv(); break;
-    }
-    // RET;
-}
-
-void TitleScreenScene_Conv(uint8_t a){
+void TitleScreenScene(uint8_t a){
     // LD_E_A;
     // LD_D(0);
     // LD_HL(mTitleScreenScene_scenes);
@@ -1986,75 +1708,23 @@ void TitleScreenScene_Conv(uint8_t a){
 
     switch(a) {
         default:
-        case 0: TitleScreenEntrance_Conv(); break;
-        case 1: TitleScreenTimer_Conv(); break;
-        case 2: TitleScreenMain_Conv(); break;
-        case 3: TitleScreenEnd_Conv(); break;
+        case 0: TitleScreenEntrance(); break;
+        case 1: TitleScreenTimer(); break;
+        case 2: TitleScreenMain(); break;
+        case 3: TitleScreenEnd(); break;
     }
 }
 
 void TitleScreenNextScene(void){
 //  //  unreferenced
-    LD_HL(wJumptableIndex);
-    INC_hl;
-    RET;
-
-}
-
-void TitleScreenEntrance(void){
-//  Animate the logo:
-//  Move each line by 4 pixels until our count hits 0.
-    LDH_A_addr(hSCX);
-    AND_A_A;
-    IF_Z goto done;
-    SUB_A(4);
-    LDH_addr_A(hSCX);
-
-//  Lay out a base (all lines scrolling together).
-    LD_E_A;
-    LD_HL(wLYOverrides);
-    LD_BC(8 * 10);  // logo height
-    CALL(aByteFill);
-
-//  Reversed signage for every other line's position.
-//  This is responsible for the interlaced effect.
-    LD_A_E;
-    XOR_A(0xff);
-    INC_A;
-
-    LD_B(8 * 10 / 2);  // logo height / 2
-    LD_HL(wLYOverrides + 1);
-
-loop:
-    LD_hli_A;
-    INC_HL;
-    DEC_B;
-    IF_NZ goto loop;
-
-    FARCALL(aAnimateTitleCrystal);
-    RET;
-
-
-done:
-//  Next scene
-    LD_HL(wJumptableIndex);
-    INC_hl;
-    XOR_A_A;
-    LDH_addr_A(hLCDCPointer);
-
-//  Play the title screen music.
-    LD_DE(MUSIC_TITLE);
-    CALL(aPlayMusic);
-
-    LD_A(0x88);
-    LDH_addr_A(hWY);
-    RET;
-
+    // LD_HL(wJumptableIndex);
+    // INC_hl;
+    // RET;
 }
 
 //  Animate the logo:
 //  Move each line by 4 pixels until our count hits 0.
-void TitleScreenEntrance_Conv(void){
+static void TitleScreenEntrance(void){
     // LDH_A_addr(hSCX);
     // AND_A_A;
     // IF_Z goto done;
@@ -2116,22 +1786,7 @@ void TitleScreenEntrance_Conv(void){
     // RET;
 }
 
-void TitleScreenTimer(void){
-//  Next scene
-    LD_HL(wJumptableIndex);
-    INC_hl;
-
-//  Start a timer
-    LD_HL(wTitleScreenTimer);
-    LD_DE(73 * 60 + 36);
-    LD_hl_E;
-    INC_HL;
-    LD_hl_D;
-    RET;
-
-}
-
-void TitleScreenTimer_Conv(void){
+static void TitleScreenTimer(void){
 //  Next scene
     // LD_HL(wJumptableIndex);
     // INC_hl;
@@ -2147,116 +1802,7 @@ void TitleScreenTimer_Conv(void){
     wram->wTitleScreenTimer = 73 * 60 + 36;
 }
 
-void TitleScreenMain(void) {
-    //  Run the timer down.
-    LD_HL(wTitleScreenTimer);
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    LD_A_E;
-    OR_A_D;
-    IF_Z goto end;
-
-    DEC_DE;
-    LD_hl_D;
-    DEC_HL;
-    LD_hl_E;
-
-    //  Save data can be deleted by pressing Up + B + Select.
-    CALL(aGetJoypad);
-    LD_HL(hJoyDown);
-    LD_A_hl;
-    AND_A(D_UP + B_BUTTON + SELECT);
-    CP_A(D_UP + B_BUTTON + SELECT);
-    IF_Z goto delete_save_data;
-
-    //  To bring up the clock reset dialog:
-
-    //  Hold Down + B + Select to initiate the sequence.
-    LDH_A_addr(hClockResetTrigger);
-    CP_A(0x34);
-    IF_Z goto check_clock_reset;
-
-    LD_A_hl;
-    AND_A(D_DOWN + B_BUTTON + SELECT);
-    CP_A(D_DOWN + B_BUTTON + SELECT);
-    IF_NZ goto check_start;
-
-    LD_A(0x34);
-    LDH_addr_A(hClockResetTrigger);
-    goto check_start;
-
-    //  Keep Select pressed, and hold Left + Up.
-    //  Then let go of Select.
-
-check_clock_reset:
-    BIT_hl(SELECT_F);
-    IF_NZ goto check_start;
-
-    XOR_A_A;
-    LDH_addr_A(hClockResetTrigger);
-
-    LD_A_hl;
-    AND_A(D_LEFT + D_UP);
-    CP_A(D_LEFT + D_UP);
-    IF_Z goto reset_clock;
-
-    //  Press Start or A to start the game.
-
-check_start:
-    LD_A_hl;
-    AND_A(START | A_BUTTON);
-    IF_NZ goto incave;
-    RET;
-
-
-incave:
-    LD_A(TITLESCREENOPTION_MAIN_MENU);
-    goto done;
-
-
-delete_save_data:
-    LD_A(TITLESCREENOPTION_DELETE_SAVE_DATA);
-
-
-done:
-    LD_addr_A(wTitleScreenSelectedOption);
-
-    //  Return to the intro sequence.
-    LD_HL(wJumptableIndex);
-    SET_hl(7);
-    RET;
-
-
-end:
-    //  Next scene
-    LD_HL(wJumptableIndex);
-    INC_hl;
-
-    //  Fade out the title screen music
-    XOR_A_A;  // MUSIC_NONE
-    LD_addr_A(wMusicFadeID);
-    LD_addr_A(wMusicFadeID + 1);
-    LD_HL(wMusicFade);
-    LD_hl(8);  // 1 second
-
-    LD_HL(wTitleScreenTimer);
-    INC_hl;
-    RET;
-
-
-reset_clock:
-    LD_A(TITLESCREENOPTION_RESET_CLOCK);
-    LD_addr_A(wTitleScreenSelectedOption);
-
-    //  Return to the intro sequence.
-    LD_HL(wJumptableIndex);
-    SET_hl(7);
-    RET;
-
-}
-
-void TitleScreenMain_Conv(void) {
+static void TitleScreenMain(void) {
     //  Run the timer down.
     // LD_HL(wTitleScreenTimer);
     // LD_E_hl;
@@ -2384,27 +1930,7 @@ void TitleScreenMain_Conv(void) {
     wram->wTitleScreenTimer++;
 }
 
-void TitleScreenEnd(void) {
-    //  Wait until the music is done fading.
-
-    LD_HL(wTitleScreenTimer);
-    INC_hl;
-
-    LD_A_addr(wMusicFade);
-    AND_A_A;
-    RET_NZ;
-
-    //LD_A(TITLESCREENOPTION_RESTART);
-    LD_addr_A(wTitleScreenSelectedOption);
-
-    //  Back to the intro.
-    LD_HL(wJumptableIndex);
-    SET_hl(7);
-    RET;
-
-}
-
-void TitleScreenEnd_Conv(void) {
+static void TitleScreenEnd(void) {
     //  Wait until the music is done fading.
 
     // LD_HL(wTitleScreenTimer);
@@ -2428,14 +1954,14 @@ void TitleScreenEnd_Conv(void) {
     // RET;
 }
 
-void DeleteSaveData(void) {
+static void DeleteSaveData(void) {
     // FARCALL(av_DeleteSaveData);
     v_DeleteSaveData();
     // JP(mInit);
     return Intro_SetJumptableIndex(INTRO_HARD_RESET);
 }
 
-void ResetClock(void) {
+static void ResetClock(void) {
     // FARCALL(av_ResetClock);
     v_ResetClock();
     // JP(mInit);

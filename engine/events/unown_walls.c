@@ -83,38 +83,7 @@ void OmanyteChamber(void){
     // RET;
 }
 
-void SpecialAerodactylChamber(void){
-    PUSH_DE;
-    PUSH_BC;
-
-    CALL(aGetMapAttributesPointer);
-    LD_A_H;
-    CP_A(HIGH(aRuinsOfAlphAerodactylChamber_MapAttributes));
-    IF_NZ goto nope;
-    LD_A_L;
-    CP_A(LOW(aRuinsOfAlphAerodactylChamber_MapAttributes));
-    IF_NZ goto nope;
-
-    LD_DE(EVENT_WALL_OPENED_IN_AERODACTYL_CHAMBER);
-    LD_B(SET_FLAG);
-    CALL(aEventFlagAction);
-
-    SCF;
-    goto done;
-
-
-nope:
-    AND_A_A;
-
-
-done:
-    POP_BC;
-    POP_DE;
-    RET;
-
-}
-
-bool SpecialAerodactylChamber_Conv(void){
+bool SpecialAerodactylChamber(void){
     // PUSH_DE;
     // PUSH_BC;
 
@@ -150,30 +119,6 @@ bool SpecialAerodactylChamber_Conv(void){
 }
 
 void SpecialKabutoChamber(void){
-    PUSH_HL;
-    PUSH_DE;
-
-    CALL(aGetMapAttributesPointer);
-    LD_A_H;
-    CP_A(HIGH(aRuinsOfAlphKabutoChamber_MapAttributes));
-    IF_NZ goto done;
-    LD_A_L;
-    CP_A(LOW(aRuinsOfAlphKabutoChamber_MapAttributes));
-    IF_NZ goto done;
-
-    LD_DE(EVENT_WALL_OPENED_IN_KABUTO_CHAMBER);
-    LD_B(SET_FLAG);
-    CALL(aEventFlagAction);
-
-
-done:
-    POP_DE;
-    POP_HL;
-    RET;
-
-}
-
-void SpecialKabutoChamber_Conv(void){
     // PUSH_HL;
     // PUSH_DE;
 

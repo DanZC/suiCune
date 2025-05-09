@@ -61,7 +61,7 @@ void CloseText(void){
     // CALL(aUpdatePlayerSprite);
     UpdatePlayerSprite();
     // FARCALL(aInitMapNameSign);
-    InitMapNameSign_Conv();
+    InitMapNameSign();
     // FARCALL(aLoadOverworldFont);
     LoadOverworldFont();
     // RET;

@@ -48,12 +48,17 @@ const struct MomPhoneItem MomItems_2[] = {
 #define NUM_MOM_ITEMS_2 lengthof(MomItems_2)
 // NUM_MOM_ITEMS_2 EQUS "((MomItems_2.End - MomItems_2) / 8)"
 
+static bool CheckBalance_MomItem2(void);
+static void MomBuysItem_DeductFunds(void);
+static bool Mom_GiveItemOrDoll(void);
+static Script_fn_t Mom_GetScriptPointer(void);
+static const struct MomPhoneItem* GetItemFromMom(void);
 
 static void MomTriesToBuySomething_ASMFunction(void) {
     // CALL(aMomBuysItem_DeductFunds);
     MomBuysItem_DeductFunds();
     // CALL(aMom_GetScriptPointer);
-    Script_fn_t script = Mom_GetScriptPointer_Conv();
+    Script_fn_t script = Mom_GetScriptPointer();
     // LD_A_addr(wWhichMomItemSet);
     // AND_A_A;
     // IF_NZ goto ok;
@@ -112,11 +117,11 @@ void MomTriesToBuySomething(void){
     wram->wWhichMomItemSet = 0;
     // CALL(aCheckBalance_MomItem2);
     // RET_NC ;
-    if(!CheckBalance_MomItem2_Conv())
+    if(!CheckBalance_MomItem2())
         return;
     // CALL(aMom_GiveItemOrDoll);
     // RET_NC ;
-    if(!Mom_GiveItemOrDoll_Conv())
+    if(!Mom_GiveItemOrDoll())
         return;
     // LD_B(BANK(aMomTriesToBuySomething_Script));
     // LD_DE(mMomTriesToBuySomething_Script);
@@ -127,73 +132,6 @@ void MomTriesToBuySomething(void){
     return;
 }
 
-void CheckBalance_MomItem2(void){
-    LD_A_addr(wWhichMomItem);
-    CP_A(NUM_MOM_ITEMS_2);
-    IF_NC goto nope;
-    CALL(aGetItemFromMom);
-    LD_A_hli;
-    LDH_addr_A(hMoneyTemp);
-    LD_A_hli;
-    LDH_addr_A(hMoneyTemp + 1);
-    LD_A_hli;
-    LDH_addr_A(hMoneyTemp + 2);
-    LD_DE(wMomsMoney);
-    LD_BC(hMoneyTemp);
-    FARCALL(aCompareMoney);
-    IF_NC goto have_enough_money;
-
-
-nope:
-    goto check_have_2300;
-
-
-have_enough_money:
-    SCF;
-    RET;
-
-
-check_have_2300:
-    LD_HL(hMoneyTemp);
-    LD_hl(HIGH(MOM_MONEY >> 8));
-    INC_HL;
-    LD_hl(HIGH(MOM_MONEY));  // mid
-    INC_HL;
-    LD_hl(LOW(MOM_MONEY));
-
-loop:
-    LD_DE(wMomItemTriggerBalance);
-    LD_BC(wMomsMoney);
-    FARCALL(aCompareMoney);
-    IF_Z goto exact;
-    IF_NC goto less_than;
-    CALL(aCheckBalance_MomItem2_AddMoney);
-    goto loop;
-
-
-less_than:
-    XOR_A_A;
-    RET;
-
-
-exact:
-    CALL(aCheckBalance_MomItem2_AddMoney);
-    LD_A(NUM_MOM_ITEMS_1);
-    CALL(aRandomRange);
-    INC_A;
-    LD_addr_A(wWhichMomItemSet);
-    SCF;
-    RET;
-
-
-AddMoney:
-    LD_DE(wMomItemTriggerBalance);
-    LD_BC(hMoneyTemp);
-    FARCALL(aAddMoney);
-    RET;
-
-}
-
 static void CheckBalance_MomItem2_AddMoney(void) {
     // LD_DE(wMomItemTriggerBalance);
     // LD_BC(hMoneyTemp);
@@ -202,13 +140,13 @@ static void CheckBalance_MomItem2_AddMoney(void) {
     return AddMoney_Conv(wram->wMomItemTriggerBalance, hram->hMoneyTemp);
 }
 
-bool CheckBalance_MomItem2_Conv(void){
+static bool CheckBalance_MomItem2(void){
     // LD_A_addr(wWhichMomItem);
     // CP_A(NUM_MOM_ITEMS_2);
     // IF_NC goto nope;
     if(wram->wWhichMomItem < NUM_MOM_ITEMS_2) {
         // CALL(aGetItemFromMom);
-        const struct MomPhoneItem* item = GetItemFromMom_Conv();
+        const struct MomPhoneItem* item = GetItemFromMom();
         // LD_A_hli;
         // LDH_addr_A(hMoneyTemp);
         hram->hMoneyTemp[0] = HIGH(item->cost >> 8);
@@ -278,9 +216,9 @@ bool CheckBalance_MomItem2_Conv(void){
     }
 }
 
-void MomBuysItem_DeductFunds(void){
+static void MomBuysItem_DeductFunds(void){
     // CALL(aGetItemFromMom);
-    const struct MomPhoneItem* item = GetItemFromMom_Conv();
+    const struct MomPhoneItem* item = GetItemFromMom();
     // LD_DE(3);  // cost
     // ADD_HL_DE;
     // LD_A_hli;
@@ -299,35 +237,9 @@ void MomBuysItem_DeductFunds(void){
     // RET;
 }
 
-void Mom_GiveItemOrDoll(void){
-    CALL(aGetItemFromMom);
-    LD_DE(6);  // item type
-    ADD_HL_DE;
-    LD_A_hli;
-    CP_A(MOM_ITEM);
-    IF_Z goto not_doll;
-    LD_A_hl;
-    LD_C_A;
-    LD_B(1);
-    FARCALL(aDecorationFlagAction_c);
-    SCF;
-    RET;
-
-
-not_doll:
-    LD_A_hl;
-    LD_addr_A(wCurItem);
-    LD_A(1);
-    LD_addr_A(wItemQuantityChange);
-    LD_HL(wNumPCItems);
-    CALL(aReceiveItem);
-    RET;
-
-}
-
-bool Mom_GiveItemOrDoll_Conv(void){
+static bool Mom_GiveItemOrDoll(void){
     // CALL(aGetItemFromMom);
-    const struct MomPhoneItem* item = GetItemFromMom_Conv();
+    const struct MomPhoneItem* item = GetItemFromMom();
     // LD_DE(6);  // item type
     // ADD_HL_DE;
     // LD_A_hli;
@@ -354,34 +266,6 @@ bool Mom_GiveItemOrDoll_Conv(void){
         // RET;
         return ReceiveItem(GetItemPocket(PC_ITEM_POCKET), item->item, 1);
     }
-}
-
-void Mom_GetScriptPointer(void){
-    CALL(aGetItemFromMom);
-    LD_DE(6);  // item type
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_DE(mMom_GetScriptPointer_ItemScript);
-    CP_A(MOM_ITEM);
-    RET_Z ;
-    LD_DE(mMom_GetScriptPointer_DollScript);
-    RET;
-
-
-// ItemScript:
-    //writetext ['MomHiHowAreYouText']
-    //writetext ['MomFoundAnItemText']
-    //writetext ['MomBoughtWithYourMoneyText']
-    //writetext ['MomItsInPCText']
-    //end ['?']
-
-
-// DollScript:
-    //writetext ['MomHiHowAreYouText']
-    //writetext ['MomFoundADollText']
-    //writetext ['MomBoughtWithYourMoneyText']
-    //writetext ['MomItsInYourRoomText']
-    //end ['?']
 }
 
 static const txt_cmd_s MomHiHowAreYouText[] = {
@@ -434,11 +318,11 @@ static bool Mom_DollScript(script_s* s) {
     SCRIPT_END
 }
 
-Script_fn_t Mom_GetScriptPointer_Conv(void){
+static Script_fn_t Mom_GetScriptPointer(void){
     // CALL(aGetItemFromMom);
     // LD_DE(6);  // item type
     // ADD_HL_DE;
-    const struct MomPhoneItem* item = GetItemFromMom_Conv();
+    const struct MomPhoneItem* item = GetItemFromMom();
     // LD_A_hli;
     // LD_DE(mMom_GetScriptPointer_ItemScript);
     // CP_A(MOM_ITEM);
@@ -450,39 +334,7 @@ Script_fn_t Mom_GetScriptPointer_Conv(void){
     return Mom_DollScript;
 }
 
-void GetItemFromMom(void){
-    LD_A_addr(wWhichMomItemSet);
-    AND_A_A;
-    IF_Z goto zero;
-    DEC_A;
-    LD_DE(mMomItems_1);
-    goto GetFromList1;
-
-
-zero:
-    LD_A_addr(wWhichMomItem);
-    CP_A(NUM_MOM_ITEMS_2);
-    IF_C goto ok;
-    XOR_A_A;
-
-
-ok:
-    LD_DE(mMomItems_2);
-
-
-GetFromList1:
-    LD_L_A;
-    LD_H(0);
-    for(int rept = 0; rept < 3; rept++){  //  multiply hl by 8
-    ADD_HL_HL;
-    }
-    ADD_HL_DE;
-    RET;
-
-// INCLUDE "data/items/mom_phone.asm"
-}
-
-const struct MomPhoneItem* GetItemFromMom_Conv(void){
+static const struct MomPhoneItem* GetItemFromMom(void){
     uint8_t a;
     const struct MomPhoneItem* de;
     // LD_A_addr(wWhichMomItemSet);

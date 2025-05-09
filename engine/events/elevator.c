@@ -13,6 +13,8 @@ static const struct ElevatorData* sElevatorPointer;
 static void Elevator_LoadFloors(void);
 static void Elevator_LoadPointer(const struct ElevatorData* de);
 static u8_flag_s Elevator_FindCurrentFloor(void);
+static void Elevator_GoToFloor(uint8_t a);
+static u8_flag_s Elevator_AskWhichFloor(void);
 
 bool Elevator(const struct ElevatorData* de){
     u8_flag_s res;
@@ -26,7 +28,7 @@ bool Elevator(const struct ElevatorData* de){
     // LD_addr_A(wElevatorOriginFloor);
     wram->wElevatorOriginFloor = res.a;
     // CALL(aElevator_AskWhichFloor);
-    res = Elevator_AskWhichFloor_Conv();
+    res = Elevator_AskWhichFloor();
     // IF_C goto quit;
     if(res.flag)
         return true;
@@ -36,7 +38,7 @@ bool Elevator(const struct ElevatorData* de){
     if(wram->wElevatorOriginFloor == res.a)
         return true;
     // CALL(aElevator_GoToFloor);
-    Elevator_GoToFloor_Conv(res.a);
+    Elevator_GoToFloor(res.a);
     // AND_A_A;
     // RET;
     return false;
@@ -149,26 +151,7 @@ static u8_flag_s Elevator_FindCurrentFloor(void) {
     return u8_flag(0, true);
 }
 
-void Elevator_GoToFloor(void){
-    PUSH_AF;
-    LD_HL(wElevatorPointer);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    INC_HL;
-    POP_AF;
-    LD_BC(wElevatorDataEnd - wElevatorData);
-    CALL(aAddNTimes);
-    INC_HL;
-    LD_DE(wBackupWarpNumber);
-    LD_A_addr(wElevatorPointerBank);
-    LD_BC(wElevatorDataEnd - wElevatorData - 1);
-    CALL(aFarCopyBytes);
-    RET;
-
-}
-
-void Elevator_GoToFloor_Conv(uint8_t a){
+static void Elevator_GoToFloor(uint8_t a){
     // PUSH_AF;
     // LD_HL(wElevatorPointer);
     // LD_A_hli;
@@ -189,39 +172,12 @@ void Elevator_GoToFloor_Conv(uint8_t a){
     // RET;
 }
 
-void Elevator_AskWhichFloor(void){
-    CALL(aLoadStandardMenuHeader);
-    LD_HL(mAskFloorElevatorText);
-    CALL(aPrintText);
-    CALL(aElevator_GetCurrentFloorText);
-    LD_HL(mElevator_MenuHeader);
-    CALL(aCopyMenuHeader);
-    CALL(aInitScrollingMenu);
-    CALL(aUpdateSprites);
-    XOR_A_A;
-    LD_addr_A(wMenuScrollPosition);
-    CALL(aScrollingMenu);
-    CALL(aCloseWindow);
-    LD_A_addr(wMenuJoypad);
-    CP_A(B_BUTTON);
-    IF_Z goto cancel;
-    XOR_A_A;
-    LD_A_addr(wScrollingMenuCursorPosition);
-    RET;
-
-
-cancel:
-    SCF;
-    RET;
-
-}
-
 static const txt_cmd_s AskFloorElevatorText[] = {
     text_far(v_AskFloorElevatorText)
     text_end
 };
 
-u8_flag_s Elevator_AskWhichFloor_Conv(void){
+static u8_flag_s Elevator_AskWhichFloor(void){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader();
     // LD_HL(mAskFloorElevatorText);

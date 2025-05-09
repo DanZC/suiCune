@@ -6,24 +6,20 @@
 #include "../../home/delay.h"
 #include "../../charmap.h"
 
-void v_InitScrollingMenu(void){
-    XOR_A_A;
-    LD_addr_A(wMenuJoypad);
-    LDH_addr_A(hBGMapMode);
-    INC_A;
-    LDH_addr_A(hInMenu);
-    CALL(aInitScrollingMenuCursor);
-    CALL(aScrollingMenu_InitFlags);
-    CALL(aScrollingMenu_ValidateSwitchItem);
-    CALL(aScrollingMenu_InitDisplay);
-    CALL(aApplyTilemap);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    RET;
+static void ScrollingMenu_InitDisplay(const struct MenuData* data);
+static u8_flag_s ScrollingMenuJoyAction(const struct MenuData* data);
+static uint8_t ScrollingMenu_GetCursorPosition(void);
 
-}
+static void InitScrollingMenuCursor(const struct MenuData* data);
+static void ScrollingMenu_InitFlags(const struct MenuData* data);
+static void ScrollingMenu_ValidateSwitchItem(void);
+static void ScrollingMenu_UpdateDisplay(const struct MenuData* data);
+static void ScrollingMenu_CallFunctions1and2(const struct MenuData* data, tile_t* hl);
+static void ScrollingMenu_PlaceCursor(const struct MenuData* data);
+static void ScrollingMenu_CheckCallFunction3(const struct MenuData* data);
+static void ScrollingMenu_GetListItemCoordAndFunctionArgs(const struct MenuData* data, uint8_t a);
 
-void v_InitScrollingMenu_Conv(const struct MenuData* data){
+void v_InitScrollingMenu(const struct MenuData* data){
     // XOR_A_A;
     // LD_addr_A(wMenuJoypad);
     wram->wMenuJoypad = 0;
@@ -33,13 +29,13 @@ void v_InitScrollingMenu_Conv(const struct MenuData* data){
     // LDH_addr_A(hInMenu);
     hram->hInMenu = TRUE;
     // CALL(aInitScrollingMenuCursor);
-    InitScrollingMenuCursor_Conv(data);
+    InitScrollingMenuCursor(data);
     // CALL(aScrollingMenu_InitFlags);
-    ScrollingMenu_InitFlags_Conv(data);
+    ScrollingMenu_InitFlags(data);
     // CALL(aScrollingMenu_ValidateSwitchItem);
-    ScrollingMenu_ValidateSwitchItem_Conv();
+    ScrollingMenu_ValidateSwitchItem();
     // CALL(aScrollingMenu_InitDisplay);
-    ScrollingMenu_InitDisplay_Conv(data);
+    ScrollingMenu_InitDisplay(data);
     // CALL(aApplyTilemap);
     ApplyTilemap();
     // XOR_A_A;
@@ -48,41 +44,12 @@ void v_InitScrollingMenu_Conv(const struct MenuData* data){
     // RET;
 }
 
-void v_ScrollingMenu(void){
-
-loop:
-    CALL(aScrollingMenuJoyAction);
-    JP_C (mv_ScrollingMenu_exit);
-    CALL_Z (av_ScrollingMenu_zero);
-    goto loop;
-
-
-exit:
-    CALL(aMenuClickSound);
-    LD_addr_A(wMenuJoypad);
-    LD_A(0);
-    LDH_addr_A(hInMenu);
-    RET;
-
-
-zero:
-    CALL(aScrollingMenu_InitDisplay);
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);
-    LD_C(3);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    RET;
-
-}
-
-void v_ScrollingMenu_Conv(const struct MenuData* data){
+void v_ScrollingMenu(const struct MenuData* data){
     u8_flag_s res;
     while(1) {
     // loop:
         // CALL(aScrollingMenuJoyAction);
-        res = ScrollingMenuJoyAction_Conv(data);
+        res = ScrollingMenuJoyAction(data);
         // JP_C (mv_ScrollingMenu_exit);
         if(res.flag)
             break;
@@ -90,7 +57,7 @@ void v_ScrollingMenu_Conv(const struct MenuData* data){
         if(res.a == 0) {
         // zero:
             // CALL(aScrollingMenu_InitDisplay);
-            ScrollingMenu_InitDisplay_Conv(data);
+            ScrollingMenu_InitDisplay(data);
             // LD_A(1);
             // LDH_addr_A(hBGMapMode);
             hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
@@ -127,23 +94,7 @@ void v_ScrollingMenu_Conv(const struct MenuData* data){
     // RET;
 }
 
-void ScrollingMenu_InitDisplay(void){
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_HL(wOptions);
-    LD_A_hl;
-    PUSH_AF;
-    SET_hl(NO_TEXT_SCROLL);
-    CALL(aScrollingMenu_UpdateDisplay);
-    CALL(aScrollingMenu_PlaceCursor);
-    CALL(aScrollingMenu_CheckCallFunction3);
-    POP_AF;
-    LD_addr_A(wOptions);
-    RET;
-
-}
-
-void ScrollingMenu_InitDisplay_Conv(const struct MenuData* data){
+static void ScrollingMenu_InitDisplay(const struct MenuData* data){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -154,168 +105,18 @@ void ScrollingMenu_InitDisplay_Conv(const struct MenuData* data){
     // SET_hl(NO_TEXT_SCROLL);
     bit_set(wram->wOptions, NO_TEXT_SCROLL);
     // CALL(aScrollingMenu_UpdateDisplay);
-    ScrollingMenu_UpdateDisplay_Conv(data);
+    ScrollingMenu_UpdateDisplay(data);
     // CALL(aScrollingMenu_PlaceCursor);
-    ScrollingMenu_PlaceCursor_Conv(data);
+    ScrollingMenu_PlaceCursor(data);
     // CALL(aScrollingMenu_CheckCallFunction3);
-    ScrollingMenu_CheckCallFunction3_Conv(data);
+    ScrollingMenu_CheckCallFunction3(data);
     // POP_AF;
     // LD_addr_A(wOptions);
     wram->wOptions = options;
     // RET;
 }
 
-void ScrollingMenuJoyAction(void){
-
-loop:
-    CALL(aScrollingMenuJoypad);
-    LDH_A_addr(hJoyLast);
-    AND_A(D_PAD);
-    LD_B_A;
-    LDH_A_addr(hJoyPressed);
-    AND_A(BUTTONS);
-    OR_A_B;
-    BIT_A(A_BUTTON_F);
-    JP_NZ (mScrollingMenuJoyAction_a_button);
-    BIT_A(B_BUTTON_F);
-    JP_NZ (mScrollingMenuJoyAction_b_button);
-    BIT_A(SELECT_F);
-    JP_NZ (mScrollingMenuJoyAction_select);
-    BIT_A(START_F);
-    JP_NZ (mScrollingMenuJoyAction_start);
-    BIT_A(D_RIGHT_F);
-    JP_NZ (mScrollingMenuJoyAction_d_right);
-    BIT_A(D_LEFT_F);
-    JP_NZ (mScrollingMenuJoyAction_d_left);
-    BIT_A(D_UP_F);
-    JP_NZ (mScrollingMenuJoyAction_d_up);
-    BIT_A(D_DOWN_F);
-    JP_NZ (mScrollingMenuJoyAction_d_down);
-    goto loop;
-
-
-no_zero_no_carry:
-//   //  unreferenced
-    LD_A(-1);
-    AND_A_A;
-    RET;
-
-
-a_button:
-    CALL(aPlaceHollowCursor);
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    CALL(aScrollingMenu_GetListItemCoordAndFunctionArgs);
-    LD_A_addr(wMenuSelection);
-    LD_addr_A(wCurItem);
-    LD_A_addr(wMenuSelectionQuantity);
-    LD_addr_A(wItemQuantity);
-    CALL(aScrollingMenu_GetCursorPosition);
-    DEC_A;
-    LD_addr_A(wScrollingMenuCursorPosition);
-    LD_addr_A(wCurItemQuantity);
-    LD_A_addr(wMenuSelection);
-    CP_A(-1);
-    IF_Z goto b_button;
-    LD_A(A_BUTTON);
-    SCF;
-    RET;
-
-
-b_button:
-    LD_A(B_BUTTON);
-    SCF;
-    RET;
-
-
-select:
-    LD_A_addr(wMenuDataFlags);
-    BIT_A(7);
-    JP_Z (mxor_a_dec_a);
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    CALL(aScrollingMenu_GetListItemCoordAndFunctionArgs);
-    LD_A_addr(wMenuSelection);
-    CP_A(-1);
-    JP_Z (mxor_a_dec_a);
-    CALL(aScrollingMenu_GetCursorPosition);
-    DEC_A;
-    LD_addr_A(wScrollingMenuCursorPosition);
-    LD_A(SELECT);
-    SCF;
-    RET;
-
-
-start:
-    LD_A_addr(wMenuDataFlags);
-    BIT_A(6);
-    JP_Z (mxor_a_dec_a);
-    LD_A(START);
-    SCF;
-    RET;
-
-
-d_left:
-    LD_HL(w2DMenuFlags2);
-    BIT_hl(7);
-    JP_Z (mxor_a_dec_a);
-    LD_A_addr(wMenuDataFlags);
-    BIT_A(3);
-    JP_Z (mxor_a_dec_a);
-    LD_A(D_LEFT);
-    SCF;
-    RET;
-
-
-d_right:
-    LD_HL(w2DMenuFlags2);
-    BIT_hl(7);
-    JP_Z (mxor_a_dec_a);
-    LD_A_addr(wMenuDataFlags);
-    BIT_A(2);
-    JP_Z (mxor_a_dec_a);
-    LD_A(D_RIGHT);
-    SCF;
-    RET;
-
-
-d_up:
-    LD_HL(w2DMenuFlags2);
-    BIT_hl(7);
-    JP_Z (mxor_a);
-    LD_HL(wMenuScrollPosition);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto xor_dec_up;
-    DEC_hl;
-    JP(mxor_a);
-
-
-xor_dec_up:
-    JP(mxor_a_dec_a);
-
-
-d_down:
-    LD_HL(w2DMenuFlags2);
-    BIT_hl(7);
-    JP_Z (mxor_a);
-    LD_HL(wMenuScrollPosition);
-    LD_A_addr(wMenuData_ScrollingMenuHeight);
-    ADD_A_hl;
-    LD_B_A;
-    LD_A_addr(wScrollingMenuListSize);
-    CP_A_B;
-    IF_C goto xor_dec_down;
-    INC_hl;
-    JP(mxor_a);
-
-
-xor_dec_down:
-    JP(mxor_a_dec_a);
-
-}
-
-u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
+static u8_flag_s ScrollingMenuJoyAction(const struct MenuData* data){
     do {
     // loop:
         // CALL(aScrollingMenuJoypad);
@@ -337,7 +138,7 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
             // LD_A_addr(wMenuCursorY);
             // DEC_A;
             // CALL(aScrollingMenu_GetListItemCoordAndFunctionArgs);
-            ScrollingMenu_GetListItemCoordAndFunctionArgs_Conv(data, wram->wMenuCursorY - 1);
+            ScrollingMenu_GetListItemCoordAndFunctionArgs(data, wram->wMenuCursorY - 1);
             // LD_A_addr(wMenuSelection);
             // LD_addr_A(wCurItem);
             wram->wCurItem = wram->wMenuSelection;
@@ -348,7 +149,7 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
             // DEC_A;
             // LD_addr_A(wScrollingMenuCursorPosition);
             // LD_addr_A(wCurItemQuantity);
-            wram->wScrollingMenuCursorPosition = ScrollingMenu_GetCursorPosition_Conv() - 1;
+            wram->wScrollingMenuCursorPosition = ScrollingMenu_GetCursorPosition() - 1;
             wram->wCurItemQuantity = wram->wScrollingMenuCursorPosition;
             // LD_A_addr(wMenuSelection);
             // CP_A(-1);
@@ -381,7 +182,7 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
             // LD_A_addr(wMenuCursorY);
             // DEC_A;
             // CALL(aScrollingMenu_GetListItemCoordAndFunctionArgs);
-            ScrollingMenu_GetListItemCoordAndFunctionArgs_Conv(data, wram->wMenuCursorY - 1);
+            ScrollingMenu_GetListItemCoordAndFunctionArgs(data, wram->wMenuCursorY - 1);
             // LD_A_addr(wMenuSelection);
             // CP_A(-1);
             // JP_Z (mxor_a_dec_a);
@@ -390,7 +191,7 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
             // CALL(aScrollingMenu_GetCursorPosition);
             // DEC_A;
             // LD_addr_A(wScrollingMenuCursorPosition);
-            wram->wScrollingMenuCursorPosition = ScrollingMenu_GetCursorPosition_Conv() - 1;
+            wram->wScrollingMenuCursorPosition = ScrollingMenu_GetCursorPosition() - 1;
             // LD_A(SELECT);
             // SCF;
             // RET;
@@ -509,17 +310,7 @@ u8_flag_s ScrollingMenuJoyAction_Conv(const struct MenuData* data){
 
 }
 
-void ScrollingMenu_GetCursorPosition(void){
-    LD_A_addr(wMenuScrollPosition);
-    LD_C_A;
-    LD_A_addr(wMenuCursorY);
-    ADD_A_C;
-    LD_C_A;
-    RET;
-
-}
-
-uint8_t ScrollingMenu_GetCursorPosition_Conv(void){
+static uint8_t ScrollingMenu_GetCursorPosition(void){
     // LD_A_addr(wMenuScrollPosition);
     // LD_C_A;
     // LD_A_addr(wMenuCursorY);
@@ -530,22 +321,6 @@ uint8_t ScrollingMenu_GetCursorPosition_Conv(void){
 }
 
 void ScrollingMenu_ClearLeftColumn(void){
-    CALL(aMenuBoxCoord2Tile);
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    LD_DE(2 * SCREEN_WIDTH);
-    LD_A_addr(wMenuData_ScrollingMenuHeight);
-
-loop:
-    LD_hl(0x7f);
-    ADD_HL_DE;
-    DEC_A;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void ScrollingMenu_ClearLeftColumn_Conv(void){
     // CALL(aMenuBoxCoord2Tile);
     // LD_DE(SCREEN_WIDTH);
     // ADD_HL_DE;
@@ -566,62 +341,7 @@ void ScrollingMenu_ClearLeftColumn_Conv(void){
     // RET;
 }
 
-void InitScrollingMenuCursor(void){
-    LD_HL(wMenuData_ItemsPointerAddr);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_addr(wMenuData_ItemsPointerBank);
-    CALL(aGetFarByte);
-    LD_addr_A(wScrollingMenuListSize);
-    LD_A_addr(wMenuData_ScrollingMenuHeight);
-    LD_C_A;
-    LD_A_addr(wMenuScrollPosition);
-    ADD_A_C;
-    LD_C_A;
-    LD_A_addr(wScrollingMenuListSize);
-    INC_A;
-    CP_A_C;
-    IF_NC goto skip;
-    LD_A_addr(wMenuData_ScrollingMenuHeight);
-    LD_C_A;
-    LD_A_addr(wScrollingMenuListSize);
-    INC_A;
-    SUB_A_C;
-    IF_NC goto store;
-    XOR_A_A;
-
-
-store:
-    LD_addr_A(wMenuScrollPosition);
-
-
-skip:
-    LD_A_addr(wMenuScrollPosition);
-    LD_C_A;
-    LD_A_addr(wMenuCursorPosition);
-    ADD_A_C;
-    LD_B_A;
-    LD_A_addr(wScrollingMenuListSize);
-    INC_A;
-    CP_A_B;
-    IF_C goto wrap;
-    IF_NC goto done;
-
-
-wrap:
-    XOR_A_A;
-    LD_addr_A(wMenuScrollPosition);
-    LD_A(0x1);
-    LD_addr_A(wMenuCursorPosition);
-
-
-done:
-    RET;
-
-}
-
-void InitScrollingMenuCursor_Conv(const struct MenuData* data){
+static void InitScrollingMenuCursor(const struct MenuData* data){
     // LD_HL(wMenuData_ItemsPointerAddr);
     // LD_A_hli;
     // LD_H_hl;
@@ -688,87 +408,7 @@ void InitScrollingMenuCursor_Conv(const struct MenuData* data){
 
 }
 
-void ScrollingMenu_InitFlags(void){
-    LD_A_addr(wMenuDataFlags);
-    LD_C_A;
-    LD_A_addr(wScrollingMenuListSize);
-    LD_B_A;
-    LD_A_addr(wMenuBorderTopCoord);
-    ADD_A(1);
-    LD_addr_A(w2DMenuCursorInitY);
-    LD_A_addr(wMenuBorderLeftCoord);
-    ADD_A(0);
-    LD_addr_A(w2DMenuCursorInitX);
-    LD_A_addr(wMenuData_ScrollingMenuHeight);
-    CP_A_B;
-    IF_C goto no_extra_row;
-    IF_Z goto no_extra_row;
-    LD_A_B;
-    INC_A;
-
-no_extra_row:
-    LD_addr_A(w2DMenuNumRows);
-    LD_A(1);
-    LD_addr_A(w2DMenuNumCols);
-    LD_A(0x8c);
-    BIT_C(2);
-    IF_Z goto skip_set_0;
-    SET_A(0);
-
-
-skip_set_0:
-    BIT_C(3);
-    IF_Z goto skip_set_1;
-    SET_A(1);
-
-
-skip_set_1:
-    LD_addr_A(w2DMenuFlags1);
-    XOR_A_A;
-    LD_addr_A(w2DMenuFlags2);
-    LD_A(0x20);
-    LD_addr_A(w2DMenuCursorOffsets);
-    LD_A(A_BUTTON | B_BUTTON | D_UP | D_DOWN);
-    BIT_C(7);
-    IF_Z goto disallow_select;
-    ADD_A(SELECT);
-
-
-disallow_select:
-    BIT_C(6);
-    IF_Z goto disallow_start;
-    ADD_A(START);
-
-
-disallow_start:
-    LD_addr_A(wMenuJoypadFilter);
-    LD_A_addr(w2DMenuNumRows);
-    LD_B_A;
-    LD_A_addr(wMenuCursorPosition);
-    AND_A_A;
-    IF_Z goto reset_cursor;
-    CP_A_B;
-    IF_Z goto cursor_okay;
-    IF_C goto cursor_okay;
-
-
-reset_cursor:
-    LD_A(1);
-
-
-cursor_okay:
-    LD_addr_A(wMenuCursorY);
-    LD_A(1);
-    LD_addr_A(wMenuCursorX);
-    XOR_A_A;
-    LD_addr_A(wCursorCurrentTile);
-    LD_addr_A(wCursorCurrentTile + 1);
-    LD_addr_A(wCursorOffCharacter);
-    RET;
-
-}
-
-void ScrollingMenu_InitFlags_Conv(const struct MenuData* data){
+static void ScrollingMenu_InitFlags(const struct MenuData* data){
     // LD_A_addr(wMenuDataFlags);
     // LD_C_A;
     uint8_t c = data->scrollingMenu.flags;
@@ -879,25 +519,7 @@ void ScrollingMenu_InitFlags_Conv(const struct MenuData* data){
     // RET;
 }
 
-void ScrollingMenu_ValidateSwitchItem(void){
-    LD_A_addr(wScrollingMenuListSize);
-    LD_C_A;
-    LD_A_addr(wSwitchItem);
-    AND_A_A;
-    IF_Z goto done;
-    DEC_A;
-    CP_A_C;
-    IF_C goto done;
-    XOR_A_A;
-    LD_addr_A(wSwitchItem);
-
-
-done:
-    RET;
-
-}
-
-void ScrollingMenu_ValidateSwitchItem_Conv(void){
+static void ScrollingMenu_ValidateSwitchItem(void){
     // LD_A_addr(wScrollingMenuListSize);
     // LD_C_A;
     uint8_t c = wram->wScrollingMenuListSize;
@@ -919,87 +541,7 @@ void ScrollingMenu_ValidateSwitchItem_Conv(void){
 
 }
 
-void ScrollingMenu_UpdateDisplay(void){
-    CALL(aClearWholeMenuBox);
-    LD_A_addr(wMenuDataFlags);
-    BIT_A(4);  // place arrows
-    IF_Z goto okay;
-    LD_A_addr(wMenuScrollPosition);
-    AND_A_A;
-    IF_Z goto okay;
-    LD_A_addr(wMenuBorderTopCoord);
-    LD_B_A;
-    LD_A_addr(wMenuBorderRightCoord);
-    LD_C_A;
-    CALL(aCoord2Tile);
-    LD_hl(0x61);
-
-
-okay:
-    CALL(aMenuBoxCoord2Tile);
-    LD_BC(SCREEN_WIDTH + 1);
-    ADD_HL_BC;
-    LD_A_addr(wMenuData_ScrollingMenuHeight);
-    LD_B_A;
-    LD_C(0x0);
-
-loop:
-    LD_A_addr(wMenuScrollPosition);
-    ADD_A_C;
-    LD_addr_A(wScrollingMenuCursorPosition);
-    LD_A_C;
-    CALL(aScrollingMenu_GetListItemCoordAndFunctionArgs);
-    LD_A_addr(wMenuSelection);
-    CP_A(-1);
-    IF_Z goto cancel;
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aScrollingMenu_CallFunctions1and2);
-    POP_HL;
-    LD_BC(2 * SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    INC_C;
-    LD_A_C;
-    CP_A_B;
-    IF_NZ goto loop;
-    LD_A_addr(wMenuDataFlags);
-    BIT_A(4);  // place arrows
-    IF_Z goto done;
-    LD_A_addr(wMenuBorderBottomCoord);
-    LD_B_A;
-    LD_A_addr(wMenuBorderRightCoord);
-    LD_C_A;
-    CALL(aCoord2Tile);
-    LD_hl(0xee);
-
-
-done:
-    RET;
-
-
-cancel:
-    LD_A_addr(wMenuDataFlags);
-    BIT_A(0);  // call function on cancel
-    IF_NZ goto call_function;
-    LD_DE(mScrollingMenu_UpdateDisplay_CancelString);
-    CALL(aPlaceString);
-    RET;
-
-
-CancelString:
-    //db ['"CANCEL@"'];
-
-
-call_function:
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wMenuData_ScrollingMenuFunction1);
-    JP(mCallPointerAt);
-
-}
-
-void ScrollingMenu_UpdateDisplay_Conv(const struct MenuData* data){
+static void ScrollingMenu_UpdateDisplay(const struct MenuData* data){
     // CALL(aClearWholeMenuBox);
     ClearWholeMenuBox();
     // LD_A_addr(wMenuDataFlags);
@@ -1038,7 +580,7 @@ void ScrollingMenu_UpdateDisplay_Conv(const struct MenuData* data){
         wram->wScrollingMenuCursorPosition = wram->wMenuScrollPosition + c;
         // LD_A_C;
         // CALL(aScrollingMenu_GetListItemCoordAndFunctionArgs);
-        ScrollingMenu_GetListItemCoordAndFunctionArgs_Conv(data, c);
+        ScrollingMenu_GetListItemCoordAndFunctionArgs(data, c);
         // LD_A_addr(wMenuSelection);
         // CP_A(-1);
         // IF_Z goto cancel;
@@ -1067,7 +609,7 @@ void ScrollingMenu_UpdateDisplay_Conv(const struct MenuData* data){
         // PUSH_BC;
         // PUSH_HL;
         // CALL(aScrollingMenu_CallFunctions1and2);
-        ScrollingMenu_CallFunctions1and2_Conv(data, hl);
+        ScrollingMenu_CallFunctions1and2(data, hl);
         // POP_HL;
         // LD_BC(2 * SCREEN_WIDTH);
         // ADD_HL_BC;
@@ -1095,31 +637,7 @@ void ScrollingMenu_UpdateDisplay_Conv(const struct MenuData* data){
     // RET;
 }
 
-void ScrollingMenu_CallFunctions1and2(void){
-    PUSH_HL;
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wMenuData_ScrollingMenuFunction1);
-    CALL(aCallPointerAt);
-    POP_HL;
-    LD_A_addr(wMenuData_ScrollingMenuWidth);
-    AND_A_A;
-    IF_Z goto done;
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wMenuData_ScrollingMenuFunction2);
-    CALL(aCallPointerAt);
-
-
-done:
-    RET;
-
-}
-
-void ScrollingMenu_CallFunctions1and2_Conv(const struct MenuData* data, tile_t* hl){
+static void ScrollingMenu_CallFunctions1and2(const struct MenuData* data, tile_t* hl){
     // PUSH_HL;
     // LD_D_H;
     // LD_E_L;
@@ -1145,41 +663,7 @@ void ScrollingMenu_CallFunctions1and2_Conv(const struct MenuData* data, tile_t* 
     // RET;
 }
 
-void ScrollingMenu_PlaceCursor(void){
-    LD_A_addr(wSwitchItem);
-    AND_A_A;
-    IF_Z goto done;
-    LD_B_A;
-    LD_A_addr(wMenuScrollPosition);
-    CP_A_B;
-    IF_NC goto done;
-    LD_C_A;
-    LD_A_addr(wMenuData_ScrollingMenuHeight);
-    ADD_A_C;
-    CP_A_B;
-    IF_C goto done;
-    LD_A_B;
-    SUB_A_C;
-    DEC_A;
-    ADD_A_A;
-    ADD_A(0x1);
-    LD_C_A;
-    LD_A_addr(wMenuBorderTopCoord);
-    ADD_A_C;
-    LD_B_A;
-    LD_A_addr(wMenuBorderLeftCoord);
-    ADD_A(0x0);
-    LD_C_A;
-    CALL(aCoord2Tile);
-    LD_hl(0xec);
-
-
-done:
-    RET;
-
-}
-
-void ScrollingMenu_PlaceCursor_Conv(const struct MenuData* data){
+static void ScrollingMenu_PlaceCursor(const struct MenuData* data){
     // LD_A_addr(wSwitchItem);
     // AND_A_A;
     // IF_Z goto done;
@@ -1221,7 +705,7 @@ void ScrollingMenu_PlaceCursor_Conv(const struct MenuData* data){
 
 }
 
-void ScrollingMenu_CheckCallFunction3_Conv(const struct MenuData* data){
+static void ScrollingMenu_CheckCallFunction3(const struct MenuData* data){
     // LD_A_addr(wMenuDataFlags);
     // BIT_A(5);  // call function 3
     // RET_Z ;
@@ -1241,73 +725,14 @@ void ScrollingMenu_CheckCallFunction3_Conv(const struct MenuData* data){
     // LD_A_addr(wMenuCursorY);
     // DEC_A;
     // CALL(aScrollingMenu_GetListItemCoordAndFunctionArgs);
-    ScrollingMenu_GetListItemCoordAndFunctionArgs_Conv(data, wram->wMenuCursorY - 1);
+    ScrollingMenu_GetListItemCoordAndFunctionArgs(data, wram->wMenuCursorY - 1);
     // LD_HL(wMenuData_ScrollingMenuFunction3);
     // CALL(aCallPointerAt);
     data->scrollingMenu.func3();
     // RET;
 }
 
-void ScrollingMenu_CheckCallFunction3(void){
-    LD_A_addr(wMenuDataFlags);
-    BIT_A(5);  // call function 3
-    RET_Z ;
-    BIT_A(1);  // call function 3 if not switching items
-    IF_Z goto call;
-    LD_A_addr(wSwitchItem);
-    AND_A_A;
-    RET_NZ ;
-
-
-call:
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    CALL(aScrollingMenu_GetListItemCoordAndFunctionArgs);
-    LD_HL(wMenuData_ScrollingMenuFunction3);
-    CALL(aCallPointerAt);
-    RET;
-
-}
-
-void ScrollingMenu_GetListItemCoordAndFunctionArgs(void){
-    PUSH_DE;
-    PUSH_HL;
-    LD_E_A;
-    LD_A_addr(wMenuScrollPosition);
-    ADD_A_E;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wMenuData_ItemsPointerAddr);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    INC_HL;  // items
-    LD_A_addr(wMenuData_ScrollingMenuItemFormat);
-    CP_A(SCROLLINGMENU_ITEMS_NORMAL);
-    IF_Z goto got_spacing;
-    CP_A(SCROLLINGMENU_ITEMS_QUANTITY);
-    IF_Z goto pointless_jump;
-
-pointless_jump:
-    ADD_HL_DE;
-
-got_spacing:
-    ADD_HL_DE;
-    LD_A_addr(wMenuData_ItemsPointerBank);
-    CALL(aGetFarByte);
-    LD_addr_A(wMenuSelection);
-    LD_addr_A(wCurItem);
-    INC_HL;
-    LD_A_addr(wMenuData_ItemsPointerBank);
-    CALL(aGetFarByte);
-    LD_addr_A(wMenuSelectionQuantity);
-    POP_HL;
-    POP_DE;
-    RET;
-
-}
-
-void ScrollingMenu_GetListItemCoordAndFunctionArgs_Conv(const struct MenuData* data, uint8_t a){
+static void ScrollingMenu_GetListItemCoordAndFunctionArgs(const struct MenuData* data, uint8_t a){
     // PUSH_DE;
     // PUSH_HL;
     // LD_E_A;

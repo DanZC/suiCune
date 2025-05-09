@@ -684,7 +684,7 @@ void init_function_pointers(void) {
     REDIRECTED(ClearPalettes);
 
     // engine/menus/intro_menu.c
-    REDIRECTED(Intro_MainMenu);
+    CONVERTED(Intro_MainMenu);
     //REDIRECTED(IntroMenu_DummyFunction);
     //REDIRECTED(PrintDayOfWeek);
     //REDIRECTED(NewGame_ClearTilemapEtc);
@@ -695,12 +695,12 @@ void init_function_pointers(void) {
     //REDIRECTED(DebugRoom);
     //REDIRECTED(ResetWRAM);
     //REDIRECTED(_ResetWRAM);
-    CONVERTED(SetDefaultBoxNames);
-    CONVERTED(InitializeNPCNames);
-    CONVERTED(InitializeWorld);
+    // CONVERTED(SetDefaultBoxNames);
+    // CONVERTED(InitializeNPCNames);
+    // CONVERTED(InitializeWorld);
     //REDIRECTED(LoadOrRegenerateLuckyIDNumber);
     //REDIRECTED(Continue);
-    CONVERTED(SpawnAfterRed);
+    // CONVERTED(SpawnAfterRed);
     //REDIRECTED(PostCreditsSpawn);
     //REDIRECTED(Continue_MobileAdapterMenu);
     //REDIRECTED(ConfirmContinue);
@@ -725,23 +725,23 @@ void init_function_pointers(void) {
     //REDIRECTED(OakText5);
     //REDIRECTED(OakText6);
     //REDIRECTED(OakText2);
-    CONVERTED(StorePlayerName);
+    // CONVERTED(StorePlayerName);
     //REDIRECTED(OakText4);
     //REDIRECTED(GSShowPlayerNamingChoices);
-    CONVERTED(ShrinkPlayer);
+    // CONVERTED(ShrinkPlayer);
     //REDIRECTED(OakText3);
     //REDIRECTED(Continue_DisplayPokedexNumCaught);
     //REDIRECTED(Intro_PrepTrainerPic);
     //REDIRECTED(Intro_WipeInFrontpic);
     //REDIRECTED(OakText1);
-    CONVERTED(NamePlayer);
+    // CONVERTED(NamePlayer);
     //REDIRECTED(ShrinkFrame);
     //REDIRECTED(OakText7);
-    CONVERTED(OakSpeech);
+    // CONVERTED(OakSpeech);
     //REDIRECTED(IntroFadePalettes);
     //REDIRECTED(Intro_RotatePalettesLeftFrontpic);
-    CONVERTED(TitleScreenScene);
-    REDIRECTED(RunTitleScreen);
+    // CONVERTED(TitleScreenScene);
+    // REDIRECTED(RunTitleScreen);
     //REDIRECTED(Intro_PlacePlayerSprite);
     //REDIRECTED(UnusedTitlePerspectiveScroll);
     //REDIRECTED(TitleScreenNextScene);
@@ -756,7 +756,7 @@ void init_function_pointers(void) {
     //REDIRECTED(CopyrightString);
     //REDIRECTED(TitleScreenEnd);
     //REDIRECTED(DeleteSaveData);
-    REDIRECTED(TitleScreenMain);
+    // REDIRECTED(TitleScreenMain);
     //REDIRECTED(TitleScreenEnd);
     //REDIRECTED(DeleteSaveData);
     //REDIRECTED(ResetClock);
@@ -2035,9 +2035,9 @@ void init_function_pointers(void) {
     // REDIRECTED(MainMenu_Option);
     // REDIRECTED(MainMenu_MysteryGift);
     // REDIRECTED(MainMenuJoypadLoop);
-    CONVERTED(MainMenu_PrintCurrentTimeAndDay);
+    // CONVERTED(MainMenu_PrintCurrentTimeAndDay);
     // REDIRECTED(MobileMenuGFX);
-    REDIRECTED(MainMenu_GetWhichMenu);
+    // REDIRECTED(MainMenu_GetWhichMenu);
     // REDIRECTED(MainMenu);
     // REDIRECTED(MainMenu_NewGame);
 

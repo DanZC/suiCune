@@ -1,8 +1,6 @@
 bool Elevator(const struct ElevatorData* de);
-void Elevator_GoToFloor(void);
-void Elevator_GoToFloor_Conv(uint8_t a);
-void Elevator_AskWhichFloor(void);
-u8_flag_s Elevator_AskWhichFloor_Conv(void);
+// void Elevator_GoToFloor(uint8_t a);
+// u8_flag_s Elevator_AskWhichFloor(void);
 // void AskFloorElevatorText(void);
 void Elevator_GetCurrentFloorText(void);
 // void Elevator_CurrentFloorText(void);

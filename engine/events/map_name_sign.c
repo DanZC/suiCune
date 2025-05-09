@@ -8,111 +8,11 @@
 
 #define MAP_NAME_SIGN_START (0x60)
 
-void InitMapNameSign(void){
-    return InitMapNameSign_Conv();
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    FARCALL(aInitMapNameSign_inefficient_farcall);  // this is a waste of 6 ROM bytes and 6 stack bytes
-    RET;
-
-//  should have just been a fallthrough
-
-inefficient_farcall:
-    LD_A_addr(wMapGroup);
-    LD_B_A;
-    LD_A_addr(wMapNumber);
-    LD_C_A;
-    CALL(aGetWorldMapLocation);
-    LD_addr_A(wCurLandmark);
-    CALL(aInitMapNameSign_CheckNationalParkGate);
-    IF_Z goto gate;
-
-    CALL(aGetMapEnvironment);
-    CP_A(GATE);
-    IF_NZ goto not_gate;
-
-
-gate:
-    LD_A(-1);
-    LD_addr_A(wCurLandmark);
-
-
-not_gate:
-    LD_HL(wEnteredMapFromContinue);
-    BIT_hl(1);
-    RES_hl(1);
-    IF_NZ goto dont_do_map_sign;
-
-    CALL(aInitMapNameSign_CheckMovingWithinLandmark);
-    IF_Z goto dont_do_map_sign;
-    LD_A_addr(wCurLandmark);
-    LD_addr_A(wPrevLandmark);
-
-    CALL(aInitMapNameSign_CheckSpecialMap);
-    IF_Z goto dont_do_map_sign;
-
-//  Display for 60 frames
-    LD_A(60);
-    LD_addr_A(wLandmarkSignTimer);
-    CALL(aLoadMapNameSignGFX);
-    CALL(aInitMapNameFrame);
-    FARCALL(aHDMATransfer_OnlyTopFourRows);
-    RET;
-
-
-dont_do_map_sign:
-    LD_A_addr(wCurLandmark);
-    LD_addr_A(wPrevLandmark);
-    LD_A(0x90);
-    LDH_addr_A(rWY);
-    LDH_addr_A(hWY);
-    XOR_A_A;
-    LDH_addr_A(hLCDCPointer);
-    RET;
-
-
-CheckMovingWithinLandmark:
-    LD_A_addr(wCurLandmark);
-    LD_C_A;
-    LD_A_addr(wPrevLandmark);
-    CP_A_C;
-    RET_Z ;
-    CP_A(LANDMARK_SPECIAL);
-    RET;
-
-
-CheckSpecialMap:
-//  These landmarks do not get pop-up signs.
-    CP_A(-1);
-    RET_Z ;
-    CP_A(LANDMARK_SPECIAL);  // redundant check
-    RET_Z ;
-    CP_A(LANDMARK_RADIO_TOWER);
-    RET_Z ;
-    CP_A(LANDMARK_LAV_RADIO_TOWER);
-    RET_Z ;
-    CP_A(LANDMARK_UNDERGROUND_PATH);
-    RET_Z ;
-    CP_A(LANDMARK_INDIGO_PLATEAU);
-    RET_Z ;
-    CP_A(LANDMARK_POWER_PLANT);
-    RET_Z ;
-    LD_A(1);
-    AND_A_A;
-    RET;
-
-
-CheckNationalParkGate:
-    LD_A_addr(wMapGroup);
-    CP_A(GROUP_ROUTE_35_NATIONAL_PARK_GATE);
-    RET_NZ ;
-    LD_A_addr(wMapNumber);
-    CP_A(MAP_ROUTE_35_NATIONAL_PARK_GATE);
-    RET_Z ;
-    CP_A(MAP_ROUTE_36_NATIONAL_PARK_GATE);
-    RET;
-
-}
+static void LoadMapNameSignGFX(void);
+static void InitMapNameFrame(void);
+static void PlaceMapNameCenterAlign(void);
+static void InitMapSignAttrmap(tile_t* tm, uint8_t b, uint8_t c);
+static void PlaceMapNameFrame(void);
 
 static bool InitMapNameSign_CheckNationalParkGate(void) {
     // LD_A_addr(wMapGroup);
@@ -177,7 +77,7 @@ static bool InitMapNameSign_CheckSpecialMap(uint8_t a) {
     return false;
 }
 
-void InitMapNameSign_Conv(void){
+void InitMapNameSign(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -233,9 +133,9 @@ void InitMapNameSign_Conv(void){
         // LD_addr_A(wLandmarkSignTimer);
         wram->wLandmarkSignTimer = 60;
         // CALL(aLoadMapNameSignGFX);
-        LoadMapNameSignGFX_Conv();
+        LoadMapNameSignGFX();
         // CALL(aInitMapNameFrame);
-        InitMapNameFrame_Conv();
+        InitMapNameFrame();
         // FARCALL(aHDMATransfer_OnlyTopFourRows);
         HDMATransfer_OnlyTopFourRows();
         // RET;
@@ -259,38 +159,6 @@ void InitMapNameSign_Conv(void){
 }
 
 void PlaceMapNameSign(void){
-    LD_HL(wLandmarkSignTimer);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto disappear;
-    DEC_hl;
-    CP_A(60);
-    RET_Z ;
-    CP_A(59);
-    IF_NZ goto already_initialized;
-    CALL(aInitMapNameFrame);
-    CALL(aPlaceMapNameCenterAlign);
-    FARCALL(aHDMATransfer_OnlyTopFourRows);
-
-already_initialized:
-    LD_A(0x80);
-    LD_A(0x70);
-    LDH_addr_A(rWY);
-    LDH_addr_A(hWY);
-    RET;
-
-
-disappear:
-    LD_A(0x90);
-    LDH_addr_A(rWY);
-    LDH_addr_A(hWY);
-    XOR_A_A;
-    LDH_addr_A(hLCDCPointer);
-    RET;
-
-}
-
-void PlaceMapNameSign_Conv(void){
     // LD_HL(wLandmarkSignTimer);
     // LD_A_hl;
     // AND_A_A;
@@ -307,9 +175,9 @@ void PlaceMapNameSign_Conv(void){
         // IF_NZ goto already_initialized;
         if(a == 59) {
             // CALL(aInitMapNameFrame);
-            InitMapNameFrame_Conv();
+            InitMapNameFrame();
             // CALL(aPlaceMapNameCenterAlign);
-            PlaceMapNameCenterAlign_Conv();
+            PlaceMapNameCenterAlign();
             // FARCALL(aHDMATransfer_OnlyTopFourRows);
             HDMATransfer_OnlyTopFourRows();
         }
@@ -337,16 +205,7 @@ void PlaceMapNameSign_Conv(void){
     // RET;
 }
 
-void LoadMapNameSignGFX(void){
-    LD_DE(mMapEntryFrameGFX);
-    LD_HL(vTiles2 + LEN_2BPP_TILE * MAP_NAME_SIGN_START);
-    LD_BC((BANK(aMapEntryFrameGFX) << 8) | 14);
-    CALL(aGet2bpp);
-    RET;
-
-}
-
-void LoadMapNameSignGFX_Conv(void){
+static void LoadMapNameSignGFX(void){
     // LD_DE(mMapEntryFrameGFX);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * MAP_NAME_SIGN_START);
     // LD_BC((BANK(aMapEntryFrameGFX) << 8) | 14);
@@ -355,62 +214,15 @@ void LoadMapNameSignGFX_Conv(void){
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * MAP_NAME_SIGN_START, "gfx/frames/map_entry_sign.png", 0, 14);
 }
 
-void InitMapNameFrame(void){
-    hlcoord(0, 0, wTilemap);
-    LD_B(2);
-    LD_C(18);
-    CALL(aInitMapSignAttrmap);
-    CALL(aPlaceMapNameFrame);
-    RET;
-
-}
-
-void InitMapNameFrame_Conv(void){
+static void InitMapNameFrame(void){
     // hlcoord(0, 0, wTilemap);
     // LD_B(2);
     // LD_C(18);
     // CALL(aInitMapSignAttrmap);
-    InitMapSignAttrmap_Conv(wram->wTilemap + coordidx(0, 0), 2, 18);
+    InitMapSignAttrmap(wram->wTilemap + coordidx(0, 0), 2, 18);
     // CALL(aPlaceMapNameFrame);
-    PlaceMapNameFrame_Conv();
+    PlaceMapNameFrame();
     // RET;
-}
-
-void PlaceMapNameCenterAlign(void){
-    LD_A_addr(wCurLandmark);
-    LD_E_A;
-    FARCALL(aGetLandmarkName);
-    CALL(aPlaceMapNameCenterAlign_GetNameLength);
-    LD_A(SCREEN_WIDTH);
-    SUB_A_C;
-    SRL_A;
-    LD_B(0);
-    LD_C_A;
-    hlcoord(0, 2, wTilemap);
-    ADD_HL_BC;
-    LD_DE(wStringBuffer1);
-    CALL(aPlaceString);
-    RET;
-
-
-GetNameLength:
-    LD_C(0);
-    PUSH_HL;
-    LD_HL(wStringBuffer1);
-
-loop:
-    LD_A_hli;
-    CP_A(0x50);
-    IF_Z goto stop;
-    CP_A(0xa1);
-    IF_Z goto loop;
-    INC_C;
-    goto loop;
-
-stop:
-    POP_HL;
-    RET;
-
 }
 
 uint8_t PlaceMapNameCenterAlign_GetNameLength(void) {
@@ -443,7 +255,7 @@ uint8_t PlaceMapNameCenterAlign_GetNameLength(void) {
     return c;
 }
 
-void PlaceMapNameCenterAlign_Conv(void){
+static void PlaceMapNameCenterAlign(void){
     // LD_A_addr(wCurLandmark);
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
@@ -463,37 +275,10 @@ void PlaceMapNameCenterAlign_Conv(void){
     // RET;
 }
 
-void InitMapSignAttrmap(void){
-    LD_DE(wAttrmap - wTilemap);
-    ADD_HL_DE;
-    INC_B;
-    INC_B;
-    INC_C;
-    INC_C;
-    LD_A(PAL_BG_TEXT | PRIORITY);
-
-loop:
-    PUSH_BC;
-    PUSH_HL;
-
-inner_loop:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto inner_loop;
-    POP_HL;
-    LD_DE(SCREEN_WIDTH);
-    ADD_HL_DE;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void InitMapSignAttrmap_Conv(uint8_t* hl, uint8_t b, uint8_t c){
+static void InitMapSignAttrmap(tile_t* tm, uint8_t b, uint8_t c){
     // LD_DE(wAttrmap - wTilemap);
     // ADD_HL_DE;
-    hl += wAttrmap - wTilemap;
+    uint8_t* hl = wram->wAttrmap + (tm - wram->wTilemap);
     // INC_B;
     // INC_B;
     b += 2;
@@ -528,78 +313,7 @@ void InitMapSignAttrmap_Conv(uint8_t* hl, uint8_t b, uint8_t c){
     // RET;
 }
 
-void PlaceMapNameFrame(void){
-    hlcoord(0, 0, wTilemap);
-// top left
-    LD_A(MAP_NAME_SIGN_START + 1);
-    LD_hli_A;
-// top row
-    LD_A(MAP_NAME_SIGN_START + 2);
-    CALL(aPlaceMapNameFrame_FillTopBottom);
-// top right
-    LD_A(MAP_NAME_SIGN_START + 4);
-    LD_hli_A;
-// left, first line
-    LD_A(MAP_NAME_SIGN_START + 5);
-    LD_hli_A;
-// first line
-    CALL(aPlaceMapNameFrame_FillMiddle);
-// right, first line
-    LD_A(MAP_NAME_SIGN_START + 11);
-    LD_hli_A;
-// left, second line
-    LD_A(MAP_NAME_SIGN_START + 6);
-    LD_hli_A;
-// second line
-    CALL(aPlaceMapNameFrame_FillMiddle);
-// right, second line
-    LD_A(MAP_NAME_SIGN_START + 12);
-    LD_hli_A;
-// bottom left
-    LD_A(MAP_NAME_SIGN_START + 7);
-    LD_hli_A;
-// bottom
-    LD_A(MAP_NAME_SIGN_START + 8);
-    CALL(aPlaceMapNameFrame_FillTopBottom);
-// bottom right
-    LD_A(MAP_NAME_SIGN_START + 10);
-    LD_hl_A;
-    RET;
-
-
-FillMiddle:
-    LD_C(SCREEN_WIDTH - 2);
-    LD_A(MAP_NAME_SIGN_START + 13);
-
-loop:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-FillTopBottom:
-    LD_C((SCREEN_WIDTH - 2) / 4 + 1);
-    goto enterloop;
-
-
-continueloop:
-    LD_hli_A;
-    LD_hli_A;
-
-
-enterloop:
-    INC_A;
-    LD_hli_A;
-    LD_hli_A;
-    DEC_A;
-    DEC_C;
-    IF_NZ goto continueloop;
-    RET;
-
-}
-
-static uint8_t* PlaceMapNameFrame_FillTopBottom(uint8_t* hl, uint8_t a) {
+static tile_t* PlaceMapNameFrame_FillTopBottom(tile_t* hl, uint8_t a) {
     // LD_C((SCREEN_WIDTH - 2) / 4 + 1);
     uint8_t c = (SCREEN_WIDTH - 2) / 4 + 1;
     // goto enterloop;
@@ -628,16 +342,15 @@ static uint8_t* PlaceMapNameFrame_FillTopBottom(uint8_t* hl, uint8_t a) {
     return hl;
 }
 
-static uint8_t* PlaceMapNameFrame_FillMiddle(uint8_t* hl) {
+static tile_t* PlaceMapNameFrame_FillMiddle(tile_t* hl) {
     // LD_C(SCREEN_WIDTH - 2);
     uint8_t c = SCREEN_WIDTH - 2;
     // LD_A(MAP_NAME_SIGN_START + 13);
-    uint8_t a = MAP_NAME_SIGN_START + 13;
 
     do {
     // loop:
         // LD_hli_A;
-        *(hl++) = a;
+        *(hl++) = MAP_NAME_SIGN_START + 13;
         // DEC_C;
         // IF_NZ goto loop;
     } while(--c != 0);
@@ -645,9 +358,9 @@ static uint8_t* PlaceMapNameFrame_FillMiddle(uint8_t* hl) {
     return hl;
 }
 
-void PlaceMapNameFrame_Conv(void){
+static void PlaceMapNameFrame(void){
     // hlcoord(0, 0, wTilemap);
-    uint8_t* hl = coord(0, 0, wram->wTilemap);
+    tile_t* hl = coord(0, 0, wram->wTilemap);
 // top left
     // LD_A(MAP_NAME_SIGN_START + 1);
     // LD_hli_A;
