@@ -123,7 +123,7 @@ done:
 void UpdatePlayerSprite(void) {
     // FARCALL(av_UpdatePlayerSprite);
     // RET;
-    return v_UpdatePlayerSprite_Conv();
+    return v_UpdatePlayerSprite();
 }
 
 void LoadStandardFont(void) {

@@ -2259,9 +2259,9 @@ void init_function_pointers(void) {
     // REDIRECTED(v_Sine);
 
     // engine/overworld/landmarks.c
-    REDIRECTED(RegionCheck);
-    REDIRECTED(GetLandmarkName);
-    REDIRECTED(GetLandmarkCoords);
+    // CONVERTED(RegionCheck);
+    // CONVERTED(GetLandmarkName);
+    // CONVERTED(GetLandmarkCoords);
 
     // engine/battle/read_trainer_party.c
     // CONVERTED(TrainerType1);
@@ -2832,12 +2832,12 @@ void init_function_pointers(void) {
     // REDIRECTED(v_TryWildEncounter_BugContest);
     // REDIRECTED(WarpToNewMapScript);
     // REDIRECTED(CheckMenuOW);
-    CONVERTED(EnableWildEncounters);
+    // CONVERTED(EnableWildEncounters);
     // REDIRECTED(CheckWildEncounterCooldown);
     // REDIRECTED(RandomEncounter);
     // REDIRECTED(DisableWildEncounters);
     // REDIRECTED(TryTileCollisionEvent);
-    CONVERTED(HandleMapBackground);
+    // CONVERTED(HandleMapBackground);
     // REDIRECTED(ObjectEventTypeArray);
     // REDIRECTED(DoRepelStep);
     // REDIRECTED(PlayTalkObject);
@@ -2868,7 +2868,7 @@ void init_function_pointers(void) {
     // REDIRECTED(EnableWarpsConnxns);
     // REDIRECTED(HatchEggScript);
     // REDIRECTED(DoPlayerEvent);
-    CONVERTED(ResetOverworldDelay);
+    // CONVERTED(ResetOverworldDelay);
     // REDIRECTED(PlayerEvents);
     // REDIRECTED(StartMap);
     // REDIRECTED(HandleMap);
@@ -3817,7 +3817,7 @@ void init_function_pointers(void) {
 
     // engine/overworld/player_movement.c
     // REDIRECTED(StopPlayerForEvent);
-    CONVERTED(DoPlayerMovement);
+    // CONVERTED(DoPlayerMovement);
     // REDIRECTED(CheckStandingOnIce);
 
     // engine/overworld/npc_movement.c
@@ -3947,20 +3947,20 @@ void init_function_pointers(void) {
 
     // engine/overworld/player_object.c
     CONVERTED(BlankScreen);
-    REDIRECTED(QueueFollowerFirstStep);
+    // CONVERTED(QueueFollowerFirstStep);
     // REDIRECTED(InitializeVisibleSprites);
-    REDIRECTED(CopyMapObjectToObjectStruct);
+    // CONVERTED(CopyMapObjectToObjectStruct);
     // REDIRECTED(SpawnPlayer);
-    REDIRECTED(CopyDECoordsToMapObject);
-    REDIRECTED(SurfStartStep);
-    REDIRECTED(WriteObjectXY);
+    // CONVERTED(CopyDECoordsToMapObject);
+    CONVERTED(SurfStartStep);
+    // CONVERTED(WriteObjectXY);
     // REDIRECTED(RefreshPlayerCoords);
     CONVERTED(TrainerWalkToPlayer);
-    REDIRECTED(FollowNotExact);
-    REDIRECTED(CopyTempObjectToObjectStruct);
-    REDIRECTED(CopyObjectStruct);
-    REDIRECTED(GetRelativeFacing);
-    REDIRECTED(PlayerSpawn_ConvertCoords);
+    // CONVERTED(FollowNotExact);
+    // CONVERTED(CopyTempObjectToObjectStruct);
+    // CONVERTED(CopyObjectStruct);
+    // CONVERTED(GetRelativeFacing);
+    // CONVERTED(PlayerSpawn_ConvertCoords);
     // REDIRECTED(PlayerObjectTemplate);
     // REDIRECTED(CheckObjectEnteringVisibleRange);
 

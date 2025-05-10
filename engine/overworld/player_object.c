@@ -8,6 +8,9 @@
 #include "../../home/sprite_updates.h"
 #include "../../home/clear_sprites.h"
 
+static void PlayerSpawn_ConvertCoords(uint8_t b);
+static void CopyMapObjectToObjectStruct(struct Object* de, struct MapObject* bc, uint8_t mapObjIdx, uint8_t objIdx);
+
 void BlankScreen(void){
     // CALL(aDisableSpriteUpdates);
     DisableSpriteUpdates();
@@ -47,7 +50,7 @@ void SpawnPlayer(void){
     CopyPlayerObjectTemplate(&PlayerObjectTemplate, PLAYER);
     // LD_B(PLAYER);
     // CALL(aPlayerSpawn_ConvertCoords);
-    PlayerSpawn_ConvertCoords_Conv(PLAYER);
+    PlayerSpawn_ConvertCoords(PLAYER);
     // LD_A(PLAYER_OBJECT);
     // CALL(aGetMapObject);
     struct MapObject* bc = GetMapObject(PLAYER_OBJECT);
@@ -76,7 +79,7 @@ void SpawnPlayer(void){
     // LDH_addr_A(hObjectStructIndex);
     // LD_DE(wObjectStructs);
     // CALL(aCopyMapObjectToObjectStruct);
-    CopyMapObjectToObjectStruct_Conv(&wram->wPlayerStruct, bc, PLAYER_OBJECT, PLAYER_OBJECT);
+    CopyMapObjectToObjectStruct(&wram->wPlayerStruct, bc, PLAYER_OBJECT, PLAYER_OBJECT);
     // LD_A(PLAYER);
     // LD_addr_A(wCenteredObject);
     wram->wCenteredObject = PLAYER;
@@ -88,22 +91,7 @@ void SpawnPlayer(void){
 //  Said bytes seem to be unused.
 const struct ObjEvent PlayerObjectTemplate = object_event(-4, -4, SPRITE_CHRIS, SPRITEMOVEDATA_PLAYER, 15, 15, -1, -1, 0, OBJECTTYPE_SCRIPT, 0, 0, -1);
 
-void CopyDECoordsToMapObject(void){
-    PUSH_DE;
-    LD_A_B;
-    CALL(aGetMapObject);
-    POP_DE;
-    LD_HL(MAPOBJECT_X_COORD);
-    ADD_HL_BC;
-    LD_hl_D;
-    LD_HL(MAPOBJECT_Y_COORD);
-    ADD_HL_BC;
-    LD_hl_E;
-    RET;
-
-}
-
-void CopyDECoordsToMapObject_Conv(uint8_t d, uint8_t e, uint8_t b){
+void CopyDECoordsToMapObject(uint8_t d, uint8_t e, uint8_t b){
     // PUSH_DE;
     // LD_A_B;
     // CALL(aGetMapObject);
@@ -120,21 +108,7 @@ void CopyDECoordsToMapObject_Conv(uint8_t d, uint8_t e, uint8_t b){
     // RET;
 }
 
-void PlayerSpawn_ConvertCoords(void){
-    PUSH_BC;
-    LD_A_addr(wXCoord);
-    ADD_A(4);
-    LD_D_A;
-    LD_A_addr(wYCoord);
-    ADD_A(4);
-    LD_E_A;
-    POP_BC;
-    CALL(aCopyDECoordsToMapObject);
-    RET;
-
-}
-
-void PlayerSpawn_ConvertCoords_Conv(uint8_t b){
+static void PlayerSpawn_ConvertCoords(uint8_t b){
     // PUSH_BC;
     // LD_A_addr(wXCoord);
     // ADD_A(4);
@@ -145,29 +119,10 @@ void PlayerSpawn_ConvertCoords_Conv(uint8_t b){
     // POP_BC;
     // CALL(aCopyDECoordsToMapObject);
     // RET;
-    return CopyDECoordsToMapObject_Conv(wram->wXCoord + 4, wram->wYCoord + 4, b);
+    return CopyDECoordsToMapObject(wram->wXCoord + 4, wram->wYCoord + 4, b);
 }
 
-void WriteObjectXY(void){
-    LD_A_B;
-    CALL(aCheckObjectVisibility);
-    RET_C ;
-
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    LDH_A_addr(hMapObjectIndex);
-    LD_B_A;
-    CALL(aCopyDECoordsToMapObject);
-    AND_A_A;
-    RET;
-
-}
-
-void WriteObjectXY_Conv(uint8_t b){
+void WriteObjectXY(uint8_t b){
     // LD_A_B;
     // CALL(aCheckObjectVisibility);
     struct Object* bc = CheckObjectVisibility(b);
@@ -184,7 +139,7 @@ void WriteObjectXY_Conv(uint8_t b){
     // LDH_A_addr(hMapObjectIndex);
     // LD_B_A;
     // CALL(aCopyDECoordsToMapObject);
-    CopyDECoordsToMapObject_Conv(bc->nextMapX, bc->nextMapY, hram->hMapObjectIndex);
+    CopyDECoordsToMapObject(bc->nextMapX, bc->nextMapY, hram->hMapObjectIndex);
     // AND_A_A;
     // RET;
 }
@@ -227,45 +182,7 @@ void RefreshPlayerCoords(void){
     // RET;
 }
 
-void CopyObjectStruct(void){
-    CALL(aCheckObjectMask);
-    AND_A_A;
-    RET_NZ ;  // masked
-
-    LD_HL(wObjectStructs + OBJECT_LENGTH * 1);
-    LD_A(1);
-    LD_DE(OBJECT_LENGTH);
-
-loop:
-    LDH_addr_A(hObjectStructIndex);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto done;
-    ADD_HL_DE;
-    LDH_A_addr(hObjectStructIndex);
-    INC_A;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NZ goto loop;
-    SCF;
-    RET;  // overflow
-
-
-done:
-    LD_D_H;
-    LD_E_L;
-    CALL(aCopyMapObjectToObjectStruct);
-    LD_HL(wVramState);
-    BIT_hl(7);
-    RET_Z ;
-
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_DE;
-    SET_hl(5);
-    RET;
-
-}
-
-uint8_t CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a){
+uint8_t CopyObjectStruct(struct MapObject* bc, uint8_t a){
     // CALL(aCheckObjectMask);
     // AND_A_A;
     // RET_NZ ;  // masked
@@ -289,7 +206,7 @@ uint8_t CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a){
             // LD_D_H;
             // LD_E_L;
             // CALL(aCopyMapObjectToObjectStruct);
-            CopyMapObjectToObjectStruct_Conv(hl, bc, a, b);
+            CopyMapObjectToObjectStruct(hl, bc, a, b);
             // LD_HL(wVramState);
             // BIT_hl(7);
             // RET_Z ;
@@ -314,73 +231,7 @@ uint8_t CopyObjectStruct_Conv(struct MapObject* bc, uint8_t a){
     return 0xff;
 }
 
-void CopyMapObjectToObjectStruct(void){
-    CALL(aCopyMapObjectToObjectStruct_CopyMapObjectToTempObject);
-    CALL(aCopyTempObjectToObjectStruct);
-    RET;
-
-
-CopyMapObjectToTempObject:
-    LDH_A_addr(hObjectStructIndex);
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_hl_A;
-
-    LDH_A_addr(hMapObjectIndex);
-    LD_addr_A(wTempObjectCopyMapObjectIndex);
-
-    LD_HL(MAPOBJECT_SPRITE);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wTempObjectCopySprite);
-
-    CALL(aGetSpriteVTile);
-    LD_addr_A(wTempObjectCopySpriteVTile);
-
-    LD_A_hl;
-    CALL(aGetSpritePalette);
-    LD_addr_A(wTempObjectCopyPalette);
-
-    LD_HL(MAPOBJECT_COLOR);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0xf0);
-    IF_Z goto skip_color_override;
-    SWAP_A;
-    AND_A(PALETTE_MASK);
-    LD_addr_A(wTempObjectCopyPalette);
-
-
-skip_color_override:
-    LD_HL(MAPOBJECT_MOVEMENT);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wTempObjectCopyMovement);
-
-    LD_HL(MAPOBJECT_RANGE);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wTempObjectCopyRange);
-
-    LD_HL(MAPOBJECT_X_COORD);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wTempObjectCopyX);
-
-    LD_HL(MAPOBJECT_Y_COORD);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wTempObjectCopyY);
-
-    LD_HL(MAPOBJECT_RADIUS);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wTempObjectCopyRadius);
-    RET;
-
-}
-
-static void CopyMapObjectToObjectStruct_CopyMapObjectToTempObject_Conv(struct MapObject* bc, uint8_t objIdx, uint8_t mapObjIdx) {
+static void CopyMapObjectToObjectStruct_CopyMapObjectToTempObject(struct MapObject* bc, uint8_t objIdx, uint8_t mapObjIdx) {
 // CopyMapObjectToTempObject:
     // LDH_A_addr(hObjectStructIndex);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
@@ -452,11 +303,11 @@ static void CopyMapObjectToObjectStruct_CopyMapObjectToTempObject_Conv(struct Ma
     // RET;
 }
 
-void CopyMapObjectToObjectStruct_Conv(struct Object* de, struct MapObject* bc, uint8_t mapObjIdx, uint8_t objIdx){
+static void CopyMapObjectToObjectStruct(struct Object* de, struct MapObject* bc, uint8_t mapObjIdx, uint8_t objIdx){
     // CALL(aCopyMapObjectToObjectStruct_CopyMapObjectToTempObject);
-    CopyMapObjectToObjectStruct_CopyMapObjectToTempObject_Conv(bc, objIdx, mapObjIdx);
+    CopyMapObjectToObjectStruct_CopyMapObjectToTempObject(bc, objIdx, mapObjIdx);
     // CALL(aCopyTempObjectToObjectStruct);
-    CopyTempObjectToObjectStruct_Conv(de);
+    CopyTempObjectToObjectStruct(de);
     // RET;
 }
 
@@ -525,7 +376,7 @@ void InitializeVisibleSprites(void){
 
         // PUSH_BC;
         // CALL(aCopyObjectStruct);
-        uint8_t res = CopyObjectStruct_Conv(bc + a, a);
+        uint8_t res = CopyObjectStruct(bc + a, a);
         // POP_BC;
         // JP_C (mInitializeVisibleSprites_ret);
         if(res == 0xff)
@@ -620,7 +471,7 @@ void CheckObjectEnteringVisibleRange(void){
             // PUSH_DE;
             // PUSH_BC;
             // CALL(aCopyObjectStruct);
-            CopyObjectStruct_Conv(bc + a, a);
+            CopyObjectStruct(bc + a, a);
             // POP_BC;
             // POP_DE;
 
@@ -696,7 +547,7 @@ void CheckObjectEnteringVisibleRange(void){
             // PUSH_DE;
             // PUSH_BC;
             // CALL(aCopyObjectStruct);
-            CopyObjectStruct_Conv(bc + a, a);
+            CopyObjectStruct(bc + a, a);
             // POP_BC;
             // POP_DE;
 
@@ -721,113 +572,6 @@ void CheckObjectEnteringVisibleRange(void){
     //dw ['.Up'];
     //dw ['.Left'];
     //dw ['.Right'];
-}
-
-void CopyTempObjectToObjectStruct(void){
-    LD_A_addr(wTempObjectCopyMapObjectIndex);
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_DE;
-    LD_hl_A;
-
-    LD_A_addr(wTempObjectCopyMovement);
-    CALL(aCopySpriteMovementData);
-
-    LD_A_addr(wTempObjectCopyPalette);
-    LD_HL(OBJECT_PALETTE);
-    ADD_HL_DE;
-    OR_A_hl;
-    LD_hl_A;
-
-    LD_A_addr(wTempObjectCopyY);
-    CALL(aCopyTempObjectToObjectStruct_InitYCoord);
-
-    LD_A_addr(wTempObjectCopyX);
-    CALL(aCopyTempObjectToObjectStruct_InitXCoord);
-
-    LD_A_addr(wTempObjectCopySprite);
-    LD_HL(OBJECT_SPRITE);
-    ADD_HL_DE;
-    LD_hl_A;
-
-    LD_A_addr(wTempObjectCopySpriteVTile);
-    LD_HL(OBJECT_SPRITE_TILE);
-    ADD_HL_DE;
-    LD_hl_A;
-
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_DE;
-    LD_hl(STEP_TYPE_RESET);
-
-    LD_HL(OBJECT_FACING_STEP);
-    ADD_HL_DE;
-    LD_hl(STANDING);
-
-    LD_A_addr(wTempObjectCopyRadius);
-    CALL(aCopyTempObjectToObjectStruct_InitRadius);
-
-    LD_A_addr(wTempObjectCopyRange);
-    LD_HL(OBJECT_RANGE);
-    ADD_HL_DE;
-    LD_hl_A;
-
-    AND_A_A;
-    RET;
-
-
-InitYCoord:
-    LD_HL(OBJECT_INIT_Y);
-    ADD_HL_DE;
-    LD_hl_A;
-
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_DE;
-    LD_hl_A;
-
-    LD_HL(wYCoord);
-    SUB_A_hl;
-    AND_A(0xf);
-    SWAP_A;
-    LD_HL(wPlayerBGMapOffsetY);
-    SUB_A_hl;
-    LD_HL(OBJECT_SPRITE_Y);
-    ADD_HL_DE;
-    LD_hl_A;
-    RET;
-
-
-InitXCoord:
-    LD_HL(OBJECT_INIT_X);
-    ADD_HL_DE;
-    LD_hl_A;
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_DE;
-    LD_hl_A;
-    LD_HL(wXCoord);
-    SUB_A_hl;
-    AND_A(0xf);
-    SWAP_A;
-    LD_HL(wPlayerBGMapOffsetX);
-    SUB_A_hl;
-    LD_HL(OBJECT_SPRITE_X);
-    ADD_HL_DE;
-    LD_hl_A;
-    RET;
-
-
-InitRadius:
-    LD_H_A;
-    INC_A;
-    AND_A(0xf);
-    LD_L_A;
-    LD_A_H;
-    ADD_A(0x10);
-    AND_A(0xf0);
-    OR_A_L;
-    LD_HL(OBJECT_RADIUS);
-    ADD_HL_DE;
-    LD_hl_A;
-    RET;
-
 }
 
 static void CopyTempObjectToObjectStruct_InitYCoord(struct Object* de, uint8_t a) {
@@ -895,7 +639,7 @@ static void CopyTempObjectToObjectStruct_InitRadius(struct Object* de, uint8_t a
     // RET;
 }
 
-void CopyTempObjectToObjectStruct_Conv(struct Object* de){
+void CopyTempObjectToObjectStruct(struct Object* de){
     // LD_A_addr(wTempObjectCopyMapObjectIndex);
     // LD_HL(OBJECT_MAP_OBJECT_INDEX);
     // ADD_HL_DE;
@@ -1070,214 +814,118 @@ void SurfStartStep(void){
     // RET;
 }
 
-void FollowNotExact(void){
-    PUSH_BC;
-    LD_A_C;
-    CALL(aCheckObjectVisibility);
-    LD_D_B;
-    LD_E_C;
-    POP_BC;
-    RET_C ;
+void FollowNotExact(uint8_t c, uint8_t b){
+    // PUSH_BC;
+    // LD_A_C;
+    // CALL(aCheckObjectVisibility);
+    // LD_D_B;
+    // LD_E_C;
+    struct Object* de = CheckObjectVisibility(c);
+    // POP_BC;
+    // RET_C ;
+    if(de == NULL)
+        return;
 
-    LD_A_B;
-    CALL(aCheckObjectVisibility);
-    RET_C ;
+    // LD_A_B;
+    // CALL(aCheckObjectVisibility);
+    struct Object* bc = CheckObjectVisibility(b);
+    // RET_C ;
+    if(bc == NULL)
+        return;
 
 //  object 2 is now in bc, object 1 is now in de
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_C_hl;
-    LD_B_A;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t nextX = bc->nextMapX;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_C_hl;
+    // LD_B_A;
+    uint8_t nextY = bc->nextMapY;
 
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_DE;
-    LD_A_hl;
-    CP_A_B;
-    IF_Z goto same_x;
-    IF_C goto to_the_left;
-    INC_B;
-    goto continue_;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // CP_A_B;
+    // IF_Z goto same_x;
+    if(de->nextMapX == nextX) {
+    // same_x:
+        // LD_HL(OBJECT_NEXT_MAP_Y);
+        // ADD_HL_DE;
+        // LD_A_hl;
+        // CP_A_C;
+        // IF_Z goto continue_;
+        // IF_C goto below;
+        if(de->nextMapY < nextY) {
+        // below:
+            // DEC_C;
+            nextY--;
+        }
+        else if(de->nextMapY > nextY) {
+            // INC_C;
+            nextY++;
+            // goto continue_;
+        }
+    }
+    // IF_C goto to_the_left;
+    else if(de->nextMapX < nextX) {
+    // to_the_left:
+        // DEC_B;
+        nextX--;
+        // goto continue_;
+    }
+    else {
+        // INC_B;
+        nextX++;
+        // goto continue_;
+    }
 
-
-to_the_left:
-    DEC_B;
-    goto continue_;
-
-
-same_x:
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_DE;
-    LD_A_hl;
-    CP_A_C;
-    IF_Z goto continue_;
-    IF_C goto below;
-    INC_C;
-    goto continue_;
-
-
-below:
-    DEC_C;
-
-
-continue_:
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_DE;
-    LD_hl_B;
-    LD_A_B;
-    LD_HL(wXCoord);
-    SUB_A_hl;
-    AND_A(0xf);
-    SWAP_A;
-    LD_HL(wPlayerBGMapOffsetX);
-    SUB_A_hl;
-    LD_HL(OBJECT_SPRITE_X);
-    ADD_HL_DE;
-    LD_hl_A;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_DE;
-    LD_hl_C;
-    LD_A_C;
-    LD_HL(wYCoord);
-    SUB_A_hl;
-    AND_A(0xf);
-    SWAP_A;
-    LD_HL(wPlayerBGMapOffsetY);
-    SUB_A_hl;
-    LD_HL(OBJECT_SPRITE_Y);
-    ADD_HL_DE;
-    LD_hl_A;
-    LDH_A_addr(hObjectStructIndex);
-    LD_HL(OBJECT_RANGE);
-    ADD_HL_DE;
-    LD_hl_A;
-    LD_HL(OBJECT_MOVEMENTTYPE);
-    ADD_HL_DE;
-    LD_hl(SPRITEMOVEDATA_FOLLOWNOTEXACT);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_DE;
-    LD_hl(STEP_TYPE_RESET);
-    RET;
-
-}
-
-void GetRelativeFacing(void){
-//  Determines which way map object e would have to turn to face map object d.  Returns carry if it's impossible for whatever reason.
-    LD_A_D;
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NC goto carry;
-    LD_D_A;
-    LD_A_E;
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NC goto carry;
-    LD_E_A;
-    CALL(aGetRelativeFacing_GetFacing_e_relativeto_d);
-    RET;
-
-
-carry:
-    SCF;
-    RET;
-
-
-GetFacing_e_relativeto_d:
-//  Determines which way object e would have to turn to face object d.  Returns carry if it's impossible.
-//  load the coordinates of object d into bc
-    LD_A_D;
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_C_hl;
-    LD_B_A;
-    PUSH_BC;
-//  load the coordinates of object e into de
-    LD_A_E;
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    POP_BC;
-//  |x1 - x2|
-    LD_A_B;
-    SUB_A_D;
-    IF_Z goto same_x_1;
-    IF_NC goto b_right_of_d_1;
-    CPL;
-    INC_A;
-
-
-b_right_of_d_1:
-//  |y1 - y2|
-    LD_H_A;
-    LD_A_C;
-    SUB_A_E;
-    IF_Z goto same_y_1;
-    IF_NC goto c_below_e_1;
-    CPL;
-    INC_A;
-
-
-c_below_e_1:
-//  |y1 - y2| - |x1 - x2|
-    SUB_A_H;
-    IF_C goto same_y_1;
-
-
-same_x_1:
-//  compare the y coordinates
-    LD_A_C;
-    CP_A_E;
-    IF_Z goto same_x_and_y;
-    IF_C goto c_directly_below_e;
-//  c directly above e
-    LD_D(DOWN);
-    AND_A_A;
-    RET;
-
-
-c_directly_below_e:
-    LD_D(UP);
-    AND_A_A;
-    RET;
-
-
-same_y_1:
-    LD_A_B;
-    CP_A_D;
-    IF_Z goto same_x_and_y;
-    IF_C goto b_directly_right_of_d;
-//  b directly left of d
-    LD_D(RIGHT);
-    AND_A_A;
-    RET;
-
-
-b_directly_right_of_d:
-    LD_D(LEFT);
-    AND_A_A;
-    RET;
-
-
-same_x_and_y:
-    SCF;
-    RET;
-
+// continue_:
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_DE;
+    // LD_hl_B;
+    de->nextMapX = nextX;
+    // LD_A_B;
+    // LD_HL(wXCoord);
+    // SUB_A_hl;
+    // AND_A(0xf);
+    // SWAP_A;
+    // LD_HL(wPlayerBGMapOffsetX);
+    // SUB_A_hl;
+    // LD_HL(OBJECT_SPRITE_X);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    de->spriteX = (((nextX - wram->wXCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetX;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_DE;
+    // LD_hl_C;
+    de->nextMapY = nextY;
+    // LD_A_C;
+    // LD_HL(wYCoord);
+    // SUB_A_hl;
+    // AND_A(0xf);
+    // SWAP_A;
+    // LD_HL(wPlayerBGMapOffsetY);
+    // SUB_A_hl;
+    // LD_HL(OBJECT_SPRITE_Y);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    de->spriteY = (((nextY - wram->wYCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetY;
+    // LDH_A_addr(hObjectStructIndex);
+    // LD_HL(OBJECT_RANGE);
+    // ADD_HL_DE;
+    // LD_hl_A;
+    de->range = hram->hObjectStructIndex;
+    // LD_HL(OBJECT_MOVEMENTTYPE);
+    // ADD_HL_DE;
+    // LD_hl(SPRITEMOVEDATA_FOLLOWNOTEXACT);
+    de->movementType = SPRITEMOVEDATA_FOLLOWNOTEXACT;
+    // LD_HL(OBJECT_STEP_TYPE);
+    // ADD_HL_DE;
+    // LD_hl(STEP_TYPE_RESET);
+    de->stepType = STEP_TYPE_RESET;
+    // RET;
 }
 
 //  Determines which way object e would have to turn to face object d.  Returns 255 if it's impossible.
@@ -1396,7 +1044,7 @@ same_y_1:
 }
 
 //  Determines which way map object e would have to turn to face map object d.  Returns 255 if it's impossible for whatever reason.
-uint8_t GetRelativeFacing_Conv(uint8_t e, uint8_t d){
+uint8_t GetRelativeFacing(uint8_t e, uint8_t d){
     // LD_A_D;
     // CALL(aGetMapObject);
     struct MapObject* bc = GetMapObject(d);
@@ -1428,73 +1076,6 @@ uint8_t GetRelativeFacing_Conv(uint8_t e, uint8_t d){
 // carry:
     // SCF;
     // RET;
-}
-
-void QueueFollowerFirstStep(void){
-    CALL(aQueueFollowerFirstStep_QueueFirstStep);
-    IF_C goto same;
-    LD_addr_A(wFollowMovementQueue);
-    XOR_A_A;
-    LD_addr_A(wFollowerMovementQueueLength);
-    RET;
-
-
-same:
-    LD_A(-1);
-    LD_addr_A(wFollowerMovementQueueLength);
-    RET;
-
-
-QueueFirstStep:
-    LD_A_addr(wObjectFollow_Leader);
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    LD_A_addr(wObjectFollow_Follower);
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_A_D;
-    CP_A_hl;
-    IF_Z goto check_y;
-    IF_C goto left;
-    AND_A_A;
-    LD_A(movement_step + RIGHT);
-    RET;
-
-
-left:
-    AND_A_A;
-    LD_A(movement_step + LEFT);
-    RET;
-
-
-check_y:
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_A_E;
-    CP_A_hl;
-    IF_Z goto same_xy;
-    IF_C goto up;
-    AND_A_A;
-    LD_A(movement_step + DOWN);
-    RET;
-
-
-up:
-    AND_A_A;
-    LD_A(movement_step + UP);
-    RET;
-
-
-same_xy:
-    SCF;
-    RET;
-
 }
 
 static u8_flag_s QueueFollowerFirstStep_QueueFirstStep(void) {
@@ -1561,7 +1142,7 @@ static u8_flag_s QueueFollowerFirstStep_QueueFirstStep(void) {
     }
 }
 
-bool QueueFollowerFirstStep_Conv(void){
+bool QueueFollowerFirstStep(void){
     // CALL(aQueueFollowerFirstStep_QueueFirstStep);
     // IF_C goto same;
     u8_flag_s res = QueueFollowerFirstStep_QueueFirstStep();

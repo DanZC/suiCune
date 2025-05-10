@@ -1,6 +1,3 @@
-void DoPlayerMovement(void);
-uint8_t DoPlayerMovement_Conv(void);
-void CheckStandingOnIce(void);
-bool CheckStandingOnIce_Conv(void);
+uint8_t DoPlayerMovement(void);
+bool CheckStandingOnIce(void);
 void StopPlayerForEvent(void);
-void StopPlayerForEvent_Conv(void);

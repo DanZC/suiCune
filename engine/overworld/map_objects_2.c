@@ -4,6 +4,9 @@
 #include "../../home/map_objects.h"
 #include "../../home/flag.h"
 
+static uint8_t CheckObjectFlag(struct MapObject* bc);
+static uint8_t GetObjectTimeMask(struct MapObject* bc);
+
 void LoadObjectMasks(void){
     // LD_HL(wObjectMasks);
     // XOR_A_A;
@@ -23,11 +26,11 @@ void LoadObjectMasks(void){
         // PUSH_BC;
         // PUSH_DE;
         // CALL(aGetObjectTimeMask);
-        uint8_t a2 = GetObjectTimeMask_Conv(bc + a);
+        uint8_t a2 = GetObjectTimeMask(bc + a);
         // IF_C goto next;
         if(a2 != 0xff) {
             // CALL(aCheckObjectFlag);
-            a2 = CheckObjectFlag_Conv(bc + a);
+            a2 = CheckObjectFlag(bc + a);
         }
 
     // next:
@@ -48,45 +51,7 @@ void LoadObjectMasks(void){
     // RET;
 }
 
-void CheckObjectFlag(void){
-    LD_HL(MAPOBJECT_SPRITE);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto masked;
-    LD_HL(MAPOBJECT_EVENT_FLAG);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hl;
-    LD_D_A;
-    CP_A(-1);
-    IF_NZ goto check;
-    LD_A_E;
-    CP_A(-1);
-    IF_Z goto unmasked;
-    goto masked;
-
-check:
-    LD_B(CHECK_FLAG);
-    CALL(aEventFlagAction);
-    LD_A_C;
-    AND_A_A;
-    IF_NZ goto masked;
-
-unmasked:
-    XOR_A_A;
-    RET;
-
-
-masked:
-    LD_A(-1);
-    SCF;
-    RET;
-
-}
-
-uint8_t CheckObjectFlag_Conv(struct MapObject* bc){
+static uint8_t CheckObjectFlag(struct MapObject* bc){
     // LD_HL(MAPOBJECT_SPRITE);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -134,16 +99,7 @@ uint8_t CheckObjectFlag_Conv(struct MapObject* bc){
     // RET;
 }
 
-void GetObjectTimeMask(void){
-    CALL(aCheckObjectTime);
-    LD_A(-1);
-    RET_C ;
-    XOR_A_A;
-    RET;
-
-}
-
-uint8_t GetObjectTimeMask_Conv(struct MapObject* bc){
+static uint8_t GetObjectTimeMask(struct MapObject* bc){
     // CALL(aCheckObjectTime);
     // LD_A(-1);
     // RET_C ;

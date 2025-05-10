@@ -149,6 +149,7 @@ void Script_moveobject_Conv(script_s* s, uint8_t obj, uint8_t x, uint8_t y);
 void Script_writeobjectxy(void);
 void Script_writeobjectxy_Conv(script_s* s, uint8_t obj);
 void Script_follownotexact(void);
+void Script_follownotexact_Conv(script_s* s, uint8_t b, uint8_t c);
 void Script_loademote(void);
 void Script_loademote_Conv(script_s* s, uint8_t emote);
 void Script_showemote(void);

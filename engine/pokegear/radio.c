@@ -601,7 +601,7 @@ static void OaksPKMNTalk4(void){
     // CALL(aGetWorldMapLocation);
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
-    GetLandmarkName_Conv(GetWorldMapLocation(map.mapGroup, map.mapNumber));
+    GetLandmarkName(GetWorldMapLocation(map.mapGroup, map.mapNumber));
     // LD_HL(mOPT_OakText1);
     // CALL(aCopyRadioTextToRAM);
     CopyRadioTextToRAM(OPT_OakText1);
@@ -1872,7 +1872,7 @@ static void PeoplePlaces6(void){
     // CALL(aGetWorldMapLocation);
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
-    GetLandmarkName_Conv(GetWorldMapLocation(map.mapGroup, map.mapNumber));
+    GetLandmarkName(GetWorldMapLocation(map.mapGroup, map.mapNumber));
     // LD_HL(mPnP_Text5);
     // LD_A(PLACES_AND_PEOPLE_7);
     // JP(mNextRadioLine);

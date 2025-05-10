@@ -1542,7 +1542,7 @@ void Script_describedecoration_Conv(script_s* s, uint8_t deco){
     // CALL(aGetScriptByte);
     // LD_B_A;
     // FARCALL(aDescribeDecoration);
-    Script_fn_t script = DescribeDecoration_Conv(deco);
+    Script_fn_t script = DescribeDecoration(deco);
     // LD_H_D;
     // LD_L_E;
     // JP(mScriptJump);
@@ -2116,7 +2116,7 @@ void Script_faceplayer_Conv(script_s* s){
     // LDH_A_addr(hLastTalked);
     // LD_E_A;
     // FARCALL(aGetRelativeFacing);
-    uint8_t d = GetRelativeFacing_Conv(hram->hLastTalked, 0);
+    uint8_t d = GetRelativeFacing(hram->hLastTalked, 0);
     // LD_A_D;
     // ADD_A_A;
     // ADD_A_A;
@@ -2186,7 +2186,7 @@ void Script_faceobject_Conv(script_s* s, uint8_t e, uint8_t d){
     // LD_D_A;
     // PUSH_DE;
     // FARCALL(aGetRelativeFacing);
-    d = GetRelativeFacing_Conv(obje, objd);
+    d = GetRelativeFacing(obje, objd);
     // POP_BC;
     // RET_C ;
     if(d == 0xff)
@@ -2330,7 +2330,7 @@ bool ApplyObjectFacing_Conv(uint8_t d, uint8_t e){
     // CALL(aDoesSpriteHaveFacings);
     // POP_BC;
     // IF_C goto not_visible;  // STILL_SPRITE
-    if(!v_DoesSpriteHaveFacings_Conv(bc->sprite))
+    if(!v_DoesSpriteHaveFacings(bc->sprite))
         return false;
     // LD_HL(OBJECT_FLAGS1);
     // ADD_HL_BC;
@@ -2569,7 +2569,7 @@ void Script_moveobject_Conv(script_s* s, uint8_t obj, uint8_t x, uint8_t y){
     // ADD_A(4);
     // LD_E_A;
     // FARCALL(aCopyDECoordsToMapObject);
-    CopyDECoordsToMapObject_Conv(x + 4, y + 4, GetScriptObject_Conv(obj));
+    CopyDECoordsToMapObject(x + 4, y + 4, GetScriptObject_Conv(obj));
     // RET;
 }
 
@@ -2602,7 +2602,7 @@ void Script_writeobjectxy_Conv(script_s* s, uint8_t obj){
     // LD_B_A;
     // FARCALL(aWriteObjectXY);
     // RET;
-    WriteObjectXY_Conv(a);
+    WriteObjectXY(a);
 }
 
 void Script_follownotexact(void){
@@ -2615,6 +2615,19 @@ void Script_follownotexact(void){
     FARCALL(aFollowNotExact);
     RET;
 
+}
+
+void Script_follownotexact_Conv(script_s* s, uint8_t b, uint8_t c){
+    (void)s;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    // LD_B_A;
+    // CALL(aGetScriptByte);
+    // CALL(aGetScriptObject);
+    // LD_C_A;
+    // FARCALL(aFollowNotExact);
+    FollowNotExact(GetScriptObject_Conv(c), GetScriptObject_Conv(b));
+    // RET;
 }
 
 void Script_loademote(void){
@@ -2642,7 +2655,7 @@ void Script_loademote_Conv(script_s* s, uint8_t emote){
 // not_var_emote:
     // LD_C_A;
     // FARCALL(aLoadEmote);
-    LoadEmote_Conv(emote);
+    LoadEmote(emote);
     // RET;
 }
 
@@ -2975,7 +2988,7 @@ void Script_reloadmapafterbattle_Conv(script_s* s){
             // LD_B(BANK(aScript_SpecialBillCall));
             // LD_DE(mScript_SpecialBillCall);
             // FARCALL(aLoadScriptBDE);
-            LoadScriptBDE_Conv(Script_SpecialBillCall);
+            LoadScriptBDE(Script_SpecialBillCall);
         }
     }
 // done:
@@ -3876,7 +3889,7 @@ void ConvertLandmarkToText_Conv(uint8_t a, uint8_t b){
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
     
-    return GetStringBuffer_Conv(b, GetLandmarkName_Conv(a));
+    return GetStringBuffer_Conv(b, GetLandmarkName(a));
 }
 
 void Script_getlandmarkname(void){
@@ -5206,7 +5219,7 @@ void Script_writecmdqueue_Conv(script_s* s, const struct CmdQueue* cmd){
     // LD_A_addr(wScriptBank);
     // LD_B_A;
     // FARCALL(aWriteCmdQueue);  // no need to farcall
-    WriteCmdQueue_Conv(cmd);
+    WriteCmdQueue(cmd);
     // RET;
 }
 
@@ -5232,7 +5245,7 @@ void Script_delcmdqueue_Conv(script_s* s, uint8_t b){
     // LD_B_A;
     // FARCALL(aDelCmdQueue);  // no need to farcall
     // RET_C ;
-    if(DelCmdQueue_Conv(b))
+    if(DelCmdQueue(b))
         return;
     // LD_A(TRUE);
     // LD_addr_A(wScriptVar);

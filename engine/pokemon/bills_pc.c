@@ -4314,7 +4314,7 @@ void BillsPC_ChangeBoxSubmenu(void){
         // LD_B(NAME_BOX);
         // LD_DE(wBoxNameBuffer);
         // FARCALL(aNamingScreen);
-        NamingScreen_Conv(wram->wBoxNameBuffer, NAME_BOX);
+        NamingScreen(wram->wBoxNameBuffer, NAME_BOX);
         // CALL(aClearTilemap);
         ClearTilemap();
         // CALL(aLoadStandardFont);

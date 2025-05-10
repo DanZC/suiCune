@@ -611,7 +611,7 @@ static uint8_t SurfFunction_TrySurf(void) {
     // IF_C goto cannotsurf;
     // FARCALL(aCheckFacingObject);
     // IF_C goto cannotsurf;
-    if(col == WATER_TILE && !CheckDirection() && CheckFacingObject_Conv() == NULL) {
+    if(col == WATER_TILE && !CheckDirection() && CheckFacingObject() == NULL) {
         // LD_A(0x1);
         // RET;
         return 0x1;
@@ -1975,7 +1975,7 @@ uint8_t TryRockSmashFromMenu(void){
 u8_flag_s GetFacingObject(void){
     // FARCALL(aCheckFacingObject);
     // IF_NC goto fail;
-    struct Object* bc = CheckFacingObject_Conv();
+    struct Object* bc = CheckFacingObject();
     if(bc == NULL)
         return u8_flag(0, false);
 

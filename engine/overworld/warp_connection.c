@@ -433,7 +433,7 @@ void LoadMapGraphics(void){
     // LDH_addr_A(hTileAnimFrame);
     hram->hTileAnimFrame = 0;
     // FARCALL(aRefreshSprites);
-    RefreshSprites_Conv();
+    RefreshSprites();
     // CALL(aLoadFontsExtra);
     LoadFontsExtra();
     // FARCALL(aLoadOverworldFont);

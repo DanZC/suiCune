@@ -119,7 +119,7 @@ void v_NameRater(void){
     // LD_B(NAME_MON);
     // LD_DE(wStringBuffer2);
     // FARCALL(av_NamingScreen);
-    v_NamingScreen_Conv(wram->wStringBuffer2, NAME_MON);
+    v_NamingScreen(wram->wStringBuffer2, NAME_MON);
 //  If the new name is empty, treat it as unchanged.
     // CALL(aIsNewNameEmpty);
     // LD_HL(mNameRaterSameNameText);

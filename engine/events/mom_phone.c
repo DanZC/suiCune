@@ -126,7 +126,7 @@ void MomTriesToBuySomething(void){
     // LD_B(BANK(aMomTriesToBuySomething_Script));
     // LD_DE(mMomTriesToBuySomething_Script);
     // FARCALL(aLoadScriptBDE);
-    LoadScriptBDE_Conv(MomTriesToBuySomething_Script);
+    LoadScriptBDE(MomTriesToBuySomething_Script);
     // SCF;
     // RET;
     return;

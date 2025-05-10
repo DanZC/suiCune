@@ -1260,7 +1260,7 @@ static void NamePlayer(void) {
         // LD_B(NAME_PLAYER);
         // LD_DE(wPlayerName);
         // FARCALL(aNamingScreen);
-        NamingScreen_Conv(wram->wPlayerName, NAME_PLAYER);
+        NamingScreen(wram->wPlayerName, NAME_PLAYER);
 
         // CALL(aRotateThreePalettesRight);
         RotateThreePalettesRight();

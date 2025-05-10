@@ -1937,7 +1937,7 @@ void MovementFunction_Strength(struct Object* bc) {
                     InitStep_Conv(bc, bc->range & 0b00000011);
                     // CALL(aCanObjectMoveInDirection);
                     // IF_C goto ok2;
-                    if(!CanObjectMoveInDirection_Conv(bc)) {
+                    if(!CanObjectMoveInDirection(bc)) {
                         // LD_DE(SFX_STRENGTH);
                         // CALL(aPlaySFX);
                         PlaySFX(SFX_STRENGTH);
@@ -2477,7 +2477,7 @@ void v_RandomWalkContinue(struct Object* bc, uint8_t a) {
     InitStep_Conv(bc, a);
     // CALL(aCanObjectMoveInDirection);
     // IF_C goto new_duration;
-    if(CanObjectMoveInDirection_Conv(bc)) {
+    if(CanObjectMoveInDirection(bc)) {
     // new_duration:
         // CALL(aEndSpriteMovement);
         EndSpriteMovement_Conv(bc);
@@ -4036,7 +4036,7 @@ void StepFunction_StrengthBoulder_Conv(struct Object* bc) {
     // LD_A_hl;
     // LD_B_A;
     // FARCALL(aCopyDECoordsToMapObject);
-    CopyDECoordsToMapObject_Conv(bc->nextMapX, bc->nextMapY, bc->mapObjectIndex);
+    CopyDECoordsToMapObject(bc->nextMapX, bc->nextMapY, bc->mapObjectIndex);
     // POP_BC;
     // LD_HL(OBJECT_FLAGS2);
     // ADD_HL_BC;
@@ -5206,7 +5206,7 @@ void InitTempObject_Conv(void) {
     // LD_D_H;
     // LD_E_L;
     // FARCALL(aCopyTempObjectToObjectStruct);
-    CopyTempObjectToObjectStruct_Conv(de);
+    CopyTempObjectToObjectStruct(de);
     // RET;
 }
 
@@ -6216,7 +6216,7 @@ void StartFollow_Conv(uint8_t b, uint8_t c) {
     // CALL(aSetFollowerIfVisible);
     SetFollowerIfVisible_Conv(c);
     // FARCALL(aQueueFollowerFirstStep);
-    QueueFollowerFirstStep_Conv();
+    QueueFollowerFirstStep();
     // RET;
 }
 

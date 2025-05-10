@@ -1874,7 +1874,7 @@ void CopyMysteryGiftReceivedDecorationsToPC(void){
         if(a != 0) { // Is this logic correct? Only set flags for decorations received before? 
             // PUSH_BC;
             // CALLFAR(aSetSpecificDecorationFlag);
-            SetSpecificDecorationFlag_Conv(c);
+            SetSpecificDecorationFlag(c);
             // POP_BC;
         }
 

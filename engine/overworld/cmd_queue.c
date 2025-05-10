@@ -7,6 +7,13 @@
 
 struct CmdQueue gCmdQueue[CMDQUEUE_CAPACITY];
 
+static void HandleQueuedCommand(struct CmdQueue* bc);
+static void CmdQueues_IncAnonJumptableIndex(uint8_t* bc);
+static void CmdQueues_DecAnonJumptableIndex(uint8_t* bc);
+static void CmdQueue_Type4(uint8_t* bc);
+static void CmdQueue_Type3(uint8_t* bc);
+static void CmdQueue_StoneTable(struct CmdQueue* bc);
+
 void ClearCmdQueue(void){
     // LD_HL(wCmdQueue);
     // LD_DE(CMDQUEUE_ENTRY_SIZE);
@@ -41,7 +48,7 @@ void HandleCmdQueue(void){
         // LD_B_H;
         // LD_C_L;
         // CALL(aHandleQueuedCommand);
-        HandleQueuedCommand_Conv(gCmdQueue + c);
+        HandleQueuedCommand(gCmdQueue + c);
         // POP_HL;
 
 
@@ -63,47 +70,6 @@ void GetNthCmdQueueEntry(void){
     CALL(aAddNTimes);
     LD_B_H;
     LD_C_L;
-    RET;
-
-}
-
-void WriteCmdQueue(void){
-    PUSH_BC;
-    PUSH_DE;
-    CALL(aWriteCmdQueue_GetNextEmptyEntry);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    POP_BC;
-    RET_C ;
-    LD_A_B;
-    LD_BC(CMDQUEUE_ENTRY_SIZE - 1);
-    CALL(aFarCopyBytes);
-    XOR_A_A;
-    LD_hl_A;
-    RET;
-
-
-GetNextEmptyEntry:
-    LD_HL(wCmdQueue);
-    LD_DE(CMDQUEUE_ENTRY_SIZE);
-    LD_C(CMDQUEUE_CAPACITY);
-
-loop:
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto done;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    SCF;
-    RET;
-
-
-done:
-    LD_A(CMDQUEUE_CAPACITY);
-    SUB_A_C;
-    AND_A_A;
     RET;
 
 }
@@ -135,7 +101,7 @@ static struct CmdQueue* WriteCmdQueue_GetNextEmptyEntry(void) {
     return NULL;
 }
 
-bool WriteCmdQueue_Conv(const struct CmdQueue* hl){
+bool WriteCmdQueue(const struct CmdQueue* hl){
     // PUSH_BC;
     // PUSH_DE;
     // CALL(aWriteCmdQueue_GetNextEmptyEntry);
@@ -159,31 +125,7 @@ bool WriteCmdQueue_Conv(const struct CmdQueue* hl){
     return true;
 }
 
-void DelCmdQueue(void){
-    LD_HL(wCmdQueue);
-    LD_DE(CMDQUEUE_ENTRY_SIZE);
-    LD_C(CMDQUEUE_CAPACITY);
-
-loop:
-    LD_A_hl;
-    CP_A_B;
-    IF_Z goto done;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    AND_A_A;
-    RET;
-
-
-done:
-    XOR_A_A;
-    LD_hl_A;
-    SCF;
-    RET;
-
-}
-
-bool DelCmdQueue_Conv(uint8_t b){
+bool DelCmdQueue(uint8_t b){
     // LD_HL(wCmdQueue);
     struct CmdQueue* hl = gCmdQueue;
     // LD_DE(CMDQUEUE_ENTRY_SIZE);
@@ -214,59 +156,15 @@ bool DelCmdQueue_Conv(uint8_t b){
     return false;
 }
 
-void v_DelCmdQueue(void){
-    LD_HL(CMDQUEUE_TYPE);
-    ADD_HL_BC;
-    LD_hl(0);
-    RET;
-
-}
-
-void v_DelCmdQueue_Conv(struct CmdQueue* bc){
+void v_DelCmdQueue(uint8_t* bc){
     // LD_HL(CMDQUEUE_TYPE);
     // ADD_HL_BC;
     // LD_hl(0);
     // RET;
-    bc->type = 0;
+    bc[CMDQUEUE_TYPE] = 0;
 }
 
-void HandleQueuedCommand(void){
-    LD_HL(CMDQUEUE_TYPE);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(NUM_CMDQUEUE_TYPES);
-    IF_C goto okay;
-    XOR_A_A;
-
-
-okay:
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mHandleQueuedCommand_Jumptable);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    PUSH_AF;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    POP_AF;
-    RST(aFarCall);
-    RET;
-
-
-Jumptable:
-    //dba ['CmdQueue_Null']
-    //dba ['CmdQueue_Type1']
-    //dba ['CmdQueue_StoneTable']
-    //dba ['CmdQueue_Type3']
-    //dba ['CmdQueue_Type4']
-
-    return CmdQueues_AnonJumptable();
-}
-
-void HandleQueuedCommand_Conv(struct CmdQueue* bc){
+static void HandleQueuedCommand(struct CmdQueue* bc){
     // LD_HL(CMDQUEUE_TYPE);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -295,9 +193,9 @@ void HandleQueuedCommand_Conv(struct CmdQueue* bc){
     switch(idx) {
         case CMDQUEUE_NULL:         return CmdQueue_Null();
         case CMDQUEUE_TYPE1:        return CmdQueue_Type1();
-        case CMDQUEUE_STONETABLE:   return CmdQueue_StoneTable_Conv(bc);
-        // case CMDQUEUE_TYPE3:        return CmdQueue_Type3_Conv(bc);
-        // case CMDQUEUE_TYPE4:        return CmdQueue_Type4_Conv(bc);
+        case CMDQUEUE_STONETABLE:   return CmdQueue_StoneTable(bc);
+        case CMDQUEUE_TYPE3:        return CmdQueue_Type3((uint8_t *)bc);
+        case CMDQUEUE_TYPE4:        return CmdQueue_Type4((uint8_t *)bc);
     }
 
 // Jumptable:
@@ -318,15 +216,7 @@ void CmdQueues_AnonJumptable(void){
 
 }
 
-void CmdQueues_IncAnonJumptableIndex(void){
-    LD_HL(CMDQUEUE_05);
-    ADD_HL_BC;
-    INC_hl;
-    RET;
-
-}
-
-void CmdQueues_IncAnonJumptableIndex_Conv(uint8_t* bc){
+static void CmdQueues_IncAnonJumptableIndex(uint8_t* bc){
     // LD_HL(CMDQUEUE_05);
     // ADD_HL_BC;
     // INC_hl;
@@ -334,15 +224,7 @@ void CmdQueues_IncAnonJumptableIndex_Conv(uint8_t* bc){
     bc[CMDQUEUE_05]++;
 }
 
-void CmdQueues_DecAnonJumptableIndex(void){
-    LD_HL(CMDQUEUE_05);
-    ADD_HL_BC;
-    DEC_hl;
-    RET;
-
-}
-
-void CmdQueues_DecAnonJumptableIndex_Conv(uint8_t* bc){
+static void CmdQueues_DecAnonJumptableIndex(uint8_t* bc){
     // LD_HL(CMDQUEUE_05);
     // ADD_HL_BC;
     // DEC_hl;
@@ -361,58 +243,7 @@ void CmdQueue_Type1(void){
     SetXYCompareFlags();
 }
 
-void CmdQueue_Type4(void){
-    CALL(aCmdQueues_AnonJumptable);
-
-anon_dw:
-    //dw ['.zero'];
-    //dw ['.one'];
-
-
-zero:
-    LDH_A_addr(hSCY);
-    LD_HL(CMDQUEUE_04);
-    ADD_HL_BC;
-    LD_hl_A;
-    CALL(aCmdQueues_IncAnonJumptableIndex);
-
-one:
-    LD_HL(CMDQUEUE_ADDR);
-    ADD_HL_BC;
-    LD_A_hl;
-    DEC_A;
-    LD_hl_A;
-    IF_Z goto finish;
-    AND_A(1);
-    IF_Z goto add;
-    LD_HL(CMDQUEUE_02);
-    ADD_HL_BC;
-    LDH_A_addr(hSCY);
-    SUB_A_hl;
-    LDH_addr_A(hSCY);
-    RET;
-
-
-add:
-    LD_HL(CMDQUEUE_02);
-    ADD_HL_BC;
-    LDH_A_addr(hSCY);
-    ADD_A_hl;
-    LDH_addr_A(hSCY);
-    RET;
-
-
-finish:
-    LD_HL(CMDQUEUE_04);
-    ADD_HL_BC;
-    LD_A_hl;
-    LDH_addr_A(hSCY);
-    CALL(av_DelCmdQueue);
-    RET;
-
-}
-
-void CmdQueue_Type4_Conv(uint8_t* bc){
+static void CmdQueue_Type4(uint8_t* bc){
     // CALL(aCmdQueues_AnonJumptable);
     uint8_t a;
     switch(bc[CMDQUEUE_05]) {
@@ -428,7 +259,7 @@ void CmdQueue_Type4_Conv(uint8_t* bc){
         // LD_hl_A;
         bc[CMDQUEUE_04] = hram->hSCY;
         // CALL(aCmdQueues_IncAnonJumptableIndex);
-        CmdQueues_IncAnonJumptableIndex_Conv(bc);
+        CmdQueues_IncAnonJumptableIndex(bc);
         fallthrough;
     case 1:
     // one:
@@ -447,7 +278,7 @@ void CmdQueue_Type4_Conv(uint8_t* bc){
             // LDH_addr_A(hSCY);
             hram->hSCY = bc[CMDQUEUE_04];
             // CALL(av_DelCmdQueue);
-            // v_DelCmdQueue_Conv(bc);
+            v_DelCmdQueue(bc);
             // RET;
             return;
         }
@@ -475,63 +306,6 @@ void CmdQueue_Type4_Conv(uint8_t* bc){
     }
 }
 
-void CmdQueue_Type3(void){
-    CALL(aCmdQueues_AnonJumptable);
-
-anon_dw:
-    //dw ['.zero'];
-    //dw ['.one'];
-    //dw ['.two'];
-
-
-zero:
-    CALL(aCmdQueue_Type3_IsPlayerFacingDown);
-    IF_Z goto PlayerNotFacingDown;
-    CALL(aCmdQueues_IncAnonJumptableIndex);
-
-one:
-    CALL(aCmdQueue_Type3_IsPlayerFacingDown);
-    IF_Z goto PlayerNotFacingDown;
-    CALL(aCmdQueues_IncAnonJumptableIndex);
-
-    LD_HL(CMDQUEUE_02);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wd173);
-    RET;
-
-
-two:
-    CALL(aCmdQueue_Type3_IsPlayerFacingDown);
-    IF_Z goto PlayerNotFacingDown;
-    CALL(aCmdQueues_DecAnonJumptableIndex);
-
-    LD_HL(CMDQUEUE_03);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wd173);
-    RET;
-
-
-PlayerNotFacingDown:
-    LD_A(0x7f);
-    LD_addr_A(wd173);
-    LD_HL(CMDQUEUE_05);
-    ADD_HL_BC;
-    LD_hl(0);
-    RET;
-
-
-IsPlayerFacingDown:
-    PUSH_BC;
-    LD_BC(wPlayerStruct);
-    CALL(aGetSpriteDirection);
-    AND_A_A;
-    POP_BC;
-    RET;
-
-}
-
 static bool CmdQueue_Type3_IsPlayerFacingDown(void) {
     // PUSH_BC;
     // LD_BC(wPlayerStruct);
@@ -553,7 +327,7 @@ static void CmdQueue_Type3_PlayerNotFacingDown(uint8_t* bc) {
     // RET;
 }
 
-void CmdQueue_Type3_Conv(uint8_t* bc){
+static void CmdQueue_Type3(uint8_t* bc){
     // CALL(aCmdQueues_AnonJumptable);
 
     switch(bc[CMDQUEUE_05]) {
@@ -568,7 +342,7 @@ void CmdQueue_Type3_Conv(uint8_t* bc){
         if(!CmdQueue_Type3_IsPlayerFacingDown())
             return CmdQueue_Type3_PlayerNotFacingDown(bc);
         // CALL(aCmdQueues_IncAnonJumptableIndex);
-        CmdQueues_IncAnonJumptableIndex_Conv(bc);
+        CmdQueues_IncAnonJumptableIndex(bc);
         fallthrough;
     case 1:
     // one:
@@ -577,7 +351,7 @@ void CmdQueue_Type3_Conv(uint8_t* bc){
         if(!CmdQueue_Type3_IsPlayerFacingDown())
             return CmdQueue_Type3_PlayerNotFacingDown(bc);
         // CALL(aCmdQueues_IncAnonJumptableIndex);
-        CmdQueues_IncAnonJumptableIndex_Conv(bc);
+        CmdQueues_IncAnonJumptableIndex(bc);
 
         // LD_HL(CMDQUEUE_02);
         // ADD_HL_BC;
@@ -594,7 +368,7 @@ void CmdQueue_Type3_Conv(uint8_t* bc){
         if(!CmdQueue_Type3_IsPlayerFacingDown())
             return CmdQueue_Type3_PlayerNotFacingDown(bc);
         // CALL(aCmdQueues_DecAnonJumptableIndex);
-        CmdQueues_DecAnonJumptableIndex_Conv(bc);
+        CmdQueues_DecAnonJumptableIndex(bc);
 
         // LD_HL(CMDQUEUE_03);
         // ADD_HL_BC;
@@ -606,59 +380,7 @@ void CmdQueue_Type3_Conv(uint8_t* bc){
     }
 }
 
-void CmdQueue_StoneTable(void){
-    LD_DE(wPlayerStruct);
-    LD_A(NUM_OBJECT_STRUCTS);
-
-loop:
-    PUSH_AF;
-
-    LD_HL(OBJECT_SPRITE);
-    ADD_HL_DE;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next;
-
-    LD_HL(OBJECT_MOVEMENTTYPE);
-    ADD_HL_DE;
-    LD_A_hl;
-    CP_A(SPRITEMOVEDATA_STRENGTH_BOULDER);
-    IF_NZ goto next;
-
-    LD_HL(OBJECT_NEXT_TILE);
-    ADD_HL_DE;
-    LD_A_hl;
-    CALL(aCheckPitTile);
-    IF_NZ goto next;
-
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_DE;
-    LD_A_hl;
-    CP_A(STANDING);
-    IF_NZ goto next;
-    CALL(aHandleStoneQueue);
-    IF_C goto fall_down_hole;
-
-
-next:
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_DE;
-    LD_D_H;
-    LD_E_L;
-
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop;
-    RET;
-
-
-fall_down_hole:
-    POP_AF;
-    RET;
-
-}
-
-void CmdQueue_StoneTable_Conv(struct CmdQueue* bc){
+static void CmdQueue_StoneTable(struct CmdQueue* bc){
     (void)bc;
     // LD_DE(wPlayerStruct);
     struct Object* de = &wram->wPlayerStruct;

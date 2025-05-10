@@ -61,6 +61,29 @@ struct OwnedPointer {
     uint8_t n;
 };
 
+static const struct Decoration* GetDecorationData(uint8_t a);
+static void GetDecorationName(uint8_t* hl, uint8_t a);
+static void DecorationMenuFunction(const char** str, uint8_t* de, uint8_t a);
+
+static uint16_t GetDecorationFlag(uint8_t c);
+static uint8_t DecorationFlagAction(uint8_t c, uint8_t b);
+static uint8_t GetDecorationSprite(uint8_t c);
+static const uint8_t* GetDecoName(const struct Decoration* hl);
+static void GetDecorationName_c_de(uint8_t* de, uint8_t c);
+
+static Script_fn_t DecorationDesc_Poster(uint8_t poster);
+static Script_fn_t DecorationDesc_LeftOrnament(void);
+static Script_fn_t DecorationDesc_RightOrnament(void);
+static Script_fn_t DecorationDesc_Console(void);
+static Script_fn_t DecorationDesc_OrnamentOrConsole(uint8_t c);
+static Script_fn_t DecorationDesc_GiantOrnament(void);
+
+static void SetPosterVisibility(void);
+static void SetDecorationTile(uint8_t a, uint8_t d, uint8_t e);
+static void ToggleDecorationVisibility(uint8_t* hl, uint16_t de, uint8_t a);
+static uint8_t v_GetDecorationSprite(uint8_t a);
+static uint8_t* PadCoords_de(uint8_t d, uint8_t e);
+
 static void v_PlayerDecorationMenu_ClearStringBuffer2(void){
     // LD_HL(wStringBuffer2);
     // XOR_A_A;
@@ -586,15 +609,7 @@ void PopulateDecoCategoryMenu(void){
     // RET;
 }
 
-void GetDecorationData(void){
-    LD_HL(mDecorationAttributes);
-    LD_BC(DECOATTR_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    RET;
-
-}
-
-const struct Decoration* GetDecorationData_Conv(uint8_t a){
+static const struct Decoration* GetDecorationData(uint8_t a){
     // LD_HL(mDecorationAttributes);
     // LD_BC(DECOATTR_STRUCT_LENGTH);
     // CALL(aAddNTimes);
@@ -602,36 +617,26 @@ const struct Decoration* GetDecorationData_Conv(uint8_t a){
     return DecorationAttributes + a;
 }
 
-void GetDecorationName(void){
-    PUSH_HL;
-    CALL(aGetDecorationData);
-    CALL(aGetDecoName);
-    POP_HL;
-    CALL(aCopyName2);
-    RET;
-
-}
-
-void GetDecorationName_Conv(uint8_t* hl, uint8_t a){
+static void GetDecorationName(uint8_t* hl, uint8_t a){
     // PUSH_HL;
     // CALL(aGetDecorationData);
-    const struct Decoration* deco = GetDecorationData_Conv(a);
+    const struct Decoration* deco = GetDecorationData(a);
     // CALL(aGetDecoName);
-    const uint8_t* de = GetDecoName_Conv(deco);
+    const uint8_t* de = GetDecoName(deco);
     // POP_HL;
     // CALL(aCopyName2);
     CopyName2(hl, de);
     // RET;
 }
 
-void DecorationMenuFunction(const char** str, uint8_t* de, uint8_t a){
+static void DecorationMenuFunction(const char** str, uint8_t* de, uint8_t a){
     (void)str;
     // LD_A_addr(wMenuSelection);
     // PUSH_DE;
     // CALL(aGetDecorationData);
-    const struct Decoration* deco = GetDecorationData_Conv(a);
+    const struct Decoration* deco = GetDecorationData(a);
     // CALL(aGetDecoName);
-    uint8_t* s = (uint8_t*)GetDecoName_Conv(deco);
+    uint8_t* s = (uint8_t*)GetDecoName(deco);
     // POP_HL;
     // CALL(aPlaceString);
     // RET;
@@ -640,15 +645,15 @@ void DecorationMenuFunction(const char** str, uint8_t* de, uint8_t a){
 
 static void DecorationMenuFunction2(const struct MenuData* data, tile_t* de){
     (void)data;
-    const struct Decoration* deco = GetDecorationData_Conv(wram->wMenuSelection);
-    uint8_t* s = (uint8_t*)GetDecoName_Conv(deco);
+    const struct Decoration* deco = GetDecorationData(wram->wMenuSelection);
+    uint8_t* s = (uint8_t*)GetDecoName(deco);
     PlaceStringSimple(s, de);
 }
 
 void DoDecorationAction2(void){
     // LD_A_addr(wMenuSelection);
     // CALL(aGetDecorationData);
-    const struct Decoration* deco = GetDecorationData_Conv(wram->wMenuSelection);
+    const struct Decoration* deco = GetDecorationData(wram->wMenuSelection);
     // LD_DE(DECOATTR_ACTION);
     // ADD_HL_DE;
     // LD_A_hl;
@@ -679,9 +684,9 @@ void DoDecorationAction2(void){
     //assert_table_length ['NUM_DECO_ACTIONS + 1']
 }
 
-uint16_t GetDecorationFlag(uint8_t c){
+static uint16_t GetDecorationFlag(uint8_t c){
     // CALL(aGetDecorationData);
-    const struct Decoration* hl = GetDecorationData_Conv(c);
+    const struct Decoration* hl = GetDecorationData(c);
     // LD_DE(DECOATTR_EVENT_FLAG);
     // ADD_HL_DE;
     // LD_A_hli;
@@ -691,7 +696,7 @@ uint16_t GetDecorationFlag(uint8_t c){
     return hl->event_flag;
 }
 
-uint8_t DecorationFlagAction(uint8_t c, uint8_t b){
+static uint8_t DecorationFlagAction(uint8_t c, uint8_t b){
     // PUSH_BC;
     // CALL(aGetDecorationFlag);
     // POP_BC;
@@ -700,140 +705,16 @@ uint8_t DecorationFlagAction(uint8_t c, uint8_t b){
     // RET;
 }
 
-void GetDecorationSprite(void){
-    LD_A_C;
-    CALL(aGetDecorationData);
-    LD_DE(DECOATTR_SPRITE);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_C_A;
-    RET;
-
-// INCLUDE "data/decorations/attributes.asm"
-
-// INCLUDE "data/decorations/names.asm"
-}
-
-uint8_t GetDecorationSprite_Conv(uint8_t c){
+static uint8_t GetDecorationSprite(uint8_t c){
     // LD_A_C;
     // CALL(aGetDecorationData);
-    const struct Decoration* hl = GetDecorationData_Conv(c);
+    const struct Decoration* hl = GetDecorationData(c);
     // LD_DE(DECOATTR_SPRITE);
     // ADD_HL_DE;
     // LD_A_hl;
     // LD_C_A;
     // RET;
     return hl->tile;
-}
-
-void GetDecoName(void){
-    LD_A_hli;  // DECOATTR_TYPE
-    LD_E_hl;  // DECOATTR_NAME
-    LD_BC(wStringBuffer2);
-    PUSH_BC;
-    LD_HL(mGetDecoName_NameFunctions);
-    RST(aJumpTable);
-    POP_DE;
-    RET;
-
-
-NameFunctions:
-    //table_width ['2', 'GetDecoName.NameFunctions']
-    //dw ['.invalid'];
-    //dw ['.plant'];
-    //dw ['.bed'];
-    //dw ['.carpet'];
-    //dw ['.poster'];
-    //dw ['.doll'];
-    //dw ['.bigdoll'];
-    //assert_table_length ['NUM_DECO_TYPES + 1']
-
-
-invalid:
-    RET;
-
-
-plant:
-    LD_A_E;
-    goto getdeconame;
-
-
-bed:
-    CALL(aGetDecoName_plant);
-    LD_A(_BED);
-    goto getdeconame;
-
-
-carpet:
-    CALL(aGetDecoName_plant);
-    LD_A(_CARPET);
-    goto getdeconame;
-
-
-poster:
-    LD_A_E;
-    CALL(aGetDecoName_getpokename);
-    LD_A(_POSTER);
-    goto getdeconame;
-
-
-doll:
-    LD_A_E;
-    CALL(aGetDecoName_getpokename);
-    LD_A(_DOLL);
-    goto getdeconame;
-
-
-bigdoll:
-    PUSH_DE;
-    LD_A(BIG_);
-    CALL(aGetDecoName_getdeconame);
-    POP_DE;
-    LD_A_E;
-    goto getpokename;
-
-
-unused:
-//   //  unreferenced
-    PUSH_DE;
-    CALL(aGetDecoName_getdeconame);
-    POP_DE;
-    LD_A_E;
-    goto getdeconame;
-
-
-getpokename:
-    PUSH_BC;
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    POP_BC;
-    goto copy;
-
-
-getdeconame:
-    CALL(aGetDecoName__getdeconame);
-    goto copy;
-
-
-_getdeconame:
-    PUSH_BC;
-    LD_HL(mDecorationNames);
-    CALL(aGetNthString);
-    LD_D_H;
-    LD_E_L;
-    POP_BC;
-    RET;
-
-
-copy:
-    LD_H_B;
-    LD_L_C;
-    CALL(aCopyName2);
-    DEC_HL;
-    LD_B_H;
-    LD_C_L;
-    RET;
-
 }
 
 static const char* GetDecoName__getdeconame_Conv(uint8_t a) {
@@ -875,7 +756,7 @@ static uint8_t* GetDecoName_getpokename(uint8_t* bc, species_t a) {
     return GetDecoName_copy(bc, GetPokemonName(a));
 }
 
-const uint8_t* GetDecoName_Conv(const struct Decoration* hl){
+static const uint8_t* GetDecoName(const struct Decoration* hl){
     // LD_A_hli;  // DECOATTR_TYPE
     uint8_t a = hl->type_id;
     // LD_E_hl;  // DECOATTR_NAME
@@ -1099,7 +980,7 @@ bool DecoAction_SetItUp(void){
         // LD_A_addr(wMenuSelection);
         // LD_HL(wStringBuffer3);
         // CALL(aGetDecorationName);
-        GetDecorationName_Conv(wram->wStringBuffer3, wram->wMenuSelection);
+        GetDecorationName(wram->wStringBuffer3, wram->wMenuSelection);
         // LD_HL(mSetUpTheDecoText);
         // CALL(aMenuTextboxBackup);
         MenuTextboxBackup(SetUpTheDecoText);
@@ -1125,11 +1006,11 @@ bool DecoAction_SetItUp(void){
     // LD_A_addr(wMenuSelection);
     // LD_HL(wStringBuffer4);
     // CALL(aGetDecorationName);
-    GetDecorationName_Conv(wram->wStringBuffer4, wram->wMenuSelection);
+    GetDecorationName(wram->wStringBuffer4, wram->wMenuSelection);
     // LD_A_addr(wCurDecoration);
     // LD_HL(wStringBuffer3);
     // CALL(aGetDecorationName);
-    GetDecorationName_Conv(wram->wStringBuffer3, wram->wCurDecoration);
+    GetDecorationName(wram->wStringBuffer3, wram->wCurDecoration);
     // LD_HL(mPutAwayAndSetUpText);
     // CALL(aMenuTextboxBackup);
     MenuTextboxBackup(PutAwayAndSetUpText);
@@ -1167,7 +1048,7 @@ bool DecoAction_TryPutItAway(uint8_t* hl){
     wram->wMenuSelection = wram->wCurDecoration;
     // LD_HL(wStringBuffer3);
     // CALL(aGetDecorationName);
-    GetDecorationName_Conv(wram->wStringBuffer3, wram->wCurDecoration);
+    GetDecorationName(wram->wStringBuffer3, wram->wCurDecoration);
     // LD_HL(mPutAwayTheDecoText);
     // CALL(aMenuTextboxBackup);
     MenuTextboxBackup(PutAwayTheDecoText);
@@ -1254,7 +1135,7 @@ bool DecoAction_SetItUp_Ornament(void){
         // LD_A_addr(wMenuSelection);
         // LD_HL(wStringBuffer3);
         // CALL(aGetDecorationName);
-        GetDecorationName_Conv(wram->wStringBuffer3, wram->wMenuSelection);
+        GetDecorationName(wram->wStringBuffer3, wram->wMenuSelection);
         // LD_HL(mSetUpTheDecoText);
         // CALL(aMenuTextboxBackup);
         MenuTextboxBackup(SetUpTheDecoText);
@@ -1278,11 +1159,11 @@ bool DecoAction_SetItUp_Ornament(void){
     // LD_A_B;
     // LD_HL(wStringBuffer3);
     // CALL(aGetDecorationName);
-    GetDecorationName_Conv(wram->wStringBuffer3, wram->wSelectedDecoration);
+    GetDecorationName(wram->wStringBuffer3, wram->wSelectedDecoration);
     // LD_A_addr(wMenuSelection);
     // LD_HL(wStringBuffer4);
     // CALL(aGetDecorationName);
-    GetDecorationName_Conv(wram->wStringBuffer4, wram->wMenuSelection);
+    GetDecorationName(wram->wStringBuffer4, wram->wMenuSelection);
     // LD_A_addr(wMenuSelection);
     // LD_addr_A(wSelectedDecoration);
     wram->wSelectedDecoration = wram->wMenuSelection;
@@ -1316,7 +1197,7 @@ bool DecoAction_PutItAway_Ornament(void){
     }
     // LD_HL(wStringBuffer3);
     // CALL(aGetDecorationName);
-    GetDecorationName_Conv(wram->wStringBuffer3, wram->wSelectedDecoration);
+    GetDecorationName(wram->wStringBuffer3, wram->wSelectedDecoration);
     // LD_A(TRUE);
     // LD_addr_A(wChangedDecorations);
     wram->wChangedDecorations = TRUE;
@@ -1433,22 +1314,13 @@ const txt_cmd_s AlreadySetUpText[] = {
     text_end
 };
 
-void GetDecorationName_c_de(void){
-    LD_A_C;
-    LD_H_D;
-    LD_L_E;
-    CALL(aGetDecorationName);
-    RET;
-
-}
-
-void GetDecorationName_c_de_Conv(uint8_t* de, uint8_t c){
+static void GetDecorationName_c_de(uint8_t* de, uint8_t c){
     // LD_A_C;
     // LD_H_D;
     // LD_L_E;
     // CALL(aGetDecorationName);
     // RET;
-    return GetDecorationName_Conv(de, c);
+    return GetDecorationName(de, c);
 }
 
 uint8_t DecorationFlagAction_c(uint8_t c, uint8_t b){
@@ -1465,20 +1337,11 @@ uint8_t* GetDecorationName_c(uint8_t c){
     // CALL(aGetDecorationName);
     // POP_DE;
     // RET;
-    GetDecorationName_Conv(wram->wStringBuffer1, GetDecorationID(c));
+    GetDecorationName(wram->wStringBuffer1, GetDecorationID(c));
     return wram->wStringBuffer1;
 }
 
-void SetSpecificDecorationFlag(void){
-    LD_A_C;
-    CALL(aGetDecorationID);
-    LD_B(SET_FLAG);
-    CALL(aDecorationFlagAction);
-    RET;
-
-}
-
-void SetSpecificDecorationFlag_Conv(uint8_t c){
+void SetSpecificDecorationFlag(uint8_t c){
     // LD_A_C;
     // CALL(aGetDecorationID);
     // LD_B(SET_FLAG);
@@ -1521,28 +1384,9 @@ done:
 
 // INCLUDE "data/decorations/decorations.asm"
 
-    return DescribeDecoration();
 }
 
-void DescribeDecoration(void){
-    LD_A_B;
-    LD_HL(mDescribeDecoration_Jumptable);
-    RST(aJumpTable);
-    RET;
-
-
-// Jumptable:
-//  entries correspond to DECODESC_* constants
-    //table_width ['2', 'DescribeDecoration.Jumptable']
-    //dw ['DecorationDesc_Poster'];
-    //dw ['DecorationDesc_LeftOrnament'];
-    //dw ['DecorationDesc_RightOrnament'];
-    //dw ['DecorationDesc_GiantOrnament'];
-    //dw ['DecorationDesc_Console'];
-    //assert_table_length ['NUM_DECODESCS']
-}
-
-Script_fn_t DescribeDecoration_Conv(uint8_t b){
+Script_fn_t DescribeDecoration(uint8_t b){
     // LD_A_B;
     // LD_HL(mDescribeDecoration_Jumptable);
     // RST(aJumpTable);
@@ -1553,15 +1397,15 @@ Script_fn_t DescribeDecoration_Conv(uint8_t b){
     //table_width ['2', 'DescribeDecoration.Jumptable']
     switch(b) {
         //dw ['DecorationDesc_Poster'];
-        case DECODESC_POSTER: return DecorationDesc_Poster_Conv(wram->wDecoPoster);
+        case DECODESC_POSTER: return DecorationDesc_Poster(wram->wDecoPoster);
         //dw ['DecorationDesc_LeftOrnament'];
-        case DECODESC_LEFT_DOLL: return DecorationDesc_LeftOrnament_Conv();
+        case DECODESC_LEFT_DOLL: return DecorationDesc_LeftOrnament();
         //dw ['DecorationDesc_RightOrnament'];
-        case DECODESC_RIGHT_DOLL: return DecorationDesc_RightOrnament_Conv();
+        case DECODESC_RIGHT_DOLL: return DecorationDesc_RightOrnament();
         //dw ['DecorationDesc_GiantOrnament'];
-        case DECODESC_BIG_DOLL: return DecorationDesc_GiantOrnament_Conv();
+        case DECODESC_BIG_DOLL: return DecorationDesc_GiantOrnament();
         //dw ['DecorationDesc_Console'];
-        case DECODESC_CONSOLE: return DecorationDesc_Console_Conv();
+        case DECODESC_CONSOLE: return DecorationDesc_Console();
     }
     //assert_table_length ['NUM_DECODESCS']
     return NULL;
@@ -1572,6 +1416,12 @@ struct DecorationDescPointer {
     Script_fn_t script;
 };
 
+static bool DecorationDesc_TownMapPoster(script_s*);
+static bool DecorationDesc_PikachuPoster(script_s*);
+static bool DecorationDesc_ClefairyPoster(script_s*);
+static bool DecorationDesc_JigglypuffPoster(script_s*);
+static bool DecorationDesc_NullPoster(script_s*);
+
 const struct DecorationDescPointer DecorationDesc_PosterPointers[] = {
     {DECO_TOWN_MAP,             DecorationDesc_TownMapPoster},
     {DECO_PIKACHU_POSTER,       DecorationDesc_PikachuPoster},
@@ -1580,28 +1430,7 @@ const struct DecorationDescPointer DecorationDesc_PosterPointers[] = {
     //db ['-1'];
 };
 
-void DecorationDesc_Poster(void){
-    LD_A_addr(wDecoPoster);
-    LD_HL(mDecorationDesc_PosterPointers);
-    LD_DE(3);
-    CALL(aIsInArray);
-    IF_C goto nope;
-    LD_DE(mDecorationDesc_NullPoster);
-    LD_B(BANK(aDecorationDesc_NullPoster));
-    RET;
-
-
-nope:
-    LD_B(BANK(aDecorationDesc_TownMapPoster));
-    INC_HL;
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    RET;
-
-}
-
-Script_fn_t DecorationDesc_Poster_Conv(uint8_t poster){
+static Script_fn_t DecorationDesc_Poster(uint8_t poster){
     // LD_A_addr(wDecoPoster);
     // LD_HL(mDecorationDesc_PosterPointers);
     // LD_DE(3);
@@ -1625,7 +1454,7 @@ Script_fn_t DecorationDesc_Poster_Conv(uint8_t poster){
     return DecorationDesc_NullPoster;
 }
 
-bool DecorationDesc_TownMapPoster(script_s* s){
+static bool DecorationDesc_TownMapPoster(script_s* s){
     static const txt_cmd_s LookTownMapText[] = {
         text_far(v_LookTownMapText)
         text_end
@@ -1640,7 +1469,7 @@ bool DecorationDesc_TownMapPoster(script_s* s){
     SCRIPT_END
 }
 
-bool DecorationDesc_PikachuPoster(script_s* s){
+static bool DecorationDesc_PikachuPoster(script_s* s){
     static const txt_cmd_s LookPikachuPosterText[] = {
         text_far(v_LookPikachuPosterText)
         text_end
@@ -1650,7 +1479,7 @@ bool DecorationDesc_PikachuPoster(script_s* s){
     SCRIPT_END
 }
 
-bool DecorationDesc_ClefairyPoster(script_s* s){
+static bool DecorationDesc_ClefairyPoster(script_s* s){
     static const txt_cmd_s LookClefairyPosterText[] = {
         text_far(v_LookClefairyPosterText)
         text_end
@@ -1660,7 +1489,7 @@ bool DecorationDesc_ClefairyPoster(script_s* s){
     SCRIPT_END
 }
 
-bool DecorationDesc_JigglypuffPoster(script_s* s){
+static bool DecorationDesc_JigglypuffPoster(script_s* s){
     static const txt_cmd_s LookJigglypuffPosterText[] = {
         text_far(v_LookJigglypuffPosterText)
         text_end
@@ -1670,66 +1499,28 @@ bool DecorationDesc_JigglypuffPoster(script_s* s){
     SCRIPT_END
 }
 
-bool DecorationDesc_NullPoster(script_s* s){
+static bool DecorationDesc_NullPoster(script_s* s){
     SCRIPT_BEGIN
     s_end
     SCRIPT_END
 }
 
-void DecorationDesc_LeftOrnament(void){
-    LD_A_addr(wDecoLeftOrnament);
-    JR(mDecorationDesc_OrnamentOrConsole);
-
-}
-
-Script_fn_t DecorationDesc_LeftOrnament_Conv(void){
+static Script_fn_t DecorationDesc_LeftOrnament(void){
     // LD_A_addr(wDecoLeftOrnament);
     // JR(mDecorationDesc_OrnamentOrConsole);
-    return DecorationDesc_OrnamentOrConsole_Conv(wram->wDecoLeftOrnament);
+    return DecorationDesc_OrnamentOrConsole(wram->wDecoLeftOrnament);
 }
 
-void DecorationDesc_RightOrnament(void){
-    LD_A_addr(wDecoRightOrnament);
-    JR(mDecorationDesc_OrnamentOrConsole);
-
-}
-
-Script_fn_t DecorationDesc_RightOrnament_Conv(void){
+static Script_fn_t DecorationDesc_RightOrnament(void){
     // LD_A_addr(wDecoRightOrnament);
     // JR(mDecorationDesc_OrnamentOrConsole);
-    return DecorationDesc_OrnamentOrConsole_Conv(wram->wDecoRightOrnament);
+    return DecorationDesc_OrnamentOrConsole(wram->wDecoRightOrnament);
 }
 
-void DecorationDesc_Console(void){
-    LD_A_addr(wDecoConsole);
-    JR(mDecorationDesc_OrnamentOrConsole);
-
-}
-
-Script_fn_t DecorationDesc_Console_Conv(void){
+static Script_fn_t DecorationDesc_Console(void){
     // LD_A_addr(wDecoConsole);
     // JR(mDecorationDesc_OrnamentOrConsole);
-    return DecorationDesc_OrnamentOrConsole_Conv(wram->wDecoConsole);
-}
-
-void DecorationDesc_OrnamentOrConsole(void){
-    LD_C_A;
-    LD_DE(wStringBuffer3);
-    CALL(aGetDecorationName_c_de);
-    LD_B(BANK(aDecorationDesc_OrnamentOrConsole_OrnamentConsoleScript));
-    LD_DE(mDecorationDesc_OrnamentOrConsole_OrnamentConsoleScript);
-    RET;
-
-
-OrnamentConsoleScript:
-    //jumptext ['.LookAdorableDecoText']
-
-
-LookAdorableDecoText:
-    //text_far ['_LookAdorableDecoText']
-    //text_end ['?']
-
-    return DecorationDesc_GiantOrnament();
+    return DecorationDesc_OrnamentOrConsole(wram->wDecoConsole);
 }
 
 static bool DecorationDesc_OrnamentOrConsole_OrnamentConsoleScript(script_s* s) {
@@ -1742,32 +1533,15 @@ static bool DecorationDesc_OrnamentOrConsole_OrnamentConsoleScript(script_s* s) 
     SCRIPT_END
 }
 
-Script_fn_t DecorationDesc_OrnamentOrConsole_Conv(uint8_t c){
+static Script_fn_t DecorationDesc_OrnamentOrConsole(uint8_t c){
     // LD_C_A;
     // LD_DE(wStringBuffer3);
     // CALL(aGetDecorationName_c_de);
-    GetDecorationName_c_de_Conv(wram->wStringBuffer3, c);
+    GetDecorationName_c_de(wram->wStringBuffer3, c);
     // LD_B(BANK(aDecorationDesc_OrnamentOrConsole_OrnamentConsoleScript));
     // LD_DE(mDecorationDesc_OrnamentOrConsole_OrnamentConsoleScript);
     // RET;
     return DecorationDesc_OrnamentOrConsole_OrnamentConsoleScript;
-}
-
-void DecorationDesc_GiantOrnament(void){
-    LD_B(BANK(aDecorationDesc_GiantOrnament_BigDollScript));
-    LD_DE(mDecorationDesc_GiantOrnament_BigDollScript);
-    RET;
-
-
-BigDollScript:
-    //jumptext ['.LookGiantDecoText']
-
-
-LookGiantDecoText:
-    //text_far ['_LookGiantDecoText']
-    //text_end ['?']
-
-    return ToggleMaptileDecorations();
 }
 
 static bool BigDollScript(script_s* s) {
@@ -1780,7 +1554,7 @@ static bool BigDollScript(script_s* s) {
     SCRIPT_END
 }
 
-Script_fn_t DecorationDesc_GiantOrnament_Conv(void){
+static Script_fn_t DecorationDesc_GiantOrnament(void){
     // LD_B(BANK(aDecorationDesc_GiantOrnament_BigDollScript));
     // LD_DE(mDecorationDesc_GiantOrnament_BigDollScript);
     // RET;
@@ -1792,33 +1566,33 @@ void ToggleMaptileDecorations(void){
     // LD_DE((0 << 8) | 4);  // bed coordinates
     // LD_A_addr(wDecoBed);
     // CALL(aSetDecorationTile);
-    SetDecorationTile_Conv(wram->wDecoBed, 0, 4);
+    SetDecorationTile(wram->wDecoBed, 0, 4);
     // LD_DE((7 << 8) | 4);  // plant coordinates
     // LD_A_addr(wDecoPlant);
     // CALL(aSetDecorationTile);
-    SetDecorationTile_Conv(wram->wDecoPlant, 7, 4);
+    SetDecorationTile(wram->wDecoPlant, 7, 4);
     // LD_DE((6 << 8) | 0);  // poster coordinates
     // LD_A_addr(wDecoPoster);
     // CALL(aSetDecorationTile);
-    SetDecorationTile_Conv(wram->wDecoPoster, 6, 0);
+    SetDecorationTile(wram->wDecoPoster, 6, 0);
     // CALL(aSetPosterVisibility);
     SetPosterVisibility();
     // LD_DE((0 << 8) | 0);  // carpet top-left coordinates
     // CALL(aPadCoords_de);
-    uint8_t* hl = PadCoords_de_Conv(0, 0);
+    uint8_t* hl = PadCoords_de(0, 0);
     // LD_A_addr(wDecoCarpet);
     // AND_A_A;
     // RET_Z ;
     if(wram->wDecoCarpet == 0)
         return;
     // CALL(av_GetDecorationSprite);
-    uint8_t sprite = v_GetDecorationSprite_Conv(wram->wDecoCarpet);
+    uint8_t sprite = v_GetDecorationSprite(wram->wDecoCarpet);
     // LD_hl_A;
     *hl = sprite;
     // PUSH_AF;
     // LD_DE((0 << 8) | 2);  // carpet bottom-left coordinates
     // CALL(aPadCoords_de);
-    hl = PadCoords_de_Conv(0, 2);
+    hl = PadCoords_de(0, 2);
     // POP_AF;
     // INC_A;
     // LD_hli_A;  // carpet bottom-left block
@@ -1832,7 +1606,7 @@ void ToggleMaptileDecorations(void){
     // RET;
 }
 
-void SetPosterVisibility(void){
+static void SetPosterVisibility(void){
     // LD_B(SET_FLAG);
     // LD_A_addr(wDecoPoster);
     // AND_A_A;
@@ -1846,30 +1620,18 @@ void SetPosterVisibility(void){
     EventFlagAction(EVENT_PLAYERS_ROOM_POSTER, b);
 }
 
-void SetDecorationTile(void){
-    PUSH_AF;
-    CALL(aPadCoords_de);
-    POP_AF;
-    AND_A_A;
-    RET_Z ;
-    CALL(av_GetDecorationSprite);
-    LD_hl_A;
-    RET;
-
-}
-
-void SetDecorationTile_Conv(uint8_t a, uint8_t d, uint8_t e){
+static void SetDecorationTile(uint8_t a, uint8_t d, uint8_t e){
     // PUSH_AF;
     // CALL(aPadCoords_de);
     // POP_AF;
-    uint8_t* hl = PadCoords_de_Conv(d, e);
+    uint8_t* hl = PadCoords_de(d, e);
     // AND_A_A;
     // RET_Z ;
     if(a == 0)
         return;
     // CALL(av_GetDecorationSprite);
     // LD_hl_A;
-    *hl = v_GetDecorationSprite_Conv(a);
+    *hl = v_GetDecorationSprite(a);
     // RET;
 }
 
@@ -1878,41 +1640,26 @@ void ToggleDecorationsVisibility(void){
     // LD_HL(wVariableSprites + SPRITE_CONSOLE - SPRITE_VARS);
     // LD_A_addr(wDecoConsole);
     // CALL(aToggleDecorationVisibility);
-    ToggleDecorationVisibility_Conv(wram->wVariableSprites + (SPRITE_CONSOLE - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_CONSOLE, wram->wDecoConsole);
+    ToggleDecorationVisibility(wram->wVariableSprites + (SPRITE_CONSOLE - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_CONSOLE, wram->wDecoConsole);
     // LD_DE(EVENT_PLAYERS_HOUSE_2F_DOLL_1);
     // LD_HL(wVariableSprites + SPRITE_DOLL_1 - SPRITE_VARS);
     // LD_A_addr(wDecoLeftOrnament);
     // CALL(aToggleDecorationVisibility);
-    ToggleDecorationVisibility_Conv(wram->wVariableSprites + (SPRITE_DOLL_1 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_1, wram->wDecoLeftOrnament);
+    ToggleDecorationVisibility(wram->wVariableSprites + (SPRITE_DOLL_1 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_1, wram->wDecoLeftOrnament);
     // LD_DE(EVENT_PLAYERS_HOUSE_2F_DOLL_2);
     // LD_HL(wVariableSprites + SPRITE_DOLL_2 - SPRITE_VARS);
     // LD_A_addr(wDecoRightOrnament);
     // CALL(aToggleDecorationVisibility);
-    ToggleDecorationVisibility_Conv(wram->wVariableSprites + (SPRITE_DOLL_2 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_2, wram->wDecoRightOrnament);
+    ToggleDecorationVisibility(wram->wVariableSprites + (SPRITE_DOLL_2 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_2, wram->wDecoRightOrnament);
     // LD_DE(EVENT_PLAYERS_HOUSE_2F_BIG_DOLL);
     // LD_HL(wVariableSprites + SPRITE_BIG_DOLL - SPRITE_VARS);
     // LD_A_addr(wDecoBigDoll);
     // CALL(aToggleDecorationVisibility);
-    ToggleDecorationVisibility_Conv(wram->wVariableSprites + (SPRITE_BIG_DOLL - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_BIG_DOLL, wram->wDecoBigDoll);
+    ToggleDecorationVisibility(wram->wVariableSprites + (SPRITE_BIG_DOLL - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_BIG_DOLL, wram->wDecoBigDoll);
     // RET;
 }
 
-void ToggleDecorationVisibility(void){
-    AND_A_A;
-    IF_Z goto hide;
-    CALL(av_GetDecorationSprite);
-    LD_hl_A;
-    LD_B(RESET_FLAG);
-    JP(mEventFlagAction);
-
-
-hide:
-    LD_B(SET_FLAG);
-    JP(mEventFlagAction);
-
-}
-
-void ToggleDecorationVisibility_Conv(uint8_t* hl, uint16_t de, uint8_t a){
+static void ToggleDecorationVisibility(uint8_t* hl, uint16_t de, uint8_t a){
     // AND_A_A;
     // IF_Z goto hide;
     if(a == 0) {
@@ -1924,42 +1671,17 @@ void ToggleDecorationVisibility_Conv(uint8_t* hl, uint16_t de, uint8_t a){
     }
     // CALL(av_GetDecorationSprite);
     // LD_hl_A;
-    *hl = v_GetDecorationSprite_Conv(a);
+    *hl = v_GetDecorationSprite(a);
     // LD_B(RESET_FLAG);
     // JP(mEventFlagAction);
     EventFlagAction(de, RESET_FLAG);
 }
 
-void v_GetDecorationSprite(void){
-    LD_C_A;
-    PUSH_DE;
-    PUSH_HL;
-    FARCALL(aGetDecorationSprite);
-    POP_HL;
-    POP_DE;
-    LD_A_C;
-    RET;
-
+static uint8_t v_GetDecorationSprite(uint8_t a) {
+    return GetDecorationSprite(a);
 }
 
-uint8_t v_GetDecorationSprite_Conv(uint8_t a) {
-    return GetDecorationSprite_Conv(a);
-}
-
-void PadCoords_de(void){
-//  adjusts coordinates, the same way as Script_changeblock
-    LD_A_D;
-    ADD_A(4);
-    LD_D_A;
-    LD_A_E;
-    ADD_A(4);
-    LD_E_A;
-    CALL(aGetBlockLocation);
-    RET;
-
-}
-
-uint8_t* PadCoords_de_Conv(uint8_t d, uint8_t e){
+static uint8_t* PadCoords_de(uint8_t d, uint8_t e){
 //  adjusts coordinates, the same way as Script_changeblock
     // LD_A_D;
     // ADD_A(4);

@@ -4504,7 +4504,7 @@ void InitNickname_Conv(uint8_t* hl){
     // PUSH_DE;
     // LD_B(NAME_MON);
     // FARCALL(aNamingScreen);
-    NamingScreen_Conv(hl, NAME_MON);
+    NamingScreen(hl, NAME_MON);
     // POP_HL;
     // LD_DE(wStringBuffer1);
     // CALL(aInitName);

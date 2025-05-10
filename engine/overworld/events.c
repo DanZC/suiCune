@@ -51,6 +51,64 @@
 Script_fn_t gMapReentryScriptAddress;
 static bool DebugFieldMenuScript(script_s* s);
 
+static void EnableWildEncounters(void);
+static bool CheckWarpConnxnScriptFlag(void);
+static bool CheckCoordEventScriptFlag(void);
+static bool CheckStepCountScriptFlag(void);
+static bool CheckWildEncountersScriptFlag(void);
+static void StartMap(void);
+static void EnterMap(void);
+static void HandleMap(void);
+static void MapEvents(void);
+static void ResetOverworldDelay(void);
+static void NextOverworldFrame(void);
+static void HandleMapTimeAndJoypad(void);
+static void HandleMapObjects(void);
+static void HandleMapBackground(void);
+
+static void CheckPlayerState(void);
+static void v_CheckObjectEnteringVisibleRange(void);
+static bool PlayerEvents(void);
+static u8_flag_s CheckTrainerBattle_GetPlayerEvent(void);
+static u8_flag_s CheckTileEvent(void);
+static bool CheckWildEncounterCooldown(void);
+static void SetUpFiveStepWildEncounterCooldown(void);
+static u8_flag_s RunSceneScript(void);
+static u8_flag_s CheckTimeEvents(void);
+static u8_flag_s OWPlayerInput(void);
+static u8_flag_s CheckAPressOW(void);
+static void PlayTalkObject(void);
+static u8_flag_s TryObjectEvent(void);
+static u8_flag_s TryBGEvent(void);
+static u8_flag_s BGEventJumptable(uint8_t a);
+static bool CheckBGEventFlag(void);
+static u8_flag_s PlayerMovement(void);
+static u8_flag_s CheckMenuOW(void);
+
+static bool StartMenuScript(script_s* s);
+static bool SelectMenuScript(script_s* s);
+static bool StartMenuCallback(script_s* s);
+static bool SelectMenuCallback(script_s* s);
+
+static u8_flag_s CountStep(void);
+static bool DoRepelStep(void);
+static void DoPlayerEvent(void);
+
+static bool InvalidEventScript(script_s* s);
+static bool HatchEggScript(script_s* s);
+static bool WarpToNewMapScript(script_s* s);
+static bool FallIntoMapScript(script_s* s);
+static bool LandAfterPitfallScript(script_s* s);
+static bool EdgeWarpScript(script_s* s);
+static bool ChangeDirectionScript(script_s* s);
+
+static u8_flag_s RunMemScript(void);
+static u8_flag_s TryTileCollisionEvent(void);
+static u8_flag_s RandomEncounter(void);
+static bool WildBattleScript(script_s* s);
+static bool v_TryWildEncounter_BugContest(void);
+static bool DoBikeStep(void);
+
 // SECTION "Events", ROMX
 
 void OverworldLoop(void){
@@ -164,42 +222,42 @@ void EnableStepCount(void){
 
 }
 
-void EnableWildEncounters(void){
+static void EnableWildEncounters(void){
     // LD_HL(wScriptFlags2);
     // SET_hl(4);
     bit_set(wram->wScriptFlags2, 4);
     // RET;
 }
 
-bool CheckWarpConnxnScriptFlag(void){
+static bool CheckWarpConnxnScriptFlag(void){
     // LD_HL(wScriptFlags2);
     // BIT_hl(2);
     // RET;
     return bit_test(wram->wScriptFlags2, 2);
 }
 
-bool CheckCoordEventScriptFlag(void){
+static bool CheckCoordEventScriptFlag(void){
     // LD_HL(wScriptFlags2);
     // BIT_hl(1);
     // RET;
     return bit_test(wram->wScriptFlags2, 1);
 }
 
-bool CheckStepCountScriptFlag(void){
+static bool CheckStepCountScriptFlag(void){
     // LD_HL(wScriptFlags2);
     // BIT_hl(0);
     // RET;
     return bit_test(wram->wScriptFlags2, 0);
 }
 
-bool CheckWildEncountersScriptFlag(void){
+static bool CheckWildEncountersScriptFlag(void){
     // LD_HL(wScriptFlags2);
     // BIT_hl(4);
     // RET;
     return bit_test(wram->wScriptFlags2, 4);
 }
 
-void StartMap(void){
+static void StartMap(void){
     // XOR_A_A;
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = 0;
@@ -218,7 +276,7 @@ void StartMap(void){
     return EnterMap();
 }
 
-void EnterMap(void){
+static void EnterMap(void){
     // XOR_A_A;
     // LD_addr_A(wXYComparePointer);
     // LD_addr_A(wXYComparePointer + 1);
@@ -268,7 +326,7 @@ void UnusedWait30Frames(void){
 
 }
 
-void HandleMap(void){
+static void HandleMap(void){
     // CALL(aResetOverworldDelay);
     ResetOverworldDelay();
     // CALL(aHandleMapTimeAndJoypad);
@@ -292,11 +350,11 @@ void HandleMap(void){
     // CALL(aHandleMapBackground);
     HandleMapBackground();
     // CALL(aCheckPlayerState);
-    CheckPlayerState_Conv();
+    CheckPlayerState();
     // RET;
 }
 
-void MapEvents(void){
+static void MapEvents(void){
     // LD_A_addr(wMapEventStatus);
     // LD_HL(mMapEvents_Jumptable);
     // RST(aJumpTable);
@@ -308,7 +366,7 @@ void MapEvents(void){
     case MAPEVENTS_ON:
     // events:
         // CALL(aPlayerEvents);
-        PlayerEvents_Conv();
+        PlayerEvents();
         // CALL(aDisableEvents);
         DisableEvents();
         // FARCALL(aScriptEvents);
@@ -330,14 +388,14 @@ void MaxOverworldDelay(void){
 
 #define MAX_OVERWORLD_DELAY 2
 
-void ResetOverworldDelay(void){
+static void ResetOverworldDelay(void){
     // LD_A_addr(mMaxOverworldDelay);
     // LD_addr_A(wOverworldDelay);
     wram->wOverworldDelay = MAX_OVERWORLD_DELAY;
     // RET;
 }
 
-void NextOverworldFrame(void){
+static void NextOverworldFrame(void){
     // LD_A_addr(wOverworldDelay);
     // AND_A_A;
     // RET_Z ;
@@ -349,7 +407,7 @@ void NextOverworldFrame(void){
     // RET;
 }
 
-void HandleMapTimeAndJoypad(void){
+static void HandleMapTimeAndJoypad(void){
     // LD_A_addr(wMapEventStatus);
     // CP_A(MAPEVENTS_OFF);
     // RET_Z ;
@@ -365,7 +423,7 @@ void HandleMapTimeAndJoypad(void){
     // RET;
 }
 
-void HandleMapObjects(void){
+static void HandleMapObjects(void){
     // FARCALL(aHandleNPCStep);
     HandleNPCStep();
     // FARCALL(av_HandlePlayerStep);
@@ -375,7 +433,7 @@ void HandleMapObjects(void){
     // RET;
 }
 
-void HandleMapBackground(void){
+static void HandleMapBackground(void){
     // FARCALL(av_UpdateSprites);
     v_UpdateSprites_Conv();
     // FARCALL(aScrollScreen);
@@ -385,30 +443,7 @@ void HandleMapBackground(void){
     // RET;
 }
 
-void CheckPlayerState(void){
-    LD_A_addr(wPlayerStepFlags);
-    BIT_A(PLAYERSTEP_CONTINUE_F);
-    IF_Z goto events;
-    BIT_A(PLAYERSTEP_STOP_F);
-    IF_Z goto noevents;
-    BIT_A(PLAYERSTEP_MIDAIR_F);
-    IF_NZ goto noevents;
-    CALL(aEnableEvents);
-
-events:
-    LD_A(MAPEVENTS_ON);
-    LD_addr_A(wMapEventStatus);
-    RET;
-
-
-noevents:
-    LD_A(MAPEVENTS_OFF);
-    LD_addr_A(wMapEventStatus);
-    RET;
-
-}
-
-void CheckPlayerState_Conv(void){
+static void CheckPlayerState(void){
     // LD_A_addr(wPlayerStepFlags);
     // BIT_A(PLAYERSTEP_CONTINUE_F);
     // IF_Z goto events;
@@ -443,7 +478,7 @@ void CheckPlayerState_Conv(void){
     return;
 }
 
-void v_CheckObjectEnteringVisibleRange(void){
+static void v_CheckObjectEnteringVisibleRange(void){
     // LD_HL(wPlayerStepFlags);
     // BIT_hl(PLAYERSTEP_STOP_F);
     // RET_Z ;
@@ -454,61 +489,7 @@ void v_CheckObjectEnteringVisibleRange(void){
     // RET;
 }
 
-void PlayerEvents(void){
-    XOR_A_A;
-//  If there's already a player event, don't interrupt it.
-    LD_A_addr(wScriptRunning);
-    AND_A_A;
-    RET_NZ ;
-
-    CALL(aDummy_CheckScriptFlags2Bit5);  // This is a waste of time
-
-    CALL(aCheckTrainerBattle_GetPlayerEvent);
-    IF_C goto ok;
-
-    CALL(aCheckTileEvent);
-    IF_C goto ok;
-
-    CALL(aRunMemScript);
-    IF_C goto ok;
-
-    CALL(aRunSceneScript);
-    IF_C goto ok;
-
-    CALL(aCheckTimeEvents);
-    IF_C goto ok;
-
-    CALL(aOWPlayerInput);
-    IF_C goto ok;
-
-    XOR_A_A;
-    RET;
-
-
-ok:
-    PUSH_AF;
-    FARCALL(aEnableScriptMode);
-    POP_AF;
-
-    LD_addr_A(wScriptRunning);
-    CALL(aDoPlayerEvent);
-    LD_A_addr(wScriptRunning);
-    CP_A(PLAYEREVENT_CONNECTION);
-    IF_Z goto ok2;
-    CP_A(PLAYEREVENT_JOYCHANGEFACING);
-    IF_Z goto ok2;
-
-    XOR_A_A;
-    LD_addr_A(wLandmarkSignTimer);
-
-
-ok2:
-    SCF;
-    RET;
-
-}
-
-bool PlayerEvents_Conv(void){
+static bool PlayerEvents(void){
     // XOR_A_A;
 //  If there's already a player event, don't interrupt it.
     // LD_A_addr(wScriptRunning);
@@ -521,33 +502,33 @@ bool PlayerEvents_Conv(void){
     u8_flag_s res;
     do {
         // CALL(aCheckTrainerBattle_GetPlayerEvent);
-        res = CheckTrainerBattle_GetPlayerEvent_Conv();
+        res = CheckTrainerBattle_GetPlayerEvent();
         // IF_C goto ok;
         if(res.flag) break;
 
         // CALL(aCheckTileEvent);
         // IF_C goto ok;
-        res = CheckTileEvent_Conv();
+        res = CheckTileEvent();
         if(res.flag) break;
 
         // CALL(aRunMemScript);
         // IF_C goto ok;
-        res = RunMemScript_Conv();
+        res = RunMemScript();
         if(res.flag) break;
 
         // CALL(aRunSceneScript);
         // IF_C goto ok;
-        res = RunSceneScript_Conv();
+        res = RunSceneScript();
         if(res.flag) break;
 
         // CALL(aCheckTimeEvents);
         // IF_C goto ok;
-        res = CheckTimeEvents_Conv();
+        res = CheckTimeEvents();
         if(res.flag) break;
 
         // CALL(aOWPlayerInput);
         // IF_C goto ok;
-        res = OWPlayerInput_Conv();
+        res = OWPlayerInput();
         if(res.flag) break;
 
         // XOR_A_A;
@@ -584,24 +565,7 @@ bool PlayerEvents_Conv(void){
     return true;
 }
 
-void CheckTrainerBattle_GetPlayerEvent(void){
-    NOP;
-    NOP;
-    CALL(aCheckTrainerBattle);
-    IF_NC goto nope;
-
-    LD_A(PLAYEREVENT_SEENBYTRAINER);
-    SCF;
-    RET;
-
-
-nope:
-    XOR_A_A;
-    RET;
-
-}
-
-u8_flag_s CheckTrainerBattle_GetPlayerEvent_Conv(void){
+static u8_flag_s CheckTrainerBattle_GetPlayerEvent(void){
     // NOP;
     // NOP;
     // CALL(aCheckTrainerBattle);
@@ -619,83 +583,8 @@ u8_flag_s CheckTrainerBattle_GetPlayerEvent_Conv(void){
     // RET;
 }
 
-void CheckTileEvent(void){
 //  Check for warps, coord events, or wild battles.
-
-    CALL(aCheckWarpConnxnScriptFlag);
-    IF_Z goto connections_disabled;
-
-    FARCALL(aCheckMovingOffEdgeOfMap);
-    IF_C goto map_connection;
-
-    CALL(aCheckWarpTile);
-    IF_C goto warp_tile;
-
-
-connections_disabled:
-    CALL(aCheckCoordEventScriptFlag);
-    IF_Z goto coord_events_disabled;
-
-    CALL(aCheckCurrentMapCoordEvents);
-    IF_C goto coord_event;
-
-
-coord_events_disabled:
-    CALL(aCheckStepCountScriptFlag);
-    IF_Z goto step_count_disabled;
-
-    CALL(aCountStep);
-    RET_C ;
-
-
-step_count_disabled:
-    CALL(aCheckWildEncountersScriptFlag);
-    IF_Z goto ok;
-
-    CALL(aRandomEncounter);
-    RET_C ;
-    goto ok;  // pointless
-
-
-ok:
-    XOR_A_A;
-    RET;
-
-
-map_connection:
-    LD_A(PLAYEREVENT_CONNECTION);
-    SCF;
-    RET;
-
-
-warp_tile:
-    LD_A_addr(wPlayerStandingTile);
-    CALL(aCheckPitTile);
-    IF_NZ goto not_pit;
-    LD_A(PLAYEREVENT_FALL);
-    SCF;
-    RET;
-
-
-not_pit:
-    LD_A(PLAYEREVENT_WARP);
-    SCF;
-    RET;
-
-
-coord_event:
-    LD_HL(wCurCoordEventScriptAddr);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    CALL(aGetMapScriptsBank);
-    CALL(aCallScript);
-    RET;
-
-}
-
-//  Check for warps, coord events, or wild battles.
-u8_flag_s CheckTileEvent_Conv(void){
+static u8_flag_s CheckTileEvent(void){
     // CALL(aCheckWarpConnxnScriptFlag);
     // IF_Z goto connections_disabled;
     if(CheckWarpConnxnScriptFlag()) {
@@ -758,7 +647,7 @@ u8_flag_s CheckTileEvent_Conv(void){
     if(CheckStepCountScriptFlag()) {
         // CALL(aCountStep);
         // RET_C ;
-        u8_flag_s res = CountStep_Conv();
+        u8_flag_s res = CountStep();
         if(res.flag)
             return res;
     }
@@ -769,7 +658,7 @@ u8_flag_s CheckTileEvent_Conv(void){
     if(CheckWildEncountersScriptFlag()) {
         // CALL(aRandomEncounter);
         // RET_C ;
-        u8_flag_s res = RandomEncounter_Conv();
+        u8_flag_s res = RandomEncounter();
         if(res.flag)
             return res;
         // goto ok;  // pointless
@@ -781,19 +670,7 @@ u8_flag_s CheckTileEvent_Conv(void){
     return u8_flag(0, false);
 }
 
-void CheckWildEncounterCooldown(void){
-    LD_HL(wWildEncounterCooldown);
-    LD_A_hl;
-    AND_A_A;
-    RET_Z ;
-    DEC_hl;
-    RET_Z ;
-    SCF;
-    RET;
-
-}
-
-bool CheckWildEncounterCooldown_Conv(void){
+static bool CheckWildEncounterCooldown(void){
     // LD_HL(wWildEncounterCooldown);
     // LD_A_hl;
     // AND_A_A;
@@ -809,7 +686,7 @@ bool CheckWildEncounterCooldown_Conv(void){
     return true;
 }
 
-void SetUpFiveStepWildEncounterCooldown(void){
+static void SetUpFiveStepWildEncounterCooldown(void){
     // LD_A(5);
     // LD_addr_A(wWildEncounterCooldown);
     wram->wWildEncounterCooldown = 5;
@@ -836,58 +713,7 @@ void Dummy_CheckScriptFlags2Bit5(void){
 
 }
 
-void RunSceneScript(void){
-    LD_A_addr(wCurMapSceneScriptCount);
-    AND_A_A;
-    IF_Z goto nope;
-
-    LD_C_A;
-    CALL(aCheckScenes);
-    CP_A_C;
-    IF_NC goto nope;
-
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wCurMapSceneScriptsPointer);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    for(int rept = 0; rept < SCENE_SCRIPT_SIZE; rept++){
-    ADD_HL_DE;
-    }
-
-    CALL(aGetMapScriptsBank);
-    CALL(aGetFarWord);
-    CALL(aGetMapScriptsBank);
-    CALL(aCallScript);
-
-    LD_HL(wScriptFlags);
-    RES_hl(3);
-
-    FARCALL(aEnableScriptMode);
-    FARCALL(aScriptEvents);
-
-    LD_HL(wScriptFlags);
-    BIT_hl(3);
-    IF_Z goto nope;
-
-    LD_HL(wDeferredScriptAddr);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_addr(wDeferredScriptBank);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-nope:
-    XOR_A_A;
-    RET;
-
-}
-
-u8_flag_s RunSceneScript_Conv(void){
+static u8_flag_s RunSceneScript(void){
     // LD_A_addr(wCurMapSceneScriptCount);
     // AND_A_A;
     // IF_Z goto nope;
@@ -950,50 +776,7 @@ u8_flag_s RunSceneScript_Conv(void){
     // RET;
 }
 
-void CheckTimeEvents(void){
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    IF_NZ goto nothing;
-
-    LD_HL(wStatusFlags2);
-    BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
-    IF_Z goto do_daily;
-
-    FARCALL(aCheckBugContestTimer);
-    IF_C goto end_bug_contest;
-    XOR_A_A;
-    RET;
-
-
-do_daily:
-    FARCALL(aCheckDailyResetTimer);
-    FARCALL(aCheckPokerusTick);
-    FARCALL(aCheckPhoneCall);
-    RET_C ;
-
-
-nothing:
-    XOR_A_A;
-    RET;
-
-
-end_bug_contest:
-    LD_A(BANK(aBugCatchingContestOverScript));
-    LD_HL(mBugCatchingContestOverScript);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-unused:
-//   //  unreferenced
-    LD_A(0x8);  // ???
-    SCF;
-    RET;
-
-}
-
-u8_flag_s CheckTimeEvents_Conv(void){
+static u8_flag_s CheckTimeEvents(void){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto nothing;
@@ -1039,41 +822,10 @@ u8_flag_s CheckTimeEvents_Conv(void){
     // RET;
 }
 
-void OWPlayerInput(void){
-    CALL(aPlayerMovement);
-    RET_C ;
-    AND_A_A;
-    IF_NZ goto NoAction;
-
-//  Can't perform button actions while sliding on ice.
-    FARCALL(aCheckStandingOnIce);
-    IF_C goto NoAction;
-
-    CALL(aCheckAPressOW);
-    IF_C goto Action;
-
-    CALL(aCheckMenuOW);
-    IF_C goto Action;
-
-
-NoAction:
-    XOR_A_A;
-    RET;
-
-
-Action:
-    PUSH_AF;
-    FARCALL(aStopPlayerForEvent);
-    POP_AF;
-    SCF;
-    RET;
-
-}
-
-u8_flag_s OWPlayerInput_Conv(void){
+static u8_flag_s OWPlayerInput(void){
     // CALL(aPlayerMovement);
     // RET_C ;
-    u8_flag_s res = PlayerMovement_Conv();
+    u8_flag_s res = PlayerMovement();
     if(res.flag)
         return res;
     // AND_A_A;
@@ -1084,18 +836,18 @@ u8_flag_s OWPlayerInput_Conv(void){
 //  Can't perform button actions while sliding on ice.
     // FARCALL(aCheckStandingOnIce);
     // IF_C goto NoAction;
-    if(CheckStandingOnIce_Conv())
+    if(CheckStandingOnIce())
         return u8_flag(0, false);
 
     do {
         // CALL(aCheckAPressOW);
         // IF_C goto Action;
-        res = CheckAPressOW_Conv();
+        res = CheckAPressOW();
         if(res.flag) break;
 
         // CALL(aCheckMenuOW);
         // IF_C goto Action;
-        res = CheckMenuOW_Conv();
+        res = CheckMenuOW();
         if(res.flag) break;
 
     // NoAction:
@@ -1107,29 +859,14 @@ u8_flag_s OWPlayerInput_Conv(void){
 // Action:
     // PUSH_AF;
     // FARCALL(aStopPlayerForEvent);
-    StopPlayerForEvent_Conv();
+    StopPlayerForEvent();
     // POP_AF;
     // SCF;
     // RET;
     return res;
 }
 
-void CheckAPressOW(void){
-    LDH_A_addr(hJoyPressed);
-    AND_A(A_BUTTON);
-    RET_Z ;
-    CALL(aTryObjectEvent);
-    RET_C ;
-    CALL(aTryBGEvent);
-    RET_C ;
-    CALL(aTryTileCollisionEvent);
-    RET_C ;
-    XOR_A_A;
-    RET;
-
-}
-
-u8_flag_s CheckAPressOW_Conv(void){
+static u8_flag_s CheckAPressOW(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // RET_Z ;
@@ -1139,31 +876,22 @@ u8_flag_s CheckAPressOW_Conv(void){
     u8_flag_s res;
     // CALL(aTryObjectEvent);
     // RET_C ;
-    res = TryObjectEvent_Conv();
+    res = TryObjectEvent();
     if(res.flag) return res;
     // CALL(aTryBGEvent);
     // RET_C ;
-    res = TryBGEvent_Conv();
+    res = TryBGEvent();
     if(res.flag) return res;
     // CALL(aTryTileCollisionEvent);
     // RET_C ;
-    res = TryTileCollisionEvent_Conv();
+    res = TryTileCollisionEvent();
     if(res.flag) return res;
     // XOR_A_A;
     // RET;
     return u8_flag(0, false);
 }
 
-void PlayTalkObject(void){
-    PUSH_DE;
-    LD_DE(SFX_READ_TEXT_2);
-    CALL(aPlaySFX);
-    POP_DE;
-    RET;
-
-}
-
-void PlayTalkObject_Conv(void){
+static void PlayTalkObject(void){
     // PUSH_DE;
     // LD_DE(SFX_READ_TEXT_2);
     // CALL(aPlaySFX);
@@ -1280,54 +1008,9 @@ const struct ObjectEventTypeFunc ObjectEventTypeArray[] = {
 
 static_assert(lengthof(ObjectEventTypeArray) == NUM_OBJECT_TYPES, "");
 
-void TryObjectEvent(void){
-    FARCALL(aCheckFacingObject);
-    IF_C goto IsObject;
-    XOR_A_A;
-    RET;
-
-
-IsObject:
-    CALL(aPlayTalkObject);
-    LDH_A_addr(hObjectStructIndex);
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    LDH_addr_A(hLastTalked);
-
-    LDH_A_addr(hLastTalked);
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_COLOR);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0b00001111);
-
-//  Bug: If IsInArray returns nc, data at bc will be executed as code.
-    PUSH_BC;
-    LD_DE(3);
-    LD_HL(mObjectEventTypeArray);
-    CALL(aIsInArray);
-    IF_NC goto nope;
-    POP_BC;
-
-    INC_HL;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
-
-
-nope:
-// pop bc
-    XOR_A_A;
-    RET;
-
-}
-
-u8_flag_s TryObjectEvent_Conv(void){
+static u8_flag_s TryObjectEvent(void){
     // FARCALL(aCheckFacingObject);
-    struct Object* bc = CheckFacingObject_Conv();
+    struct Object* bc = CheckFacingObject();
     // IF_C goto IsObject;
     if(bc == NULL)
         // XOR_A_A;
@@ -1336,7 +1019,7 @@ u8_flag_s TryObjectEvent_Conv(void){
 
 // IsObject:
     // CALL(aPlayTalkObject);
-    PlayTalkObject_Conv();
+    PlayTalkObject();
     // LDH_A_addr(hObjectStructIndex);
     // CALL(aGetObjectStruct);
     // LD_HL(OBJECT_MAP_OBJECT_INDEX);
@@ -1388,22 +1071,7 @@ nope:
     return u8_flag(0, false);
 }
 
-void TryBGEvent(void){
-    CALL(aCheckFacingBGEvent);
-    IF_C goto is_bg_event;
-    XOR_A_A;
-    RET;
-
-
-is_bg_event:
-    LD_A_addr(wCurBGEventType);
-    LD_HL(mBGEventJumptable);
-    RST(aJumpTable);
-    RET;
-
-}
-
-u8_flag_s TryBGEvent_Conv(void){
+static u8_flag_s TryBGEvent(void){
     // CALL(aCheckFacingBGEvent);
     // IF_C goto is_bg_event;
     if(CheckFacingBGEvent()) {
@@ -1412,121 +1080,14 @@ u8_flag_s TryBGEvent_Conv(void){
         // LD_HL(mBGEventJumptable);
         // RST(aJumpTable);
         // RET;
-        return BGEventJumptable_Conv(gCurBGEvent.function);
+        return BGEventJumptable(gCurBGEvent.function);
     }
     // XOR_A_A;
     // RET;
     return u8_flag(0, false);
 }
 
-void BGEventJumptable(void){
-    //table_width ['2', 'BGEventJumptable']
-    //dw ['.read'];
-    //dw ['.up'];
-    //dw ['.down'];
-    //dw ['.right'];
-    //dw ['.left'];
-    //dw ['.ifset'];
-    //dw ['.ifnotset'];
-    //dw ['.itemifset'];
-    //dw ['.copy'];
-    //assert_table_length ['NUM_BGEVENTS']
-
-
-up:
-    LD_B(OW_UP);
-    goto checkdir;
-
-
-down:
-    LD_B(OW_DOWN);
-    goto checkdir;
-
-
-right:
-    LD_B(OW_RIGHT);
-    goto checkdir;
-
-
-left:
-    LD_B(OW_LEFT);
-    goto checkdir;
-
-
-checkdir:
-    LD_A_addr(wPlayerDirection);
-    AND_A(0b1100);
-    CP_A_B;
-    JP_NZ (mBGEventJumptable_dontread);
-
-read:
-    CALL(aPlayTalkObject);
-    LD_HL(wCurBGEventScriptAddr);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    CALL(aGetMapScriptsBank);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-itemifset:
-    CALL(aCheckBGEventFlag);
-    JP_NZ (mBGEventJumptable_dontread);
-    CALL(aPlayTalkObject);
-    CALL(aGetMapScriptsBank);
-    LD_DE(wHiddenItemData);
-    LD_BC(wHiddenItemDataEnd - wHiddenItemData);
-    CALL(aFarCopyBytes);
-    LD_A(BANK(aHiddenItemScript));
-    LD_HL(mHiddenItemScript);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-copy:
-    CALL(aCheckBGEventFlag);
-    IF_NZ goto dontread;
-    CALL(aGetMapScriptsBank);
-    LD_DE(wHiddenItemData);
-    LD_BC(wHiddenItemDataEnd - wHiddenItemData);
-    CALL(aFarCopyBytes);
-    goto dontread;
-
-
-ifset:
-    CALL(aCheckBGEventFlag);
-    IF_Z goto dontread;
-    goto thenread;
-
-
-ifnotset:
-    CALL(aCheckBGEventFlag);
-    IF_NZ goto dontread;
-
-thenread:
-    PUSH_HL;
-    CALL(aPlayTalkObject);
-    POP_HL;
-    INC_HL;
-    INC_HL;
-    CALL(aGetMapScriptsBank);
-    CALL(aGetFarWord);
-    CALL(aGetMapScriptsBank);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-dontread:
-    XOR_A_A;
-    RET;
-
-}
-
-u8_flag_s BGEventJumptable_Conv(uint8_t a){
+u8_flag_s BGEventJumptable(uint8_t a){
     //table_width ['2', 'BGEventJumptable']
     //dw ['.read'];
     //dw ['.up'];
@@ -1571,7 +1132,7 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
         case BGEVENT_READ:
         // read:
             // CALL(aPlayTalkObject);
-            PlayTalkObject_Conv();
+            PlayTalkObject();
             // LD_HL(wCurBGEventScriptAddr);
             // LD_A_hli;
             // LD_H_hl;
@@ -1586,10 +1147,10 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
         // itemifset:
             // CALL(aCheckBGEventFlag);
             // JP_NZ (mBGEventJumptable_dontread);
-            if(CheckBGEventFlag_Conv())
+            if(CheckBGEventFlag())
                 return u8_flag(0, false);
             // CALL(aPlayTalkObject);
-            PlayTalkObject_Conv();
+            PlayTalkObject();
             // CALL(aGetMapScriptsBank);
             // LD_DE(wHiddenItemData);
             // LD_BC(wHiddenItemDataEnd - wHiddenItemData);
@@ -1607,7 +1168,7 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
         // copy:
             // CALL(aCheckBGEventFlag);
             // IF_NZ goto dontread;
-            if(CheckBGEventFlag_Conv())
+            if(CheckBGEventFlag())
                 return u8_flag(0, false);
             // CALL(aGetMapScriptsBank);
             // LD_DE(wHiddenItemData);
@@ -1621,19 +1182,19 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
         // ifset:
             // CALL(aCheckBGEventFlag);
             // IF_Z goto dontread;
-            if(!CheckBGEventFlag_Conv())
+            if(!CheckBGEventFlag())
                 return u8_flag(0, false);
             goto thenread;
         case BGEVENT_IFNOTSET:
         // ifnotset:
             // CALL(aCheckBGEventFlag);
             // IF_NZ goto dontread;
-            if(!CheckBGEventFlag_Conv())
+            if(!CheckBGEventFlag())
                 return u8_flag(0, false);
         thenread:
             // PUSH_HL;
             // CALL(aPlayTalkObject);
-            PlayTalkObject_Conv();
+            PlayTalkObject();
             // POP_HL;
             // INC_HL;
             // INC_HL;
@@ -1650,26 +1211,7 @@ u8_flag_s BGEventJumptable_Conv(uint8_t a){
     }
 }
 
-void CheckBGEventFlag(void){
-    LD_HL(wCurBGEventScriptAddr);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    PUSH_HL;
-    CALL(aGetMapScriptsBank);
-    CALL(aGetFarWord);
-    LD_E_L;
-    LD_D_H;
-    LD_B(CHECK_FLAG);
-    CALL(aEventFlagAction);
-    LD_A_C;
-    AND_A_A;
-    POP_HL;
-    RET;
-
-}
-
-bool CheckBGEventFlag_Conv(void){
+static bool CheckBGEventFlag(void){
     // LD_HL(wCurBGEventScriptAddr);
     // LD_A_hli;
     // LD_H_hl;
@@ -1690,20 +1232,10 @@ bool CheckBGEventFlag_Conv(void){
     return a;
 }
 
-void PlayerMovement(void){
-    FARCALL(aDoPlayerMovement);
-    LD_A_C;
-    LD_HL(mPlayerMovementPointers);
-    RST(aJumpTable);
-    LD_A_C;
-    RET;
-
-}
-
-u8_flag_s PlayerMovement_Conv(void){
+static u8_flag_s PlayerMovement(void){
     // FARCALL(aDoPlayerMovement);
     // LD_A_C;
-    uint8_t a = DoPlayerMovement_Conv();
+    uint8_t a = DoPlayerMovement();
     // LD_HL(mPlayerMovementPointers);
     // RST(aJumpTable);
     switch(a) {
@@ -1841,41 +1373,7 @@ exit_water:
 
 }
 
-void CheckMenuOW(void){
-    XOR_A_A;
-    LDH_addr_A(hMenuReturn);
-    LDH_addr_A(hUnusedByte);
-    LDH_A_addr(hJoyPressed);
-
-    BIT_A(SELECT_F);
-    IF_NZ goto Select;
-
-    BIT_A(START_F);
-    IF_Z goto NoMenu;
-
-    LD_A(BANK(aStartMenuScript));
-    LD_HL(mStartMenuScript);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-
-NoMenu:
-    XOR_A_A;
-    RET;
-
-
-Select:
-    CALL(aPlayTalkObject);
-    LD_A(BANK(aSelectMenuScript));
-    LD_HL(mSelectMenuScript);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-}
-
-u8_flag_s CheckMenuOW_Conv(void){
+static u8_flag_s CheckMenuOW(void){
     // XOR_A_A;
     // LDH_addr_A(hMenuReturn);
     hram->hMenuReturn = 0;
@@ -1892,7 +1390,7 @@ u8_flag_s CheckMenuOW_Conv(void){
     if(bit_test(a, SELECT_F)) {
     // Select:
         // CALL(aPlayTalkObject);
-        PlayTalkObject_Conv();
+        PlayTalkObject();
         // LD_A(BANK(aSelectMenuScript));
         // LD_HL(mSelectMenuScript);
         // CALL(aCallScript);
@@ -1925,7 +1423,7 @@ static bool DebugFieldMenuScript(script_s* s){
     SCRIPT_END
 }
 
-bool StartMenuScript(script_s* s){
+static bool StartMenuScript(script_s* s){
     SCRIPT_BEGIN
     StartMenu();
     //sjump ['StartMenuCallback']
@@ -1933,19 +1431,19 @@ bool StartMenuScript(script_s* s){
     SCRIPT_END
 }
 
-bool SelectMenuScript(script_s* s){
+static bool SelectMenuScript(script_s* s){
     SCRIPT_BEGIN
     SelectMenu();
     sjump(SelectMenuCallback)
     SCRIPT_END
 }
 
-bool StartMenuCallback(script_s* s){
+static bool StartMenuCallback(script_s* s){
     SCRIPT_BEGIN
     SCRIPT_FALLTHROUGH(SelectMenuCallback)
 }
 
-bool SelectMenuCallback(script_s* s){
+static bool SelectMenuCallback(script_s* s){
     SCRIPT_BEGIN
     readmem(hram_ptr(hMenuReturn))
     ifequal(HMENURETURN_SCRIPT, Script)
@@ -1962,88 +1460,7 @@ Asm:
     SCRIPT_END
 }
 
-void CountStep(void){
-// Don't count steps in link communication rooms.
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    IF_NZ goto done;
-
-// If there is a special phone call, don't count the step.
-    FARCALL(aCheckSpecialPhoneCall);
-    IF_C goto doscript;
-
-// If Repel wore off, don't count the step.
-    CALL(aDoRepelStep);
-    IF_C goto doscript;
-
-// Count the step for poison and total steps
-    LD_HL(wPoisonStepCount);
-    INC_hl;
-    LD_HL(wStepCount);
-    INC_hl;
-// Every 256 steps, increase the happiness of all your Pokemon.
-    IF_NZ goto skip_happiness;
-
-    FARCALL(aStepHappiness);
-
-
-skip_happiness:
-// Every 256 steps, offset from the happiness incrementor by 128 steps,
-// decrease the hatch counter of all your eggs until you reach the first
-// one that is ready to hatch.
-    LD_A_addr(wStepCount);
-    CP_A(0x80);
-    IF_NZ goto skip_egg;
-
-    FARCALL(aDoEggStep);
-    IF_NZ goto hatch;
-
-
-skip_egg:
-// Increase the EXP of (both) DayCare Pokemon by 1.
-    FARCALL(aDayCareStep);
-
-// Every 4 steps, deal damage to all poisoned Pokemon.
-    LD_HL(wPoisonStepCount);
-    LD_A_hl;
-    CP_A(4);
-    IF_C goto skip_poison;
-    LD_hl(0);
-
-    FARCALL(aDoPoisonStep);
-    IF_C goto doscript;
-
-
-skip_poison:
-    FARCALL(aDoBikeStep);
-
-
-done:
-    XOR_A_A;
-    RET;
-
-
-doscript:
-    LD_A(-1);
-    SCF;
-    RET;
-
-
-hatch:
-    LD_A(PLAYEREVENT_HATCH);
-    SCF;
-    RET;
-
-
-whiteout:
-//   //  unreferenced
-    LD_A(PLAYEREVENT_WHITEOUT);
-    SCF;
-    RET;
-
-}
-
-u8_flag_s CountStep_Conv(void){
+static u8_flag_s CountStep(void){
 // Don't count steps in link communication rooms.
     // LD_A_addr(wLinkMode);
     // AND_A_A;
@@ -2060,7 +1477,7 @@ u8_flag_s CountStep_Conv(void){
 // If Repel wore off, don't count the step.
     // CALL(aDoRepelStep);
     // IF_C goto doscript;
-    if(DoRepelStep_Conv())
+    if(DoRepelStep())
         goto doscript;
 
 // Count the step for poison and total steps
@@ -2120,7 +1537,7 @@ u8_flag_s CountStep_Conv(void){
 
 // skip_poison:
     // FARCALL(aDoBikeStep);
-    DoBikeStep_Conv();
+    DoBikeStep();
 
 
 done:
@@ -2144,24 +1561,7 @@ whiteout:
     return u8_flag(PLAYEREVENT_WHITEOUT, true);
 }
 
-void DoRepelStep(void){
-    LD_A_addr(wRepelEffect);
-    AND_A_A;
-    RET_Z ;
-
-    DEC_A;
-    LD_addr_A(wRepelEffect);
-    RET_NZ ;
-
-    LD_A(BANK(aRepelWoreOffScript));
-    LD_HL(mRepelWoreOffScript);
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-}
-
-bool DoRepelStep_Conv(void){
+static bool DoRepelStep(void){
     // LD_A_addr(wRepelEffect);
     // AND_A_A;
     // RET_Z ;
@@ -2183,7 +1583,7 @@ bool DoRepelStep_Conv(void){
     return true;
 }
 
-void DoPlayerEvent(void){
+static void DoPlayerEvent(void){
     // LD_A_addr(wScriptRunning);
     // AND_A_A;
     // RET_Z ;
@@ -2233,7 +1633,7 @@ const Script_fn_t PlayerEventScriptPointers[] = {
 };
 static_assert(lengthof(PlayerEventScriptPointers) == NUM_PLAYER_EVENTS + 1, "");
 
-bool InvalidEventScript(script_s* s){
+static bool InvalidEventScript(script_s* s){
     SCRIPT_BEGIN
     s_end
     SCRIPT_END
@@ -2244,14 +1644,14 @@ void UnusedPlayerEventScript(void){
     //end ['?']
 }
 
-bool HatchEggScript(script_s* s){
+static bool HatchEggScript(script_s* s){
     SCRIPT_BEGIN
     OverworldHatchEgg();
     s_end
     SCRIPT_END
 }
 
-bool WarpToNewMapScript(script_s* s){
+static bool WarpToNewMapScript(script_s* s){
     SCRIPT_BEGIN
     warpsound
     newloadmap(MAPSETUP_DOOR)
@@ -2259,7 +1659,7 @@ bool WarpToNewMapScript(script_s* s){
     SCRIPT_END
 }
 
-bool FallIntoMapScript(script_s* s){
+static bool FallIntoMapScript(script_s* s){
     static const uint8_t SkyfallMovement[] = {
         movement_skyfall,
         movement_step_end
@@ -2274,21 +1674,21 @@ bool FallIntoMapScript(script_s* s){
     SCRIPT_END
 }
 
-bool LandAfterPitfallScript(script_s* s){
+static bool LandAfterPitfallScript(script_s* s){
     SCRIPT_BEGIN
     earthquake(16)
     s_end
     SCRIPT_END
 }
 
-bool EdgeWarpScript(script_s* s){
+static bool EdgeWarpScript(script_s* s){
     SCRIPT_BEGIN
     reloadend(MAPSETUP_CONNECTION)
     sjump(ChangeDirectionScript)
     SCRIPT_END
 }
 
-bool ChangeDirectionScript(script_s* s){
+static bool ChangeDirectionScript(script_s* s){
     SCRIPT_BEGIN
     deactivatefacing(3)
     EnableWildEncounters();
@@ -2307,31 +1707,7 @@ void WarpToSpawnPoint(void){
     bit_reset(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F);
 }
 
-void RunMemScript(void){
-//  If there is no script here, we don't need to be here.
-    LD_A_addr(wMapReentryScriptQueueFlag);
-    AND_A_A;
-    RET_Z ;
-//  Execute the script at (wMapReentryScriptBank):(wMapReentryScriptAddress).
-    LD_HL(wMapReentryScriptAddress);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_addr(wMapReentryScriptBank);
-    CALL(aCallScript);
-    SCF;
-//  Clear the buffer for the next script.
-    PUSH_AF;
-    XOR_A_A;
-    LD_HL(wMapReentryScriptQueueFlag);
-    LD_BC(8);
-    CALL(aByteFill);
-    POP_AF;
-    RET;
-
-}
-
-u8_flag_s RunMemScript_Conv(void){
+static u8_flag_s RunMemScript(void){
 //  If there is no script here, we don't need to be here.
     // LD_A_addr(wMapReentryScriptQueueFlag);
     // AND_A_A;
@@ -2360,27 +1736,7 @@ u8_flag_s RunMemScript_Conv(void){
     return u8_flag(a, true);
 }
 
-void LoadScriptBDE(void){
-//  If there's already a script here, don't overwrite.
-    LD_HL(wMapReentryScriptQueueFlag);
-    LD_A_hl;
-    AND_A_A;
-    RET_NZ ;
-//  Set the flag
-    LD_hl(1);
-    INC_HL;
-//  Load the script pointer b:de into (wMapReentryScriptBank):(wMapReentryScriptAddress)
-    LD_hl_B;
-    INC_HL;
-    LD_hl_E;
-    INC_HL;
-    LD_hl_D;
-    SCF;
-    RET;
-
-}
-
-bool LoadScriptBDE_Conv(Script_fn_t de){
+bool LoadScriptBDE(Script_fn_t de){
 //  If there's already a script here, don't overwrite.
     // LD_HL(wMapReentryScriptQueueFlag);
     // LD_A_hl;
@@ -2404,64 +1760,7 @@ bool LoadScriptBDE_Conv(Script_fn_t de){
     return true;
 }
 
-void TryTileCollisionEvent(void){
-    CALL(aGetFacingTileCoord);
-    LD_addr_A(wFacingTileID);
-    LD_C_A;
-    FARCALL(aCheckFacingTileForStdScript);
-    IF_C goto done;
-
-    CALL(aCheckCutTreeTile);
-    IF_NZ goto whirlpool;
-    FARCALL(aTryCutOW);
-    goto done;
-
-
-whirlpool:
-    LD_A_addr(wFacingTileID);
-    CALL(aCheckWhirlpoolTile);
-    IF_NZ goto waterfall;
-    FARCALL(aTryWhirlpoolOW);
-    goto done;
-
-
-waterfall:
-    LD_A_addr(wFacingTileID);
-    CALL(aCheckWaterfallTile);
-    IF_NZ goto headbutt;
-    FARCALL(aTryWaterfallOW);
-    goto done;
-
-
-headbutt:
-    LD_A_addr(wFacingTileID);
-    CALL(aCheckHeadbuttTreeTile);
-    IF_NZ goto surf;
-    FARCALL(aTryHeadbuttOW);
-    IF_C goto done;
-    goto noevent;
-
-
-surf:
-    FARCALL(aTrySurfOW);
-    IF_NC goto noevent;
-    goto done;
-
-
-noevent:
-    XOR_A_A;
-    RET;
-
-
-done:
-    CALL(aPlayClickSFX);
-    LD_A(0xff);
-    SCF;
-    RET;
-
-}
-
-u8_flag_s TryTileCollisionEvent_Conv(void){
+static u8_flag_s TryTileCollisionEvent(void){
     // CALL(aGetFacingTileCoord);
     struct CoordsTileId cid = GetFacingTileCoord();
     // LD_addr_A(wFacingTileID);
@@ -2536,61 +1835,15 @@ u8_flag_s TryTileCollisionEvent_Conv(void){
     return u8_flag(0xff, true);
 }
 
-void RandomEncounter(void){
 //  Random encounter
-
-    CALL(aCheckWildEncounterCooldown);
-    IF_C goto nope;
-    CALL(aCanUseSweetScent);
-    IF_NC goto nope;
-    LD_HL(wStatusFlags2);
-    BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
-    IF_NZ goto bug_contest;
-    FARCALL(aTryWildEncounter);
-    IF_NZ goto nope;
-    goto ok;
-
-
-bug_contest:
-    CALL(av_TryWildEncounter_BugContest);
-    IF_NC goto nope;
-    goto ok_bug_contest;
-
-
-nope:
-    LD_A(1);
-    AND_A_A;
-    RET;
-
-
-ok:
-    LD_A(BANK(aWildBattleScript));
-    LD_HL(mWildBattleScript);
-    goto done;
-
-
-ok_bug_contest:
-    LD_A(BANK(aBugCatchingContestBattleScript));
-    LD_HL(mBugCatchingContestBattleScript);
-    goto done;
-
-
-done:
-    CALL(aCallScript);
-    SCF;
-    RET;
-
-}
-
-//  Random encounter
-u8_flag_s RandomEncounter_Conv(void){
+static u8_flag_s RandomEncounter(void){
     // CALL(aCheckWildEncounterCooldown);
     // IF_C goto nope;
-    if(CheckWildEncounterCooldown_Conv())
+    if(CheckWildEncounterCooldown())
         return u8_flag(1, false);
     // CALL(aCanUseSweetScent);
     // IF_NC goto nope;
-    if(!CanUseSweetScent_Conv())
+    if(!CanUseSweetScent())
         return u8_flag(1, false);
     // LD_HL(wStatusFlags2);
     // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
@@ -2599,7 +1852,7 @@ u8_flag_s RandomEncounter_Conv(void){
     // bug_contest:
         // CALL(av_TryWildEncounter_BugContest);
         // IF_NC goto nope;
-        if(!v_TryWildEncounter_BugContest_Conv())
+        if(!v_TryWildEncounter_BugContest())
             return u8_flag(1, false);
         // goto ok_bug_contest;
     // ok_bug_contest:
@@ -2633,7 +1886,7 @@ u8_flag_s RandomEncounter_Conv(void){
     return u8_flag(CallScript(WildBattleScript), true);
 }
 
-bool WildBattleScript(script_s* s){
+static bool WildBattleScript(script_s* s){
     SCRIPT_BEGIN
     randomwildmon
     startbattle
@@ -2642,34 +1895,7 @@ bool WildBattleScript(script_s* s){
     SCRIPT_END
 }
 
-void CanUseSweetScent(void){
-    LD_HL(wStatusFlags);
-    BIT_hl(STATUSFLAGS_NO_WILD_ENCOUNTERS_F);
-    IF_NZ goto no;
-    LD_A_addr(wEnvironment);
-    CP_A(CAVE);
-    IF_Z goto ice_check;
-    CP_A(DUNGEON);
-    IF_Z goto ice_check;
-    FARCALL(aCheckGrassCollision);
-    IF_NC goto no;
-
-
-ice_check:
-    LD_A_addr(wPlayerStandingTile);
-    CALL(aCheckIceTile);
-    IF_Z goto no;
-    SCF;
-    RET;
-
-
-no:
-    AND_A_A;
-    RET;
-
-}
-
-bool CanUseSweetScent_Conv(void){
+bool CanUseSweetScent(void){
     // LD_HL(wStatusFlags);
     // BIT_hl(STATUSFLAGS_NO_WILD_ENCOUNTERS_F);
     // IF_NZ goto no;
@@ -2701,89 +1927,20 @@ bool CanUseSweetScent_Conv(void){
     // RET;
 }
 
-void v_TryWildEncounter_BugContest(void){
-    CALL(aTryWildEncounter_BugContest);
-    RET_NC ;
-    CALL(aChooseWildEncounter_BugContest);
-    FARCALL(aCheckRepelEffect);
-    RET;
-
-}
-
-bool v_TryWildEncounter_BugContest_Conv(void){
+static bool v_TryWildEncounter_BugContest(void){
     // CALL(aTryWildEncounter_BugContest);
     // RET_NC ;
-    if(!TryWildEncounter_BugContest_Conv())
+    if(!TryWildEncounter_BugContest())
         return false;
     // CALL(aChooseWildEncounter_BugContest);
-    ChooseWildEncounter_BugContest_Conv();
+    ChooseWildEncounter_BugContest();
     // FARCALL(aCheckRepelEffect);
     return !CheckRepelEffect_Conv();
     // RET;
 }
 
+//  Pick a random mon out of ContestMons.
 void ChooseWildEncounter_BugContest(void){
-//  Pick a random mon out of ContestMons.
-
-
-loop:
-    CALL(aRandom);
-    CP_A(100 << 1);
-    IF_NC goto loop;
-    SRL_A;
-
-    LD_HL(mContestMons);
-    LD_DE(4);
-
-CheckMon:
-    SUB_A_hl;
-    IF_C goto GotMon;
-    ADD_HL_DE;
-    goto CheckMon;
-
-
-GotMon:
-    INC_HL;
-
-//  Species
-    LD_A_hli;
-    LD_addr_A(wTempWildMonSpecies);
-
-//  Min level
-    LD_A_hli;
-    LD_D_A;
-
-//  Max level
-    LD_A_hl;
-
-    SUB_A_D;
-    IF_NZ goto RandomLevel;
-
-//  If min and max are the same.
-    LD_A_D;
-    goto GotLevel;
-
-
-RandomLevel:
-//  Get a random level between the min and max.
-    LD_C_A;
-    INC_C;
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    CALL(aSimpleDivide);
-    ADD_A_D;
-
-
-GotLevel:
-    LD_addr_A(wCurPartyLevel);
-
-    XOR_A_A;
-    RET;
-
-}
-
-//  Pick a random mon out of ContestMons.
-void ChooseWildEncounter_BugContest_Conv(void){
     uint8_t a;
     do {
     // loop:
@@ -2857,29 +2014,7 @@ void ChooseWildEncounter_BugContest_Conv(void){
     // RET;
 }
 
-void TryWildEncounter_BugContest(void){
-    LD_A_addr(wPlayerStandingTile);
-    CALL(aCheckSuperTallGrassTile);
-    LD_B(40 percent);
-    IF_Z goto ok;
-    LD_B(20 percent);
-
-
-ok:
-    FARCALL(aApplyMusicEffectOnEncounterRate);
-    FARCALL(aApplyCleanseTagEffectOnEncounterRate);
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    CP_A_B;
-    RET_C ;
-    LD_A(1);
-    AND_A_A;
-    RET;
-
-// INCLUDE "data/wild/bug_contest_mons.asm"
-}
-
-bool TryWildEncounter_BugContest_Conv(void){
+bool TryWildEncounter_BugContest(void){
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckSuperTallGrassTile);
     // LD_B(40 percent);
@@ -2908,80 +2043,7 @@ bool TryWildEncounter_BugContest_Conv(void){
 // INCLUDE "data/wild/bug_contest_mons.asm"
 }
 
-void DoBikeStep(void){
-    NOP;
-    NOP;
-// If the bike shop owner doesn't have our number, or
-// if we've already gotten the call, we don't have to
-// be here.
-    LD_HL(wStatusFlags2);
-    BIT_hl(STATUSFLAGS2_BIKE_SHOP_CALL_F);
-    IF_Z goto NoCall;
-
-// If we're not on the bike, we don't have to be here.
-    LD_A_addr(wPlayerState);
-    CP_A(PLAYER_BIKE);
-    IF_NZ goto NoCall;
-
-// If we're not in an area of phone service, we don't
-// have to be here.
-    CALL(aGetMapPhoneService);
-    AND_A_A;
-    IF_NZ goto NoCall;
-
-// Check the bike step count and check whether we've
-// taken 65536 of them yet.
-    LD_HL(wBikeStep);
-    LD_A_hli;
-    LD_D_A;
-    LD_E_hl;
-    CP_A(255);
-    IF_NZ goto increment;
-    LD_A_E;
-    CP_A(255);
-    IF_Z goto dont_increment;
-
-
-increment:
-    INC_DE;
-    LD_hl_E;
-    DEC_HL;
-    LD_hl_D;
-
-
-dont_increment:
-// If we've taken at least 1024 steps, have the bike
-//  shop owner try to call us.
-    LD_A_D;
-    CP_A(HIGH(1024));
-    IF_C goto NoCall;
-
-// If a call has already been queued, don't overwrite
-// that call.
-    LD_A_addr(wSpecialPhoneCallID);
-    AND_A_A;
-    IF_NZ goto NoCall;
-
-// Queue the call.
-    LD_A(SPECIALCALL_BIKESHOP);
-    LD_addr_A(wSpecialPhoneCallID);
-    XOR_A_A;
-    LD_addr_A(wSpecialPhoneCallID + 1);
-    LD_HL(wStatusFlags2);
-    RES_hl(STATUSFLAGS2_BIKE_SHOP_CALL_F);
-    SCF;
-    RET;
-
-
-NoCall:
-    XOR_A_A;
-    RET;
-
-// INCLUDE "engine/overworld/cmd_queue.asm"
-
-}
-
-bool DoBikeStep_Conv(void){
+static bool DoBikeStep(void){
     // NOP;
     // NOP;
 // If the bike shop owner doesn't have our number, or

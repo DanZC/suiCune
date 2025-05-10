@@ -1061,7 +1061,7 @@ void PokeBallEffect(void){
                     wram->wMonType = PARTYMON;
                     // LD_B(NAME_MON);
                     // FARCALL(aNamingScreen);
-                    NamingScreen_Conv(nick, NAME_MON);
+                    NamingScreen(nick, NAME_MON);
 
                     // CALL(aRotateThreePalettesRight);
                     RotateThreePalettesRight();
@@ -1136,7 +1136,7 @@ void PokeBallEffect(void){
                     // LD_DE(wMonOrItemNameBuffer);
                     // LD_B(NAME_MON);
                     // FARCALL(aNamingScreen);
-                    NamingScreen_Conv(wram->wMonOrItemNameBuffer, NAME_MON);
+                    NamingScreen(wram->wMonOrItemNameBuffer, NAME_MON);
 
                     // LD_A(BANK(sBoxMonNicknames));
                     // CALL(aOpenSRAM);

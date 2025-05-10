@@ -2430,7 +2430,7 @@ void LoadOpponentTrainerAndPokemonWithOTSprite(void){
     // LDH_addr_A(hUsedSpriteTile);
     hram->hUsedSpriteTile = wram->wUsedSprites[(a << 1) + 1];
     // FARCALL(aGetUsedSprite);
-    GetUsedSprite_Conv();
+    GetUsedSprite();
     // RET;
 
 // INCLUDE "data/trainers/sprites.asm"

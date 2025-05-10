@@ -1027,7 +1027,7 @@ struct CallerLocation GetCallerLocation(void){
     uint8_t landmark = GetWorldMapLocation(mgroup, mnum);
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
-    GetLandmarkName_Conv(landmark);
+    GetLandmarkName(landmark);
     // POP_BC;
     // POP_DE;
     // RET;

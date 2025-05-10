@@ -724,7 +724,7 @@ void HatchEggs(void){
                 // PUSH_DE;
                 // LD_B(NAME_MON);
                 // FARCALL(aNamingScreen);
-                NamingScreen_Conv(wram->wPartyMonNickname[mon], NAME_MON);
+                NamingScreen(wram->wPartyMonNickname[mon], NAME_MON);
                 // POP_HL;
                 // LD_DE(wStringBuffer1);
                 // CALL(aInitName);

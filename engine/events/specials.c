@@ -158,7 +158,7 @@ void NameRival(void){
     // LD_B(NAME_RIVAL);
     // LD_DE(wRivalName);
     // FARCALL(av_NamingScreen);
-    v_NamingScreen_Conv(wram->wRivalName, NAME_RIVAL);
+    v_NamingScreen(wram->wRivalName, NAME_RIVAL);
     // LD_HL(wRivalName);
     // LD_DE(mNameRival_DefaultName);
     // CALL(aInitName);

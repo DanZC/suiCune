@@ -20,7 +20,7 @@ uint8_t GetSpritePalette(uint8_t a){
     // LD_C_A;
 
     // FARCALL(av_GetSpritePalette);
-    return v_GetSpritePalette_Conv(a);
+    return v_GetSpritePalette(a);
 
     // LD_A_C;
     // POP_BC;
@@ -424,7 +424,7 @@ void UnmaskCopyMapObjectStruct(uint8_t a){
     // CALL(aGetMapObject);
     struct MapObject* bc = GetMapObject(a);
     // FARCALL(aCopyObjectStruct);
-    CopyObjectStruct_Conv(bc, a);
+    CopyObjectStruct(bc, a);
     // RET;
 }
 

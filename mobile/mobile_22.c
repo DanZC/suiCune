@@ -5233,7 +5233,7 @@ bool Function8a78c(void){
     // LD_DE(wd002);
     // LD_B(NAME_FRIEND);
     // FARCALL(aNamingScreen);
-    NamingScreen_Conv(&wram->wd002, NAME_FRIEND);
+    NamingScreen(&wram->wd002, NAME_FRIEND);
     // CALL(aOpenSRAMBank4);
     OpenSRAMBank4();
     // CALL(aFunction8931b);

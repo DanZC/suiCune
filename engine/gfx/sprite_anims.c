@@ -338,7 +338,7 @@ static void AnimSeq_NamingScreenCursor(struct SpriteAnim* bc){
     // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
     // CALLFAR(aNamingScreen_AnimateCursor);
     // RET;
-    return NamingScreen_AnimateCursor_Conv(bc);
+    return NamingScreen_AnimateCursor(bc);
 }
 
 static void AnimSeq_MailCursor(struct SpriteAnim* bc){

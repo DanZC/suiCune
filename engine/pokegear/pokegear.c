@@ -1091,7 +1091,7 @@ static void PokegearMap_InitPlayerIcon(uint8_t landmark){
     // LD_E_A;
     // PUSH_BC;
     // FARCALL(aGetLandmarkCoords);
-    struct Coords coord = GetLandmarkCoords_Conv(landmark);
+    struct Coords coord = GetLandmarkCoords(landmark);
     // POP_BC;
     // LD_HL(SPRITEANIMSTRUCT_XCOORD);
     // ADD_HL_BC;
@@ -1137,7 +1137,7 @@ static void PokegearMap_UpdateLandmarkName(uint8_t landmark){
     // REG_DE = landmark;
     // PUSH_DE;
     // FARCALL(aGetLandmarkName);
-    GetLandmarkName_Conv(landmark);
+    GetLandmarkName(landmark);
     // POP_DE;
     // FARCALL(aTownMap_ConvertLineBreakCharacters);
     TownMap_ConvertLineBreakCharacters();
@@ -1151,7 +1151,7 @@ static void PokegearMap_UpdateCursorPosition(struct SpriteAnim* bc, uint8_t land
     // PUSH_BC;
     // LD_E_A;
     // FARCALL(aGetLandmarkCoords);
-    struct Coords coord = GetLandmarkCoords_Conv(landmark);
+    struct Coords coord = GetLandmarkCoords(landmark);
     // POP_BC;
     // LD_HL(SPRITEANIMSTRUCT_XCOORD);
     // ADD_HL_BC;
@@ -3308,7 +3308,7 @@ static void TownMapBubble_Name(void) {
     // hlcoord(2, 1, wTilemap);
     // LD_DE(wStringBuffer1);
     // CALL(aPlaceString);
-    PlaceStringSimple(GetLandmarkName_Conv(Flypoints[wram->wTownMapPlayerIconLandmark].landmark), coord(2, 1, wram->wTilemap));
+    PlaceStringSimple(GetLandmarkName(Flypoints[wram->wTownMapPlayerIconLandmark].landmark), coord(2, 1, wram->wTilemap));
     // RET;
 }
 
@@ -3381,7 +3381,7 @@ void GetMapCursorCoordinates(void){
     // LD_E_hl;
     uint8_t e = Flypoints[wram->wTownMapPlayerIconLandmark].landmark;
     // FARCALL(aGetLandmarkCoords);
-    struct Coords coord = GetLandmarkCoords_Conv(e);
+    struct Coords coord = GetLandmarkCoords(e);
     // LD_A_addr(wTownMapCursorCoordinates);
     // LD_C_A;
     // LD_A_addr(wTownMapCursorCoordinates + 1);
@@ -3624,7 +3624,7 @@ static void Pokedex_GetArea_GetAndPlaceNest(uint8_t a, species_t species){
         // LD_E_A;
         // PUSH_HL;
         // FARCALL(aGetLandmarkCoords);
-        const struct Coords coords = GetLandmarkCoords_Conv(*de);
+        const struct Coords coords = GetLandmarkCoords(*de);
         // POP_HL;
     // load into OAM
         // LD_A_D;
@@ -3797,7 +3797,7 @@ static void Pokedex_GetArea_HideNestsShowPlayer(void){
     // LD_A_addr(wTownMapPlayerIconLandmark);
     // LD_E_A;
     // FARCALL(aGetLandmarkCoords);
-    const struct Coords coords = GetLandmarkCoords_Conv(wram->wTownMapPlayerIconLandmark);
+    const struct Coords coords = GetLandmarkCoords(wram->wTownMapPlayerIconLandmark);
     // LD_C_E;
     // LD_B_D;
     // LD_DE(mPokedex_GetArea_PlayerOAM);
@@ -4199,7 +4199,7 @@ static struct SpriteAnim* TownMapPlayerIcon(uint8_t location){
     // LD_E_A;
     // PUSH_BC;
     // FARCALL(aGetLandmarkCoords);
-    struct Coords coord = GetLandmarkCoords_Conv(location);
+    struct Coords coord = GetLandmarkCoords(location);
     // POP_BC;
     // LD_HL(SPRITEANIMSTRUCT_XCOORD);
     // ADD_HL_BC;

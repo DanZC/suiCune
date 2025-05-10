@@ -74,6 +74,7 @@
 #define stopfollow                  SCRIPT_EVCMD(Script_stopfollow_Conv)
 #define moveobject(_o, _x, _y)      SCRIPT_EVCMD(Script_moveobject_Conv, _o, _x, _y)
 #define writeobjectxy(_o)           SCRIPT_EVCMD(Script_writeobjectxy_Conv, _o)
+#define follownotexact(_b, _c)      SCRIPT_EVCMD(Script_follownotexact_Conv, _b, _c)
 #define loademote(_e)               SCRIPT_EVCMD(Script_loademote_Conv, _e)
 #define showemote(_e, _o, _f)       SCRIPT_EVCMD(Script_showemote_Conv, _e, _o, _f)
 #define earthquake(_m)              SCRIPT_EVCMD(Script_earthquake_Conv, _m)

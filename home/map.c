@@ -211,7 +211,7 @@ void LoadMapPart(void){
     // LD_A(BANK(av_LoadMapPart));
     // RST(aBankswitch);
     // CALL(av_LoadMapPart);
-    v_LoadMapPart_Conv();
+    v_LoadMapPart();
 
     // POP_AF;
     // RST(aBankswitch);
@@ -2927,7 +2927,7 @@ void ReloadTilesetAndPalettes(void){
     // CALL(aClearSprites);
     ClearSprites();
     // FARCALL(aRefreshSprites);
-    RefreshSprites_Conv();
+    RefreshSprites();
     // CALL(aLoadStandardFont);
     LoadStandardFont();
     // CALL(aLoadFontsExtra);

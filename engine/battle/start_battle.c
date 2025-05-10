@@ -193,7 +193,7 @@ void PlayBattleMusic(void){
         // LD_A_E;
         // AND_A_A;
         // IF_NZ goto kantotrainer;
-        else if(RegionCheck_Conv() != JOHTO_REGION) {
+        else if(RegionCheck() != JOHTO_REGION) {
             de = MUSIC_KANTO_TRAINER_BATTLE;
         }
 
@@ -214,7 +214,7 @@ void PlayBattleMusic(void){
     // LD_A_E;
     // AND_A_A;
     // IF_NZ goto kantowild;
-    else if(RegionCheck_Conv() != JOHTO_REGION) {
+    else if(RegionCheck() != JOHTO_REGION) {
     // kantowild:
         // LD_DE(MUSIC_KANTO_WILD_BATTLE);
         // goto done;

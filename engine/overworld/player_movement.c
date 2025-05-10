@@ -551,7 +551,7 @@ static uint8_t DoPlayerMovement_CheckNPC(void) {
     uint8_t e = wram->wPlayerStruct.nextMapY + wram->wWalkingY;
 //  Find an object struct with coordinates equal to d,e
     // LD_BC(wObjectStructs);  // redundant
-    struct Object* bc = IsNPCAtCoord_Conv(d, e);
+    struct Object* bc = IsNPCAtCoord(d, e);
     // FARCALL(aIsNPCAtCoord);
     // IF_NC return 1;
     if(bc == NULL)
@@ -901,7 +901,7 @@ static void DoPlayerMovement_CheckForced(void) {
 
     // CALL(aCheckStandingOnIce);
     // RET_NC ;
-    if(!CheckStandingOnIce_Conv())
+    if(!CheckStandingOnIce())
         return;
 
     // LD_A_addr(wPlayerTurningDirection);
@@ -1120,25 +1120,7 @@ static void DoPlayerMovement_GetOutOfWater(void) {
     // RET;
 }
 
-void DoPlayerMovement(void){
-    // CALL(aDoPlayerMovement_GetDPad);
-    DoPlayerMovement_GetDPad();
-    // LD_A(movement_step_sleep);
-    // LD_addr_A(wMovementAnimation);
-    wram->wMovementAnimation = movement_step_sleep;
-    // XOR_A_A;
-    // LD_addr_A(wWalkingIntoEdgeWarp);
-    wram->wWalkingIntoEdgeWarp = 0;
-    // CALL(aDoPlayerMovement_TranslateIntoMovement);
-    // LD_C_A;
-    REG_C = DoPlayerMovement_TranslateIntoMovement();
-    // LD_A_addr(wMovementAnimation);
-    // LD_addr_A(wPlayerNextMovement);
-    wram->wPlayerNextMovement = wram->wMovementAnimation;
-    // RET;
-}
-
-uint8_t DoPlayerMovement_Conv(void){
+uint8_t DoPlayerMovement(void){
     // CALL(aDoPlayerMovement_GetDPad);
     DoPlayerMovement_GetDPad();
     // LD_A(movement_step_sleep);
@@ -1157,32 +1139,7 @@ uint8_t DoPlayerMovement_Conv(void){
     return c;
 }
 
-void CheckStandingOnIce(void){
-    LD_A_addr(wPlayerTurningDirection);
-    CP_A(0);
-    IF_Z goto not_ice;
-    CP_A(0xf0);
-    IF_Z goto not_ice;
-    LD_A_addr(wPlayerStandingTile);
-    CALL(aCheckIceTile);
-    IF_NC goto yep;
-    LD_A_addr(wPlayerState);
-    CP_A(PLAYER_SKATE);
-    IF_NZ goto not_ice;
-
-
-yep:
-    SCF;
-    RET;
-
-
-not_ice:
-    AND_A_A;
-    RET;
-
-}
-
-bool CheckStandingOnIce_Conv(void){
+bool CheckStandingOnIce(void){
     // LD_A_addr(wPlayerTurningDirection);
     // CP_A(0);
     // IF_Z goto not_ice;
@@ -1212,19 +1169,6 @@ bool CheckStandingOnIce_Conv(void){
 }
 
 void StopPlayerForEvent(void){
-    LD_HL(wPlayerNextMovement);
-    LD_A(movement_step_sleep);
-    CP_A_hl;
-    RET_Z ;
-
-    LD_hl_A;
-    LD_A(0);
-    LD_addr_A(wPlayerTurningDirection);
-    RET;
-
-}
-
-void StopPlayerForEvent_Conv(void){
     // LD_HL(wPlayerNextMovement);
     // LD_A(movement_step_sleep);
     // CP_A_hl;

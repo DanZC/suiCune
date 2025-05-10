@@ -334,7 +334,7 @@ void GetCaughtLocation(void){
     }
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
-    uint8_t* de = GetLandmarkName_Conv(caughtGender);
+    uint8_t* de = GetLandmarkName(caughtGender);
     // LD_HL(wStringBuffer1);
     // LD_DE(wSeerCaughtLocation);
     // LD_BC(17);

@@ -259,7 +259,7 @@ static void PlaceMapNameCenterAlign(void){
     // LD_A_addr(wCurLandmark);
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
-    GetLandmarkName_Conv(wram->wCurLandmark);
+    GetLandmarkName(wram->wCurLandmark);
     // CALL(aPlaceMapNameCenterAlign_GetNameLength);
     // LD_A(SCREEN_WIDTH);
     // SUB_A_C;

@@ -1,14 +1,11 @@
-void v_NamingScreen(void);
-void v_NamingScreen_Conv(uint8_t* de, uint8_t b);
-void NamingScreen(void);
-void NamingScreen_Conv(uint8_t* de, uint8_t b);
+void v_NamingScreen(uint8_t* de, uint8_t b);
+void NamingScreen(uint8_t* de, uint8_t b);
 bool NamingScreen_IsTargetBox(void);
 void NamingScreen_InitText(void);
 void NamingScreen_ApplyTextInputMode(const char* de);
 bool NamingScreenJoypadLoop(void);
 uint8_t NamingScreen_GetCursorPosition(struct SpriteAnim* bc);
-void NamingScreen_AnimateCursor(void);
-void NamingScreen_AnimateCursor_Conv(struct SpriteAnim* bc);
+void NamingScreen_AnimateCursor(struct SpriteAnim* bc);
 bool NamingScreen_TryAddCharacter(void);
 bool MailComposition_TryAddCharacter(void);
 bool NamingScreen_LoadNextCharacter(uint8_t a);

@@ -1,6 +1,5 @@
 void RunMapSetupScript(void);
-void ReadMapSetupScript(void);
-void ReadMapSetupScript_Conv(const uint8_t* script);
+// void ReadMapSetupScript(const uint8_t* script);
 void EnableTextAcceleration(void);
 void ActivateMapAnims(void);
 void SuspendMapAnims(void);
