@@ -1011,10 +1011,10 @@ void PokeBallEffect(void){
                 ClearSprites();
 
                 // PREDEF(pTryAddMonToParty);
-                TryAddMonToParty_Conv(wram->wCurPartySpecies, wram->wCurPartyLevel);
+                TryAddMonToParty(wram->wCurPartySpecies, wram->wCurPartyLevel);
 
                 // FARCALL(aSetCaughtData);
-                SetCaughtData_Conv(wram->wCurPartyLevel);
+                SetCaughtData(wram->wCurPartyLevel);
 
                 // LD_A_addr(wCurItem);
                 // CP_A(FRIEND_BALL);
@@ -1082,7 +1082,7 @@ void PokeBallEffect(void){
                 ClearSprites();
 
                 // PREDEF(pSendMonIntoBox);
-                SendMonIntoBox_Conv();
+                SendMonIntoBox();
 
                 // FARCALL(aSetBoxMonCaughtData);
                 SetBoxMonCaughtData(wram->wCurPartyLevel);
@@ -1526,7 +1526,7 @@ uint8_t LoveBallMultiplier(uint8_t b){
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = wram->wCurBattleMon;
     // FARCALL(aGetGender);
-    u8_flag_s bgender = GetGender_Conv(PARTYMON);
+    u8_flag_s bgender = GetGender(PARTYMON);
     // IF_C goto done1;  // no effect on genderless
     if(bgender.flag)
         return b;
@@ -1545,7 +1545,7 @@ uint8_t LoveBallMultiplier(uint8_t b){
     // LD_A(WILDMON);
     // LD_addr_A(wMonType);
     // FARCALL(aGetGender);
-    u8_flag_s wgender = GetGender_Conv(WILDMON);
+    u8_flag_s wgender = GetGender(WILDMON);
     // IF_C goto done2;  // no effect on genderless
     if(wgender.flag)
         return b;
@@ -2071,7 +2071,7 @@ void RareCandyEffect(void){
     // PUSH_DE;
     // LD_D_A;
     // FARCALL(aCalcExpAtLevel);
-    uint32_t exp = CalcExpAtLevel_Conv(wram->wCurPartyLevel);
+    uint32_t exp = CalcExpAtLevel(wram->wCurPartyLevel);
 
     // POP_DE;
     // LD_A(MON_EXP);
@@ -2128,7 +2128,7 @@ void RareCandyEffect(void){
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // PREDEF(pCopyMonToTempMon);
-    CopyMonToTempMon_Conv();
+    CopyMonToTempMon();
 
     // hlcoord(9, 0, wTilemap);
     // LD_B(10);
@@ -2139,7 +2139,7 @@ void RareCandyEffect(void){
     // hlcoord(11, 1, wTilemap);
     // LD_BC(4);
     // PREDEF(pPrintTempMonStats);
-    PrintTempMonStats_Conv(coord(11, 1, wram->wTilemap), 4);
+    PrintTempMonStats(coord(11, 1, wram->wTilemap), 4);
 
     // CALL(aWaitPressAorB_BlinkCursor);
     WaitPressAorB_BlinkCursor();
@@ -2150,7 +2150,7 @@ void RareCandyEffect(void){
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wTempSpecies);
     // PREDEF(pLearnLevelMoves);
-    LearnLevelMoves_Conv(hl, wram->wCurPartyLevel, wram->wCurPartySpecies);
+    LearnLevelMoves(hl, wram->wCurPartyLevel, wram->wCurPartySpecies);
 
     // XOR_A_A;
     // LD_addr_A(wForceEvolution);
@@ -2648,7 +2648,7 @@ void HealHP_SFX_GFX(void){
     // LD_A(0x2);
     // LD_addr_A(wWhichHPBar);
     // PREDEF_JUMP(pAnimateHPBar);
-    AnimateHPBar_Conv(coord(11, 0, wram->wTilemap) + wram->wCurPartyMon * SCREEN_WIDTH * 2, 0x2);
+    AnimateHPBar(coord(11, 0, wram->wTilemap) + wram->wCurPartyMon * SCREEN_WIDTH * 2, 0x2);
 }
 
 static u8_flag_s UseItem_SelectMon_SelectMon(uint8_t b) {
@@ -4229,7 +4229,7 @@ void ApplyPPUp(void){
     // PUSH_HL;
     // LD_DE(wPPUpPPBuffer);
     // PREDEF(pFillPP);
-    FillPP_Conv(wram->wPPUpPPBuffer, mon->mon.moves);
+    FillPP(wram->wPPUpPPBuffer, mon->mon.moves);
     // POP_HL;
     // LD_BC(MON_PP - MON_MOVES);
     // ADD_HL_BC;

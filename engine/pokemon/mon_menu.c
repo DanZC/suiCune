@@ -457,7 +457,7 @@ void TryGiveItemToPartymon(void){
     // FARCALL(aItemIsMail);
     // POP_HL;
     // IF_C goto please_remove_mail;
-    else if(ItemIsMail_Conv(*itm)) {
+    else if(ItemIsMail(*itm)) {
     // please_remove_mail:
         // LD_HL(mPokemonRemoveMailText);
         // CALL(aMenuTextboxBackup);
@@ -520,7 +520,7 @@ void GivePartyItem(item_t item){
     // LD_D_A;
     // FARCALL(aItemIsMail);
     // IF_NC goto done;
-    if(ItemIsMail_Conv(item)) {
+    if(ItemIsMail(item)) {
         // CALL(aComposeMailMessage);
         ComposeMailMessage();
     }
@@ -1685,7 +1685,7 @@ void SetUpMoveScreenBG(void){
     PlaceString(&st, st.hl);
     // PUSH_BC;
     // FARCALL(aCopyMonToTempMon);
-    CopyMonToTempMon_Conv();
+    CopyMonToTempMon();
     // POP_HL;
     // CALL(aPrintLevel);
     PrintLevel(st.bc, wram->wTempMon.mon.level);
@@ -1713,7 +1713,7 @@ void SetUpMoveList(void){
     // LD_addr_A(wMonType);
     wram->wMonType = 0;
     // PREDEF(pCopyMonToTempMon);
-    CopyMonToTempMon_Conv();
+    CopyMonToTempMon();
     // LD_HL(wTempMonMoves);
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
@@ -1724,10 +1724,10 @@ void SetUpMoveList(void){
     wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
     // hlcoord(2, 3, wTilemap);
     // PREDEF(pListMoves);
-    ListMoves_Conv(coord(2, 3, wram->wTilemap));
+    ListMoves(coord(2, 3, wram->wTilemap));
     // hlcoord(10, 4, wTilemap);
     // PREDEF(pListMovePP);
-    ListMovePP_Conv(coord(10, 4, wram->wTilemap));
+    ListMovePP(coord(10, 4, wram->wTilemap));
     // CALL(aWaitBGMap);
     WaitBGMap();
     // CALL(aSetPalettes);
@@ -1812,7 +1812,7 @@ void PlaceMoveData(void){
 // description:
     // hlcoord(1, 14, wTilemap);
     // PREDEF(pPrintMoveDescription);
-    PrintMoveDescription_Conv(coord(1, 14, wram->wTilemap), wram->wCurSpecies);
+    PrintMoveDescription(coord(1, 14, wram->wTilemap), wram->wCurSpecies);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;

@@ -48,7 +48,7 @@ void NPCTrade(uint8_t e){
 //  Select givemon from party
     // LD_B(PARTYMENUACTION_GIVE_MON);
     // FARCALL(aSelectTradeOrDayCareMon);
-    u8_flag_s sel_res = SelectTradeOrDayCareMon_Conv(PARTYMENUACTION_GIVE_MON);
+    u8_flag_s sel_res = SelectTradeOrDayCareMon(PARTYMENUACTION_GIVE_MON);
     // LD_A(TRADE_DIALOG_CANCEL);
     // IF_C goto done;
     if(sel_res.flag) {
@@ -142,7 +142,7 @@ bool CheckTradeGender(void){
         return true;
     // CP_A(TRADE_GENDER_MALE);
     // IF_Z goto check_male;
-    u8_flag_s res = GetGender_Conv(0);
+    u8_flag_s res = GetGender(0);
     if(gender == TRADE_GENDER_MALE) {
     // check_male:
         // FARCALL(aGetGender);
@@ -279,9 +279,9 @@ void DoNPCTrade(void){
     wram->wMonType = PARTYMON;
     // LD_addr_A(wPokemonWithdrawDepositParameter);  // REMOVE_PARTY
     // CALLFAR(aRemoveMonFromPartyOrBox);
-    RemoveMonFromPartyOrBox_Conv(REMOVE_PARTY);
+    RemoveMonFromPartyOrBox(REMOVE_PARTY);
     // PREDEF(pTryAddMonToParty);
-    TryAddMonToParty_Conv(wram->wOTTrademon.species, wram->wCurPartyLevel);
+    TryAddMonToParty(wram->wOTTrademon.species, wram->wCurPartyLevel);
 
     // LD_E(NPCTRADE_DIALOG);
     // CALL(aGetTradeAttr);
@@ -377,7 +377,7 @@ void DoNPCTrade(void){
     // DEC_A;
     // LD_addr_A(wCurPartyMon);
     // FARCALL(aComputeNPCTrademonStats);
-    ComputeNPCTrademonStats_Conv(wram->wPartyCount - 1);
+    ComputeNPCTrademonStats(wram->wPartyCount - 1);
     // POP_AF;
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = curPartyMon;

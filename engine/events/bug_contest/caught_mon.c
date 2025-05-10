@@ -24,7 +24,7 @@ static void BugContest_SetCaughtContestMon_generatestats(void) {
     // LD_addr_A(wMonType);
     // LD_HL(wContestMon);
     // JP(mGeneratePartyMonStats);
-    GeneratePartyMonStats_Conv(&wram->wContestMon, wram->wTempEnemyMonSpecies, wram->wCurPartyLevel, PARTYMON, wram->wBattleMode);
+    GeneratePartyMonStats(&wram->wContestMon, wram->wTempEnemyMonSpecies, wram->wCurPartyLevel, PARTYMON, wram->wBattleMode);
 }
 
 void BugContest_SetCaughtContestMon(void){

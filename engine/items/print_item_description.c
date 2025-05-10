@@ -19,7 +19,7 @@ void PrintItemDescription(tile_t* de, item_t item){
         // LD_A_addr(wTempTMHM);
         // LD_addr_A(wCurSpecies);
         // PREDEF(pPrintMoveDescription);
-        PrintMoveDescription_Conv(de, move);
+        PrintMoveDescription(de, move);
         // RET;
         return;
     }

@@ -237,7 +237,7 @@ void PrintPartyMonPage1(void){
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // FARCALL(aCopyMonToTempMon);
-    CopyMonToTempMon_Conv();
+    CopyMonToTempMon();
     // hlcoord(0, 7, wTilemap);
     // LD_B(9);
     // LD_C(18);
@@ -362,7 +362,7 @@ void PrintPartyMonPage2(void){
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // FARCALL(aCopyMonToTempMon);
-    CopyMonToTempMon_Conv();
+    CopyMonToTempMon();
     // hlcoord(0, 0, wTilemap);
     // LD_B(15);
     // LD_C(18);
@@ -454,7 +454,7 @@ void PlaceMoveNameString(tile_t* hl, move_t move){
 
 void PlaceGenderAndShininess(void){
     // FARCALL(aGetGender);
-    u8_flag_s res = GetGender_Conv(wram->wMonType);
+    u8_flag_s res = GetGender(wram->wMonType);
     uint8_t a;
     // LD_A(0x7f);
     // IF_C goto got_gender;

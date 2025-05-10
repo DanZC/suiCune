@@ -259,7 +259,7 @@ void GetMonSubmenuItems(void){
         // LD_A(MONMENUITEM_MAIL);
         // IF_C goto ok;
         // LD_A(MONMENUITEM_ITEM);
-        uint8_t item = (ItemIsMail_Conv(wram->wPartyMon[wram->wCurPartyMon].mon.item))
+        uint8_t item = (ItemIsMail(wram->wPartyMon[wram->wCurPartyMon].mon.item))
             ? MONMENUITEM_MAIL
             : MONMENUITEM_ITEM;
 

@@ -60,7 +60,7 @@ bool CheckOppositeGender(uint8_t battleMon){
 
     // FARCALL(aGetGender);
     // IF_C goto genderless_samegender;
-    u8_flag_s res = GetGender_Conv(PARTYMON);
+    u8_flag_s res = GetGender(PARTYMON);
     if(res.flag) {
     // genderless_samegender:
         // SCF;
@@ -95,7 +95,7 @@ bool CheckOppositeGender(uint8_t battleMon){
     // LD_A(3);
     // LD_addr_A(wMonType);
     // FARCALL(aGetGender);
-    res = GetGender_Conv(TEMPMON);
+    res = GetGender(TEMPMON);
     // POP_BC;
     // IF_C goto genderless_samegender;
     if(res.flag)

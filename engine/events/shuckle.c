@@ -22,7 +22,7 @@ void GiveShuckle(void){
 
     // PREDEF(pTryAddMonToParty);
     // IF_NC goto NotGiven;
-    if(!TryAddMonToParty_Conv(SHUCKLE, 15)) {
+    if(!TryAddMonToParty(SHUCKLE, 15)) {
     // NotGiven:
         // XOR_A_A;
         // LD_addr_A(wScriptVar);
@@ -137,7 +137,7 @@ void ReturnShuckie(void){
             // done:
                 // FARCALL(aCheckCurPartyMonFainted);
                 // IF_C goto fainted;
-                if(CheckCurPartyMonFainted_Conv()) {
+                if(CheckCurPartyMonFainted()) {
                 // fainted:
                     // LD_A(SHUCKIE_FAINTED);
                     // LD_addr_A(wScriptVar);
@@ -161,7 +161,7 @@ void ReturnShuckie(void){
                     // XOR_A_A;  // REMOVE_PARTY
                     // LD_addr_A(wPokemonWithdrawDepositParameter);
                     // CALLFAR(aRemoveMonFromPartyOrBox);
-                    RemoveMonFromPartyOrBox_Conv(REMOVE_PARTY);
+                    RemoveMonFromPartyOrBox(REMOVE_PARTY);
                     // LD_A(SHUCKIE_RETURNED);
                     a = SHUCKIE_RETURNED;
                 }

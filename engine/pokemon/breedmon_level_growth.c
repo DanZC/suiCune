@@ -10,7 +10,7 @@ u8_pair_s GetBreedMon1LevelGrowth(void){
     // CALL(aCopyBytes);
     CopyBytes(&wram->wTempMon.mon, &wram->wBreedMon1, BOXMON_STRUCT_LENGTH);
     // CALLFAR(aCalcLevel);
-    uint8_t d = CalcLevel_Conv(&wram->wTempMon);
+    uint8_t d = CalcLevel(&wram->wTempMon);
     // LD_A_addr(wBreedMon1Level);
     // LD_B_A;
     // LD_A_D;
@@ -28,7 +28,7 @@ u8_pair_s GetBreedMon2LevelGrowth(void){
     // CALL(aCopyBytes);
     CopyBytes(&wram->wTempMon.mon, &wram->wBreedMon2, BOXMON_STRUCT_LENGTH);
     // CALLFAR(aCalcLevel);
-    uint8_t d = CalcLevel_Conv(&wram->wTempMon);
+    uint8_t d = CalcLevel(&wram->wTempMon);
     // LD_A_addr(wBreedMon2Level);
     // LD_B_A;
     // LD_A_D;

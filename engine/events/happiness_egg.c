@@ -290,7 +290,7 @@ void DayCareStep(void){
     // CALLFAR(aCheckBreedmonCompatibility);
     // LD_A_addr(wBreedingCompatibility);
     uint8_t b;
-    uint8_t compat = CheckBreedmonCompatibility_Conv();
+    uint8_t compat = CheckBreedmonCompatibility();
     // CP_A(230);
     // LD_B(31 percent + 1);
     // IF_NC goto okay;

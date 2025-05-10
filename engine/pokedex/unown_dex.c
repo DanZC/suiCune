@@ -2,31 +2,7 @@
 #include "unown_dex.h"
 #include "../../home/copy.h"
 
-void UpdateUnownDex(void){
-    LD_A_addr(wUnownLetter);
-    LD_C_A;
-    LD_B(NUM_UNOWN);
-    LD_HL(wUnownDex);
-
-loop:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto done;
-    CP_A_C;
-    RET_Z ;
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-
-
-done:
-    DEC_HL;
-    LD_hl_C;
-    RET;
-
-}
-
-void UpdateUnownDex_Conv(unown_letter_t letter){
+void UpdateUnownDex(unown_letter_t letter){
     // LD_A_addr(wUnownLetter);
     // LD_C_A;
     // LD_B(NUM_UNOWN);

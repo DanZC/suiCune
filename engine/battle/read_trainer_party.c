@@ -166,7 +166,7 @@ void TrainerType1(const struct TrainerParty* de){
         wram->wMonType = OTPARTYMON;
         // PUSH_HL;
         // PREDEF(pTryAddMonToParty);
-        TryAddMonToParty_Conv(de->pnormal[i].species, de->pnormal[i].level);
+        TryAddMonToParty(de->pnormal[i].species, de->pnormal[i].level);
         // POP_HL;
         // goto loop;
     }
@@ -196,7 +196,7 @@ void TrainerType2(const struct TrainerParty* de){
 
         // PUSH_HL;
         // PREDEF(pTryAddMonToParty);
-        TryAddMonToParty_Conv(de->pmoves[i].species, de->pmoves[i].level);
+        TryAddMonToParty(de->pmoves[i].species, de->pmoves[i].level);
         // LD_A_addr(wOTPartyCount);
         // DEC_A;
         // LD_HL(wOTPartyMon1Moves);
@@ -291,7 +291,7 @@ void TrainerType3(const struct TrainerParty* de){
         wram->wMonType = OTPARTYMON;
         // PUSH_HL;
         // PREDEF(pTryAddMonToParty);
-        TryAddMonToParty_Conv(de->pitem[i].species, de->pitem[i].level);
+        TryAddMonToParty(de->pitem[i].species, de->pitem[i].level);
         // LD_A_addr(wOTPartyCount);
         // DEC_A;
         // LD_HL(wOTPartyMon1Item);
@@ -332,7 +332,7 @@ void TrainerType4(const struct TrainerParty* de){
 
         // PUSH_HL;
         // PREDEF(pTryAddMonToParty);
-        TryAddMonToParty_Conv(de->pitemmoves[i].species, de->pitemmoves[i].level);
+        TryAddMonToParty(de->pitemmoves[i].species, de->pitemmoves[i].level);
         // LD_A_addr(wOTPartyCount);
         // DEC_A;
         // LD_HL(wOTPartyMon1Item);

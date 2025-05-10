@@ -572,7 +572,7 @@ void Gen2ToGen2LinkComms(void){
             struct MailMsg* de2 = (struct MailMsg*)de;
             // FARCALL(aIsMailEuropean);
             // LD_A_C;
-            uint8_t c = IsMailEuropean_Conv(de2);
+            uint8_t c = IsMailEuropean(de2);
             // OR_A_A;
             // IF_Z goto next;
             if(c != 0) {
@@ -1340,7 +1340,7 @@ static void Link_PrepPartyData_Gen2(void){
         // PUSH_DE;
         // PUSH_HL;
         // FARCALL(aIsMailEuropean);
-        uint8_t c = IsMailEuropean_Conv(de2);
+        uint8_t c = IsMailEuropean(de2);
         // POP_DE;
         // LD_A_C;
         // OR_A_A;
@@ -3276,7 +3276,7 @@ void LinkTrade(void){
         // XOR_A_A;  // REMOVE_PARTY
         // LD_addr_A(wPokemonWithdrawDepositParameter);
         // CALLFAR(aRemoveMonFromPartyOrBox);
-        RemoveMonFromPartyOrBox_Conv(REMOVE_PARTY);
+        RemoveMonFromPartyOrBox(REMOVE_PARTY);
         // LD_A_addr(wPartyCount);
         // DEC_A;
         // LD_addr_A(wCurPartyMon);
@@ -3341,7 +3341,7 @@ void LinkTrade(void){
             wram->wOTPartyMon + otmon,
             PARTYMON_STRUCT_LENGTH);
         // PREDEF(pAddTempmonToParty);
-        AddTempmonToParty_Conv();
+        AddTempmonToParty();
         // LD_A_addr(wPartyCount);
         // DEC_A;
         // LD_addr_A(wCurPartyMon);

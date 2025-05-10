@@ -132,7 +132,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
         // LD_A_B;
         // AND_A_A;
         // IF_Z goto didnt_learn;
-        if(!KnowsMove_Conv(&wram->wPartyMon[curMon].mon, move) && LearnMove(move)) {
+        if(!KnowsMove(&wram->wPartyMon[curMon].mon, move) && LearnMove(move)) {
             // LD_C(HAPPINESS_LEARNMOVE);
             // CALLFAR(aChangeHappiness);
             // goto learned;

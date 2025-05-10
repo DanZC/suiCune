@@ -468,7 +468,7 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     //     PREDEF(pTryAddMonToParty);
     //     wbank_pop;
     // }
-    TryAddMonToParty_Conv(DRAGONITE, 100);
+    TryAddMonToParty(DRAGONITE, 100);
     wbank_push(MBANK(awInBattleTowerBattle));
     StartBattle();
 
@@ -664,7 +664,7 @@ void DebugMenu_Stats(void) {
     wram->wCurPartyLevel = 100;
     wram->wPartyCount = 0;
     wram->wMonType = PARTYMON;
-    TryAddMonToParty_Conv(CHARIZARD, 100);
+    TryAddMonToParty(CHARIZARD, 100);
 
     wram->wCurPartyMon = 0;
 
@@ -924,7 +924,7 @@ void DebugMenu_BattleAnim(void) {
     //     PREDEF(pTryAddMonToParty);
     //     wbank_pop;
     // }
-    TryAddMonToParty_Conv(PIKACHU, 50);
+    TryAddMonToParty(PIKACHU, 50);
     U82CA(wram->wBattleMonNickname, "PIKACHU@");
 
     wram->wCurPartySpecies = CHARIZARD;
@@ -936,7 +936,7 @@ void DebugMenu_BattleAnim(void) {
     //     PREDEF(pTryAddMonToParty);
     //     wbank_pop;
     // }
-    TryAddMonToParty_Conv(CHARIZARD, 50);
+    TryAddMonToParty(CHARIZARD, 50);
     U82CA(wram->wEnemyMonNickname, "CHARIZARD@");
 
     wram->wCurPartyMon = 0;

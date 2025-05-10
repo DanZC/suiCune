@@ -200,7 +200,7 @@ u8_flag_s ForgetMove(struct PartyMon* mon){
         // LD_addr_A(wListMovesLineSpacing);
         wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
         // PREDEF(pListMoves);
-        ListMoves_Conv(coord(5 + 2, 2 + 2, wram->wTilemap));
+        ListMoves(coord(5 + 2, 2 + 2, wram->wTilemap));
     // w2DMenuData
         // LD_A(0x4);
         // LD_addr_A(w2DMenuCursorInitY);

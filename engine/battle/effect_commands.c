@@ -3521,7 +3521,7 @@ void BattleCommand_CheckFaint(void){
         // LD_H_B;
         // LD_L_C;
         // PREDEF(pAnimateHPBar);
-        AnimateHPBar_Conv(bc, whichHPBar);
+        AnimateHPBar(bc, whichHPBar);
         // CALL(aRefreshBattleHuds);
         RefreshBattleHuds();
 
@@ -5001,7 +5001,7 @@ void DoEnemyDamage(bool ignoreSub){
         // XOR_A_A;
         // LD_addr_A(wWhichHPBar);
         // PREDEF(pAnimateHPBar);
-        AnimateHPBar_Conv(coord(2, 2, wram->wTilemap), 0);
+        AnimateHPBar(coord(2, 2, wram->wTilemap), 0);
     }
 
 // did_no_damage:
@@ -5078,7 +5078,7 @@ void DoPlayerDamage(bool ignoreSub){
         // LD_A(1);
         // LD_addr_A(wWhichHPBar);
         // PREDEF(pAnimateHPBar);
-        AnimateHPBar_Conv(coord(10, 9, wram->wTilemap), 1);
+        AnimateHPBar(coord(10, 9, wram->wTilemap), 1);
     }
 
 // did_no_damage:
@@ -5770,7 +5770,7 @@ finish:;
 // hp_bar:
     // LD_addr_A(wWhichHPBar);
     // PREDEF(pAnimateHPBar);
-    AnimateHPBar_Conv(hl, which);
+    AnimateHPBar(hl, which);
     // CALL(aRefreshBattleHuds);
     RefreshBattleHuds();
     // JP(mUpdateBattleMonInParty);
@@ -8584,7 +8584,7 @@ void BattleCommand_Recoil(void){
 // animate_hp_bar:
     // LD_addr_A(wWhichHPBar);
     // PREDEF(pAnimateHPBar);
-    AnimateHPBar_Conv(hl, which);
+    AnimateHPBar(hl, which);
     // CALL(aRefreshBattleHuds);
     RefreshBattleHuds();
     // LD_HL(mRecoilText);

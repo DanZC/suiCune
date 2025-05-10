@@ -40,7 +40,7 @@ static uint16_t v_AnimateHPBar_ComputePixels(void){
     // CALL(aComputeHPBarPixels);
     // LD_A_E;
     // LD_addr_A(wCurHPBarPixels);
-    wram->wCurHPBarPixels = ComputeHPBarPixels_Conv(wram->wCurHPAnimOldHP, wram->wCurHPAnimMaxHP);
+    wram->wCurHPBarPixels = ComputeHPBarPixels(wram->wCurHPAnimOldHP, wram->wCurHPAnimMaxHP);
 
     // LD_A_addr(wCurHPAnimNewHP);
     // LD_C_A;
@@ -53,7 +53,7 @@ static uint16_t v_AnimateHPBar_ComputePixels(void){
     // CALL(aComputeHPBarPixels);
     // LD_A_E;
     // LD_addr_A(wNewHPBarPixels);
-    wram->wNewHPBarPixels = ComputeHPBarPixels_Conv(wram->wCurHPAnimNewHP, wram->wCurHPAnimMaxHP);
+    wram->wNewHPBarPixels = ComputeHPBarPixels(wram->wCurHPAnimNewHP, wram->wCurHPAnimMaxHP);
 
     // PUSH_HL;
     // LD_HL(wCurHPAnimOldHP);
@@ -250,14 +250,14 @@ bool LongAnim_UpdateVariables(uint16_t bc){
         // CALL(aComputeHPBarPixels);
     // ld a, e
         (void)de_old;
-        uint8_t a = ComputeHPBarPixels_Conv(wram->wCurHPAnimOldHP, wram->wCurHPAnimMaxHP);
+        uint8_t a = ComputeHPBarPixels(wram->wCurHPAnimOldHP, wram->wCurHPAnimMaxHP);
         // POP_BC;
         // POP_DE;
         // POP_HL;
         // LD_A_E;  // Comment or delete this line to fix the above bug.
 #else
         // CALL(aComputeHPBarPixels);
-        ComputeHPBarPixels_Conv(wram->wCurHPAnimOldHP, wram->wCurHPAnimMaxHP);
+        ComputeHPBarPixels(wram->wCurHPAnimOldHP, wram->wCurHPAnimMaxHP);
         // POP_BC;
         // POP_DE;
         // POP_HL;
@@ -312,7 +312,7 @@ void LongHPBarAnim_UpdateTiles(tile_t* hl){
     // LD_A_addr(wCurHPAnimMaxHP + 1);
     // LD_D_A;
     // CALL(aComputeHPBarPixels);
-    uint8_t e = ComputeHPBarPixels_Conv(wram->wCurHPAnimOldHP, wram->wCurHPAnimMaxHP);
+    uint8_t e = ComputeHPBarPixels(wram->wCurHPAnimOldHP, wram->wCurHPAnimMaxHP);
     // LD_C_E;
     // LD_D(HP_BAR_LENGTH);
     // LD_A_addr(wWhichHPBar);

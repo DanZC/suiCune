@@ -194,7 +194,7 @@ bool BillsPC_MovePKMNMenu(void){
     LoadStandardMenuHeader();
     // FARCALL(aIsAnyMonHoldingMail);
     // IF_NC goto no_mail;
-    if(IsAnyMonHoldingMail_Conv()) {
+    if(IsAnyMonHoldingMail()) {
         // LD_HL(mBillsPC_MovePKMNMenu_PCMonHoldingMailText);
         // CALL(aPrintText);
         PrintText(PCMonHoldingMailText);
@@ -263,54 +263,19 @@ only_one_mon:
     RET;
 
 
-PCNoSingleMonText:
+// PCNoSingleMonText:
     //text_far ['_PCNoSingleMonText']
     //text_end ['?']
 
 
-PCCantDepositLastMonText:
+// PCCantDepositLastMonText:
     //text_far ['_PCCantDepositLastMonText']
     //text_end ['?']
 
-    return CheckCurPartyMonFainted();
+    // return CheckCurPartyMonFainted();
 }
 
-void CheckCurPartyMonFainted(void){
-    LD_HL(wPartyMon1HP);
-    LD_DE(PARTYMON_STRUCT_LENGTH);
-    LD_B(0x0);
-
-loop:
-    LD_A_addr(wCurPartyMon);
-    CP_A_B;
-    IF_Z goto skip;
-    LD_A_hli;
-    OR_A_hl;
-    IF_NZ goto notfainted;
-    DEC_HL;
-
-
-skip:
-    INC_B;
-    LD_A_addr(wPartyCount);
-    CP_A_B;
-    IF_Z goto done;
-    ADD_HL_DE;
-    goto loop;
-
-
-done:
-    SCF;
-    RET;
-
-
-notfainted:
-    AND_A_A;
-    RET;
-
-}
-
-bool CheckCurPartyMonFainted_Conv(void){
+bool CheckCurPartyMonFainted(void){
     if(wram->wCurPartyMon >= wram->wPartyCount)
         return true;
     // LD_HL(wPartyMon1HP);
@@ -429,21 +394,6 @@ void ClearPCItemScreen(void){
 }
 
 void CopyBoxmonToTempMon(void){
-    LD_A_addr(wCurPartyMon);
-    LD_HL(sBoxMon1Species);
-    LD_BC(BOXMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_DE(wTempMonSpecies);
-    LD_BC(BOXMON_STRUCT_LENGTH);
-    LD_A(BANK(sBoxMon1Species));
-    CALL(aOpenSRAM);
-    CALL(aCopyBytes);
-    CALL(aCloseSRAM);
-    RET;
-
-}
-
-void CopyBoxmonToTempMon_Conv(void){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(sBoxMon1Species);
     // LD_BC(BOXMON_STRUCT_LENGTH);

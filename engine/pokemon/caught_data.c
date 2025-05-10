@@ -11,6 +11,9 @@
 #include "../../home/names.h"
 #include "../../data/text/common.h"
 
+static void SetBoxmonOrEggmonCaughtData(struct BoxMon* boxmon, uint8_t level);
+static void SetGiftMonCaughtData(struct BoxMon* hl, uint8_t b);
+
 void CheckPartyFullAfterContest(void){
     // LD_A_addr(wContestMonSpecies);
     // AND_A_A;
@@ -74,7 +77,7 @@ void CheckPartyFullAfterContest(void){
                 wram->wMonType = BOXMON;
                 // LD_DE(wMonOrItemNameBuffer);
                 // CALLFAR(aInitNickname);
-                InitNickname_Conv(wram->wMonOrItemNameBuffer);
+                InitNickname(wram->wMonOrItemNameBuffer);
                 // LD_HL(wMonOrItemNameBuffer);
                 hl = wram->wMonOrItemNameBuffer;
             }
@@ -176,7 +179,7 @@ void CheckPartyFullAfterContest(void){
         wram->wMonType = 0;
         // LD_DE(wMonOrItemNameBuffer);
         // CALLFAR(aInitNickname);
-        InitNickname_Conv(wram->wMonOrItemNameBuffer);
+        InitNickname(wram->wMonOrItemNameBuffer);
     }
 
 // Party_SkipNickname:
@@ -196,7 +199,7 @@ void CheckPartyFullAfterContest(void){
     // LD_A_hl;
     // LD_addr_A(wCurPartyLevel);
     // CALL(aSetCaughtData);
-    SetCaughtData_Conv(wram->wContestMon.mon.level);
+    SetCaughtData(wram->wContestMon.mon.level);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1CaughtLocation);
@@ -231,60 +234,16 @@ const txt_cmd_s CaughtAskNicknameText[] = {
     text_end
 };
 
-void SetCaughtData(void){
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    LD_HL(wPartyMon1CaughtLevel);
-    CALL(aGetPartyLocation);
-    return SetBoxmonOrEggmonCaughtData();
-}
-
-void SetCaughtData_Conv(uint8_t level){
+void SetCaughtData(uint8_t level){
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1CaughtLevel);
     // CALL(aGetPartyLocation);
     // return SetBoxmonOrEggmonCaughtData();
-    return SetBoxmonOrEggmonCaughtData_Conv(&wram->wPartyMon[wram->wPartyCount - 1].mon, level);
+    return SetBoxmonOrEggmonCaughtData(&wram->wPartyMon[wram->wPartyCount - 1].mon, level);
 }
 
-void SetBoxmonOrEggmonCaughtData(void){
-    LD_A_addr(wTimeOfDay);
-    INC_A;
-    RRCA;
-    RRCA;
-    LD_B_A;
-    LD_A_addr(wCurPartyLevel);
-    OR_A_B;
-    LD_hli_A;
-    LD_A_addr(wMapGroup);
-    LD_B_A;
-    LD_A_addr(wMapNumber);
-    LD_C_A;
-    CP_A(MAP_POKECENTER_2F);
-    IF_NZ goto NotPokecenter2F;
-    LD_A_B;
-    CP_A(GROUP_POKECENTER_2F);
-    IF_NZ goto NotPokecenter2F;
-
-    LD_A_addr(wBackupMapGroup);
-    LD_B_A;
-    LD_A_addr(wBackupMapNumber);
-    LD_C_A;
-
-
-NotPokecenter2F:
-    CALL(aGetWorldMapLocation);
-    LD_B_A;
-    LD_A_addr(wPlayerGender);
-    RRCA;  // shift bit 0 (PLAYERGENDER_FEMALE_F) to bit 7 (CAUGHT_GENDER_MASK)
-    OR_A_B;
-    LD_hl_A;
-    RET;
-
-}
-
-void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon, uint8_t level){
+static void SetBoxmonOrEggmonCaughtData(struct BoxMon* boxmon, uint8_t level){
     // LD_A_addr(wTimeOfDay);
     // INC_A;
     // RRCA;
@@ -335,7 +294,7 @@ void SetBoxMonCaughtData(uint8_t level){
     OpenSRAM(MBANK(asBoxMon1CaughtLevel));
     // LD_HL(sBoxMon1CaughtLevel);
     // CALL(aSetBoxmonOrEggmonCaughtData);
-    SetBoxmonOrEggmonCaughtData_Conv((struct BoxMon*)GBToRAMAddr(sBoxMon1CaughtLevel), level);
+    SetBoxmonOrEggmonCaughtData((struct BoxMon*)GBToRAMAddr(sBoxMon1), level);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -345,12 +304,12 @@ void SetGiftBoxMonCaughtData(uint8_t b){
     // PUSH_BC;
     // LD_A(BANK(sBoxMon1CaughtLevel));
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(asBoxMon1CaughtLevel));
+    OpenSRAM(MBANK(asBoxMon1));
     // LD_HL(sBoxMon1CaughtLevel);
-    struct BoxMon* hl = (struct BoxMon*)GBToRAMAddr(sBoxMon1CaughtLevel);
+    struct BoxMon* hl = (struct BoxMon*)GBToRAMAddr(sBoxMon1);
     // POP_BC;
     // CALL(aSetGiftMonCaughtData);
-    SetGiftMonCaughtData_Conv(hl, b);
+    SetGiftMonCaughtData(hl, b);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -364,21 +323,10 @@ void SetGiftPartyMonCaughtData(uint8_t b){
     // CALL(aGetPartyLocation);
     struct PartyMon* hl = wram->wPartyMon + (wram->wPartyCount - 1);
     // POP_BC;
-    return SetGiftMonCaughtData_Conv(&hl->mon, b);
+    return SetGiftMonCaughtData(&hl->mon, b);
 }
 
-void SetGiftMonCaughtData(void){
-    XOR_A_A;
-    LD_hli_A;
-    LD_A(LANDMARK_GIFT);
-    RRC_B;
-    OR_A_B;
-    LD_hl_A;
-    RET;
-
-}
-
-void SetGiftMonCaughtData_Conv(struct BoxMon* hl, uint8_t b){
+static void SetGiftMonCaughtData(struct BoxMon* hl, uint8_t b){
     // XOR_A_A;
     // LD_hli_A;
     hl->caughtTimeLevel = 0;
@@ -390,22 +338,7 @@ void SetGiftMonCaughtData_Conv(struct BoxMon* hl, uint8_t b){
     // RET;
 }
 
-void SetEggMonCaughtData(void){
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMon1CaughtLevel);
-    CALL(aGetPartyLocation);
-    LD_A_addr(wCurPartyLevel);
-    PUSH_AF;
-    LD_A(CAUGHT_EGG_LEVEL);
-    LD_addr_A(wCurPartyLevel);
-    CALL(aSetBoxmonOrEggmonCaughtData);
-    POP_AF;
-    LD_addr_A(wCurPartyLevel);
-    RET;
-
-}
-
-void SetEggMonCaughtData_Conv(uint8_t a){
+void SetEggMonCaughtData(uint8_t a){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMon1CaughtLevel);
     // CALL(aGetPartyLocation);
@@ -414,7 +347,7 @@ void SetEggMonCaughtData_Conv(uint8_t a){
     // LD_A(CAUGHT_EGG_LEVEL);
     // LD_addr_A(wCurPartyLevel);
     // CALL(aSetBoxmonOrEggmonCaughtData);
-    SetBoxmonOrEggmonCaughtData_Conv(&wram->wPartyMon[a].mon, CAUGHT_EGG_LEVEL);
+    SetBoxmonOrEggmonCaughtData(&wram->wPartyMon[a].mon, CAUGHT_EGG_LEVEL);
     // POP_AF;
     // LD_addr_A(wCurPartyLevel);
     // RET;

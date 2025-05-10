@@ -64,7 +64,7 @@ void DayCareMan(void){
             }
             else {
                 // FARCALL(aDepositMonWithDayCareMan);
-                DepositMonWithDayCareMan_Conv(res.a);
+                DepositMonWithDayCareMan(res.a);
                 // LD_HL(wDayCareMan);
                 // SET_hl(DAYCAREMAN_HAS_MON_F);
                 bit_set(wram->wDayCareMan, DAYCAREMAN_HAS_MON_F);
@@ -92,7 +92,7 @@ void DayCareMan(void){
         }
         else {
             // FARCALL(aRetrieveMonFromDayCareMan);
-            RetrieveMonFromDayCareMan_Conv();
+            RetrieveMonFromDayCareMan();
             // CALL(aDayCare_GetBackMonForMoney);
             DayCare_GetBackMonForMoney();
             // LD_HL(wDayCareMan);
@@ -129,7 +129,7 @@ void DayCareLady(void){
             }
             else {
                 // FARCALL(aDepositMonWithDayCareLady);
-                DepositMonWithDayCareLady_Conv(res.a);
+                DepositMonWithDayCareLady(res.a);
                 // LD_HL(wDayCareLady);
                 // SET_hl(DAYCARELADY_HAS_MON_F);
                 bit_set(wram->wDayCareLady, DAYCARELADY_HAS_MON_F);
@@ -157,7 +157,7 @@ void DayCareLady(void){
         }
         else {
             // FARCALL(aRetrieveMonFromDayCareLady);
-            RetrieveMonFromDayCareLady_Conv();
+            RetrieveMonFromDayCareLady();
             // CALL(aDayCare_GetBackMonForMoney);
             DayCare_GetBackMonForMoney();
             // LD_HL(wDayCareLady);
@@ -224,7 +224,7 @@ u8_flag_s DayCareAskDepositPokemon(void){
     // LD_B(PARTYMENUACTION_GIVE_MON);
     // FARCALL(aSelectTradeOrDayCareMon);
     // IF_C goto Declined;
-    u8_flag_s res = SelectTradeOrDayCareMon_Conv(PARTYMENUACTION_GIVE_MON);
+    u8_flag_s res = SelectTradeOrDayCareMon(PARTYMENUACTION_GIVE_MON);
     if(res.flag) {
     // Declined:
         // LD_A(DAYCARETEXT_OH_FINE);
@@ -244,7 +244,7 @@ u8_flag_s DayCareAskDepositPokemon(void){
     }
     // FARCALL(aCheckCurPartyMonFainted);
     // IF_C goto OutOfUsableMons;
-    if(CheckCurPartyMonFainted_Conv()) {
+    if(CheckCurPartyMonFainted()) {
     // OutOfUsableMons:
         // LD_A(DAYCARETEXT_LAST_ALIVE_MON);
         // SCF;
@@ -258,7 +258,7 @@ u8_flag_s DayCareAskDepositPokemon(void){
     // LD_D_hl;
     // FARCALL(aItemIsMail);
     // IF_C goto HoldingMail;
-    if(ItemIsMail_Conv(wram->wPartyMon[res.a].mon.item)) {
+    if(ItemIsMail(wram->wPartyMon[res.a].mon.item)) {
     // HoldingMail:
         // LD_A(DAYCARETEXT_REMOVE_MAIL);
         // SCF;
@@ -758,7 +758,7 @@ void DayCare_InitBreeding(void){
     if(!bit_test(wram->wDayCareLady, DAYCARELADY_HAS_MON_F) || !bit_test(wram->wDayCareMan, DAYCARELADY_HAS_MON_F))
         return;
     // CALLFAR(aCheckBreedmonCompatibility);
-    CheckBreedmonCompatibility_Conv();
+    CheckBreedmonCompatibility();
     // LD_A_addr(wBreedingCompatibility);
     // AND_A_A;
     // RET_Z ;
@@ -822,7 +822,7 @@ void DayCare_InitBreeding(void){
 
 // LoadWhichBreedmonIsTheMother:
     // LD_addr_A(wBreedMotherOrNonDitto);
-    wram->wBreedMotherOrNonDitto = (wram->wBreedMon1.species == DITTO || (wram->wBreedMon2.species != DITTO && GetGender_Conv(TEMPMON).a != 0))? 0x1: 0x0;
+    wram->wBreedMotherOrNonDitto = (wram->wBreedMon1.species == DITTO || (wram->wBreedMon2.species != DITTO && GetGender(TEMPMON).a != 0))? 0x1: 0x0;
     // AND_A_A;
     // LD_A_addr(wBreedMon1Species);
     // IF_Z goto GotMother;
@@ -833,7 +833,7 @@ void DayCare_InitBreeding(void){
     wram->wCurPartySpecies = (wram->wBreedMotherOrNonDitto)? wram->wBreedMon2.species: wram->wBreedMon1.species;
     // CALLFAR(aGetPreEvolution);
     // CALLFAR(aGetPreEvolution);
-    wram->wCurPartySpecies = GetPreEvolution_Conv(GetPreEvolution_Conv(wram->wCurPartySpecies));
+    wram->wCurPartySpecies = GetPreEvolution(GetPreEvolution(wram->wCurPartySpecies));
     // LD_A(EGG_LEVEL);
     // LD_addr_A(wCurPartyLevel);
     wram->wCurPartyLevel = EGG_LEVEL;
@@ -877,9 +877,9 @@ void DayCare_InitBreeding(void){
     // LD_addr_A(wSkipMovesBeforeLevelUp);
     wram->wSkipMovesBeforeLevelUp = FALSE;
     // PREDEF(pFillMoves);
-    FillMoves_Conv(wram->wEggMon.moves, wram->wEggMon.PP, wram->wEggMon.species, wram->wEggMon.level);
+    FillMoves(wram->wEggMon.moves, wram->wEggMon.PP, wram->wEggMon.species, wram->wEggMon.level);
     // FARCALL(aInitEggMoves);
-    InitEggMoves_Conv();
+    InitEggMoves();
     // LD_HL(wEggMonID);
     // LD_A_addr(wPlayerID);
     // LD_hli_A;
@@ -889,7 +889,7 @@ void DayCare_InitBreeding(void){
     // LD_A_addr(wCurPartyLevel);
     // LD_D_A;
     // CALLFAR(aCalcExpAtLevel);
-    uint32_t exp = CalcExpAtLevel_Conv(wram->wCurPartyLevel);
+    uint32_t exp = CalcExpAtLevel(wram->wCurPartyLevel);
     // LD_HL(wEggMonExp);
     // LDH_A_addr(hMultiplicand);
     // LD_hli_A;
@@ -940,7 +940,7 @@ void DayCare_InitBreeding(void){
         wram->wMonType = TEMPMON;
         // PUSH_HL;
         // FARCALL(aGetGender);
-        u8_flag_s gender = GetGender_Conv(TEMPMON);
+        u8_flag_s gender = GetGender(TEMPMON);
         // POP_HL;
         // LD_DE(wBreedMon1DVs);
         // LD_BC(wBreedMon2DVs);
@@ -997,7 +997,7 @@ SkipDVs:
     // LD_HL(wEggMonMoves);
     // LD_DE(wEggMonPP);
     // PREDEF(pFillPP);
-    FillPP_Conv(wram->wEggMon.PP, wram->wEggMon.moves);
+    FillPP(wram->wEggMon.PP, wram->wEggMon.moves);
     // LD_HL(wMonOrItemNameBuffer);
     // LD_DE(wStringBuffer1);
     // LD_BC(NAME_LENGTH);

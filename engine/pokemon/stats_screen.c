@@ -38,6 +38,37 @@ enum {
 
 void (*const StatsScreenPointerTable[])(void);
 
+static void StatsScreen_WaitAnim(void);
+static void StatsScreen_SetJumptableIndex(uint8_t h);
+static void StatsScreen_Exit(void);
+static void MonStatsInit(void);
+static void EggStatsInit(void);
+static void EggStatsJoypad(void);
+static void StatsScreen_LoadPage(void);
+static void MonStatsJoypad(void);
+
+static void StatsScreenWaitCry(void);
+static void StatsScreen_CopyToTempMon(void);
+static bool StatsScreen_GetJoypad(uint8_t* a);
+static void StatsScreen_JoypadAction(uint8_t a);
+static void StatsScreen_InitUpperHalf(void);
+static void StatsScreen_PlaceHorizontalDivider(void);
+static void StatsScreen_PlacePageSwitchArrows(void);
+static void StatsScreen_PlaceShinyIcon(void);
+static void StatsScreen_LoadGFX(void);
+static void LoadPinkPage(void);
+static void LoadGreenPage(void);
+static void LoadBluePage(void);
+
+static void StatsScreen_PlaceFrontpic(void);
+static u8_flag_s StatsScreen_GetAnimationParam(void);
+
+static void StatsScreen_AnimateEgg(void);
+static void StatsScreen_LoadPageIndicators(uint8_t c);
+static uint8_t* CopyNickname(uint8_t* hl);
+static uint8_t* GetNicknamenamePointer(void);
+static uint8_t* GetNicknamenamePointer2(void);
+
 void BattleStatsScreenInit(void){
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_MOBILE);
@@ -257,7 +288,7 @@ void (*const StatsScreenPointerTable[])(void) = {
     [JT_EXIT]               = StatsScreen_Exit,
 };
 
-void StatsScreen_WaitAnim(void){
+static void StatsScreen_WaitAnim(void){
     // LD_HL(wStatsScreenFlags);
     // BIT_hl(6);
     // IF_NZ goto try_anim;
@@ -289,16 +320,7 @@ void StatsScreen_WaitAnim(void){
     // RET;
 }
 
-void StatsScreen_SetJumptableIndex(void){
-    LD_A_addr(wJumptableIndex);
-    AND_A(0x80);
-    OR_A_H;
-    LD_addr_A(wJumptableIndex);
-    RET;
-
-}
-
-void StatsScreen_SetJumptableIndex_Conv(uint8_t h){
+static void StatsScreen_SetJumptableIndex(uint8_t h){
     // LD_A_addr(wJumptableIndex);
     // AND_A(0x80);
     // OR_A_H;
@@ -307,14 +329,14 @@ void StatsScreen_SetJumptableIndex_Conv(uint8_t h){
     wram->wJumptableIndex = (wram->wJumptableIndex & 0x80) | h;
 }
 
-void StatsScreen_Exit(void){
+static void StatsScreen_Exit(void){
     // LD_HL(wJumptableIndex);
     // SET_hl(7);
     // RET;
     bit_set(wram->wJumptableIndex, 7);
 }
 
-void MonStatsInit(void){
+static void MonStatsInit(void){
     // LD_HL(wStatsScreenFlags);
     // RES_hl(6);
     bit_reset(wram->wStatsScreenFlags, 6);
@@ -325,7 +347,7 @@ void MonStatsInit(void){
     // FARCALL(aHDMATransferTilemapToWRAMBank3);
     HDMATransferTilemapToWRAMBank3();
     // CALL(aStatsScreen_CopyToTempMon);
-    StatsScreen_CopyToTempMon_Conv();
+    StatsScreen_CopyToTempMon();
     // LD_A_addr(wCurPartySpecies);
     // CP_A(EGG);
     // IF_Z goto egg;
@@ -334,7 +356,7 @@ void MonStatsInit(void){
         // LD_H(1);
         // CALL(aStatsScreen_SetJumptableIndex);
         // RET;
-        return StatsScreen_SetJumptableIndex_Conv(JT_EGG_STATS_INIT);
+        return StatsScreen_SetJumptableIndex(JT_EGG_STATS_INIT);
     }
     // CALL(aStatsScreen_InitUpperHalf);
     StatsScreen_InitUpperHalf();
@@ -344,10 +366,10 @@ void MonStatsInit(void){
     // LD_H(4);
     // CALL(aStatsScreen_SetJumptableIndex);
     // RET;
-    return StatsScreen_SetJumptableIndex_Conv(JT_LOAD_PAGE);
+    return StatsScreen_SetJumptableIndex(JT_LOAD_PAGE);
 }
 
-void EggStatsInit(void){
+static void EggStatsInit(void){
     // CALL(aEggStatsScreen);
     EggStatsScreen();
     // LD_A_addr(wJumptableIndex);
@@ -357,15 +379,15 @@ void EggStatsInit(void){
     wram->wJumptableIndex++;
 }
 
-void EggStatsJoypad(void){
+static void EggStatsJoypad(void){
     uint8_t a = 0;
     // CALL(aStatsScreen_GetJoypad);
     // IF_NC goto check;
-    if(StatsScreen_GetJoypad_Conv(&a)) {
+    if(StatsScreen_GetJoypad(&a)) {
         // LD_H(0);
         // CALL(aStatsScreen_SetJumptableIndex);
         // RET;
-        StatsScreen_SetJumptableIndex_Conv(JT_MON_STATS_INIT);
+        StatsScreen_SetJumptableIndex(JT_MON_STATS_INIT);
         return;
     }
 
@@ -374,63 +396,62 @@ void EggStatsJoypad(void){
     // IF_NZ goto quit;
     if(!bit_test(a, A_BUTTON_F)) {
 #if defined(_DEBUG) && 0
+static const char HatchSoonString[] = "▶HATCH SOON!";
         // CP_A(START);
         // IF_Z goto hatch;
-        if(a == START) 
-            goto hatch;
+        if(a == START) {
+        // hatch:
+            // LD_A_addr(wMonType);
+            // OR_A_A;
+            // IF_NZ goto skip;
+            if(wram->wMonType == TEMPMON) {
+                // PUSH_BC;
+                // PUSH_DE;
+                // PUSH_HL;
+                // LD_A_addr(wCurPartyMon);
+                // LD_BC(PARTYMON_STRUCT_LENGTH);
+                // LD_HL(wPartyMon1Happiness);
+                // CALL(aAddNTimes);
+                // LD_hl(1);
+                wram->wPartyMon[wram->wCurPartyMon].mon.happiness = 1;
+                // LD_A(1);
+                // LD_addr_A(wTempMonHappiness);
+                wram->wTempMon.mon.happiness = 1;
+                // LD_A(127);
+                // LD_addr_A(wStepCount);
+                wram->wStepCount = 127;
+                // LD_DE(HatchSoonString);
+                // hlcoord(8, 17, wTilemap);
+                // CALL(aPlaceString);
+                PlaceStringSimple(U82C(HatchSoonString), coord(8, 17, wram->wTilemap));
+                // LD_HL(wStatsScreenFlags);
+                // SET_hl(5);
+                bit_set(wram->wStatsScreenFlags, 5);
+                // POP_HL;
+                // POP_DE;
+                // POP_BC;
+            }
+
+        // skip:
+            // XOR_A_A;
+            // JP(mStatsScreen_JoypadAction);
+            return StatsScreen_JoypadAction(0);
+        }
 #endif
         // AND_A(D_DOWN | D_UP | A_BUTTON | B_BUTTON);
         // JP(mStatsScreen_JoypadAction);
-        return StatsScreen_JoypadAction_Conv(a & (D_DOWN | D_UP | A_BUTTON | B_BUTTON));
+        return StatsScreen_JoypadAction(a & (D_DOWN | D_UP | A_BUTTON | B_BUTTON));
     }
 
 // quit:
     // LD_H(7);
     // CALL(aStatsScreen_SetJumptableIndex);
     // RET;
-    StatsScreen_SetJumptableIndex_Conv(JT_EXIT);
+    StatsScreen_SetJumptableIndex(JT_EXIT);
     return;
-
-#if defined(_DEBUG) && 0
-
-hatch:
-    LD_A_addr(wMonType);
-    OR_A_A;
-    IF_NZ goto skip;
-    PUSH_BC;
-    PUSH_DE;
-    PUSH_HL;
-    LD_A_addr(wCurPartyMon);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_HL(wPartyMon1Happiness);
-    CALL(aAddNTimes);
-    LD_hl(1);
-    LD_A(1);
-    LD_addr_A(wTempMonHappiness);
-    LD_A(127);
-    LD_addr_A(wStepCount);
-    LD_DE(EggStatsJoypad_HatchSoonString);
-    hlcoord(8, 17, wTilemap);
-    CALL(aPlaceString);
-    LD_HL(wStatsScreenFlags);
-    SET_hl(5);
-    POP_HL;
-    POP_DE;
-    POP_BC;
-
-skip:
-    XOR_A_A;
-    JP(mStatsScreen_JoypadAction);
-
-
-HatchSoonString:
-    //db ['"▶HATCH SOON!@"'];
-#endif
-
-    return StatsScreen_LoadPage();
 }
 
-void StatsScreen_LoadPage(void){
+static void StatsScreen_LoadPage(void){
     // CALL(aStatsScreen_LoadGFX);
     StatsScreen_LoadGFX();
     // LD_HL(wStatsScreenFlags);
@@ -443,25 +464,25 @@ void StatsScreen_LoadPage(void){
     // RET;
 }
 
-void MonStatsJoypad(void){
+static void MonStatsJoypad(void){
     uint8_t a;
     // CALL(aStatsScreen_GetJoypad);
     // IF_NC goto next;
-    if(StatsScreen_GetJoypad_Conv(&a)) {
+    if(StatsScreen_GetJoypad(&a)) {
         // LD_H(0);
         // CALL(aStatsScreen_SetJumptableIndex);
         // RET;
-        return StatsScreen_SetJumptableIndex_Conv(JT_MON_STATS_INIT);
+        return StatsScreen_SetJumptableIndex(JT_MON_STATS_INIT);
     }
 
 
 // next:
     // AND_A(D_DOWN | D_UP | D_LEFT | D_RIGHT | A_BUTTON | B_BUTTON);
     // JP(mStatsScreen_JoypadAction);
-    return StatsScreen_JoypadAction_Conv(a & (D_DOWN | D_UP | D_LEFT | D_RIGHT | A_BUTTON | B_BUTTON));
+    return StatsScreen_JoypadAction(a & (D_DOWN | D_UP | D_LEFT | D_RIGHT | A_BUTTON | B_BUTTON));
 }
 
-void StatsScreenWaitCry(void){
+static void StatsScreenWaitCry(void){
     // CALL(aIsSFXPlaying);
     // RET_NC ;
     if(IsSFXPlaying())
@@ -474,37 +495,7 @@ void StatsScreenWaitCry(void){
     wram->wJumptableIndex++;
 }
 
-void StatsScreen_CopyToTempMon(void){
-    LD_A_addr(wMonType);
-    CP_A(TEMPMON);
-    IF_NZ goto not_tempmon;
-    LD_A_addr(wBufferMonSpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_HL(wBufferMon);
-    LD_DE(wTempMon);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aCopyBytes);
-    goto done;
-
-
-not_tempmon:
-    FARCALL(aCopyMonToTempMon);
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    IF_Z goto done;
-    LD_A_addr(wMonType);
-    CP_A(BOXMON);
-    IF_C goto done;
-    FARCALL(aCalcTempmonStats);
-
-done:
-    AND_A_A;
-    RET;
-
-}
-
-void StatsScreen_CopyToTempMon_Conv(void){
+static void StatsScreen_CopyToTempMon(void){
     // LD_A_addr(wMonType);
     // CP_A(TEMPMON);
     // IF_NZ goto not_tempmon;
@@ -525,7 +516,7 @@ void StatsScreen_CopyToTempMon_Conv(void){
 
     // not_tempmon:
         // FARCALL(aCopyMonToTempMon);
-        CopyMonToTempMon_Conv();
+        CopyMonToTempMon();
         // LD_A_addr(wCurPartySpecies);
         // CP_A(EGG);
         // IF_Z goto done;
@@ -534,7 +525,7 @@ void StatsScreen_CopyToTempMon_Conv(void){
         // IF_C goto done;
         if(wram->wCurPartySpecies != EGG && wram->wMonType >= BOXMON) {
             // FARCALL(aCalcTempmonStats);
-            CalcTempmonStats_Conv();
+            CalcTempmonStats();
         }
     }
 
@@ -543,40 +534,7 @@ void StatsScreen_CopyToTempMon_Conv(void){
     // RET;
 }
 
-void StatsScreen_GetJoypad(void){
-    CALL(aGetJoypad);
-    LD_A_addr(wMonType);
-    CP_A(TEMPMON);
-    IF_NZ goto not_tempmon;
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    FARCALL(aStatsScreenDPad);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    LD_A_addr(wMenuJoypad);
-    AND_A(D_DOWN | D_UP);
-    IF_NZ goto set_carry;
-    LD_A_addr(wMenuJoypad);
-    goto clear_carry;
-
-
-not_tempmon:
-    LDH_A_addr(hJoyPressed);
-
-clear_carry:
-    AND_A_A;
-    RET;
-
-
-set_carry:
-    SCF;
-    RET;
-
-}
-
-bool StatsScreen_GetJoypad_Conv(uint8_t* a){
+static bool StatsScreen_GetJoypad(uint8_t* a){
     // CALL(aGetJoypad);
     GetJoypad();
     // LD_A_addr(wMonType);
@@ -595,7 +553,7 @@ bool StatsScreen_GetJoypad_Conv(uint8_t* a){
         // POP_BC;
         // POP_DE;
         // POP_HL;
-        StatsScreenDPad_Conv();
+        StatsScreenDPad();
         // LD_A_addr(wMenuJoypad);
         // AND_A(D_DOWN | D_UP);
         // IF_NZ goto set_carry;
@@ -615,118 +573,7 @@ bool StatsScreen_GetJoypad_Conv(uint8_t* a){
     return false;
 }
 
-void StatsScreen_JoypadAction(void){
-    PUSH_AF;
-    LD_A_addr(wStatsScreenFlags);
-    maskbits(NUM_STAT_PAGES, 0);
-    LD_C_A;
-    POP_AF;
-    BIT_A(B_BUTTON_F);
-    JP_NZ (mStatsScreen_JoypadAction_b_button);
-    BIT_A(D_LEFT_F);
-    IF_NZ goto d_left;
-    BIT_A(D_RIGHT_F);
-    IF_NZ goto d_right;
-    BIT_A(A_BUTTON_F);
-    IF_NZ goto a_button;
-    BIT_A(D_UP_F);
-    IF_NZ goto d_up;
-    BIT_A(D_DOWN_F);
-    IF_NZ goto d_down;
-    goto done;
-
-
-d_down:
-    LD_A_addr(wMonType);
-    CP_A(BOXMON);
-    IF_NC goto done;
-    AND_A_A;
-    LD_A_addr(wPartyCount);
-    IF_Z goto next_mon;
-    LD_A_addr(wOTPartyCount);
-
-next_mon:
-    LD_B_A;
-    LD_A_addr(wCurPartyMon);
-    INC_A;
-    CP_A_B;
-    IF_Z goto done;
-    LD_addr_A(wCurPartyMon);
-    LD_B_A;
-    LD_A_addr(wMonType);
-    AND_A_A;
-    IF_NZ goto load_mon;
-    LD_A_B;
-    INC_A;
-    LD_addr_A(wPartyMenuCursor);
-    goto load_mon;
-
-
-d_up:
-    LD_A_addr(wCurPartyMon);
-    AND_A_A;
-    IF_Z goto done;
-    DEC_A;
-    LD_addr_A(wCurPartyMon);
-    LD_B_A;
-    LD_A_addr(wMonType);
-    AND_A_A;
-    IF_NZ goto load_mon;
-    LD_A_B;
-    INC_A;
-    LD_addr_A(wPartyMenuCursor);
-    goto load_mon;
-
-
-a_button:
-    LD_A_C;
-    CP_A(BLUE_PAGE);  // last page
-    IF_Z goto b_button;
-
-d_right:
-    INC_C;
-    LD_A(BLUE_PAGE);  // last page
-    CP_A_C;
-    IF_NC goto set_page;
-    LD_C(PINK_PAGE);  // first page
-    goto set_page;
-
-
-d_left:
-    DEC_C;
-    IF_NZ goto set_page;
-    LD_C(BLUE_PAGE);  // last page
-    goto set_page;
-
-
-done:
-    RET;
-
-
-set_page:
-    LD_A_addr(wStatsScreenFlags);
-    AND_A(~STAT_PAGE_MASK);
-    OR_A_C;
-    LD_addr_A(wStatsScreenFlags);
-    LD_H(4);
-    CALL(aStatsScreen_SetJumptableIndex);
-    RET;
-
-
-load_mon:
-    LD_H(0);
-    CALL(aStatsScreen_SetJumptableIndex);
-    RET;
-
-
-b_button:
-    LD_H(7);
-    CALL(aStatsScreen_SetJumptableIndex);
-    RET;
-
-}
-
-void StatsScreen_JoypadAction_Conv(uint8_t a){
+static void StatsScreen_JoypadAction(uint8_t a){
     // PUSH_AF;
     // LD_A_addr(wStatsScreenFlags);
     // maskbits(NUM_STAT_PAGES, 0);
@@ -740,7 +587,7 @@ void StatsScreen_JoypadAction_Conv(uint8_t a){
         // LD_H(7);
         // CALL(aStatsScreen_SetJumptableIndex);
         // RET;
-        return StatsScreen_SetJumptableIndex_Conv(JT_EXIT);
+        return StatsScreen_SetJumptableIndex(JT_EXIT);
     }
     // BIT_A(D_LEFT_F);
     // IF_NZ goto d_left;
@@ -773,7 +620,7 @@ void StatsScreen_JoypadAction_Conv(uint8_t a){
         // LD_H(4);
         // CALL(aStatsScreen_SetJumptableIndex);
         // RET;
-        return StatsScreen_SetJumptableIndex_Conv(JT_LOAD_PAGE);
+        return StatsScreen_SetJumptableIndex(JT_LOAD_PAGE);
     }
     // BIT_A(A_BUTTON_F);
     // IF_NZ goto a_button;
@@ -783,7 +630,7 @@ void StatsScreen_JoypadAction_Conv(uint8_t a){
         // CP_A(BLUE_PAGE);  // last page
         // IF_Z goto b_button;
         if(c == BLUE_PAGE)
-            return StatsScreen_SetJumptableIndex_Conv(JT_EXIT);
+            return StatsScreen_SetJumptableIndex(JT_EXIT);
         goto d_right;
     }
     // BIT_A(D_UP_F);
@@ -813,7 +660,7 @@ void StatsScreen_JoypadAction_Conv(uint8_t a){
         // LD_H(0);
         // CALL(aStatsScreen_SetJumptableIndex);
         // RET;
-        return StatsScreen_SetJumptableIndex_Conv(JT_MON_STATS_INIT);
+        return StatsScreen_SetJumptableIndex(JT_MON_STATS_INIT);
     }
     // BIT_A(D_DOWN_F);
     // IF_NZ goto d_down;
@@ -855,7 +702,7 @@ void StatsScreen_JoypadAction_Conv(uint8_t a){
         // LD_H(0);
         // CALL(aStatsScreen_SetJumptableIndex);
         // RET;
-        return StatsScreen_SetJumptableIndex_Conv(JT_MON_STATS_INIT);
+        return StatsScreen_SetJumptableIndex(JT_MON_STATS_INIT);
     }
     // goto done;
     else {
@@ -879,7 +726,7 @@ static void StatsScreen_PlaceHPBar(void) {
     // FARCALL(aComputeHPBarPixels);
     // LD_HL(wCurHPPal);
     // CALL(aSetHPPal);
-    SetHPPal(&wram->wCurHPPal, ComputeHPBarPixels_Conv(BigEndianToNative16(wram->wTempMon.HP), BigEndianToNative16(wram->wTempMon.maxHP)));
+    SetHPPal(&wram->wCurHPPal, ComputeHPBarPixels(BigEndianToNative16(wram->wTempMon.HP), BigEndianToNative16(wram->wTempMon.maxHP)));
     // LD_B(SCGB_STATS_SCREEN_HP_PALS);
     // CALL(aGetSGBLayout);
     GetSGBLayout(SCGB_STATS_SCREEN_HP_PALS);
@@ -891,7 +738,7 @@ static void StatsScreen_PlaceHPBar(void) {
 static void StatsScreen_PlaceGenderChar(uint8_t* hl) {
     // PUSH_HL;
     // FARCALL(aGetGender);
-    u8_flag_s res = GetGender_Conv(wram->wMonType);
+    u8_flag_s res = GetGender(wram->wMonType);
     // POP_HL;
     // RET_C ;
     if(res.flag)
@@ -906,7 +753,7 @@ static void StatsScreen_PlaceGenderChar(uint8_t* hl) {
     // RET;
 }
 
-void StatsScreen_InitUpperHalf(void){
+static void StatsScreen_InitUpperHalf(void){
     // CALL(aStatsScreen_InitUpperHalf_PlaceHPBar);
     StatsScreen_PlaceHPBar();
     // XOR_A_A;
@@ -937,7 +784,7 @@ void StatsScreen_InitUpperHalf(void){
     // CALL(aCopyNickname);
     // hlcoord(8, 2, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(CopyNickname_Conv(GetNicknamenamePointer2_Conv()), coord(8, 2, wram->wTilemap));
+    PlaceStringSimple(CopyNickname(GetNicknamenamePointer2()), coord(8, 2, wram->wTilemap));
     // hlcoord(18, 0, wTilemap);
     // CALL(aStatsScreen_InitUpperHalf_PlaceGenderChar);
     StatsScreen_PlaceGenderChar(coord(18, 0, wram->wTilemap));
@@ -985,7 +832,7 @@ loop:
 
 }
 
-void StatsScreen_PlaceHorizontalDivider(void){
+static void StatsScreen_PlaceHorizontalDivider(void){
     // hlcoord(0, 7, wTilemap);
     // LD_B(SCREEN_WIDTH);
     // LD_A(0x62);  // horizontal divider (empty HP/exp bar)
@@ -1000,7 +847,7 @@ void StatsScreen_PlaceHorizontalDivider(void){
     // RET;
 }
 
-void StatsScreen_PlacePageSwitchArrows(void){
+static void StatsScreen_PlacePageSwitchArrows(void){
     // hlcoord(12, 6, wTilemap);
     // LD_hl(0x71);
     *coord(12, 6, wram->wTilemap) = CHAR_LEFT_CURSOR;
@@ -1010,7 +857,7 @@ void StatsScreen_PlacePageSwitchArrows(void){
     // RET;
 }
 
-void StatsScreen_PlaceShinyIcon(void){
+static void StatsScreen_PlaceShinyIcon(void){
     // LD_BC(wTempMonDVs);
     // FARCALL(aCheckShininess);
     // RET_NC ;
@@ -1027,7 +874,7 @@ static void StatsScreen_LoadGFX_ClearBox(void) {
     // maskbits(NUM_STAT_PAGES, 0);
     // LD_C_A;
     // CALL(aStatsScreen_LoadPageIndicators);
-    StatsScreen_LoadPageIndicators_Conv(wram->wStatsScreenFlags & NUM_STAT_PAGES);
+    StatsScreen_LoadPageIndicators(wram->wStatsScreenFlags & NUM_STAT_PAGES);
     // hlcoord(0, 8, wTilemap);
     // LD_BC((10 << 8) | 20);
     // CALL(aClearBox);
@@ -1070,7 +917,7 @@ static void StatsScreen_LoadGFX_PageTilemap(void) {
     // RET;
 }
 
-void StatsScreen_LoadGFX(void){
+static void StatsScreen_LoadGFX(void){
     // LD_A_addr(wBaseDexNo);
     // LD_addr_A(wTempSpecies);
     wram->wTempSpecies = wram->wBaseDexNo;
@@ -1145,7 +992,7 @@ void LoadPinkPage_CalcExpToNextLevel(void) {
     // REG_D = wram->wTempMon.mon.level + 1;
     // FARCALL(aCalcExpAtLevel);
     // RESTORE_REGS;
-    uint32_t xp = CalcExpAtLevel_Conv(wram->wTempMon.mon.level + 1);
+    uint32_t xp = CalcExpAtLevel(wram->wTempMon.mon.level + 1);
     uint32_t cur_xp = (uint32_t)wram->wTempMon.mon.exp[2] + 
         ((uint32_t)wram->wTempMon.mon.exp[1] << 8) +
         ((uint32_t)wram->wTempMon.mon.exp[0] << 16);
@@ -1169,7 +1016,7 @@ void LoadPinkPage_CalcExpToNextLevel(void) {
     // RET;
 }
 
-void LoadPinkPage(void){
+static void LoadPinkPage(void){
     static const char Status_Type[] = "STATUS/" \
         t_next "TYPE/@";
     static const char OK_str[] = "OK @";
@@ -1181,7 +1028,7 @@ void LoadPinkPage(void){
     // hlcoord(0, 9, wTilemap);
     // LD_B(0x0);
     // PREDEF(pDrawPlayerHP);
-    DrawPlayerHP_Conv(coord(0, 9, wram->wTilemap), 0x0);
+    DrawPlayerHP(coord(0, 9, wram->wTilemap), 0x0);
     // hlcoord(8, 9, wTilemap);
     // LD_hl(0x41);  // right HP/exp bar end cap
     *coord(8, 9, wram->wTilemap) = 0x41;
@@ -1220,7 +1067,7 @@ void LoadPinkPage(void){
         // PREDEF(pPlaceStatusString);
         // POP_HL;
         // IF_NZ goto done_status;
-        if(wram->wMonType == BOXMON || !PlaceStatusString_Conv(coord(6, 13, wram->wTilemap), &wram->wTempMon)) {
+        if(wram->wMonType == BOXMON || !PlaceStatusString(coord(6, 13, wram->wTilemap), &wram->wTempMon)) {
         // goto StatusOK;
 
         // StatusOK:
@@ -1307,7 +1154,7 @@ static uint8_t* LoadGreenPage_GetItemName(void) {
     return GetItemName(item);
 }
 
-void LoadGreenPage(void){
+static void LoadGreenPage(void){
     // LD_DE(mLoadGreenPage_Item);
     // hlcoord(0, 8, wTilemap);
     // CALL(aPlaceString);
@@ -1330,13 +1177,13 @@ void LoadGreenPage(void){
     // LD_addr_A(wListMovesLineSpacing);
     wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
     // PREDEF(pListMoves);
-    ListMoves_Conv(coord(8, 10, wram->wTilemap));
+    ListMoves(coord(8, 10, wram->wTilemap));
     // hlcoord(12, 11, wTilemap);
     // LD_A(SCREEN_WIDTH * 2);
     // LD_addr_A(wListMovesLineSpacing);
     wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
     // PREDEF(pListMovePP);
-    ListMovePP_Conv(coord(12, 11, wram->wTilemap));
+    ListMovePP(coord(12, 11, wram->wTilemap));
     // RET;
     return;
 }
@@ -1375,7 +1222,7 @@ static void LoadBluePage_PlaceOTInfo(void) {
     // FARCALL(aCorrectNickErrors);
     // hlcoord(2, 13, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(CopyNickname_Conv(GetNicknamenamePointer_Conv()), coord(2, 13, wram->wTilemap));
+    PlaceStringSimple(CopyNickname(GetNicknamenamePointer()), coord(2, 13, wram->wTilemap));
     // LD_A_addr(wTempMonCaughtGender);
     uint8_t genloc = wram->wTempMon.mon.caughtGenderLocation;
     // AND_A_A;
@@ -1400,7 +1247,7 @@ static void LoadBluePage_PlaceOTInfo(void) {
     // RET;
 }
 
-void LoadBluePage(void){
+static void LoadBluePage(void){
     // CALL(aLoadBluePage_PlaceOTInfo);
     LoadBluePage_PlaceOTInfo();
     // hlcoord(10, 8, wTilemap);
@@ -1419,7 +1266,7 @@ void LoadBluePage(void){
     // hlcoord(11, 8, wTilemap);
     // LD_BC(6);
     // PREDEF(pPrintTempMonStats);
-    PrintTempMonStats_Conv(coord(11, 8, wram->wTilemap), 6);
+    PrintTempMonStats(coord(11, 8, wram->wTilemap), 6);
     // RET;
     return;
 
@@ -1478,7 +1325,7 @@ static void StatsScreen_PlaceFrontpic_get_animation(void) {
     // RET;
 }
 
-void StatsScreen_PlaceFrontpic_AnimateEgg(void) {
+static void StatsScreen_PlaceFrontpic_AnimateEgg(void) {
     // LD_A_addr(wCurPartySpecies);
     // CP_A(UNOWN);
     // IF_Z goto unownegg;
@@ -1499,12 +1346,12 @@ void StatsScreen_PlaceFrontpic_AnimateEgg(void) {
     return StatsScreen_PlaceFrontpic_get_animation();
 }
 
-void StatsScreen_PlaceFrontpic(void){
+static void StatsScreen_PlaceFrontpic(void){
     // LD_HL(wTempMonDVs);
     // PREDEF(pGetUnownLetter);
     GetUnownLetter(wram->wTempMon.mon.DVs);
     // CALL(aStatsScreen_GetAnimationParam);
-    u8_flag_s res = StatsScreen_GetAnimationParam_Conv();
+    u8_flag_s res = StatsScreen_GetAnimationParam();
     // IF_C goto egg;
     if(res.flag) {
     // egg:
@@ -1594,90 +1441,7 @@ void StatsScreen_PlaceFrontpic(void){
 
 }
 
-void StatsScreen_GetAnimationParam(void){
-    // LD_A_addr(wMonType);
-    // LD_HL(mStatsScreen_GetAnimationParam_Jumptable);
-    // RST(aJumpTable);
-    // RET;
-
-
-// Jumptable:
-    //dw ['.PartyMon'];
-    //dw ['.OTPartyMon'];
-    //dw ['.BoxMon'];
-    //dw ['.Tempmon'];
-    //dw ['.Wildmon'];
-    switch(wram->wMonType) {
-        case PARTYMON: goto PartyMon;
-        case OTPARTYMON: goto OTPartyMon;
-        case BOXMON: goto BoxMon;
-        case TEMPMON: goto Tempmon;
-        case WILDMON: goto Wildmon;
-    }
-
-
-PartyMon:
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMon1);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_B_H;
-    LD_C_L;
-    goto CheckEggFaintedFrzSlp;
-
-
-OTPartyMon:
-    XOR_A_A;
-    RET;
-
-
-BoxMon:
-    LD_HL(sBoxMons);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    LD_B_H;
-    LD_C_L;
-    LD_A(MBANK(asBoxMons));
-    CALL(aOpenSRAM);
-    CALL(aStatsScreen_GetAnimationParam_CheckEggFaintedFrzSlp);
-    PUSH_AF;
-    CALL(aCloseSRAM);
-    POP_AF;
-    RET;
-
-
-Tempmon:
-    LD_BC(wTempMonSpecies);
-    goto CheckEggFaintedFrzSlp;  // utterly pointless
-
-
-CheckEggFaintedFrzSlp:
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    IF_Z goto egg;
-    CALL(aCheckFaintedFrzSlp);
-    IF_C goto FaintedFrzSlp;
-
-egg:
-    XOR_A_A;
-    SCF;
-    RET;
-
-
-Wildmon:
-    LD_A(0x1);
-    AND_A_A;
-    RET;
-
-
-FaintedFrzSlp:
-    XOR_A_A;
-    RET;
-
-}
-
-u8_flag_s StatsScreen_GetAnimationParam_Conv(void){
+static u8_flag_s StatsScreen_GetAnimationParam(void){
     // LD_A_addr(wMonType);
     // LD_HL(mStatsScreen_GetAnimationParam_Jumptable);
     // RST(aJumpTable);
@@ -1708,7 +1472,7 @@ u8_flag_s StatsScreen_GetAnimationParam_Conv(void){
             // IF_Z goto egg;
             // CALL(aCheckFaintedFrzSlp);
             // IF_C goto FaintedFrzSlp;
-            if(wram->wCurPartySpecies == EGG || !CheckFaintedFrzSlp_Conv(bc)) {
+            if(wram->wCurPartySpecies == EGG || !CheckFaintedFrzSlp(bc)) {
             // egg:
                 // XOR_A_A;
                 // SCF;
@@ -1738,7 +1502,7 @@ u8_flag_s StatsScreen_GetAnimationParam_Conv(void){
             struct PartyMon* bc = GBToRAMAddr(sBoxMons + (wram->wCurPartyMon * PARTYMON_STRUCT_LENGTH));
             // CALL(aStatsScreen_GetAnimationParam_CheckEggFaintedFrzSlp);
             u8_flag_s res;
-            if(wram->wCurPartySpecies == EGG || !CheckFaintedFrzSlp_Conv(bc)) {
+            if(wram->wCurPartySpecies == EGG || !CheckFaintedFrzSlp(bc)) {
             // egg:
                 // XOR_A_A;
                 // SCF;
@@ -1765,7 +1529,7 @@ u8_flag_s StatsScreen_GetAnimationParam_Conv(void){
             // IF_Z goto egg;
             // CALL(aCheckFaintedFrzSlp);
             // IF_C goto FaintedFrzSlp;
-            if(wram->wCurPartySpecies == EGG || !CheckFaintedFrzSlp_Conv(bc)) {
+            if(wram->wCurPartySpecies == EGG || !CheckFaintedFrzSlp(bc)) {
             // egg:
                 // XOR_A_A;
                 // SCF;
@@ -1815,11 +1579,32 @@ void StatsScreen_LoadTextboxSpaceGFX(void){
 void StatsScreenSpaceGFX(void){
 //  //  unreferenced
 // INCBIN "gfx/font/space.2bpp"
-
-    return EggStatsScreen();
 }
 
 void EggStatsScreen(void){
+    static const char EggString[] = "EGG@";
+    static const char FiveQMarkString[] = "?????@";
+
+    static const char EggSoonString[] = 
+                "It's making sounds"
+        t_next  "inside. It's going"
+        t_next  "to hatch soon!@";
+
+    static const char EggCloseString[] = 
+                "It moves around"
+        t_next  "inside sometimes."
+        t_next  "It must be close"
+        t_next  "to hatching.@";
+
+    static const char EggMoreTimeString[] = 
+                "Wonder what's"
+        t_next  "inside? It needs"
+        t_next  "more time, though.@";
+
+    static const char EggALotMoreTimeString[] = 
+                "This EGG needs a"
+        t_next  "lot more time to"
+        t_next  "hatch.@";
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;
@@ -1920,75 +1705,9 @@ void EggStatsScreen(void){
     PlaySFX(SFX_2_BOOPS);
 }
 
-// void EggString(void){
-    //db ['"EGG@"'];
-
-    // return FiveQMarkString();
-// }
-
-const char EggString[] = "EGG@";
-
-// void FiveQMarkString(void){
-    //db ['"?????@"'];
-
-    // return EggSoonString();
-// }
-
-const char FiveQMarkString[] = "?????@";
-
-// void EggSoonString(void){
-    //db ['"It\'s making sounds"'];
-    //next ['"inside. It\'s going"']
-    //next ['"to hatch soon!@"']
-
-//     return EggCloseString();
-// }
-
-const char EggSoonString[] = "It's making sounds" \
-    t_next "inside. It's going" \
-    t_next "to hatch soon!@";
-
-// void EggCloseString(void){
-    //db ['"It moves around"'];
-    //next ['"inside sometimes."']
-    //next ['"It must be close"']
-    //next ['"to hatching.@"']
-
-//     return EggMoreTimeString();
-// }
-
-const char EggCloseString[] = "It moves around" \
-    t_next "inside sometimes." \
-    t_next "It must be close" \
-    t_next "to hatching.@";
-
-// void EggMoreTimeString(void){
-    //db ['"Wonder what\'s"'];
-    //next ['"inside? It needs"']
-    //next ['"more time', 'though.@"']
-
-    // return EggALotMoreTimeString();
-// }
-
-const char EggMoreTimeString[] = "Wonder what's" \
-    t_next "inside? It needs" \
-    t_next "more time, though.@";
-
-// void EggALotMoreTimeString(void){
-    //db ['"This EGG needs a"'];
-    //next ['"lot more time to"']
-    //next ['"hatch.@"']
-
-    // return StatsScreen_AnimateEgg();
-// }
-
-const char EggALotMoreTimeString[] = "This EGG needs a" \
-    t_next "lot more time to" \
-    t_next "hatch.@";
-
-void StatsScreen_AnimateEgg(void){
+static void StatsScreen_AnimateEgg(void){
     // CALL(aStatsScreen_GetAnimationParam);
-    u8_flag_s res = StatsScreen_GetAnimationParam_Conv();
+    u8_flag_s res = StatsScreen_GetAnimationParam();
     // RET_NC ;
     if(!res.flag)
         return;
@@ -2029,40 +1748,6 @@ void StatsScreen_AnimateEgg(void){
     // RET;
 }
 
-void StatsScreen_LoadPageIndicators(void){
-    hlcoord(13, 5, wTilemap);
-    LD_A(0x36);  // first of 4 small square tiles
-    CALL(aStatsScreen_LoadPageIndicators_load_square);
-    hlcoord(15, 5, wTilemap);
-    LD_A(0x36);  // " " " "
-    CALL(aStatsScreen_LoadPageIndicators_load_square);
-    hlcoord(17, 5, wTilemap);
-    LD_A(0x36);  // " " " "
-    CALL(aStatsScreen_LoadPageIndicators_load_square);
-    LD_A_C;
-    CP_A(GREEN_PAGE);
-    LD_A(0x3a);  // first of 4 large square tiles
-    hlcoord(13, 5, wTilemap);  // PINK_PAGE (< GREEN_PAGE)
-    IF_C goto load_square;
-    hlcoord(15, 5, wTilemap);  // GREEN_PAGE (= GREEN_PAGE)
-    IF_Z goto load_square;
-    hlcoord(17, 5, wTilemap);  // BLUE_PAGE (> GREEN_PAGE)
-
-load_square:
-    PUSH_BC;
-    LD_hli_A;
-    INC_A;
-    LD_hld_A;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    INC_A;
-    LD_hli_A;
-    INC_A;
-    LD_hl_A;
-    POP_BC;
-    RET;
-}
-
 static void StatsScreen_LoadPageIndicators_load_square(uint8_t* hl, uint8_t a) {
 // load_square:
     // PUSH_BC;
@@ -2083,7 +1768,7 @@ static void StatsScreen_LoadPageIndicators_load_square(uint8_t* hl, uint8_t a) {
     // RET;
 }
 
-void StatsScreen_LoadPageIndicators_Conv(uint8_t c){
+static void StatsScreen_LoadPageIndicators(uint8_t c){
     // hlcoord(13, 5, wTilemap);
     // LD_A(0x36);  // first of 4 small square tiles
     // CALL(aStatsScreen_LoadPageIndicators_load_square);
@@ -2113,33 +1798,7 @@ void StatsScreen_LoadPageIndicators_Conv(uint8_t c){
     }
 }
 
-void CopyNickname(void){
-    LD_DE(wStringBuffer1);
-    LD_BC(MON_NAME_LENGTH);
-    goto okay;  // utterly pointless
-
-okay:
-    LD_A_addr(wMonType);
-    CP_A(BOXMON);
-    IF_NZ goto partymon;
-    LD_A(MBANK(asBoxMonNicknames));
-    CALL(aOpenSRAM);
-    PUSH_DE;
-    CALL(aCopyBytes);
-    POP_DE;
-    CALL(aCloseSRAM);
-    RET;
-
-
-partymon:
-    PUSH_DE;
-    CALL(aCopyBytes);
-    POP_DE;
-    RET;
-
-}
-
-uint8_t* CopyNickname_Conv(uint8_t* hl){
+static uint8_t* CopyNickname(uint8_t* hl){
     // LD_DE(wStringBuffer1);
     // LD_BC(MON_NAME_LENGTH);
     // goto okay;  // utterly pointless
@@ -2170,24 +1829,7 @@ uint8_t* CopyNickname_Conv(uint8_t* hl){
 
 }
 
-void GetNicknamenamePointer(void){
-    LD_A_addr(wMonType);
-    ADD_A_A;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_addr(wMonType);
-    CP_A(TEMPMON);
-    RET_Z ;
-    LD_A_addr(wCurPartyMon);
-    JP(mSkipNames);
-
-}
-
-uint8_t* GetNicknamenamePointer_Conv(void){
+static uint8_t* GetNicknamenamePointer(void){
     // LD_A_addr(wMonType);
     // ADD_A_A;
     // LD_C_A;
@@ -2219,7 +1861,7 @@ uint8_t* GetNicknamenamePointer_Conv(void){
 
 }
 
-uint8_t* GetNicknamenamePointer2_Conv(void){
+static uint8_t* GetNicknamenamePointer2(void){
     // LD_A_addr(wMonType);
     // ADD_A_A;
     // LD_C_A;
@@ -2251,28 +1893,7 @@ uint8_t* GetNicknamenamePointer2_Conv(void){
 
 }
 
-void CheckFaintedFrzSlp(void){
-    LD_HL(MON_HP);
-    ADD_HL_BC;
-    LD_A_hli;
-    OR_A_hl;
-    IF_Z goto fainted_frz_slp;
-    LD_HL(MON_STATUS);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(1 << FRZ | SLP);
-    IF_NZ goto fainted_frz_slp;
-    AND_A_A;
-    RET;
-
-
-fainted_frz_slp:
-    SCF;
-    RET;
-
-}
-
-bool CheckFaintedFrzSlp_Conv(struct PartyMon* bc){
+bool CheckFaintedFrzSlp(struct PartyMon* bc){
     // LD_HL(MON_HP);
     // ADD_HL_BC;
     // LD_A_hli;

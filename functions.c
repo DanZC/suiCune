@@ -3304,59 +3304,59 @@ void init_function_pointers(void) {
     // REDIRECTED(PlaceMapNameFrame);
 
     // engine/pokemon/stats_screen.c
-    REDIRECTED(StatsScreen_LoadPage);
-    REDIRECTED(StatsScreen_InitUpperHalf);
-    REDIRECTED(StatsScreen_AnimateEgg);
+    // CONVERTED(StatsScreen_LoadPage);
+    // CONVERTED(StatsScreen_InitUpperHalf);
+    // CONVERTED(StatsScreen_AnimateEgg);
     // REDIRECTED(OTString);
-    REDIRECTED(MonStatsInit);
-    REDIRECTED(StatsScreenSpaceGFX);
-    REDIRECTED(EggStatsJoypad);
-    REDIRECTED(GetNicknamenamePointer);
-    REDIRECTED(StatsScreen_PlacePageSwitchArrows);
-    REDIRECTED(StatsScreenMain);
-    REDIRECTED(StatsScreen_PlaceHorizontalDivider);
-    REDIRECTED(EggStatsScreen);
-    REDIRECTED(StatsScreen_SetJumptableIndex);
-    REDIRECTED(StatsScreen_LoadGFX);
-    REDIRECTED(StatsScreen_LoadTextboxSpaceGFX);
+    // CONVERTED(MonStatsInit);
+    CONVERTED(StatsScreenSpaceGFX);
+    // CONVERTED(EggStatsJoypad);
+    // CONVERTED(GetNicknamenamePointer);
+    // CONVERTED(StatsScreen_PlacePageSwitchArrows);
+    CONVERTED(StatsScreenMain);
+    // CONVERTED(StatsScreen_PlaceHorizontalDivider);
+    CONVERTED(EggStatsScreen);
+    // CONVERTED(StatsScreen_SetJumptableIndex);
+    // CONVERTED(StatsScreen_LoadGFX);
+    CONVERTED(StatsScreen_LoadTextboxSpaceGFX);
     CONVERTED(BattleStatsScreenInit);
-    REDIRECTED(StatsScreen_LoadPageIndicators);
-    CONVERTED(LoadGreenPage);
-    REDIRECTED(StatsScreen_JoypadAction);
-    REDIRECTED(EggStatsInit);
-    REDIRECTED(CheckFaintedFrzSlp);
-    REDIRECTED(StatsScreenMobile);
-    REDIRECTED(StatsScreen_PlaceVerticalDivider);
+    // CONVERTED(StatsScreen_LoadPageIndicators);
+    // CONVERTED(LoadGreenPage);
+    // CONVERTED(StatsScreen_JoypadAction);
+    // CONVERTED(EggStatsInit);
+    // CONVERTED(CheckFaintedFrzSlp);
+    CONVERTED(StatsScreenMobile);
+    // CONVERTED(StatsScreen_PlaceVerticalDivider);
     // REDIRECTED(EggCloseString);
     CONVERTED(v_MobileStatsScreenInit);
-    REDIRECTED(StatsScreen_CopyToTempMon);
+    // CONVERTED(StatsScreen_CopyToTempMon);
     // REDIRECTED(EggALotMoreTimeString);
-    REDIRECTED(CopyNickname);
-    REDIRECTED(StatsScreen_Exit);
-    CONVERTED(LoadBluePage);
-    REDIRECTED(StatsScreen_PlaceFrontpic);
-    REDIRECTED(MonStatsJoypad);
-    REDIRECTED(StatsScreen_GetJoypad);
+    // CONVERTED(CopyNickname);
+    // CONVERTED(StatsScreen_Exit);
+    // CONVERTED(LoadBluePage);
+    // CONVERTED(StatsScreen_PlaceFrontpic);
+    // CONVERTED(MonStatsJoypad);
+    // CONVERTED(StatsScreen_GetJoypad);
     // REDIRECTED(EggString);
     // REDIRECTED(EggSoonString);
-    CONVERTED(LoadPinkPage);
-    REDIRECTED(StatsScreenInit_gotaddress);
-    REDIRECTED(StatsScreenWaitCry);
+    // CONVERTED(LoadPinkPage);
+    // CONVERTED(StatsScreenInit_gotaddress);
+    // CONVERTED(StatsScreenWaitCry);
     // REDIRECTED(EggMoreTimeString);
     // REDIRECTED(FiveQMarkString);
-    REDIRECTED(StatsScreen_GetAnimationParam);
+    // CONVERTED(StatsScreen_GetAnimationParam);
     // REDIRECTED(StatsScreenPointerTable);
-    REDIRECTED(StatsScreen_PlaceShinyIcon);
+    // CONVERTED(StatsScreen_PlaceShinyIcon);
     // REDIRECTED(IDNoString);
-    CONVERTED(StatsScreenInit);
-    REDIRECTED(StatsScreen_WaitAnim);
+    // CONVERTED(StatsScreenInit);
+    // REDIRECTED(StatsScreen_WaitAnim);
 
     // engine/pokemon/tempmon.c
-    REDIRECTED(GetMonSpecies);
-    REDIRECTED(CalcTempmonStats);
-    REDIRECTED(v_TempMonStatsCalculation);
-    REDIRECTED(CalcBufferMonStats);
-    REDIRECTED(CopyMonToTempMon);
+    // CONVERTED(GetMonSpecies);
+    // CONVERTED(CalcTempmonStats);
+    // CONVERTED(v_TempMonStatsCalculation);
+    CONVERTED(CalcBufferMonStats);
+    CONVERTED(CopyMonToTempMon);
 
     // engine/gfx/load_pics.c
     // CONVERTED(GetAnimatedFrontpic);
@@ -3477,21 +3477,21 @@ void init_function_pointers(void) {
     // REDIRECTED(BillsPC_SeeYa);
 
     // engine/pokemon/mon_stats.c
-    REDIRECTED(PrintTempMonStats);
+    // CONVERTED(PrintTempMonStats);
     REDIRECTED(BrokenPlacePPUnits);
-    REDIRECTED(PlaceStatusString);
-    REDIRECTED(PlaceNonFaintStatus);
+    // CONVERTED(PlaceStatusString);
+    // CONVERTED(PlaceNonFaintStatus);
     // REDIRECTED(PsnString);
     REDIRECTED(Unused_PlaceEnemyHPLevel);
     // REDIRECTED(SlpString);
     // REDIRECTED(DrawEnemyHP);
     // REDIRECTED(FrzString);
     // REDIRECTED(DrawPlayerHP);
-    REDIRECTED(CopyStatusString);
+    // CONVERTED(CopyStatusString);
     // REDIRECTED(BrnString);
-    REDIRECTED(ListMovePP);
+    // CONVERTED(ListMovePP);
     // REDIRECTED(ParString);
-    REDIRECTED(ListMoves);
+    // CONVERTED(ListMoves);
     // REDIRECTED(FntString);
     // REDIRECTED(DrawHP);
     // REDIRECTED(GetGender);
@@ -3550,9 +3550,9 @@ void init_function_pointers(void) {
 
     // engine/pokemon/health.c
     CONVERTED(HealParty);
-    REDIRECTED(HealPartyMon);
-    REDIRECTED(ComputeHPBarPixels);
-    REDIRECTED(AnimateHPBar);
+    // CONVERTED(HealPartyMon);
+    // CONVERTED(ComputeHPBarPixels);
+    // CONVERTED(AnimateHPBar);
 
     // engine/gfx/cgb_layouts.c
     // REDIRECTED(v_CGB_Unknown);
@@ -3762,8 +3762,8 @@ void init_function_pointers(void) {
     // REDIRECTED(HealHP_SFX_GFX);
 
     // engine/pokemon/experience.c
-    REDIRECTED(CalcExpAtLevel);
-    REDIRECTED(CalcLevel);
+    // CONVERTED(CalcExpAtLevel);
+    // CONVERTED(CalcLevel);
 
     // engine/pokemon/types.c
     // CONVERTED(PrintMoveType);

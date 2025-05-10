@@ -4,13 +4,16 @@
 #include "move_mon_wo_mail.h"
 #include "move_mon.h"
 
+static void InsertSpeciesIntoBoxOrParty(uint8_t* count, species_t* party);
+static void InsertDataIntoBoxOrParty(uint8_t* hl, const uint8_t* de, uint16_t bc);
+
 void InsertPokemonIntoBox(void){
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBoxCount));
     // LD_HL(sBoxCount);
     // CALL(aInsertSpeciesIntoBoxOrParty);
-    InsertSpeciesIntoBoxOrParty_Conv(GBToRAMAddr(sBoxCount), GBToRAMAddr(sBoxSpecies));
+    InsertSpeciesIntoBoxOrParty(GBToRAMAddr(sBoxCount), GBToRAMAddr(sBoxSpecies));
     // LD_A_addr(sBoxCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
@@ -19,7 +22,7 @@ void InsertPokemonIntoBox(void){
     // LD_BC(MON_NAME_LENGTH);
     // LD_DE(wBufferMonNickname);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty_Conv(GBToRAMAddr(sBoxMonNicknames), wram->wBufferMonNickname, MON_NAME_LENGTH);
+    InsertDataIntoBoxOrParty(GBToRAMAddr(sBoxMonNicknames), wram->wBufferMonNickname, MON_NAME_LENGTH);
     // LD_A_addr(sBoxCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
@@ -28,7 +31,7 @@ void InsertPokemonIntoBox(void){
     // LD_BC(NAME_LENGTH);
     // LD_DE(wBufferMonOT);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty_Conv(GBToRAMAddr(sBoxMonOTs), wram->wBufferMonOT, NAME_LENGTH);
+    InsertDataIntoBoxOrParty(GBToRAMAddr(sBoxMonOTs), wram->wBufferMonOT, NAME_LENGTH);
     // LD_A_addr(sBoxCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
@@ -37,7 +40,7 @@ void InsertPokemonIntoBox(void){
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // LD_DE(wBufferMon);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty_Conv(GBToRAMAddr(sBoxMons), (const uint8_t*)&wram->wBufferMon.mon, BOXMON_STRUCT_LENGTH);
+    InsertDataIntoBoxOrParty(GBToRAMAddr(sBoxMons), (const uint8_t*)&wram->wBufferMon.mon, BOXMON_STRUCT_LENGTH);
     // LD_HL(wBufferMonMoves);
     // LD_DE(wTempMonMoves);
     // LD_BC(NUM_MOVES);
@@ -59,7 +62,7 @@ void InsertPokemonIntoBox(void){
 void InsertPokemonIntoParty(void){
     // LD_HL(wPartyCount);
     // CALL(aInsertSpeciesIntoBoxOrParty);
-    InsertSpeciesIntoBoxOrParty_Conv(&wram->wPartyCount, wram->wPartySpecies);
+    InsertSpeciesIntoBoxOrParty(&wram->wPartyCount, wram->wPartySpecies);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
@@ -68,7 +71,7 @@ void InsertPokemonIntoParty(void){
     // LD_BC(MON_NAME_LENGTH);
     // LD_DE(wBufferMonNickname);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty_Conv(wram->wPartyMonNickname[0], wram->wBufferMonNickname, MON_NAME_LENGTH);
+    InsertDataIntoBoxOrParty(wram->wPartyMonNickname[0], wram->wBufferMonNickname, MON_NAME_LENGTH);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
@@ -77,7 +80,7 @@ void InsertPokemonIntoParty(void){
     // LD_BC(NAME_LENGTH);
     // LD_DE(wBufferMonOT);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty_Conv(wram->wPartyMonOT[0], wram->wBufferMonOT, NAME_LENGTH);
+    InsertDataIntoBoxOrParty(wram->wPartyMonOT[0], wram->wBufferMonOT, NAME_LENGTH);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
@@ -85,32 +88,11 @@ void InsertPokemonIntoParty(void){
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // LD_DE(wBufferMon);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty_Conv((uint8_t*)wram->wPartyMon, (uint8_t*)&wram->wBufferMon, PARTYMON_STRUCT_LENGTH);
+    InsertDataIntoBoxOrParty((uint8_t*)wram->wPartyMon, (uint8_t*)&wram->wBufferMon, PARTYMON_STRUCT_LENGTH);
     // RET;
 }
 
-void InsertSpeciesIntoBoxOrParty(void){
-    INC_hl;
-    INC_HL;
-    LD_A_addr(wCurPartyMon);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_addr(wCurPartySpecies);
-    LD_C_A;
-
-loop:
-    LD_A_hl;
-    LD_hl_C;
-    INC_HL;
-    INC_C;
-    LD_C_A;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void InsertSpeciesIntoBoxOrParty_Conv(uint8_t* count, species_t* party){
+static void InsertSpeciesIntoBoxOrParty(uint8_t* count, species_t* party){
     // INC_hl;
     (*count)++;
     // INC_HL;
@@ -140,62 +122,7 @@ void InsertSpeciesIntoBoxOrParty_Conv(uint8_t* count, species_t* party){
 
 }
 
-void InsertDataIntoBoxOrParty(void){
-    PUSH_DE;
-    PUSH_HL;
-    PUSH_BC;
-    LD_A_addr(wNextBoxOrPartyIndex);
-    DEC_A;
-    CALL(aAddNTimes);
-    PUSH_HL;
-    ADD_HL_BC;
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-
-loop:
-    PUSH_BC;
-    LD_A_addr(wNextBoxOrPartyIndex);
-    LD_B_A;
-    LD_A_addr(wCurPartyMon);
-    CP_A_B;
-    POP_BC;
-    IF_Z goto insert;
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    CALL(aCopyBytes);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    PUSH_HL;
-    LD_A_L;
-    SUB_A_C;
-    LD_L_A;
-    LD_A_H;
-    SBC_A_B;
-    LD_H_A;
-    POP_DE;
-    LD_A_addr(wNextBoxOrPartyIndex);
-    DEC_A;
-    LD_addr_A(wNextBoxOrPartyIndex);
-    goto loop;
-
-
-insert:
-    POP_BC;
-    POP_HL;
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    CALL(aCopyBytes);
-    RET;
-
-}
-
-void InsertDataIntoBoxOrParty_Conv(uint8_t* hl, const uint8_t* de, uint16_t bc){
+static void InsertDataIntoBoxOrParty(uint8_t* hl, const uint8_t* de, uint16_t bc){
     // PUSH_DE;
     // PUSH_HL;
     // PUSH_BC;
@@ -208,7 +135,7 @@ void InsertDataIntoBoxOrParty_Conv(uint8_t* hl, const uint8_t* de, uint16_t bc){
     // LD_E_L;
     uint8_t* de2 = hl + (bc * (wram->wNextBoxOrPartyIndex - 1));
     // POP_HL;
-    hl = de2 - bc;
+    uint8_t* hl2 = de2 - bc;
 
     while(1) {
     // loop:
@@ -236,7 +163,7 @@ void InsertDataIntoBoxOrParty_Conv(uint8_t* hl, const uint8_t* de, uint16_t bc){
         // PUSH_DE;
         // PUSH_BC;
         // CALL(aCopyBytes);
-        CopyBytes(de2, hl, bc);
+        CopyBytes(de2, hl2, bc);
         // POP_BC;
         // POP_DE;
         // POP_HL;
@@ -248,8 +175,8 @@ void InsertDataIntoBoxOrParty_Conv(uint8_t* hl, const uint8_t* de, uint16_t bc){
         // SBC_A_B;
         // LD_H_A;
         // POP_DE;
-        de2 = hl;
-        hl = hl - bc;
+        de2 = hl2;
+        hl2 = hl2 - bc;
         // LD_A_addr(wNextBoxOrPartyIndex);
         // DEC_A;
         // LD_addr_A(wNextBoxOrPartyIndex);

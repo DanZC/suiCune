@@ -43,123 +43,8 @@ void ReadPartyMonMail(void){
     // LD_D_H;
     // LD_E_L;
     const struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sPartyMail)) + wram->wCurPartyMon;
-    ReadAnyMail_Conv(de);
+    ReadAnyMail(de);
     CloseSRAM();
-}
-
-void ReadAnyMail(void){
-    PUSH_DE;
-    CALL(aClearBGPalettes);
-    CALL(aClearSprites);
-    CALL(aClearTilemap);
-    CALL(aDisableLCD);
-    CALL(aLoadFontsExtra);
-    POP_DE;
-    PUSH_DE;
-    LD_A(BANK(sPartyMail));
-    CALL(aOpenSRAM);
-    FARCALL(aIsMailEuropean);
-    CALL(aCloseSRAM);
-    LD_A_C;
-    LD_DE(mStandardEnglishFont);
-    OR_A_A;
-    IF_Z goto got_font;
-    LD_DE(mFrenchGermanFont);
-    SUB_A(0x3);
-    IF_C goto got_font;
-    LD_DE(mSpanishItalianFont);
-
-
-got_font:
-    LD_HL(vTiles1);
-    LD_BC((BANK(aStandardEnglishFont) << 8) | 0x80);
-    CALL(aGet1bpp);
-    POP_DE;
-    CALL(aReadAnyMail_LoadGFX);
-    CALL(aEnableLCD);
-    CALL(aWaitBGMap);
-    LD_A_addr(wCurMailIndex);
-    LD_E_A;
-    FARCALL(aLoadMailPalettes);
-    CALL(aSetPalettes);
-    XOR_A_A;
-    LDH_addr_A(hJoyPressed);
-    CALL(aReadAnyMail_loop);
-    CALL(aClearBGPalettes);
-    CALL(aDisableLCD);
-    CALL(aLoadStandardFont);
-    JP(mEnableLCD);
-
-
-loop:
-    CALL(aGetJoypad);
-    LDH_A_addr(hJoyPressed);
-    AND_A(A_BUTTON | B_BUTTON | START);
-    IF_Z goto loop;
-    AND_A(START);
-    IF_NZ goto pressed_start;
-    RET;
-
-
-pressed_start:
-    LD_A_addr(wJumptableIndex);
-    PUSH_AF;
-    CALLFAR(aPrintMailAndExit);  // printer
-    POP_AF;
-    LD_addr_A(wJumptableIndex);
-    goto loop;
-
-
-LoadGFX:
-    LD_H_D;
-    LD_L_E;
-    PUSH_HL;
-    LD_A(BANK(sPartyMail));
-    CALL(aOpenSRAM);
-    LD_DE(sPartyMon1MailAuthorID - sPartyMon1Mail);
-    ADD_HL_DE;
-    LD_A_hli;  // author id
-    LD_addr_A(wCurMailAuthorID);
-    LD_A_hli;
-    LD_addr_A(wCurMailAuthorID + 1);
-    LD_A_hli;  // species
-    LD_addr_A(wCurPartySpecies);
-    LD_B_hl;  // type
-    CALL(aCloseSRAM);
-    LD_HL(mMailGFXPointers);
-    LD_C(0);
-
-loop2:
-    LD_A_hli;
-    CP_A_B;
-    IF_Z goto got_pointer;
-    CP_A(-1);
-    IF_Z goto invalid;
-    INC_C;
-    INC_HL;
-    INC_HL;
-    goto loop2;
-
-
-invalid:
-    LD_HL(mMailGFXPointers);
-    INC_HL;
-
-
-got_pointer:
-    LD_A_C;
-    LD_addr_A(wCurMailIndex);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(mReadAnyMail_done);
-    POP_BC;
-    PUSH_DE;
-    JP_hl;
-
-done:
-    RET;
-
 }
 
 struct MailGFX {
@@ -279,7 +164,7 @@ static void ReadAnyMail_loop(void){
     }
 }
 
-void ReadAnyMail_Conv(const struct MailMsg* de){
+void ReadAnyMail(const struct MailMsg* de){
     // PUSH_DE;
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
@@ -296,7 +181,7 @@ void ReadAnyMail_Conv(const struct MailMsg* de){
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
     // FARCALL(aIsMailEuropean);
-    uint8_t c = IsMailEuropean_Conv(de);
+    uint8_t c = IsMailEuropean(de);
     // CALL(aCloseSRAM);
     // LD_A_C;
     // LD_DE(mStandardEnglishFont);
@@ -1513,17 +1398,7 @@ uint8_t* LoadMailGFX_Color3(uint8_t* hl, const char* de, uint8_t start, uint8_t 
 // INCLUDE "gfx/mail.asm"
 }
 
-void ItemIsMail(void){
-    LD_A_D;
-    LD_HL(mMailItems);
-    LD_DE(1);
-    JP(mIsInArray);
-
-// INCLUDE "data/items/mail_items.asm"
-
-}
-
-bool ItemIsMail_Conv(item_t d){
+bool ItemIsMail(item_t d){
     // LD_A_D;
     // LD_HL(mMailItems);
     // LD_DE(1);

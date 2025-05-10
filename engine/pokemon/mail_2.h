@@ -1,6 +1,5 @@
 void ReadPartyMonMail(void);
-void ReadAnyMail(void);
-void ReadAnyMail_Conv(const struct MailMsg* de);
+void ReadAnyMail(const struct MailMsg* de);
 // void MailGFXPointers(void);
 void LoadSurfMailGFX(const struct MailMsg* bc);
 void LoadLiteBlueMailGFX(const struct MailMsg* bc);
@@ -39,7 +38,6 @@ tile_t Mail_Draw3x2Graphic(tile_t* hl, tile_t a);
 uint8_t* LoadMailGFX_Color1(uint8_t* hl, const char* de, uint8_t start, uint8_t c);
 uint8_t* LoadMailGFX_Color2(uint8_t* hl, const char* de, uint8_t start, uint8_t c);
 uint8_t* LoadMailGFX_Color3(uint8_t* hl, const char* de, uint8_t start, uint8_t c);
-void ItemIsMail(void);
-bool ItemIsMail_Conv(item_t d);
+bool ItemIsMail(item_t d);
 //#include "gfx/mail.h"
 //#include "data/items/mail_items.h"

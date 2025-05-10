@@ -1,13 +1,11 @@
 u8_flag_s SelectMonFromParty(void);
-void SelectTradeOrDayCareMon(void);
-u8_flag_s SelectTradeOrDayCareMon_Conv(uint8_t b);
+u8_flag_s SelectTradeOrDayCareMon(uint8_t b);
 void InitPartyMenuLayout(void);
 void LoadPartyMenuGFX(void);
 void WritePartyMenuTilemap(void);
 void PlacePartyNicknames(void);
 void PlacePartyHPBar(void);
-void PlacePartymonHPBar(void);
-uint8_t PlacePartymonHPBar_Conv(uint8_t b);
+uint8_t PlacePartymonHPBar(uint8_t b);
 void PlacePartyMenuHPDigits(void);
 void PlacePartyMonLevel(void);
 void PlacePartyMonStatus(void);

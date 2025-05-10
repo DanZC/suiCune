@@ -185,7 +185,7 @@ static void NamingScreen_GetNamingScreenSetup(void) {
             PlaceString(&st, st.hl);
             // FARCALL(aGetGender);
             // IF_C goto genderless;
-            u8_flag_s res = GetGender_Conv(wram->wMonType);
+            u8_flag_s res = GetGender(wram->wMonType);
             if(!res.flag) {
                 // LD_A(0xef);
                 // IF_NZ goto place_gender;

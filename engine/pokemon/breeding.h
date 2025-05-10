@@ -1,18 +1,9 @@
-void CheckBreedmonCompatibility(void);
-uint8_t CheckBreedmonCompatibility_Conv(void);
+uint8_t CheckBreedmonCompatibility(void);
 bool DoEggStep(void);
 void OverworldHatchEgg(void);
 void HatchEggs(void);
 void InitEggMoves(void);
-void InitEggMoves_Conv(void);
-void GetEggMove(void);
-bool GetEggMove_Conv(const move_t* de);
-void LoadEggMove(void);
-void LoadEggMove_Conv(const move_t* de2);
-void GetHeritableMoves(void);
-const move_t* GetHeritableMoves_Conv(void);
-void GetBreedmonMovePointer(void);
-move_t* GetBreedmonMovePointer_Conv(void);
+
 void GetEggFrontpic(tile_t* de, species_t a);
 void GetHatchlingFrontpic(tile_t* de, species_t a);
 void Hatch_UpdateFrontpicBGMapCenter(tile_t* hl, uint8_t b, uint8_t c, uint8_t a);
@@ -20,7 +11,6 @@ void EggHatch_DoAnimFrame(void);
 void EggHatch_AnimationSequence(void);
 void Hatch_LoadFrontpicPal(uint8_t a);
 void EggHatch_CrackShell(void);
-// void EggHatchGFX(void);
 void Hatch_InitShellFragments(void);
 void Hatch_ShellFragmentLoop(void);
 void DayCareMon1(void);

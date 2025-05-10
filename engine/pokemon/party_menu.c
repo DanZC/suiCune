@@ -45,24 +45,7 @@ u8_flag_s SelectMonFromParty(void){
     return res;
 }
 
-void SelectTradeOrDayCareMon(void){
-    LD_A_B;
-    LD_addr_A(wPartyMenuActionText);
-    CALL(aDisableSpriteUpdates);
-    CALL(aClearBGPalettes);
-    CALL(aInitPartyMenuLayout);
-    CALL(aWaitBGMap);
-    LD_B(SCGB_PARTY_MENU);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    CALL(aDelayFrame);
-    CALL(aPartyMenuSelect);
-    CALL(aReturnToMapWithSpeechTextbox);
-    RET;
-
-}
-
-u8_flag_s SelectTradeOrDayCareMon_Conv(uint8_t b){
+u8_flag_s SelectTradeOrDayCareMon(uint8_t b){
     // LD_A_B;
     // LD_addr_A(wPartyMenuActionText);
     wram->wPartyMenuActionText = b;
@@ -234,7 +217,7 @@ void PlacePartyHPBar(void){
         if(!PartyMenuCheckEgg_Conv(b)) {
             // PUSH_HL;
             // CALL(aPlacePartymonHPBar);
-            uint8_t e = PlacePartymonHPBar_Conv(b);
+            uint8_t e = PlacePartymonHPBar(b);
             // POP_HL;
             // LD_D(0x6);
             // LD_B(0x0);
@@ -271,36 +254,7 @@ void PlacePartyHPBar(void){
     // RET;
 }
 
-void PlacePartymonHPBar(void){
-    LD_A_B;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    LD_HL(wPartyMon1HP);
-    CALL(aAddNTimes);
-    LD_A_hli;
-    OR_A_hl;
-    IF_NZ goto not_fainted;
-    XOR_A_A;
-    LD_E_A;
-    LD_C_A;
-    RET;
-
-
-not_fainted:
-    DEC_HL;
-    LD_A_hli;
-    LD_B_A;
-    LD_A_hli;
-    LD_C_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_A_hli;
-    LD_E_A;
-    PREDEF(pComputeHPBarPixels);
-    RET;
-
-}
-
-uint8_t PlacePartymonHPBar_Conv(uint8_t b){
+uint8_t PlacePartymonHPBar(uint8_t b){
     // LD_A_B;
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // LD_HL(wPartyMon1HP);
@@ -330,7 +284,7 @@ uint8_t PlacePartymonHPBar_Conv(uint8_t b){
     // LD_E_A;
     uint16_t de = BigEndianToNative16(wram->wPartyMon[b].maxHP);
     // PREDEF(pComputeHPBarPixels);
-    return ComputeHPBarPixels_Conv(bc, de);
+    return ComputeHPBarPixels(bc, de);
     // RET;
 }
 
@@ -483,7 +437,7 @@ void PlacePartyMonStatus(void){
             // LD_D_H;
             // POP_HL;
             // CALL(aPlaceStatusString);
-            PlaceStatusString_Conv(hl, wram->wPartyMon + b);
+            PlaceStatusString(hl, wram->wPartyMon + b);
         }
 
     // next:
@@ -692,7 +646,7 @@ void PlacePartyMonGender(void){
             // XOR_A_A;
             // LD_addr_A(wMonType);
             // CALL(aGetGender);
-            u8_flag_s res = GetGender_Conv(0);
+            u8_flag_s res = GetGender(0);
             // LD_DE(mPlacePartyMonGender_unknown);
             // IF_C goto got_gender;
             if(res.flag) {

@@ -1176,7 +1176,7 @@ tile_t* Printer_GetMonGender(tile_t* hl){
     // LD_A(TEMPMON);
     // LD_addr_A(wMonType);
     // FARCALL(aGetGender);
-    u8_flag_s res = GetGender_Conv(TEMPMON);
+    u8_flag_s res = GetGender(TEMPMON);
     // LD_A(0x7f);
     // IF_C goto got_gender;
     // LD_A(0xef);

@@ -373,7 +373,7 @@ void GetNickname(const uint8_t* hl, uint8_t a){
     //POP_DE;
 
     // CALLFAR(aCorrectNickErrors);
-    CorrectNickErrors_Conv(wram->wStringBuffer1);
+    CorrectNickErrors(wram->wStringBuffer1);
 
     // POP_BC;
     // POP_HL;
@@ -382,6 +382,6 @@ void GetNickname(const uint8_t* hl, uint8_t a){
 
 uint8_t* GetCurNickname(void){
     CopyBytes(wram->wStringBuffer1, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
-    CorrectNickErrors_Conv(wram->wStringBuffer1);
+    CorrectNickErrors(wram->wStringBuffer1);
     return wram->wStringBuffer1;
 }

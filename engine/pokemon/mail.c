@@ -16,6 +16,8 @@
 #include "../../home/text.h"
 #include "../../data/text/common.h"
 
+static bool InitMail(void);
+
 bool SendMailToPC(uint8_t b){
     // LD_A(MON_ITEM);
     // CALL(aGetPartyParamLocation);
@@ -23,7 +25,7 @@ bool SendMailToPC(uint8_t b){
     item_t itm = wram->wPartyMon[b].mon.item;
     // FARCALL(aItemIsMail);
     // IF_NC goto full;
-    if(ItemIsMail_Conv(itm)) {
+    if(ItemIsMail(itm)) {
         // CALL(aGetMailboxCount);
         uint8_t count = GetMailboxCount();
         // CP_A(MAILBOX_CAPACITY);
@@ -129,7 +131,7 @@ void ReadMailMessage(uint8_t b){
     // LD_D_H;
     // LD_E_L;
     // FARCALL(aReadAnyMail);
-    ReadAnyMail_Conv(GBToRAMAddr(sMailboxes + MAIL_STRUCT_LENGTH * b));
+    ReadAnyMail(GBToRAMAddr(sMailboxes + MAIL_STRUCT_LENGTH * b));
     // RET;
     CloseSRAM();
 }
@@ -186,82 +188,7 @@ uint8_t GetMailboxCount(void){
     return c;
 }
 
-void CheckPokeMail(void){
-    PUSH_BC;
-    PUSH_DE;
-    FARCALL(aSelectMonFromParty);
-    LD_A(POKEMAIL_REFUSED);
-    IF_C goto pop_return;
-
-    LD_A_addr(wCurPartyMon);
-    LD_HL(wPartyMon1Item);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_hl;
-    FARCALL(aItemIsMail);
-    LD_A(POKEMAIL_NO_MAIL);
-    IF_NC goto pop_return;
-
-    LD_A(BANK(sPartyMail));
-    CALL(aOpenSRAM);
-    LD_A_addr(wCurPartyMon);
-    LD_HL(sPartyMail);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    POP_BC;
-
-//  Compare the mail message, byte for byte, with the expected message.
-    LD_A(MAIL_MSG_LENGTH);
-    LD_addr_A(wTempByteValue);
-
-loop:
-    LD_A_de;
-    LD_C_A;
-    LD_A_B;
-    CALL(aGetFarByte);
-    CP_A(0x50);
-    IF_Z goto done;
-    CP_A_C;
-    LD_A(POKEMAIL_WRONG_MAIL);
-    IF_NZ goto close_sram_return;
-    INC_HL;
-    INC_DE;
-    LD_A_addr(wTempByteValue);
-    DEC_A;
-    LD_addr_A(wTempByteValue);
-    IF_NZ goto loop;
-
-
-done:
-    FARCALL(aCheckCurPartyMonFainted);
-    LD_A(POKEMAIL_LAST_MON);
-    IF_C goto close_sram_return;
-    XOR_A_A;  // REMOVE_PARTY
-    LD_addr_A(wPokemonWithdrawDepositParameter);
-    FARCALL(aRemoveMonFromPartyOrBox);
-    LD_A(POKEMAIL_CORRECT);
-
-
-close_sram_return:
-    CALL(aCloseSRAM);
-    goto l_return;
-
-
-pop_return:
-    POP_DE;
-    POP_BC;
-
-
-l_return:
-    LD_addr_A(wScriptVar);
-    RET;
-
-}
-
-void CheckPokeMail_Conv(const char* message){
+void CheckPokeMail(const char* message){
     // PUSH_BC;
     // PUSH_DE;
     // FARCALL(aSelectMonFromParty);
@@ -281,7 +208,7 @@ void CheckPokeMail_Conv(const char* message){
     // FARCALL(aItemIsMail);
     // LD_A(POKEMAIL_NO_MAIL);
     // IF_NC goto pop_return;
-    if(!ItemIsMail_Conv(wram->wPartyMon[wram->wCurPartyMon].mon.item)) {
+    if(!ItemIsMail(wram->wPartyMon[wram->wCurPartyMon].mon.item)) {
         wram->wScriptVar = POKEMAIL_NO_MAIL;
         return;
     }
@@ -339,7 +266,7 @@ void CheckPokeMail_Conv(const char* message){
     // FARCALL(aCheckCurPartyMonFainted);
     // LD_A(POKEMAIL_LAST_MON);
     // IF_C goto close_sram_return;
-    if(CheckCurPartyMonFainted_Conv()) {
+    if(CheckCurPartyMonFainted()) {
         CloseSRAM();
         wram->wScriptVar = POKEMAIL_LAST_MON;
         return;
@@ -347,7 +274,7 @@ void CheckPokeMail_Conv(const char* message){
     // XOR_A_A;  // REMOVE_PARTY
     // LD_addr_A(wPokemonWithdrawDepositParameter);
     // FARCALL(aRemoveMonFromPartyOrBox);
-    RemoveMonFromPartyOrBox_Conv(REMOVE_PARTY);
+    RemoveMonFromPartyOrBox(REMOVE_PARTY);
     // LD_A(POKEMAIL_CORRECT);
 
 // close_sram_return:
@@ -364,57 +291,7 @@ void CheckPokeMail_Conv(const char* message){
     // RET;
 }
 
-void GivePokeMail(void){
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    PUSH_AF;
-    PUSH_BC;
-    LD_HL(wPartyMon1Item);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    POP_BC;
-    LD_hl_B;
-    POP_AF;
-    PUSH_BC;
-    PUSH_AF;
-    LD_HL(sPartyMail);
-    LD_BC(MAIL_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wMonMailMessageBuffer);
-    LD_BC(MAIL_MSG_LENGTH + 1);
-    LD_A(BANK(sPartyMail));
-    CALL(aOpenSRAM);
-    CALL(aCopyBytes);
-    POP_AF;
-    PUSH_AF;
-    LD_HL(wPartyMonOTs);
-    LD_BC(NAME_LENGTH);
-    CALL(aAddNTimes);
-    LD_BC(NAME_LENGTH - 1);
-    CALL(aCopyBytes);
-    POP_AF;
-    LD_HL(wPartyMon1ID);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    LD_de_A;
-    INC_DE;
-    LD_A_addr(wCurPartySpecies);
-    LD_de_A;
-    INC_DE;
-    POP_BC;
-    LD_A_B;
-    LD_de_A;
-    JP(mCloseSRAM);
-
-}
-
-void GivePokeMail_Conv(const struct Pokemail* mail){
+void GivePokeMail(const struct Pokemail* mail){
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // PUSH_AF;
@@ -528,34 +405,7 @@ void DeletePartyMonMail(void){
     CloseSRAM();
 }
 
-void IsAnyMonHoldingMail(void){
-    LD_A_addr(wPartyCount);
-    AND_A_A;
-    IF_Z goto no_mons;
-    LD_E_A;
-    LD_HL(wPartyMon1Item);
-
-loop:
-    LD_D_hl;
-    PUSH_HL;
-    PUSH_DE;
-    FARCALL(aItemIsMail);
-    POP_DE;
-    POP_HL;
-    RET_C ;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    ADD_HL_BC;
-    DEC_E;
-    IF_NZ goto loop;
-
-
-no_mons:
-    AND_A_A;
-    RET;
-
-}
-
-bool IsAnyMonHoldingMail_Conv(void){
+bool IsAnyMonHoldingMail(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // IF_Z goto no_mons;
@@ -575,7 +425,7 @@ bool IsAnyMonHoldingMail_Conv(void){
         // POP_DE;
         // POP_HL;
         // RET_C ;
-        if(ItemIsMail_Conv(hl->mon.item))
+        if(ItemIsMail(hl->mon.item))
             return true;
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // ADD_HL_BC;
@@ -597,7 +447,7 @@ void v_PlayerMailBoxMenu(void){
     };
     // CALL(aInitMail);
     // IF_Z goto nomail;
-    if(!InitMail_Conv()) {
+    if(!InitMail()) {
     // nomail:
         // LD_HL(mv_PlayerMailBoxMenu_EmptyMailboxText);
         // JP(mMenuTextboxBackup);
@@ -611,42 +461,8 @@ void v_PlayerMailBoxMenu(void){
     CloseWindow();
 }
 
-void InitMail(void){
-//  return z if no mail
-    LD_A(BANK(sMailboxCount));
-    CALL(aOpenSRAM);
-    LD_A_addr(sMailboxCount);
-    CALL(aCloseSRAM);
-
-//  initialize wMailboxCount from sMailboxCount
-    LD_HL(wMailboxCount);
-    LD_hli_A;
-    //assert ['wMailboxCount + 1 == wMailboxItems'];
-    AND_A_A;
-    IF_Z goto done;  // if no mail, we're done
-
-//  initialize wMailboxItems with incrementing values starting at 1
-    LD_B_A;
-    LD_A(1);
-
-loop:
-    LD_hli_A;
-    INC_A;
-    DEC_B;
-    IF_NZ goto loop;
-
-
-done:
-    LD_hl(-1);  // terminate
-
-    LD_A_addr(wMailboxCount);
-    AND_A_A;
-    RET;
-
-}
-
 //  return false (z) if no mail
-bool InitMail_Conv(void){
+static bool InitMail(void){
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asMailboxCount));
@@ -965,7 +781,7 @@ void MailboxPC(void){
     while(1) {
     // loop:
         // CALL(aInitMail);
-        InitMail_Conv();
+        InitMail();
         // LD_HL(mMailboxPC_TopMenuHeader);
         // CALL(aCopyMenuHeader);
         CopyMenuHeader(&MailboxPC_TopMenuHeader);

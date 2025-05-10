@@ -6,38 +6,7 @@
 //  return 3 if Italian
 //  return 4 if Spanish
 //  return 0 if none of the above
-void IsMailEuropean(void){
-    LD_C(0x0);
-    LD_HL(sPartyMon1MailNationality - sPartyMon1Mail);
-    ADD_HL_DE;
-    LD_A_hli;
-    CP_A(0x84);
-    RET_NZ ;
-    LD_A_hli;
-    INC_C;
-    CP_A(0x85);
-    RET_Z ;
-    INC_C;
-    CP_A(0x86);
-    RET_Z ;
-    INC_C;
-    CP_A(0x88);
-    RET_Z ;
-    INC_C;
-    CP_A(0x92);
-    RET_Z ;
-    LD_C(0x0);
-    RET;
-
-//  The regular font.
-}
-
-//  return 1 if French
-//  return 2 if German
-//  return 3 if Italian
-//  return 4 if Spanish
-//  return 0 if none of the above
-uint8_t IsMailEuropean_Conv(const struct MailMsg* de){
+uint8_t IsMailEuropean(const struct MailMsg* de){
     // LD_C(0x0);
     // LD_HL(sPartyMon1MailNationality - sPartyMon1Mail);
     // ADD_HL_DE;

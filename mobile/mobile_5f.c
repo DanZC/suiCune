@@ -676,7 +676,7 @@ void Function17d1f1(void){
         // PREDEF(pGetUnownLetter);
         unown_letter_t letter = GetUnownLetter(wram->wPartyMon[wram->wPartyCount - 1].mon.DVs);
         // CALLFAR(aUpdateUnownDex);
-        UpdateUnownDex_Conv(letter);
+        UpdateUnownDex(letter);
         // LD_A_addr(wFirstUnownSeen);
         // AND_A_A;
         // IF_NZ goto asm_17d223;

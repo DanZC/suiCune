@@ -10185,7 +10185,7 @@ void Function11b242(void){
     // XOR_A_A;
     // LD_addr_A(wMonType);
     // FARCALL(aGetGender);
-    u8_flag_s res = GetGender_Conv(0);
+    u8_flag_s res = GetGender(0);
     // hlcoord(1, 4, wTilemap);
     tile_t* hl = coord(6, 2, wram->wTilemap);
     // LD_A_addr(wCurPartySpecies);
@@ -11006,7 +11006,7 @@ void Function11b5c0(void){
     // XOR_A_A;  // REMOVE_PARTY
     // LD_addr_A(wPokemonWithdrawDepositParameter);
     // FARCALL(aRemoveMonFromPartyOrBox);
-    RemoveMonFromPartyOrBox_Conv(REMOVE_PARTY);
+    RemoveMonFromPartyOrBox(REMOVE_PARTY);
     // FARCALL(aFunction170807);
     Function170807();
     // FARCALL(aSaveAfterLinkTrade);
@@ -11744,7 +11744,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
 void Function11ba38(void){
     // FARCALL(aCheckCurPartyMonFainted);
     // RET_C ;
-    if(CheckCurPartyMonFainted_Conv())
+    if(CheckCurPartyMonFainted())
         return;
     // XOR_A_A;
     // LD_addr_A(wScriptVar);

@@ -3,43 +3,7 @@
 #include "../../data/growth_rates.h"
 #include "../../home/pokemon.h"
 
-void CalcLevel(void){
-    LD_A_addr(wTempMonSpecies);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_D(1);
-
-next_level:
-    INC_D;
-    LD_A_D;
-    CP_A(LOW(MAX_LEVEL + 1));
-    IF_Z goto got_level;
-    CALL(aCalcExpAtLevel);
-    PUSH_HL;
-    LD_HL(wTempMonExp + 2);
-    LDH_A_addr(hProduct + 3);
-    LD_C_A;
-    LD_A_hld;
-    SUB_A_C;
-    LDH_A_addr(hProduct + 2);
-    LD_C_A;
-    LD_A_hld;
-    SBC_A_C;
-    LDH_A_addr(hProduct + 1);
-    LD_C_A;
-    LD_A_hl;
-    SBC_A_C;
-    POP_HL;
-    IF_NC goto next_level;
-
-
-got_level:
-    DEC_D;
-    RET;
-
-}
-
-uint8_t CalcLevel_Conv(struct PartyMon* mon){
+uint8_t CalcLevel(struct PartyMon* mon){
     // LD_A_addr(wTempMonSpecies);
     // LD_addr_A(wCurSpecies);
     // CALL(aGetBaseData);
@@ -57,7 +21,7 @@ uint8_t CalcLevel_Conv(struct PartyMon* mon){
         if(d == MAX_LEVEL + 1)
             break;
         // CALL(aCalcExpAtLevel);
-        uint32_t exp = CalcExpAtLevel_Conv(d);
+        uint32_t exp = CalcExpAtLevel(d);
         uint32_t mon_exp = (mon->mon.exp[2] | (mon->mon.exp[1] << 8) | (mon->mon.exp[0] << 16));
         // PUSH_HL;
         // LD_HL(wTempMonExp + 2);
@@ -86,143 +50,7 @@ uint8_t CalcLevel_Conv(struct PartyMon* mon){
     return d;
 }
 
-void CalcExpAtLevel(void){
-//  (a/b)*n**3 + c*n**2 + d*n - e
-    LD_A_addr(wBaseGrowthRate);
-    ADD_A_A;
-    ADD_A_A;
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mGrowthRates);
-    ADD_HL_BC;
-//  Cube the level
-    CALL(aCalcExpAtLevel_LevelSquared);
-    LD_A_D;
-    LDH_addr_A(hMultiplier);
-    CALL(aMultiply);
-
-//  Multiply by a
-    LD_A_hl;
-    AND_A(0xf0);
-    SWAP_A;
-    LDH_addr_A(hMultiplier);
-    CALL(aMultiply);
-//  Divide by b
-    LD_A_hli;
-    AND_A(0xf);
-    LDH_addr_A(hDivisor);
-    LD_B(4);
-    CALL(aDivide);
-//  Push the cubic term to the stack
-    LDH_A_addr(hQuotient + 1);
-    PUSH_AF;
-    LDH_A_addr(hQuotient + 2);
-    PUSH_AF;
-    LDH_A_addr(hQuotient + 3);
-    PUSH_AF;
-//  Square the level and multiply by the lower 7 bits of c
-    CALL(aCalcExpAtLevel_LevelSquared);
-    LD_A_hl;
-    AND_A(0x7f);
-    LDH_addr_A(hMultiplier);
-    CALL(aMultiply);
-//  Push the absolute value of the quadratic term to the stack
-    LDH_A_addr(hProduct + 1);
-    PUSH_AF;
-    LDH_A_addr(hProduct + 2);
-    PUSH_AF;
-    LDH_A_addr(hProduct + 3);
-    PUSH_AF;
-    LD_A_hli;
-    PUSH_AF;
-//  Multiply the level by d
-    XOR_A_A;
-    LDH_addr_A(hMultiplicand + 0);
-    LDH_addr_A(hMultiplicand + 1);
-    LD_A_D;
-    LDH_addr_A(hMultiplicand + 2);
-    LD_A_hli;
-    LDH_addr_A(hMultiplier);
-    CALL(aMultiply);
-//  Subtract e
-    LD_B_hl;
-    LDH_A_addr(hProduct + 3);
-    SUB_A_B;
-    LDH_addr_A(hMultiplicand + 2);
-    LD_B(0);
-    LDH_A_addr(hProduct + 2);
-    SBC_A_B;
-    LDH_addr_A(hMultiplicand + 1);
-    LDH_A_addr(hProduct + 1);
-    SBC_A_B;
-    LDH_addr_A(hMultiplicand);
-//  If bit 7 of c is set, c is negative
-    POP_AF;
-    AND_A(0x80);
-    IF_NZ goto subtract;
-//  Add c*n**2 to (d*n - e)
-    POP_BC;
-    LDH_A_addr(hProduct + 3);
-    ADD_A_B;
-    LDH_addr_A(hMultiplicand + 2);
-    POP_BC;
-    LDH_A_addr(hProduct + 2);
-    ADC_A_B;
-    LDH_addr_A(hMultiplicand + 1);
-    POP_BC;
-    LDH_A_addr(hProduct + 1);
-    ADC_A_B;
-    LDH_addr_A(hMultiplicand);
-    goto done_quadratic;
-
-
-subtract:
-//  Subtract c*n**2 from (d*n - e)
-    POP_BC;
-    LDH_A_addr(hProduct + 3);
-    SUB_A_B;
-    LDH_addr_A(hMultiplicand + 2);
-    POP_BC;
-    LDH_A_addr(hProduct + 2);
-    SBC_A_B;
-    LDH_addr_A(hMultiplicand + 1);
-    POP_BC;
-    LDH_A_addr(hProduct + 1);
-    SBC_A_B;
-    LDH_addr_A(hMultiplicand);
-
-
-done_quadratic:
-//  Add (a/b)*n**3 to (d*n - e +/- c*n**2)
-    POP_BC;
-    LDH_A_addr(hProduct + 3);
-    ADD_A_B;
-    LDH_addr_A(hMultiplicand + 2);
-    POP_BC;
-    LDH_A_addr(hProduct + 2);
-    ADC_A_B;
-    LDH_addr_A(hMultiplicand + 1);
-    POP_BC;
-    LDH_A_addr(hProduct + 1);
-    ADC_A_B;
-    LDH_addr_A(hMultiplicand);
-    RET;
-
-
-LevelSquared:
-    XOR_A_A;
-    LDH_addr_A(hMultiplicand + 0);
-    LDH_addr_A(hMultiplicand + 1);
-    LD_A_D;
-    LDH_addr_A(hMultiplicand + 2);
-    LDH_addr_A(hMultiplier);
-    JP(mMultiply);
-
-// INCLUDE "data/growth_rates.asm"
-
-}
-
-uint32_t CalcExpAtLevel_Conv(uint8_t d){
+uint32_t CalcExpAtLevel(uint8_t d){
 //  (a/b)*n**3 + c*n**2 + d*n - e
     // LD_A_addr(wBaseGrowthRate);
     // ADD_A_A;

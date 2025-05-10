@@ -2733,7 +2733,7 @@ static void Mobile_MoveSelectionScreen_ListMoves(void){
     wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
     // hlcoord(2, 10, wTilemap);
     // PREDEF(pListMoves);
-    ListMoves_Conv(coord(2, 10, wram->wTilemap));
+    ListMoves(coord(2, 10, wram->wTilemap));
     // RET;
 }
 
@@ -7597,7 +7597,7 @@ void Function1023c6(void){
     // LD_addr_A(wPokemonWithdrawDepositParameter);
     wram->wPokemonWithdrawDepositParameter = REMOVE_PARTY;
     // FARCALL(aRemoveMonFromPartyOrBox);
-    RemoveMonFromPartyOrBox_Conv(REMOVE_PARTY);
+    RemoveMonFromPartyOrBox(REMOVE_PARTY);
     // LD_HL(wPartyCount);
     // INC_hl;
     wram->wPartyCount++;
@@ -9500,7 +9500,7 @@ void Function102d48(void){
         // PREDEF(pGetUnownLetter);
         unown_letter_t letter = GetUnownLetter(wram->wPartyMon[wram->wcd4c - 1].mon.DVs);
         // FARCALL(aUpdateUnownDex);
-        UpdateUnownDex_Conv(letter);
+        UpdateUnownDex(letter);
         // LD_A_addr(wFirstUnownSeen);
         // AND_A_A;
         // IF_NZ goto asm_102d98;

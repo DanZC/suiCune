@@ -1,2 +1,1 @@
-void KnowsMove(void);
-bool KnowsMove_Conv(const struct BoxMon* hl, move_t b);
+bool KnowsMove(const struct BoxMon* hl, move_t b);

@@ -234,7 +234,7 @@ void TeachTMHM(void){
 // compatible:
     // CALLFAR(aKnowsMove);
     // IF_C goto nope;
-    if(KnowsMove_Conv(&wram->wPartyMon[wram->wCurPartyMon].mon, wram->wPutativeTMHMMove))
+    if(KnowsMove(&wram->wPartyMon[wram->wCurPartyMon].mon, wram->wPutativeTMHMMove))
         return;
 
     // PREDEF(pLearnMove);
@@ -422,7 +422,7 @@ bool TMHM_PocketLoop_Conv(void){
             // LD_addr_A(wCurSpecies);
             // hlcoord(1, 14, wTilemap);
             // CALL(aPrintMoveDescription);
-            PrintMoveDescription_Conv(coord(1, 14, wram->wTilemap), GetTMHMMove(wram->wCurItem));
+            PrintMoveDescription(coord(1, 14, wram->wTilemap), GetTMHMMove(wram->wCurItem));
             // JP(mTMHM_JoypadLoop);
         }
 

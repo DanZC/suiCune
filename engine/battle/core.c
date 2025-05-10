@@ -3245,13 +3245,13 @@ void UpdateHPBar(void){
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // LD_A(1);
-        AnimateHPBar_Conv(coord(10, 9, wram->wTilemap), 1);
+        AnimateHPBar(coord(10, 9, wram->wTilemap), 1);
         // IF_Z goto ok;
     }
     else {
         // hlcoord(2, 2, wTilemap);
         // XOR_A_A;
-        AnimateHPBar_Conv(coord(2, 2, wram->wTilemap), 0);
+        AnimateHPBar(coord(2, 2, wram->wTilemap), 0);
     }
 // ok:
     // PUSH_BC;
@@ -3920,7 +3920,7 @@ static void WinTrainerBattle(void){
     // IF_NZ goto skip_heal;
     if(wram->wBattleType == BATTLETYPE_CANLOSE){
         // PREDEF(pHealParty);
-        HealParty_Conv();
+        HealParty();
     }
 
 // skip_heal:
@@ -5512,7 +5512,7 @@ static bool CheckWhetherToAskSwitch(void){
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = wram->wCurBattleMon;
     // FARCALL(aCheckCurPartyMonFainted);
-    bool res = CheckCurPartyMonFainted_Conv();
+    bool res = CheckCurPartyMonFainted();
     // POP_BC;
     // LD_A_B;
     // LD_addr_A(wCurPartyMon);
@@ -5639,7 +5639,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
     // LD_addr_A(wMonType);
     wram->wMonType = OTPARTYMON;
     // PREDEF(pCopyMonToTempMon);
-    CopyMonToTempMon_Conv();
+    CopyMonToTempMon();
     // CALL(aGetEnemyMonFrontpic);
     GetEnemyMonFrontpic();
 
@@ -5669,7 +5669,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
     // LD_BC(wTempMonSpecies);
     // FARCALL(aCheckFaintedFrzSlp);
     // IF_C goto skip_cry;
-    if(!CheckFaintedFrzSlp_Conv(&wram->wTempMon)) {
+    if(!CheckFaintedFrzSlp(&wram->wTempMon)) {
         // FARCALL(aCheckBattleScene);
         // IF_C goto cry_no_anim;
         if(CheckBattleScene()) {
@@ -6412,7 +6412,7 @@ void SendOutPlayerMon(void){
     // LD_C_L;
     // FARCALL(aCheckFaintedFrzSlp);
     // IF_C goto statused;
-    if(!CheckFaintedFrzSlp_Conv(bc)) {
+    if(!CheckFaintedFrzSlp(bc)) {
         // LD_A(0xf0);
         // LD_addr_A(wCryTracks);
         wram->wCryTracks = 0xf0;
@@ -6831,7 +6831,7 @@ void HandleHPHealingItem(void){
 // got_hp_bar_coords:
     // LD_addr_A(wWhichHPBar);
     // PREDEF(pAnimateHPBar);
-    AnimateHPBar_Conv(hl, hram->hBattleTurn);
+    AnimateHPBar(hl, hram->hBattleTurn);
     return UseOpponentItem();
 }
 
@@ -7229,7 +7229,7 @@ uint8_t DrawPlayerHUD(void){
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // PREDEF(pDrawPlayerHP);
-    uint8_t e = DrawPlayerHP_Conv(coord(10, 9, wram->wTilemap), 1);
+    uint8_t e = DrawPlayerHP(coord(10, 9, wram->wTilemap), 1);
 
 // Exp bar
     // PUSH_DE;
@@ -7340,7 +7340,7 @@ void PrintPlayerHUD(void){
     // LD_addr_A(wMonType);
     wram->wMonType = TEMPMON;
     // CALLFAR(aGetGender);
-    u8_flag_s temp = GetGender_Conv(TEMPMON);
+    u8_flag_s temp = GetGender(TEMPMON);
     // LD_A(0x7f);
     // IF_C goto got_gender_char;
     if(temp.flag) {
@@ -7365,7 +7365,7 @@ void PrintPlayerHUD(void){
     uint8_t* hl2 = coord(14, 8, wram->wTilemap);
     // LD_DE(wBattleMonStatus);
     // PREDEF(pPlaceNonFaintStatus);
-    bool c_ = PlaceNonFaintStatus2_Conv(hl2, wram->wBattleMon.status[0]);
+    bool c_ = PlaceNonFaintStatus2(hl2, wram->wBattleMon.status[0]);
     // POP_HL;
     // POP_BC;
     // RET_NZ ;
@@ -7464,7 +7464,7 @@ uint8_t DrawEnemyHUD(void){
     // LD_addr_A(wMonType);
     wram->wMonType = TEMPMON;
     // CALLFAR(aGetGender);
-    u8_flag_s gender = GetGender_Conv(TEMPMON);
+    u8_flag_s gender = GetGender(TEMPMON);
     // LD_A(0x7f);
     // IF_C goto got_gender;
     if(gender.flag) 
@@ -7487,7 +7487,7 @@ uint8_t DrawEnemyHUD(void){
     // PUSH_HL;
     // LD_DE(wEnemyMonStatus);
     // PREDEF(pPlaceNonFaintStatus);
-    bool f = PlaceNonFaintStatus2_Conv(coord(6, 1, wram->wTilemap), wram->wEnemyMon.status[0]);
+    bool f = PlaceNonFaintStatus2(coord(6, 1, wram->wTilemap), wram->wEnemyMon.status[0]);
     // POP_HL;
     // POP_BC;
     // IF_NZ goto skip_level;
@@ -8692,7 +8692,7 @@ MoveSelectionScreen:
     // LD_addr_A(wListMovesLineSpacing);
     wram->wListMovesLineSpacing = SCREEN_WIDTH;
     // PREDEF(pListMoves);
-    ListMoves_Conv(hl);
+    ListMoves(hl);
 
     if(wram->wMoveSelectionMenuType != 0x2) {
         // LD_B(5);
@@ -9865,11 +9865,11 @@ Happiness:
     wram->wEnemyMon.level = wram->wCurPartyLevel;
 //  Fill stats
     // LD_DE(wEnemyMonMaxHP);
-    uint16_t* monStats = (uint16_t*)((uint8_t*)&wram->wEnemyMon + offsetof(struct BattleMon, maxHP));
+    // uint16_t* monStats = (uint16_t*)((uint8_t*)&wram->wEnemyMon + offsetof(struct BattleMon, maxHP));
     // LD_B(FALSE);
     // LD_HL(wEnemyMonDVs - (MON_DVS - MON_STAT_EXP + 1));
     // PREDEF(pCalcMonStats);
-    CalcMonStats_Conv(monStats, NULL, wram->wEnemyMon.dvs, FALSE);
+    CalcMonStats_BattleMon(&wram->wEnemyMon);
 
 //  If we're in a trainer battle,
 //  get the rest of the parameters from the party struct
@@ -10012,7 +10012,7 @@ Happiness:
         printf("wSkipMovesBeforeLevelUp = %d\n", wram->wSkipMovesBeforeLevelUp);
     //  Fill moves based on level
         // PREDEF(pFillMoves);
-        FillMoves_Conv(moves, wram->wEnemyMon.pp, wram->wEnemyMon.species, wram->wEnemyMon.level);
+        FillMoves(moves, wram->wEnemyMon.pp, wram->wEnemyMon.species, wram->wEnemyMon.level);
         for(int i = 0; i < NUM_MOVES; ++i) {
             printf("Move %d = %02X\n", i, moves[i]);
         }
@@ -10039,7 +10039,7 @@ Happiness:
         // LD_HL(wEnemyMonMoves);
         // LD_DE(wEnemyMonPP);
         // PREDEF(pFillPP);
-        FillPP_Conv(wram->wEnemyMon.pp, wram->wEnemyMon.moves);
+        FillPP(wram->wEnemyMon.pp, wram->wEnemyMon.moves);
         // goto Finish;
     }
 
@@ -11176,7 +11176,7 @@ void GiveExperiencePoints(void){
         // PUSH_BC;
         // LD_D(MAX_LEVEL);
         // CALLFAR(aCalcExpAtLevel);
-        uint32_t maxExp = CalcExpAtLevel_Conv(MAX_LEVEL);
+        uint32_t maxExp = CalcExpAtLevel(MAX_LEVEL);
         // POP_BC;
         // LD_HL(MON_EXP + 2);
         // ADD_HL_BC;
@@ -11213,9 +11213,9 @@ void GiveExperiencePoints(void){
         // LD_addr_A(wMonType);
         wram->wMonType = PARTYMON;
         // PREDEF(pCopyMonToTempMon);
-        CopyMonToTempMon_Conv();
+        CopyMonToTempMon();
         // CALLFAR(aCalcLevel);
-        uint8_t d = CalcLevel_Conv(&wram->wTempMon);
+        uint8_t d = CalcLevel(&wram->wTempMon);
         // POP_BC;
         // LD_HL(MON_LEVEL);
         // ADD_HL_BC;
@@ -11269,7 +11269,7 @@ void GiveExperiencePoints(void){
             const uint16_t* statxp = ((const struct BoxMon*)bc)->statExp;
             uint16_t* stats = ((const struct PartyMon*)bc)->maxHP;
 #endif
-            CalcMonStats_Conv(stats, statxp, bc->mon.DVs, TRUE);
+            CalcMonStats(stats, statxp, bc->mon.DVs, TRUE);
             // POP_BC;
             // POP_DE;
             // LD_HL(MON_MAXHP + 1);
@@ -11372,7 +11372,7 @@ void GiveExperiencePoints(void){
             // LD_addr_A(wMonType);
             wram->wMonType = PARTYMON;
             // PREDEF(pCopyMonToTempMon);
-            CopyMonToTempMon_Conv();
+            CopyMonToTempMon();
             // hlcoord(9, 0, wTilemap);
             // LD_B(10);
             // LD_C(9);
@@ -11381,7 +11381,7 @@ void GiveExperiencePoints(void){
             // hlcoord(11, 1, wTilemap);
             // LD_BC(4);
             // PREDEF(pPrintTempMonStats);
-            PrintTempMonStats_Conv(coord(11, 1, wram->wTilemap), 4);
+            PrintTempMonStats(coord(11, 1, wram->wTilemap), 4);
             // LD_C(30);
             // CALL(aDelayFrames);
             DelayFrames(30);
@@ -11410,7 +11410,7 @@ void GiveExperiencePoints(void){
                 wram->wCurPartyLevel = ++b;
                 // PUSH_BC;
                 // PREDEF(pLearnLevelMoves);
-                LearnLevelMoves_Conv(bc, wram->wCurPartyLevel, wram->wCurPartySpecies);
+                LearnLevelMoves(bc, wram->wCurPartyLevel, wram->wCurPartySpecies);
                 // POP_BC;
                 // LD_A_B;
                 // CP_A_C;
@@ -11612,7 +11612,7 @@ void AnimateExpBar(uint16_t exp){
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // PREDEF(pCopyMonToTempMon);
-    CopyMonToTempMon_Conv();
+    CopyMonToTempMon();
     // LD_A_addr(wTempMonLevel);
     // LD_B_A;
     // LD_E_A;
@@ -11651,7 +11651,7 @@ void AnimateExpBar(uint16_t exp){
 // NoOverflow:
     // LD_D(MAX_LEVEL);
     // CALLFAR(aCalcExpAtLevel);
-    uint32_t maxExp = CalcExpAtLevel_Conv(MAX_LEVEL);
+    uint32_t maxExp = CalcExpAtLevel(MAX_LEVEL);
     // LDH_A_addr(hProduct + 1);
     // LD_B_A;
     // LDH_A_addr(hProduct + 2);
@@ -11683,7 +11683,7 @@ void AnimateExpBar(uint16_t exp){
 // AlreadyAtMaxExp:
     // CALLFAR(aCalcLevel);
     // LD_A_D;
-    uint8_t d = CalcLevel_Conv(&wram->wTempMon);
+    uint8_t d = CalcLevel(&wram->wTempMon);
     // POP_BC;
     // POP_DE;
     // LD_D_A;
@@ -12052,7 +12052,7 @@ static uint8_t CalcExpBar(uint8_t b, const uint8_t* de){
     // LD_D_B;
     // PUSH_DE;
     // CALLFAR(aCalcExpAtLevel);
-    uint32_t exp = CalcExpAtLevel_Conv(b);
+    uint32_t exp = CalcExpAtLevel(b);
     // POP_DE;
 //  exp at current level gets pushed to the stack
     // LD_HL(hMultiplicand);
@@ -12065,7 +12065,7 @@ static uint8_t CalcExpBar(uint8_t b, const uint8_t* de){
 //  next level
     // INC_D;
     // CALLFAR(aCalcExpAtLevel);
-    uint32_t next = CalcExpAtLevel_Conv(b + 1);
+    uint32_t next = CalcExpAtLevel(b + 1);
 //  back up the next level exp, and subtract the two levels
     // LD_HL(hMultiplicand + 2);
     // LD_A_hl;

@@ -973,7 +973,7 @@ void EnemyPotionFinish(void){
     // CALL(aAIUsedItemSound);
     AIUsedItemSound();
     // PREDEF(pAnimateHPBar);
-    AnimateHPBar_Conv(coord(2, 2, wram->wTilemap), 0x0);
+    AnimateHPBar(coord(2, 2, wram->wTilemap), 0x0);
     // JP(mAIUpdateHUD);
     return AIUpdateHUD();
 }

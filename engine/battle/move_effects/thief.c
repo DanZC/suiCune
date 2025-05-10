@@ -70,7 +70,7 @@ void BattleCommand_Thief(void){
         // LD_D_A;
         // FARCALL(aItemIsMail);
         // RET_C ;
-        if(ItemIsMail_Conv(itm))
+        if(ItemIsMail(itm))
             return;
 
         // LD_A_addr(wEffectFailed);
@@ -140,7 +140,7 @@ void BattleCommand_Thief(void){
         // LD_D_A;
         // FARCALL(aItemIsMail);
         // RET_C ;
-        if(ItemIsMail_Conv(itm))
+        if(ItemIsMail(itm))
             return;
 
         // LD_A_addr(wEffectFailed);

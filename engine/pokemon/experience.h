@@ -1,5 +1,3 @@
-void CalcLevel(void);
-uint8_t CalcLevel_Conv(struct PartyMon* mon);
-void CalcExpAtLevel(void);
-uint32_t CalcExpAtLevel_Conv(uint8_t d);
+uint8_t CalcLevel(struct PartyMon* mon);
+uint32_t CalcExpAtLevel(uint8_t d);
 //#include "data/growth_rates.h"

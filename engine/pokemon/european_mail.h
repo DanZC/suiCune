@@ -1,5 +1,4 @@
-void IsMailEuropean(void);
-uint8_t IsMailEuropean_Conv(const struct MailMsg* de);
+uint8_t IsMailEuropean(const struct MailMsg* de);
 extern const char StandardEnglishFont[];
 extern const char FrenchGermanFont[];
 extern const char SpanishItalianFont[];

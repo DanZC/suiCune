@@ -99,7 +99,7 @@ void BattleCommand_PainSplit(void){
     // LD_addr_A(wWhichHPBar);
     // hlcoord(10, 9, wTilemap);
     // PREDEF(pAnimateHPBar);
-    AnimateHPBar_Conv(coord(10, 9, wram->wTilemap), 0x1);
+    AnimateHPBar(coord(10, 9, wram->wTilemap), 0x1);
     // LD_HL(wEnemyMonHP);
     // LD_A_hli;
     // LD_addr_A(wHPBuffer2 + 1);
@@ -119,7 +119,7 @@ void BattleCommand_PainSplit(void){
     ResetDamage();
     // hlcoord(2, 2, wTilemap);
     // PREDEF(pAnimateHPBar);
-    AnimateHPBar_Conv(coord(2, 2, wram->wTilemap), 0x0);
+    AnimateHPBar(coord(2, 2, wram->wTilemap), 0x0);
     // FARCALL(av_UpdateBattleHUDs);
     v_UpdateBattleHUDs();
 

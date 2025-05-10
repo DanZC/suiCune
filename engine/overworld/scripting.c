@@ -4117,7 +4117,7 @@ void Script_givepokemail_Conv(script_s* s, const struct Pokemail* mail){
     U82CB(wram->wMonMailMessageBuffer, MAIL_MSG_LENGTH, mail->message);
     // POP_BC;
     // FARCALL(aGivePokeMail);
-    GivePokeMail_Conv(mail);
+    GivePokeMail(mail);
     // RET;
 }
 
@@ -4142,7 +4142,7 @@ void Script_checkpokemail_Conv(script_s* s, const char* text){
     // LD_A_addr(wScriptBank);
     // LD_B_A;
     // FARCALL(aCheckPokeMail);
-    CheckPokeMail_Conv(text);
+    CheckPokeMail(text);
     // RET;
 }
 
@@ -4761,7 +4761,7 @@ void Script_givepoke_Conv(script_s* s, species_t species, uint8_t lvl, item_t it
     // CALL(aGetScriptByte);
 // ok:
     // FARCALL(aGivePoke);
-    wram->wScriptVar = GivePoke_Conv(ext? 1: 0, nickname, otName);
+    wram->wScriptVar = GivePoke(ext? 1: 0, nickname, otName);
     // LD_A_B;
     // LD_addr_A(wScriptVar);
     // RET;
@@ -4808,7 +4808,7 @@ void Script_giveegg_Conv(script_s* s, species_t species, uint8_t lvl){
     wram->wCurPartyLevel = lvl;
     // FARCALL(aGiveEgg);
     // RET_NC ;
-    if(GiveEgg_Conv())
+    if(GiveEgg())
         return;
     // LD_A(2);
     // LD_addr_A(wScriptVar);

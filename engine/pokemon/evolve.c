@@ -121,7 +121,7 @@ MasterLoop:
     // LD_addr_A(wMonType);
     wram->wMonType = PARTYMON;
     // PREDEF(pCopyMonToTempMon);
-    CopyMonToTempMon_Conv();
+    CopyMonToTempMon();
     // POP_HL;
 
     while(1) {
@@ -454,7 +454,7 @@ MasterLoop:
         // XOR_A_A;
         // LD_addr_A(wMonType);
         // CALL(aLearnLevelMoves);
-        LearnLevelMoves_Conv(mon, mon->mon.level, wram->wCurSpecies);
+        LearnLevelMoves(mon, mon->mon.level, wram->wCurSpecies);
         // LD_A_addr(wTempSpecies);
         // DEC_A;
         // CALL(aSetSeenAndCaughtMon);
@@ -468,7 +468,7 @@ MasterLoop:
             // LD_HL(wTempMonDVs);
             // PREDEF(pGetUnownLetter);
             // CALLFAR(aUpdateUnownDex);
-            UpdateUnownDex_Conv(GetUnownLetter(wram->wTempMon.mon.DVs));
+            UpdateUnownDex(GetUnownLetter(wram->wTempMon.mon.DVs));
         }
 
     // skip_unown:
@@ -547,6 +547,8 @@ void UpdateSpeciesNameIfNotNicknamed(void){
     CopyBytes(wram->wPartyMonNickname[wram->wCurPartyMon], GetPokemonName(wram->wCurSpecies), MON_NAME_LENGTH);
 }
 
+// Inlined CancelEvolution to reduce stack smashing. 
+// Unused
 void CancelEvolution(void){
     LD_HL(mStoppedEvolvingText);
     CALL(aPrintText);
@@ -589,79 +591,7 @@ const txt_cmd_s EvolvingText[] = {
     text_end
 };
 
-void LearnLevelMoves(void){
-    LD_A_addr(wTempSpecies);
-    LD_addr_A(wCurPartySpecies);
-    DEC_A;
-    LD_B(0);
-    LD_C_A;
-    LD_HL(mEvosAttacksPointers);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-
-
-skip_evos:
-    LD_A_hli;
-    AND_A_A;
-    IF_NZ goto skip_evos;
-
-
-find_move:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto done;
-
-    LD_B_A;
-    LD_A_addr(wCurPartyLevel);
-    CP_A_B;
-    LD_A_hli;
-    IF_NZ goto find_move;
-
-    PUSH_HL;
-    LD_D_A;
-    LD_HL(wPartyMon1Moves);
-    LD_A_addr(wCurPartyMon);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-
-    LD_B(NUM_MOVES);
-
-check_move:
-    LD_A_hli;
-    CP_A_D;
-    IF_Z goto has_move;
-    DEC_B;
-    IF_NZ goto check_move;
-    goto learn;
-
-has_move:
-
-    POP_HL;
-    goto find_move;
-
-
-learn:
-    LD_A_D;
-    LD_addr_A(wPutativeTMHMMove);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetMoveName);
-    CALL(aCopyName1);
-    PREDEF(pLearnMove);
-    POP_HL;
-    goto find_move;
-
-
-done:
-    LD_A_addr(wCurPartySpecies);
-    LD_addr_A(wTempSpecies);
-    RET;
-
-}
-
-void LearnLevelMoves_Conv(struct PartyMon* mon, uint8_t level, species_t species){
+void LearnLevelMoves(struct PartyMon* mon, uint8_t level, species_t species){
     // LD_A_addr(wTempSpecies);
     // LD_addr_A(wCurPartySpecies);
     // DEC_A;
@@ -749,130 +679,8 @@ void LearnLevelMoves_Conv(struct PartyMon* mon, uint8_t level, species_t species
     // RET;
 }
 
-void FillMoves(void){
 //  Fill in moves at de for wCurPartySpecies at wCurPartyLevel
-
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LD_HL(mEvosAttacksPointers);
-    LD_B(0);
-    LD_A_addr(wCurPartySpecies);
-    DEC_A;
-    ADD_A_A;
-    RL_B;
-    LD_C_A;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-
-GoToAttacks:
-    LD_A_hli;
-    AND_A_A;
-    IF_NZ goto GoToAttacks;
-    goto GetLevel;
-
-
-NextMove:
-    POP_DE;
-
-GetMove:
-    INC_HL;
-
-GetLevel:
-    LD_A_hli;
-    AND_A_A;
-    JP_Z (mFillMoves_done);
-    LD_B_A;
-    LD_A_addr(wCurPartyLevel);
-    CP_A_B;
-    JP_C (mFillMoves_done);
-    LD_A_addr(wSkipMovesBeforeLevelUp);
-    AND_A_A;
-    IF_Z goto CheckMove;
-    LD_A_addr(wPrevPartyLevel);
-    CP_A_B;
-    IF_NC goto GetMove;
-
-
-CheckMove:
-    PUSH_DE;
-    LD_C(NUM_MOVES);
-
-CheckRepeat:
-    LD_A_de;
-    INC_DE;
-    CP_A_hl;
-    IF_Z goto NextMove;
-    DEC_C;
-    IF_NZ goto CheckRepeat;
-    POP_DE;
-    PUSH_DE;
-    LD_C(NUM_MOVES);
-
-CheckSlot:
-    LD_A_de;
-    AND_A_A;
-    IF_Z goto LearnMove;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto CheckSlot;
-    POP_DE;
-    PUSH_DE;
-    PUSH_HL;
-    LD_H_D;
-    LD_L_E;
-    CALL(aShiftMoves);
-    LD_A_addr(wEvolutionOldSpecies);
-    AND_A_A;
-    IF_Z goto ShiftedMove;
-    PUSH_DE;
-    LD_BC(wPartyMon1PP - (wPartyMon1Moves + NUM_MOVES - 1));
-    ADD_HL_BC;
-    LD_D_H;
-    LD_E_L;
-    CALL(aShiftMoves);
-    POP_DE;
-
-
-ShiftedMove:
-    POP_HL;
-
-
-LearnMove:
-    LD_A_hl;
-    LD_de_A;
-    LD_A_addr(wEvolutionOldSpecies);
-    AND_A_A;
-    IF_Z goto NextMove;
-    PUSH_HL;
-    LD_A_hl;
-    LD_HL(MON_PP - MON_MOVES);
-    ADD_HL_DE;
-    PUSH_HL;
-    DEC_A;
-    LD_HL(mMoves + MOVE_PP);
-    LD_BC(MOVE_LENGTH);
-    CALL(aAddNTimes);
-    LD_A(BANK(aMoves));
-    CALL(aGetFarByte);
-    POP_HL;
-    LD_hl_A;
-    POP_HL;
-    goto NextMove;
-
-
-done:
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
-}
-
-//  Fill in moves at de for wCurPartySpecies at wCurPartyLevel
-void FillMoves_Conv(move_t* de, uint8_t* pp, species_t species, uint8_t level){
+void FillMoves(move_t* de, uint8_t* pp, species_t species, uint8_t level){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
@@ -953,7 +761,7 @@ void FillMoves_Conv(move_t* de, uint8_t* pp, species_t species, uint8_t level){
         // LD_H_D;
         // LD_L_E;
         // CALL(aShiftMoves);
-        ShiftMoves_Conv(de);
+        ShiftMoves(de);
         c = NUM_MOVES - 1;
         // LD_A_addr(wEvolutionOldSpecies);
         // AND_A_A;
@@ -1023,20 +831,7 @@ void FillMoves_Conv(move_t* de, uint8_t* pp, species_t species, uint8_t level){
     // RET;
 }
 
-void ShiftMoves(void){
-    LD_C(NUM_MOVES - 1);
-
-loop:
-    INC_DE;
-    LD_A_de;
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void ShiftMoves_Conv(move_t* hl){
+void ShiftMoves(move_t* hl){
     // LD_C(NUM_MOVES - 1);
 
     for(uint8_t c = 0; c < NUM_MOVES - 1; ++c) {
@@ -1060,67 +855,10 @@ uint8_t EvoFlagAction(uint8_t* hl, uint8_t c, uint8_t b){
     return SmallFarFlagAction(hl, c, b);
 }
 
-void GetPreEvolution(void){
-//  Find the first mon to evolve into wCurPartySpecies.
-
-//  Return carry and the new species in wCurPartySpecies
-//  if a pre-evolution is found.
-
-    LD_C(0);
-
-loop:
-//   //  For each Pokemon...
-    LD_HL(mEvosAttacksPointers);
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-
-loop2:
-//   //  For each evolution...
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto no_evolve;  // If we jump, this Pokemon does not evolve into wCurPartySpecies.
-    CP_A(EVOLVE_STAT);  // This evolution type has the extra parameter of stat comparison.
-    IF_NZ goto not_tyrogue;
-    INC_HL;
-
-
-not_tyrogue:
-    INC_HL;
-    LD_A_addr(wCurPartySpecies);
-    CP_A_hl;
-    IF_Z goto found_preevo;
-    INC_HL;
-    LD_A_hl;
-    AND_A_A;
-    IF_NZ goto loop2;
-
-
-no_evolve:
-    INC_C;
-    LD_A_C;
-    CP_A(NUM_POKEMON);
-    IF_C goto loop;
-    AND_A_A;
-    RET;
-
-
-found_preevo:
-    INC_C;
-    LD_A_C;
-    LD_addr_A(wCurPartySpecies);
-    SCF;
-    RET;
-
-}
-
 //  Find the first mon to evolve into wCurPartySpecies.
 //  Return the new species if a pre-evolution is found.
 //  species otherwise.
-species_t GetPreEvolution_Conv(species_t species){
+species_t GetPreEvolution(species_t species){
     // LD_C(0);
     species_t c = 0;
 

@@ -34,191 +34,10 @@
 #include "../../data/moves/tmhm_moves.h"
 #include "../../data/text/common.h"
 
-void CheckBreedmonCompatibility(void){
-    CALL(aCheckBreedmonCompatibility_CheckBreedingGroupCompatibility);
-    LD_C(0x0);
-    JP_NC (mCheckBreedmonCompatibility_done);
-    LD_A_addr(wBreedMon1Species);
-    LD_addr_A(wCurPartySpecies);
-    LD_A_addr(wBreedMon1DVs);
-    LD_addr_A(wTempMonDVs);
-    LD_A_addr(wBreedMon1DVs + 1);
-    LD_addr_A(wTempMonDVs + 1);
-    LD_A(TEMPMON);
-    LD_addr_A(wMonType);
-    PREDEF(pGetGender);
-    IF_C goto genderless;
-    LD_B(0x1);
-    IF_NZ goto breedmon2;
-    INC_B;
-
-
-breedmon2:
-    PUSH_BC;
-    LD_A_addr(wBreedMon2Species);
-    LD_addr_A(wCurPartySpecies);
-    LD_A_addr(wBreedMon2DVs);
-    LD_addr_A(wTempMonDVs);
-    LD_A_addr(wBreedMon2DVs + 1);
-    LD_addr_A(wTempMonDVs + 1);
-    LD_A(TEMPMON);
-    LD_addr_A(wMonType);
-    PREDEF(pGetGender);
-    POP_BC;
-    IF_C goto genderless;
-    LD_A(0x1);
-    IF_NZ goto compare_gender;
-    INC_A;
-
-
-compare_gender:
-    CP_A_B;
-    IF_NZ goto compute;
-
-
-genderless:
-    LD_C(0x0);
-    LD_A_addr(wBreedMon1Species);
-    CP_A(DITTO);
-    IF_Z goto ditto1;
-    LD_A_addr(wBreedMon2Species);
-    CP_A(DITTO);
-    IF_NZ goto done;
-    goto compute;
-
-
-ditto1:
-    LD_A_addr(wBreedMon2Species);
-    CP_A(DITTO);
-    IF_Z goto done;
-
-
-compute:
-    CALL(aCheckBreedmonCompatibility_CheckDVs);
-    LD_C(255);
-    JP_Z (mCheckBreedmonCompatibility_done);
-    LD_A_addr(wBreedMon2Species);
-    LD_B_A;
-    LD_A_addr(wBreedMon1Species);
-    CP_A_B;
-    LD_C(254);
-    IF_Z goto compare_ids;
-    LD_C(128);
-
-compare_ids:
-// Speed up
-    LD_A_addr(wBreedMon1ID);
-    LD_B_A;
-    LD_A_addr(wBreedMon2ID);
-    CP_A_B;
-    IF_NZ goto done;
-    LD_A_addr(wBreedMon1ID + 1);
-    LD_B_A;
-    LD_A_addr(wBreedMon2ID + 1);
-    CP_A_B;
-    IF_NZ goto done;
-    LD_A_C;
-    SUB_A(77);
-    LD_C_A;
-
-
-done:
-    LD_A_C;
-    LD_addr_A(wBreedingCompatibility);
-    RET;
-
-
-CheckDVs:
-//  If Defense DVs match and the lower 3 bits of the Special DVs match,
-//  avoid breeding
-    LD_A_addr(wBreedMon1DVs);
-    AND_A(0b1111);
-    LD_B_A;
-    LD_A_addr(wBreedMon2DVs);
-    AND_A(0b1111);
-    CP_A_B;
-    RET_NZ ;
-    LD_A_addr(wBreedMon1DVs + 1);
-    AND_A(0b111);
-    LD_B_A;
-    LD_A_addr(wBreedMon2DVs + 1);
-    AND_A(0b111);
-    CP_A_B;
-    RET;
-
-
-CheckBreedingGroupCompatibility:
-//  If either mon is in the No Eggs group,
-//  they are not compatible.
-    LD_A_addr(wBreedMon2Species);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_A_addr(wBaseEggGroups);
-    CP_A(EGG_NONE * 0x11);
-    IF_Z goto Incompatible;
-
-    LD_A_addr(wBreedMon1Species);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_A_addr(wBaseEggGroups);
-    CP_A(EGG_NONE * 0x11);
-    IF_Z goto Incompatible;
-
-//  Ditto is automatically compatible with everything.
-//  If not Ditto, load the breeding groups into b/c and d/e.
-    LD_A_addr(wBreedMon2Species);
-    CP_A(DITTO);
-    IF_Z goto Compatible;
-    LD_addr_A(wCurSpecies);
-    CALL(aGetBaseData);
-    LD_A_addr(wBaseEggGroups);
-    PUSH_AF;
-    AND_A(0xf);
-    LD_B_A;
-    POP_AF;
-    AND_A(0xf0);
-    SWAP_A;
-    LD_C_A;
-
-    LD_A_addr(wBreedMon1Species);
-    CP_A(DITTO);
-    IF_Z goto Compatible;
-    LD_addr_A(wCurSpecies);
-    PUSH_BC;
-    CALL(aGetBaseData);
-    POP_BC;
-    LD_A_addr(wBaseEggGroups);
-    PUSH_AF;
-    AND_A(0xf);
-    LD_D_A;
-    POP_AF;
-    AND_A(0xf0);
-    SWAP_A;
-    LD_E_A;
-
-    LD_A_D;
-    CP_A_B;
-    IF_Z goto Compatible;
-    CP_A_C;
-    IF_Z goto Compatible;
-
-    LD_A_E;
-    CP_A_B;
-    IF_Z goto Compatible;
-    CP_A_C;
-    IF_Z goto Compatible;
-
-
-Incompatible:
-    AND_A_A;
-    RET;
-
-
-Compatible:
-    SCF;
-    RET;
-
-}
+static bool GetEggMove(const move_t* de);
+static void LoadEggMove(const move_t* de2);
+static const move_t* GetHeritableMoves(void);
+static move_t* GetBreedmonMovePointer(void);
 
 static bool CheckBreedmonCompatibility_CheckBreedingGroupCompatibility(void){
 //  If either mon is in the No Eggs group,
@@ -337,7 +156,7 @@ static bool CheckBreedmonCompatibility_CheckDVs(void){
     return ((wram->wBreedMon1.DVs >> 8) & 0b111) != ((wram->wBreedMon2.DVs >> 8) & 0b111);
 }
 
-uint8_t CheckBreedmonCompatibility_Conv(void){
+uint8_t CheckBreedmonCompatibility(void){
     // CALL(aCheckBreedmonCompatibility_CheckBreedingGroupCompatibility);
     bool compatible = CheckBreedmonCompatibility_CheckBreedingGroupCompatibility();
     // LD_C(0x0);
@@ -357,7 +176,7 @@ uint8_t CheckBreedmonCompatibility_Conv(void){
     // LD_A(TEMPMON);
     // LD_addr_A(wMonType);
     // PREDEF(pGetGender);
-    u8_flag_s gender = GetGender_Conv(TEMPMON);
+    u8_flag_s gender = GetGender(TEMPMON);
     // IF_C goto genderless;
     if(gender.flag)
         goto genderless;
@@ -379,7 +198,7 @@ uint8_t CheckBreedmonCompatibility_Conv(void){
     // LD_A(TEMPMON);
     // LD_addr_A(wMonType);
     // PREDEF(pGetGender);
-    u8_flag_s gender2 = GetGender_Conv(TEMPMON);
+    u8_flag_s gender2 = GetGender(TEMPMON);
     // POP_BC;
     // IF_C goto genderless;
     if(gender2.flag)
@@ -592,7 +411,7 @@ void HatchEggs(void){
             // PUSH_DE;
 
             // FARCALL(aSetEggMonCaughtData);
-            SetEggMonCaughtData_Conv(mon);
+            SetEggMonCaughtData(mon);
             // FARCALL(aStubbedTrainerRankings_EggsHatched);
             StubbedTrainerRankings_EggsHatched();
             // LD_A_addr(wCurPartyMon);
@@ -757,46 +576,10 @@ void HatchEggs(void){
 }
 
 void InitEggMoves(void){
-    CALL(aGetHeritableMoves);
-    LD_D_H;
-    LD_E_L;
-    LD_B(NUM_MOVES);
-
-loop:
-    LD_A_de;
-    AND_A_A;
-    IF_Z goto done;
-    LD_HL(wEggMonMoves);
-    LD_C(NUM_MOVES);
-
-next:
-    LD_A_de;
-    CP_A_hl;
-    IF_Z goto skip;
-    INC_HL;
-    DEC_C;
-    IF_NZ goto next;
-    CALL(aGetEggMove);
-    IF_NC goto skip;
-    CALL(aLoadEggMove);
-
-
-skip:
-    INC_DE;
-    DEC_B;
-    IF_NZ goto loop;
-
-
-done:
-    RET;
-
-}
-
-void InitEggMoves_Conv(void){
     // CALL(aGetHeritableMoves);
     // LD_D_H;
     // LD_E_L;
-    const move_t* de = GetHeritableMoves_Conv();
+    const move_t* de = GetHeritableMoves();
     // LD_B(NUM_MOVES);
     uint8_t b = NUM_MOVES;
 
@@ -825,9 +608,9 @@ void InitEggMoves_Conv(void){
         } while(hl++, --c != 0);
         // CALL(aGetEggMove);
         // IF_NC goto skip;
-        if(GetEggMove_Conv(de)) {
+        if(GetEggMove(de)) {
             // CALL(aLoadEggMove);
-            LoadEggMove_Conv(de);
+            LoadEggMove(de);
         }
 
     skip:;
@@ -841,113 +624,7 @@ void InitEggMoves_Conv(void){
     // RET;
 }
 
-void GetEggMove(void){
-    PUSH_BC;
-    LD_A_addr(wEggMonSpecies);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mEggMovePointers);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A(BANK(aEggMovePointers));
-    CALL(aGetFarWord);
-
-loop:
-    LD_A(BANK(aBulbasaurEggMoves)); // LD_A(BANK("Egg Moves"));
-    CALL(aGetFarByte);
-    CP_A(-1);
-    IF_Z goto reached_end;
-    LD_B_A;
-    LD_A_de;
-    CP_A_B;
-    IF_Z goto done_carry;
-    INC_HL;
-    goto loop;
-
-
-reached_end:
-    CALL(aGetBreedmonMovePointer);
-    LD_B(NUM_MOVES);
-
-loop2:
-    LD_A_de;
-    CP_A_hl;
-    IF_Z goto found_eggmove;
-    INC_HL;
-    DEC_B;
-    IF_Z goto inherit_tmhm;
-    goto loop2;
-
-
-found_eggmove:
-    LD_A_addr(wEggMonSpecies);
-    DEC_A;
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mEvosAttacksPointers);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A(BANK(aEvosAttacksPointers));
-    CALL(aGetFarWord);
-
-loop3:
-    LD_A(BANK(aBulbasaurEvosAttacks)); // LD_A(BANK("Evolutions and Attacks"));
-    CALL(aGetFarByte);
-    INC_HL;
-    AND_A_A;
-    IF_NZ goto loop3;
-
-loop4:
-    LD_A(BANK(aBulbasaurEvosAttacks)); // LD_A(BANK("Evolutions and Attacks"));
-    CALL(aGetFarByte);
-    AND_A_A;
-    IF_Z goto inherit_tmhm;
-    INC_HL;
-    LD_A(BANK(aBulbasaurEvosAttacks)); // LD_A(BANK("Evolutions and Attacks"));
-    CALL(aGetFarByte);
-    LD_B_A;
-    LD_A_de;
-    CP_A_B;
-    IF_Z goto done_carry;
-    INC_HL;
-    goto loop4;
-
-
-inherit_tmhm:
-    LD_HL(mTMHMMoves);
-
-loop5:
-    LD_A(BANK(aTMHMMoves));
-    CALL(aGetFarByte);
-    INC_HL;
-    AND_A_A;
-    IF_Z goto done;
-    LD_B_A;
-    LD_A_de;
-    CP_A_B;
-    IF_NZ goto loop5;
-    LD_addr_A(wPutativeTMHMMove);
-    PREDEF(pCanLearnTMHMMove);
-    LD_A_C;
-    AND_A_A;
-    IF_Z goto done;
-
-
-done_carry:
-    POP_BC;
-    SCF;
-    RET;
-
-
-done:
-    POP_BC;
-    AND_A_A;
-    RET;
-
-}
-
-bool GetEggMove_Conv(const move_t* de){
+static bool GetEggMove(const move_t* de){
     // PUSH_BC;
     // LD_A_addr(wEggMonSpecies);
     // DEC_A;
@@ -980,7 +657,7 @@ bool GetEggMove_Conv(const move_t* de){
 
 // reached_end:
     // CALL(aGetBreedmonMovePointer);
-    move_t* hl = GetBreedmonMovePointer_Conv();
+    move_t* hl = GetBreedmonMovePointer();
     // LD_B(NUM_MOVES);
     uint8_t b = NUM_MOVES;
 
@@ -1082,45 +759,7 @@ inherit_tmhm:
     // RET;
 }
 
-void LoadEggMove(void){
-    PUSH_DE;
-    PUSH_BC;
-    LD_A_de;
-    LD_B_A;
-    LD_HL(wEggMonMoves);
-    LD_C(NUM_MOVES);
-
-loop:
-    LD_A_hli;
-    AND_A_A;
-    IF_Z goto done;
-    DEC_C;
-    IF_NZ goto loop;
-    LD_DE(wEggMonMoves);
-    LD_HL(wEggMonMoves + 1);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hli;
-    LD_de_A;
-
-
-done:
-    DEC_HL;
-    LD_hl_B;
-    LD_HL(wEggMonMoves);
-    LD_DE(wEggMonPP);
-    PREDEF(pFillPP);
-    POP_BC;
-    POP_DE;
-    RET;
-
-}
-
-void LoadEggMove_Conv(const move_t* de2){
+static void LoadEggMove(const move_t* de2){
     // PUSH_DE;
     // PUSH_BC;
     // LD_A_de;
@@ -1165,76 +804,13 @@ done:
     // LD_HL(wEggMonMoves);
     // LD_DE(wEggMonPP);
     // PREDEF(pFillPP);
-    FillPP_Conv(wram->wEggMon.PP, wram->wEggMon.moves);
+    FillPP(wram->wEggMon.PP, wram->wEggMon.moves);
     // POP_BC;
     // POP_DE;
     // RET;
 }
 
-void GetHeritableMoves(void){
-    LD_HL(wBreedMon2Moves);
-    LD_A_addr(wBreedMon1Species);
-    CP_A(DITTO);
-    IF_Z goto ditto1;
-    LD_A_addr(wBreedMon2Species);
-    CP_A(DITTO);
-    IF_Z goto ditto2;
-    LD_A_addr(wBreedMotherOrNonDitto);
-    AND_A_A;
-    RET_Z ;
-    LD_HL(wBreedMon1Moves);
-    RET;
-
-
-ditto1:
-    LD_A_addr(wCurPartySpecies);
-    PUSH_AF;
-    LD_A_addr(wBreedMon2Species);
-    LD_addr_A(wCurPartySpecies);
-    LD_A_addr(wBreedMon2DVs);
-    LD_addr_A(wTempMonDVs);
-    LD_A_addr(wBreedMon2DVs + 1);
-    LD_addr_A(wTempMonDVs + 1);
-    LD_A(TEMPMON);
-    LD_addr_A(wMonType);
-    PREDEF(pGetGender);
-    IF_C goto inherit_mon2_moves;
-    IF_NZ goto inherit_mon2_moves;
-    goto inherit_mon1_moves;
-
-
-ditto2:
-    LD_A_addr(wCurPartySpecies);
-    PUSH_AF;
-    LD_A_addr(wBreedMon1Species);
-    LD_addr_A(wCurPartySpecies);
-    LD_A_addr(wBreedMon1DVs);
-    LD_addr_A(wTempMonDVs);
-    LD_A_addr(wBreedMon1DVs + 1);
-    LD_addr_A(wTempMonDVs + 1);
-    LD_A(TEMPMON);
-    LD_addr_A(wMonType);
-    PREDEF(pGetGender);
-    IF_C goto inherit_mon1_moves;
-    IF_NZ goto inherit_mon1_moves;
-
-
-inherit_mon2_moves:
-    LD_HL(wBreedMon2Moves);
-    POP_AF;
-    LD_addr_A(wCurPartySpecies);
-    RET;
-
-
-inherit_mon1_moves:
-    LD_HL(wBreedMon1Moves);
-    POP_AF;
-    LD_addr_A(wCurPartySpecies);
-    RET;
-
-}
-
-const move_t* GetHeritableMoves_Conv(void){
+static const move_t* GetHeritableMoves(void){
     // LD_HL(wBreedMon2Moves);
     move_t* hl = wram->wBreedMon2.moves;
     // LD_A_addr(wBreedMon1Species);
@@ -1256,7 +832,7 @@ const move_t* GetHeritableMoves_Conv(void){
         // LD_A(TEMPMON);
         // LD_addr_A(wMonType);
         // PREDEF(pGetGender);
-        u8_flag_s gender = GetGender_Conv(TEMPMON);
+        u8_flag_s gender = GetGender(TEMPMON);
         // IF_C goto inherit_mon2_moves;
         // IF_NZ goto inherit_mon2_moves;
         if(gender.flag || gender.a != 0) {
@@ -1294,7 +870,7 @@ const move_t* GetHeritableMoves_Conv(void){
         // LD_A(TEMPMON);
         // LD_addr_A(wMonType);
         // PREDEF(pGetGender);
-        u8_flag_s gender = GetGender_Conv(TEMPMON);
+        u8_flag_s gender = GetGender(TEMPMON);
         // IF_C goto inherit_mon1_moves;
         // IF_NZ goto inherit_mon1_moves;
         if(gender.flag || gender.a != 0) {
@@ -1324,26 +900,7 @@ const move_t* GetHeritableMoves_Conv(void){
     return wram->wBreedMon1.moves;
 }
 
-void GetBreedmonMovePointer(void){
-    LD_HL(wBreedMon1Moves);
-    LD_A_addr(wBreedMon1Species);
-    CP_A(DITTO);
-    RET_Z ;
-    LD_A_addr(wBreedMon2Species);
-    CP_A(DITTO);
-    IF_Z goto ditto;
-    LD_A_addr(wBreedMotherOrNonDitto);
-    AND_A_A;
-    RET_Z ;
-
-
-ditto:
-    LD_HL(wBreedMon2Moves);
-    RET;
-
-}
-
-move_t* GetBreedmonMovePointer_Conv(void){
+static move_t* GetBreedmonMovePointer(void){
     // LD_HL(wBreedMon1Moves);
     // LD_A_addr(wBreedMon1Species);
     // CP_A(DITTO);
@@ -1853,7 +1410,7 @@ static const txt_cmd_s BreedShowsInterestText[] = {
     // CALL(aCopyBytes);
     CopyBytes(wram->wStringBuffer1, nickname, NAME_LENGTH);
     // CALL(aCheckBreedmonCompatibility);
-    uint8_t compat = CheckBreedmonCompatibility_Conv();
+    uint8_t compat = CheckBreedmonCompatibility();
     // POP_BC;
     // LD_A_addr(wBreedingCompatibility);
     // LD_HL(mDayCareMonCompatibilityText_BreedBrimmingWithEnergyText);

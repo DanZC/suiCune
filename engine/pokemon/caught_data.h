@@ -1,14 +1,10 @@
 void CheckPartyFullAfterContest(void);
 bool GiveANickname_YesNo(void);
 extern const txt_cmd_s CaughtAskNicknameText[];
-void SetCaughtData(void);
-void SetCaughtData_Conv(uint8_t level);
-void SetBoxmonOrEggmonCaughtData(void);
-void SetBoxmonOrEggmonCaughtData_Conv(struct BoxMon* boxmon, uint8_t level);
+void SetCaughtData(uint8_t level);
+// void SetBoxmonOrEggmonCaughtData(struct BoxMon* boxmon, uint8_t level);
 void SetBoxMonCaughtData(uint8_t level);
 void SetGiftBoxMonCaughtData(uint8_t b);
 void SetGiftPartyMonCaughtData(uint8_t b);
-void SetGiftMonCaughtData(void);
-void SetGiftMonCaughtData_Conv(struct BoxMon* hl, uint8_t b);
-void SetEggMonCaughtData(void);
-void SetEggMonCaughtData_Conv(uint8_t a);
+// void SetGiftMonCaughtData(struct BoxMon* hl, uint8_t b);
+void SetEggMonCaughtData(uint8_t a);
