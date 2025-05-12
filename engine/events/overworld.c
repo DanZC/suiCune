@@ -105,6 +105,7 @@ void GetPartyNickname(void){
     // CALL(aCopyName1);
     CopyName1(wram->wPartyMonNickname[wram->wCurPartyMon]);
 //  copy text from wStringBuffer2 to wStringBuffer3
+    wram->wStringBuffer2[STRING_BUFFER_LENGTH - 1] = 0x50; // Just in case string doesn't terminate
     // LD_DE(wStringBuffer2);
     // LD_HL(wStringBuffer3);
     // CALL(aCopyName2);
@@ -1219,11 +1220,11 @@ static uint8_t EscapeRopeOrDig_DoDig(void){
     wram->wNextMapGroup = wram->wDigMapGroup;
     wram->wNextMapNumber = wram->wDigMapNumber;
     // CALL(aGetPartyNickname);
-    GetPartyNickname();
     // LD_A_addr(wEscapeRopeOrDigType);
     // CP_A(0x2);
     // IF_NZ goto escaperope;
     if(wram->wEscapeRopeOrDigType == ESCAPE_TYPE_DIG) {
+        GetPartyNickname();
         // LD_HL(mEscapeRopeOrDig_UsedDigScript);
         // CALL(aQueueScript);
         QueueScript(EscapeRopeOrDig_UsedDigScript);
