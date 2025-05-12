@@ -39,7 +39,7 @@ void Load2DMenuData(const uint8_t* de) {
 
 uint8_t StaticMenuJoypad(void) {
     // CALLFAR(av_StaticMenuJoypad);
-    v_StaticMenuJoypad_Conv();
+    v_StaticMenuJoypad();
     // CALL(aGetMenuJoypad);
     // RET;
     return GetMenuJoypad();
@@ -47,7 +47,7 @@ uint8_t StaticMenuJoypad(void) {
 
 uint8_t ScrollingMenuJoypad(void) {
     // CALLFAR(av_ScrollingMenuJoypad);
-    v_ScrollingMenuJoypad_Conv();
+    v_ScrollingMenuJoypad();
     // CALL(aGetMenuJoypad);
     // RET;
     return GetMenuJoypad();
@@ -81,7 +81,7 @@ uint8_t* HideCursor(void){
 void PushWindow(void) {
     // CALLFAR(av_PushWindow);
     // RET;
-    return v_PushWindow_Conv();
+    return v_PushWindow();
 }
 
 void ExitMenu(void) {
@@ -95,7 +95,7 @@ void ExitMenu(void) {
 void InitVerticalMenuCursor(const struct MenuData* data) {
     // CALLFAR(av_InitVerticalMenuCursor);
     // RET;
-    return v_InitVerticalMenuCursor_Conv(data);
+    return v_InitVerticalMenuCursor(data);
 }
 
 void CloseWindow(void) {
@@ -161,29 +161,7 @@ void RestoreTileBackup(const uint8_t* de) {
     // RET;
 }
 
-void PopWindow(void) {
-    LD_B(wMenuHeaderEnd - wMenuHeader);
-    LD_DE(wMenuHeader);
-
-loop:
-    LD_A_hld;
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-}
-
-void PopWindow_Conv(uint16_t hl) {
-    uint8_t i = wMenuHeaderEnd - wMenuHeader;
-    uint16_t de = wMenuHeader;
-
-    do {
-        gb_write(de++, gb_read(hl--));
-    } while(--i != 0);
-}
-
-void PopWindow_Conv2(struct MenuHeader* hl) {
+void PopWindow(struct MenuHeader* hl) {
     CopyMenuHeader(hl);
 }
 
@@ -198,25 +176,6 @@ void GetMenuBoxDims(uint8_t* w, uint8_t* h) {
 }
 
 void CopyMenuData(void) {
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    PUSH_AF;
-    LD_HL(wMenuDataPointer);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_DE(wMenuData);
-    LD_BC(wMenuDataEnd - wMenuData);
-    CALL(aCopyBytes);
-    POP_AF;
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-}
-
-void CopyMenuData_Conv(void) {
     // LD_HL(wMenuDataPointer);
 
     // LD_A_hli;
@@ -238,19 +197,16 @@ const struct MenuData* GetMenuData(void) {
     return (const struct MenuData*)gMenuDataPointer;
 }
 
-void GetWindowStackTop(void) {
-    LD_HL(wWindowStackPointer);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    INC_HL;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    RET;
-}
-
-uint16_t GetWindowStackTop_Conv(void) {
+uint16_t GetWindowStackTop(void) {
+    // LD_HL(wWindowStackPointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // INC_HL;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // RET;
     uint16_t hl = (gb_read(wWindowStackPointer + 1) << 8) | gb_read(wWindowStackPointer);
     hl = (gb_read(hl + 2) << 8) | gb_read(hl + 1);
     return hl;
@@ -598,15 +554,7 @@ bool VerticalMenu(void) {
     // RET;
 }
 
-void GetMenu2(void) {
-    CALL(aLoadMenuHeader);
-    CALL(aVerticalMenu);
-    CALL(aCloseWindow);
-    LD_A_addr(wMenuCursorY);
-    RET;
-}
-
-u8_flag_s GetMenu2_Conv(const struct MenuHeader* hl) {
+u8_flag_s GetMenu2(const struct MenuHeader* hl) {
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(hl);
     // CALL(aVerticalMenu);
@@ -1220,7 +1168,7 @@ u8_flag_s v_2DMenu(void) {
     // LDH_A_addr(hROMBank);
     // LD_addr_A(wMenuData_2DMenuItemStringsBank);
     // FARCALL(av_2DMenu_);
-    bool cancel = v_2DMenu__Conv();
+    bool cancel = v_2DMenu_();
     // LD_A_addr(wMenuCursorPosition);
     // RET;
     return u8_flag(wram->wMenuCursorPosition, cancel);
@@ -1230,7 +1178,7 @@ u8_flag_s InterpretBattleMenu(void) {
     // LDH_A_addr(hROMBank);
     // LD_addr_A(wMenuData_2DMenuItemStringsBank);
     // FARCALL(av_InterpretBattleMenu);
-    bool c = v_InterpretBattleMenu_Conv();
+    bool c = v_InterpretBattleMenu();
     // LD_A_addr(wMenuCursorPosition);
     // RET;
     return u8_flag(wram->wMenuCursorPosition, c);

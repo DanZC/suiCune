@@ -424,35 +424,74 @@ void SetFacingGrassShake(struct Object* bc){
     bc->facingStep = ((bc->stepFrame & 4) == 0)? FACING_GRASS_1: FACING_GRASS_2;
 }
 
-void DeleteMapObject(void) {
-    SET_PC(aDeleteMapObject);
-    PUSH_BC;
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    PUSH_AF;
-    LD_H_B;
-    LD_L_C;
-    LD_BC(OBJECT_LENGTH);
-    XOR_A_A;
-    CALL(aByteFill);
-    POP_AF;
-    CP_A(-1);
-    IF_Z goto ok;
-    BIT_A(7);
-    IF_NZ goto ok;
-    CALL(aGetMapObject);
-    LD_HL(OBJECT_SPRITE);
-    ADD_HL_BC;
-    LD_hl(-1);
+static void HandleObjectStep(struct Object* bc);
+static bool CheckObjectStillVisible(struct Object* bc);
+static void HandleStepType(struct Object* bc);
+static void HandleObjectAction(struct Object* bc);
+static void HandleFrozenObjectAction(struct Object* bc);
+static void v_CallFrozenObjectAction(struct Object* bc);
+static void CallObjectAction(struct Object* bc, int column);
+static uint8_t CopyNextCoordsTileToStandingCoordsTile(struct Object* bc);
+static void CopyStandingCoordsTileToNextCoordsTile(struct Object* bc);
+static void SetTallGrassFlags(struct Object* bc, uint8_t a);
+static void EndSpriteMovement(struct Object* bc);
+static void GetNextTile(struct Object* bc);
+static struct StepVector AddStepVector(struct Object* bc);
+static struct StepVector GetStepVector(struct Object* bc);
+static int8_t GetStepVectorSign(int8_t a);
+static void UpdatePlayerStep(struct Object* bc);
 
-ok:
+static void StepFunction_Reset(struct Object* bc);
+static void StepFunction_FromMovement(struct Object* bc);
+static void StepFunction_NPCJump(struct Object* bc);
+static void StepFunction_PlayerJump(struct Object* bc);
+static void StepFunction_TeleportFrom(struct Object* bc);
+static void StepFunction_TeleportTo(struct Object* bc);
+static void StepFunction_Skyfall(struct Object* bc);
+static void StepFunction_GotBite(struct Object* bc);
+static void StepFunction_RockSmash(struct Object* bc);
+static void StepFunction_DigTo(struct Object* bc);
+static void StepFunction_Sleep(struct Object* bc);
+static void StepFunction_Delete(struct Object* bc);
+static void StepFunction_Bump(struct Object* bc);
+static void StepFunction_Restore(struct Object* bc);
+static void StepFunction_Standing(struct Object* bc);
+static void StepFunction_NPCWalk(struct Object* bc);
+static void StepFunction_ContinueWalk(struct Object* bc);
+static void StepFunction_PlayerWalk(struct Object* bc);
+static void StepFunction_Turn(struct Object* bc);
+static void StepFunction_StrengthBoulder(struct Object* bc);
+static void StepFunction_TrackingObject(struct Object* bc);
+static void StepFunction_14(struct Object* bc);
+static void StepFunction_ScreenShake(struct Object* bc);
+static void StepFunction_16(struct Object* bc);
+static void StepFunction_17(struct Object* bc);
+static void StepFunction_SkyfallTop(struct Object* bc);
 
-    POP_BC;
-    RET;
-}
+static void v_MovementSpinNextFacing(struct Object* bc, const uint8_t* de);
 
-void DeleteMapObject_Conv(struct Object* obj) {
+static void UpdateJumpPosition(struct Object* bc);
+static uint8_t GetPlayerNextMovementByte(struct Object* bc);
+static uint8_t GetMovementByte(struct Object* bc);
+static uint8_t GetIndexedMovementByte1(struct Object* bc);
+static uint8_t GetIndexedMovementByte2(struct Object* bc);
+static void v_GetMovementObject(struct Object* bc);
+static uint8_t GetMovementObject(struct Object* bc);
+static void HandleMovementData(struct Object* bc, uint8_t (*hl)(struct Object*));
+static void DoMovementFunction(struct Object* bc, uint8_t a);
+static void ApplyMovementToFollower(uint8_t a);
+static uint8_t GetFollowerNextMovementByte(struct Object* bc);
+
+static void InitTempObject(void);
+static void CopyTempObjectData(struct Object* bc, const uint8_t* de);
+static bool UpdateObjectFrozen(struct Object* bc);
+static void UpdateRespawnedObjectFrozen(struct Object* bc);
+static bool SetFacing_Standing(struct Object* bc);
+static void UpdateObjectNextTile(struct Object* bc);
+static bool CheckObjectOnScreen(struct Object* bc);
+static bool CheckObjectCoveredByTextbox(struct Object* bc);
+
+void DeleteMapObject(struct Object* obj) {
     // SET_PC(aDeleteMapObject);
     // PUSH_BC;
     // LD_HL(OBJECT_MAP_OBJECT_INDEX);
@@ -489,106 +528,20 @@ void DeleteMapObject_Conv(struct Object* obj) {
     // RET;
 }
 
-void HandleObjectStep(void) {
-    SET_PC(aHandleObjectStep);
-    CALL(aCheckObjectStillVisible);
-    RET_C;
-    CALL(aHandleStepType);
-    CALL(aHandleObjectAction);
-    RET;
-}
-
-void HandleObjectStep_Conv(struct Object* bc) {
+static void HandleObjectStep(struct Object* bc) {
     // SET_PC(aHandleObjectStep);
     // CALL(aCheckObjectStillVisible);
     // RET_C;
-    if(!CheckObjectStillVisible_Conv(bc))
+    if(!CheckObjectStillVisible(bc))
         return;
     // CALL(aHandleStepType);
-    HandleStepType_Conv(bc);
+    HandleStepType(bc);
     // CALL(aHandleObjectAction);
-    HandleObjectAction_Conv(bc);
+    HandleObjectAction(bc);
     // RET;
 }
 
-void CheckObjectStillVisible(void) {
-    SET_PC(aCheckObjectStillVisible);
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(OBJ_FLAGS2_6);
-    LD_A_addr(wXCoord);
-    LD_E_A;
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A(1);
-    SUB_A_E;
-    IF_C goto ok;
-    CP_A(MAPOBJECT_SCREEN_WIDTH);
-    IF_NC goto ok;
-    LD_A_addr(wYCoord);
-    LD_E_A;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A(1);
-    SUB_A_E;
-    IF_C goto ok;
-    CP_A(MAPOBJECT_SCREEN_HEIGHT);
-    IF_NC goto ok;
-    goto yes;
-
-ok:
-
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    SET_hl(OBJ_FLAGS2_6);
-    LD_A_addr(wXCoord);
-    LD_E_A;
-    LD_HL(OBJECT_INIT_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A(1);
-    SUB_A_E;
-    IF_C goto ok2;
-    CP_A(MAPOBJECT_SCREEN_WIDTH);
-    IF_NC goto ok2;
-    LD_A_addr(wYCoord);
-    LD_E_A;
-    LD_HL(OBJECT_INIT_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A(1);
-    SUB_A_E;
-    IF_C goto ok2;
-    CP_A(MAPOBJECT_SCREEN_HEIGHT);
-    IF_NC goto ok2;
-
-yes:
-
-    AND_A_A;
-    RET;
-
-ok2:
-
-    LD_HL(OBJECT_FLAGS1);
-    ADD_HL_BC;
-    BIT_hl(WONT_DELETE_F);
-    IF_NZ goto yes2;
-    CALL(aDeleteMapObject);
-    SCF;
-    RET;
-
-yes2:
-
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    SET_hl(OBJ_FLAGS2_6);
-    AND_A_A;
-    RET;
-}
-
-bool CheckObjectStillVisible_Conv(struct Object* bc) {
+static bool CheckObjectStillVisible(struct Object* bc) {
     // SET_PC(aCheckObjectStillVisible);
     uint8_t x, y;
     // LD_HL(OBJECT_FLAGS2);
@@ -671,7 +624,7 @@ bool CheckObjectStillVisible_Conv(struct Object* bc) {
     // IF_NZ goto yes2;
     if(!bit_test(bc->flags1, WONT_DELETE_F)) {
         // CALL(aDeleteMapObject);
-        DeleteMapObject_Conv(bc);
+        DeleteMapObject(bc);
         // SCF;
         // RET;
         return false;
@@ -688,52 +641,7 @@ bool CheckObjectStillVisible_Conv(struct Object* bc) {
     return true;
 }
 
-void HandleStepType(void) {
-    SET_PC(aHandleStepType);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto zero;
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    BIT_hl(FROZEN_F);
-    IF_NZ goto frozen;
-    CP_A(STEP_TYPE_FROM_MOVEMENT);
-    IF_Z goto one;
-    goto ok3;
-
-zero:
-
-    CALL(aStepFunction_Reset);
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    BIT_hl(FROZEN_F);
-    IF_NZ goto frozen;
-
-one:
-
-    CALL(aStepFunction_FromMovement);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    RET_Z;
-    CP_A(STEP_TYPE_FROM_MOVEMENT);
-    RET_Z;
-
-ok3:
-
-    LD_HL(mStepTypesJumptable);
-    RST(aJumpTable);
-    RET;
-
-frozen:
-
-    RET;
-}
-
-void HandleStepType_Conv(struct Object* bc) {
+static void HandleStepType(struct Object* bc) {
     // SET_PC(aHandleStepType);
     // LD_HL(OBJECT_STEP_TYPE);
     // ADD_HL_BC;
@@ -757,7 +665,7 @@ void HandleStepType_Conv(struct Object* bc) {
 zero:
 
     // CALL(aStepFunction_Reset);
-    StepFunction_Reset_Conv(bc);
+    StepFunction_Reset(bc);
     // LD_HL(OBJECT_FLAGS2);
     // ADD_HL_BC;
     // BIT_hl(FROZEN_F);
@@ -768,7 +676,7 @@ zero:
 one:
 
     // CALL(aStepFunction_FromMovement);
-    StepFunction_FromMovement_Conv(bc);
+    StepFunction_FromMovement(bc);
     // LD_HL(OBJECT_STEP_TYPE);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -791,103 +699,51 @@ ok3:
     // RET;
 }
 
-void HandleObjectAction(void) {
-    SET_PC(aHandleObjectAction);
-    LD_HL(OBJECT_FLAGS1);
-    ADD_HL_BC;
-    BIT_hl(INVISIBLE_F);
-    JR_NZ(mSetFacingStanding);
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    BIT_hl(OBJ_FLAGS2_6);
-    JR_NZ(mSetFacingStanding);
-    BIT_hl(FROZEN_F);
-    JR_NZ(mv_CallFrozenObjectAction);
-    //  use first column (normal)
-    LD_DE(mObjectActionPairPointers);
-    JR(mCallObjectAction);
-}
-
-void HandleObjectAction_Conv(struct Object* bc) {
+static void HandleObjectAction(struct Object* bc) {
     // SET_PC(aHandleObjectAction);
     // LD_HL(OBJECT_FLAGS1);
     // ADD_HL_BC;
     // BIT_hl(INVISIBLE_F);
     // JR_NZ(mSetFacingStanding);
     if(bit_test(bc->flags1, INVISIBLE_F))
-        return SetFacing_Standing_Conv(bc), (void)0;
+        return SetFacing_Standing(bc), (void)0;
     // LD_HL(OBJECT_FLAGS2);
     // ADD_HL_BC;
     // BIT_hl(OBJ_FLAGS2_6);
     // JR_NZ(mSetFacingStanding);
     if(bit_test(bc->flags2, OBJ_FLAGS2_6))
-        return SetFacing_Standing_Conv(bc), (void)0;
+        return SetFacing_Standing(bc), (void)0;
     // BIT_hl(FROZEN_F);
     // JR_NZ(mv_CallFrozenObjectAction);
     if(bit_test(bc->flags2, FROZEN_F))
-        return v_CallFrozenObjectAction_Conv(bc);
+        return v_CallFrozenObjectAction(bc);
     //  use first column (normal)
     // LD_DE(mObjectActionPairPointers);
     // JR(mCallObjectAction);
-    return CallObjectAction_Conv(bc, 0);
+    return CallObjectAction(bc, 0);
 }
 
-void HandleFrozenObjectAction(void) {
-    SET_PC(aHandleFrozenObjectAction);
-    LD_HL(OBJECT_FLAGS1);
-    ADD_HL_BC;
-    BIT_hl(INVISIBLE_F);
-    JR_NZ(mSetFacingStanding);
-    return v_CallFrozenObjectAction();
-}
-
-void HandleFrozenObjectAction_Conv(struct Object* bc) {
+static void HandleFrozenObjectAction(struct Object* bc) {
     // SET_PC(aHandleFrozenObjectAction);
     // LD_HL(OBJECT_FLAGS1);
     // ADD_HL_BC;
     // BIT_hl(INVISIBLE_F);
     // JR_NZ(mSetFacingStanding);
     if(bit_test(bc->flags1, INVISIBLE_F)) {
-        return SetFacing_Standing_Conv(bc), (void)0;
+        return SetFacing_Standing(bc), (void)0;
     }
-    return v_CallFrozenObjectAction_Conv(bc);
+    return v_CallFrozenObjectAction(bc);
 }
 
-void v_CallFrozenObjectAction(void) {
-    SET_PC(av_CallFrozenObjectAction);
-    //  use second column (frozen)
-    LD_DE(mObjectActionPairPointers + 2);
-    JR(mCallObjectAction);  // pointless
-}
-
-void v_CallFrozenObjectAction_Conv(struct Object* bc) {
+static void v_CallFrozenObjectAction(struct Object* bc) {
     // SET_PC(av_CallFrozenObjectAction);
     //  use second column (frozen)
     // LD_DE(mObjectActionPairPointers + 2);
     // JR(mCallObjectAction);  // pointless
-    return CallObjectAction_Conv(bc, 1);
+    return CallObjectAction(bc, 1);
 }
 
-void CallObjectAction(void) {
-    SET_PC(aCallObjectAction);
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    CALL(av_hl_);
-    RET;
-
-    return CopyNextCoordsTileToStandingCoordsTile();
-}
-
-void CallObjectAction_Conv(struct Object* bc, int column) {
+static void CallObjectAction(struct Object* bc, int column) {
     // SET_PC(aCallObjectAction);
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
@@ -906,35 +762,7 @@ void CallObjectAction_Conv(struct Object* bc, int column) {
     return ObjectActionPairPointers[action][column](bc);
 }
 
-void CopyNextCoordsTileToStandingCoordsTile(void) {
-    SET_PC(aCopyNextCoordsTileToStandingCoordsTile);
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_MAP_X);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_MAP_Y);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_NEXT_TILE);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_STANDING_TILE);
-    ADD_HL_BC;
-    LD_hl_A;
-    CALL(aSetTallGrassFlags);
-    LD_HL(OBJECT_NEXT_TILE);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aUselessAndA);
-    RET;
-}
-
-uint8_t CopyNextCoordsTileToStandingCoordsTile_Conv(struct Object* bc) {
+static uint8_t CopyNextCoordsTileToStandingCoordsTile(struct Object* bc) {
     // SET_PC(aCopyNextCoordsTileToStandingCoordsTile);
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
@@ -958,7 +786,7 @@ uint8_t CopyNextCoordsTileToStandingCoordsTile_Conv(struct Object* bc) {
     // LD_hl_A;
     bc->standingTile = bc->nextTile;
     // CALL(aSetTallGrassFlags);
-    SetTallGrassFlags_Conv(bc, bc->nextTile);
+    SetTallGrassFlags(bc, bc->nextTile);
     // LD_HL(OBJECT_NEXT_TILE);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -967,7 +795,7 @@ uint8_t CopyNextCoordsTileToStandingCoordsTile_Conv(struct Object* bc) {
     return bc->nextTile;
 }
 
-void CopyStandingCoordsTileToNextCoordsTile_Conv(struct Object* bc) {
+static void CopyStandingCoordsTileToNextCoordsTile(struct Object* bc) {
     // SET_PC(aCopyStandingCoordsTileToNextCoordsTile);
     // LD_HL(OBJECT_MAP_X);
     // ADD_HL_BC;
@@ -986,49 +814,7 @@ void CopyStandingCoordsTileToNextCoordsTile_Conv(struct Object* bc) {
     // RET;
 }
 
-void CopyStandingCoordsTileToNextCoordsTile(void) {
-    SET_PC(aCopyStandingCoordsTileToNextCoordsTile);
-    LD_HL(OBJECT_MAP_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_MAP_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-}
-
-void UpdateTallGrassFlags(void) {
-    SET_PC(aUpdateTallGrassFlags);
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    BIT_hl(OVERHEAD_F);
-    IF_Z goto ok;
-    LD_HL(OBJECT_NEXT_TILE);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aSetTallGrassFlags);
-
-ok:
-
-    LD_HL(OBJECT_NEXT_TILE);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aUselessAndA);
-    RET_C;  // never happens
-    LD_HL(OBJECT_STANDING_TILE);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aUselessAndA);
-    RET;
-}
-
-void UpdateTallGrassFlags_Conv(struct Object* bc) {
+void UpdateTallGrassFlags(struct Object* bc) {
     // SET_PC(aUpdateTallGrassFlags);
     // LD_HL(OBJECT_FLAGS2);
     // ADD_HL_BC;
@@ -1039,7 +825,7 @@ void UpdateTallGrassFlags_Conv(struct Object* bc) {
         // ADD_HL_BC;
         // LD_A_hl;
         // CALL(aSetTallGrassFlags);
-        SetTallGrassFlags_Conv(bc, bc->nextTile);
+        SetTallGrassFlags(bc, bc->nextTile);
     }
 // ok:
     // LD_HL(OBJECT_NEXT_TILE);
@@ -1054,29 +840,7 @@ void UpdateTallGrassFlags_Conv(struct Object* bc) {
     // RET;
 }
 
-void SetTallGrassFlags(void) {
-    SET_PC(aSetTallGrassFlags);
-    CALL(aCheckSuperTallGrassTile);
-    IF_Z goto set;
-    CALL(aCheckGrassTile);
-    IF_C goto reset;
-
-set:
-
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    SET_hl(OVERHEAD_F);
-    RET;
-
-reset:
-
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(OVERHEAD_F);
-    RET;
-}
-
-void SetTallGrassFlags_Conv(struct Object* bc, uint8_t a) {
+static void SetTallGrassFlags(struct Object* bc, uint8_t a) {
     // SET_PC(aSetTallGrassFlags);
     // CALL(aCheckSuperTallGrassTile);
     // IF_Z goto set;
@@ -1106,25 +870,7 @@ void UselessAndA(void) {
     RET;
 }
 
-void EndSpriteMovement(void) {
-    SET_PC(aEndSpriteMovement);
-    XOR_A_A;
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
-    ADD_HL_BC;
-    LD_hli_A;
-    LD_hli_A;  // OBJECT_1C
-    LD_hli_A;  // OBJECT_1D
-    LD_hl_A;   // OBJECT_1E
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    RET;
-}
-
-void EndSpriteMovement_Conv(struct Object* bc) {
+static void EndSpriteMovement(struct Object* bc) {
     // SET_PC(aEndSpriteMovement);
     // XOR_A_A;
     // LD_HL(OBJECT_STEP_FRAME);
@@ -1148,27 +894,7 @@ void EndSpriteMovement_Conv(struct Object* bc) {
     // RET;
 }
 
-void InitStep(void) {
-    SET_PC(aInitStep);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_FLAGS1);
-    ADD_HL_BC;
-    BIT_hl(FIXED_FACING_F);
-    JR_NZ(mGetNextTile);
-    ADD_A_A;
-    ADD_A_A;
-    AND_A(0b00001100);
-    LD_HL(OBJECT_FACING);
-    ADD_HL_BC;
-    LD_hl_A;
-    // fallthrough
-
-    return GetNextTile();
-}
-
-void InitStep_Conv(struct Object* bc, uint8_t a) {
+void InitStep(struct Object* bc, uint8_t a) {
     // SET_PC(aInitStep);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
@@ -1189,46 +915,13 @@ void InitStep_Conv(struct Object* bc, uint8_t a) {
     }
     // fallthrough
 
-    return GetNextTile_Conv(bc);
+    return GetNextTile(bc);
 }
 
-void GetNextTile(void) {
-    SET_PC(aGetNextTile);
-    CALL(aGetStepVector);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_A_D;
-    CALL(aGetStepVectorSign);
-    LD_HL(OBJECT_MAP_X);
-    ADD_HL_BC;
-    ADD_A_hl;
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_D_A;
-    LD_A_E;
-    CALL(aGetStepVectorSign);
-    LD_HL(OBJECT_MAP_Y);
-    ADD_HL_BC;
-    ADD_A_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_E_A;
-    PUSH_BC;
-    CALL(aGetCoordTile);
-    POP_BC;
-    LD_HL(OBJECT_NEXT_TILE);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-}
-
-void GetNextTile_Conv(struct Object* bc) {
+static void GetNextTile(struct Object* bc) {
     // SET_PC(aGetNextTile);
     // CALL(aGetStepVector);
-    struct StepVector sv = GetStepVector_Conv(bc);
+    struct StepVector sv = GetStepVector(bc);
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // LD_hl_A;
@@ -1242,7 +935,7 @@ void GetNextTile_Conv(struct Object* bc) {
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->nextMapX = bc->mapX + GetStepVectorSign_Conv(sv.x);
+    bc->nextMapX = bc->mapX + GetStepVectorSign(sv.x);
     // LD_D_A;
     // LD_A_E;
     // CALL(aGetStepVectorSign);
@@ -1252,7 +945,7 @@ void GetNextTile_Conv(struct Object* bc) {
     // LD_HL(OBJECT_NEXT_MAP_Y);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->nextMapY = bc->mapY + GetStepVectorSign_Conv(sv.y);
+    bc->nextMapY = bc->mapY + GetStepVectorSign(sv.y);
     // LD_E_A;
     // PUSH_BC;
     // CALL(aGetCoordTile);
@@ -1264,26 +957,10 @@ void GetNextTile_Conv(struct Object* bc) {
     // RET;
 }
 
-void AddStepVector(void) {
-    SET_PC(aAddStepVector);
-    CALL(aGetStepVector);
-    LD_HL(OBJECT_SPRITE_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A_D;
-    LD_hl_A;
-    LD_HL(OBJECT_SPRITE_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A_E;
-    LD_hl_A;
-    RET;
-}
-
-struct StepVector AddStepVector_Conv(struct Object* bc) {
+static struct StepVector AddStepVector(struct Object* bc) {
     // SET_PC(aAddStepVector);
     // CALL(aGetStepVector);
-    struct StepVector sv = GetStepVector_Conv(bc);
+    struct StepVector sv = GetStepVector(bc);
     // LD_HL(OBJECT_SPRITE_X);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -1300,31 +977,9 @@ struct StepVector AddStepVector_Conv(struct Object* bc) {
     return sv;
 }
 
-void GetStepVector(void) {
-    SET_PC(aGetStepVector);
-    //  Return (x, y, duration, speed) in (d, e, a, h).
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0b00001111);
-    ADD_A_A;
-    ADD_A_A;
-    LD_L_A;
-    LD_H(0);
-    LD_DE(mStepVectors);
-    ADD_HL_DE;
-    LD_D_hl;
-    INC_HL;
-    LD_E_hl;
-    INC_HL;
-    LD_A_hli;
-    LD_H_hl;
-    RET;
-}
-
-struct StepVector GetStepVector_Conv(struct Object* bc) {
+//  Return (x, y, duration, speed) in (d, e, a, h).
+static struct StepVector GetStepVector(struct Object* bc) {
     // SET_PC(aGetStepVector);
-    //  Return (x, y, duration, speed) in (d, e, a, h).
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -1387,21 +1042,11 @@ const struct StepVector StepVectors[] = {
 //     return GetStepVectorSign();
 // }
 
-void GetStepVectorSign(void) {
-    SET_PC(aGetStepVectorSign);
-    ADD_A_A;
-    RET_Z;  // 0 or 128 (-128)
-    LD_A(1);
-    RET_NC;  // +1 to +127
-    LD_A(-1);
-    RET;  // -127 to -1
-}
-
-int8_t GetStepVectorSign_Conv(int8_t a) {
+static int8_t GetStepVectorSign(int8_t a) {
     // SET_PC(aGetStepVectorSign);
     // ADD_A_A;
     // RET_Z;  // 0 or 128 (-128)
-    if(a == 0)
+    if(a == 0 || a == -128)
         return 0;
     // LD_A(1);
     // RET_NC;  // +1 to +127
@@ -1412,26 +1057,7 @@ int8_t GetStepVectorSign_Conv(int8_t a) {
     return -1;
 }
 
-void UpdatePlayerStep(void) {
-    SET_PC(aUpdatePlayerStep);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0b00000011);
-    LD_addr_A(wPlayerStepDirection);
-    CALL(aAddStepVector);
-    LD_A_addr(wPlayerStepVectorX);
-    ADD_A_D;
-    LD_addr_A(wPlayerStepVectorX);
-    LD_A_addr(wPlayerStepVectorY);
-    ADD_A_E;
-    LD_addr_A(wPlayerStepVectorY);
-    LD_HL(wPlayerStepFlags);
-    SET_hl(PLAYERSTEP_CONTINUE_F);
-    RET;
-}
-
-void UpdatePlayerStep_Conv(struct Object* bc) {
+static void UpdatePlayerStep(struct Object* bc) {
     // SET_PC(aUpdatePlayerStep);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
@@ -1440,7 +1066,7 @@ void UpdatePlayerStep_Conv(struct Object* bc) {
     // LD_addr_A(wPlayerStepDirection);
     wram->wPlayerStepDirection = bc->dirWalking & 0b00000011;
     // CALL(aAddStepVector);
-    struct StepVector sv = AddStepVector_Conv(bc);
+    struct StepVector sv = AddStepVector(bc);
     // LD_A_addr(wPlayerStepVectorX);
     // ADD_A_D;
     // LD_addr_A(wPlayerStepVectorX);
@@ -1471,28 +1097,7 @@ void GetMapObjectField(void) {
     RET;
 }
 
-void RestoreDefaultMovement(void) {
-    SET_PC(aRestoreDefaultMovement);
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(-1);
-    IF_Z goto ok;
-    PUSH_BC;
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_MOVEMENT);
-    ADD_HL_BC;
-    LD_A_hl;
-    POP_BC;
-    RET;
-
-ok:
-
-    LD_A(SPRITEMOVEDATA_STANDING_DOWN);
-    RET;
-}
-
-uint8_t RestoreDefaultMovement_Conv(struct Object* bc) {
+uint8_t RestoreDefaultMovement(struct Object* bc) {
     // SET_PC(aRestoreDefaultMovement);
     // LD_HL(OBJECT_MAP_OBJECT_INDEX);
     // ADD_HL_BC;
@@ -1599,29 +1204,7 @@ void Field1c_SetAnonJumptableIndex(void) {
     RET;
 }
 
-void StepFunction_Reset(void) {
-    SET_PC(aStepFunction_Reset);
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    PUSH_BC;
-    CALL(aGetCoordTile);
-    POP_BC;
-    LD_HL(OBJECT_NEXT_TILE);
-    ADD_HL_BC;
-    LD_hl_A;
-    CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    CALL(aEndSpriteMovement);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_Reset_Conv(struct Object* bc) {
+static void StepFunction_Reset(struct Object* bc) {
     // SET_PC(aStepFunction_Reset);
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
@@ -1640,9 +1223,9 @@ void StepFunction_Reset_Conv(struct Object* bc) {
     // LD_hl_A;
     bc->nextTile = tile;
     // CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+    CopyNextCoordsTileToStandingCoordsTile(bc);
     // CALL(aEndSpriteMovement);
-    EndSpriteMovement_Conv(bc);
+    EndSpriteMovement(bc);
     // LD_HL(OBJECT_STEP_TYPE);
     // ADD_HL_BC;
     // LD_hl(STEP_TYPE_FROM_MOVEMENT);
@@ -1650,51 +1233,7 @@ void StepFunction_Reset_Conv(struct Object* bc) {
     // RET;
 }
 
-void StepFunction_FromMovement(void) {
-    SET_PC(aStepFunction_FromMovement);
-    CALL(aField1c_ZeroAnonJumptableIndex);
-    CALL(aGetSpriteMovementFunction);
-    LD_A_hl;
-    LD_HL(mStepFunction_FromMovement_Pointers);
-    RST(aJumpTable);
-    RET;
-
-//Pointers:
-
-    //  entries correspond to SPRITEMOVEFN_* constants (see constants/map_object_constants.asm)
-    // table_width ['2', 'StepFunction_FromMovement.Pointers']
-    // dw ['MovementFunction_Null'];  // 00
-    // dw ['MovementFunction_RandomWalkY'];  // 01
-    // dw ['MovementFunction_RandomWalkX'];  // 02
-    // dw ['MovementFunction_RandomWalkXY'];  // 03
-    // dw ['MovementFunction_RandomSpinSlow'];  // 04
-    // dw ['MovementFunction_RandomSpinFast'];  // 05
-    // dw ['MovementFunction_Standing'];  // 06
-    // dw ['MovementFunction_ObeyDPad'];  // 07
-    // dw ['MovementFunction_Indexed1'];  // 08
-    // dw ['MovementFunction_Indexed2'];  // 09
-    // dw ['MovementFunction_0a'];  // 0a
-    // dw ['MovementFunction_0b'];  // 0b
-    // dw ['MovementFunction_0c'];  // 0c
-    // dw ['MovementFunction_0d'];  // 0d
-    // dw ['MovementFunction_0e'];  // 0e
-    // dw ['MovementFunction_Follow'];  // 0f
-    // dw ['MovementFunction_Script'];  // 10
-    // dw ['MovementFunction_Strength'];  // 11
-    // dw ['MovementFunction_FollowNotExact'];  // 12
-    // dw ['MovementFunction_Shadow'];  // 13
-    // dw ['MovementFunction_Emote'];  // 14
-    // dw ['MovementFunction_BigStanding'];  // 15
-    // dw ['MovementFunction_Bouncing'];  // 16
-    // dw ['MovementFunction_ScreenShake'];  // 17
-    // dw ['MovementFunction_SpinClockwise'];  // 18
-    // dw ['MovementFunction_SpinCounterclockwise'];  // 19
-    // dw ['MovementFunction_BoulderDust'];  // 1a
-    // dw ['MovementFunction_ShakingGrass'];  // 1b
-    // assert_table_length ['NUM_SPRITEMOVEFN']
-}
-
-void StepFunction_FromMovement_Conv(struct Object* bc) {
+static void StepFunction_FromMovement(struct Object* bc) {
     static void (*const Pointers[])(struct Object*) = {
     //  entries correspond to SPRITEMOVEFN_* constants (see constants/map_object_constants.asm)
     // table_width ['2', 'StepFunction_FromMovement.Pointers']
@@ -1820,9 +1359,9 @@ void MovementFunction_RandomSpinFast(struct Object* bc) {
 void MovementFunction_Standing(struct Object* bc) {
     // SET_PC(aMovementFunction_Standing);
     // CALL(aCopyStandingCoordsTileToNextCoordsTile);
-    CopyStandingCoordsTileToNextCoordsTile_Conv(bc);
+    CopyStandingCoordsTileToNextCoordsTile(bc);
     // CALL(aEndSpriteMovement);
-    EndSpriteMovement_Conv(bc);
+    EndSpriteMovement(bc);
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
     // LD_hl(OBJECT_ACTION_STAND);
@@ -1838,66 +1377,66 @@ void MovementFunction_ObeyDPad(struct Object* bc) {
     // SET_PC(aMovementFunction_ObeyDPad);
     // LD_HL(mGetPlayerNextMovementByte);
     // JP(mHandleMovementData);
-    HandleMovementData_Conv(bc, GetPlayerNextMovementByte_Conv);
+    HandleMovementData(bc, GetPlayerNextMovementByte);
 }
 
 void MovementFunction_Indexed1(struct Object* bc) {
     // SET_PC(aMovementFunction_Indexed1);
     // LD_HL(mGetIndexedMovementByte1);
     // JP(mHandleMovementData);
-    HandleMovementData_Conv(bc, GetIndexedMovementByte1_Conv);
+    HandleMovementData(bc, GetIndexedMovementByte1);
 }
 
 void MovementFunction_Indexed2(struct Object* bc) {
     // SET_PC(aMovementFunction_Indexed2);
     // LD_HL(mGetIndexedMovementByte2);
     // JP(mHandleMovementData);
-    HandleMovementData_Conv(bc, GetIndexedMovementByte2_Conv);
+    HandleMovementData(bc, GetIndexedMovementByte2);
 }
 
 void MovementFunction_0a(struct Object* bc) {
     // SET_PC(aMovementFunction_0a);
     // JP(mv_GetMovementObject);
-    v_GetMovementObject_Conv(bc);
+    v_GetMovementObject(bc);
 }
 
 void MovementFunction_0b(struct Object* bc) {
     // SET_PC(aMovementFunction_0b);
     // JP(mv_GetMovementObject);
-    v_GetMovementObject_Conv(bc);
+    v_GetMovementObject(bc);
 }
 
 void MovementFunction_0c(struct Object* bc) {
     // SET_PC(aMovementFunction_0c);
     // JP(mv_GetMovementObject);
-    v_GetMovementObject_Conv(bc);
+    v_GetMovementObject(bc);
 }
 
 void MovementFunction_0d(struct Object* bc) {
     // SET_PC(aMovementFunction_0d);
     // LD_HL(mGetPlayerNextMovementByte);
     // JP(mHandleMovementData);
-    HandleMovementData_Conv(bc, GetPlayerNextMovementByte_Conv);
+    HandleMovementData(bc, GetPlayerNextMovementByte);
 }
 
 void MovementFunction_0e(struct Object* bc) {
     // SET_PC(aMovementFunction_0e);
     // JP(mv_GetMovementObject);
-    v_GetMovementObject_Conv(bc);
+    v_GetMovementObject(bc);
 }
 
 void MovementFunction_Follow(struct Object* bc) {
     // SET_PC(aMovementFunction_Follow);
     // LD_HL(mGetFollowerNextMovementByte);
     // JP(mHandleMovementData);
-    HandleMovementData_Conv(bc, GetFollowerNextMovementByte_Conv);
+    HandleMovementData(bc, GetFollowerNextMovementByte);
 }
 
 void MovementFunction_Script(struct Object* bc) {
     // SET_PC(aMovementFunction_Script);
     // LD_HL(mGetMovementByte);
     // JP(mHandleMovementData);
-    HandleMovementData_Conv(bc, GetMovementByte_Conv);
+    HandleMovementData(bc, GetMovementByte);
 }
 
 void MovementFunction_Strength(struct Object* bc) {
@@ -1934,7 +1473,7 @@ void MovementFunction_Strength(struct Object* bc) {
                     // AND_A(0b00000011);
                     // OR_A(0);
                     // CALL(aInitStep);
-                    InitStep_Conv(bc, bc->range & 0b00000011);
+                    InitStep(bc, bc->range & 0b00000011);
                     // CALL(aCanObjectMoveInDirection);
                     // IF_C goto ok2;
                     if(!CanObjectMoveInDirection(bc)) {
@@ -1942,9 +1481,9 @@ void MovementFunction_Strength(struct Object* bc) {
                         // CALL(aPlaySFX);
                         PlaySFX(SFX_STRENGTH);
                         // CALL(aSpawnStrengthBoulderDust);
-                        SpawnStrengthBoulderDust_Conv(bc);
+                        SpawnStrengthBoulderDust(bc);
                         // CALL(aUpdateTallGrassFlags);
-                        UpdateTallGrassFlags_Conv(bc);
+                        UpdateTallGrassFlags(bc);
                         // LD_HL(OBJECT_STEP_TYPE);
                         // ADD_HL_BC;
                         // LD_hl(STEP_TYPE_STRENGTH_BOULDER);
@@ -1954,7 +1493,7 @@ void MovementFunction_Strength(struct Object* bc) {
                     }
                 // ok2:
                     // CALL(aCopyStandingCoordsTileToNextCoordsTile);
-                    CopyStandingCoordsTileToNextCoordsTile_Conv(bc);
+                    CopyStandingCoordsTileToNextCoordsTile(bc);
                 }
             // ok:
                 // LD_HL(OBJECT_DIRECTION_WALKING);
@@ -2069,7 +1608,7 @@ standing:
 void MovementFunction_BigStanding(struct Object* bc) {
     // SET_PC(aMovementFunction_BigStanding);
     // CALL(aEndSpriteMovement);
-    EndSpriteMovement_Conv(bc);
+    EndSpriteMovement(bc);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
     // LD_hl(STANDING);
@@ -2088,7 +1627,7 @@ void MovementFunction_BigStanding(struct Object* bc) {
 void MovementFunction_Bouncing(struct Object* bc) {
     // SET_PC(aMovementFunction_Bouncing);
     // CALL(aEndSpriteMovement);
-    EndSpriteMovement_Conv(bc);
+    EndSpriteMovement(bc);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
     // LD_hl(STANDING);
@@ -2133,7 +1672,7 @@ void MovementFunction_SpinClockwise(struct Object* bc) {
 void v_MovementSpinInit(struct Object* bc) {
     // SET_PC(av_MovementSpinInit);
     // CALL(aEndSpriteMovement);
-    EndSpriteMovement_Conv(bc);
+    EndSpriteMovement(bc);
     // CALL(aObjectMovementByte_IncAnonJumptableIndex);
     ObjectMovementByte_IncAnonJumptableIndex(bc);
     // fallthrough
@@ -2174,7 +1713,7 @@ void v_MovementSpinTurnLeft(struct Object* bc) {
     // SET_PC(av_MovementSpinTurnLeft);
     // LD_DE(mv_MovementSpinTurnLeft_facings_counterclockwise);
     // CALL(av_MovementSpinNextFacing);
-    v_MovementSpinNextFacing_Conv(bc, facings_counterclockwise);
+    v_MovementSpinNextFacing(bc, facings_counterclockwise);
     // JR(mMovementFunction_SpinCounterclockwise);
     return MovementFunction_SpinCounterclockwise(bc);
 }
@@ -2189,31 +1728,12 @@ void v_MovementSpinTurnRight(struct Object* bc) {
     // SET_PC(av_MovementSpinTurnRight);
     // LD_DE(mv_MovementSpinTurnRight_facings_clockwise);
     // CALL(av_MovementSpinNextFacing);
-    v_MovementSpinNextFacing_Conv(bc, facings_clockwise);
+    v_MovementSpinNextFacing(bc, facings_clockwise);
     // JR(mMovementFunction_SpinClockwise);
     return MovementFunction_SpinClockwise(bc);
 }
 
-void v_MovementSpinNextFacing(void) {
-    SET_PC(av_MovementSpinNextFacing);
-    LD_HL(OBJECT_FACING);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0b00001100);
-    RRCA;
-    RRCA;
-    PUSH_HL;
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_DE;
-    LD_A_hl;
-    POP_HL;
-    LD_hl_A;
-    CALL(aObjectMovementByte_DecAnonJumptableIndex);
-    RET;
-}
-
-void v_MovementSpinNextFacing_Conv(struct Object* bc, const uint8_t* de) {
+static void v_MovementSpinNextFacing(struct Object* bc, const uint8_t* de) {
     // SET_PC(av_MovementSpinNextFacing);
     // LD_HL(OBJECT_FACING);
     // ADD_HL_BC;
@@ -2289,7 +1809,7 @@ void MovementFunction_Shadow(struct Object* bc) {
 void MovementFunction_Emote(struct Object* bc) {
     // SET_PC(aMovementFunction_Emote);
     // CALL(aEndSpriteMovement);
-    EndSpriteMovement_Conv(bc);
+    EndSpriteMovement(bc);
     // CALL(aInitMovementField1dField1e);
     InitMovementField1dField1e(bc);
     // LD_HL(OBJECT_ACTION);
@@ -2325,7 +1845,7 @@ void MovementFunction_BoulderDust(struct Object* bc) {
     };
     // SET_PC(aMovementFunction_BoulderDust);
     // CALL(aEndSpriteMovement);
-    EndSpriteMovement_Conv(bc);
+    EndSpriteMovement(bc);
     // CALL(aInitMovementField1dField1e);
     struct Object* de = InitMovementField1dField1e(bc);
     // LD_HL(OBJECT_ACTION);
@@ -2372,7 +1892,7 @@ void MovementFunction_BoulderDust(struct Object* bc) {
 void MovementFunction_ShakingGrass(struct Object* bc) {
     // SET_PC(aMovementFunction_ShakingGrass);
     // CALL(aEndSpriteMovement);
-    EndSpriteMovement_Conv(bc);
+    EndSpriteMovement(bc);
     // CALL(aInitMovementField1dField1e);
     struct Object* de = InitMovementField1dField1e(bc);
     // LD_HL(OBJECT_ACTION);
@@ -2446,7 +1966,7 @@ static uint16_t MovementFunction_ScreenShake_GetDurationAndField1e(uint8_t a) {
 void MovementFunction_ScreenShake(struct Object* bc) {
     // SET_PC(aMovementFunction_ScreenShake);
     // CALL(aEndSpriteMovement);
-    EndSpriteMovement_Conv(bc);
+    EndSpriteMovement(bc);
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
     // LD_hl(OBJECT_ACTION_00);
@@ -2474,22 +1994,22 @@ void MovementFunction_ScreenShake(struct Object* bc) {
 void v_RandomWalkContinue(struct Object* bc, uint8_t a) {
     // SET_PC(av_RandomWalkContinue);
     // CALL(aInitStep);
-    InitStep_Conv(bc, a);
+    InitStep(bc, a);
     // CALL(aCanObjectMoveInDirection);
     // IF_C goto new_duration;
     if(CanObjectMoveInDirection(bc)) {
     // new_duration:
         // CALL(aEndSpriteMovement);
-        EndSpriteMovement_Conv(bc);
+        EndSpriteMovement(bc);
         // CALL(aCopyStandingCoordsTileToNextCoordsTile);
-        CopyStandingCoordsTileToNextCoordsTile_Conv(bc);
+        CopyStandingCoordsTileToNextCoordsTile(bc);
         // fallthrough
 
         return RandomStepDuration_Slow(bc);
     }
 
     // CALL(aUpdateTallGrassFlags);
-    UpdateTallGrassFlags_Conv(bc);
+    UpdateTallGrassFlags(bc);
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
     // LD_hl(OBJECT_ACTION_STEP);
@@ -2561,33 +2081,32 @@ void (*const StepTypesJumptable[])(struct Object* bc) = {
     // SET_PC(aStepTypesJumptable);
     //  entries correspond to STEP_TYPE_* constants (see constants/map_object_constants.asm)
     // table_width ['2', 'StepTypesJumptable']
-    [STEP_TYPE_RESET]           = StepFunction_Reset_Conv,  // 00
-    [STEP_TYPE_FROM_MOVEMENT]   = StepFunction_FromMovement_Conv,  // 01
-    [STEP_TYPE_NPC_WALK]        = StepFunction_NPCWalk_Conv,  // 02
-    [STEP_TYPE_SLEEP]           = StepFunction_Sleep_Conv,  // 03
-    [STEP_TYPE_STANDING]        = StepFunction_Standing_Conv,  // 04
-    [STEP_TYPE_RESTORE]         = StepFunction_Restore_Conv,  // 05
-    [STEP_TYPE_PLAYER_WALK]     = StepFunction_PlayerWalk_Conv,  // 06
-    [STEP_TYPE_CONTINUE_WALK]   = StepFunction_ContinueWalk_Conv,  // 07
-    [STEP_TYPE_NPC_JUMP]        = StepFunction_NPCJump_Conv,  // 08
-    [STEP_TYPE_PLAYER_JUMP]     = StepFunction_PlayerJump_Conv,  // 09
-    [STEP_TYPE_TURN]            = StepFunction_Turn_Conv,  // 0a
-    [STEP_TYPE_BUMP]            = StepFunction_Bump_Conv,  // 0b
-    [STEP_TYPE_TELEPORT_FROM]   = StepFunction_TeleportFrom_Conv,  // 0c
-    [STEP_TYPE_TELEPORT_TO]     = StepFunction_TeleportTo_Conv,  // 0d
-    [STEP_TYPE_SKYFALL]         = StepFunction_Skyfall_Conv,  // 0e
-    [STEP_TYPE_STRENGTH_BOULDER]= StepFunction_StrengthBoulder_Conv,  // 0f
-    [STEP_TYPE_GOT_BITE]        = StepFunction_GotBite_Conv,  // 10
-    [STEP_TYPE_ROCK_SMASH]      = StepFunction_RockSmash_Conv,  // 11
-    [STEP_TYPE_RETURN_DIG]      = StepFunction_DigTo_Conv,  // 12
-    [STEP_TYPE_TRACKING_OBJECT] = StepFunction_TrackingObject_Conv,  // 13
-    [STEP_TYPE_14]              = StepFunction_14_Conv,  // 14
-    [STEP_TYPE_SCREENSHAKE]     = StepFunction_ScreenShake_Conv,  // 15
-    //  16 and 17 are unfinished so I omitted them.
-    // dw ['StepFunction_16'];  // 16
-    // dw ['StepFunction_17'];  // 17
-    [STEP_TYPE_DELETE]          = StepFunction_Delete_Conv,  // 18
-    [STEP_TYPE_SKYFALL_TOP]     = StepFunction_SkyfallTop_Conv,  // 19
+    [STEP_TYPE_RESET]           = StepFunction_Reset,  // 00
+    [STEP_TYPE_FROM_MOVEMENT]   = StepFunction_FromMovement,  // 01
+    [STEP_TYPE_NPC_WALK]        = StepFunction_NPCWalk,  // 02
+    [STEP_TYPE_SLEEP]           = StepFunction_Sleep,  // 03
+    [STEP_TYPE_STANDING]        = StepFunction_Standing,  // 04
+    [STEP_TYPE_RESTORE]         = StepFunction_Restore,  // 05
+    [STEP_TYPE_PLAYER_WALK]     = StepFunction_PlayerWalk,  // 06
+    [STEP_TYPE_CONTINUE_WALK]   = StepFunction_ContinueWalk,  // 07
+    [STEP_TYPE_NPC_JUMP]        = StepFunction_NPCJump,  // 08
+    [STEP_TYPE_PLAYER_JUMP]     = StepFunction_PlayerJump,  // 09
+    [STEP_TYPE_TURN]            = StepFunction_Turn,  // 0a
+    [STEP_TYPE_BUMP]            = StepFunction_Bump,  // 0b
+    [STEP_TYPE_TELEPORT_FROM]   = StepFunction_TeleportFrom,  // 0c
+    [STEP_TYPE_TELEPORT_TO]     = StepFunction_TeleportTo,  // 0d
+    [STEP_TYPE_SKYFALL]         = StepFunction_Skyfall,  // 0e
+    [STEP_TYPE_STRENGTH_BOULDER]= StepFunction_StrengthBoulder,  // 0f
+    [STEP_TYPE_GOT_BITE]        = StepFunction_GotBite,  // 10
+    [STEP_TYPE_ROCK_SMASH]      = StepFunction_RockSmash,  // 11
+    [STEP_TYPE_RETURN_DIG]      = StepFunction_DigTo,  // 12
+    [STEP_TYPE_TRACKING_OBJECT] = StepFunction_TrackingObject,  // 13
+    [STEP_TYPE_14]              = StepFunction_14,  // 14
+    [STEP_TYPE_SCREENSHAKE]     = StepFunction_ScreenShake,  // 15
+    [STEP_TYPE_16]              = StepFunction_16,  // 16
+    [STEP_TYPE_17]              = StepFunction_17,  // 17
+    [STEP_TYPE_DELETE]          = StepFunction_Delete,  // 18
+    [STEP_TYPE_SKYFALL_TOP]     = StepFunction_SkyfallTop,  // 19
 };
 // assert_table_length ['NUM_STEP_TYPES']
 static_assert(lengthof(StepTypesJumptable) == NUM_STEP_TYPES, "");
@@ -2607,46 +2126,7 @@ void WaitStep_InPlace(struct Object* bc) {
     // RET;
 }
 
-void StepFunction_NPCJump(void) {
-    SET_PC(aStepFunction_NPCJump);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto Jump;
-    if (REG_A == 1) goto Land;
-
-Jump:
-
-    CALL(aAddStepVector);
-    CALL(aUpdateJumpPosition);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    CALL(aGetNextTile);
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(OVERHEAD_F);
-    CALL(aField1c_IncAnonJumptableIndex);
-    RET;
-
-Land:
-
-    CALL(aAddStepVector);
-    CALL(aUpdateJumpPosition);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_NPCJump_Conv(struct Object* bc) {
+static void StepFunction_NPCJump(struct Object* bc) {
     // SET_PC(aStepFunction_NPCJump);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -2657,9 +2137,9 @@ void StepFunction_NPCJump_Conv(struct Object* bc) {
     case 0:
     // Jump:
         // CALL(aAddStepVector);
-        AddStepVector_Conv(bc);
+        AddStepVector(bc);
         // CALL(aUpdateJumpPosition);
-        UpdateJumpPosition();
+        UpdateJumpPosition(bc);
         // LD_HL(OBJECT_STEP_DURATION);
         // ADD_HL_BC;
         // DEC_hl;
@@ -2667,9 +2147,9 @@ void StepFunction_NPCJump_Conv(struct Object* bc) {
         if(--bc->stepDuration != 0)
             return;
         // CALL(aCopyNextCoordsTileToStandingCoordsTile);
-        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        CopyNextCoordsTileToStandingCoordsTile(bc);
         // CALL(aGetNextTile);
-        GetNextTile_Conv(bc);
+        GetNextTile(bc);
         // LD_HL(OBJECT_FLAGS2);
         // ADD_HL_BC;
         // RES_hl(OVERHEAD_F);
@@ -2682,9 +2162,9 @@ void StepFunction_NPCJump_Conv(struct Object* bc) {
     case 1:
     // Land:
         // CALL(aAddStepVector);
-        AddStepVector_Conv(bc);
+        AddStepVector(bc);
         // CALL(aUpdateJumpPosition);
-        UpdateJumpPosition();
+        UpdateJumpPosition(bc);
         // LD_HL(OBJECT_STEP_DURATION);
         // ADD_HL_BC;
         // DEC_hl;
@@ -2692,7 +2172,7 @@ void StepFunction_NPCJump_Conv(struct Object* bc) {
         if(--bc->stepDuration != 0)
             return;
         // CALL(aCopyNextCoordsTileToStandingCoordsTile);
-        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        CopyNextCoordsTileToStandingCoordsTile(bc);
         // LD_HL(OBJECT_STEP_TYPE);
         // ADD_HL_BC;
         // LD_hl(STEP_TYPE_FROM_MOVEMENT);
@@ -2702,65 +2182,7 @@ void StepFunction_NPCJump_Conv(struct Object* bc) {
     }
 }
 
-void StepFunction_PlayerJump(void) {
-    SET_PC(aStepFunction_PlayerJump);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto initjump;
-    if (REG_A == 1) goto stepjump;
-    if (REG_A == 2) goto initland;
-    if (REG_A == 3) goto stepland;
-
-initjump:
-
-    LD_HL(wPlayerStepFlags);
-    SET_hl(PLAYERSTEP_START_F);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-stepjump:
-
-    CALL(aUpdateJumpPosition);
-    CALL(aUpdatePlayerStep);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(OVERHEAD_F);
-    LD_HL(wPlayerStepFlags);
-    SET_hl(PLAYERSTEP_STOP_F);
-    SET_hl(PLAYERSTEP_MIDAIR_F);
-    CALL(aField1c_IncAnonJumptableIndex);
-    RET;
-
-initland:
-
-    CALL(aGetNextTile);
-    LD_HL(wPlayerStepFlags);
-    SET_hl(PLAYERSTEP_START_F);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-stepland:
-
-    CALL(aUpdateJumpPosition);
-    CALL(aUpdatePlayerStep);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(wPlayerStepFlags);
-    SET_hl(PLAYERSTEP_STOP_F);
-    CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_PlayerJump_Conv(struct Object* bc) {
+static void StepFunction_PlayerJump(struct Object* bc) {
     // SET_PC(aStepFunction_PlayerJump);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -2777,9 +2199,9 @@ void StepFunction_PlayerJump_Conv(struct Object* bc) {
     case 1:
     // stepjump:
         // CALL(aUpdateJumpPosition);
-        UpdateJumpPosition_Conv(bc);
+        UpdateJumpPosition(bc);
         // CALL(aUpdatePlayerStep);
-        UpdatePlayerStep_Conv(bc);
+        UpdatePlayerStep(bc);
         // LD_HL(OBJECT_STEP_DURATION);
         // ADD_HL_BC;
         // DEC_hl;
@@ -2787,7 +2209,7 @@ void StepFunction_PlayerJump_Conv(struct Object* bc) {
         if(--bc->stepDuration)
             return;
         // CALL(aCopyNextCoordsTileToStandingCoordsTile);
-        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        CopyNextCoordsTileToStandingCoordsTile(bc);
         // LD_HL(OBJECT_FLAGS2);
         // ADD_HL_BC;
         // RES_hl(OVERHEAD_F);
@@ -2805,7 +2227,7 @@ void StepFunction_PlayerJump_Conv(struct Object* bc) {
     case 2:
     // initland:
         // CALL(aGetNextTile);
-        GetNextTile_Conv(bc);
+        GetNextTile(bc);
         // LD_HL(wPlayerStepFlags);
         // SET_hl(PLAYERSTEP_START_F);
         bit_set(wram->wPlayerStepFlags, PLAYERSTEP_START_F);
@@ -2816,9 +2238,9 @@ void StepFunction_PlayerJump_Conv(struct Object* bc) {
     case 3:
     // stepland:
         // CALL(aUpdateJumpPosition);
-        UpdateJumpPosition_Conv(bc);
+        UpdateJumpPosition(bc);
         // CALL(aUpdatePlayerStep);
-        UpdatePlayerStep_Conv(bc);
+        UpdatePlayerStep(bc);
         // LD_HL(OBJECT_STEP_DURATION);
         // ADD_HL_BC;
         // DEC_hl;
@@ -2829,7 +2251,7 @@ void StepFunction_PlayerJump_Conv(struct Object* bc) {
         // SET_hl(PLAYERSTEP_STOP_F);
         bit_set(wram->wPlayerStepFlags, PLAYERSTEP_STOP_F);
         // CALL(aCopyNextCoordsTileToStandingCoordsTile);
-        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        CopyNextCoordsTileToStandingCoordsTile(bc);
         // LD_HL(OBJECT_STEP_TYPE);
         // ADD_HL_BC;
         // LD_hl(STEP_TYPE_FROM_MOVEMENT);
@@ -2839,84 +2261,7 @@ void StepFunction_PlayerJump_Conv(struct Object* bc) {
     }
 }
 
-void StepFunction_TeleportFrom(void) {
-    SET_PC(aStepFunction_TeleportFrom);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto InitSpin;
-    if (REG_A == 1) goto DoSpin;
-    if (REG_A == 2) goto InitSpinRise;
-    if (REG_A == 3) goto DoSpinRise;
-
-InitSpin:
-
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(16);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-DoSpin:
-
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_SPIN);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aField1c_IncAnonJumptableIndex);
-    RET;
-
-InitSpinRise:
-
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_1F);
-    ADD_HL_BC;
-    LD_hl(0x10);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(16);
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(OVERHEAD_F);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-DoSpinRise:
-
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_SPIN);
-    LD_HL(OBJECT_1F);
-    ADD_HL_BC;
-    INC_hl;
-    LD_A_hl;
-    LD_D(0x60);
-    CALL(aSine);
-    LD_A_H;
-    SUB_A(0x60);
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_TeleportFrom_Conv(struct Object* bc) {
+static void StepFunction_TeleportFrom(struct Object* bc) {
     // SET_PC(aStepFunction_TeleportFrom);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -3009,107 +2354,7 @@ void StepFunction_TeleportFrom_Conv(struct Object* bc) {
     }
 }
 
-void StepFunction_TeleportTo(void) {
-    SET_PC(aStepFunction_TeleportTo);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto InitWait;
-    if (REG_A == 1) goto DoWait;
-    if (REG_A == 2) goto InitDescent;
-    if (REG_A == 3) goto DoDescent;
-    if (REG_A == 4) goto InitFinalSpin;
-    if (REG_A == 5) goto DoFinalSpin;
-    if (REG_A == 6) goto FinishStep;
-
-InitWait:
-
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_00);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(16);
-    CALL(aField1c_IncAnonJumptableIndex);
-    RET;
-
-DoWait:
-
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aField1c_IncAnonJumptableIndex);
-
-InitDescent:
-
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_1F);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(16);
-    CALL(aField1c_IncAnonJumptableIndex);
-    RET;
-
-DoDescent:
-
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_SPIN);
-    LD_HL(OBJECT_1F);
-    ADD_HL_BC;
-    INC_hl;
-    LD_A_hl;
-    LD_D(0x60);
-    CALL(aSine);
-    LD_A_H;
-    SUB_A(0x60);
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aField1c_IncAnonJumptableIndex);
-
-InitFinalSpin:
-
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(16);
-    CALL(aField1c_IncAnonJumptableIndex);
-    RET;
-
-DoFinalSpin:
-
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_SPIN);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-
-FinishStep:
-
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_TeleportTo_Conv(struct Object* bc) {
+static void StepFunction_TeleportTo(struct Object* bc) {
     // SET_PC(aStepFunction_TeleportTo);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -3227,80 +2472,7 @@ void StepFunction_TeleportTo_Conv(struct Object* bc) {
     }
 }
 
-void StepFunction_Skyfall(void) {
-    SET_PC(aStepFunction_Skyfall);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto Init;
-    if (REG_A == 1) goto Step;
-    if (REG_A == 2) goto Fall;
-    if (REG_A == 3) goto Finish;
-
-Init:
-
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_00);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(16);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-Step:
-
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_STEP);
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_1F);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(16);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-Fall:
-
-    LD_HL(OBJECT_1F);
-    ADD_HL_BC;
-    INC_hl;
-    LD_A_hl;
-    LD_D(0x60);
-    CALL(aSine);
-    LD_A_H;
-    SUB_A(0x60);
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aField1c_IncAnonJumptableIndex);
-
-Finish:
-
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_Skyfall_Conv(struct Object* bc) {
+static void StepFunction_Skyfall(struct Object* bc) {
     // SET_PC(aStepFunction_Skyfall);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -3388,45 +2560,7 @@ void StepFunction_Skyfall_Conv(struct Object* bc) {
     }
 }
 
-void StepFunction_GotBite(void) {
-    SET_PC(aStepFunction_GotBite);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto Init;
-    if (REG_A == 1) goto Run;
-
-Init:
-
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(8);
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl(0);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-Run:
-
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_A_hl;
-    XOR_A(1);
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_GotBite_Conv(struct Object* bc) {
+static void StepFunction_GotBite(struct Object* bc) {
     // SET_PC(aStepFunction_GotBite);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -3472,30 +2606,7 @@ void StepFunction_GotBite_Conv(struct Object* bc) {
     }
 }
 
-void StepFunction_RockSmash(void) {
-    SET_PC(aStepFunction_RockSmash);
-    CALL(aStepFunction_RockSmash_Step);
-    JP(mWaitStep_InPlace);
-
-Step:
-
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0b00000001);
-    LD_A(OBJECT_ACTION_STAND);
-    IF_Z goto yes;
-    LD_A(OBJECT_ACTION_00);
-
-yes:
-
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-}
-
-void StepFunction_RockSmash_Conv(struct Object* bc) {
+static void StepFunction_RockSmash(struct Object* bc) {
     // SET_PC(aStepFunction_RockSmash);
     // CALL(aStepFunction_RockSmash_Step);
     // JP(mWaitStep_InPlace);
@@ -3520,25 +2631,7 @@ void StepFunction_RockSmash_Conv(struct Object* bc) {
     return WaitStep_InPlace(bc);
 }
 
-void StepFunction_DigTo(void) {
-    SET_PC(aStepFunction_DigTo);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(0b00000001);
-    LD_A(OBJECT_ACTION_SPIN);
-    IF_Z goto yes;
-    LD_A(OBJECT_ACTION_SPIN_FLICKER);
-
-yes:
-
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl_A;
-    JP(mWaitStep_InPlace);
-}
-
-void StepFunction_DigTo_Conv(struct Object* bc) {
+static void StepFunction_DigTo(struct Object* bc) {
     // SET_PC(aStepFunction_DigTo);
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
@@ -3558,22 +2651,7 @@ void StepFunction_DigTo_Conv(struct Object* bc) {
     return WaitStep_InPlace(bc);
 }
 
-void StepFunction_Sleep(void) {
-    SET_PC(aStepFunction_Sleep);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_Sleep_Conv(struct Object* bc) {
+static void StepFunction_Sleep(struct Object* bc) {
     // SET_PC(aStepFunction_Sleep);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
@@ -3592,19 +2670,7 @@ void StepFunction_Sleep_Conv(struct Object* bc) {
     // RET;
 }
 
-void StepFunction_Delete(void) {
-    SET_PC(aStepFunction_Delete);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    JP(mDeleteMapObject);
-}
-
-void StepFunction_Delete_Conv(struct Object* bc) {
+static void StepFunction_Delete(struct Object* bc) {
     // SET_PC(aStepFunction_Delete);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
@@ -3617,22 +2683,10 @@ void StepFunction_Delete_Conv(struct Object* bc) {
     if(--bc->stepDuration)
         return;
     // JP(mDeleteMapObject);
-    DeleteMapObject_Conv(bc);
+    DeleteMapObject(bc);
 }
 
-void StepFunction_Bump(void) {
-    SET_PC(aStepFunction_Bump);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_Bump_Conv(struct Object* bc) {
+static void StepFunction_Bump(struct Object* bc) {
     // SET_PC(aStepFunction_Bump);
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
@@ -3647,28 +2701,7 @@ void StepFunction_Bump_Conv(struct Object* bc) {
     // RET;
 }
 
-void StepFunction_Restore(void) {
-    SET_PC(aStepFunction_Restore);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto Reset;
-    if (REG_A == 1) goto StepFunction_Standing;
-
-Reset:
-
-    CALL(aRestoreDefaultMovement);
-    CALL(aGetInitialFacing);
-    LD_HL(OBJECT_FACING);
-    ADD_HL_BC;
-    LD_hl_A;
-    CALL(aField1c_IncAnonJumptableIndex);
-    // fallthrough
-StepFunction_Standing:
-    return StepFunction_Standing();
-}
-
-void StepFunction_Restore_Conv(struct Object* bc) {
+static void StepFunction_Restore(struct Object* bc) {
     // SET_PC(aStepFunction_Restore);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -3681,26 +2714,17 @@ void StepFunction_Restore_Conv(struct Object* bc) {
         // LD_HL(OBJECT_FACING);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->facing = GetInitialFacing(RestoreDefaultMovement_Conv(bc));
+        bc->facing = GetInitialFacing(RestoreDefaultMovement(bc));
         // CALL(aField1c_IncAnonJumptableIndex);
         Field1c_IncAnonJumptableIndex(bc);
         // fallthrough
     case 1:
     // StepFunction_Standing:
-        return StepFunction_Standing_Conv(bc);
+        return StepFunction_Standing(bc);
     }
 }
 
-void StepFunction_Standing(void) {
-    SET_PC(aStepFunction_Standing);
-    CALL(aStubbed_UpdateYOffset);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    RET;
-}
-
-void StepFunction_Standing_Conv(struct Object* bc) {
+static void StepFunction_Standing(struct Object* bc) {
     // SET_PC(aStepFunction_Standing);
     // CALL(aStubbed_UpdateYOffset);
     // LD_HL(OBJECT_DIRECTION_WALKING);
@@ -3710,30 +2734,12 @@ void StepFunction_Standing_Conv(struct Object* bc) {
     // RET;
 }
 
-void StepFunction_NPCWalk(void) {
-    SET_PC(aStepFunction_NPCWalk);
-    CALL(aStubbed_UpdateYOffset);
-    CALL(aAddStepVector);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_NPCWalk_Conv(struct Object* bc) {
+static void StepFunction_NPCWalk(struct Object* bc) {
     // SET_PC(aStepFunction_NPCWalk);
     // CALL(aStubbed_UpdateYOffset);
     //  Stubbed so no point to call Stubbed_UpdateYOffset
     // CALL(aAddStepVector);
-    AddStepVector_Conv(bc);
+    AddStepVector(bc);
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // DEC_hl;
@@ -3741,7 +2747,7 @@ void StepFunction_NPCWalk_Conv(struct Object* bc) {
     if(--bc->stepDuration != 0)
         return;
     // CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+    CopyNextCoordsTileToStandingCoordsTile(bc);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
     // LD_hl(STANDING);
@@ -3753,21 +2759,10 @@ void StepFunction_NPCWalk_Conv(struct Object* bc) {
     // RET;
 }
 
-void StepFunction_ContinueWalk(void) {
-    SET_PC(aStepFunction_ContinueWalk);
-    CALL(aAddStepVector);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    JP(mRandomStepDuration_Slow);
-}
-
-void StepFunction_ContinueWalk_Conv(struct Object* bc) {
+static void StepFunction_ContinueWalk(struct Object* bc) {
     // SET_PC(aStepFunction_ContinueWalk);
     // CALL(aAddStepVector);
-    AddStepVector_Conv(bc);
+    AddStepVector(bc);
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // DEC_hl;
@@ -3775,45 +2770,12 @@ void StepFunction_ContinueWalk_Conv(struct Object* bc) {
     if(--bc->stepDuration != 0)
         return;
     // CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+    CopyNextCoordsTileToStandingCoordsTile(bc);
     // JP(mRandomStepDuration_Slow);
     return RandomStepDuration_Slow(bc);
 }
 
-void StepFunction_PlayerWalk(void) {
-    SET_PC(aStepFunction_PlayerWalk);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto init;
-    if (REG_A == 1) goto step;
-
-init:
-
-    LD_HL(wPlayerStepFlags);
-    SET_hl(PLAYERSTEP_START_F);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-step:
-
-    CALL(aUpdatePlayerStep);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(wPlayerStepFlags);
-    SET_hl(PLAYERSTEP_STOP_F);
-    CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_PlayerWalk_Conv(struct Object* bc) {
+static void StepFunction_PlayerWalk(struct Object* bc) {
     // SET_PC(aStepFunction_PlayerWalk);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -3831,7 +2793,7 @@ void StepFunction_PlayerWalk_Conv(struct Object* bc) {
     case 1:
     // step:
         // CALL(aUpdatePlayerStep);
-        UpdatePlayerStep_Conv(bc);
+        UpdatePlayerStep(bc);
         // LD_HL(OBJECT_STEP_DURATION);
         // ADD_HL_BC;
         // DEC_hl;
@@ -3842,7 +2804,7 @@ void StepFunction_PlayerWalk_Conv(struct Object* bc) {
         // SET_hl(PLAYERSTEP_STOP_F);
         bit_set(wram->wPlayerStepFlags, PLAYERSTEP_STOP_F);
         // CALL(aCopyNextCoordsTileToStandingCoordsTile);
-        CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+        CopyNextCoordsTileToStandingCoordsTile(bc);
         // LD_HL(OBJECT_DIRECTION_WALKING);
         // ADD_HL_BC;
         // LD_hl(STANDING);
@@ -3856,64 +2818,7 @@ void StepFunction_PlayerWalk_Conv(struct Object* bc) {
     }
 }
 
-void StepFunction_Turn(void) {
-    SET_PC(aStepFunction_Turn);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto init1;
-    if (REG_A == 1) goto step1;
-    if (REG_A == 2) goto init2;
-    if (REG_A == 3) goto step2;
-
-init1:
-
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_hl(2);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(2);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-step1:
-
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    CALL(aField1c_IncAnonJumptableIndex);
-
-init2:
-
-    LD_HL(OBJECT_1D);  // new facing
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_FACING);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(2);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-step2:
-
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_Turn_Conv(struct Object* bc) {
+static void StepFunction_Turn(struct Object* bc) {
     // SET_PC(aStepFunction_Turn);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -3981,43 +2886,10 @@ void StepFunction_Turn_Conv(struct Object* bc) {
     }
 }
 
-void StepFunction_StrengthBoulder(void) {
-    SET_PC(aStepFunction_StrengthBoulder);
-    CALL(aAddStepVector);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    PUSH_BC;
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_B_A;
-    FARCALL(aCopyDECoordsToMapObject);
-    POP_BC;
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(OBJ_FLAGS2_2);
-    CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    LD_HL(OBJECT_DIRECTION_WALKING);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_StrengthBoulder_Conv(struct Object* bc) {
+static void StepFunction_StrengthBoulder(struct Object* bc) {
     // SET_PC(aStepFunction_StrengthBoulder);
     // CALL(aAddStepVector);
-    AddStepVector_Conv(bc);
+    AddStepVector(bc);
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // DEC_hl;
@@ -4043,7 +2915,7 @@ void StepFunction_StrengthBoulder_Conv(struct Object* bc) {
     // RES_hl(OBJ_FLAGS2_2);
     bit_reset(bc->flags2, OBJ_FLAGS2_2);
     // CALL(aCopyNextCoordsTileToStandingCoordsTile);
-    CopyNextCoordsTileToStandingCoordsTile_Conv(bc);
+    CopyNextCoordsTileToStandingCoordsTile(bc);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
     // LD_hl(STANDING);
@@ -4055,44 +2927,7 @@ void StepFunction_StrengthBoulder_Conv(struct Object* bc) {
     // RET;
 }
 
-void StepFunction_TrackingObject(void) {
-    SET_PC(aStepFunction_TrackingObject);
-    LD_HL(OBJECT_1D);
-    ADD_HL_BC;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    LD_HL(OBJECT_SPRITE);
-    ADD_HL_DE;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto nope;
-    LD_HL(OBJECT_SPRITE_X);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_HL(OBJECT_SPRITE_X);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_SPRITE_Y);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_HL(OBJECT_SPRITE_Y);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A_A;
-    RET_Z;
-    DEC_hl;
-    RET_NZ;
-
-nope:
-
-    JP(mDeleteMapObject);
-}
-
-void StepFunction_TrackingObject_Conv(struct Object* bc) {
+static void StepFunction_TrackingObject(struct Object* bc) {
     // SET_PC(aStepFunction_TrackingObject);
     // LD_HL(OBJECT_1D);
     // ADD_HL_BC;
@@ -4134,74 +2969,13 @@ void StepFunction_TrackingObject_Conv(struct Object* bc) {
     }
 // nope:
     // JP(mDeleteMapObject);
-    return DeleteMapObject_Conv(bc);
-}
-
-void StepFunction_14(void) {
-    SET_PC(aStepFunction_14);
-    return StepFunction_ScreenShake();
+    return DeleteMapObject(bc);
 }
 
 // Duplicate of StepFunction_ScreenShake
-void StepFunction_14_Conv(struct Object* bc) {
+static void StepFunction_14(struct Object* bc) {
     // SET_PC(aStepFunction_14);
-    return StepFunction_ScreenShake_Conv(bc);
-}
-
-void StepFunction_ScreenShake(void) {
-    SET_PC(aStepFunction_ScreenShake);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto Init;
-    if (REG_A == 1) goto Run;
-
-Init:
-
-    XOR_A_A;
-    LD_HL(OBJECT_1D);
-    ADD_HL_BC;
-    LD_hl_A;
-    CALL(aField1c_IncAnonJumptableIndex);
-
-Run:
-
-    LD_HL(OBJECT_1D);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_A_addr(wPlayerStepVectorY);
-    SUB_A_D;
-    LD_addr_A(wPlayerStepVectorY);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    IF_Z goto ok;
-    LD_A_hl;
-    CALL(aStepFunction_ScreenShake_GetSign);
-    LD_HL(OBJECT_1D);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_D_A;
-    LD_A_addr(wPlayerStepVectorY);
-    ADD_A_D;
-    LD_addr_A(wPlayerStepVectorY);
-    RET;
-
-ok:
-
-    CALL(aDeleteMapObject);
-    RET;
-
-GetSign:
-
-    LD_HL(OBJECT_1E);
-    ADD_HL_BC;
-    AND_A(1);
-    LD_A_hl;
-    RET_Z;
-    CPL;
-    INC_A;
-    RET;
+    return StepFunction_ScreenShake(bc);
 }
 
 static uint8_t StepFunction_ScreenShake_GetSign(const struct Object* bc, uint8_t a) {
@@ -4218,7 +2992,7 @@ static uint8_t StepFunction_ScreenShake_GetSign(const struct Object* bc, uint8_t
     return (bc->field_1E ^ 0xff) + 1;
 }
 
-void StepFunction_ScreenShake_Conv(struct Object* bc) {
+static void StepFunction_ScreenShake(struct Object* bc) {
     // SET_PC(aStepFunction_ScreenShake);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -4265,71 +3039,35 @@ void StepFunction_ScreenShake_Conv(struct Object* bc) {
         }
     // ok:
         // CALL(aDeleteMapObject);
-        DeleteMapObject_Conv(bc);
+        DeleteMapObject(bc);
         // RET;
         return;
     }
 }
 
-void StepFunction_16(void) {
-    SET_PC(aStepFunction_16);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    return StepFunction_17();
+static void StepFunction_16(struct Object* bc) {
+    // SET_PC(aStepFunction_16);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    return StepFunction_17(bc);
 }
 
-void StepFunction_17(void) {
-    SET_PC(aStepFunction_17);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto null;
-    if (REG_A == 1) goto null;
-    if (REG_A == 2) goto null;
+static void StepFunction_17(struct Object* bc) {
+    // SET_PC(aStepFunction_17);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // if (REG_A == 0) goto null;
+    // if (REG_A == 1) goto null;
+    // if (REG_A == 2) goto null;
 
-null:
+// null:
 
-    return StepFunction_SkyfallTop();
+    return StepFunction_SkyfallTop(bc);
 }
 
-void StepFunction_SkyfallTop(void) {
-    SET_PC(aStepFunction_SkyfallTop);
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    if (REG_A == 0) goto Init;
-    if (REG_A == 1) goto Run;
-
-Init:
-
-    LD_HL(OBJECT_ACTION);
-    ADD_HL_BC;
-    LD_hl(OBJECT_ACTION_SKYFALL);
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    LD_hl(16);
-    CALL(aField1c_IncAnonJumptableIndex);
-
-Run:
-
-    LD_HL(OBJECT_STEP_DURATION);
-    ADD_HL_BC;
-    DEC_hl;
-    RET_NZ;
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl(0x60);
-    LD_HL(OBJECT_STEP_FRAME);
-    ADD_HL_BC;
-    LD_hl(0);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_FROM_MOVEMENT);
-    RET;
-}
-
-void StepFunction_SkyfallTop_Conv(struct Object* bc) {
+static void StepFunction_SkyfallTop(struct Object* bc) {
     // SET_PC(aStepFunction_SkyfallTop);
     // LD_HL(OBJECT_1C);
     // ADD_HL_BC;
@@ -4399,40 +3137,14 @@ void Stubbed_UpdateYOffset(void) {
     // db ['0', '-1', '-2', '-3', '-4', '-3', '-2', '-1'];
 }
 
-void UpdateJumpPosition(void) {
-    SET_PC(aUpdateJumpPosition);
-    CALL(aGetStepVector);
-    LD_A_H;
-    LD_HL(OBJECT_1F);
-    ADD_HL_BC;
-    LD_E_hl;
-    ADD_A_E;
-    LD_hl_A;
-    NOP;
-    SRL_E;
-    LD_D(0);
-    LD_HL(mUpdateJumpPosition_y_offsets);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
-
-//y_offsets:
-
-    // db ['-4', '-6', '-8', '-10', '-11', '-12', '-12', '-12'];
-    // db ['-11', '-10', '-9', '-8', '-6', '-4', '0', '0'];
-}
-
-void UpdateJumpPosition_Conv(struct Object* bc) {
+static void UpdateJumpPosition(struct Object* bc) {
     static const int8_t y_offsets[] = {
         -4, -6, -8, -10, -11, -12, -12, -12,
         -11, -10, -9, -8, -6, -4, 0, 0,
     };
     // SET_PC(aUpdateJumpPosition);
     // CALL(aGetStepVector);
-    struct StepVector vec = GetStepVector_Conv(bc);
+    struct StepVector vec = GetStepVector(bc);
     // LD_A_H;
     // LD_HL(OBJECT_1F);
     // ADD_HL_BC;
@@ -4454,21 +3166,7 @@ void UpdateJumpPosition_Conv(struct Object* bc) {
     // RET;
 }
 
-void GetPlayerNextMovementByte(void) {
-    SET_PC(aGetPlayerNextMovementByte);
-    //  copy [wPlayerNextMovement] to [wPlayerMovement]
-    LD_A_addr(wPlayerNextMovement);
-    LD_HL(wPlayerMovement);
-    LD_hl_A;
-    //  load [wPlayerNextMovement] with movement_step_sleep
-    LD_A(movement_step_sleep);
-    LD_addr_A(wPlayerNextMovement);
-    //  recover the previous value of [wPlayerNextMovement]
-    LD_A_hl;
-    RET;
-}
-
-uint8_t GetPlayerNextMovementByte_Conv(struct Object* bc) {
+static uint8_t GetPlayerNextMovementByte(struct Object* bc) {
     (void)bc;
     // SET_PC(aGetPlayerNextMovementByte);
     //  copy [wPlayerNextMovement] to [wPlayerMovement]
@@ -4486,14 +3184,7 @@ uint8_t GetPlayerNextMovementByte_Conv(struct Object* bc) {
     return wram->wPlayerMovement;
 }
 
-void GetMovementByte(void) {
-    SET_PC(aGetMovementByte);
-    LD_HL(wMovementDataBank);
-    CALL(av_GetMovementByte);
-    RET;
-}
-
-uint8_t GetMovementByte_Conv(struct Object* bc) {
+static uint8_t GetMovementByte(struct Object* bc) {
     // SET_PC(aGetMovementByte);
     // LD_HL(wMovementDataBank);
     // CALL(av_GetMovementByte);
@@ -4501,23 +3192,7 @@ uint8_t GetMovementByte_Conv(struct Object* bc) {
     return v_GetMovementByte(gMovementDataAddr, bc);
 }
 
-void GetIndexedMovementByte1(void) {
-    SET_PC(aGetIndexedMovementByte1);
-    LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
-    ADD_HL_BC;
-    LD_E_hl;
-    INC_hl;
-    LD_D(0);
-    LD_HL(wMovementObject);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    ADD_HL_DE;
-    LD_A_hl;
-    RET;
-}
-
-uint8_t GetIndexedMovementByte1_Conv(struct Object* bc) {
+static uint8_t GetIndexedMovementByte1(struct Object* bc) {
     // SET_PC(aGetIndexedMovementByte1);
     // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
     // ADD_HL_BC;
@@ -4535,23 +3210,7 @@ uint8_t GetIndexedMovementByte1_Conv(struct Object* bc) {
     return gMovementDataAddr[e];
 }
 
-void GetIndexedMovementByte2(void) {
-    SET_PC(aGetIndexedMovementByte2);
-    LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
-    ADD_HL_BC;
-    LD_E_hl;
-    INC_hl;
-    LD_D(0);
-    LD_HL(wIndexedMovement2Pointer);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    ADD_HL_DE;
-    LD_A_hl;
-    RET;
-}
-
-uint8_t GetIndexedMovementByte2_Conv(struct Object* bc) {
+static uint8_t GetIndexedMovementByte2(struct Object* bc) {
     // SET_PC(aGetIndexedMovementByte2);
     // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
     // ADD_HL_BC;
@@ -4568,20 +3227,14 @@ uint8_t GetIndexedMovementByte2_Conv(struct Object* bc) {
     return gIndexedMovement2Pointer[bc->movementByteIndex++];
 }
 
-void v_GetMovementObject(void) {
-    SET_PC(av_GetMovementObject);
-    LD_HL(mGetMovementObject);
-    JP(mHandleMovementData);
-}
-
-void v_GetMovementObject_Conv(struct Object* bc) {
+static void v_GetMovementObject(struct Object* bc) {
     // SET_PC(av_GetMovementObject);
     // LD_HL(mGetMovementObject);
     // JP(mHandleMovementData);
-    HandleMovementData_Conv(bc, GetMovementObject);
+    HandleMovementData(bc, GetMovementObject);
 }
 
-uint8_t GetMovementObject(struct Object* bc) {
+static uint8_t GetMovementObject(struct Object* bc) {
     (void)bc;
     // SET_PC(aGetMovementObject);
     // LD_A_addr(wMovementObject);
@@ -4589,31 +3242,7 @@ uint8_t GetMovementObject(struct Object* bc) {
     return wram->wMovementObject;
 }
 
-void HandleMovementData(void) {
-    SET_PC(aHandleMovementData);
-    CALL(aHandleMovementData_StorePointer);
-
-loop:
-
-    XOR_A_A;
-    LD_addr_A(wMovementByteWasControlSwitch);
-    CALL(aJumpMovementPointer);
-    CALL(aDoMovementFunction);
-    LD_A_addr(wMovementByteWasControlSwitch);
-    AND_A_A;
-    IF_NZ goto loop;
-    RET;
-
-StorePointer:
-
-    LD_A_L;
-    LD_addr_A(wMovementPointer);
-    LD_A_H;
-    LD_addr_A(wMovementPointer + 1);
-    RET;
-}
-
-void HandleMovementData_Conv(struct Object* bc, uint8_t (*hl)(struct Object*)) {
+static void HandleMovementData(struct Object* bc, uint8_t (*hl)(struct Object*)) {
     // SET_PC(aHandleMovementData);
     // CALL(aHandleMovementData_StorePointer);
     // StorePointer:
@@ -4630,9 +3259,9 @@ void HandleMovementData_Conv(struct Object* bc, uint8_t (*hl)(struct Object*)) {
         // LD_addr_A(wMovementByteWasControlSwitch);
         wram->wMovementByteWasControlSwitch = 0;
         // CALL(aJumpMovementPointer);
-        uint8_t a = JumpMovementPointer_Conv(bc);
+        uint8_t a = JumpMovementPointer(bc);
         // CALL(aDoMovementFunction);
-        DoMovementFunction_Conv(bc, a);
+        DoMovementFunction(bc, a);
         // LD_A_addr(wMovementByteWasControlSwitch);
         // AND_A_A;
         // IF_NZ goto loop;
@@ -4640,17 +3269,7 @@ void HandleMovementData_Conv(struct Object* bc, uint8_t (*hl)(struct Object*)) {
     // RET;
 }
 
-void JumpMovementPointer(void) {
-    SET_PC(aJumpMovementPointer);
-    // LD_HL(wMovementPointer);
-    // LD_A_hli;
-    // LD_H_hl;
-    // LD_L_A;
-    // JP_hl;
-    RET;
-}
-
-uint8_t JumpMovementPointer_Conv(struct Object* bc) {
+uint8_t JumpMovementPointer(struct Object* bc) {
     return gMovementPointer(bc);
 }
 
@@ -4662,25 +3281,11 @@ void ContinueReadingMovement(void) {
     // RET;
 }
 
-void DoMovementFunction(void) {
-    SET_PC(aDoMovementFunction);
-    PUSH_AF;
-    CALL(aApplyMovementToFollower);
-    POP_AF;
-    LD_HL(mMovementPointers);
-    RST(aJumpTable);
-    RET;
-
-    // INCLUDE "engine/overworld/movement.asm"
-
-    return ApplyMovementToFollower();
-}
-
-void DoMovementFunction_Conv(struct Object* bc, uint8_t a) {
+static void DoMovementFunction(struct Object* bc, uint8_t a) {
     // SET_PC(aDoMovementFunction);
     // PUSH_AF;
     // CALL(aApplyMovementToFollower);
-    ApplyMovementToFollower_Conv(a);
+    ApplyMovementToFollower(a);
     // POP_AF;
     // LD_HL(mMovementPointers);
     // RST(aJumpTable);
@@ -4688,41 +3293,7 @@ void DoMovementFunction_Conv(struct Object* bc, uint8_t a) {
     return MovementPointers[a](bc);
 }
 
-void ApplyMovementToFollower(void) {
-    SET_PC(aApplyMovementToFollower);
-    LD_E_A;
-    LD_A_addr(wObjectFollow_Follower);
-    CP_A(-1);
-    RET_Z;
-    LD_A_addr(wObjectFollow_Leader);
-    LD_D_A;
-    LDH_A_addr(hMapObjectIndex);
-    CP_A_D;
-    RET_NZ;
-    LD_A_E;
-    CP_A(movement_step_sleep);
-    RET_Z;
-    CP_A(movement_step_end);
-    RET_Z;
-    CP_A(movement_step_4b);
-    RET_Z;
-    CP_A(movement_step_bump);
-    RET_Z;
-    CP_A(movement_slow_step);
-    RET_C;
-    PUSH_AF;
-    LD_HL(wFollowerMovementQueueLength);
-    INC_hl;
-    LD_E_hl;
-    LD_D(0);
-    LD_HL(wFollowMovementQueue);
-    ADD_HL_DE;
-    POP_AF;
-    LD_hl_A;
-    RET;
-}
-
-void ApplyMovementToFollower_Conv(uint8_t a) {
+static void ApplyMovementToFollower(uint8_t a) {
     // SET_PC(aApplyMovementToFollower);
     // LD_E_A;
     // LD_A_addr(wObjectFollow_Follower);
@@ -4764,63 +3335,6 @@ void ApplyMovementToFollower_Conv(uint8_t a) {
     // RET;
 }
 
-void GetFollowerNextMovementByte(void) {
-    SET_PC(aGetFollowerNextMovementByte);
-    LD_HL(wFollowerMovementQueueLength);
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto done;
-    CP_A(-1);
-    IF_Z goto done;
-    DEC_hl;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wFollowMovementQueue);
-    ADD_HL_DE;
-    INC_E;
-    LD_A(-1);
-
-loop:
-
-    LD_D_hl;
-    LD_hld_A;
-    LD_A_D;
-    DEC_E;
-    IF_NZ goto loop;
-    RET;
-
-done:
-
-    CALL(aGetFollowerNextMovementByte_CancelFollowIfLeaderMissing);
-    RET_C;
-    LD_A(movement_step_sleep);
-    RET;
-
-CancelFollowIfLeaderMissing:
-
-    LD_A_addr(wObjectFollow_Leader);
-    CP_A(-1);
-    IF_Z goto nope;
-    PUSH_BC;
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_SPRITE);
-    ADD_HL_BC;
-    LD_A_hl;
-    POP_BC;
-    AND_A_A;
-    IF_Z goto nope;
-    AND_A_A;
-    RET;
-
-nope:
-
-    LD_A(-1);
-    LD_addr_A(wObjectFollow_Follower);
-    LD_A(movement_step_end);
-    SCF;
-    RET;
-}
-
 static u8_flag_s GetFollowerNextMovementByte_CancelFollowIfLeaderMissing(void) {
     // LD_A_addr(wObjectFollow_Leader);
     // CP_A(-1);
@@ -4852,7 +3366,7 @@ static u8_flag_s GetFollowerNextMovementByte_CancelFollowIfLeaderMissing(void) {
     return u8_flag(movement_step_end, true);
 }
 
-uint8_t GetFollowerNextMovementByte_Conv(struct Object* bc) {
+static uint8_t GetFollowerNextMovementByte(struct Object* bc) {
     (void)bc;
     // SET_PC(aGetFollowerNextMovementByte);
     // LD_HL(wFollowerMovementQueueLength);
@@ -4900,22 +3414,7 @@ uint8_t GetFollowerNextMovementByte_Conv(struct Object* bc) {
     return d;
 }
 
-void SpawnShadow(void) {
-    SET_PC(aSpawnShadow);
-    PUSH_BC;
-    LD_DE(mSpawnShadow_ShadowObject);
-    CALL(aCopyTempObjectData);
-    CALL(aInitTempObject);
-    POP_BC;
-    RET;
-
-//ShadowObject:
-
-    // vtile, palette, movement
-    // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_SHADOW'];
-}
-
-void SpawnShadow_Conv(struct Object* bc) {
+void SpawnShadow(struct Object* bc) {
     static const uint8_t ShadowObject[] = {
         0x00, PAL_OW_SILVER, SPRITEMOVEDATA_SHADOW,
     };
@@ -4923,9 +3422,9 @@ void SpawnShadow_Conv(struct Object* bc) {
     // PUSH_BC;
     // LD_DE(mSpawnShadow_ShadowObject);
     // CALL(aCopyTempObjectData);
-    CopyTempObjectData_Conv(bc, ShadowObject);
+    CopyTempObjectData(bc, ShadowObject);
     // CALL(aInitTempObject);
-    InitTempObject_Conv();
+    InitTempObject();
     // POP_BC;
     // RET;
 
@@ -4936,24 +3435,7 @@ void SpawnShadow_Conv(struct Object* bc) {
     // return SpawnStrengthBoulderDust();
 }
 
-void SpawnStrengthBoulderDust(void) {
-    SET_PC(aSpawnStrengthBoulderDust);
-    PUSH_BC;
-    LD_DE(mSpawnStrengthBoulderDust_BoulderDustObject);
-    CALL(aCopyTempObjectData);
-    CALL(aInitTempObject);
-    POP_BC;
-    RET;
-
-BoulderDustObject:
-
-    // vtile, palette, movement
-    // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_BOULDERDUST'];
-
-    return SpawnEmote();
-}
-
-void SpawnStrengthBoulderDust_Conv(struct Object* bc) {
+void SpawnStrengthBoulderDust(struct Object* bc) {
     static const uint8_t BoulderDustObject[] = {
     // vtile, palette, movement
         0x00, PAL_OW_SILVER, SPRITEMOVEDATA_BOULDERDUST
@@ -4962,31 +3444,14 @@ void SpawnStrengthBoulderDust_Conv(struct Object* bc) {
     // PUSH_BC;
     // LD_DE(mSpawnStrengthBoulderDust_BoulderDustObject);
     // CALL(aCopyTempObjectData);
-    CopyTempObjectData_Conv(bc, BoulderDustObject);
+    CopyTempObjectData(bc, BoulderDustObject);
     // CALL(aInitTempObject);
-    InitTempObject_Conv();
+    InitTempObject();
     // POP_BC;
     // RET;
 }
 
-void SpawnEmote(void) {
-    SET_PC(aSpawnEmote);
-    PUSH_BC;
-    LD_DE(mSpawnEmote_EmoteObject);
-    CALL(aCopyTempObjectData);
-    CALL(aInitTempObject);
-    POP_BC;
-    RET;
-
-EmoteObject:
-
-    // vtile, palette, movement
-    // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_EMOTE'];
-
-    return ShakeGrass();
-}
-
-void SpawnEmote_Conv(struct Object* bc) {
+void SpawnEmote(struct Object* bc) {
     static const uint8_t EmoteObject[] = {
         0x00, PAL_OW_SILVER, SPRITEMOVEDATA_EMOTE,
     };
@@ -4994,9 +3459,9 @@ void SpawnEmote_Conv(struct Object* bc) {
     // PUSH_BC;
     // LD_DE(mSpawnEmote_EmoteObject);
     // CALL(aCopyTempObjectData);
-    CopyTempObjectData_Conv(bc, EmoteObject);
+    CopyTempObjectData(bc, EmoteObject);
     // CALL(aInitTempObject);
-    InitTempObject_Conv();
+    InitTempObject();
     // POP_BC;
     // RET;
 
@@ -5008,24 +3473,7 @@ void SpawnEmote_Conv(struct Object* bc) {
     // return ShakeGrass();
 }
 
-void ShakeGrass(void) {
-    SET_PC(aShakeGrass);
-    PUSH_BC;
-    LD_DE(mShakeGrass_GrassObject);
-    CALL(aCopyTempObjectData);
-    CALL(aInitTempObject);
-    POP_BC;
-    RET;
-
-GrassObject:
-
-    // vtile, palette, movement
-    // db ['0x00', 'PAL_OW_TREE', 'SPRITEMOVEDATA_GRASS'];
-
-    return ShakeScreen();
-}
-
-void ShakeGrass_Conv(struct Object* bc) {
+void ShakeGrass(struct Object* bc) {
     static const uint8_t GrassObject[] = {
         0x00, PAL_OW_TREE, SPRITEMOVEDATA_GRASS,
     };
@@ -5033,9 +3481,9 @@ void ShakeGrass_Conv(struct Object* bc) {
     // PUSH_BC;
     // LD_DE(mShakeGrass_GrassObject);
     // CALL(aCopyTempObjectData);
-    CopyTempObjectData_Conv(bc, GrassObject);
+    CopyTempObjectData(bc, GrassObject);
     // CALL(aInitTempObject);
-    InitTempObject_Conv();
+    InitTempObject();
     // POP_BC;
     // RET;
 
@@ -5047,27 +3495,7 @@ void ShakeGrass_Conv(struct Object* bc) {
     // return ShakeScreen();
 }
 
-void ShakeScreen(void) {
-    SET_PC(aShakeScreen);
-    PUSH_BC;
-    PUSH_AF;
-    LD_DE(mShakeScreen_ScreenShakeObject);
-    CALL(aCopyTempObjectData);
-    POP_AF;
-    LD_addr_A(wTempObjectCopyRange);
-    CALL(aInitTempObject);
-    POP_BC;
-    RET;
-
-ScreenShakeObject:
-
-    // vtile, palette, movement
-    // db ['0x00', 'PAL_OW_SILVER', 'SPRITEMOVEDATA_SCREENSHAKE'];
-
-    return DespawnEmote();
-}
-
-void ShakeScreen_Conv(struct Object* bc, uint8_t a) {
+void ShakeScreen(struct Object* bc, uint8_t a) {
     static const uint8_t ScreenShakeObject[] = {
         0x00, PAL_OW_SILVER, SPRITEMOVEDATA_SCREENSHAKE,
     };
@@ -5076,12 +3504,12 @@ void ShakeScreen_Conv(struct Object* bc, uint8_t a) {
     // PUSH_AF;
     // LD_DE(mShakeScreen_ScreenShakeObject);
     // CALL(aCopyTempObjectData);
-    CopyTempObjectData_Conv(bc, ScreenShakeObject);
+    CopyTempObjectData(bc, ScreenShakeObject);
     // POP_AF;
     // LD_addr_A(wTempObjectCopyRange);
     wram->wTempObjectCopyRange = a;
     // CALL(aInitTempObject);
-    InitTempObject_Conv();
+    InitTempObject();
     // POP_BC;
     // RET;
 
@@ -5092,51 +3520,7 @@ void ShakeScreen_Conv(struct Object* bc, uint8_t a) {
     // return DespawnEmote();
 }
 
-void DespawnEmote(void) {
-    SET_PC(aDespawnEmote);
-    PUSH_BC;
-    LDH_A_addr(hMapObjectIndex);
-    LD_C_A;
-    CALL(aDespawnEmote_DeleteEmote);
-    POP_BC;
-    RET;
-
-DeleteEmote:
-
-    LD_DE(wObjectStructs);
-    LD_A(NUM_OBJECT_STRUCTS);
-
-loop:
-
-    PUSH_AF;
-    LD_HL(OBJECT_FLAGS1);
-    ADD_HL_DE;
-    BIT_hl(EMOTE_OBJECT_F);
-    IF_Z goto next;
-    LD_HL(OBJECT_SPRITE);
-    ADD_HL_DE;
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto next;
-    PUSH_BC;
-    XOR_A_A;
-    LD_BC(OBJECT_LENGTH);
-    CALL(aByteFill);
-    POP_BC;
-
-next:
-
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_DE;
-    LD_D_H;
-    LD_E_L;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop;
-    RET;
-}
-
-void DespawnEmote_Conv(struct Object* bc) {
+void DespawnEmote(struct Object* bc) {
     (void)bc;
     // SET_PC(aDespawnEmote);
     // PUSH_BC;
@@ -5186,17 +3570,7 @@ void DespawnEmote_Conv(struct Object* bc) {
     // RET;
 }
 
-void InitTempObject(void) {
-    SET_PC(aInitTempObject);
-    CALL(aFindFirstEmptyObjectStruct);
-    RET_NC;
-    LD_D_H;
-    LD_E_L;
-    FARCALL(aCopyTempObjectToObjectStruct);
-    RET;
-}
-
-void InitTempObject_Conv(void) {
+static void InitTempObject(void) {
     // SET_PC(aInitTempObject);
     // CALL(aFindFirstEmptyObjectStruct);
     struct Object* de = FindFirstEmptyObjectStruct();
@@ -5210,47 +3584,11 @@ void InitTempObject_Conv(void) {
     // RET;
 }
 
-void CopyTempObjectData(void) {
-    SET_PC(aCopyTempObjectData);
-    //  load into wTempObjectCopy:
-    //  -1, -1, [de], [de + 1], [de + 2], [hMapObjectIndex], [NextMapX], [NextMapY], -1
-    //  This spawns the object at the same place as whichever object is loaded into bc.
-    LD_HL(wTempObjectCopyMapObjectIndex);
-    LD_hl(-1);
-    INC_HL;
-    LD_hl(-1);
-    INC_HL;
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    LD_A_de;
-    LD_hli_A;
-    LDH_A_addr(hMapObjectIndex);
-    LD_hli_A;
-    PUSH_HL;
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    POP_HL;
-    LD_hl_D;
-    INC_HL;
-    LD_hl_E;
-    INC_HL;
-    LD_hl(-1);
-    RET;
-}
-
-void CopyTempObjectData_Conv(struct Object* bc, const uint8_t* de) {
+//  load into wTempObjectCopy:
+//  -1, -1, [de], [de + 1], [de + 2], [hMapObjectIndex], [NextMapX], [NextMapY], -1
+//  This spawns the object at the same place as whichever object is loaded into bc.
+static void CopyTempObjectData(struct Object* bc, const uint8_t* de) {
     // SET_PC(aCopyTempObjectData);
-    //  load into wTempObjectCopy:
-    //  -1, -1, [de], [de + 1], [de + 2], [hMapObjectIndex], [NextMapX], [NextMapY], -1
-    //  This spawns the object at the same place as whichever object is loaded into bc.
     // LD_HL(wTempObjectCopyMapObjectIndex);
     // LD_hl(-1);
     wram->wTempObjectCopyMapObjectIndex = 0xff;
@@ -5292,34 +3630,6 @@ void CopyTempObjectData_Conv(struct Object* bc, const uint8_t* de) {
 }
 
 void UpdateAllObjectsFrozen(void) {
-    SET_PC(aUpdateAllObjectsFrozen);
-    LD_A_addr(wVramState);
-    BIT_A(0);
-    RET_Z;
-    LD_BC(wObjectStructs);
-    XOR_A_A;
-
-loop:
-
-    LDH_addr_A(hMapObjectIndex);
-    CALL(aDoesObjectHaveASprite);
-    IF_Z goto ok;
-    CALL(aUpdateObjectFrozen);
-
-ok:
-
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    LDH_A_addr(hMapObjectIndex);
-    INC_A;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NZ goto loop;
-    RET;
-}
-
-void UpdateAllObjectsFrozen_Conv(void) {
     // SET_PC(aUpdateAllObjectsFrozen);
     // LD_A_addr(wVramState);
     // BIT_A(0);
@@ -5339,7 +3649,7 @@ void UpdateAllObjectsFrozen_Conv(void) {
         // IF_Z goto ok;
         if(DoesObjectHaveASprite(&bc[a])) {
             // CALL(aUpdateObjectFrozen);
-            UpdateObjectFrozen_Conv(&bc[a]);
+            UpdateObjectFrozen(&bc[a]);
         }
     // ok:
         // LD_HL(OBJECT_LENGTH);
@@ -5354,33 +3664,13 @@ void UpdateAllObjectsFrozen_Conv(void) {
     // RET;
 }
 
-void RespawnPlayerAndOpponent(void) {
-    SET_PC(aRespawnPlayerAndOpponent);
-    //  called at battle start
-    CALL(aHideAllObjects);
-    LD_A(PLAYER);
-    CALL(aRespawnObject);
-    LD_A_addr(wBattleScriptFlags);
-    BIT_A(7);
-    IF_Z goto skip_opponent;
-    LDH_A_addr(hLastTalked);
-    AND_A_A;
-    IF_Z goto skip_opponent;
-    CALL(aRespawnObject);
-
-skip_opponent:
-
-    CALL(av_UpdateSprites);
-    RET;
-}
-
 //  called at battle start
-void RespawnPlayerAndOpponent_Conv(void) {
+void RespawnPlayerAndOpponent(void) {
     // CALL(aHideAllObjects);
     HideAllObjects();
     // LD_A(PLAYER);
     // CALL(aRespawnObject);
-    RespawnObject_Conv(PLAYER);
+    RespawnObject(PLAYER);
     // LD_A_addr(wBattleScriptFlags);
     // BIT_A(7);
     // IF_Z goto skip_opponent;
@@ -5389,57 +3679,29 @@ void RespawnPlayerAndOpponent_Conv(void) {
     // IF_Z goto skip_opponent;
     if(bit_test(wram->wBattleScriptFlags, 7) && hram->hLastTalked != 0) {
         // CALL(aRespawnObject);
-        RespawnObject_Conv(hram->hLastTalked);
+        RespawnObject(hram->hLastTalked);
     }
 
 // skip_opponent:
 
     // CALL(av_UpdateSprites);
-    v_UpdateSprites_Conv();
+    v_UpdateSprites();
     // RET;
 }
 
 void RespawnPlayer(void) {
-    SET_PC(aRespawnPlayer);
-    CALL(aHideAllObjects);
-    LD_A(PLAYER);
-    CALL(aRespawnObject);
-    CALL(av_UpdateSprites);
-    RET;
-}
-
-void RespawnPlayer_Conv(void) {
     // SET_PC(aRespawnPlayer);
     // CALL(aHideAllObjects);
     HideAllObjects();
     // LD_A(PLAYER);
     // CALL(aRespawnObject);
-    RespawnObject_Conv(PLAYER);
+    RespawnObject(PLAYER);
     // CALL(av_UpdateSprites);
-    v_UpdateSprites_Conv();
+    v_UpdateSprites();
     // RET;
 }
 
-void RespawnObject(void) {
-    SET_PC(aRespawnObject);
-    CP_A(NUM_OBJECTS);
-    RET_NC;
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(-1);
-    RET_Z;
-    CP_A(NUM_OBJECT_STRUCTS);
-    RET_NC;
-    CALL(aGetObjectStruct);
-    CALL(aDoesObjectHaveASprite);
-    RET_Z;
-    CALL(aUpdateRespawnedObjectFrozen);
-    RET;
-}
-
-void RespawnObject_Conv(uint8_t a) {
+void RespawnObject(uint8_t a) {
     // SET_PC(aRespawnObject);
     // CP_A(NUM_OBJECTS);
     // RET_NC;
@@ -5465,7 +3727,7 @@ void RespawnObject_Conv(uint8_t a) {
     if(!DoesObjectHaveASprite(obj))
         return;
     // CALL(aUpdateRespawnedObjectFrozen);
-    UpdateRespawnedObjectFrozen_Conv(obj);
+    UpdateRespawnedObjectFrozen(obj);
     // RET;
 }
 
@@ -5481,7 +3743,7 @@ void HideAllObjects(void) {
 
         // LDH_addr_A(hMapObjectIndex);
         // CALL(aSetFacing_Standing);
-        SetFacing_Standing_Conv(bc);
+        SetFacing_Standing(bc);
         // LD_HL(OBJECT_LENGTH);
         // ADD_HL_BC;
         // LD_B_H;
@@ -5495,74 +3757,42 @@ void HideAllObjects(void) {
     // RET;
 }
 
-void UpdateObjectFrozen(void) {
-    SET_PC(aUpdateObjectFrozen);
-    PUSH_BC;
-    CALL(aCheckObjectCoveredByTextbox);
-    POP_BC;
-    JR_C(mSetFacing_Standing);
-    CALL(aCheckObjectOnScreen);
-    JR_C(mSetFacing_Standing);
-    CALL(aUpdateObjectNextTile);
-    FARCALL(aHandleFrozenObjectAction);  // no need to farcall
-    XOR_A_A;
-    RET;
-}
-
-bool UpdateObjectFrozen_Conv(struct Object* bc) {
+static bool UpdateObjectFrozen(struct Object* bc) {
     // SET_PC(aUpdateObjectFrozen);
     // PUSH_BC;
     // CALL(aCheckObjectCoveredByTextbox);
     // POP_BC;
     // JR_C(mSetFacing_Standing);
-    if(CheckObjectCoveredByTextbox_Conv(bc))
-        return SetFacing_Standing_Conv(bc);
+    if(CheckObjectCoveredByTextbox(bc))
+        return SetFacing_Standing(bc);
     
     // CALL(aCheckObjectOnScreen);
     // JR_C(mSetFacing_Standing);
-    if(CheckObjectOnScreen_Conv(bc))
-        return SetFacing_Standing_Conv(bc);
+    if(CheckObjectOnScreen(bc))
+        return SetFacing_Standing(bc);
     
     // CALL(aUpdateObjectNextTile);
-    UpdateObjectNextTile_Conv(bc);
+    UpdateObjectNextTile(bc);
     // FARCALL(aHandleFrozenObjectAction);  // no need to farcall
-    HandleFrozenObjectAction_Conv(bc);
+    HandleFrozenObjectAction(bc);
     // XOR_A_A;
     // RET;
     return false;
 }
 
-void UpdateRespawnedObjectFrozen(void) {
-    SET_PC(aUpdateRespawnedObjectFrozen);
-    CALL(aCheckObjectOnScreen);
-    JR_C(mSetFacing_Standing);
-    FARCALL(aHandleFrozenObjectAction);  // no need to farcall
-    XOR_A_A;
-    RET;
-}
-
-void UpdateRespawnedObjectFrozen_Conv(struct Object* bc) {
+static void UpdateRespawnedObjectFrozen(struct Object* bc) {
     // SET_PC(aUpdateRespawnedObjectFrozen);
     // CALL(aCheckObjectOnScreen);
     // JR_C(mSetFacing_Standing);
-    if(CheckObjectOnScreen_Conv(bc)) {
+    if(CheckObjectOnScreen(bc)) {
     // FARCALL(aHandleFrozenObjectAction);  // no need to farcall
-        HandleFrozenObjectAction_Conv(bc);
+        HandleFrozenObjectAction(bc);
     }
     // XOR_A_A;
     // RET;
 }
 
-void SetFacing_Standing(void) {
-    SET_PC(aSetFacing_Standing);
-    LD_HL(OBJECT_FACING_STEP);
-    ADD_HL_BC;
-    LD_hl(STANDING);
-    SCF;
-    RET;
-}
-
-bool SetFacing_Standing_Conv(struct Object* bc) {
+static bool SetFacing_Standing(struct Object* bc) {
     // LD_HL(OBJECT_FACING_STEP);
     // ADD_HL_BC;
     // LD_hl(STANDING);
@@ -5572,25 +3802,7 @@ bool SetFacing_Standing_Conv(struct Object* bc) {
     return true;
 }
 
-void UpdateObjectNextTile(void) {
-    SET_PC(aUpdateObjectNextTile);
-    PUSH_BC;
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    CALL(aGetCoordTile);
-    POP_BC;
-    LD_HL(OBJECT_NEXT_TILE);
-    ADD_HL_BC;
-    LD_hl_A;
-    FARCALL(aUpdateTallGrassFlags);  // no need to farcall
-    RET;
-}
-
-void UpdateObjectNextTile_Conv(struct Object* bc) {
+static void UpdateObjectNextTile(struct Object* bc) {
     // SET_PC(aUpdateObjectNextTile);
     // PUSH_BC;
     // LD_HL(OBJECT_NEXT_MAP_X);
@@ -5606,50 +3818,11 @@ void UpdateObjectNextTile_Conv(struct Object* bc) {
     // LD_hl_A;
     bc->nextTile = GetCoordTile(bc->nextMapX, bc->nextMapY);
     // FARCALL(aUpdateTallGrassFlags);  // no need to farcall
-    UpdateTallGrassFlags_Conv(bc);
+    UpdateTallGrassFlags(bc);
     // RET;
 }
 
-void CheckObjectOnScreen(void) {
-    SET_PC(aCheckObjectOnScreen);
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    INC_D;
-    INC_E;
-    LD_A_addr(wXCoord);
-    CP_A_D;
-    IF_Z goto equal_x;
-    IF_NC goto nope;
-    ADD_A(MAPOBJECT_SCREEN_WIDTH - 1);
-    CP_A_D;
-    IF_C goto nope;
-
-equal_x:
-
-    LD_A_addr(wYCoord);
-    CP_A_E;
-    IF_Z goto equal_y;
-    IF_NC goto nope;
-    ADD_A(MAPOBJECT_SCREEN_HEIGHT - 1);
-    CP_A_E;
-    IF_C goto nope;
-
-equal_y:
-
-    XOR_A_A;
-    RET;
-
-nope:
-
-    SCF;
-    RET;
-}
-
-bool CheckObjectOnScreen_Conv(struct Object* bc) {
+static bool CheckObjectOnScreen(struct Object* bc) {
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_D_hl;
@@ -5693,151 +3866,7 @@ bool CheckObjectOnScreen_Conv(struct Object* bc) {
     return true;
 }
 
-void CheckObjectCoveredByTextbox(void) {
-    SET_PC(aCheckObjectCoveredByTextbox);
-    //  Check whether the object fits in the screen width.
-    LD_A_addr(wPlayerBGMapOffsetX);
-    LD_D_A;
-    LD_HL(OBJECT_SPRITE_X_OFFSET);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_SPRITE_X);
-    ADD_HL_BC;
-    ADD_A_hl;
-    ADD_A_D;
-    CP_A(0xf0);
-    IF_NC goto ok1;
-    CP_A(SCREEN_WIDTH_PX);
-    JP_NC(mCheckObjectCoveredByTextbox_nope);
-
-ok1:
-
-    //  Account for objects currently moving left/right.
-    AND_A(0b00000111);
-    LD_D(2);
-    CP_A(TILE_WIDTH / 2);
-    IF_C goto ok2;
-    LD_D(3);
-
-ok2:
-
-    //  Convert pixels to tiles.
-    LD_A_hl;
-    SRL_A;
-    SRL_A;
-    SRL_A;
-    CP_A(SCREEN_WIDTH);
-    IF_C goto ok3;
-    SUB_A(BG_MAP_WIDTH);
-
-ok3:
-
-    LDH_addr_A(hCurSpriteXCoord);
-
-    //  Check whether the object fits in the screen height.
-    LD_A_addr(wPlayerBGMapOffsetY);
-    LD_E_A;
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_HL(OBJECT_SPRITE_Y);
-    ADD_HL_BC;
-    ADD_A_hl;
-    ADD_A_E;
-    CP_A(0xf0);
-    IF_NC goto ok4;
-    CP_A(SCREEN_HEIGHT_PX);
-    IF_NC goto nope;
-
-ok4:
-
-    //  Account for objects currently moving up/down.
-    AND_A(0b00000111);
-    LD_E(2);
-    CP_A(TILE_WIDTH / 2);
-    IF_C goto ok5;
-    LD_E(3);
-
-ok5:
-
-    //  Convert pixels to tiles.
-    LD_A_hl;
-    SRL_A;
-    SRL_A;
-    SRL_A;
-    CP_A(SCREEN_HEIGHT);
-    IF_C goto ok6;
-    SUB_A(BG_MAP_HEIGHT);
-
-ok6:
-
-    LDH_addr_A(hCurSpriteYCoord);
-
-    //  Account for big objects that are twice as wide and high.
-    LD_HL(OBJECT_PALETTE);
-    ADD_HL_BC;
-    BIT_hl(BIG_OBJECT_F);
-    IF_Z goto ok7;
-    LD_A_D;
-    ADD_A(2);
-    LD_D_A;
-    LD_A_E;
-    ADD_A(2);
-    LD_E_A;
-
-ok7:
-
-    LD_A_D;
-    LDH_addr_A(hCurSpriteXPixel);
-
-loop:
-
-    LDH_A_addr(hCurSpriteXPixel);
-    LD_D_A;
-    LDH_A_addr(hCurSpriteYCoord);
-    ADD_A_E;
-    DEC_A;
-    CP_A(SCREEN_HEIGHT);
-    IF_NC goto ok9;
-    LD_B_A;
-
-next:
-
-    LDH_A_addr(hCurSpriteXCoord);
-    ADD_A_D;
-    DEC_A;
-    CP_A(SCREEN_WIDTH);
-    IF_NC goto ok8;
-    LD_C_A;
-    PUSH_BC;
-    CALL(aCoord2Tile);
-    POP_BC;
-    //  NPCs disappear if standing on tile $60-$7f (or $e0-$ff),
-    //  since those IDs are for text characters and textbox frames.
-    LD_A_hl;
-    CP_A(FIRST_REGULAR_TEXT_CHAR);
-    IF_NC goto nope;
-
-ok8:
-
-    DEC_D;
-    IF_NZ goto next;
-
-ok9:
-
-    DEC_E;
-    IF_NZ goto loop;
-
-    AND_A_A;
-    RET;
-
-nope:
-
-    SCF;
-    RET;
-}
-
-bool CheckObjectCoveredByTextbox_Conv(struct Object* bc) {
+static bool CheckObjectCoveredByTextbox(struct Object* bc) {
     // SET_PC(aCheckObjectCoveredByTextbox);
     //  Check whether the object fits in the screen width.
     // LD_A_addr(wPlayerBGMapOffsetX);
@@ -6042,7 +4071,7 @@ void DoStepsForAllObjects(void) {
         // IF_Z goto next;
         if(DoesObjectHaveASprite(bc + a)) {
             // CALL(aHandleObjectStep);
-            HandleObjectStep_Conv(bc + a);
+            HandleObjectStep(bc + a);
         }
     // next:
 
@@ -6111,23 +4140,16 @@ void SpawnInCustomFacing(void) {
     // ADD_A_A;
     // ADD_A_A;
     // JR(mv_ContinueSpawnFacing);
-    return v_ContinueSpawnFacing_Conv((wram->wPlayerSpriteSetupFlags & (PLAYERSPRITESETUP_FACING_MASK)) << 2);
+    return v_ContinueSpawnFacing((wram->wPlayerSpriteSetupFlags & (PLAYERSPRITESETUP_FACING_MASK)) << 2);
 }
 
 void SpawnInFacingDown(void) {
     // SET_PC(aSpawnInFacingDown);
     // LD_A(DOWN);
-    return v_ContinueSpawnFacing_Conv(DOWN);
+    return v_ContinueSpawnFacing(DOWN);
 }
 
-void v_ContinueSpawnFacing(void) {
-    SET_PC(av_ContinueSpawnFacing);
-    LD_BC(wPlayerStruct);
-    CALL(aSetSpriteDirection);
-    RET;
-}
-
-void v_ContinueSpawnFacing_Conv(uint8_t a) {
+void v_ContinueSpawnFacing(uint8_t a) {
     // SET_PC(av_ContinueSpawnFacing);
     // LD_BC(wPlayerStruct);
     // CALL(aSetSpriteDirection);
@@ -6135,32 +4157,7 @@ void v_ContinueSpawnFacing_Conv(uint8_t a) {
     // RET;
 }
 
-void v_SetPlayerPalette(void) {
-    SET_PC(av_SetPlayerPalette);
-    LD_A_D;
-    AND_A(1 << 7);
-    RET_Z;
-    LD_BC(0);  // debug?
-    LD_HL(OBJECT_FACING);
-    ADD_HL_BC;
-    LD_A_hl;
-    OR_A_D;
-    LD_hl_A;
-    LD_A_D;
-    SWAP_A;
-    AND_A(PALETTE_MASK);
-    LD_D_A;
-    LD_BC(wPlayerStruct);
-    LD_HL(OBJECT_PALETTE);
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(~PALETTE_MASK);
-    OR_A_D;
-    LD_hl_A;
-    RET;
-}
-
-void v_SetPlayerPalette_Conv(uint8_t d) {
+void v_SetPlayerPalette(uint8_t d) {
     // SET_PC(av_SetPlayerPalette);
     // LD_A_D;
     // AND_A(1 << 7);
@@ -6190,46 +4187,24 @@ void v_SetPlayerPalette_Conv(uint8_t d) {
     // RET;
 }
 
-void StartFollow(void) {
-    SET_PC(aStartFollow);
-    PUSH_BC;
-    LD_A_B;
-    CALL(aSetLeaderIfVisible);
-    POP_BC;
-    RET_C;
-    LD_A_C;
-    CALL(aSetFollowerIfVisible);
-    FARCALL(aQueueFollowerFirstStep);
-    RET;
-}
-
-void StartFollow_Conv(uint8_t b, uint8_t c) {
+void StartFollow(uint8_t b, uint8_t c) {
     // SET_PC(aStartFollow);
     // PUSH_BC;
     // LD_A_B;
     // CALL(aSetLeaderIfVisible);
     // POP_BC;
     // RET_C;
-    if(!SetLeaderIfVisible_Conv(b))
+    if(!SetLeaderIfVisible(b))
         return;
     // LD_A_C;
     // CALL(aSetFollowerIfVisible);
-    SetFollowerIfVisible_Conv(c);
+    SetFollowerIfVisible(c);
     // FARCALL(aQueueFollowerFirstStep);
     QueueFollowerFirstStep();
     // RET;
 }
 
-void SetLeaderIfVisible(void) {
-    SET_PC(aSetLeaderIfVisible);
-    CALL(aCheckObjectVisibility);
-    RET_C;
-    LDH_A_addr(hObjectStructIndex);
-    LD_addr_A(wObjectFollow_Leader);
-    RET;
-}
-
-bool SetLeaderIfVisible_Conv(uint8_t a) {
+bool SetLeaderIfVisible(uint8_t a) {
     // SET_PC(aSetLeaderIfVisible);
     // CALL(aCheckObjectVisibility);
     struct Object* bc = CheckObjectVisibility(a);
@@ -6244,29 +4219,15 @@ bool SetLeaderIfVisible_Conv(uint8_t a) {
 }
 
 void StopFollow(void) {
-    SET_PC(aStopFollow);
-    CALL(aResetLeader);
-    CALL(aResetFollower);
-    RET;
-}
-
-void StopFollow_Conv(void) {
     // SET_PC(aStopFollow);
     // CALL(aResetLeader);
-    ResetLeader_Conv();
+    ResetLeader();
     // CALL(aResetFollower);
-    ResetFollower_Conv();
+    ResetFollower();
     // RET;
 }
 
 void ResetLeader(void) {
-    SET_PC(aResetLeader);
-    LD_A(-1);
-    LD_addr_A(wObjectFollow_Leader);
-    RET;
-}
-
-void ResetLeader_Conv(void) {
     // SET_PC(aResetLeader);
     // LD_A(-1);
     // LD_addr_A(wObjectFollow_Leader);
@@ -6274,29 +4235,11 @@ void ResetLeader_Conv(void) {
     wram->wObjectFollow_Leader = 0xff;
 }
 
-void SetFollowerIfVisible(void) {
-    SET_PC(aSetFollowerIfVisible);
-    PUSH_AF;
-    CALL(aResetFollower);
-    POP_AF;
-    CALL(aCheckObjectVisibility);
-    RET_C;
-    LD_HL(OBJECT_MOVEMENTTYPE);
-    ADD_HL_BC;
-    LD_hl(SPRITEMOVEDATA_FOLLOWING);
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_RESET);
-    LDH_A_addr(hObjectStructIndex);
-    LD_addr_A(wObjectFollow_Follower);
-    RET;
-}
-
-bool SetFollowerIfVisible_Conv(uint8_t a) {
+bool SetFollowerIfVisible(uint8_t a) {
     // SET_PC(aSetFollowerIfVisible);
     // PUSH_AF;
     // CALL(aResetFollower);
-    ResetFollower_Conv();
+    ResetFollower();
     // POP_AF;
     // CALL(aCheckObjectVisibility);
     // RET_C;
@@ -6319,18 +4262,6 @@ bool SetFollowerIfVisible_Conv(uint8_t a) {
 }
 
 void ResetFollower(void) {
-    SET_PC(aResetFollower);
-    LD_A_addr(wObjectFollow_Follower);
-    CP_A(-1);
-    RET_Z;
-    CALL(aGetObjectStruct);
-    FARCALL(aResetObject);  // no need to farcall
-    LD_A(-1);
-    LD_addr_A(wObjectFollow_Follower);
-    RET;
-}
-
-void ResetFollower_Conv(void) {
     // SET_PC(aResetFollower);
     // LD_A_addr(wObjectFollow_Follower);
     // CP_A(-1);
@@ -6340,29 +4271,14 @@ void ResetFollower_Conv(void) {
     // CALL(aGetObjectStruct);
     struct Object* bc = GetObjectStruct(wram->wObjectFollow_Follower);
     // FARCALL(aResetObject);  // no need to farcall
-    ResetObject_Conv(bc);
+    ResetObject(bc);
     // LD_A(-1);
     // LD_addr_A(wObjectFollow_Follower);
     wram->wObjectFollow_Follower = 0xff;
     // RET;
 }
 
-void FreezeAllOtherObjects(void) {
-    SET_PC(aFreezeAllOtherObjects);
-    LD_A_C;
-    CALL(aCheckObjectVisibility);
-    RET_C;
-    PUSH_BC;
-    CALL(aFreezeAllObjects);
-    POP_BC;
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(FROZEN_F);
-    XOR_A_A;
-    RET;
-}
-
-bool FreezeAllOtherObjects_Conv(uint8_t c) {
+bool FreezeAllOtherObjects(uint8_t c) {
     // SET_PC(aFreezeAllOtherObjects);
     // LD_A_C;
     // CALL(aCheckObjectVisibility);
@@ -6372,7 +4288,7 @@ bool FreezeAllOtherObjects_Conv(uint8_t c) {
         return false;
     // PUSH_BC;
     // CALL(aFreezeAllObjects);
-    FreezeAllObjects_Conv();
+    FreezeAllObjects();
     // POP_BC;
     // LD_HL(OBJECT_FLAGS2);
     // ADD_HL_BC;
@@ -6396,33 +4312,6 @@ void FreezeObject(void) {
 }
 
 void FreezeAllObjects(void) {
-    SET_PC(aFreezeAllObjects);
-    LD_BC(wObjectStructs);
-    XOR_A_A;
-
-loop:
-
-    PUSH_AF;
-    CALL(aDoesObjectHaveASprite);
-    IF_Z goto next;
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    SET_hl(FROZEN_F);
-
-next:
-
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    POP_AF;
-    INC_A;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NZ goto loop;
-    RET;
-}
-
-void FreezeAllObjects_Conv(void) {
     // SET_PC(aFreezeAllObjects);
     // LD_BC(wObjectStructs);
     // XOR_A_A;
@@ -6454,30 +4343,7 @@ void FreezeAllObjects_Conv(void) {
     // RET;
 }
 
-void v_UnfreezeFollowerObject(void) {
-    SET_PC(av_UnfreezeFollowerObject);
-    LD_A_addr(wObjectFollow_Leader);
-    CP_A(-1);
-    RET_Z;
-    PUSH_BC;
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    POP_BC;
-    CP_A_C;
-    RET_NZ;
-    LD_A_addr(wObjectFollow_Follower);
-    CP_A(-1);
-    RET_Z;
-    CALL(aGetObjectStruct);
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(FROZEN_F);
-    RET;
-}
-
-void v_UnfreezeFollowerObject_Conv(uint8_t c) {
+void v_UnfreezeFollowerObject(uint8_t c) {
     // SET_PC(av_UnfreezeFollowerObject);
     // LD_A_addr(wObjectFollow_Leader);
     // CP_A(-1);
@@ -6510,35 +4376,6 @@ void v_UnfreezeFollowerObject_Conv(uint8_t c) {
 }
 
 void UnfreezeAllObjects(void) {
-    SET_PC(aUnfreezeAllObjects);
-    PUSH_BC;
-    LD_BC(wObjectStructs);
-    XOR_A_A;
-
-loop:
-
-    PUSH_AF;
-    CALL(aDoesObjectHaveASprite);
-    IF_Z goto next;
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(FROZEN_F);
-
-next:
-
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    POP_AF;
-    INC_A;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NZ goto loop;
-    POP_BC;
-    RET;
-}
-
-void UnfreezeAllObjects_Conv(void) {
     // SET_PC(aUnfreezeAllObjects);
     // PUSH_BC;
     // LD_BC(wObjectStructs);
@@ -6584,56 +4421,7 @@ void UnfreezeObject(void) {
     RET;
 }
 
-void ResetObject(void) {
-    SET_PC(aResetObject);
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(-1);
-    JP_Z(mResetObject_set_standing);  // a jr would have been appropriate here
-    PUSH_BC;
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_MOVEMENT);
-    ADD_HL_BC;
-    LD_A_hl;
-    POP_BC;
-    LD_HL(OBJECT_MOVEMENTTYPE);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_RESET);
-    RET;
-
-set_standing:
-
-    CALL(aGetSpriteDirection);
-    RRCA;
-    RRCA;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mResetObject_standing_movefns);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_HL(OBJECT_MOVEMENTTYPE);
-    ADD_HL_BC;
-    LD_hl_A;
-    LD_HL(OBJECT_STEP_TYPE);
-    ADD_HL_BC;
-    LD_hl(STEP_TYPE_RESET);
-    RET;
-
-standing_movefns:
-
-    // db ['SPRITEMOVEDATA_STANDING_DOWN'];
-    // db ['SPRITEMOVEDATA_STANDING_UP'];
-    // db ['SPRITEMOVEDATA_STANDING_LEFT'];
-    // db ['SPRITEMOVEDATA_STANDING_RIGHT'];
-
-    return v_UpdateSprites();
-}
-
-static void ResetObject_set_standing_Conv(struct Object* bc) {
+static void ResetObject_set_standing(struct Object* bc) {
     static const uint8_t standing_movefns[] = {
         SPRITEMOVEDATA_STANDING_DOWN,
         SPRITEMOVEDATA_STANDING_UP,
@@ -6661,7 +4449,7 @@ static void ResetObject_set_standing_Conv(struct Object* bc) {
     // RET;
 }
 
-void ResetObject_Conv(struct Object* bc) {
+void ResetObject(struct Object* bc) {
     // SET_PC(aResetObject);
     // LD_HL(OBJECT_MAP_OBJECT_INDEX);
     // ADD_HL_BC;
@@ -6669,7 +4457,7 @@ void ResetObject_Conv(struct Object* bc) {
     // CP_A(-1);
     // JP_Z(mResetObject_set_standing);  // a jr would have been appropriate here
     if(bc->mapObjectIndex == 0xff)
-        return ResetObject_set_standing_Conv(bc);
+        return ResetObject_set_standing(bc);
     // PUSH_BC;
     // CALL(aGetMapObject);
     struct MapObject* obj = GetMapObject(bc->mapObjectIndex);
@@ -6689,52 +4477,6 @@ void ResetObject_Conv(struct Object* bc) {
 }
 
 void v_UpdateSprites(void) {
-    return v_UpdateSprites_Conv();
-    SET_PC(av_UpdateSprites);
-    LD_A_addr(wVramState);
-    BIT_A(0);
-    RET_Z;
-    XOR_A_A;
-    LDH_addr_A(hUsedSpriteIndex);
-    LDH_A_addr(hOAMUpdate);
-    PUSH_AF;
-    LD_A(1);
-    LDH_addr_A(hOAMUpdate);
-    CALL(aInitSprites);
-    CALL(av_UpdateSprites_fill);
-    POP_AF;
-    LDH_addr_A(hOAMUpdate);
-    RET;
-
-fill:
-
-    LD_A_addr(wVramState);
-    BIT_A(1);
-    LD_B(NUM_SPRITE_OAM_STRUCTS * SPRITEOAMSTRUCT_LENGTH);
-    IF_Z goto ok;
-    LD_B((NUM_SPRITE_OAM_STRUCTS - 12) * SPRITEOAMSTRUCT_LENGTH);
-
-ok:
-
-    LDH_A_addr(hUsedSpriteIndex);
-    CP_A_B;
-    RET_NC;
-    LD_L_A;
-    LD_H(HIGH(wVirtualOAM));
-    LD_DE(SPRITEOAMSTRUCT_LENGTH);
-    LD_A_B;
-    LD_C(SCREEN_HEIGHT_PX + 2 * TILE_WIDTH);
-
-loop:
-
-    LD_hl_C;  // y
-    ADD_HL_DE;
-    CP_A_L;
-    IF_NZ goto loop;
-    RET;
-}
-
-void v_UpdateSprites_Conv(void) {
     // SET_PC(av_UpdateSprites);
     // LD_A_addr(wVramState);
     // BIT_A(0);
@@ -6796,59 +4538,11 @@ void v_UpdateSprites_Conv(void) {
     hram->hOAMUpdate = temp;
 }
 
-void ApplyBGMapAnchorToObjects(void) {
-    SET_PC(aApplyBGMapAnchorToObjects);
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    LD_A_addr(wPlayerBGMapOffsetX);
-    LD_D_A;
-    LD_A_addr(wPlayerBGMapOffsetY);
-    LD_E_A;
-    LD_BC(wObjectStructs);
-    LD_A(NUM_OBJECT_STRUCTS);
-
-loop:
-
-    PUSH_AF;
-    CALL(aDoesObjectHaveASprite);
-    IF_Z goto skip;
-    LD_HL(OBJECT_SPRITE_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A_D;
-    LD_hl_A;
-    LD_HL(OBJECT_SPRITE_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    ADD_A_E;
-    LD_hl_A;
-
-skip:
-
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto loop;
-    XOR_A_A;
-    LD_addr_A(wPlayerBGMapOffsetX);
-    LD_addr_A(wPlayerBGMapOffsetY);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
 #define PRIORITY_LOW (0x10)
 #define PRIORITY_NORM (0x20)
 #define PRIORITY_HIGH (0x30)
 
-    return InitSprites();
-}
-
-void ApplyBGMapAnchorToObjects_Conv(void) {
+void ApplyBGMapAnchorToObjects(void) {
     // SET_PC(aApplyBGMapAnchorToObjects);
     // PUSH_HL;
     // PUSH_DE;

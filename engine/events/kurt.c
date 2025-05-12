@@ -56,7 +56,7 @@ void SelectApricornForKurt(void){
         // CALL(aKurt_SelectApricorn);
         // LD_A_C;
         // LD_addr_A(wScriptVar);
-        wram->wScriptVar = Kurt_SelectApricorn_Conv();
+        wram->wScriptVar = Kurt_SelectApricorn();
         // AND_A_A;
         // IF_Z goto done;
         if(wram->wScriptVar == 0)
@@ -72,7 +72,7 @@ void SelectApricornForKurt(void){
         // CALL(aKurt_SelectQuantity);
         // POP_BC;
         // IF_NC goto loop;
-    } while(!Kurt_SelectQuantity_Conv());
+    } while(!Kurt_SelectQuantity());
     // LD_A_addr(wItemQuantityChange);
     // LD_addr_A(wKurtApricornQuantity);
     wram->wKurtApricornQuantity = wram->wItemQuantityChange;
@@ -93,7 +93,7 @@ static void Kurt_SelectApricorn_Name(const struct MenuData* data, tile_t* de) {
     if(wram->wMenuSelection == 0)
         return;
     // FARCALL(aPlaceMenuItemName);
-    PlaceMenuItemName_Conv(data, de);
+    PlaceMenuItemName(data, de);
     // RET;
 }
 
@@ -102,7 +102,7 @@ static void Kurt_SelectApricorn_Quantity(const struct MenuData* data, tile_t* de
     // LD_addr_A(wCurItem);
     wram->wCurItem = wram->wMenuSelection;
     // CALL(aKurt_GetQuantityOfApricorn);
-    uint8_t quantity = Kurt_GetQuantityOfApricorn_Conv(wram->wMenuSelection);
+    uint8_t quantity = Kurt_GetQuantityOfApricorn(wram->wMenuSelection);
     // RET_Z ;
     if(quantity == 0)
         return;
@@ -110,7 +110,7 @@ static void Kurt_SelectApricorn_Quantity(const struct MenuData* data, tile_t* de
     // LD_addr_A(wMenuSelectionQuantity);
     wram->wMenuSelectionQuantity = quantity;
     // FARCALL(aPlaceMenuItemQuantity);
-    PlaceMenuItemQuantity_Conv(data, de);
+    PlaceMenuItemQuantity(data, de);
     // RET;
 }
 
@@ -139,41 +139,10 @@ static struct MenuHeader Kurt_SelectApricorn_MenuHeader = {
 };
     //db ['0'];  // unused
 
-
-void Kurt_SelectApricorn(void){
-    FARCALL(aFindApricornsInBag);
-    IF_C goto nope;
-    LD_HL(mKurt_SelectApricorn_MenuHeader);
-    CALL(aCopyMenuHeader);
-    LD_A_addr(wMenuSelection);
-    LD_addr_A(wMenuCursorPosition);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aInitScrollingMenu);
-    CALL(aUpdateSprites);
-    CALL(aScrollingMenu);
-    LD_A_addr(wMenuJoypad);
-    CP_A(B_BUTTON);
-    IF_Z goto nope;
-    LD_A_addr(wMenuSelection);
-    CP_A(-1);
-    IF_NZ goto done;
-
-
-nope:
-    XOR_A_A;  // FALSE
-
-
-done:
-    LD_C_A;
-    RET;
-
-}
-
-uint8_t Kurt_SelectApricorn_Conv(void){
+uint8_t Kurt_SelectApricorn(void){
     // FARCALL(aFindApricornsInBag);
     // IF_C goto nope;
-    if(FindApricornsInBag_Conv()) {
+    if(FindApricornsInBag()) {
         // LD_HL(mKurt_SelectApricorn_MenuHeader);
         // CALL(aCopyMenuHeader);
         CopyMenuHeader(&Kurt_SelectApricorn_MenuHeader);
@@ -221,65 +190,15 @@ static const struct MenuHeader Kurt_SelectQuantity_MenuHeader = {
     //db ['0'];
 };
 
-void Kurt_SelectQuantity(void){
-    LD_A_addr(wCurItem);
-    LD_addr_A(wMenuSelection);
-    CALL(aKurt_GetQuantityOfApricorn);
-    IF_Z goto done;
-    LD_A_addr(wItemQuantityChange);
-    LD_addr_A(wItemQuantity);
-    LD_A(0x1);
-    LD_addr_A(wItemQuantityChange);
-    LD_HL(mKurt_SelectQuantity_MenuHeader);
-    CALL(aLoadMenuHeader);
-
-loop:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(aMenuBox);
-    CALL(aUpdateSprites);
-    CALL(aKurt_SelectQuantity_PlaceApricornName);
-    CALL(aPlaceApricornQuantity);
-    CALL(aApplyTilemap);
-    FARCALL(aKurt_SelectQuantity_InterpretJoypad);
-    IF_NC goto loop;
-
-    PUSH_BC;
-    CALL(aPlayClickSFX);
-    POP_BC;
-    LD_A_B;
-    CP_A(-1);
-    IF_Z goto done;
-    LD_A_addr(wItemQuantityChange);
-    LD_addr_A(wItemQuantityChange);  // What is the point of this operation?
-    SCF;
-
-
-done:
-    CALL(aCloseWindow);
-    RET;
-
-
-PlaceApricornName:
-    CALL(aMenuBoxCoord2Tile);
-    LD_DE(SCREEN_WIDTH + 1);
-    ADD_HL_DE;
-    LD_D_H;
-    LD_E_L;
-    FARCALL(aPlaceMenuItemName);
-    RET;
-
-}
-
 static void Kurt_SelectQuantity_PlaceApricornName(void);
 
-bool Kurt_SelectQuantity_Conv(void){
+bool Kurt_SelectQuantity(void){
     // LD_A_addr(wCurItem);
     // LD_addr_A(wMenuSelection);
     wram->wMenuSelection = wram->wCurItem;
     // CALL(aKurt_GetQuantityOfApricorn);
     // IF_Z goto done;
-    uint8_t q = Kurt_GetQuantityOfApricorn_Conv(wram->wCurItem);
+    uint8_t q = Kurt_GetQuantityOfApricorn(wram->wCurItem);
     if(q == 0) {
         CloseWindow();
         return false;
@@ -344,7 +263,7 @@ static void Kurt_SelectQuantity_PlaceApricornName(void){
     // LD_D_H;
     // LD_E_L;
     // FARCALL(aPlaceMenuItemName);
-    PlaceMenuItemName_Conv(GetMenuData(), MenuBoxCoord2Tile() + SCREEN_WIDTH + 1);
+    PlaceMenuItemName(GetMenuData(), MenuBoxCoord2Tile() + SCREEN_WIDTH + 1);
     // RET;
 }
 
@@ -362,44 +281,7 @@ void PlaceApricornQuantity(void){
     PrintNum(hl + 1, &wram->wItemQuantityChange, PRINTNUM_LEADINGZEROS | 1, 2);
 }
 
-void Kurt_GetQuantityOfApricorn(void){
-    PUSH_BC;
-    LD_HL(wNumItems);
-    LD_A_addr(wCurItem);
-    LD_C_A;
-    LD_B(0);
-
-loop:
-    INC_HL;
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto done;
-    CP_A_C;
-    IF_NZ goto loop;
-    LD_A_hl;
-    ADD_A_B;
-    LD_B_A;
-    IF_NC goto loop;
-    LD_B(-1);
-
-
-done:
-    LD_A_B;
-    SUB_A(99);
-    IF_C goto done2;
-    LD_B(99);
-
-
-done2:
-    LD_A_B;
-    LD_addr_A(wItemQuantityChange);
-    AND_A_A;
-    POP_BC;
-    RET;
-
-}
-
-uint8_t Kurt_GetQuantityOfApricorn_Conv(item_t apricorn){
+uint8_t Kurt_GetQuantityOfApricorn(item_t apricorn){
     // PUSH_BC;
     // LD_HL(wNumItems);
     item_quantity_pocket_s* hl = &GetItemPocket(ITEM_POCKET)->quantity_pocket;
@@ -550,10 +432,10 @@ okay1:
                     // LD_A_C;
                     // CALL(aKurt_GetAddressOfApricornQuantity);
                     // LD_E_A;
-                    uint8_t e = Kurt_GetAddressOfApricornQuantity_Conv(c2);
+                    uint8_t e = Kurt_GetAddressOfApricornQuantity(c2);
                     // LD_A_B;
                     // CALL(aKurt_GetAddressOfApricornQuantity);
-                    uint8_t t = Kurt_GetAddressOfApricornQuantity_Conv(b);
+                    uint8_t t = Kurt_GetAddressOfApricornQuantity(b);
                     // SUB_A_E;
                     // IF_Z goto equal;
                     if(t == e) {
@@ -611,7 +493,7 @@ okay1:
             // LD_addr_A(wCurItemQuantity);
             wram->wCurItemQuantity = *hl_;
             // CALL(aKurt_GetRidOfItem);
-            Kurt_GetRidOfItem_Conv();
+            Kurt_GetRidOfItem();
             // POP_HL;
             // LD_A_addr(wItemQuantityChange);
             // AND_A_A;
@@ -661,24 +543,7 @@ okay1:
     return;
 }
 
-void Kurt_GetAddressOfApricornQuantity(void){
-    PUSH_HL;
-    PUSH_BC;
-    LD_HL(wNumItems);
-    INC_HL;
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    ADD_HL_BC;
-    INC_HL;
-    LD_A_hl;
-    POP_BC;
-    POP_HL;
-    RET;
-
-}
-
-uint8_t Kurt_GetAddressOfApricornQuantity_Conv(uint8_t a){
+uint8_t Kurt_GetAddressOfApricornQuantity(uint8_t a){
     // PUSH_HL;
     // PUSH_BC;
     // LD_HL(wNumItems);
@@ -697,50 +562,6 @@ uint8_t Kurt_GetAddressOfApricornQuantity_Conv(uint8_t a){
 }
 
 void Kurt_GetRidOfItem(void){
-    PUSH_BC;
-    LD_HL(wNumItems);
-    LD_A_addr(wCurItemQuantity);
-    LD_C_A;
-    LD_B(0);
-    INC_HL;
-    ADD_HL_BC;
-    ADD_HL_BC;
-    LD_A_addr(wCurItem);
-    LD_C_A;
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto done;
-    CP_A_C;
-    IF_NZ goto done;
-    LD_A_addr(wItemQuantityChange);
-    LD_C_A;
-    LD_A_hl;
-    SUB_A_C;
-    LD_B_C;
-    IF_NC goto okay;
-    ADD_A_C;
-    LD_B_A;
-
-
-okay:
-    PUSH_BC;
-    LD_HL(wNumItems);
-    LD_A_B;
-    LD_addr_A(wItemQuantityChange);
-    CALL(aTossItem);
-    POP_BC;
-    LD_A_C;
-    SUB_A_B;
-
-
-done:
-    LD_addr_A(wItemQuantityChange);
-    POP_BC;
-    RET;
-
-}
-
-void Kurt_GetRidOfItem_Conv(void){
     // PUSH_BC;
     // LD_HL(wNumItems);
     item_quantity_pocket_s* pocket = &GetItemPocket(ITEM_POCKET)->quantity_pocket;

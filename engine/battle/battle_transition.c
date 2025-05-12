@@ -465,7 +465,7 @@ void StartTrainerBattle_Flash(void){
 void StartTrainerBattle_SetUpForWavyOutro(void){
     PEEK("");
     // FARCALL(aRespawnPlayerAndOpponent);
-    RespawnPlayerAndOpponent_Conv();
+    RespawnPlayerAndOpponent();
     // LD_A(MBANK(awLYOverrides));
     // LDH_addr_A(rSVBK);
     // CALL(aStartTrainerBattle_NextScene);
@@ -547,7 +547,7 @@ void StartTrainerBattle_SineWave(void){
 
 void StartTrainerBattle_SetUpForSpinOutro(void){
     // FARCALL(aRespawnPlayerAndOpponent);
-    RespawnPlayerAndOpponent_Conv();
+    RespawnPlayerAndOpponent();
     // LD_A(MBANK(awLYOverrides));
     // LDH_addr_A(rSVBK);
     // CALL(aStartTrainerBattle_NextScene);
@@ -748,7 +748,7 @@ static const int8_t wedge5[] = {4, 0, 3, 0, 3, 0, 2, 0, 2, 0, 1, 0, 1, 0, 1, -1}
 
 void StartTrainerBattle_SetUpForRandomScatterOutro(void){
     // FARCALL(aRespawnPlayerAndOpponent);
-    RespawnPlayerAndOpponent_Conv();
+    RespawnPlayerAndOpponent();
     // LD_A(MBANK(awLYOverrides));
     // LDH_addr_A(rSVBK);
     // CALL(aStartTrainerBattle_NextScene);
@@ -1177,7 +1177,7 @@ void StartTrainerBattle_ZoomToBlack(void){
     //db ['-1'];
     };
     // FARCALL(aRespawnPlayerAndOpponent);
-    RespawnPlayerAndOpponent_Conv();
+    RespawnPlayerAndOpponent();
     // LD_DE(mStartTrainerBattle_ZoomToBlack_boxes);
 
     for(uint32_t i = 0; i < lengthof(boxes); ++i) {

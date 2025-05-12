@@ -423,7 +423,7 @@ static void CmdQueue_StoneTable(struct CmdQueue* bc){
             continue;
         // CALL(aHandleStoneQueue);
         // IF_C goto fall_down_hole;
-        if(HandleStoneQueue_Conv(de, bc->stonetable)) {
+        if(HandleStoneQueue(de, bc->stonetable)) {
         // fall_down_hole:
             // POP_AF;
             // RET;

@@ -10,18 +10,7 @@
 #include "../../data/items/apricorn_balls.h"
 #include "../items/items.h"
 
-void PlaceMenuItemName(void){
-    PUSH_DE;
-    LD_A_addr(wMenuSelection);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetItemName);
-    POP_HL;
-    CALL(aPlaceString);
-    RET;
-
-}
-
-void PlaceMenuItemName_Conv(const struct MenuData* data, uint8_t* de){
+void PlaceMenuItemName(const struct MenuData* data, uint8_t* de){
     (void)data;
     // PUSH_DE;
     // LD_A_addr(wMenuSelection);
@@ -34,30 +23,7 @@ void PlaceMenuItemName_Conv(const struct MenuData* data, uint8_t* de){
     // RET;
 }
 
-void PlaceMenuItemQuantity(void){
-    PUSH_DE;
-    LD_A_addr(wMenuSelection);
-    LD_addr_A(wCurItem);
-    FARCALL(av_CheckTossableItem);
-    LD_A_addr(wItemAttributeValue);
-    POP_HL;
-    AND_A_A;
-    IF_NZ goto done;
-    LD_DE(0x15);
-    ADD_HL_DE;
-    LD_hl(0xf1);
-    INC_HL;
-    LD_DE(wMenuSelectionQuantity);
-    LD_BC((1 << 8) | 2);
-    CALL(aPrintNum);
-
-
-done:
-    RET;
-
-}
-
-void PlaceMenuItemQuantity_Conv(const struct MenuData* data, tile_t* de){
+void PlaceMenuItemQuantity(const struct MenuData* data, tile_t* de){
     (void)data;
     // PUSH_DE;
     // LD_A_addr(wMenuSelection);
@@ -306,63 +272,9 @@ void StartMenu_PrintBugContestStatus(void){
     // RET;
 
 
-BallsJPString:;
+// BallsJPString:;
 //   //  unreferenced
     //db ['"ボール\u3000\u3000\u3000こ@"'];
-}
-
-void FindApricornsInBag(void){
-//  Checks the bag for Apricorns.
-    LD_HL(wKurtApricornCount);
-    XOR_A_A;
-    LD_hli_A;
-    //assert ['wKurtApricornCount + 1 == wKurtApricornItems'];
-    DEC_A;
-    LD_BC(10);
-    CALL(aByteFill);
-
-    LD_HL(mApricornBalls);
-
-loop:
-    LD_A_hl;
-    CP_A(-1);
-    IF_Z goto done;
-    PUSH_HL;
-    LD_addr_A(wCurItem);
-    LD_HL(wNumItems);
-    CALL(aCheckItem);
-    POP_HL;
-    IF_NC goto nope;
-    LD_A_hl;
-    CALL(aFindApricornsInBag_addtobuffer);
-
-nope:
-    INC_HL;
-    INC_HL;
-    goto loop;
-
-
-done:
-    LD_A_addr(wKurtApricornCount);
-    AND_A_A;
-    RET_NZ ;
-    SCF;
-    RET;
-
-
-addtobuffer:
-    PUSH_HL;
-    LD_HL(wKurtApricornCount);
-    INC_hl;
-    LD_E_hl;
-    LD_D(0);
-    ADD_HL_DE;
-    LD_hl_A;
-    POP_HL;
-    RET;
-
-// INCLUDE "data/items/apricorn_balls.asm"
-
 }
 
 static void FindApricornsInBag_addtobuffer(item_t a) {
@@ -378,8 +290,8 @@ static void FindApricornsInBag_addtobuffer(item_t a) {
     // RET;
 }
 
-bool FindApricornsInBag_Conv(void){
 //  Checks the bag for Apricorns.
+bool FindApricornsInBag(void){
     // LD_HL(wKurtApricornCount);
     wram->wKurtApricornCount = 0;
     // XOR_A_A;

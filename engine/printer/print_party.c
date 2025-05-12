@@ -64,7 +64,7 @@ void PrintPage1(void){
     // LD_B_A;
     // LD_C(1);  // get page 1
     // FARCALL(aGetDexEntryPagePointer);
-    uint8_t* entryPage = GetDexEntryPagePointer_Conv(wram->wTempSpecies, 1);
+    uint8_t* entryPage = GetDexEntryPagePointer(wram->wTempSpecies, 1);
     // POP_AF;
     // LD_A_B;
     // hlcoord(1, 11, wPrinterTilemapBuffer);
@@ -152,7 +152,7 @@ void PrintPage2(void){
     // LD_B_A;
     // LD_C(2);  // get page 2
     // FARCALL(aGetDexEntryPagePointer);
-    uint8_t* entry = GetDexEntryPagePointer_Conv(wram->wTempSpecies, 2);
+    uint8_t* entry = GetDexEntryPagePointer(wram->wTempSpecies, 2);
     // POP_AF;
     // hlcoord(1, 1, wPrinterTilemapBuffer);
     // LD_A_B;

@@ -56,7 +56,7 @@ struct OverworldTileRes {
     bool flag;
 };
 
-struct OverworldTileRes CheckOverworldTileArrays_Conv(const struct BlockPointer* hl, tile_t c);
+static struct OverworldTileRes CheckOverworldTileArrays(const struct BlockPointer* hl, tile_t c);
 
 static bool CheckMapForSomethingToCut(void);
 static uint8_t GetSurfType(void);
@@ -323,7 +323,7 @@ static bool CheckMapForSomethingToCut(void){
     // PUSH_HL;
     // LD_HL(mCutTreeBlockPointers);
     // CALL(aCheckOverworldTileArrays);
-    struct OverworldTileRes res = CheckOverworldTileArrays_Conv(CutTreeBlockPointers, *hl);
+    struct OverworldTileRes res = CheckOverworldTileArrays(CutTreeBlockPointers, *hl);
     // POP_HL;
     // IF_NC goto fail;
     if(!res.flag)
@@ -401,53 +401,11 @@ void CutDownTreeOrGrass(void){
     // RET;
 }
 
-void CheckOverworldTileArrays(void){
 // Input: c contains the tile you're facing
 // Output: Replacement tile in b and effect on wild encounters in c, plus carry set.
 //         Carry is not set if the facing tile cannot be replaced, or if the tileset
 //         does not contain a tile you can replace.
-
-// Dictionary lookup for pointer to tile replacement table
-    PUSH_BC;
-    LD_A_addr(wMapTileset);
-    LD_DE(3);
-    CALL(aIsInArray);
-    POP_BC;
-    IF_NC goto nope;
-// Load the pointer
-    INC_HL;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-// Look up the tile you're facing
-    LD_DE(3);
-    LD_A_C;
-    CALL(aIsInArray);
-    IF_NC goto nope;
-// Load the replacement to b
-    INC_HL;
-    LD_B_hl;
-// Load the animation type parameter to c
-    INC_HL;
-    LD_C_hl;
-    SCF;
-    RET;
-
-
-nope:
-    XOR_A_A;
-    RET;
-
-// INCLUDE "data/collision/field_move_blocks.asm"
-
-    return FlashFunction();
-}
-
-// Input: c contains the tile you're facing
-// Output: Replacement tile in b and effect on wild encounters in c, plus carry set.
-//         Carry is not set if the facing tile cannot be replaced, or if the tileset
-//         does not contain a tile you can replace.
-struct OverworldTileRes CheckOverworldTileArrays_Conv(const struct BlockPointer* hl, tile_t c){
+static struct OverworldTileRes CheckOverworldTileArrays(const struct BlockPointer* hl, tile_t c){
 // Dictionary lookup for pointer to tile replacement table
     // PUSH_BC;
     // LD_A_addr(wMapTileset);
@@ -933,7 +891,7 @@ static bool FlyFunction_FlyScript(script_s* s) {
     {
     // ReturnFromFly:
         // FARCALL(aRespawnPlayer);
-        RespawnPlayer_Conv();
+        RespawnPlayer();
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aUpdatePlayerSprite);
@@ -1704,7 +1662,7 @@ bool TryWhirlpoolMenu(void){
     // PUSH_HL;
     // LD_HL(mWhirlpoolBlockPointers);
     // CALL(aCheckOverworldTileArrays);
-    struct OverworldTileRes res = CheckOverworldTileArrays_Conv(WhirlpoolBlockPointers, *hl);
+    struct OverworldTileRes res = CheckOverworldTileArrays(WhirlpoolBlockPointers, *hl);
     // POP_HL;
     // IF_NC goto failed;
     if(!res.flag)

@@ -236,62 +236,9 @@ const uint16_t HaveWantPals[] = {
     rgb(0, 0, 0),
 };
 
-void CheckStringForErrors(void){
 //  Valid character ranges:
 //  $0, $5 - $13, $19 - $1c, $26 - $34, $3a - $3e, $40 - $48, $60 - $ff
-
-loop:
-    LD_A_de;
-    INC_DE;
-    AND_A_A;  // "<NULL>"
-    IF_Z goto NextChar;
-    CP_A(FIRST_REGULAR_TEXT_CHAR);
-    IF_NC goto NextChar;
-    CP_A(0x4e);
-    IF_Z goto NextChar;
-    CP_A(0x50);
-    IF_Z goto Done;
-    CP_A(0x05);
-    IF_C goto Fail;
-    CP_A(0x14);
-    IF_C goto NextChar;
-    CP_A(0x18 + 1);
-    IF_C goto Fail;
-    CP_A(0x1d);
-    IF_C goto NextChar;
-    CP_A(0x25 + 1);
-    IF_C goto Fail;
-    CP_A(0x35);
-    IF_C goto NextChar;
-    CP_A(0x39 + 1);
-    IF_C goto Fail;
-    CP_A(0x3f);
-    IF_C goto NextChar;
-    CP_A(0x3f + 1);
-    IF_C goto Fail;
-    CP_A(0x49);
-    IF_C goto NextChar;
-
-
-Fail:
-    SCF;
-    RET;
-
-
-NextChar:
-    DEC_C;
-    IF_NZ goto loop;
-
-
-Done:
-    AND_A_A;
-    RET;
-
-}
-
-//  Valid character ranges:
-//  $0, $5 - $13, $19 - $1c, $26 - $34, $3a - $3e, $40 - $48, $60 - $ff
-bool CheckStringForErrors_Conv(const uint8_t* de, uint8_t c){
+bool CheckStringForErrors(const uint8_t* de, uint8_t c){
     do {
     // loop:
         // LD_A_de;
@@ -356,58 +303,8 @@ bool CheckStringForErrors_Conv(const uint8_t* de, uint8_t c){
     return false;
 }
 
-void CheckStringForErrors_IgnoreTerminator(void){
 //  Find control chars
-
-loop:
-    LD_A_de;
-    INC_DE;
-    AND_A_A;
-    IF_Z goto next;
-    CP_A(0x5f + 1);
-    IF_NC goto next;
-    CP_A(0x4e);
-    IF_Z goto next;
-    CP_A(0x50);
-    IF_Z goto next;
-
-    CP_A(0x05);
-    IF_C goto end;
-    CP_A(0x14);
-    IF_C goto next;
-    CP_A(0x18 + 1);
-    IF_C goto end;
-    CP_A(0x1d);
-    IF_C goto next;
-    CP_A(0x25 + 1);
-    IF_C goto end;
-    CP_A(0x35);
-    IF_C goto next;
-    CP_A(0x39 + 1);
-    IF_C goto end;
-    CP_A(0x3f);
-    IF_C goto next;
-    CP_A(0x3f + 1);
-    IF_C goto end;
-    CP_A(0x49);
-    IF_C goto next;
-
-
-end:
-    SCF;
-    RET;
-
-
-next:
-    DEC_C;
-    IF_NZ goto loop;
-    AND_A_A;
-    RET;
-
-}
-
-//  Find control chars
-bool CheckStringForErrors_IgnoreTerminator_Conv(const uint8_t* de, uint8_t c){
+bool CheckStringForErrors_IgnoreTerminator(const uint8_t* de, uint8_t c){
     do {
     // loop:
         // LD_A_de;
@@ -605,31 +502,7 @@ void Mobile_CopyDefaultMailAuthor(void){
     // RET;
 }
 
-void CheckStringContainsLessThanBNextCharacters(void){
-
-loop:
-    LD_A_de;
-    INC_DE;
-    CP_A(0x4e);
-    IF_NZ goto next_char;
-    DEC_B;
-    IF_Z goto done;
-
-
-next_char:
-    DEC_C;
-    IF_NZ goto loop;
-    AND_A_A;
-    RET;
-
-
-done:
-    SCF;
-    RET;
-
-}
-
-u8_flag_s CheckStringContainsLessThanBNextCharacters_Conv(const uint8_t* de, uint8_t b, uint8_t c){
+u8_flag_s CheckStringContainsLessThanBNextCharacters(const uint8_t* de, uint8_t b, uint8_t c){
     do {
     // loop:
         // LD_A_de;

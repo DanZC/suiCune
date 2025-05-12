@@ -695,7 +695,7 @@ bool BuyMenuLoop(void){
         // LD_A(3);  // useless load
         // CALL(aCompareMoney);
         // IF_C goto insufficient_funds;
-        u8_flag_s res = CompareMoney_Conv(hram->hMoneyTemp, wram->wMoney);
+        u8_flag_s res = CompareMoney(hram->hMoneyTemp, wram->wMoney);
         if(res.flag) {
         // insufficient_funds:
             // LD_A(MARTTEXT_NOT_ENOUGH_MONEY);
@@ -734,7 +734,7 @@ bool BuyMenuLoop(void){
         // LD_DE(wMoney);
         // LD_BC(hMoneyTemp);
         // CALL(aTakeMoney);
-        TakeMoney_Conv(wram->wMoney, hram->hMoneyTemp);
+        TakeMoney(wram->wMoney, hram->hMoneyTemp);
         // LD_A(MARTTEXT_HERE_YOU_GO);
         // CALL(aLoadBuyMenuText);
         LoadBuyMenuText(MARTTEXT_HERE_YOU_GO);
@@ -919,7 +919,7 @@ const struct MenuHeader MenuHeader_Buy = {
             //dbw ['0', 'wCurMartCount']
             .list=&sCurMart.count,
             //dba ['PlaceMenuItemName']
-            .func1=PlaceMenuItemName_Conv,
+            .func1=PlaceMenuItemName,
             //dba ['.PrintBCDPrices']
             .func2=MenuHeader_PrintBCDPrices,
             //dba ['UpdateItemDescription']
@@ -1087,7 +1087,7 @@ static void SellMenu_TryToSellItem(void) {
                     // LD_DE(wMoney);
                     // LD_BC(hMoneyTemp);
                     // CALL(aGiveMoney);
-                    GiveMoney_Conv(wram->wMoney, hram->hMoneyTemp);
+                    GiveMoney(wram->wMoney, hram->hMoneyTemp);
                     // LD_A_addr(wMartItemID);
                     // LD_HL(wNumItems);
                     // CALL(aTossItem);

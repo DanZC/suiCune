@@ -393,7 +393,7 @@ void ListMovePP(tile_t* hl){
         wram->wMenuCursorY = b;
         // PUSH_HL;
         // CALLFAR(aGetMaxPPOfMove);
-        uint8_t maxpp = GetMaxPPOfMove_Conv(&wram->wTempMon, TEMPMON, b);
+        uint8_t maxpp = GetMaxPPOfMove(&wram->wTempMon, TEMPMON, b);
         // POP_HL;
         // POP_AF;
         // LD_hl_A;

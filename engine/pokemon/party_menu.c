@@ -214,7 +214,7 @@ void PlacePartyHPBar(void){
         // PUSH_HL;
         // CALL(aPartyMenuCheckEgg);
         // IF_Z goto skip;
-        if(!PartyMenuCheckEgg_Conv(b)) {
+        if(!PartyMenuCheckEgg(b)) {
             // PUSH_HL;
             // CALL(aPlacePartymonHPBar);
             uint8_t e = PlacePartymonHPBar(b);
@@ -307,7 +307,7 @@ void PlacePartyMenuHPDigits(void){
         // PUSH_HL;
         // CALL(aPartyMenuCheckEgg);
         // IF_Z goto next;
-        if(!PartyMenuCheckEgg_Conv(b)) {
+        if(!PartyMenuCheckEgg(b)) {
             // PUSH_HL;
             // LD_A_B;
             // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -366,7 +366,7 @@ void PlacePartyMonLevel(void){
         // PUSH_HL;
         // CALL(aPartyMenuCheckEgg);
         // IF_Z goto next;
-        if(!PartyMenuCheckEgg_Conv(b)) {
+        if(!PartyMenuCheckEgg(b)) {
             // PUSH_HL;
             tile_t* hl2 = hl;
             // LD_A_B;
@@ -427,7 +427,7 @@ void PlacePartyMonStatus(void){
         // PUSH_HL;
         // CALL(aPartyMenuCheckEgg);
         // IF_Z goto next;
-        if(!PartyMenuCheckEgg_Conv(b)) {
+        if(!PartyMenuCheckEgg(b)) {
             // PUSH_HL;
             // LD_A_B;
             // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -492,7 +492,7 @@ void PlacePartyMonTMHMCompatibility(void){
         // PUSH_HL;
         // CALL(aPartyMenuCheckEgg);
         // IF_Z goto next;
-        if(!PartyMenuCheckEgg_Conv(b)) {
+        if(!PartyMenuCheckEgg(b)) {
             // PUSH_HL;
             // LD_HL(wPartySpecies);
             // LD_E_B;
@@ -586,7 +586,7 @@ void PlacePartyMonEvoStoneCompatibility(void){
         // PUSH_HL;
         // CALL(aPartyMenuCheckEgg);
         // IF_Z goto next;
-        if(!PartyMenuCheckEgg_Conv(b)) {
+        if(!PartyMenuCheckEgg(b)) {
             // PUSH_HL;
             // LD_A_B;
             // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -636,7 +636,7 @@ void PlacePartyMonGender(void){
         // PUSH_HL;
         // CALL(aPartyMenuCheckEgg);
         // IF_Z goto next;
-        if(!PartyMenuCheckEgg_Conv(b)) {
+        if(!PartyMenuCheckEgg(b)) {
             // LD_addr_A(wCurPartySpecies);
             wram->wCurPartySpecies = wram->wPartySpecies[b];
             // PUSH_HL;
@@ -705,7 +705,7 @@ void PlacePartyMonMobileBattleSelection(void){
     // loop:
         // PUSH_BC;
         // PUSH_HL;
-        if(!PartyMenuCheckEgg_Conv(b)) {
+        if(!PartyMenuCheckEgg(b)) {
         // .mon_able	
             // push hl
             // ld de, .String_Able
@@ -801,20 +801,7 @@ void PlacePartyMonMobileBattleSelection(void){
     //db ['"けってい\u3000\u3000やめる@"'];  // Quit
 }
 
-void PartyMenuCheckEgg(void){
-    LD_A(LOW(wPartySpecies));
-    ADD_A_B;
-    LD_E_A;
-    LD_A(HIGH(wPartySpecies));
-    ADC_A(0);
-    LD_D_A;
-    LD_A_de;
-    CP_A(EGG);
-    RET;
-
-}
-
-bool PartyMenuCheckEgg_Conv(uint8_t b){
+bool PartyMenuCheckEgg(uint8_t b){
     // LD_A(LOW(wPartySpecies));
     // ADD_A_B;
     // LD_E_A;

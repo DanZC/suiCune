@@ -1,5 +1,4 @@
-void LoadSpecialMapPalette(void);
-bool LoadSpecialMapPalette_Conv(void);
+bool LoadSpecialMapPalette(void);
 void LoadPokeComPalette(void);
 extern const uint16_t PokeComPalette[];
 void LoadBattleTowerInsidePalette(void);

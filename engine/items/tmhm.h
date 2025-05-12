@@ -1,7 +1,6 @@
 bool TMHMPocket(void);
 void ConvertCurItemIntoCurTMHM(void);
-void GetTMHMItemMove(void);
-move_t GetTMHMItemMove_Conv(item_t item);
+move_t GetTMHMItemMove(item_t item);
 bool AskTeachTMHM(void);
 u8_flag_s ChooseMonToLearnTMHM(void);
 u8_flag_s ChooseMonToLearnTMHM_NoRefresh(void);
@@ -10,8 +9,7 @@ extern const txt_cmd_s BootedTMText[];
 extern const txt_cmd_s BootedHMText[];
 extern const txt_cmd_s ContainedMoveText[];
 extern const txt_cmd_s TMHMNotCompatibleText[];
-void TMHM_PocketLoop(void);
-bool TMHM_PocketLoop_Conv(void);
+bool TMHM_PocketLoop(void);
 void TMHM_JoypadLoop(void);
 void TMHM_ShowTMMoveDescription(void);
 bool TMHM_ChooseTMorHM(void);

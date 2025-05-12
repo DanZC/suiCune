@@ -62,7 +62,7 @@ static void ReanchorBGMap_NoOAMUpdate_ReanchorBGMap(void) {
     // LDH_addr_A(hSCY);
     hram->hSCY = 0;
     // CALL(aApplyBGMapAnchorToObjects);
-    ApplyBGMapAnchorToObjects_Conv();
+    ApplyBGMapAnchorToObjects();
     // RET;
 }
 

@@ -2,70 +2,7 @@
 #include "tileset_palettes.h"
 #include "../../home/copy.h"
 
-void LoadSpecialMapPalette(void){
-    LD_A_addr(wMapTileset);
-    CP_A(TILESET_POKECOM_CENTER);
-    IF_Z goto pokecom_2f;
-    CP_A(TILESET_BATTLE_TOWER_INSIDE);
-    IF_Z goto battle_tower_inside;
-    CP_A(TILESET_ICE_PATH);
-    IF_Z goto ice_path;
-    CP_A(TILESET_HOUSE);
-    IF_Z goto house;
-    CP_A(TILESET_RADIO_TOWER);
-    IF_Z goto radio_tower;
-    CP_A(TILESET_MANSION);
-    IF_Z goto mansion_mobile;
-    goto do_nothing;
-
-
-pokecom_2f:
-    CALL(aLoadPokeComPalette);
-    SCF;
-    RET;
-
-
-battle_tower_inside:
-    CALL(aLoadBattleTowerInsidePalette);
-    SCF;
-    RET;
-
-
-ice_path:
-    LD_A_addr(wEnvironment);
-    AND_A(0x7);
-    CP_A(INDOOR);  // Hall of Fame
-    IF_Z goto do_nothing;
-    CALL(aLoadIcePathPalette);
-    SCF;
-    RET;
-
-
-house:
-    CALL(aLoadHousePalette);
-    SCF;
-    RET;
-
-
-radio_tower:
-    CALL(aLoadRadioTowerPalette);
-    SCF;
-    RET;
-
-
-mansion_mobile:
-    CALL(aLoadMansionPalette);
-    SCF;
-    RET;
-
-
-do_nothing:
-    AND_A_A;
-    RET;
-
-}
-
-bool LoadSpecialMapPalette_Conv(void){
+bool LoadSpecialMapPalette(void){
     // LD_A_addr(wMapTileset);
     switch(wram->wMapTileset) {
     // CP_A(TILESET_POKECOM_CENTER);

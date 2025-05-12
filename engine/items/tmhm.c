@@ -35,7 +35,7 @@ bool TMHMPocket(void){
     // LDH_addr_A(hInMenu);
     hram->hInMenu = 0x1;
     // CALL(aTMHM_PocketLoop);
-    bool exit = TMHM_PocketLoop_Conv();
+    bool exit = TMHM_PocketLoop();
     // LD_A(0x0);
     // LDH_addr_A(hInMenu);
     hram->hInMenu = 0x0;
@@ -75,15 +75,7 @@ void ConvertCurItemIntoCurTMHM(void){
 
 }
 
-void GetTMHMItemMove(void){
-    // CALL(aConvertCurItemIntoCurTMHM);
-    ConvertCurItemIntoCurTMHM();
-    // PREDEF(pGetTMHMMove);
-    wram->wTempTMHM = GetTMHMMove(wram->wTempTMHM);
-    // RET;
-}
-
-move_t GetTMHMItemMove_Conv(item_t item){
+move_t GetTMHMItemMove(item_t item){
     // CALL(aConvertCurItemIntoCurTMHM);
     // PREDEF(pGetTMHMMove);
     return GetTMHMMove(GetTMHMNumber(item));
@@ -105,7 +97,7 @@ bool AskTeachTMHM(void){
         // CALL(aGetTMHMItemMove);
         // LD_A_addr(wTempTMHM);
         // LD_addr_A(wPutativeTMHMMove);
-        wram->wPutativeTMHMMove = GetTMHMItemMove_Conv(wram->wCurItem);
+        wram->wPutativeTMHMMove = GetTMHMItemMove(wram->wCurItem);
         // CALL(aGetMoveName);
         // CALL(aCopyName1);
         CopyName1(GetMoveName(wram->wPutativeTMHMMove));
@@ -295,61 +287,7 @@ const txt_cmd_s TMHMNotCompatibleText[] = {
     text_end
 };
 
-void TMHM_PocketLoop(void){
-    // XOR_A_A;
-    // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
-    // CALL(aTMHM_DisplayPocketItems);
-    uint8_t d = TMHM_DisplayPocketItems();
-    // LD_A(2);
-    // LD_addr_A(w2DMenuCursorInitY);
-    wram->w2DMenuCursorInitY = 2;
-    // LD_A(7);
-    // LD_addr_A(w2DMenuCursorInitX);
-    wram->w2DMenuCursorInitX = 7;
-    // LD_A(1);
-    // LD_addr_A(w2DMenuNumCols);
-    wram->w2DMenuNumCols = 7;
-    // LD_A(5);
-    uint8_t a = 5;
-    // SUB_A_D;
-    // INC_A;
-    // CP_A(6);
-    // IF_NZ goto okay;
-    if((a - d) + 1 == 6){ // Just d == 0?
-        // DEC_A;
-        wram->w2DMenuNumRows = (a - d);
-    }
-    else {
-        wram->w2DMenuNumRows = (a - d) + 1;
-    }
-
-// okay:
-    // LD_addr_A(w2DMenuNumRows);
-    // LD_A(0xc);
-    // LD_addr_A(w2DMenuFlags1);
-    wram->w2DMenuFlags1 = 0xc;
-    // XOR_A_A;
-    // LD_addr_A(w2DMenuFlags2);
-    wram->w2DMenuFlags2 = 0x0;
-    // LD_A(0x20);
-    // LD_addr_A(w2DMenuCursorOffsets);
-    wram->w2DMenuCursorOffsets = 0x20;
-    // LD_A(A_BUTTON | B_BUTTON | D_UP | D_DOWN | D_LEFT | D_RIGHT);
-    // LD_addr_A(wMenuJoypadFilter);
-    wram->wMenuJoypadFilter = A_BUTTON | B_BUTTON | D_UP | D_DOWN | D_LEFT | D_RIGHT;
-    // LD_A_addr(wTMHMPocketCursor);
-    // INC_A;
-    // LD_addr_A(wMenuCursorY);
-    wram->wMenuCursorY = wram->wTMHMPocketCursor + 1;
-    // LD_A(0x1);
-    // LD_addr_A(wMenuCursorX);
-    wram->wMenuCursorX = 0x1;
-    // JR(mTMHM_ShowTMMoveDescription);
-    return TMHM_ShowTMMoveDescription();
-}
-
-bool TMHM_PocketLoop_Conv(void){
+bool TMHM_PocketLoop(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram->hBGMapMode = BGMAPMODE_NONE;

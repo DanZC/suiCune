@@ -603,7 +603,7 @@ uint8_t Function100276(void){
     case 0x02:
     // asm_100296:
         // FARCALL(aScript_reloadmappart);
-        Script_reloadmappart_Conv(&gCurScript);
+        Script_reloadmappart(&gCurScript);
         // LD_C(0x04);
         // RET;
         return 0x04;
@@ -615,7 +615,7 @@ uint8_t Function100276(void){
     case 0xf6:
     // asm_1002a5:
         // FARCALL(aScript_reloadmappart);
-        Script_reloadmappart_Conv(&gCurScript);
+        Script_reloadmappart(&gCurScript);
         // CALL(aFunction1002ed);
         Function1002ed();
         // LD_C(0x03);
@@ -1294,7 +1294,7 @@ void Function100545(void){
 bool Function10054d(void){
     // FARCALL(aMobileMenuJoypad);
     // LD_A_C;
-    uint8_t joypad = MobileMenuJoypad_Conv();
+    uint8_t joypad = MobileMenuJoypad();
     // LD_HL(wMenuJoypadFilter);
     // AND_A_hl;
     // RET_Z ;
@@ -2668,7 +2668,7 @@ bool Function100b45(void){
         // CALL(aMobile_SetOverworldDelay);
         Mobile_SetOverworldDelay();
         // FARCALL(aMobileMenuJoypad);
-        c = MobileMenuJoypad_Conv();
+        c = MobileMenuJoypad();
         // PUSH_BC;
         // FARCALL(aHDMATransferTilemapToWRAMBank3);
         HDMATransferTilemapToWRAMBank3();
@@ -2693,7 +2693,7 @@ bool Function100b45(void){
     } while((c & wram->wMenuJoypadFilter) == 0);
     // FARCALL(aMobile_GetMenuSelection);
     // RET;
-    return Mobile_GetMenuSelection_Conv(GetMenuData());
+    return Mobile_GetMenuSelection(GetMenuData());
 }
 
 void Function100b7a(void){
@@ -2702,7 +2702,7 @@ void Function100b7a(void){
     // RST(aFarCall);
     const struct MenuData* data = GetMenuData();
     // FARCALL(aDraw2DMenu);
-    Draw2DMenu_Conv(data);
+    Draw2DMenu(data);
     // FARCALL(aMobileTextBorder);
     MobileTextBorder();
     // CALL(aUpdateSprites);
@@ -2710,7 +2710,7 @@ void Function100b7a(void){
     // CALL(aApplyTilemap);
     ApplyTilemap();
     // FARCALL(aInit2DMenuCursorPosition);
-    Init2DMenuCursorPosition_Conv(data);
+    Init2DMenuCursorPosition(data);
     // LD_HL(w2DMenuFlags1);
     // SET_hl(7);
     bit_set(wram->w2DMenuFlags1, 7);
@@ -2757,7 +2757,7 @@ Top:
             // CALL(aMobile_SetOverworldDelay);
             Mobile_SetOverworldDelay();
             // FARCALL(aMobileMenuJoypad);
-            uint8_t c = MobileMenuJoypad_Conv();
+            uint8_t c = MobileMenuJoypad();
             // PUSH_BC;
             // FARCALL(aHDMATransferTilemapToWRAMBank3);
             HDMATransferTilemapToWRAMBank3();
@@ -2955,7 +2955,7 @@ bool Mobile_PartyMenuSelect(void){
         // CALL(aMobile_SetOverworldDelay);
         Mobile_SetOverworldDelay();
         // FARCALL(aMobileMenuJoypad);
-        c = MobileMenuJoypad_Conv();
+        c = MobileMenuJoypad();
         // PUSH_BC;
         // FARCALL(aPlaySpriteAnimations);
         PlaySpriteAnimations();
@@ -3038,7 +3038,7 @@ bool MobileBattleMonMenu(void){
         // CALL(aMobile_SetOverworldDelay);
         Mobile_SetOverworldDelay();
         // FARCALL(aMobileMenuJoypad);
-        c = MobileMenuJoypad_Conv();
+        c = MobileMenuJoypad();
         // PUSH_BC;
         // FARCALL(aPlaySpriteAnimations);
         PlaySpriteAnimations();
@@ -4155,7 +4155,7 @@ void Function10126c(void){
     // CALL(aUpdateSprites);
     UpdateSprites();
     // FARCALL(aScript_reloadmappart);
-    Script_reloadmappart_Conv(&gCurScript);
+    Script_reloadmappart(&gCurScript);
     // LD_HL(mClosingLinkText);
     // CALL(aFunction1021e0);
     Function1021e0(ClosingLinkText);
@@ -8039,7 +8039,7 @@ void Function1025ff(void){
     if(Function1009f3())
         return;
     // FARCALL(aMobileMenuJoypad);
-    uint8_t c = MobileMenuJoypad_Conv();
+    uint8_t c = MobileMenuJoypad();
     // LD_A_addr(wMenuJoypadFilter);
     // AND_A_C;
     c &= wram->wMenuJoypadFilter;
@@ -8128,7 +8128,7 @@ void Function10266b(void){
     if(Function1009f3())
         return;
     // FARCALL(aMobileMenuJoypad);
-    uint8_t c = MobileMenuJoypad_Conv();
+    uint8_t c = MobileMenuJoypad();
     // LD_A_addr(wMenuJoypadFilter);
     c &= wram->wMenuJoypadFilter;
     // AND_A_C;
@@ -8904,7 +8904,7 @@ u8_flag_s Function1029fe(void){
     if(Function1009f3())
         return u8_flag(0xf8, true);
     // FARCALL(aMobileMenuJoypad);
-    uint8_t c = MobileMenuJoypad_Conv();
+    uint8_t c = MobileMenuJoypad();
     // LD_A_C;
     // LD_HL(wMenuJoypadFilter);
     // AND_A_hl;
@@ -11249,7 +11249,7 @@ void Function10383c(void){
     // CALL(aJoyWaitAorB);
     JoyWaitAorB();
     // FARCALL(aScript_reloadmappart);
-    Script_reloadmappart_Conv(&gCurScript);
+    Script_reloadmappart(&gCurScript);
     // FARCALL(aFunction4a94e);
     // IF_C goto asm_103870;
     if(Function4a94e()) {

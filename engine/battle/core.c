@@ -9117,7 +9117,7 @@ void MoveInfoBox(void){
     // LD_A(WILDMON);
     // LD_addr_A(wMonType);
     // CALLFAR(aGetMaxPPOfMove);
-    uint8_t maxpp = GetMaxPPOfMove_Conv(wram->wPartyMon + wram->wCurPartyMon, WILDMON, wram->wMenuCursorY);
+    uint8_t maxpp = GetMaxPPOfMove(wram->wPartyMon + wram->wCurPartyMon, WILDMON, wram->wMenuCursorY);
 
     // LD_HL(wMenuCursorY);
     // LD_C_hl;
@@ -9786,7 +9786,7 @@ InitDVs:
             // LD_DE(wEnemyMonDVs);
             // LD_BC(wPlayerID);
             // CALLFAR(aCalcMagikarpLength);
-            CalcMagikarpLength_Conv(wram->wEnemyMon.dvs, wram->wPlayerID);
+            CalcMagikarpLength(wram->wEnemyMon.dvs, wram->wPlayerID);
 
         //  No reason to keep going if length > 1536 mm (i.e. if HIGH(length) > 6 feet)
             // LD_A_addr(wMagikarpLength);

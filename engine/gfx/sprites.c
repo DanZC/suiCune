@@ -559,7 +559,7 @@ void v_ReinitSpriteAnimFrame(struct SpriteAnim* bc, uint8_t a){
     bc->frameIndex = 0xff; // -1
 }
 
-static const uint8_t* GetSpriteAnimFrame_GetPointer_Conv(struct SpriteAnim* bc) {
+static const uint8_t* GetSpriteAnimFrame_GetPointer(struct SpriteAnim* bc) {
     // LD_HL(SPRITEANIMSTRUCT_FRAMESET_ID);
     // ADD_HL_BC;
     // LD_E_hl;
@@ -605,7 +605,7 @@ uint8_t GetSpriteAnimFrame(struct SpriteAnim* bc){
             // INC_hl;
             bc->frameIndex++;
             // CALL(aGetSpriteAnimFrame_GetPointer);
-            hl = GetSpriteAnimFrame_GetPointer_Conv(bc);
+            hl = GetSpriteAnimFrame_GetPointer(bc);
             // LD_A_hli;
             a = *(hl++);
             // CP_A(dorestart_command);
@@ -664,7 +664,7 @@ uint8_t GetSpriteAnimFrame(struct SpriteAnim* bc){
             bc->duration--;
             // CALL(aGetSpriteAnimFrame_GetPointer);
             // LD_A_hli;
-            hl = GetSpriteAnimFrame_GetPointer_Conv(bc);
+            hl = GetSpriteAnimFrame_GetPointer(bc);
             a = *(hl++);
             // PUSH_AF;
             // goto okay;

@@ -374,15 +374,15 @@ static void PokeGear_InitTilemap(void) {
 
 static void Pokegear_LoadGFX(void){
     ClearVBank1();
-    // FarDecompress_Conv(BANK(aTownMapGFX), mTownMapGFX, vTiles2);
+    // FarDecompress(BANK(aTownMapGFX), mTownMapGFX, vTiles2);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, TownMapGFX);
-    // FarDecompress_Conv(BANK(aPokegearGFX), mPokegearGFX, (vTiles2 + LEN_2BPP_TILE * 0x30));
+    // FarDecompress(BANK(aPokegearGFX), mPokegearGFX, (vTiles2 + LEN_2BPP_TILE * 0x30));
     LoadPNG2bppAssetToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x30, PokegearGFX);
     // LD_HL(mPokegearSpritesGFX);
     // LD_DE(vTiles0);
     // LD_A(BANK(aPokegearSpritesGFX));
     // CALL(aDecompress);
-    // FarDecompress_Conv(BANK(aPokegearSpritesGFX), mPokegearSpritesGFX, vTiles0);
+    // FarDecompress(BANK(aPokegearSpritesGFX), mPokegearSpritesGFX, vTiles0);
     LoadPNG2bppAssetToVRAM(vram->vTiles0, PokegearSpritesGFX);
 
     uint8_t landmark = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
@@ -399,7 +399,7 @@ static void Pokegear_LoadGFX(void){
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x10, iconpath, 0, 4);
 // walking sprite
     // iconptr += (12 * LEN_2BPP_TILE);
-    // FarCopyBytes_Conv(vTiles0 + LEN_2BPP_TILE * 0x14, iconbank, iconptr, 4 * LEN_2BPP_TILE);
+    // FarCopyBytes(vTiles0 + LEN_2BPP_TILE * 0x14, iconbank, iconptr, 4 * LEN_2BPP_TILE);
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x14, iconpath, 12, 4);
 }
 
@@ -3609,7 +3609,7 @@ static void Pokedex_GetArea_GetAndPlaceNest(uint8_t a, species_t species){
     wram->wTownMapCursorLandmark = a;
     // LD_E_A;
     // FARCALL(aFindNest);  // load nest landmarks into wTilemap[0,0]
-    FindNest_Conv(a, species);
+    FindNest(a, species);
     // decoord(0, 0, wTilemap);
     tile_t* de = coord(0, 0, wram->wTilemap);
     // LD_HL(wVirtualOAMSprite00);

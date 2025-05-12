@@ -70,13 +70,13 @@ void SweetScentEncounter(void){
         }
         else {
             // FARCALL(aGetMapEncounterRate);
-            uint8_t b = GetMapEncounterRate_Conv();
+            uint8_t b = GetMapEncounterRate();
             // LD_A_B;
             // AND_A_A;
             // IF_Z goto no_battle;
             // FARCALL(aChooseWildEncounter);
             // IF_NZ goto no_battle;
-            if(b != 0 && ChooseWildEncounter_Conv()) {
+            if(b != 0 && ChooseWildEncounter()) {
             // start_battle:
                 // LD_A(0x1);
                 // LD_addr_A(wScriptVar);

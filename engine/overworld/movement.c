@@ -245,7 +245,7 @@ void Movement_step_dig(struct Object* bc){
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->stepDuration = JumpMovementPointer_Conv(bc);
+    bc->stepDuration = JumpMovementPointer(bc);
     // LD_HL(OBJECT_STEP_TYPE);
     // ADD_HL_BC;
     // LD_hl(STEP_TYPE_SLEEP);
@@ -272,7 +272,7 @@ void Movement_return_dig(struct Object* bc){
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->stepDuration = JumpMovementPointer_Conv(bc);
+    bc->stepDuration = JumpMovementPointer(bc);
     // LD_HL(OBJECT_DIRECTION_WALKING);
     // ADD_HL_BC;
     // LD_hl(STANDING);
@@ -301,7 +301,7 @@ void Movement_rock_smash(struct Object* bc){
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->stepDuration = JumpMovementPointer_Conv(bc);
+    bc->stepDuration = JumpMovementPointer(bc);
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
     // LD_hl(OBJECT_ACTION_STAND);
@@ -339,7 +339,7 @@ void Movement_step_end(struct Object* bc){
     // LD_HL(OBJECT_MOVEMENTTYPE);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->movementType = RestoreDefaultMovement_Conv(bc);
+    bc->movementType = RestoreDefaultMovement(bc);
 
     // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
     // ADD_HL_BC;
@@ -362,7 +362,7 @@ void Movement_48(struct Object* bc){
     // LD_HL(OBJECT_MOVEMENTTYPE);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->movementType = RestoreDefaultMovement_Conv(bc);
+    bc->movementType = RestoreDefaultMovement(bc);
 
     // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
     // ADD_HL_BC;
@@ -373,7 +373,7 @@ void Movement_48(struct Object* bc){
     // LD_HL(OBJECT_STEP_DURATION);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->stepDuration = JumpMovementPointer_Conv(bc);
+    bc->stepDuration = JumpMovementPointer(bc);
 
     // LD_HL(OBJECT_STEP_TYPE);
     // ADD_HL_BC;
@@ -388,7 +388,7 @@ void Movement_48(struct Object* bc){
 
 void Movement_remove_object(struct Object* bc){
     // CALL(aDeleteMapObject);
-    DeleteMapObject_Conv(bc);
+    DeleteMapObject(bc);
     // LD_HL(wObjectFollow_Leader);
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_hl;
@@ -475,7 +475,7 @@ void Movement_step_sleep(struct Object* bc){
 
     // CALL(aJumpMovementPointer);
     // JR(mMovement_step_sleep_common);
-    return Movement_step_sleep_common(bc, JumpMovementPointer_Conv(bc));
+    return Movement_step_sleep_common(bc, JumpMovementPointer(bc));
 }
 
 void Movement_step_sleep_common(struct Object* bc, uint8_t a){
@@ -605,14 +605,14 @@ void Movement_hide_object(struct Object* bc){
 
 void Movement_hide_emote(struct Object* bc){
     // CALL(aDespawnEmote);
-    DespawnEmote_Conv(bc);
+    DespawnEmote(bc);
     // JP(mContinueReadingMovement);
     return ContinueReadingMovement();
 }
 
 void Movement_show_emote(struct Object* bc){
     // CALL(aSpawnEmote);
-    SpawnEmote_Conv(bc);
+    SpawnEmote(bc);
     // JP(mContinueReadingMovement);
     return ContinueReadingMovement();
 }
@@ -622,7 +622,7 @@ void Movement_step_shake(struct Object* bc){
 //     displacement (DecimalParam)
     // CALL(aJumpMovementPointer);
     // CALL(aShakeScreen);
-    ShakeScreen_Conv(bc, JumpMovementPointer_Conv(bc));
+    ShakeScreen(bc, JumpMovementPointer(bc));
     // JP(mContinueReadingMovement);
     return ContinueReadingMovement();
 }
@@ -1001,9 +1001,9 @@ void TurnStep(struct Object* bc, uint8_t a){
 
 void NormalStep(struct Object* bc, uint8_t a){
     // CALL(aInitStep);
-    InitStep_Conv(bc, a);
+    InitStep(bc, a);
     // CALL(aUpdateTallGrassFlags);
-    UpdateTallGrassFlags_Conv(bc);
+    UpdateTallGrassFlags(bc);
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
     // LD_hl(OBJECT_ACTION_STEP);
@@ -1020,7 +1020,7 @@ void NormalStep(struct Object* bc, uint8_t a){
     if(CheckSuperTallGrassTile(bc->nextTile) || CheckGrassTile(bc->nextTile)) {
     // shake_grass:
         // CALL(aShakeGrass);
-        ShakeGrass_Conv(bc);
+        ShakeGrass(bc);
     }
 
 // skip_grass:
@@ -1049,9 +1049,9 @@ void NormalStep(struct Object* bc, uint8_t a){
 
 void TurningStep(struct Object* bc, uint8_t a){
     // CALL(aInitStep);
-    InitStep_Conv(bc, a);
+    InitStep(bc, a);
     // CALL(aUpdateTallGrassFlags);
-    UpdateTallGrassFlags_Conv(bc);
+    UpdateTallGrassFlags(bc);
 
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
@@ -1082,9 +1082,9 @@ void TurningStep(struct Object* bc, uint8_t a){
 
 void SlideStep(struct Object* bc, uint8_t a){
     // CALL(aInitStep);
-    InitStep_Conv(bc, a);
+    InitStep(bc, a);
     // CALL(aUpdateTallGrassFlags);
-    UpdateTallGrassFlags_Conv(bc);
+    UpdateTallGrassFlags(bc);
 
     // LD_HL(OBJECT_ACTION);
     // ADD_HL_BC;
@@ -1116,7 +1116,7 @@ void SlideStep(struct Object* bc, uint8_t a){
 
 void JumpStep(struct Object* bc, uint8_t a){
     // CALL(aInitStep);
-    InitStep_Conv(bc, a);
+    InitStep(bc, a);
     // LD_HL(OBJECT_1F);
     // ADD_HL_BC;
     // LD_hl(0x0);
@@ -1133,7 +1133,7 @@ void JumpStep(struct Object* bc, uint8_t a){
     bc->action = OBJECT_ACTION_STEP;
 
     // CALL(aSpawnShadow);
-    SpawnShadow_Conv(bc);
+    SpawnShadow(bc);
 
     // LD_HL(wCenteredObject);
     // LDH_A_addr(hMapObjectIndex);

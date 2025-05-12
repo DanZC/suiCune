@@ -58,9 +58,9 @@ static void Intro_Scene16_AnimateSuicune(void);
 static void Intro_ColoredSuicuneFrameSwap(void);
 static void Intro_RustleGrass(void);
 static void Intro_ClearBGPals(void);
-// static void Intro_DecompressRequest2bpp_128Tiles_Conv(uint16_t hl, uint16_t de);
-// static void Intro_DecompressRequest2bpp_255Tiles_Conv(uint16_t hl, uint16_t de);
-// static void Intro_DecompressRequest2bpp_64Tiles_Conv(uint16_t hl, uint16_t de);
+// static void Intro_DecompressRequest2bpp_128Tiles(uint16_t hl, uint16_t de);
+// static void Intro_DecompressRequest2bpp_255Tiles(uint16_t hl, uint16_t de);
+// static void Intro_DecompressRequest2bpp_64Tiles(uint16_t hl, uint16_t de);
 static void Intro_ResetLYOverrides(void);
 static void Intro_PerspectiveScrollBG(void);
 
@@ -465,7 +465,7 @@ static void IntroScene1(void){
     // LD_HL(mIntroUnownAAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroUnownAAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroUnownAAttrmap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroUnownAAttrmap, 0, 64);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
@@ -473,17 +473,17 @@ static void IntroScene1(void){
     // LD_HL(mIntroUnownsGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, IntroUnownsGFX);
     // LD_HL(mIntroPulseGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroPulseGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroPulseGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles0, IntroPulseGFX);
     // LD_HL(mIntroUnownATilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroUnownATilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroUnownATilemap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroUnownATilemap, 0, 64);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -585,7 +585,7 @@ static void IntroScene3(void){
     // LD_HL(mIntroBackgroundAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroBackgroundAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroBackgroundAttrmap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroBackgroundAttrmap, 0, 64);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
@@ -593,12 +593,12 @@ static void IntroScene3(void){
     // LD_HL(mIntroBackgroundGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, IntroBackgroundGFX);
     // LD_HL(mIntroBackgroundTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroBackgroundTilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroBackgroundTilemap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroBackgroundTilemap, 0, 64);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -688,7 +688,7 @@ static void IntroScene5(void){
     // LD_HL(mIntroUnownHIAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroUnownHIAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroUnownHIAttrmap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroUnownHIAttrmap, 0, 64);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
@@ -696,17 +696,17 @@ static void IntroScene5(void){
     // LD_HL(mIntroUnownsGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, IntroUnownsGFX);
     // LD_HL(mIntroPulseGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroPulseGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroPulseGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles0, IntroPulseGFX);
     // LD_HL(mIntroUnownHITilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroUnownHITilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroUnownHITilemap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroUnownHITilemap, 0, 64);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -835,13 +835,13 @@ static void IntroScene7(void){
     // LD_HL(mIntroBackgroundAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroBackgroundAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroBackgroundAttrmap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroBackgroundAttrmap, 0, 64);
 
     // LD_HL(mIntroPichuWooperGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroPichuWooperGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroPichuWooperGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles3, IntroPichuWooperGFX);
 
     // LD_A(0x0);
@@ -850,19 +850,19 @@ static void IntroScene7(void){
     // LD_HL(mIntroSuicuneRunGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_255Tiles);
-    // Intro_DecompressRequest2bpp_255Tiles_Conv(mIntroSuicuneRunGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_255Tiles(mIntroSuicuneRunGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles0, IntroSuicuneRunGFX);
 
     // LD_HL(mIntroBackgroundGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, IntroBackgroundGFX);
 
     // LD_HL(mIntroBackgroundTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroBackgroundTilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroBackgroundTilemap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroBackgroundTilemap, 0, 64);
 
     // LDH_A_addr(rSVBK);
@@ -1092,7 +1092,7 @@ static void IntroScene11(void){
     // LD_HL(mIntroUnownsAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroUnownsAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroUnownsAttrmap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroUnownsAttrmap, 0, 64);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
@@ -1104,7 +1104,7 @@ static void IntroScene11(void){
     // LD_HL(mIntroUnownsTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroUnownsTilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroUnownsTilemap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroUnownsTilemap, 0, 64);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -1284,7 +1284,7 @@ static void IntroScene13(void){
     // LD_HL(mIntroBackgroundAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroBackgroundAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroBackgroundAttrmap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroBackgroundAttrmap, 0, 64);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
@@ -1292,17 +1292,17 @@ static void IntroScene13(void){
     // LD_HL(mIntroSuicuneRunGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_255Tiles);
-    // Intro_DecompressRequest2bpp_255Tiles_Conv(mIntroSuicuneRunGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_255Tiles(mIntroSuicuneRunGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles0, IntroSuicuneRunGFX);
     // LD_HL(mIntroBackgroundGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroBackgroundGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, IntroBackgroundGFX);
     // LD_HL(mIntroBackgroundTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroBackgroundTilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroBackgroundTilemap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroBackgroundTilemap, 0, 64);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -1439,7 +1439,7 @@ static void IntroScene15(void){
     // LD_HL(mIntroSuicuneJumpAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroSuicuneJumpAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroSuicuneJumpAttrmap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroSuicuneJumpAttrmap, 0, 64);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
@@ -1447,23 +1447,23 @@ static void IntroScene15(void){
     // LD_HL(mIntroSuicuneJumpGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroSuicuneJumpGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroSuicuneJumpGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, IntroSuicuneJumpGFX);
     // LD_HL(mIntroUnownBackGFX);
     // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownBackGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroUnownBackGFX, vTiles0 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles0, IntroUnownBackGFX);
     // LD_DE(mIntroGrass4GFX);
     // LD_HL(vTiles1 + LEN_2BPP_TILE * 0x00);
     // LD_BC((BANK(aIntroGrass4GFX) << 8) | 1);
     // CALL(aRequest2bpp);
-    // Request2bpp_Conv(BANK(aIntroGrass4GFX), mIntroGrass4GFX, vTiles1 + LEN_2BPP_TILE * 0x00, 1);
+    // Request2bpp(BANK(aIntroGrass4GFX), mIntroGrass4GFX, vTiles1 + LEN_2BPP_TILE * 0x00, 1);
     CopyBytes(vram->vTiles1 + LEN_2BPP_TILE * 0x00, IntroGrass4GFX, LEN_2BPP_TILE);
     // LD_HL(mIntroSuicuneJumpTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroSuicuneJumpTilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroSuicuneJumpTilemap, bgcoord(0, 0, vBGMap0));
     // CALL(aIntro_LoadTilemap);
     Intro_LoadTilemap(Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroSuicuneJumpTilemap, 0, 64));
     // LDH_A_addr(rSVBK);
@@ -1571,7 +1571,7 @@ static void IntroScene17(void){
     // LD_HL(mIntroSuicuneCloseAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroSuicuneCloseAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroSuicuneCloseAttrmap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroSuicuneCloseAttrmap, 0, 64);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
@@ -1579,12 +1579,12 @@ static void IntroScene17(void){
     // LD_HL(mIntroSuicuneCloseGFX);
     // LD_DE(vTiles1 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_255Tiles);
-    // Intro_DecompressRequest2bpp_255Tiles_Conv(mIntroSuicuneCloseGFX, vTiles1 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_255Tiles(mIntroSuicuneCloseGFX, vTiles1 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles1, IntroSuicuneCloseGFX);
     // LD_HL(mIntroSuicuneCloseTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroSuicuneCloseTilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroSuicuneCloseTilemap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroSuicuneCloseTilemap, 0, 64);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
@@ -1676,7 +1676,7 @@ static void IntroScene19(void){
     // LD_HL(mIntroSuicuneBackAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroSuicuneBackAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroSuicuneBackAttrmap, bgcoord(0, 0, vBGMap0));
     Load2bppBinaryAssetToBuffer(coord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroSuicuneBackAttrmap, 0, 64);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
@@ -1684,24 +1684,24 @@ static void IntroScene19(void){
     // LD_HL(mIntroSuicuneBackGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroSuicuneBackGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroSuicuneBackGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, IntroSuicuneBackGFX);
     // LD_HL(mIntroUnownsGFX);
     // LD_DE(vTiles1 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroUnownsGFX, vTiles1 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroUnownsGFX, vTiles1 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles1, IntroUnownsGFX);
     // LD_DE(mIntroGrass4GFX);
     // LD_HL(vTiles1 + LEN_2BPP_TILE * 0x7f);
     // LD_BC((BANK(aIntroGrass4GFX) << 8) | 1);
     // CALL(aRequest2bpp);
-    // Request2bpp_Conv(BANK(aIntroGrass4GFX), mIntroGrass4GFX, vTiles1 + LEN_2BPP_TILE * 0x7f, 1);
+    // Request2bpp(BANK(aIntroGrass4GFX), mIntroGrass4GFX, vTiles1 + LEN_2BPP_TILE * 0x7f, 1);
     // LoadPNG2bppAssetSectionToVRAM(vram->vTiles1 + LEN_2BPP_TILE * 0x7f, "gfx/intro/grass4.png", 0, 1);
     CopyBytes(vram->vTiles1 + LEN_2BPP_TILE * 0x7f, IntroGrass4GFX, 1 * LEN_2BPP_TILE);
     // LD_HL(mIntroSuicuneBackTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroSuicuneBackTilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroSuicuneBackTilemap, bgcoord(0, 0, vBGMap0));
     // CALL(aIntro_LoadTilemap);
     Intro_LoadTilemap(Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroSuicuneBackTilemap, 0, 64));
     // LDH_A_addr(rSVBK);
@@ -2109,7 +2109,7 @@ static void IntroScene26(void){
     // LD_HL(mIntroCrystalUnownsAttrmap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroCrystalUnownsAttrmap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroCrystalUnownsAttrmap, bgcoord(0, 0, vBGMap0));
     // Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroCrystalUnownsAttrmap, 0, 64);
     LoadAssetToBuffer(bgcoord(0, 0, vram->vBGMap2), sizeof(vram->vBGMap2), IntroCrystalUnownsAttrmap);
     // LD_A(0x0);
@@ -2118,12 +2118,12 @@ static void IntroScene26(void){
     // LD_HL(mIntroCrystalUnownsGFX);
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
     // CALL(aIntro_DecompressRequest2bpp_128Tiles);
-    // Intro_DecompressRequest2bpp_128Tiles_Conv(mIntroCrystalUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
+    // Intro_DecompressRequest2bpp_128Tiles(mIntroCrystalUnownsGFX, vTiles2 + LEN_2BPP_TILE * 0x00);
     LoadPNG2bppAssetToVRAM(vram->vTiles2, IntroCrystalUnownsGFX);
     // LD_HL(mIntroCrystalUnownsTilemap);
     // debgcoord(0, 0, vBGMap0);
     // CALL(aIntro_DecompressRequest2bpp_64Tiles);
-    // Intro_DecompressRequest2bpp_64Tiles_Conv(mIntroCrystalUnownsTilemap, bgcoord(0, 0, vBGMap0));
+    // Intro_DecompressRequest2bpp_64Tiles(mIntroCrystalUnownsTilemap, bgcoord(0, 0, vBGMap0));
     // Load2bppBinaryAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroCrystalUnownsTilemap, 0, 64);
     LoadAssetToBuffer(bgcoord(0, 0, vram->vBGMap0), sizeof(vram->vBGMap0), IntroCrystalUnownsTilemap);
     // LDH_A_addr(rSVBK);
@@ -2726,11 +2726,11 @@ void Intro_DecompressRequest2bpp_128Tiles(void){
 
 }
 
-// static void Intro_DecompressRequest2bpp_128Tiles_Conv(uint16_t hl, uint16_t de) {
+// static void Intro_DecompressRequest2bpp_128Tiles(uint16_t hl, uint16_t de) {
 //     uint8_t svbk = gb_read(rSVBK);
 //     gb_write(rSVBK, MBANK(awDecompressScratch));
-//     Decompress_Conv(wDecompressScratch, hl);
-//     Request2bpp_Conv(0x01, wDecompressScratch, de, 128);
+//     Decompress_GB(wDecompressScratch, hl);
+//     Request2bpp(0x01, wDecompressScratch, de, 128);
 //     gb_write(rSVBK, svbk);
 // }
 
@@ -2756,11 +2756,11 @@ void Intro_DecompressRequest2bpp_255Tiles(void){
 }
 
 // Unused
-// static void Intro_DecompressRequest2bpp_255Tiles_Conv(uint16_t hl, uint16_t de) {
+// static void Intro_DecompressRequest2bpp_255Tiles(uint16_t hl, uint16_t de) {
 //     uint8_t svbk = gb_read(rSVBK);
 //     gb_write(rSVBK, MBANK(awDecompressScratch));
-//     Decompress_Conv(wDecompressScratch, hl);
-//     Request2bpp_Conv(0x01, wDecompressScratch, de, 255);
+//     Decompress_GB(wDecompressScratch, hl);
+//     Request2bpp(0x01, wDecompressScratch, de, 255);
 //     gb_write(rSVBK, svbk);
 // }
 
@@ -2785,7 +2785,7 @@ void Intro_DecompressRequest2bpp_64Tiles(void){
 
 }
 
-// static void Intro_DecompressRequest2bpp_64Tiles_Conv(uint16_t hl, uint16_t de){
+// static void Intro_DecompressRequest2bpp_64Tiles(uint16_t hl, uint16_t de){
 //     // LDH_A_addr(rSVBK);
 //     // PUSH_AF;
 //     // LD_A(MBANK(awDecompressScratch));
@@ -2797,12 +2797,12 @@ void Intro_DecompressRequest2bpp_64Tiles(void){
 //     // LD_DE(wDecompressScratch);
 //     // CALL(aDecompress);
 //     // POP_HL;
-//     Decompress_Conv(wDecompressScratch, hl);
+//     Decompress_GB(wDecompressScratch, hl);
 
 //     // LD_DE(wDecompressScratch);
 //     // LD_BC((0x01 << 8) | 0x40);
 //     // CALL(aRequest2bpp);
-//     Request2bpp_Conv(0x01, wDecompressScratch, de, 0x40);
+//     Request2bpp(0x01, wDecompressScratch, de, 0x40);
 
 //     // POP_AF;
 //     // LDH_addr_A(rSVBK);

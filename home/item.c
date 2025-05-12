@@ -6,7 +6,7 @@
 void DoItemEffect(void){
     // FARCALL(av_DoItemEffect);
     // RET;
-    v_DoItemEffect_Conv(wram->wCurItem);
+    v_DoItemEffect(wram->wCurItem);
 }
 
 //  Return false if item can't be removed from the bag.

@@ -48,7 +48,7 @@ static void AnimSeq_IntroSuicuneAway(struct SpriteAnim* bc);
 static void AnimSeq_EZChatCursor(struct SpriteAnim* bc);
 static void AnimSeq_Celebi(struct SpriteAnim* bc);
 
-static void AnimSeqs_IncAnonJumptableIndex_Conv(struct SpriteAnim* bc);
+static void AnimSeqs_IncAnonJumptableIndex(struct SpriteAnim* bc);
 
 static uint8_t AnimSeqs_Sine(uint8_t a, uint8_t d);
 static uint8_t AnimSeqs_Cosine(uint8_t a, uint8_t d);
@@ -240,7 +240,7 @@ static void AnimSeq_GSTitleTrail(struct SpriteAnim* bc){
         case 0:
         // zero:
             // CALL(aAnimSeqs_IncAnonJumptableIndex);
-            AnimSeqs_IncAnonJumptableIndex_Conv(bc);
+            AnimSeqs_IncAnonJumptableIndex(bc);
 
             // LD_HL(SPRITEANIMSTRUCT_INDEX);
             // ADD_HL_BC;
@@ -350,7 +350,7 @@ static void AnimSeq_MailCursor(struct SpriteAnim* bc){
 static void AnimSeq_GameFreakLogo(struct SpriteAnim* bc){
     // REG_BC = (bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH + wSpriteAnimationStructs;
     // CALLFAR(aGameFreakLogoSpriteAnim);
-    return GameFreakLogoSpriteAnim_Conv(bc);
+    return GameFreakLogoSpriteAnim(bc);
 }
 
 static void AnimSeq_GSGameFreakLogoStar(struct SpriteAnim* bc){
@@ -636,7 +636,7 @@ static void AnimSeq_TradePokeBall(struct SpriteAnim* bc){
 
     // next:
         // CALL(aAnimSeqs_IncAnonJumptableIndex);
-        AnimSeqs_IncAnonJumptableIndex_Conv(bc);
+        AnimSeqs_IncAnonJumptableIndex(bc);
 
         // LD_HL(SPRITEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
@@ -712,7 +712,7 @@ static void AnimSeq_TradePokeBall(struct SpriteAnim* bc){
             // LD_hl_A;
             bc->yOffset = 0;
             // CALL(aAnimSeqs_IncAnonJumptableIndex);
-            AnimSeqs_IncAnonJumptableIndex_Conv(bc);
+            AnimSeqs_IncAnonJumptableIndex(bc);
             // RET;
             return;
         }
@@ -1177,7 +1177,7 @@ void AnimSeqs_AnonJumptable(void){
 
 }
 
-static void AnimSeqs_IncAnonJumptableIndex_Conv(struct SpriteAnim* bc){
+static void AnimSeqs_IncAnonJumptableIndex(struct SpriteAnim* bc){
     // LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
     // ADD_HL_BC;
     // INC_hl;

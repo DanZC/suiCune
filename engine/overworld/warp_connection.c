@@ -327,7 +327,7 @@ static void LoadMapTimeOfDay_ClearBGMap(void) {
     // LDH_addr_A(hSCX);
     hram->hSCX = 0;
     // FARCALL(aApplyBGMapAnchorToObjects);
-    ApplyBGMapAnchorToObjects_Conv();
+    ApplyBGMapAnchorToObjects();
 
     // LDH_A_addr(rVBK);
     // PUSH_AF;
@@ -409,7 +409,7 @@ void LoadMapTimeOfDay(void){
     // LD_addr_A(wSpriteUpdatesEnabled);
     wram->wSpriteUpdatesEnabled = 0x1;
     // FARCALL(aReplaceTimeOfDayPals);
-    ReplaceTimeOfDayPals_Conv();
+    ReplaceTimeOfDayPals();
     // FARCALL(aUpdateTimeOfDayPal);
     UpdateTimeOfDayPal();
     // CALL(aOverworldTextModeSwitch);

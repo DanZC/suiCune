@@ -2,7 +2,6 @@ bool v_ReceiveItem(item_pocket_u* pocket, item_t a, uint8_t count);
 bool v_TossItem(item_pocket_u* pocket, item_t item, uint8_t count);
 bool v_CheckItem(item_pocket_u* hl, item_t item);
 void DoesHLEqualNumItems(void);
-bool DoesHLEqualNumItems_Conv(uint16_t hl);
 uint8_t GetPocketCapacity(item_quantity_pocket_s* pocket);
 bool PutItemInPocket(item_quantity_pocket_s* pocket, item_t item, uint8_t count);
 bool RemoveItemFromPocket(item_quantity_pocket_s* hl, item_t item, item_t count);

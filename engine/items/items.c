@@ -183,16 +183,6 @@ void DoesHLEqualNumItems(void){
 
 }
 
-bool DoesHLEqualNumItems_Conv(uint16_t hl){
-    // LD_A_L;
-    // CP_A(LOW(wNumItems));
-    // RET_NZ ;
-    // LD_A_H;
-    // CP_A(HIGH(wNumItems));
-    // RET;
-    return hl == wram->wNumItems;
-}
-
 uint8_t GetPocketCapacity(item_quantity_pocket_s* pocket){
     // LD_C(MAX_ITEMS);
     // LD_A_E;

@@ -42,7 +42,7 @@ void BlindingFlash(void){
     // SET_hl(STATUSFLAGS_FLASH_F);
     bit_set(wram->wStatusFlags, STATUSFLAGS_FLASH_F);
     // FARCALL(aReplaceTimeOfDayPals);
-    ReplaceTimeOfDayPals_Conv();
+    ReplaceTimeOfDayPals();
     // FARCALL(aUpdateTimeOfDayPal);
     UpdateTimeOfDayPal();
     // LD_B(SCGB_MAPPALS);

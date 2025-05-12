@@ -245,7 +245,7 @@ void BankOfMom(void){
                     // LD_DE(wMoney);
                     // LD_BC(wStringBuffer2);
                     // FARCALL(aCompareMoney);
-                    u8_flag_s res = CompareMoney_Conv(wram->wStringBuffer2, wram->wMoney);
+                    u8_flag_s res = CompareMoney(wram->wStringBuffer2, wram->wMoney);
                     // IF_C goto InsufficientFundsInWallet;
                     if(res.flag) {
                     // InsufficientFundsInWallet:
@@ -263,7 +263,7 @@ void BankOfMom(void){
                     // LD_BC(wMomsMoney);
                     // LD_DE(wStringBuffer2);
                     // FARCALL(aGiveMoney);
-                    bool noroom = GiveMoney_Conv(wram->wStringBuffer2, wram->wMomsMoney);
+                    bool noroom = GiveMoney(wram->wStringBuffer2, wram->wMomsMoney);
                     // IF_C goto NotEnoughRoomInBank;
                     if(noroom) {
                     // NotEnoughRoomInBank:
@@ -276,7 +276,7 @@ void BankOfMom(void){
                     // LD_BC(wStringBuffer2 + 3);
                     // LD_DE(wMoney);
                     // FARCALL(aTakeMoney);
-                    TakeMoney_Conv(wram->wMoney, wram->wStringBuffer2 + 3);
+                    TakeMoney(wram->wMoney, wram->wStringBuffer2 + 3);
                     // LD_HL(wStringBuffer2);
                     // LD_DE(wMomsMoney);
                     // LD_BC(3);
@@ -346,7 +346,7 @@ void BankOfMom(void){
                     // LD_DE(wMomsMoney);
                     // LD_BC(wStringBuffer2);
                     // FARCALL(aCompareMoney);
-                    u8_flag_s res = CompareMoney_Conv(wram->wStringBuffer2, wram->wMomsMoney);
+                    u8_flag_s res = CompareMoney(wram->wStringBuffer2, wram->wMomsMoney);
                     // IF_C goto InsufficientFundsInBank;
                     if(res.flag) {
                     // InsufficientFundsInBank:
@@ -359,7 +359,7 @@ void BankOfMom(void){
                     // LD_BC(wMoney);
                     // LD_DE(wStringBuffer2);
                     // FARCALL(aGiveMoney);
-                    bool noroom = GiveMoney_Conv(wram->wStringBuffer2, wram->wMoney);
+                    bool noroom = GiveMoney(wram->wStringBuffer2, wram->wMoney);
                     // IF_C goto NotEnoughRoomInWallet;
                     if(noroom) {
                     // NotEnoughRoomInWallet:
@@ -372,7 +372,7 @@ void BankOfMom(void){
                     // LD_BC(wStringBuffer2 + 3);
                     // LD_DE(wMomsMoney);
                     // FARCALL(aTakeMoney);
-                    TakeMoney_Conv(wram->wMomsMoney, wram->wStringBuffer2 + 3);
+                    TakeMoney(wram->wMomsMoney, wram->wStringBuffer2 + 3);
                     // LD_HL(wStringBuffer2);
                     // LD_DE(wMoney);
                     // LD_BC(3);
@@ -762,7 +762,7 @@ static void Mom_WithdrawDepositMenuJoypad_dpadaction(void) {
         // LD_B_H;
         // LD_DE(wStringBuffer2);
         // FARCALL(aGiveMoney);
-        GiveMoney_Conv(wram->wStringBuffer2, temp);
+        GiveMoney(wram->wStringBuffer2, temp);
         // RET;
         return;
     }
@@ -778,7 +778,7 @@ static void Mom_WithdrawDepositMenuJoypad_dpadaction(void) {
         // LD_B_H;
         // LD_DE(wStringBuffer2);
         // FARCALL(aTakeMoney);
-        TakeMoney_Conv(wram->wStringBuffer2, temp);
+        TakeMoney(wram->wStringBuffer2, temp);
         // RET;
         return;
     }

@@ -5,7 +5,6 @@ void Clears5_a89a(void);
 void Function170c06(void);
 void Function170c8b(void);
 void CheckBTMonMovesForErrors(void);
-void CheckBTMonMovesForErrors_Conv(void);
 void Function170cc6(void);
 void Function170d02(void);
 extern const char PichuAnimatedMobileGFX[];

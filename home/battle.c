@@ -205,7 +205,7 @@ void UpdateBattleMon(uint8_t a){
     // CALL(aGetPartyLocation);
     // LD_D_H;
     // LD_E_L;
-    // uint16_t de = GetPartyLocation_Conv(wPartyMon1Level, a);
+    // uint16_t de = GetPartyLocation(wPartyMon1Level, a);
     struct PartyMon* de = wram->wPartyMon + a;
 
     // LD_HL(wBattleMonLevel);

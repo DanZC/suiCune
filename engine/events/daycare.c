@@ -344,7 +344,7 @@ u8_flag_s DayCare_AskWithdrawBreedMon(void){
     // LD_DE(wMoney);
     // LD_BC(wStringBuffer2 + 2);
     // FARCALL(aCompareMoney);
-    u8_flag_s res = CompareMoney_Conv(wram->wStringBuffer2 + 2, wram->wMoney);
+    u8_flag_s res = CompareMoney(wram->wStringBuffer2 + 2, wram->wMoney);
     // IF_C goto not_enough_money;
     if(res.flag) {
     // not_enough_money:
@@ -372,7 +372,7 @@ void DayCare_GetBackMonForMoney(void){
     // LD_BC(wStringBuffer2 + 2);
     // LD_DE(wMoney);
     // FARCALL(aTakeMoney);
-    TakeMoney_Conv(wram->wMoney, wram->wStringBuffer2 + 2);
+    TakeMoney(wram->wMoney, wram->wStringBuffer2 + 2);
     // LD_A(DAYCARETEXT_WITHDRAW);
     // CALL(aPrintDayCareText);
     PrintDayCareText(DAYCARETEXT_WITHDRAW);

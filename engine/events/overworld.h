@@ -12,7 +12,6 @@ extern const txt_cmd_s CutNothingText[];
 bool Script_CutFromMenu(script_s* s);
 bool Script_Cut(script_s* s);
 void CutDownTreeOrGrass(void);
-void CheckOverworldTileArrays(void);
 void FlashFunction(void);
 void UseFlash(void);
 bool Script_UseFlash(script_s* s);

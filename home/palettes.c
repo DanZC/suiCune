@@ -452,11 +452,11 @@ void ReloadSpritesNoPalettes(void){
 void SwapTextboxPalettes(void){
     // HOMECALL(av_SwapTextboxPalettes);
     // RET;
-    return v_SwapTextboxPalettes_Conv();
+    return v_SwapTextboxPalettes();
 }
 
 void ScrollBGMapPalettes(uint8_t c){
     // HOMECALL(av_ScrollBGMapPalettes);
     // RET;
-    return v_ScrollBGMapPalettes_Conv(c);
+    return v_ScrollBGMapPalettes(c);
 }

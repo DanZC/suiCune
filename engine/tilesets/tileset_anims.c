@@ -1074,7 +1074,7 @@ void WriteTileFromAnimBuffer(uint8_t* de){
     // LD_H_D;
     // LD_L_E;
     // JR(mWriteTile);
-    WriteTile_Conv(de, wram->wTileAnimBuffer);
+    WriteTile(de, wram->wTileAnimBuffer);
 }
 
 void ReadTileToAnimBuffer(uint8_t* de){
@@ -1090,40 +1090,12 @@ void ReadTileToAnimBuffer(uint8_t* de){
     // LD_HL(wTileAnimBuffer);
 // fallthrough
 
-    return WriteTile_Conv(wram->wTileAnimBuffer, de);
-}
-
-void WriteTile(void){
-//  Write one tile from sp to hl.
-//  The stack pointer has been saved in bc.
-
-//  This function cannot be called, only jumped to,
-//  because it relocates the stack pointer to quickly
-//  copy data with a "pop slide".
-
-    POP_DE;
-    LD_hl_E;
-    INC_HL;
-    LD_hl_D;
-    for(int rept = 0; rept < (LEN_2BPP_TILE - 2) / 2; rept++){
-    POP_DE;
-    INC_HL;
-    LD_hl_E;
-    INC_HL;
-    LD_hl_D;
-    }
-
-//  Restore the stack pointer from bc
-    LD_H_B;
-    LD_L_C;
-    LD_SP_HL;
-    RET;
-
+    return WriteTile(wram->wTileAnimBuffer, de);
 }
 
 //  Write one tile from sp to hl.
 //  Unlike the original version, this just uses CopyBytes.
-void WriteTile_Conv(uint8_t* hl, const uint8_t* sp){
+void WriteTile(uint8_t* hl, const uint8_t* sp){
     // POP_DE;
     // LD_hl_E;
     // INC_HL;

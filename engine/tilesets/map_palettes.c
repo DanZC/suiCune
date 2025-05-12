@@ -3,58 +3,6 @@
 #include "../../home/map.h"
 
 void v_SwapTextboxPalettes(void){
-    hlcoord(0, 0, wTilemap);
-    decoord(0, 0, wAttrmap);
-    LD_B(SCREEN_HEIGHT);
-
-loop:
-    PUSH_BC;
-    LD_C(SCREEN_WIDTH);
-
-innerloop:
-    LD_A_hl;
-    PUSH_HL;
-    SRL_A;
-    IF_C goto UpperNybble;
-    LD_HL(wTilesetPalettes);
-    ADD_A_hl;
-    LD_L_A;
-    LD_A_addr(wTilesetPalettes + 1);
-    ADC_A(0);
-    LD_H_A;
-    LD_A_hl;
-    AND_A(0xf);
-    goto next;
-
-
-UpperNybble:
-    LD_HL(wTilesetPalettes);
-    ADD_A_hl;
-    LD_L_A;
-    LD_A_addr(wTilesetPalettes + 1);
-    ADC_A(0);
-    LD_H_A;
-    LD_A_hl;
-    SWAP_A;
-    AND_A(0xf);
-
-
-next:
-    POP_HL;
-    LD_de_A;
-    RES_hl(7);
-    INC_HL;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto innerloop;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void v_SwapTextboxPalettes_Conv(void){
     // hlcoord(0, 0, wTilemap);
     uint8_t* hl = coord(0, 0, wram->wTilemap);
     // decoord(0, 0, wAttrmap);
@@ -121,53 +69,7 @@ void v_SwapTextboxPalettes_Conv(void){
     // RET;
 }
 
-void v_ScrollBGMapPalettes(void){
-    LD_HL(wBGMapBuffer);
-    LD_DE(wBGMapPalBuffer);
-
-loop:
-    LD_A_hl;
-    PUSH_HL;
-    SRL_A;
-    IF_C goto UpperNybble;
-
-//  .LowerNybble
-    LD_HL(wTilesetPalettes);
-    ADD_A_hl;
-    LD_L_A;
-    LD_A_addr(wTilesetPalettes + 1);
-    ADC_A(0);
-    LD_H_A;
-    LD_A_hl;
-    AND_A(0xf);
-    goto next;
-
-
-UpperNybble:
-    LD_HL(wTilesetPalettes);
-    ADD_A_hl;
-    LD_L_A;
-    LD_A_addr(wTilesetPalettes + 1);
-    ADC_A(0);
-    LD_H_A;
-    LD_A_hl;
-    SWAP_A;
-    AND_A(0xf);
-
-
-next:
-    POP_HL;
-    LD_de_A;
-    RES_hl(7);
-    INC_HL;
-    INC_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void v_ScrollBGMapPalettes_Conv(uint8_t c){
+void v_ScrollBGMapPalettes(uint8_t c){
     // LD_HL(wBGMapBuffer);
     tile_t* hl = wram->wBGMapBuffer;
     // LD_DE(wBGMapPalBuffer);

@@ -13,10 +13,6 @@
 #include "../gfx/pic_animation.h"
 #include "../pokemon/stats_screen.h"
 
-void EvolutionAnimation(void) {
-    REG_F_C = EvolutionAnimation_Conv();
-}
-
 static void EvolutionAnimation_GetSGBLayout(bool c){
     // LD_B(SCGB_EVOLUTION);
     // JP(mGetSGBLayout);
@@ -506,7 +502,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
     // RET;
 }
 
-bool EvolutionAnimation_Conv(void){
+bool EvolutionAnimation(void){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;

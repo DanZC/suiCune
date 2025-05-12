@@ -717,7 +717,7 @@ static uint8_t GetDecorationSprite(uint8_t c){
     return hl->tile;
 }
 
-static const char* GetDecoName__getdeconame_Conv(uint8_t a) {
+static const char* GetDecoName__getdeconame(uint8_t a) {
     // PUSH_BC;
     // LD_HL(mDecorationNames);
     // CALL(aGetNthString);
@@ -744,7 +744,7 @@ static uint8_t* GetDecoName_getdeconame(uint8_t* bc, uint8_t a) {
     uint8_t buffer[16];
     // CALL(aGetDecoName__getdeconame);
     // goto copy;
-    return GetDecoName_copy(bc, U82CA(buffer, GetDecoName__getdeconame_Conv(a)));
+    return GetDecoName_copy(bc, U82CA(buffer, GetDecoName__getdeconame(a)));
 }
 
 static uint8_t* GetDecoName_getpokename(uint8_t* bc, species_t a) {
@@ -1222,7 +1222,7 @@ bool DecoAction_AskWhichSide(const txt_cmd_s* hl){
     MenuTextbox(hl);
     // LD_HL(mDecoSideMenuHeader);
     // CALL(aGetMenu2);
-    u8_flag_s res = GetMenu2_Conv(&DecoSideMenuHeader);
+    u8_flag_s res = GetMenu2(&DecoSideMenuHeader);
     // CALL(aExitMenu);
     ExitMenu();
     // CALL(aCopyMenuData);

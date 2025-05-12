@@ -889,9 +889,9 @@ const struct MenuHeader PCItemsMenuData = {
             //dbw ['0', 'wNumPCItems']
             .list = wram_ptr(wNumPCItems),
             //dba ['PlaceMenuItemName']
-            .func1 = PlaceMenuItemName_Conv,
+            .func1 = PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
-            .func2 = PlaceMenuItemQuantity_Conv,
+            .func2 = PlaceMenuItemQuantity,
             //dba ['UpdateItemDescription']
             .func3 = UpdateItemDescription,
         },

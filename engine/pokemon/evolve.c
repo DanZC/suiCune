@@ -345,7 +345,7 @@ MasterLoop:
         ClearSprites();
 
         // FARCALL(aEvolutionAnimation);
-        bool cancel = EvolutionAnimation_Conv();
+        bool cancel = EvolutionAnimation();
 
         // PUSH_AF;
         // CALL(aClearSprites);

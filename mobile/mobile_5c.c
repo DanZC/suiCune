@@ -318,56 +318,6 @@ void Function170c8b(void){
 }
 
 void CheckBTMonMovesForErrors(void){
-    LD_C(BATTLETOWER_PARTY_LENGTH);
-    LD_HL(wBT_OTTempMon1Moves);
-
-loop:
-    PUSH_HL;
-    LD_A_hl;
-    CP_A(NUM_ATTACKS + 1);
-    IF_C goto okay;
-    LD_A(POUND);
-    LD_hl_A;
-
-
-okay:
-    INC_HL;
-    LD_B(NUM_MOVES - 1);
-
-loop2:
-    LD_A_hl;
-    AND_A_A;
-    IF_Z goto loop3;
-    CP_A(NUM_ATTACKS + 1);
-    IF_C goto next;
-
-
-loop3:
-    XOR_A_A;
-    LD_hl_A;
-    INC_HL;
-    DEC_B;
-    IF_NZ goto loop3;
-    goto done;
-
-
-next:
-    INC_HL;
-    DEC_B;
-    IF_NZ goto loop2;
-
-
-done:
-    POP_HL;
-    LD_DE(NICKNAMED_MON_STRUCT_LENGTH);
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void CheckBTMonMovesForErrors_Conv(void){
     // LD_C(BATTLETOWER_PARTY_LENGTH);
     uint8_t c = BATTLETOWER_PARTY_LENGTH;
     // LD_HL(wBT_OTTempMon1Moves);

@@ -994,21 +994,7 @@ void UnloadBlinkingCursor(void) {
     // RET;
 }
 
-void PlaceFarString(void) {
-    LD_B_A;
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-
-    LD_A_B;
-    RST(aBankswitch);
-    CALL(aPlaceString);
-
-    POP_AF;
-    RST(aBankswitch);
-    RET;
-}
-
-void PlaceFarString_Conv(uint8_t bank, struct TextPrintState* state, uint8_t* hl) {
+void PlaceFarString(uint8_t bank, struct TextPrintState* state, uint8_t* hl) {
     // LD_B_A;
     // LDH_A_addr(hROMBank);
     // PUSH_AF;

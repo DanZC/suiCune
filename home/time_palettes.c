@@ -22,7 +22,7 @@ bool UpdateTimeAndPals(void){
 bool TimeOfDayPals(void){
     // CALLFAR(av_TimeOfDayPals);
     // RET;
-    return v_TimeOfDayPals_Conv();
+    return v_TimeOfDayPals();
 }
 
 void UpdateTimePals(void){

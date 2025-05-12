@@ -6,6 +6,8 @@
 #include "copy_tilemap.h"
 #include "../util/network.h"
 
+static uint8_t SerialDisconnected(uint8_t a);
+
 //  The serial interrupt.
 void Serial(void){
     // PUSH_AF;
@@ -123,52 +125,8 @@ void Serial(void){
     // RET;
 }
 
-void Serial_ExchangeBytes(void){
-    //  send bc bytes from hl, receive bc bytes to de
-    LD_A(TRUE);
-    LDH_addr_A(hSerialIgnoringInitialData);
-
-
-loop:
-        LD_A_hl;
-    LDH_addr_A(hSerialSend);
-    CALL(aSerial_ExchangeByte);
-    PUSH_BC;
-    LD_B_A;
-    INC_HL;
-
-    LD_A(48);
-
-wait:
-        DEC_A;
-    IF_NZ goto wait;
-
-    LDH_A_addr(hSerialIgnoringInitialData);
-    AND_A_A;
-    LD_A_B;
-    POP_BC;
-    IF_Z goto load;
-    DEC_HL;
-    CP_A(SERIAL_PREAMBLE_BYTE);
-    IF_NZ goto loop;
-    XOR_A_A;
-    LDH_addr_A(hSerialIgnoringInitialData);
-    goto loop;
-
-
-load:
-        LD_de_A;
-    INC_DE;
-    DEC_BC;
-    LD_A_B;
-    OR_A_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
 //  send bc bytes from hl, receive bc bytes to de
-uint8_t* Serial_ExchangeBytes_Conv(void* de_, const void* hl_, uint16_t bc){
+uint8_t* Serial_ExchangeBytes(void* de_, const void* hl_, uint16_t bc){
     uint8_t* de = de_;
     const uint8_t* hl = hl_;
     // LD_A(TRUE);
@@ -229,134 +187,11 @@ uint8_t* Serial_ExchangeBytes_Conv(void* de_, const void* hl_, uint16_t bc){
     }
 }
 
-void Serial_ExchangeByte(void){
-    
-timeout_loop:
-        XOR_A_A;
-    LDH_addr_A(hSerialReceivedNewData);
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_INTERNAL_CLOCK);
-    IF_NZ goto not_player_2;
-    LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-
-not_player_2:
-    
-loop:
-        LDH_A_addr(hSerialReceivedNewData);
-    AND_A_A;
-    IF_NZ goto await_new_data;
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_EXTERNAL_CLOCK);
-    IF_NZ goto not_player_1_or_timed_out;
-    CALL(aCheckLinkTimeoutFramesNonzero);
-    IF_Z goto not_player_1_or_timed_out;
-    CALL(aSerial_ExchangeByte_ShortDelay);
-    PUSH_HL;
-    LD_HL(wLinkTimeoutFrames + 1);
-    INC_hl;
-    IF_NZ goto no_rollover_up;
-    DEC_HL;
-    INC_hl;
-
-
-no_rollover_up:
-        POP_HL;
-    CALL(aCheckLinkTimeoutFramesNonzero);
-    IF_NZ goto loop;
-    JP(mSerialDisconnected);
-
-
-not_player_1_or_timed_out:
-        LDH_A_addr(rIE);
-    AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
-    CP_A(1 << SERIAL);
-    IF_NZ goto loop;
-    LD_A_addr(wLinkByteTimeout);
-    DEC_A;
-    LD_addr_A(wLinkByteTimeout);
-    IF_NZ goto loop;
-    LD_A_addr(wLinkByteTimeout + 1);
-    DEC_A;
-    LD_addr_A(wLinkByteTimeout + 1);
-    IF_NZ goto loop;
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_EXTERNAL_CLOCK);
-    IF_Z goto await_new_data;
-
-    LD_A(255);
-
-long_delay_loop:
-        DEC_A;
-    IF_NZ goto long_delay_loop;
-
-
-await_new_data:
-        XOR_A_A;
-    LDH_addr_A(hSerialReceivedNewData);
-    LDH_A_addr(rIE);
-    AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
-    SUB_A(1 << SERIAL);
-    IF_NZ goto non_serial_interrupts_enabled;
-
-// a == 0
-    //assert ['LOW(SERIAL_LINK_BYTE_TIMEOUT) == 0'];
-    LD_addr_A(wLinkByteTimeout);
-    LD_A(HIGH(SERIAL_LINK_BYTE_TIMEOUT));
-    LD_addr_A(wLinkByteTimeout + 1);
-
-
-non_serial_interrupts_enabled:
-        LDH_A_addr(hSerialReceive);
-    CP_A(SERIAL_NO_DATA_BYTE);
-    RET_NZ ;
-    CALL(aCheckLinkTimeoutFramesNonzero);
-    IF_Z goto timed_out;
-    PUSH_HL;
-    LD_HL(wLinkTimeoutFrames + 1);
-    LD_A_hl;
-    DEC_A;
-    LD_hld_A;
-    INC_A;
-    IF_NZ goto no_rollover;
-    DEC_hl;
-
-
-no_rollover:
-        POP_HL;
-    CALL(aCheckLinkTimeoutFramesNonzero);
-    JR_Z (mSerialDisconnected);
-
-
-timed_out:
-        LDH_A_addr(rIE);
-    AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
-    CP_A(1 << SERIAL);
-    LD_A(SERIAL_NO_DATA_BYTE);
-    RET_Z ;
-    LD_A_hl;
-    LDH_addr_A(hSerialSend);
-    CALL(aDelayFrame);
-    JP(mSerial_ExchangeByte_timeout_loop);
-
-
-ShortDelay:
-        LD_A(15);
-
-short_delay_loop:
-        DEC_A;
-    IF_NZ goto short_delay_loop;
-    RET;
-
-}
-
 static void Serial_ExchangeByte_ShortDelay(void) {
     DelayFrame();
 }
 
-uint8_t Serial_ExchangeByte_Conv(const uint8_t* hl){ 
+uint8_t Serial_ExchangeByte(const uint8_t* hl){ 
     printf("%s:\n", __func__);
 timeout_loop:
     // XOR_A_A;
@@ -385,7 +220,7 @@ timeout_loop:
             goto await_new_data;
         // LDH_A_addr(hSerialConnectionStatus);
         // CP_A(USING_EXTERNAL_CLOCK);
-        if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK || !CheckLinkTimeoutFramesNonzero_Conv()) {
+        if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK || !CheckLinkTimeoutFramesNonzero()) {
         // not_player_1_or_timed_out:
             // LDH_A_addr(rIE);
             // AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
@@ -444,7 +279,7 @@ timeout_loop:
                 return hram->hSerialReceive;
             // CALL(aCheckLinkTimeoutFramesNonzero);
             // IF_Z goto timed_out;
-            if(!CheckLinkTimeoutFramesNonzero_Conv()) {
+            if(!CheckLinkTimeoutFramesNonzero()) {
             // timed_out:
                 // LDH_A_addr(rIE);
                 // AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
@@ -477,8 +312,8 @@ timeout_loop:
             // POP_HL;
             // CALL(aCheckLinkTimeoutFramesNonzero);
             // JR_Z (mSerialDisconnected);
-            if(!CheckLinkTimeoutFramesNonzero_Conv())
-                return SerialDisconnected_Conv(0);
+            if(!CheckLinkTimeoutFramesNonzero())
+                return SerialDisconnected(0);
 
         // ShortDelay:
             // LD_A(15);
@@ -509,25 +344,16 @@ timeout_loop:
         // POP_HL;
         // CALL(aCheckLinkTimeoutFramesNonzero);
         // IF_NZ goto loop;
-        if(CheckLinkTimeoutFramesNonzero_Conv())
+        if(CheckLinkTimeoutFramesNonzero())
             continue;
         
-        return SerialDisconnected_Conv(0);
+        return SerialDisconnected(0);
     } while(1);
     // JP(mSerialDisconnected);
     return 0;
 }
 
-void CheckLinkTimeoutFramesNonzero(void){
-        PUSH_HL;
-    LD_HL(wLinkTimeoutFrames);
-    LD_A_hli;
-    OR_A_hl;
-    POP_HL;
-    RET;
-}
-
-bool CheckLinkTimeoutFramesNonzero_Conv(void){
+bool CheckLinkTimeoutFramesNonzero(void){
     // PUSH_HL;
     // LD_HL(wLinkTimeoutFrames);
     // LD_A_hli;
@@ -539,19 +365,7 @@ bool CheckLinkTimeoutFramesNonzero_Conv(void){
 
 //  This sets wLinkTimeoutFrames to $ffff, since
 //  a is always 0 when it is called.
-void SerialDisconnected(void){
-        DEC_A;
-    LD_addr_A(wLinkTimeoutFrames);
-    LD_addr_A(wLinkTimeoutFrames + 1);
-    RET;
-
-//  This is used to check that both players entered the same Cable Club room.
-    return Serial_ExchangeSyncBytes();
-}
-
-//  This sets wLinkTimeoutFrames to $ffff, since
-//  a is always 0 when it is called.
-uint8_t SerialDisconnected_Conv(uint8_t a){
+static uint8_t SerialDisconnected(uint8_t a){
     // DEC_A;
     --a;
     // LD_addr_A(wLinkTimeoutFrames);
@@ -588,7 +402,7 @@ void Serial_ExchangeSyncBytes(void){
         //     hram->hSerialSend = *hl;
         //     // CALL(aSerial_ExchangeByte);
         //     // LD_B_A;
-        //     b = Serial_ExchangeByte_Conv(hl);
+        //     b = Serial_ExchangeByte(hl);
         //     // INC_HL;
         //     hl++;
         //     // LDH_A_addr(hSerialIgnoringInitialData);
@@ -642,7 +456,7 @@ void WaitLinkTransfer(void){
         DelayFrame();
         // CALL(aCheckLinkTimeoutFramesNonzero);
         // IF_Z goto check;
-        if(!CheckLinkTimeoutFramesNonzero_Conv())
+        if(!CheckLinkTimeoutFramesNonzero())
             continue;
         // PUSH_HL;
         // LD_HL(wLinkTimeoutFrames + 1);
@@ -656,7 +470,7 @@ void WaitLinkTransfer(void){
             // POP_HL;
             // XOR_A_A;
             // JP(mSerialDisconnected);
-            return SerialDisconnected_Conv(0), (void)0;
+            return SerialDisconnected(0), (void)0;
         }
 
     // skip:

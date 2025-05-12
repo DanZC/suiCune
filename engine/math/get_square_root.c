@@ -10,41 +10,8 @@
 #include <math.h>
 #endif
 
-void GetSquareRoot(void){
 //  Return the square root of de in b.
-
-//  Rather than calculating the result, we take the index of the
-//  first value in a table of squares that isn't lower than de.
-
-    LD_HL(mGetSquareRoot_Squares);
-    LD_B(0);
-
-loop:
-//  Make sure we don't go past the end of the table.
-    INC_B;
-    LD_A_B;
-    CP_A(NUM_SQUARE_ROOTS);
-    RET_Z ;
-
-//  Iterate over the table until b**2 >= de.
-    LD_A_hli;
-    SUB_A_E;
-    LD_A_hli;
-    SBC_A_D;
-
-    IF_C goto loop;
-    RET;
-
-
-// Squares:
-    // for(int x = 0; x < 1, NUM_SQUARE_ROOTS + 1; x++){
-    //dw ['x**2'];
-    // }
-
-}
-
-//  Return the square root of de in b.
-uint8_t GetSquareRoot_Conv(uint16_t de){
+uint8_t GetSquareRoot(uint16_t de){
 #if USE_CMATH_SQRT
 //  Use cmath's sqrt and downcast to uint8_t.
     double x = (double)de;

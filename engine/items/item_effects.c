@@ -59,22 +59,7 @@
 #include <stddef.h>
 #endif
 
-void v_DoItemEffect(void){
-    LD_A_addr(wCurItem);
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetItemName);
-    CALL(aCopyName1);
-    LD_A(1);
-    LD_addr_A(wItemEffectSucceeded);
-    LD_A_addr(wCurItem);
-    DEC_A;
-    LD_HL(mItemEffects);
-    RST(aJumpTable);
-    RET;
-
-}
-
-void v_DoItemEffect_Conv(item_t item){
+void v_DoItemEffect(item_t item){
     // LD_A_addr(wCurItem);
     wram->wCurItem = item;
     // LD_addr_A(wNamedObjectIndex);
@@ -2618,7 +2603,7 @@ uint8_t ItemRestoreHP(void){
     // CALL(aGetHealingItemAmount);
     uint16_t amount = GetHealingItemAmount(wram->wCurItem);
     // CALL(aRestoreHealth);
-    amount = RestoreHealth_Conv(curMon, amount);
+    amount = RestoreHealth(curMon, amount);
     // CALL(aBattlemonRestoreHealth);
     BattlemonRestoreHealth(amount);
     // CALL(aHealHP_SFX_GFX);
@@ -2836,40 +2821,7 @@ uint16_t ContinueRevive(struct PartyMon* bc, uint16_t hp){
     return hp;
 }
 
-void RestoreHealth(void){
-    LD_A(MON_HP + 1);
-    CALL(aGetPartyParamLocation);
-    LD_A_hl;
-    ADD_A_E;
-    LD_hld_A;
-    LD_A_hl;
-    ADC_A_D;
-    LD_hl_A;
-    IF_C goto full_hp;
-    CALL(aLoadCurHPIntoBuffer3);
-    LD_A(MON_HP + 1);
-    CALL(aGetPartyParamLocation);
-    LD_D_H;
-    LD_E_L;
-    LD_A(MON_MAXHP + 1);
-    CALL(aGetPartyParamLocation);
-    LD_A_de;
-    SUB_A_hl;
-    DEC_DE;
-    DEC_HL;
-    LD_A_de;
-    SBC_A_hl;
-    IF_C goto finish;
-
-full_hp:
-    CALL(aReviveFullHP);
-
-finish:
-    RET;
-
-}
-
-uint16_t RestoreHealth_Conv(struct PartyMon* bc, uint16_t amount){
+uint16_t RestoreHealth(struct PartyMon* bc, uint16_t amount){
     // LD_A(MON_HP + 1);
     // CALL(aGetPartyParamLocation);
     uint16_t hp = BigEndianToNative16(bc->HP);
@@ -2913,27 +2865,7 @@ uint16_t RestoreHealth_Conv(struct PartyMon* bc, uint16_t amount){
     return hp;
 }
 
-void RemoveHP(void){
-    LD_A(MON_HP + 1);
-    CALL(aGetPartyParamLocation);
-    LD_A_hl;
-    SUB_A_E;
-    LD_hld_A;
-    LD_A_hl;
-    SBC_A_D;
-    LD_hl_A;
-    IF_NC goto okay;
-    XOR_A_A;
-    LD_hld_A;
-    LD_hl_A;
-
-okay:
-    CALL(aLoadCurHPIntoBuffer3);
-    RET;
-
-}
-
-void RemoveHP_Conv(struct PartyMon* bc, uint16_t amount){
+void RemoveHP(struct PartyMon* bc, uint16_t amount){
     // LD_A(MON_HP + 1);
     // CALL(aGetPartyParamLocation);
     uint16_t hp = BigEndianToNative16(bc->HP);
@@ -3063,28 +2995,7 @@ void LoadHPFromBuffer1(void){
 
 }
 
-void GetOneFifthMaxHP(void){
-    PUSH_BC;
-    LD_A(MON_MAXHP);
-    CALL(aGetPartyParamLocation);
-    LD_A_hli;
-    LDH_addr_A(hDividend + 0);
-    LD_A_hl;
-    LDH_addr_A(hDividend + 1);
-    LD_A(5);
-    LDH_addr_A(hDivisor);
-    LD_B(2);
-    CALL(aDivide);
-    LDH_A_addr(hQuotient + 2);
-    LD_D_A;
-    LDH_A_addr(hQuotient + 3);
-    LD_E_A;
-    POP_BC;
-    RET;
-
-}
-
-uint16_t GetOneFifthMaxHP_Conv(struct PartyMon* bc){
+uint16_t GetOneFifthMaxHP(struct PartyMon* bc){
     // PUSH_BC;
     // LD_A(MON_MAXHP);
     // CALL(aGetPartyParamLocation);
@@ -3210,22 +3121,22 @@ void Softboiled_MilkDrinkFunction(void){
         // CALL(aIsMonFainted);
         IsMonFainted(user);
         // CALL(aGetOneFifthMaxHP);
-        uint16_t amt = GetOneFifthMaxHP_Conv(user);
+        uint16_t amt = GetOneFifthMaxHP(user);
         // CALL(aRemoveHP);
-        RemoveHP_Conv(user, amt);
+        RemoveHP(user, amt);
         // PUSH_BC;
         // CALL(aHealHP_SFX_GFX);
         HealHP_SFX_GFX();
         // POP_BC;
         // CALL(aGetOneFifthMaxHP);
-        amt = GetOneFifthMaxHP_Conv(user);
+        amt = GetOneFifthMaxHP(user);
         // LD_A_C;
         // LD_addr_A(wCurPartyMon);
         struct PartyMon* recipient = wram->wPartyMon + res.a;
         // CALL(aIsMonFainted);
         IsMonFainted(recipient);
         // CALL(aRestoreHealth);
-        RestoreHealth_Conv(recipient, amt);
+        RestoreHealth(recipient, amt);
         // CALL(aHealHP_SFX_GFX);
         HealHP_SFX_GFX();
         // LD_A(PARTYMENUTEXT_HEAL_HP);
@@ -3753,7 +3664,7 @@ void BattleRestorePP(void){
 void Not_PP_Up(struct PartyMon* mon, uint8_t n, item_t item){
     // CALL(aRestorePP);
     // JR_NZ (mBattleRestorePP);
-    if(RestorePP_Conv(mon, n, item))
+    if(RestorePP(mon, n, item))
         return BattleRestorePP();
     // JP(mPPRestoreItem_NoEffect);
     return PPRestoreItem_NoEffect();
@@ -3784,7 +3695,7 @@ void Elixer_RestorePPofAllMoves(void){
 
         // CALL(aRestorePP);
         // IF_Z goto next;
-        if(RestorePP_Conv(curMon, wram->wMenuCursorY, wram->wTempRestorePPItem)) {
+        if(RestorePP(curMon, wram->wMenuCursorY, wram->wTempRestorePPItem)) {
             // LD_HL(wMenuCursorX);
             // INC_hl;
             wram->wMenuCursorX++;
@@ -3822,61 +3733,11 @@ void PPRestoreItem_Cancel(void){
     // RET;
 }
 
-void RestorePP(void){
-    XOR_A_A;  // PARTYMON
-    LD_addr_A(wMonType);
-    CALL(aGetMaxPPOfMove);
-    LD_HL(wPartyMon1PP);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aGetMthMoveOfNthPartymon);
-    LD_A_addr(wTempPP);
-    LD_B_A;
-    LD_A_hl;
-    AND_A(PP_MASK);
-    CP_A_B;
-    IF_NC goto dont_restore;
-
-    LD_A_addr(wTempRestorePPItem);
-    CP_A(MAX_ELIXER);
-    IF_Z goto restore_all;
-    CP_A(MAX_ETHER);
-    IF_Z goto restore_all;
-
-    LD_C(5);
-    CP_A(MYSTERYBERRY);
-    IF_Z goto restore_some;
-
-    LD_C(10);
-
-
-restore_some:
-    LD_A_hl;
-    AND_A(PP_MASK);
-    ADD_A_C;
-    CP_A_B;
-    IF_NC goto restore_all;
-    LD_B_A;
-
-
-restore_all:
-    LD_A_hl;
-    AND_A(PP_UP_MASK);
-    OR_A_B;
-    LD_hl_A;
-    RET;
-
-
-dont_restore:
-    XOR_A_A;
-    RET;
-
-}
-
-bool RestorePP_Conv(struct PartyMon* mon, uint8_t n, item_t item){
+bool RestorePP(struct PartyMon* mon, uint8_t n, item_t item){
     // XOR_A_A;  // PARTYMON
     // LD_addr_A(wMonType);
     // CALL(aGetMaxPPOfMove);
-    uint8_t maxpp = GetMaxPPOfMove_Conv(mon, PARTYMON, n);
+    uint8_t maxpp = GetMaxPPOfMove(mon, PARTYMON, n);
     // LD_HL(wPartyMon1PP);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aGetMthMoveOfNthPartymon);
@@ -4258,7 +4119,7 @@ void ApplyPPUp(void){
             // LD_A_de;  // wasted cycle
             // CALL_NZ (aComputeMaxPP);
             if((mon->mon.PP[b-1] & PP_UP_MASK) != 0) {
-                ComputeMaxPP_Conv(mon->mon.PP[b-1], *de);
+                ComputeMaxPP(mon->mon.PP[b-1], *de);
             }
         }
 
@@ -4269,61 +4130,7 @@ void ApplyPPUp(void){
     }
 }
 
-void ComputeMaxPP(void){
-    PUSH_BC;
-// Divide the base PP by 5.
-    LD_A_de;
-    LDH_addr_A(hDividend + 3);
-    XOR_A_A;
-    LDH_addr_A(hDividend);
-    LDH_addr_A(hDividend + 1);
-    LDH_addr_A(hDividend + 2);
-    LD_A(5);
-    LDH_addr_A(hDivisor);
-    LD_B(4);
-    CALL(aDivide);
-// Get the number of PP, which are bits 6 and 7 of the PP value stored in RAM.
-    LD_A_hl;
-    LD_B_A;
-    SWAP_A;
-    AND_A(0xf);
-    SRL_A;
-    SRL_A;
-    LD_C_A;
-// If this value is 0, we are done
-    AND_A_A;
-    IF_Z goto NoPPUp;
-
-
-loop:
-// Normally, a move with 40 PP would have 64 PP with three PP Ups.
-// Since this would overflow into bit 6, we prevent that from happening
-// by decreasing the extra amount of PP each PP Up provides, resulting
-// in a maximum of 61.
-    LDH_A_addr(hQuotient + 3);
-    CP_A(0x8);
-    IF_C goto okay;
-    LD_A(0x7);
-
-
-okay:
-    ADD_A_B;
-    LD_B_A;
-    LD_A_addr(wTempPP);
-    DEC_A;
-    IF_Z goto NoPPUp;
-    DEC_C;
-    IF_NZ goto loop;
-
-
-NoPPUp:
-    LD_hl_B;
-    POP_BC;
-    RET;
-
-}
-
-uint8_t ComputeMaxPP_Conv(uint8_t pp, uint8_t base){
+uint8_t ComputeMaxPP(uint8_t pp, uint8_t base){
     // PUSH_BC;
 // Divide the base PP by 5.
     // LD_A_de;
@@ -4392,45 +4199,7 @@ uint8_t ComputeMaxPP_Conv(uint8_t pp, uint8_t base){
     return b;
 }
 
-void RestoreAllPP(void){
-    LD_A(MON_PP);
-    CALL(aGetPartyParamLocation);
-    PUSH_HL;
-    LD_A(MON_MOVES);
-    CALL(aGetPartyParamLocation);
-    POP_DE;
-    XOR_A_A;  // PARTYMON
-    LD_addr_A(wMenuCursorY);
-    LD_addr_A(wMonType);
-    LD_C(NUM_MOVES);
-
-loop:
-    LD_A_hli;
-    AND_A_A;
-    RET_Z ;
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    CALL(aGetMaxPPOfMove);
-    POP_BC;
-    POP_DE;
-    LD_A_de;
-    AND_A(PP_UP_MASK);
-    LD_B_A;
-    LD_A_addr(wTempPP);
-    ADD_A_B;
-    LD_de_A;
-    INC_DE;
-    LD_HL(wMenuCursorY);
-    INC_hl;
-    POP_HL;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-void RestoreAllPP_Conv(struct PartyMon* pmon){
+void RestoreAllPP(struct PartyMon* pmon){
     // LD_A(MON_PP);
     // CALL(aGetPartyParamLocation);
     // PUSH_HL;
@@ -4456,7 +4225,7 @@ void RestoreAllPP_Conv(struct PartyMon* pmon){
         // PUSH_DE;
         // PUSH_BC;
         // CALL(aGetMaxPPOfMove);
-        uint8_t maxpp = GetMaxPPOfMove_Conv(pmon, PARTYMON, i);
+        uint8_t maxpp = GetMaxPPOfMove(pmon, PARTYMON, i);
         // POP_BC;
         // POP_DE;
         // LD_A_de;
@@ -4476,93 +4245,7 @@ void RestoreAllPP_Conv(struct PartyMon* pmon){
     // RET;
 }
 
-void GetMaxPPOfMove(void){
-    LD_A_addr(wStringBuffer1 + 0);
-    PUSH_AF;
-    LD_A_addr(wStringBuffer1 + 1);
-    PUSH_AF;
-
-    LD_A_addr(wMonType);
-    AND_A_A;
-
-    LD_HL(wPartyMon1Moves);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    IF_Z goto got_partymon;  // PARTYMON
-
-    LD_HL(wOTPartyMon1Moves);
-    DEC_A;
-    IF_Z goto got_partymon;  // OTPARTYMON
-
-    LD_HL(wTempMonMoves);
-    DEC_A;
-    IF_Z goto got_nonpartymon;  // BOXMON
-
-    LD_HL(wTempMonMoves);  // Wasted cycles
-    DEC_A;
-    IF_Z goto got_nonpartymon;  // TEMPMON
-
-    LD_HL(wBattleMonMoves);  // WILDMON
-
-
-got_nonpartymon:
-//   //  BOXMON, TEMPMON, WILDMON
-    CALL(aGetMthMoveOfCurrentMon);
-    goto gotdatmove;
-
-
-got_partymon:
-//   //  PARTYMON, OTPARTYMON
-    CALL(aGetMthMoveOfNthPartymon);
-
-
-gotdatmove:
-    LD_A_hl;
-    DEC_A;
-
-    PUSH_HL;
-    LD_HL(mMoves + MOVE_PP);
-    LD_BC(MOVE_LENGTH);
-    CALL(aAddNTimes);
-    LD_A(BANK(aMoves));
-    CALL(aGetFarByte);
-    LD_B_A;
-    LD_DE(wStringBuffer1);
-    LD_de_A;
-    POP_HL;
-
-    PUSH_BC;
-    LD_BC(MON_PP - MON_MOVES);
-    LD_A_addr(wMonType);
-    CP_A(WILDMON);
-    IF_NZ goto notwild;
-    LD_BC(wEnemyMonPP - wEnemyMonMoves);
-
-notwild:
-    ADD_HL_BC;
-    LD_A_hl;
-    AND_A(PP_UP_MASK);
-    POP_BC;
-
-    OR_A_B;
-    LD_HL(wStringBuffer1 + 1);
-    LD_hl_A;
-    XOR_A_A;
-    LD_addr_A(wTempPP);
-    LD_A_B;  // this gets lost anyway
-    CALL(aComputeMaxPP);
-    LD_A_hl;
-    AND_A(PP_MASK);
-    LD_addr_A(wTempPP);
-
-    POP_AF;
-    LD_addr_A(wStringBuffer1 + 1);
-    POP_AF;
-    LD_addr_A(wStringBuffer1 + 0);
-    RET;
-
-}
-
-uint8_t GetMaxPPOfMove_Conv(void* mon, uint8_t montype, uint8_t n){
+uint8_t GetMaxPPOfMove(void* mon, uint8_t montype, uint8_t n){
     // LD_A_addr(wStringBuffer1 + 0);
     // PUSH_AF;
     // LD_A_addr(wStringBuffer1 + 1);
@@ -4654,7 +4337,7 @@ uint8_t GetMaxPPOfMove_Conv(void* mon, uint8_t montype, uint8_t n){
     // LD_A_hl;
     // AND_A(PP_MASK);
     // LD_addr_A(wTempPP);
-    return ComputeMaxPP_Conv(pp2, pp) & PP_MASK;
+    return ComputeMaxPP(pp2, pp) & PP_MASK;
 
     // POP_AF;
     // LD_addr_A(wStringBuffer1 + 1);

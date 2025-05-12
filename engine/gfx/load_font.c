@@ -34,7 +34,7 @@ void v_LoadStandardFont(void){
     // BIT_A(rLCDC_ENABLE);
     // JP_Z (mCopy1bpp);
     // if(!bit_test(gb_read(rLCDC), rLCDC_ENABLE))
-        // return Copy1bpp_Conv(vTiles1, BANK(aFont), mFont, 128);
+        // return Copy1bpp(vTiles1, BANK(aFont), mFont, 128);
 
     // LD_DE(mFont);
     // LD_HL(vTiles1);

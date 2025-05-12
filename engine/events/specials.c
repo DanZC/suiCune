@@ -62,7 +62,7 @@ void SetPlayerPalette(void){
     // LD_A_addr(wScriptVar);
     // LD_D_A;
     // FARCALL(av_SetPlayerPalette);
-    v_SetPlayerPalette_Conv(wram->wScriptVar);
+    v_SetPlayerPalette(wram->wScriptVar);
     // RET;
 }
 
@@ -404,20 +404,7 @@ void ClearBGPalettesBufferScreen(void){
 
 }
 
-void ScriptReturnCarry(void){
-    IF_C goto carry;
-    XOR_A_A;
-    LD_addr_A(wScriptVar);
-    RET;
-
-carry:
-    LD_A(1);
-    LD_addr_A(wScriptVar);
-    RET;
-
-}
-
-void ScriptReturnCarry_Conv(bool carry){
+void ScriptReturnCarry(bool carry){
     // IF_C goto carry;
     // XOR_A_A;
     // LD_addr_A(wScriptVar);
@@ -475,7 +462,7 @@ void CheckPokerus(void){
 //  Check if a monster in your party has Pokerus
     // FARCALL(av_CheckPokerus);
     // JP(mScriptReturnCarry);
-    return ScriptReturnCarry_Conv(v_CheckPokerus());
+    return ScriptReturnCarry(v_CheckPokerus());
 }
 
 void ResetLuckyNumberShowFlag(void){
@@ -493,7 +480,7 @@ void CheckLuckyNumberShowFlag(void){
     // FARCALL(av_CheckLuckyNumberShowFlag);
     bool flag = v_CheckLuckyNumberShowFlag();
     // JP(mScriptReturnCarry);
-    return ScriptReturnCarry_Conv(flag);
+    return ScriptReturnCarry(flag);
 }
 
 //  Check if the Poké Flute channel is playing, and if the player is standing

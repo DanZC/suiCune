@@ -1,7 +1,5 @@
-void PlaceMenuItemName(void);
-void PlaceMenuItemName_Conv(const struct MenuData* data, uint8_t* de);
-void PlaceMenuItemQuantity(void);
-void PlaceMenuItemQuantity_Conv(const struct MenuData* data, tile_t* de);
+void PlaceMenuItemName(const struct MenuData* data, uint8_t* de);
+void PlaceMenuItemQuantity(const struct MenuData* data, tile_t* de);
 void PlaceMoneyTopRight(void);
 void PlaceMoneyBottomLeft(void);
 void PlaceMoneyAtTopLeftOfTextbox(void);
@@ -16,6 +14,5 @@ extern const char ShowMoney_TerminatorString[];
 void StartMenu_PrintSafariGameStatus(void);
 void StartMenu_DrawBugContestStatusBox(void);
 void StartMenu_PrintBugContestStatus(void);
-void FindApricornsInBag(void);
-bool FindApricornsInBag_Conv(void);
+bool FindApricornsInBag(void);
 //#include "data/items/apricorn_balls.h"

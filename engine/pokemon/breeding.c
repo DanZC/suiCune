@@ -1291,7 +1291,7 @@ void DayCareMon1(void){
     // LD_HL(wBreedMon2Nickname);
     // CALL(aDayCareMonCompatibilityText);
     // JP(mPrintText);
-    PrintText(DayCareMonCompatibilityText_Conv(wram->wBreedMon2Nickname));
+    PrintText(DayCareMonCompatibilityText(wram->wBreedMon2Nickname));
 }
 
 void DayCareMon2(void){
@@ -1311,7 +1311,7 @@ void DayCareMon2(void){
     // LD_HL(wBreedMon1Nickname);
     // CALL(aDayCareMonCompatibilityText);
     // JP(mPrintText);
-    PrintText(DayCareMonCompatibilityText_Conv(wram->wBreedMon1Nickname));
+    PrintText(DayCareMonCompatibilityText(wram->wBreedMon1Nickname));
 }
 
 void DayCareMonCursor(void){
@@ -1329,61 +1329,7 @@ const txt_cmd_s LeftWithDayCareManText[] = {
     text_end
 };
 
-void DayCareMonCompatibilityText(void){
-    PUSH_BC;
-    LD_DE(wStringBuffer1);
-    LD_BC(NAME_LENGTH);
-    CALL(aCopyBytes);
-    CALL(aCheckBreedmonCompatibility);
-    POP_BC;
-    LD_A_addr(wBreedingCompatibility);
-    LD_HL(mDayCareMonCompatibilityText_BreedBrimmingWithEnergyText);
-    CP_A(-1);
-    IF_Z goto done;
-    LD_HL(mDayCareMonCompatibilityText_BreedNoInterestText);
-    AND_A_A;
-    IF_Z goto done;
-    LD_HL(mDayCareMonCompatibilityText_BreedAppearsToCareForText);
-    CP_A(230);
-    IF_NC goto done;
-    CP_A(70);
-    LD_HL(mDayCareMonCompatibilityText_BreedFriendlyText);
-    IF_NC goto done;
-    LD_HL(mDayCareMonCompatibilityText_BreedShowsInterestText);
-
-
-done:
-    RET;
-
-
-BreedBrimmingWithEnergyText:
-    //text_far ['_BreedBrimmingWithEnergyText']
-    //text_end ['?']
-
-
-BreedNoInterestText:
-    //text_far ['_BreedNoInterestText']
-    //text_end ['?']
-
-
-BreedAppearsToCareForText:
-    //text_far ['_BreedAppearsToCareForText']
-    //text_end ['?']
-
-
-BreedFriendlyText:
-    //text_far ['_BreedFriendlyText']
-    //text_end ['?']
-
-
-BreedShowsInterestText:
-    //text_far ['_BreedShowsInterestText']
-    //text_end ['?']
-
-    return DayCareMonPrintEmptyString();
-}
-
-const txt_cmd_s* DayCareMonCompatibilityText_Conv(const uint8_t* nickname){
+const txt_cmd_s* DayCareMonCompatibilityText(const uint8_t* nickname){
 static const txt_cmd_s BreedBrimmingWithEnergyText[] = {
     text_far(v_BreedBrimmingWithEnergyText)
     text_end

@@ -14,7 +14,7 @@ void PrintItemDescription(tile_t* de, item_t item){
         // LD_addr_A(wCurItem);
         // PUSH_DE;
         // FARCALL(aGetTMHMItemMove);
-        move_t move = GetTMHMItemMove_Conv(item);
+        move_t move = GetTMHMItemMove(item);
         // POP_HL;
         // LD_A_addr(wTempTMHM);
         // LD_addr_A(wCurSpecies);

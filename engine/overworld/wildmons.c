@@ -22,7 +22,7 @@
 
 void LoadWildMonData(void){
     // CALL(av_GrassWildmonLookup);
-    const struct WildMons gmons = v_GrassWildmonLookup_Conv();
+    const struct WildMons gmons = v_GrassWildmonLookup();
     // IF_C goto copy;
     if(gmons.grassMons == NULL) {
         // LD_HL(wMornEncounterRate);
@@ -50,7 +50,7 @@ void LoadWildMonData(void){
 
 // done_copy:
     // CALL(av_WaterWildmonLookup);
-    const struct WildMons wmons = v_WaterWildmonLookup_Conv();
+    const struct WildMons wmons = v_WaterWildmonLookup();
     // LD_A(0);
     // IF_NC goto no_copy;
     if(wmons.waterMons == NULL) {
@@ -65,169 +65,6 @@ void LoadWildMonData(void){
 // no_copy:
     // LD_addr_A(wWaterEncounterRate);
     // RET;
-}
-
-void FindNest(void){
-//  Parameters:
-//  e: 0 = Johto, 1 = Kanto
-//  wNamedObjectIndex: species
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    XOR_A_A;
-    CALL(aByteFill);
-    LD_A_E;
-    AND_A_A;
-    IF_NZ goto kanto;
-    decoord(0, 0, wTilemap);
-    LD_HL(mJohtoGrassWildMons);
-    CALL(aFindNest_FindGrass);
-    LD_HL(mJohtoWaterWildMons);
-    CALL(aFindNest_FindWater);
-    CALL(aFindNest_RoamMon1);
-    CALL(aFindNest_RoamMon2);
-    RET;
-
-
-kanto:
-    decoord(0, 0, wTilemap);
-    LD_HL(mKantoGrassWildMons);
-    CALL(aFindNest_FindGrass);
-    LD_HL(mKantoWaterWildMons);
-    JP(mFindNest_FindWater);
-
-
-FindGrass:
-    LD_A_hl;
-    CP_A(-1);
-    RET_Z ;
-    PUSH_HL;
-    LD_A_hli;
-    LD_B_A;
-    LD_A_hli;
-    LD_C_A;
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    LD_A(NUM_GRASSMON * 3);
-    CALL(aFindNest_SearchMapForMon);
-    IF_NC goto next_grass;
-    LD_de_A;
-    INC_DE;
-
-
-next_grass:
-    POP_HL;
-    LD_BC(GRASS_WILDDATA_LENGTH);
-    ADD_HL_BC;
-    goto FindGrass;
-
-
-FindWater:
-    LD_A_hl;
-    CP_A(-1);
-    RET_Z ;
-    PUSH_HL;
-    LD_A_hli;
-    LD_B_A;
-    LD_A_hli;
-    LD_C_A;
-    INC_HL;
-    LD_A(NUM_WATERMON);
-    CALL(aFindNest_SearchMapForMon);
-    IF_NC goto next_water;
-    LD_de_A;
-    INC_DE;
-
-
-next_water:
-    POP_HL;
-    LD_BC(WATER_WILDDATA_LENGTH);
-    ADD_HL_BC;
-    goto FindWater;
-
-
-SearchMapForMon:
-    INC_HL;
-
-ScanMapLoop:
-    PUSH_AF;
-    LD_A_addr(wNamedObjectIndex);
-    CP_A_hl;
-    IF_Z goto found;
-    INC_HL;
-    INC_HL;
-    POP_AF;
-    DEC_A;
-    IF_NZ goto ScanMapLoop;
-    AND_A_A;
-    RET;
-
-
-found:
-    POP_AF;
-    JP(mFindNest_AppendNest);
-
-
-AppendNest:
-    PUSH_DE;
-    CALL(aGetWorldMapLocation);
-    LD_C_A;
-    hlcoord(0, 0, wTilemap);
-    LD_DE(SCREEN_WIDTH * SCREEN_HEIGHT);
-
-AppendNestLoop:
-    LD_A_hli;
-    CP_A_C;
-    IF_Z goto found_nest;
-    DEC_DE;
-    LD_A_E;
-    OR_A_D;
-    IF_NZ goto AppendNestLoop;
-    LD_A_C;
-    POP_DE;
-    SCF;
-    RET;
-
-
-found_nest:
-    POP_DE;
-    AND_A_A;
-    RET;
-
-
-RoamMon1:
-    LD_A_addr(wRoamMon1Species);
-    LD_B_A;
-    LD_A_addr(wNamedObjectIndex);
-    CP_A_B;
-    RET_NZ ;
-    LD_A_addr(wRoamMon1MapGroup);
-    LD_B_A;
-    LD_A_addr(wRoamMon1MapNumber);
-    LD_C_A;
-    CALL(aFindNest_AppendNest);
-    RET_NC ;
-    LD_de_A;
-    INC_DE;
-    RET;
-
-
-RoamMon2:
-    LD_A_addr(wRoamMon2Species);
-    LD_B_A;
-    LD_A_addr(wNamedObjectIndex);
-    CP_A_B;
-    RET_NZ ;
-    LD_A_addr(wRoamMon2MapGroup);
-    LD_B_A;
-    LD_A_addr(wRoamMon2MapNumber);
-    LD_C_A;
-    CALL(aFindNest_AppendNest);
-    RET_NC ;
-    LD_de_A;
-    INC_DE;
-    RET;
-
 }
 
 static u8_flag_s FindNest_AppendNest(uint8_t group, uint8_t map) {
@@ -432,7 +269,7 @@ static tile_t* FindNest_RoamMon2(tile_t* de, species_t species) {
 //  Parameters:
 //  e: 0 = Johto, 1 = Kanto
 //  wNamedObjectIndex: species
-void FindNest_Conv(uint8_t e, species_t species){
+void FindNest(uint8_t e, species_t species){
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // XOR_A_A;
@@ -471,38 +308,7 @@ void FindNest_Conv(uint8_t e, species_t species){
     }
 }
 
-void TryWildEncounter(void){
-//  Try to trigger a wild encounter.
-    CALL(aTryWildEncounter_EncounterRate);
-    IF_NC goto no_battle;
-    CALL(aChooseWildEncounter);
-    IF_NZ goto no_battle;
-    CALL(aCheckRepelEffect);
-    IF_NC goto no_battle;
-    XOR_A_A;
-    RET;
-
-
-no_battle:
-    XOR_A_A;  // BATTLETYPE_NORMAL
-    LD_addr_A(wTempWildMonSpecies);
-    LD_addr_A(wBattleType);
-    LD_A(1);
-    AND_A_A;
-    RET;
-
-
-EncounterRate:
-    CALL(aGetMapEncounterRate);
-    CALL(aApplyMusicEffectOnEncounterRate);
-    CALL(aApplyCleanseTagEffectOnEncounterRate);
-    CALL(aRandom);
-    CP_A_B;
-    RET;
-
-}
-
-uint8_t GetMapEncounterRate_Conv(void){
+uint8_t GetMapEncounterRate(void){
     // LD_HL(wMornEncounterRate);
     uint8_t* hl = &wram->wMornEncounterRate;
     // CALL(aCheckOnWater);
@@ -524,11 +330,11 @@ uint8_t GetMapEncounterRate_Conv(void){
 
 static bool TryWildEncounter_EncounterRate(void) {
     // CALL(aGetMapEncounterRate);
-    uint8_t b = GetMapEncounterRate_Conv();
+    uint8_t b = GetMapEncounterRate();
     // CALL(aApplyMusicEffectOnEncounterRate);
-    b = ApplyMusicEffectOnEncounterRate_Conv(b);
+    b = ApplyMusicEffectOnEncounterRate(b);
     // CALL(aApplyCleanseTagEffectOnEncounterRate);
-    b = ApplyCleanseTagEffectOnEncounterRate_Conv(b);
+    b = ApplyCleanseTagEffectOnEncounterRate(b);
     // CALL(aRandom);
     uint8_t a = Random();
     // CP_A_B;
@@ -537,10 +343,10 @@ static bool TryWildEncounter_EncounterRate(void) {
 }
 
 //  Try to trigger a wild encounter.
-bool TryWildEncounter_Conv(void){
+bool TryWildEncounter(void){
     // CALL(aTryWildEncounter_EncounterRate);
     // IF_NC goto no_battle;
-    if(TryWildEncounter_EncounterRate() && ChooseWildEncounter_Conv() && !CheckRepelEffect_Conv() && !bit_test(hram->hJoyDown, B_BUTTON_F))
+    if(TryWildEncounter_EncounterRate() && ChooseWildEncounter() && !CheckRepelEffect() && !bit_test(hram->hJoyDown, B_BUTTON_F))
         return true;
     // CALL(aChooseWildEncounter);
     // IF_NZ goto no_battle;
@@ -561,45 +367,9 @@ bool TryWildEncounter_Conv(void){
     return false;
 }
 
-void GetMapEncounterRate(void){
-    LD_HL(wMornEncounterRate);
-    CALL(aCheckOnWater);
-    LD_A(wWaterEncounterRate - wMornEncounterRate);
-    IF_Z goto ok;
-    LD_A_addr(wTimeOfDay);
-
-ok:
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_B_hl;
-    RET;
-
-}
-
-void ApplyMusicEffectOnEncounterRate(void){
 //  Pokemon March and Ruins of Alph signal double encounter rate.
 //  Pokemon Lullaby halves encounter rate.
-    LD_A_addr(wMapMusic);
-    CP_A(MUSIC_POKEMON_MARCH);
-    IF_Z goto double_;
-    CP_A(MUSIC_RUINS_OF_ALPH_RADIO);
-    IF_Z goto double_;
-    CP_A(MUSIC_POKEMON_LULLABY);
-    RET_NZ ;
-    SRL_B;
-    RET;
-
-
-double_:
-    SLA_B;
-    RET;
-
-}
-
-//  Pokemon March and Ruins of Alph signal double encounter rate.
-//  Pokemon Lullaby halves encounter rate.
-uint8_t ApplyMusicEffectOnEncounterRate_Conv(uint8_t b){
+uint8_t ApplyMusicEffectOnEncounterRate(uint8_t b){
     // LD_A_addr(wMapMusic);
     uint8_t mus = wram->wMapMusic;
     // CP_A(MUSIC_POKEMON_MARCH);
@@ -621,31 +391,8 @@ uint8_t ApplyMusicEffectOnEncounterRate_Conv(uint8_t b){
     // RET;
 }
 
-void ApplyCleanseTagEffectOnEncounterRate(void){
 //  Cleanse Tag halves encounter rate.
-    LD_HL(wPartyMon1Item);
-    LD_DE(PARTYMON_STRUCT_LENGTH);
-    LD_A_addr(wPartyCount);
-    LD_C_A;
-
-loop:
-    LD_A_hl;
-    CP_A(CLEANSE_TAG);
-    IF_Z goto cleansetag;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-cleansetag:
-    SRL_B;
-    RET;
-
-}
-
-//  Cleanse Tag halves encounter rate.
-uint8_t ApplyCleanseTagEffectOnEncounterRate_Conv(uint8_t b){
+uint8_t ApplyCleanseTagEffectOnEncounterRate(uint8_t b){
     // LD_HL(wPartyMon1Item);
     struct PartyMon* hl = wram->wPartyMon;
     // LD_DE(PARTYMON_STRUCT_LENGTH);
@@ -671,119 +418,10 @@ uint8_t ApplyCleanseTagEffectOnEncounterRate_Conv(uint8_t b){
     // RET;
 }
 
-void ChooseWildEncounter(void){
-    CALL(aLoadWildMonDataPointer);
-    JP_NC (mChooseWildEncounter_nowildbattle);
-    CALL(aCheckEncounterRoamMon);
-    JP_C (mChooseWildEncounter_startwildbattle);
-
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    CALL(aCheckOnWater);
-    LD_DE(mWaterMonProbTable);
-    IF_Z goto watermon;
-    INC_HL;
-    INC_HL;
-    LD_A_addr(wTimeOfDay);
-    LD_BC(NUM_GRASSMON * 2);
-    CALL(aAddNTimes);
-    LD_DE(mGrassMonProbTable);
-
-
-watermon:
-//  hl contains the pointer to the wild mon data, let's save that to the stack
-    PUSH_HL;
-
-randomloop:
-    CALL(aRandom);
-    CP_A(100);
-    IF_NC goto randomloop;
-    INC_A;  // 1 <= a <= 100
-    LD_B_A;
-    LD_H_D;
-    LD_L_E;
-//  This next loop chooses which mon to load up.
-
-prob_bracket_loop:
-    LD_A_hli;
-    CP_A_B;
-    IF_NC goto got_it;
-    INC_HL;
-    goto prob_bracket_loop;
-
-
-got_it:
-    LD_C_hl;
-    LD_B(0);
-    POP_HL;
-    ADD_HL_BC;  // this selects our mon
-    LD_A_hli;
-    LD_B_A;
-//  If the Pokemon is encountered by surfing, we need to give the levels some variety.
-    CALL(aCheckOnWater);
-    IF_NZ goto ok;
-//  Check if we buff the wild mon, and by how much.
-    CALL(aRandom);
-    CP_A(35 percent);
-    IF_C goto ok;
-    INC_B;
-    CP_A(65 percent);
-    IF_C goto ok;
-    INC_B;
-    CP_A(85 percent);
-    IF_C goto ok;
-    INC_B;
-    CP_A(95 percent);
-    IF_C goto ok;
-    INC_B;
-//  Store the level
-
-ok:
-    LD_A_B;
-    LD_addr_A(wCurPartyLevel);
-    LD_B_hl;
-// ld a, b
-    CALL(aValidateTempWildMonSpecies);
-    IF_C goto nowildbattle;
-
-    LD_A_B;  // This is in the wrong place.
-    CP_A(UNOWN);
-    IF_NZ goto done;
-
-    LD_A_addr(wUnlockedUnowns);
-    AND_A_A;
-    IF_Z goto nowildbattle;
-
-
-done:
-    goto loadwildmon;
-
-
-nowildbattle:
-    LD_A(1);
-    AND_A_A;
-    RET;
-
-
-loadwildmon:
-    LD_A_B;
-    LD_addr_A(wTempWildMonSpecies);
-
-
-startwildbattle:
-    XOR_A_A;
-    RET;
-
-// INCLUDE "data/wild/probabilities.asm"
-
-    return CheckRepelEffect();
-}
-
-bool ChooseWildEncounter_Conv(void){
+bool ChooseWildEncounter(void){
     // CALL(aLoadWildMonDataPointer);
     // JP_NC (mChooseWildEncounter_nowildbattle);
-    const struct WildMons hl = LoadWildMonDataPointer_Conv();
+    const struct WildMons hl = LoadWildMonDataPointer();
     if(hl.grassMons == NULL)
         return false;
     // CALL(aCheckEncounterRoamMon);
@@ -884,7 +522,7 @@ bool ChooseWildEncounter_Conv(void){
 // ld a, b
     // CALL(aValidateTempWildMonSpecies);
     // IF_C goto nowildbattle;
-    if(!ValidateTempWildMonSpecies_Conv(s))
+    if(!ValidateTempWildMonSpecies(s))
         return false;
 
     // LD_A_B;  // This is in the wrong place.
@@ -921,43 +559,7 @@ bool ChooseWildEncounter_Conv(void){
     // return CheckRepelEffect();
 }
 
-void CheckRepelEffect(void){
-//  If there is no active Repel, there's no need to be here.
-    LD_A_addr(wRepelEffect);
-    AND_A_A;
-    IF_Z goto encounter;
-//  Get the first Pokemon in your party that isn't fainted.
-    LD_HL(wPartyMon1HP);
-    LD_BC(PARTYMON_STRUCT_LENGTH - 1);
-
-loop:
-    LD_A_hli;
-    OR_A_hl;
-    IF_NZ goto ok;
-    ADD_HL_BC;
-    goto loop;
-
-
-ok:
-//  to PartyMonLevel
-    for(int rept = 0; rept < 4; rept++){
-    DEC_HL;
-    }
-
-    LD_A_addr(wCurPartyLevel);
-    CP_A_hl;
-    IF_NC goto encounter;
-    AND_A_A;
-    RET;
-
-
-encounter:
-    SCF;
-    RET;
-
-}
-
-bool CheckRepelEffect_Conv(void){
+bool CheckRepelEffect(void){
 //  If there is no active Repel, there's no need to be here.
     // LD_A_addr(wRepelEffect);
     // AND_A_A;
@@ -1000,40 +602,20 @@ bool CheckRepelEffect_Conv(void){
     // RET;
 }
 
-void LoadWildMonDataPointer(void){
-    CALL(aCheckOnWater);
-    JR_Z (mv_WaterWildmonLookup);
-
-    return v_GrassWildmonLookup();
-}
-
-struct WildMons LoadWildMonDataPointer_Conv(void){
+struct WildMons LoadWildMonDataPointer(void){
     // CALL(aCheckOnWater);
     // JR_Z (mv_WaterWildmonLookup);
     if(CheckOnWater())
-        return v_WaterWildmonLookup_Conv();
+        return v_WaterWildmonLookup();
     // return v_GrassWildmonLookup();
-    return v_GrassWildmonLookup_Conv();
+    return v_GrassWildmonLookup();
 }
 
-void v_GrassWildmonLookup(void){
-    LD_HL(mSwarmGrassWildMons);
-    LD_BC(GRASS_WILDDATA_LENGTH);
-    CALL(av_SwarmWildmonCheck);
-    RET_C ;
-    LD_HL(mJohtoGrassWildMons);
-    LD_DE(mKantoGrassWildMons);
-    CALL(av_JohtoWildmonCheck);
-    LD_BC(GRASS_WILDDATA_LENGTH);
-    JR(mv_NormalWildmonOK);
-
-}
-
-struct WildMons v_GrassWildmonLookup_Conv(void){
+struct WildMons v_GrassWildmonLookup(void){
     // LD_HL(mSwarmGrassWildMons);
     // LD_BC(GRASS_WILDDATA_LENGTH);
     // CALL(av_SwarmWildmonCheck);
-    struct WildMons mons = v_SwarmWildmonCheck_Conv((struct WildMons){.type = 0, .grassMons = SwarmGrassWildMons});
+    struct WildMons mons = v_SwarmWildmonCheck((struct WildMons){.type = 0, .grassMons = SwarmGrassWildMons});
     // RET_C ;
     if(mons.grassMons != NULL)
         return mons;
@@ -1043,23 +625,10 @@ struct WildMons v_GrassWildmonLookup_Conv(void){
     // CALL(av_JohtoWildmonCheck);
     // LD_BC(GRASS_WILDDATA_LENGTH);
     // JR(mv_NormalWildmonOK);
-    return v_NormalWildmonOK_Conv((struct WildMons){.type = 0, .grassMons = hl});
+    return v_NormalWildmonOK((struct WildMons){.type = 0, .grassMons = hl});
 }
 
-void v_WaterWildmonLookup(void){
-    LD_HL(mSwarmWaterWildMons);
-    LD_BC(WATER_WILDDATA_LENGTH);
-    CALL(av_SwarmWildmonCheck);
-    RET_C ;
-    LD_HL(mJohtoWaterWildMons);
-    LD_DE(mKantoWaterWildMons);
-    CALL(av_JohtoWildmonCheck);
-    LD_BC(WATER_WILDDATA_LENGTH);
-    JR(mv_NormalWildmonOK);
-
-}
-
-struct WildMons v_WaterWildmonLookup_Conv(void){
+struct WildMons v_WaterWildmonLookup(void){
     // LD_HL(mSwarmWaterWildMons);
     // LD_BC(WATER_WILDDATA_LENGTH);
     // CALL(av_SwarmWildmonCheck);
@@ -1070,7 +639,7 @@ struct WildMons v_WaterWildmonLookup_Conv(void){
     const struct WildWaterMons* hl = (IsInJohto() == JOHTO_REGION)? JohtoWaterWildMons: KantoWaterWildMons;
     // LD_BC(WATER_WILDDATA_LENGTH);
     // JR(mv_NormalWildmonOK);
-    return v_NormalWildmonOK_Conv((struct WildMons){.type = 1, .waterMons = hl});
+    return v_NormalWildmonOK((struct WildMons){.type = 1, .waterMons = hl});
 }
 
 void v_JohtoWildmonCheck(void){
@@ -1083,47 +652,9 @@ void v_JohtoWildmonCheck(void){
 
 }
 
-void v_SwarmWildmonCheck(void){
-    CALL(aCopyCurrMapDE);
-    PUSH_HL;
-    LD_HL(wSwarmFlags);
-    BIT_hl(SWARMFLAGS_DUNSPARCE_SWARM_F);
-    POP_HL;
-    IF_Z goto CheckYanma;
-    LD_A_addr(wDunsparceMapGroup);
-    CP_A_D;
-    IF_NZ goto CheckYanma;
-    LD_A_addr(wDunsparceMapNumber);
-    CP_A_E;
-    IF_NZ goto CheckYanma;
-    CALL(aLookUpWildmonsForMapDE);
-    JR_NC (mv_NoSwarmWildmon);
-    SCF;
-    RET;
-
-
-CheckYanma:
-    PUSH_HL;
-    LD_HL(wSwarmFlags);
-    BIT_hl(SWARMFLAGS_YANMA_SWARM_F);
-    POP_HL;
-    JR_Z (mv_NoSwarmWildmon);
-    LD_A_addr(wYanmaMapGroup);
-    CP_A_D;
-    JR_NZ (mv_NoSwarmWildmon);
-    LD_A_addr(wYanmaMapNumber);
-    CP_A_E;
-    JR_NZ (mv_NoSwarmWildmon);
-    CALL(aLookUpWildmonsForMapDE);
-    JR_NC (mv_NoSwarmWildmon);
-    SCF;
-    RET;
-
-}
-
-struct WildMons v_SwarmWildmonCheck_Conv(struct WildMons mons){
+struct WildMons v_SwarmWildmonCheck(struct WildMons mons){
     // CALL(aCopyCurrMapDE);
-    struct MapId map = CopyCurrMapDE_Conv();
+    struct MapId map = CopyCurrMapDE();
     // PUSH_HL;
     // LD_HL(wSwarmFlags);
     // BIT_hl(SWARMFLAGS_DUNSPARCE_SWARM_F);
@@ -1139,7 +670,7 @@ struct WildMons v_SwarmWildmonCheck_Conv(struct WildMons mons){
     && wram->wDunsparceMapGroup == map.mapGroup
     && wram->wDunsparceMapNumber == map.mapNumber) {
         // CALL(aLookUpWildmonsForMapDE);
-        mons = LookUpWildmonsForMapDE_Conv(mons, map);
+        mons = LookUpWildmonsForMapDE(mons, map);
         // JR_NC (mv_NoSwarmWildmon);
         // SCF;
         // RET;
@@ -1165,7 +696,7 @@ struct WildMons v_SwarmWildmonCheck_Conv(struct WildMons mons){
         // JR_NC (mv_NoSwarmWildmon);
         // SCF;
         // RET;
-        return LookUpWildmonsForMapDE_Conv(mons, map);
+        return LookUpWildmonsForMapDE(mons, map);
     }
     return (struct WildMons){.type = 0xff, .grassMons = NULL};
 }
@@ -1176,29 +707,14 @@ void v_NoSwarmWildmon(void){
 
 }
 
-void v_NormalWildmonOK(void){
-    CALL(aCopyCurrMapDE);
-    JR(mLookUpWildmonsForMapDE);
-
-}
-
-struct WildMons v_NormalWildmonOK_Conv(struct WildMons hl){
+struct WildMons v_NormalWildmonOK(struct WildMons hl){
     // CALL(aCopyCurrMapDE);
-    struct MapId mapId = CopyCurrMapDE_Conv();
+    struct MapId mapId = CopyCurrMapDE();
     // JR(mLookUpWildmonsForMapDE);
-    return LookUpWildmonsForMapDE_Conv(hl, mapId);
+    return LookUpWildmonsForMapDE(hl, mapId);
 }
 
-void CopyCurrMapDE(void){
-    LD_A_addr(wMapGroup);
-    LD_D_A;
-    LD_A_addr(wMapNumber);
-    LD_E_A;
-    RET;
-
-}
-
-struct MapId CopyCurrMapDE_Conv(void){
+struct MapId CopyCurrMapDE(void){
     // LD_A_addr(wMapGroup);
     // LD_D_A;
     // LD_A_addr(wMapNumber);
@@ -1207,42 +723,7 @@ struct MapId CopyCurrMapDE_Conv(void){
     return (struct MapId) {.mapNumber = wram->wMapNumber, .mapGroup = wram->wMapGroup};
 }
 
-void LookUpWildmonsForMapDE(void){
-
-loop:
-    PUSH_HL;
-    LD_A_hl;
-    INC_A;
-    IF_Z goto nope;
-    LD_A_D;
-    CP_A_hl;
-    IF_NZ goto next;
-    INC_HL;
-    LD_A_E;
-    CP_A_hl;
-    IF_Z goto yup;
-
-
-next:
-    POP_HL;
-    ADD_HL_BC;
-    goto loop;
-
-
-nope:
-    POP_HL;
-    AND_A_A;
-    RET;
-
-
-yup:
-    POP_HL;
-    SCF;
-    RET;
-
-}
-
-struct WildMons LookUpWildmonsForMapDE_Conv(struct WildMons wm, struct MapId de){
+struct WildMons LookUpWildmonsForMapDE(struct WildMons wm, struct MapId de){
     if(wm.type == 0) {
         const struct WildGrassMons* hl = wm.grassMons;
         do {
@@ -1360,7 +841,7 @@ bool CheckEncounterRoamMon(void){
         return false;
 //  Load the current map group and number to de
     // CALL(aCopyCurrMapDE);
-    struct MapId curMap = CopyCurrMapDE_Conv();
+    struct MapId curMap = CopyCurrMapDE();
 //  Randomly select a beast.
     // CALL(aRandom);
     uint8_t a = Random();
@@ -1454,7 +935,7 @@ static struct MapId UpdateRoamMons_Update(uint8_t mapGroup, uint8_t mapNumber) {
                     a = Random() & 0b00011111;
                     // JR_Z (mJumpRoamMon);
                     if(a == 0)
-                        return JumpRoamMon_Conv();
+                        return JumpRoamMon();
                     // AND_A(0b11);
                     // CP_A_hl;
                     // IF_NC goto update_loop;  // invalid index, try again
@@ -1556,7 +1037,7 @@ void JumpRoamMons(void){
     // IF_Z goto SkipRaikou;
     if(wram->wRoamMon1.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // CALL(aJumpRoamMon);
-        struct MapId new_map = JumpRoamMon_Conv();
+        struct MapId new_map = JumpRoamMon();
         // LD_A_B;
         // LD_addr_A(wRoamMon1MapGroup);
         wram->wRoamMon1.mapId = new_map;
@@ -1571,7 +1052,7 @@ void JumpRoamMons(void){
     // IF_Z goto SkipEntei;
     if(wram->wRoamMon2.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // CALL(aJumpRoamMon);
-        struct MapId new_map = JumpRoamMon_Conv();
+        struct MapId new_map = JumpRoamMon();
         // LD_A_B;
         // LD_addr_A(wRoamMon2MapGroup);
         wram->wRoamMon2.mapId = new_map;
@@ -1586,7 +1067,7 @@ void JumpRoamMons(void){
     // IF_Z goto Finished;
     if(wram->wRoamMon3.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // CALL(aJumpRoamMon);
-        struct MapId new_map = JumpRoamMon_Conv();
+        struct MapId new_map = JumpRoamMon();
         // LD_A_B;
         // LD_addr_A(wRoamMon3MapGroup);
         wram->wRoamMon3.mapId = new_map;
@@ -1599,55 +1080,7 @@ void JumpRoamMons(void){
     return v_BackUpMapIndices();
 }
 
-void JumpRoamMon(void){
-
-loop:
-    LD_HL(mRoamMaps);
-
-innerloop1:
-// 0-15 are all valid indexes into RoamMaps,
-// so this retry loop is unnecessary
-// since NUM_ROAMMON_MAPS happens to be 16
-    CALL(aRandom);
-    maskbits(NUM_ROAMMON_MAPS, 0);
-    CP_A(NUM_ROAMMON_MAPS);
-    IF_NC goto innerloop1;
-    INC_A;
-    LD_B_A;
-
-innerloop2:
-//   //  Loop to get hl to the address of the chosen roam map.
-    DEC_B;
-    IF_Z goto ok;
-
-innerloop3:
-//   //  Loop to skip the current roam map, which is terminated by a 0.
-    LD_A_hli;
-    AND_A_A;
-    IF_NZ goto innerloop3;
-    goto innerloop2;
-//  Check to see if the selected map is the one the player is currently in.  If so, try again.
-
-ok:
-    LD_A_addr(wMapGroup);
-    CP_A_hl;
-    IF_NZ goto done;
-    INC_HL;
-    LD_A_addr(wMapNumber);
-    CP_A_hl;
-    IF_Z goto loop;
-    DEC_HL;
-//  Return the map group and number in bc.
-
-done:
-    LD_A_hli;
-    LD_B_A;
-    LD_C_hl;
-    RET;
-
-}
-
-struct MapId JumpRoamMon_Conv(void){
+struct MapId JumpRoamMon(void){
 
     uint8_t a;
     do {
@@ -1718,27 +1151,8 @@ void v_BackUpMapIndices(void){
 // INCLUDE "data/wild/roammon_maps.asm"
 }
 
-void ValidateTempWildMonSpecies(void){
 //  Due to a development oversight, this function is called with the wild Pokemon's level, not its species, in a.
-    AND_A_A;
-    IF_Z goto nowildmon;  // = 0
-    CP_A(NUM_POKEMON + 1);  // 252
-    IF_NC goto nowildmon;  // >= 252
-    AND_A_A;  // 1 <= Species <= 251
-    RET;
-
-
-nowildmon:
-    SCF;
-    RET;
-
-//  Finds a rare wild Pokemon in the route of the trainer calling, then checks if it's been Seen already.
-//  The trainer will then tell you about the Pokemon if you haven't seen it.
-    return RandomUnseenWildMon();
-}
-
-//  Due to a development oversight, this function is called with the wild Pokemon's level, not its species, in a.
-bool ValidateTempWildMonSpecies_Conv(species_t a){
+bool ValidateTempWildMonSpecies(species_t a){
     // AND_A_A;
     // IF_Z goto nowildmon;  // = 0
     if(a == 0)
@@ -1767,13 +1181,13 @@ void RandomUnseenWildMon(void){
     // LD_HL(mJohtoGrassWildMons);
     // LD_BC(GRASS_WILDDATA_LENGTH);
     // CALL(aLookUpWildmonsForMapDE);
-    struct WildMons mons = LookUpWildmonsForMapDE_Conv((struct WildMons){.grassMons = JohtoGrassWildMons, .type=0}, (struct MapId){loc.mgroup, loc.mnum});
+    struct WildMons mons = LookUpWildmonsForMapDE((struct WildMons){.grassMons = JohtoGrassWildMons, .type=0}, (struct MapId){loc.mgroup, loc.mnum});
     // IF_C goto GetGrassmon;
     // LD_HL(mKantoGrassWildMons);
     // CALL(aLookUpWildmonsForMapDE);
     // IF_NC goto done;
     if(mons.grassMons == NULL) {
-        mons = LookUpWildmonsForMapDE_Conv(
+        mons = LookUpWildmonsForMapDE(
             (struct WildMons){.grassMons = KantoGrassWildMons, .type=0}, (struct MapId){loc.mgroup, loc.mnum});
         if(mons.grassMons == NULL){
             wram->wScriptVar = 0x1;
@@ -1873,11 +1287,11 @@ void RandomPhoneWildMon(void){
     // IF_C goto ok;
     // LD_HL(mKantoGrassWildMons);
     // CALL(aLookUpWildmonsForMapDE);
-    struct WildMons mons = LookUpWildmonsForMapDE_Conv(
+    struct WildMons mons = LookUpWildmonsForMapDE(
         (struct WildMons){.grassMons = JohtoGrassWildMons, .type=0}, (struct MapId){loc.mgroup, loc.mnum});
 
     if(mons.grassMons == NULL)
-        mons = LookUpWildmonsForMapDE_Conv(
+        mons = LookUpWildmonsForMapDE(
             (struct WildMons){.grassMons = KantoGrassWildMons, .type=0}, (struct MapId){loc.mgroup, loc.mnum});
 
 // ok:

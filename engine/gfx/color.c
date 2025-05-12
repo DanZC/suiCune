@@ -919,7 +919,7 @@ uint16_t* GetPlayerOrMonPalettePointer(uint16_t* dest, uint8_t a, uint16_t bc){
     // AND_A_A;
     // JP_NZ (mGetMonNormalOrShinyPalettePointer);
     if(a != 0) {
-        return GetMonNormalOrShinyPalettePointer_Conv(dest, a, bc);
+        return GetMonNormalOrShinyPalettePointer(dest, a, bc);
     }
     // LD_A_addr(wPlayerSpriteSetupFlags);
     // BIT_A(PLAYERSPRITESETUP_FEMALE_TO_MALE_F);
@@ -949,7 +949,7 @@ uint16_t* GetFrontpicPalettePointer(uint16_t* dest, uint8_t a, uint16_t bc){
     // AND_A_A;
     // JP_NZ (mGetMonNormalOrShinyPalettePointer);
     if(a != 0)
-        return GetMonNormalOrShinyPalettePointer_Conv(dest, a, bc);
+        return GetMonNormalOrShinyPalettePointer(dest, a, bc);
     // LD_A_addr(wTrainerClass);
 
     return GetTrainerPalettePointer(dest, wram->wTrainerClass);
@@ -973,7 +973,7 @@ uint16_t* GetTrainerPalettePointer(uint16_t* dest, uint8_t a){
 static uint16_t* GetMonPalettePointer(uint16_t* dest, uint8_t a){
     // CALL(av_GetMonPalettePointer);
     // RET;
-    ExtractPaletteFromPNGAssetToBuffer(dest, v_GetMonPalettePointer_Conv(a));
+    ExtractPaletteFromPNGAssetToBuffer(dest, v_GetMonPalettePointer(a));
 
     // First palette color should be ignored 
     dest[0] = dest[1];
@@ -1068,19 +1068,7 @@ loop:
 
 }
 
-void v_GetMonPalettePointer(void){
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_BC(mPokemonPalettes);
-    ADD_HL_BC;
-    RET;
-
-}
-
-const char* v_GetMonPalettePointer_Conv(species_t a){
+const char* v_GetMonPalettePointer(species_t a){
     // LD_L_A;
     // LD_H(0);
     // ADD_HL_HL;
@@ -1095,21 +1083,6 @@ const char* v_GetMonPalettePointer_Conv(species_t a){
     return PokemonPicPointers[a-1][0];
 }
 
-void GetMonNormalOrShinyPalettePointer(void){
-    PUSH_BC;
-    CALL(av_GetMonPalettePointer);
-    POP_BC;
-    PUSH_HL;
-    CALL(aCheckShininess);
-    POP_HL;
-    RET_NC ;
-    for(int rept = 0; rept < 4; rept++){
-    INC_HL;
-    }
-    RET;
-
-}
-
 static uint16_t* GetCustomMonPalette(uint16_t* dest, species_t a, bool shiny) {
     for(size_t i = 0; i < 4; ++i) {
         if(PokemonCustomPals[i].id == a) {
@@ -1121,7 +1094,7 @@ static uint16_t* GetCustomMonPalette(uint16_t* dest, species_t a, bool shiny) {
     return dest;
 }
 
-uint16_t* GetMonNormalOrShinyPalettePointer_Conv(uint16_t* dest, species_t a, uint16_t bc){
+uint16_t* GetMonNormalOrShinyPalettePointer(uint16_t* dest, species_t a, uint16_t bc){
     // PUSH_BC;
     // CALL(av_GetMonPalettePointer);
     // POP_BC;
@@ -1134,9 +1107,9 @@ uint16_t* GetMonNormalOrShinyPalettePointer_Conv(uint16_t* dest, species_t a, ui
     // INC_HL;
     // }
     // RET;
-        if(v_GetMonPalettePointer_Conv(a) == NULL)
+        if(v_GetMonPalettePointer(a) == NULL)
             return GetCustomMonPalette(dest, a, false);
-        ExtractPaletteFromPNGAssetToBuffer(dest, v_GetMonPalettePointer_Conv(a));
+        ExtractPaletteFromPNGAssetToBuffer(dest, v_GetMonPalettePointer(a));
         // First palette color should be ignored 
         dest[0] = dest[1];
         dest[1] = dest[2];
@@ -1554,23 +1527,8 @@ loop:
 
 }
 
-void ClearBytes(void){
 //  clear bc bytes of data starting from de
-
-loop:
-    XOR_A_A;
-    LD_de_A;
-    INC_DE;
-    DEC_BC;
-    LD_A_C;
-    OR_A_B;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-//  clear bc bytes of data starting from de
-void ClearBytes_Conv(uint8_t* de, size_t bc){
+void ClearBytes(uint8_t* de, size_t bc){
     for(size_t i = 0; i < bc; ++i) {
         // XOR_A_A;
         // LD_de_A;
@@ -1766,7 +1724,7 @@ const char ExpBarPalette[] = "gfx/battle/exp_bar.pal";
 void LoadMapPals(void){
     // FARCALL(aLoadSpecialMapPalette);
     // IF_C goto got_pals;
-    if(!LoadSpecialMapPalette_Conv()) {
+    if(!LoadSpecialMapPalette()) {
     // Which palette group is based on whether we're outside or inside
         // LD_A_addr(wEnvironment);
         // AND_A(7);

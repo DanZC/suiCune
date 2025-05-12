@@ -1034,7 +1034,7 @@ void RestorePPOfDepositedPokemon(uint8_t b){
         // PUSH_HL;
         // PUSH_DE;
         // FARCALL(aGetMaxPPOfMove);
-        uint8_t pp = GetMaxPPOfMove_Conv(bc, BOXMON, b);
+        uint8_t pp = GetMaxPPOfMove(bc, BOXMON, b);
         // POP_DE;
         // POP_HL;
         // LD_A_addr(wTempPP);
@@ -2168,7 +2168,7 @@ uint16_t CalcMonStatC(const uint16_t* statExp, uint16_t dvs, uint8_t b, uint8_t 
         // LD_D_hl;
         uint16_t de = BigEndianToNative16(statExp[c]);
         // FARCALL(aGetSquareRoot);
-        b = GetSquareRoot_Conv(de);
+        b = GetSquareRoot(de);
         // POP_DE;
     }
 

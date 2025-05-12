@@ -403,7 +403,7 @@ void v_CGB_Pokedex(void){
     else {
     // is_pokemon:
         // CALL(aGetMonPalettePointer);
-        ExtractPaletteFromPNGAssetToBuffer(palbuf, v_GetMonPalettePointer_Conv(wram->wCurPartySpecies));
+        ExtractPaletteFromPNGAssetToBuffer(palbuf, v_GetMonPalettePointer(wram->wCurPartySpecies));
         palbuf[0] = palbuf[1];
         palbuf[1] = palbuf[2];
         // CALL(aLoadPalette_White_Col1_Col2_Black);  // mon palette
@@ -548,7 +548,7 @@ void v_CGB_PokedexUnownMode(void){
     de += NUM_PAL_COLORS;
     // LD_A_addr(wCurPartySpecies);
     // CALL(aGetMonPalettePointer);
-    LoadPaletteAssetColorsToArray(buffer, v_GetMonPalettePointer_Conv(wram->wCurPartySpecies), 0, 2);
+    LoadPaletteAssetColorsToArray(buffer, v_GetMonPalettePointer(wram->wCurPartySpecies), 0, 2);
     // CALL(aLoadPalette_White_Col1_Col2_Black);
     de = LoadPalette_White_Col1_Col2_Black(de, buffer);
     // CALL(aWipeAttrmap);

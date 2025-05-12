@@ -103,8 +103,8 @@ void init_function_pointers(void) {
     REDIRECTED(SafeLoadTempTilemapToTilemap);
 
     // home/decompress.c
-    CONVERTED(Decompress);
-    REDIRECTED(FarDecompress);
+    // CONVERTED(Decompress);
+    // CONVERTED(FarDecompress);
 
     // home/delay.c
     // CONVERTED(DelayFrame);
@@ -164,24 +164,24 @@ void init_function_pointers(void) {
     // REDIRECTED(GameTimer);
 
     // home/gfx.c
-    REDIRECTED(Get2bppViaHDMA);
-    REDIRECTED(LoadFontsExtra);
+    // CONVERTED(Get2bppViaHDMA);
+    CONVERTED(LoadFontsExtra);
     REDIRECTED(SafeHDMATransfer);
-    REDIRECTED(Copy2bpp);
-    REDIRECTED(DecompressRequest2bpp);
+    // CONVERTED(Copy2bpp);
+    // CONVERTED(DecompressRequest2bpp);
     CONVERTED(UpdatePlayerSprite);
-    REDIRECTED(LoadStandardFont);
-    REDIRECTED(Request1bpp);
-    REDIRECTED(Request2bpp);
+    CONVERTED(LoadStandardFont);
+    // CONVERTED(Request1bpp);
+    // CONVERTED(Request2bpp);
     REDIRECTED(Get1bppViaHDMA);
-    REDIRECTED(Copy1bpp);
-    REDIRECTED(LoadFontsBattleExtra);
-    REDIRECTED(FarCopyBytes);
+    // CONVERTED(Copy1bpp);
+    CONVERTED(LoadFontsBattleExtra);
+    // CONVERTED(FarCopyBytes);
     REDIRECTED(FarCopyBytesDouble_DoubleBankSwitch);
-    REDIRECTED(Get2bpp);
-    REDIRECTED(LoadFontsExtra2);
-    REDIRECTED(FarCopyBytesDouble);
-    REDIRECTED(Get1bpp);
+    // CONVERTED(Get2bpp);
+    CONVERTED(LoadFontsExtra2);
+    // CONVERTED(FarCopyBytesDouble);
+    // CONVERTED(Get1bpp);
 
     // home/header.c
     // CONVERTED(Bankswitch);
@@ -770,8 +770,8 @@ void init_function_pointers(void) {
     REDIRECTED(SaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack);
 
     // engine/overworld/map_objects.c
-    REDIRECTED(StepFunction_PlayerJump);
-    REDIRECTED(StepFunction_14);
+    // REDIRECTED(StepFunction_PlayerJump);
+    // REDIRECTED(StepFunction_14);
     // REDIRECTED(TryResetPlayerAction);
     // REDIRECTED(GetIndexedMovementByte1);
     // REDIRECTED(WaitStep_InPlace);
@@ -792,10 +792,10 @@ void init_function_pointers(void) {
     // REDIRECTED(UpdateObjectNextTile);
     // REDIRECTED(CopyStandingCoordsTileToNextCoordsTile);
     // REDIRECTED(UpdatePlayerStep);
-    REDIRECTED(StepFunction_TeleportTo);
+    // REDIRECTED(StepFunction_TeleportTo);
     // REDIRECTED(ResetStepVector);
     // REDIRECTED(UpdateAllObjectsFrozen);
-    REDIRECTED(StepFunction_Restore);
+    // REDIRECTED(StepFunction_Restore);
     // REDIRECTED(CallObjectAction);
     // REDIRECTED(MovementFunction_0d);
     // REDIRECTED(CheckObjectCoveredByTextbox);
@@ -804,47 +804,47 @@ void init_function_pointers(void) {
     // REDIRECTED(v_MovementSpinRepeat);
     // REDIRECTED(InitTempObject);
     // REDIRECTED(HandleMovementData);
-    REDIRECTED(StepFunction_Reset);
-    REDIRECTED(StepFunction_NPCWalk);
-    REDIRECTED(StepFunction_TrackingObject);
+    // REDIRECTED(StepFunction_Reset);
+    // REDIRECTED(StepFunction_NPCWalk);
+    // REDIRECTED(StepFunction_TrackingObject);
     // REDIRECTED(ResetLeader);
-    REDIRECTED(StepFunction_TeleportFrom);
+    // REDIRECTED(StepFunction_TeleportFrom);
     // REDIRECTED(UpdateTallGrassFlags);
     // REDIRECTED(RestoreDefaultMovement);
-    REDIRECTED(StepFunction_PlayerWalk);
+    // REDIRECTED(StepFunction_PlayerWalk);
     // REDIRECTED(MovementFunction_RandomWalkX);
     // REDIRECTED(v_MovementSpinTurnRight);
     // REDIRECTED(MovementFunction_Emote);
     // REDIRECTED(RespawnPlayer);
     // REDIRECTED(MovementFunction_ShakingGrass);
     // REDIRECTED(UpdateRespawnedObjectFrozen);
-    REDIRECTED(StepFunction_SkyfallTop);
+    // REDIRECTED(StepFunction_SkyfallTop);
     // REDIRECTED(DoStepsForAllObjects);
     // REDIRECTED(GetStepVector);
     // REDIRECTED(ShakeGrass);
-    REDIRECTED(StepFunction_StrengthBoulder);
+    // REDIRECTED(StepFunction_StrengthBoulder);
     // REDIRECTED(AddStepVector);
     // REDIRECTED(DeleteMapObject);
     // REDIRECTED(SpawnInCustomFacing);
     ////REDIRECTED(Field1c_AnonJumptable);
     // REDIRECTED(MovementFunction_Null);
     // REDIRECTED(Stubbed_UpdateYOffset);
-    REDIRECTED(StepFunction_NPCJump);
+    // REDIRECTED(StepFunction_NPCJump);
     // REDIRECTED(RespawnPlayerAndOpponent);
     // REDIRECTED(RespawnObject);
     // REDIRECTED(MovementFunction_RandomWalkY);
-    REDIRECTED(StepFunction_GotBite);
-    REDIRECTED(StepFunction_ContinueWalk);
+    // REDIRECTED(StepFunction_GotBite);
+    // REDIRECTED(StepFunction_ContinueWalk);
     // REDIRECTED(MovementFunction_SpinClockwise);
     // REDIRECTED(SpawnStrengthBoulderDust);
-    REDIRECTED(StepFunction_Skyfall);
+    // REDIRECTED(StepFunction_Skyfall);
     // REDIRECTED(MovementFunction_RandomSpinFast);
     // REDIRECTED(v_MovementSpinTurnLeft);
     // REDIRECTED(RandomStepDuration_Slow);
     // REDIRECTED(MovementFunction_Follow);
     // REDIRECTED(v_SetRandomStepDuration);
     // REDIRECTED(CopyTempObjectData);
-    REDIRECTED(StepFunction_Sleep);
+    // REDIRECTED(StepFunction_Sleep);
     // REDIRECTED(MovementFunction_0b);
     // REDIRECTED(FreezeObject);
     // REDIRECTED(MovementFunction_Strength);
@@ -853,9 +853,9 @@ void init_function_pointers(void) {
     // REDIRECTED(InitMovementField1dField1e);
     // REDIRECTED(GetNextTile);
     // REDIRECTED(ObjectMovementByte_AnonJumptable);
-    REDIRECTED(StepFunction_FromMovement);
+    // REDIRECTED(StepFunction_FromMovement);
     // REDIRECTED(ObjectMovementByte_DecAnonJumptableIndex);
-    REDIRECTED(StepFunction_ScreenShake);
+    // REDIRECTED(StepFunction_ScreenShake);
     // REDIRECTED(DespawnEmote);
     // REDIRECTED(SpawnInFacingDown);
     // REDIRECTED(ResetObject);
@@ -865,7 +865,7 @@ void init_function_pointers(void) {
     // REDIRECTED(ObjectMovementByte_IncAnonJumptableIndex);
     // REDIRECTED(v_GetMovementObject);
     // REDIRECTED(UselessAndA);
-    REDIRECTED(StepFunction_DigTo);
+    // REDIRECTED(StepFunction_DigTo);
     // REDIRECTED(StepTypesJumptable);
     // REDIRECTED(HandleStepType);
     // REDIRECTED(GetStepVectorSign);
@@ -873,8 +873,8 @@ void init_function_pointers(void) {
     // REDIRECTED(MovementFunction_Shadow);
     // REDIRECTED(HandleObjectAction);
     // REDIRECTED(InitStep);
-    REDIRECTED(StepFunction_Bump);
-    REDIRECTED(StepFunction_RockSmash);
+    // REDIRECTED(StepFunction_Bump);
+    // REDIRECTED(StepFunction_RockSmash);
     // REDIRECTED(GetMapObjectField);
     // REDIRECTED(v_RandomWalkContinue);
     // REDIRECTED(DoMovementFunction);
@@ -893,12 +893,12 @@ void init_function_pointers(void) {
     // REDIRECTED(RefreshPlayerSprite);
     // REDIRECTED(ShakeScreen);
     // REDIRECTED(ResetFollower);
-    REDIRECTED(StepFunction_Turn);
+    // REDIRECTED(StepFunction_Turn);
     // REDIRECTED(ApplyMovementToFollower);
     // REDIRECTED(RandomStepDuration_Fast);
     // REDIRECTED(ApplyBGMapAnchorToObjects);
     // REDIRECTED(MovementFunction_Standing);
-    REDIRECTED(StepFunction_Delete);
+    // REDIRECTED(StepFunction_Delete);
     // REDIRECTED(MovementFunction_FollowNotExact);
     // REDIRECTED(MovementFunction_0c);
     // REDIRECTED(Field1c_GetAnonJumptableIndex);
@@ -914,14 +914,14 @@ void init_function_pointers(void) {
     // REDIRECTED(MovementFunction_0e);
     // REDIRECTED(SetTallGrassFlags);
     // REDIRECTED(StartFollow);
-    REDIRECTED(StepFunction_17);
+    // REDIRECTED(StepFunction_17);
     // REDIRECTED(MovementFunction_BoulderDust);
     // REDIRECTED(MovementFunction_Bouncing);
     // REDIRECTED(GetPlayerNextMovementByte);
     // REDIRECTED(UpdateObjectFrozen);
-    REDIRECTED(StepFunction_Standing);
+    // REDIRECTED(StepFunction_Standing);
     // REDIRECTED(Field1c_ZeroAnonJumptableIndex);
-    REDIRECTED(StepFunction_16);
+    // REDIRECTED(StepFunction_16);
     CONVERTED(HideAllObjects);
     // REDIRECTED(MovementFunction_BigStanding);
     // REDIRECTED(StopFollow);
@@ -1121,7 +1121,7 @@ void init_function_pointers(void) {
 
     // engine/gfx/dma_transfer.c
     // REDIRECTED(HDMATransferAttrmapToWRAMBank3);
-    REDIRECTED(v_continue_HDMATransfer);
+    // CONVERTED(v_continue_HDMATransfer);
     REDIRECTED(HDMATransfer_NoDI);
     // REDIRECTED(HDMATransfer_OnlyTopFourRows);
     // REDIRECTED(HDMATransfer1bpp);
@@ -1140,7 +1140,7 @@ void init_function_pointers(void) {
     // REDIRECTED(PadMapForHDMATransfer);
     // REDIRECTED(HDMATransferTilemapToWRAMBank3);
     CONVERTED(ReloadMapPart);
-    REDIRECTED(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
+    CONVERTED(OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
     // REDIRECTED(CallInSafeGFXMode);
     // REDIRECTED(v_LoadHDMAParameters);
     // REDIRECTED(PadAttrmapForHDMATransfer);
@@ -2209,7 +2209,7 @@ void init_function_pointers(void) {
     // CONVERTED(v_PrintNum);
 
     // engine/math/math.c
-    REDIRECTED(v_Multiply);
+    CONVERTED(v_Multiply);
     REDIRECTED(v_Divide);
 
     // engine/battle/hidden_power.c
@@ -9696,7 +9696,7 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(MysteryGiftGetDecoration);
 
     // engine/movie/evolution_animation.c
-    CONVERTED(EvolutionAnimation);
+    // CONVERTED(EvolutionAnimation);
 
     // engine/events/diploma.c
     // CONVERTED(PrintDiplomaPage2);

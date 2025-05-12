@@ -137,7 +137,7 @@ static void CheckBalance_MomItem2_AddMoney(void) {
     // LD_BC(hMoneyTemp);
     // FARCALL(aAddMoney);
     // RET;
-    return AddMoney_Conv(wram->wMomItemTriggerBalance, hram->hMoneyTemp);
+    return AddMoney(wram->wMomItemTriggerBalance, hram->hMoneyTemp);
 }
 
 static bool CheckBalance_MomItem2(void){
@@ -159,7 +159,7 @@ static bool CheckBalance_MomItem2(void){
         // LD_DE(wMomsMoney);
         // LD_BC(hMoneyTemp);
         // FARCALL(aCompareMoney);
-        u8_flag_s res = CompareMoney_Conv(hram->hMoneyTemp, wram->wMomsMoney);
+        u8_flag_s res = CompareMoney(hram->hMoneyTemp, wram->wMomsMoney);
         // IF_NC goto have_enough_money;
         if(!res.flag) {
         // have_enough_money:
@@ -188,7 +188,7 @@ static bool CheckBalance_MomItem2(void){
         // LD_DE(wMomItemTriggerBalance);
         // LD_BC(wMomsMoney);
         // FARCALL(aCompareMoney);
-        u8_flag_s res = CompareMoney_Conv(wram->wMomsMoney, wram->wMomItemTriggerBalance);
+        u8_flag_s res = CompareMoney(wram->wMomsMoney, wram->wMomItemTriggerBalance);
         // IF_Z goto exact;
         if(res.a == 0) {
         // exact:
@@ -233,7 +233,7 @@ static void MomBuysItem_DeductFunds(void){
     // LD_DE(wMomsMoney);
     // LD_BC(hMoneyTemp);
     // FARCALL(aTakeMoney);
-    TakeMoney_Conv(wram->wMomsMoney, hram->hMoneyTemp);
+    TakeMoney(wram->wMomsMoney, hram->hMoneyTemp);
     // RET;
 }
 

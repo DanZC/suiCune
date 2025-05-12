@@ -370,7 +370,7 @@ static void MapEvents(void){
         // CALL(aDisableEvents);
         DisableEvents();
         // FARCALL(aScriptEvents);
-        ScriptEvents_Conv();
+        ScriptEvents();
         // RET;
         return;
     case MAPEVENTS_OFF:
@@ -435,7 +435,7 @@ static void HandleMapObjects(void){
 
 static void HandleMapBackground(void){
     // FARCALL(av_UpdateSprites);
-    v_UpdateSprites_Conv();
+    v_UpdateSprites();
     // FARCALL(aScrollScreen);
     ScrollScreen();
     // FARCALL(aPlaceMapNameSign);
@@ -752,7 +752,7 @@ static u8_flag_s RunSceneScript(void){
     // FARCALL(aEnableScriptMode);
     EnableScriptMode();
     // FARCALL(aScriptEvents);
-    ScriptEvents_Conv();
+    ScriptEvents();
 
     // LD_HL(wScriptFlags);
     // BIT_hl(3);
@@ -947,7 +947,7 @@ static u8_flag_s ObjectEventTypeArray_itemball(struct MapObject* bc) {
             wram->wItemBallQuantity = ball->quantity;
         }
         else {
-            FarCopyBytes_Conv(wItemBallData, GetMapScriptsBank(), bc->objectScript, wItemBallDataEnd - wItemBallData);
+            FarCopyBytes(wItemBallData, GetMapScriptsBank(), bc->objectScript, wItemBallDataEnd - wItemBallData);
         }
     }
     // LD_A(PLAYEREVENT_ITEMBALL);
@@ -1863,7 +1863,7 @@ static u8_flag_s RandomEncounter(void){
     }
     // FARCALL(aTryWildEncounter);
     // IF_NZ goto nope;
-    if(!TryWildEncounter_Conv())
+    if(!TryWildEncounter())
         return u8_flag(1, false);
     // goto ok;
 
@@ -1935,7 +1935,7 @@ static bool v_TryWildEncounter_BugContest(void){
     // CALL(aChooseWildEncounter_BugContest);
     ChooseWildEncounter_BugContest();
     // FARCALL(aCheckRepelEffect);
-    return !CheckRepelEffect_Conv();
+    return !CheckRepelEffect();
     // RET;
 }
 
@@ -2026,9 +2026,9 @@ bool TryWildEncounter_BugContest(void){
 
 // ok:
     // FARCALL(aApplyMusicEffectOnEncounterRate);
-    b = ApplyMusicEffectOnEncounterRate_Conv(b);
+    b = ApplyMusicEffectOnEncounterRate(b);
     // FARCALL(aApplyCleanseTagEffectOnEncounterRate);
-    b = ApplyCleanseTagEffectOnEncounterRate_Conv(b);
+    b = ApplyCleanseTagEffectOnEncounterRate(b);
     // CALL(aRandom);
     Random();
     // LDH_A_addr(hRandomAdd);

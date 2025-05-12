@@ -792,49 +792,9 @@ void LinkTimeout(void){
     // RET;
 }
 
-void ExchangeBytes(void){
 //  This is similar to Serial_ExchangeBytes,
 //  but without a SERIAL_PREAMBLE_BYTE check.
-    LD_A(TRUE);
-    LDH_addr_A(hSerialIgnoringInitialData);
-
-loop:
-    LD_A_hl;
-    LDH_addr_A(hSerialSend);
-    CALL(aSerial_ExchangeByte);
-    PUSH_BC;
-    LD_B_A;
-    INC_HL;
-    LD_A(48);
-
-wait:
-    DEC_A;
-    IF_NZ goto wait;
-    LDH_A_addr(hSerialIgnoringInitialData);
-    AND_A_A;
-    LD_A_B;
-    POP_BC;
-    IF_Z goto load;
-    DEC_HL;
-    XOR_A_A;
-    LDH_addr_A(hSerialIgnoringInitialData);
-    goto loop;
-
-
-load:
-    LD_de_A;
-    INC_DE;
-    DEC_BC;
-    LD_A_B;
-    OR_A_C;
-    IF_NZ goto loop;
-    RET;
-
-}
-
-//  This is similar to Serial_ExchangeBytes,
-//  but without a SERIAL_PREAMBLE_BYTE check.
-void ExchangeBytes_Conv(void* de_, const void* hl_, uint16_t bc){
+void ExchangeBytes(void* de_, const void* hl_, uint16_t bc){
     uint8_t* de = de_;
     const uint8_t* hl = hl_;
     // LD_A(TRUE);
@@ -847,7 +807,7 @@ void ExchangeBytes_Conv(void* de_, const void* hl_, uint16_t bc){
         // LDH_addr_A(hSerialSend);
         hram->hSerialSend = *hl;
         // CALL(aSerial_ExchangeByte);
-        uint8_t byte = Serial_ExchangeByte_Conv(hl);
+        uint8_t byte = Serial_ExchangeByte(hl);
         // PUSH_BC;
         // LD_B_A;
         // INC_HL;
@@ -1982,12 +1942,12 @@ joy_loop:
         // LD_BC((6 << 8) | 1);
         // LD_A(0x7f);
         // CALL(aLinkEngine_FillBox);
-        LinkEngine_FillBox_Conv(coord(6, 1, wram->wTilemap), 6, 1, 0x7f);
+        LinkEngine_FillBox(coord(6, 1, wram->wTilemap), 6, 1, 0x7f);
         // hlcoord(17, 1, wTilemap);
         // LD_BC((6 << 8) | 1);
         // LD_A(0x7f);
         // CALL(aLinkEngine_FillBox);
-        LinkEngine_FillBox_Conv(coord(17, 1, wram->wTilemap), 6, 1, 0x7f);
+        LinkEngine_FillBox(coord(17, 1, wram->wTilemap), 6, 1, 0x7f);
         // JP(mLinkTrade_PlayerPartyMenu);
         goto LinkTrade_PlayerPartyMenu;
     }
@@ -2659,12 +2619,12 @@ joy_loop:
         // LD_BC((6 << 8) | 1);
         // LD_A(0x7f);
         // CALL(aLinkEngine_FillBox);
-        LinkEngine_FillBox_Conv(coord(6, 1, wram->wTilemap), 6, 1, 0x7f);
+        LinkEngine_FillBox(coord(6, 1, wram->wTilemap), 6, 1, 0x7f);
         // hlcoord(17, 1, wTilemap);
         // LD_BC((6 << 8) | 1);
         // LD_A(0x7f);
         // CALL(aLinkEngine_FillBox);
-        LinkEngine_FillBox_Conv(coord(17, 1, wram->wTilemap), 6, 1, 0x7f);
+        LinkEngine_FillBox(coord(17, 1, wram->wTilemap), 6, 1, 0x7f);
         // JP(mLinkTrade_PlayerPartyMenu);
         return LinkTrade_PlayerPartyMenu();
     }
@@ -2914,27 +2874,7 @@ void LinkTradePlaceArrow(void){
     // RET;
 }
 
-void LinkEngine_FillBox(void){
-
-row:
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-
-}
-
-void LinkEngine_FillBox_Conv(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
+void LinkEngine_FillBox(tile_t* hl, uint8_t b, uint8_t c, uint8_t a){
 
     for(uint32_t x = 0; x < b; ++x) {
     // row:

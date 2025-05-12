@@ -108,7 +108,7 @@ static bool DebugWildBattleScript(script_s* s){
 }
 
 static void DebugWildBattle(species_t species, uint8_t level){
-    Script_loadwildmon_Conv(&gCurScript, species, level);
+    Script_loadwildmon(&gCurScript, species, level);
     gQueuedScriptAddr = DebugWildBattleScript;
     hram->hMenuReturn = HMENURETURN_SCRIPT;
 }

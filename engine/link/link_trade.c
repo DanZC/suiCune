@@ -456,7 +456,7 @@ static void LinkTradeMenu_loop(void) {
             break;
         // FARCALL(av_2DMenuInterpretJoypad);
         // IF_C goto done;
-        if(v_2DMenuInterpretJoypad_Conv())
+        if(v_2DMenuInterpretJoypad())
             break;
         // LD_A_addr(w2DMenuFlags1);
         // BIT_A(7);

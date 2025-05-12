@@ -565,8 +565,8 @@ void LoadCallerScript(uint8_t caller){
     //     LD_A_E;
     //     CALL(aAddNTimes);
     //     LD_A(BANK(aPhoneContacts));
-        // uint16_t phone_struct = AddNTimes_Conv(PHONE_CONTACT_SIZE, mPhoneContacts, caller);
-        // FarCopyBytes_Conv(wCallerContact, BANK(aPhoneContacts), phone_struct, PHONE_CONTACT_SIZE);
+        // uint16_t phone_struct = AddNTimes(PHONE_CONTACT_SIZE, mPhoneContacts, caller);
+        // FarCopyBytes(wCallerContact, BANK(aPhoneContacts), phone_struct, PHONE_CONTACT_SIZE);
         CopyBytes(&gCallerContact, &PhoneContacts[caller], sizeof(gCallerContact));
     }
 }

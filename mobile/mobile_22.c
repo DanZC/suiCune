@@ -3135,7 +3135,7 @@ u8_flag_s Function89dab(void){
     // CALL(aMobile22_SetBGMapMode0);
     Mobile22_SetBGMapMode0();
     // FARCALL(aMobileMenuJoypad);
-    uint8_t c = MobileMenuJoypad_Conv();
+    uint8_t c = MobileMenuJoypad();
     // CALL(aMobile22_SetBGMapMode0);
     Mobile22_SetBGMapMode0();
     // LD_A_C;
@@ -4392,7 +4392,7 @@ uint8_t Function8a31c(uint8_t c){
 
 u8_flag_s Function8a383(void){
     // FARCALL(aMobileMenuJoypad);
-    uint8_t c = MobileMenuJoypad_Conv() & wram->wMenuJoypadFilter;
+    uint8_t c = MobileMenuJoypad() & wram->wMenuJoypadFilter;
     // LD_A_C;
     // LD_HL(wMenuJoypadFilter);
     // AND_A_hl;

@@ -1,12 +1,8 @@
 void Unused_AnimateMon_Slow_Normal(void);
-void AnimateMon_Menu(void);
-void AnimateMon_Menu_Conv(uint8_t* hl);
-void AnimateMon_Trade(void);
-void AnimateMon_Trade_Conv(uint8_t* hl);
-void AnimateMon_Evolve(void);
-void AnimateMon_Evolve_Conv(uint8_t* hl);
-void AnimateMon_Hatch(void);
-void AnimateMon_Hatch_Conv(uint8_t* hl);
+void AnimateMon_Menu(uint8_t* hl);
+void AnimateMon_Trade(uint8_t* hl);
+void AnimateMon_Evolve(uint8_t* hl);
+void AnimateMon_Hatch(uint8_t* hl);
 void AnimateMon_HOF(void);
 // void PokeAnims(void);
 void AnimateFrontpic(uint8_t* hl, uint8_t d, uint8_t e);

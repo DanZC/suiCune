@@ -1592,7 +1592,7 @@ void RunMapCallback(uint8_t a){
 //  Do map callback de and return to script bank b.
 void ExecuteCallbackScript(Script_fn_t de){
     // FARCALL(aCallCallback);
-    CallCallback_Conv(de);
+    CallCallback(de);
     // LD_A_addr(wScriptMode);
     // PUSH_AF;
     uint8_t mode = wram->wScriptMode;
@@ -1605,7 +1605,7 @@ void ExecuteCallbackScript(Script_fn_t de){
     // FARCALL(aEnableScriptMode);
     EnableScriptMode();
     // FARCALL(aScriptEvents);
-    ScriptEvents_Conv();
+    ScriptEvents();
     // POP_AF;
     // LD_addr_A(wScriptFlags);
     wram->wScriptFlags = scriptFlags;
@@ -2107,7 +2107,7 @@ void LoadTilesetGFX(void){
         case TILESET_JOHTO:
         case TILESET_JOHTO_MODERN:
         case TILESET_BATTLE_TOWER_OUTSIDE:
-            LoadMapGroupRoof_Conv(); 
+            LoadMapGroupRoof(); 
             break;
         default:
             break;

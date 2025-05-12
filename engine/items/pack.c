@@ -177,7 +177,7 @@ void Pack_RunJumptable(void) {
             // LD_C(PACKSTATE_INITBALLSPOCKET);  // right
             // CALL(aPack_InterpretJoypad);
             // RET_C ;
-            if(Pack_InterpretJoypad_Conv(PACKSTATE_INITTMHMPOCKET, PACKSTATE_INITBALLSPOCKET))
+            if(Pack_InterpretJoypad(PACKSTATE_INITTMHMPOCKET, PACKSTATE_INITBALLSPOCKET))
                 return;
             // CALL(aPack_ItemBallsKey_LoadSubmenu);
             Pack_ItemBallsKey_LoadSubmenu();
@@ -223,7 +223,7 @@ void Pack_RunJumptable(void) {
             // LD_C(PACKSTATE_INITKEYITEMSPOCKET);  // right
             // CALL(aPack_InterpretJoypad);
             // RET_C ;
-            if(Pack_InterpretJoypad_Conv(PACKSTATE_INITITEMSPOCKET, PACKSTATE_INITKEYITEMSPOCKET))
+            if(Pack_InterpretJoypad(PACKSTATE_INITITEMSPOCKET, PACKSTATE_INITKEYITEMSPOCKET))
                 return;
             // CALL(aPack_ItemBallsKey_LoadSubmenu);
             Pack_ItemBallsKey_LoadSubmenu();
@@ -269,7 +269,7 @@ void Pack_RunJumptable(void) {
             // LD_C(PACKSTATE_INITTMHMPOCKET);  // right
             // CALL(aPack_InterpretJoypad);
             // RET_C ;
-            if(Pack_InterpretJoypad_Conv(PACKSTATE_INITBALLSPOCKET, PACKSTATE_INITTMHMPOCKET))
+            if(Pack_InterpretJoypad(PACKSTATE_INITBALLSPOCKET, PACKSTATE_INITTMHMPOCKET))
                 return;
             // CALL(aPack_ItemBallsKey_LoadSubmenu);
             Pack_ItemBallsKey_LoadSubmenu();
@@ -303,7 +303,7 @@ void Pack_RunJumptable(void) {
             // LD_C(PACKSTATE_INITITEMSPOCKET);  // right
             // CALL(aPack_InterpretJoypad);
             // RET_C ;
-            if(Pack_InterpretJoypad_Conv(PACKSTATE_INITKEYITEMSPOCKET, PACKSTATE_INITITEMSPOCKET))
+            if(Pack_InterpretJoypad(PACKSTATE_INITKEYITEMSPOCKET, PACKSTATE_INITITEMSPOCKET))
                 return;
             // FARCALL(av_CheckTossableItem);
             bool tossable = v_CheckTossableItem(wram->wCurItem);
@@ -1004,7 +1004,7 @@ static void BattlePack_RunJumptable(void) {
             // LD_C(PACKSTATE_INITBALLSPOCKET);  // right
             // CALL(aPack_InterpretJoypad);
             // RET_C ;
-            if(Pack_InterpretJoypad_Conv(PACKSTATE_INITTMHMPOCKET, PACKSTATE_INITBALLSPOCKET))
+            if(Pack_InterpretJoypad(PACKSTATE_INITTMHMPOCKET, PACKSTATE_INITBALLSPOCKET))
                 return;
             // CALL(aItemSubmenu);
             ItemSubmenu();
@@ -1050,7 +1050,7 @@ static void BattlePack_RunJumptable(void) {
             // LD_C(PACKSTATE_INITKEYITEMSPOCKET);  // right
             // CALL(aPack_InterpretJoypad);
             // RET_C ;
-            if(Pack_InterpretJoypad_Conv(PACKSTATE_INITITEMSPOCKET, PACKSTATE_INITKEYITEMSPOCKET))
+            if(Pack_InterpretJoypad(PACKSTATE_INITITEMSPOCKET, PACKSTATE_INITKEYITEMSPOCKET))
                 return;
             // CALL(aItemSubmenu);
             ItemSubmenu();
@@ -1096,7 +1096,7 @@ static void BattlePack_RunJumptable(void) {
             // LD_C(PACKSTATE_INITTMHMPOCKET);  // right
             // CALL(aPack_InterpretJoypad);
             // RET_C ;
-            if(Pack_InterpretJoypad_Conv(PACKSTATE_INITBALLSPOCKET, PACKSTATE_INITTMHMPOCKET))
+            if(Pack_InterpretJoypad(PACKSTATE_INITBALLSPOCKET, PACKSTATE_INITTMHMPOCKET))
                 return;
             // CALL(aItemSubmenu);
             ItemSubmenu();
@@ -1133,7 +1133,7 @@ static void BattlePack_RunJumptable(void) {
             // LD_C(PACKSTATE_INITITEMSPOCKET);  // right
             // CALL(aPack_InterpretJoypad);
             // RET_C ;
-            if(Pack_InterpretJoypad_Conv(PACKSTATE_INITKEYITEMSPOCKET, PACKSTATE_INITITEMSPOCKET))
+            if(Pack_InterpretJoypad(PACKSTATE_INITKEYITEMSPOCKET, PACKSTATE_INITITEMSPOCKET))
                 return;
             // XOR_A_A;
             // CALL(aTMHMSubmenu);
@@ -1622,9 +1622,9 @@ static const struct MenuHeader TutorialPack_ItemsMenuHeader = {
             //dbw ['0', 'wDudeNumItems']
             .list = wram_ptr(wDudeNumItems),
             //dba ['PlaceMenuItemName']
-            .func1 = PlaceMenuItemName_Conv,
+            .func1 = PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
-            .func2 = PlaceMenuItemQuantity_Conv,
+            .func2 = PlaceMenuItemQuantity,
             //dba ['UpdateItemDescription']
             .func3 = UpdateItemDescription,
         },
@@ -1645,9 +1645,9 @@ static const struct MenuHeader TutorialPack_KeyItemsMenuHeader = {
             //dbw ['0', 'wDudeNumKeyItems']
             .list = wram_ptr(wDudeNumKeyItems),
             //dba ['PlaceMenuItemName']
-            .func1 = PlaceMenuItemName_Conv,
+            .func1 = PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
-            .func2 = PlaceMenuItemQuantity_Conv,
+            .func2 = PlaceMenuItemQuantity,
             //dba ['UpdateItemDescription']
             .func3 = UpdateItemDescription,
         },
@@ -1668,9 +1668,9 @@ static const struct MenuHeader TutorialPack_BallsMenuHeader = {
             //dbw ['0', 'wDudeNumBalls']
             .list = wram_ptr(wDudeNumBalls),
             //dba ['PlaceMenuItemName']
-            .func1 = PlaceMenuItemName_Conv,
+            .func1 = PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
-            .func2 = PlaceMenuItemQuantity_Conv,
+            .func2 = PlaceMenuItemQuantity,
             //dba ['UpdateItemDescription']
             .func3 = UpdateItemDescription,
         },
@@ -1875,101 +1875,7 @@ const uint16_t PackGFXPointers[] = {
     [TM_HM_POCKET]      = 15 * 2,
 };
 
-void Pack_InterpretJoypad(void){
-    LD_HL(wMenuJoypad);
-    LD_A_addr(wSwitchItem);
-    AND_A_A;
-    IF_NZ goto switching_item;
-    LD_A_hl;
-    AND_A(A_BUTTON);
-    IF_NZ goto a_button;
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto b_button;
-    LD_A_hl;
-    AND_A(D_LEFT);
-    IF_NZ goto d_left;
-    LD_A_hl;
-    AND_A(D_RIGHT);
-    IF_NZ goto d_right;
-    LD_A_hl;
-    AND_A(SELECT);
-    IF_NZ goto select;
-    SCF;
-    RET;
-
-
-a_button:
-    AND_A_A;
-    RET;
-
-
-b_button:
-    LD_A(PACKSTATE_QUITNOSCRIPT);
-    LD_addr_A(wJumptableIndex);
-    SCF;
-    RET;
-
-
-d_left:
-    LD_A_B;
-    LD_addr_A(wJumptableIndex);
-    LD_addr_A(wPackJumptableIndex);
-    PUSH_DE;
-    LD_DE(SFX_SWITCH_POCKETS);
-    CALL(aPlaySFX);
-    POP_DE;
-    SCF;
-    RET;
-
-
-d_right:
-    LD_A_C;
-    LD_addr_A(wJumptableIndex);
-    LD_addr_A(wPackJumptableIndex);
-    PUSH_DE;
-    LD_DE(SFX_SWITCH_POCKETS);
-    CALL(aPlaySFX);
-    POP_DE;
-    SCF;
-    RET;
-
-
-select:
-    FARCALL(aSwitchItemsInBag);
-    LD_HL(mAskItemMoveText);
-    CALL(aPack_PrintTextNoScroll);
-    SCF;
-    RET;
-
-
-switching_item:
-    LD_A_hl;
-    AND_A(A_BUTTON | SELECT);
-    IF_NZ goto place_insert;
-    LD_A_hl;
-    AND_A(B_BUTTON);
-    IF_NZ goto end_switch;
-    SCF;
-    RET;
-
-
-place_insert:
-    FARCALL(aSwitchItemsInBag);
-    LD_DE(SFX_SWITCH_POKEMON);
-    CALL(aWaitPlaySFX);
-    LD_DE(SFX_SWITCH_POKEMON);
-    CALL(aWaitPlaySFX);
-
-end_switch:
-    XOR_A_A;
-    LD_addr_A(wSwitchItem);
-    SCF;
-    RET;
-
-}
-
-bool Pack_InterpretJoypad_Conv(uint8_t b, uint8_t c){
+bool Pack_InterpretJoypad(uint8_t b, uint8_t c){
     // LD_HL(wMenuJoypad);
     // LD_A_addr(wSwitchItem);
     // AND_A_A;
@@ -2275,9 +2181,9 @@ const struct MenuHeader ItemsPocketMenuHeader = {
         //dbw ['0', 'wNumItems']
             .list = wram_ptr(wNumItems),
         //dba ['PlaceMenuItemName']
-            .func1 = PlaceMenuItemName_Conv,
+            .func1 = PlaceMenuItemName,
         //dba ['PlaceMenuItemQuantity']
-            .func2 = PlaceMenuItemQuantity_Conv,
+            .func2 = PlaceMenuItemQuantity,
         //dba ['UpdateItemDescription']
             .func3 = UpdateItemDescription,
         },
@@ -2299,9 +2205,9 @@ const struct MenuHeader PC_Mart_ItemsPocketMenuHeader = {
             //dbw ['0', 'wNumItems']
             .list=wram_ptr(wNumItems),
             //dba ['PlaceMenuItemName']
-            .func1=PlaceMenuItemName_Conv,
+            .func1=PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
-            .func2=PlaceMenuItemQuantity_Conv,
+            .func2=PlaceMenuItemQuantity,
             //dba ['UpdateItemDescription']
             .func3=UpdateItemDescription,
         },
@@ -2323,9 +2229,9 @@ const struct MenuHeader KeyItemsPocketMenuHeader = {
             //dbw ['0', 'wNumKeyItems']
             .list = wram_ptr(wNumKeyItems),
             //dba ['PlaceMenuItemName']
-            .func1 = PlaceMenuItemName_Conv,
+            .func1 = PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
-            .func2 = PlaceMenuItemQuantity_Conv,
+            .func2 = PlaceMenuItemQuantity,
             //dba ['UpdateItemDescription']
             .func3 = UpdateItemDescription,
         },
@@ -2347,9 +2253,9 @@ const struct MenuHeader PC_Mart_KeyItemsPocketMenuHeader = {
             //dbw ['0', 'wNumKeyItems']
             .list = wram_ptr(wNumKeyItems),
             //dba ['PlaceMenuItemName']
-            .func1=PlaceMenuItemName_Conv,
+            .func1=PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
-            .func2=PlaceMenuItemQuantity_Conv,
+            .func2=PlaceMenuItemQuantity,
             //dba ['UpdateItemDescription']
             .func3=UpdateItemDescription,
         },
@@ -2370,9 +2276,9 @@ const struct MenuHeader BallsPocketMenuHeader = {
             //dbw ['0', 'wNumBalls']
             .list = wram_ptr(wNumBalls),
             //dba ['PlaceMenuItemName']
-            .func1 = PlaceMenuItemName_Conv,
+            .func1 = PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
-            .func2 = PlaceMenuItemQuantity_Conv,
+            .func2 = PlaceMenuItemQuantity,
             //dba ['UpdateItemDescription']
             .func3 = UpdateItemDescription,
         },
@@ -2392,9 +2298,9 @@ const struct MenuHeader PC_Mart_BallsPocketMenuHeader = {
             //dbw ['0', 'wNumBalls']
             .list = wram_ptr(wNumBalls),
             //dba ['PlaceMenuItemName']
-            .func1=PlaceMenuItemName_Conv,
+            .func1=PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
-            .func2=PlaceMenuItemQuantity_Conv,
+            .func2=PlaceMenuItemQuantity,
             //dba ['UpdateItemDescription']
             .func3=UpdateItemDescription,
         },

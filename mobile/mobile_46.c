@@ -448,8 +448,8 @@ void Function118180(void){
     // LD_BC((1 << 8) | 0x96);
     // FARCALL(aCheckStringContainsLessThanBNextCharacters);
     // IF_C goto return_d3;
-    if(CheckStringForErrors_IgnoreTerminator_Conv((const uint8_t*)&wram->w3_d202, HONOR_ROLL_DATA_LENGTH)
-    || CheckStringContainsLessThanBNextCharacters_Conv((const uint8_t*)&wram->w3_d202, 1, HONOR_ROLL_DATA_LENGTH).flag) {
+    if(CheckStringForErrors_IgnoreTerminator((const uint8_t*)&wram->w3_d202, HONOR_ROLL_DATA_LENGTH)
+    || CheckStringContainsLessThanBNextCharacters((const uint8_t*)&wram->w3_d202, 1, HONOR_ROLL_DATA_LENGTH).flag) {
     // return_d3:
         // LD_A(0xd3);
         // LD_addr_A(wMobileErrorCodeBuffer);
@@ -11199,7 +11199,7 @@ void Function11b6b4(void){
     // LD_C(5);
     // FARCALL(aCheckStringForErrors);
     // IF_NC goto length_check_OT;
-    if(CheckStringForErrors_Conv(wram->wMobileMonOT, PLAYER_NAME_LENGTH - 1)) {
+    if(CheckStringForErrors(wram->wMobileMonOT, PLAYER_NAME_LENGTH - 1)) {
         // FARCALL(aMobile_CopyDefaultOTName);
         Mobile_CopyDefaultOTName();
     }
@@ -11209,7 +11209,7 @@ void Function11b6b4(void){
     // LD_BC((1 << 8) | 5);
     // FARCALL(aCheckStringContainsLessThanBNextCharacters);
     // IF_NC goto error_check_nick;
-    if(CheckStringContainsLessThanBNextCharacters_Conv(wram->wMobileMonOT, 1, PLAYER_NAME_LENGTH - 1).flag) {
+    if(CheckStringContainsLessThanBNextCharacters(wram->wMobileMonOT, 1, PLAYER_NAME_LENGTH - 1).flag) {
         // FARCALL(aMobile_CopyDefaultOTName);
         Mobile_CopyDefaultOTName();
     }
@@ -11219,7 +11219,7 @@ void Function11b6b4(void){
     // LD_C(5);
     // FARCALL(aCheckStringForErrors);
     // IF_NC goto length_check_nick;
-    if(CheckStringForErrors_Conv(wram->wMobileMonName, MON_NAME_LENGTH - 1)) {
+    if(CheckStringForErrors(wram->wMobileMonName, MON_NAME_LENGTH - 1)) {
         // FARCALL(aMobile_CopyDefaultNickname);
         Mobile_CopyDefaultNickname();
     }
@@ -11229,7 +11229,7 @@ void Function11b6b4(void){
     // LD_BC((1 << 8) | 5);
     // FARCALL(aCheckStringContainsLessThanBNextCharacters);
     // IF_NC goto error_check_mail;
-    if(CheckStringContainsLessThanBNextCharacters_Conv(wram->wMobileMonName, 1, MON_NAME_LENGTH - 1).flag) {
+    if(CheckStringContainsLessThanBNextCharacters(wram->wMobileMonName, 1, MON_NAME_LENGTH - 1).flag) {
         // FARCALL(aMobile_CopyDefaultNickname);
         Mobile_CopyDefaultNickname();
     }
@@ -11239,7 +11239,7 @@ void Function11b6b4(void){
     // LD_C(MAIL_MSG_LENGTH + 1);
     // FARCALL(aCheckStringForErrors);
     // IF_NC goto length_check_mail;
-    if(CheckStringForErrors_Conv(wram->wMobileMonMail.message, MAIL_MSG_LENGTH + 1)) {
+    if(CheckStringForErrors(wram->wMobileMonMail.message, MAIL_MSG_LENGTH + 1)) {
         // FARCALL(aMobile_CopyDefaultMail);
         Mobile_CopyDefaultMail();
     }
@@ -11248,7 +11248,7 @@ void Function11b6b4(void){
     // LD_DE(0xc647);
     // LD_BC((2 << 8) | (MAIL_MSG_LENGTH + 1));
     // FARCALL(aCheckStringContainsLessThanBNextCharacters);
-    u8_flag_s res = CheckStringContainsLessThanBNextCharacters_Conv(wram->wMobileMonMail.message, 2, MAIL_MSG_LENGTH + 1);
+    u8_flag_s res = CheckStringContainsLessThanBNextCharacters(wram->wMobileMonMail.message, 2, MAIL_MSG_LENGTH + 1);
     // IF_C goto fix_mail;
     // LD_A_B;
     // CP_A(0x2);
@@ -11264,7 +11264,7 @@ void Function11b6b4(void){
     // LD_C(0x5);
     // FARCALL(aCheckStringForErrors);
     // IF_NC goto length_check_author;
-    if(CheckStringForErrors_Conv(wram->wMobileMonMail.author, PLAYER_NAME_LENGTH - 1)) {
+    if(CheckStringForErrors(wram->wMobileMonMail.author, PLAYER_NAME_LENGTH - 1)) {
         // FARCALL(aMobile_CopyDefaultMailAuthor);
         Mobile_CopyDefaultMailAuthor();
     }
@@ -11274,7 +11274,7 @@ void Function11b6b4(void){
     // LD_BC((1 << 8) | 5);
     // FARCALL(aCheckStringContainsLessThanBNextCharacters);
     // IF_NC goto author_okay;
-    if(CheckStringContainsLessThanBNextCharacters_Conv(wram->wMobileMonName, 1, PLAYER_NAME_LENGTH - 1).flag) {
+    if(CheckStringContainsLessThanBNextCharacters(wram->wMobileMonName, 1, PLAYER_NAME_LENGTH - 1).flag) {
         // FARCALL(aMobile_CopyDefaultMailAuthor);
         Mobile_CopyDefaultMailAuthor();
     }

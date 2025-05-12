@@ -483,7 +483,7 @@ void ReadBTTrainerParty(void){
     // FARCALL(aCheckStringForErrors);
     // IF_NC goto skip_mon_1;
 
-    if(CheckStringForErrors_Conv(pmon[0].monName, MON_NAME_LENGTH)) {
+    if(CheckStringForErrors(pmon[0].monName, MON_NAME_LENGTH)) {
         // LD_A_addr(wBT_OTTempMon1);
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetPokemonName);
@@ -500,7 +500,7 @@ void ReadBTTrainerParty(void){
     // LD_C(MON_NAME_LENGTH);
     // FARCALL(aCheckStringForErrors);
     // IF_NC goto skip_mon_2;
-    if(CheckStringForErrors_Conv(pmon[1].monName, MON_NAME_LENGTH)) {
+    if(CheckStringForErrors(pmon[1].monName, MON_NAME_LENGTH)) {
         // LD_A_addr(wBT_OTTempMon2);
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetPokemonName);
@@ -517,7 +517,7 @@ void ReadBTTrainerParty(void){
     // LD_C(MON_NAME_LENGTH);
     // FARCALL(aCheckStringForErrors);
     // IF_NC goto skip_mon_3;
-    if(CheckStringForErrors_Conv(pmon[2].monName, MON_NAME_LENGTH)) {
+    if(CheckStringForErrors(pmon[2].monName, MON_NAME_LENGTH)) {
         // LD_A_addr(wBT_OTTempMon3);
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetPokemonName);
@@ -540,13 +540,13 @@ void ReadBTTrainerParty(void){
     pmon[2].monName[MON_NAME_LENGTH - 1] = 0x50;
 //  Fix errors in the movesets
     // CALL(aCheckBTMonMovesForErrors);
-    CheckBTMonMovesForErrors_Conv();
+    CheckBTMonMovesForErrors();
 //  Repair the trainer name if needed, then copy it to wOTPlayerName
     // LD_DE(wBT_OTTempName);
     // LD_C(NAME_LENGTH - 1);
     // FARCALL(aCheckStringForErrors);
     // IF_NC goto trainer_name_okay;
-    if(CheckStringForErrors_Conv(wram->wBT_OTTemp.name, NAME_LENGTH - 1)) {
+    if(CheckStringForErrors(wram->wBT_OTTemp.name, NAME_LENGTH - 1)) {
         // LD_HL(mBT_ChrisName);
         CopyBytes(wram->wOTPlayerName, U82C(BT_ChrisName), NAME_LENGTH - 1);
         // goto done_trainer_name;

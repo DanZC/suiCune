@@ -335,47 +335,7 @@ const struct DexEntry* GetDexEntryPointer(uint8_t b){
     return PokedexDataPointerTable[b - 1];
 }
 
-void GetDexEntryPagePointer(void){
-    CALL(aGetDexEntryPointer);
-    PUSH_HL;
-    LD_H_D;
-    LD_L_E;
-//  skip species name
-
-loop1:
-    LD_A_B;
-    CALL(aGetFarByte);
-    INC_HL;
-    CP_A(0x50);
-    IF_NZ goto loop1;
-//  skip height and weight
-    for(int rept = 0; rept < 4; rept++){
-    INC_HL;
-    }
-//  if c != 1: skip entry
-    DEC_C;
-    IF_Z goto done;
-//  skip entry
-
-loop2:
-    LD_A_B;
-    CALL(aGetFarByte);
-    INC_HL;
-    CP_A(0x50);
-    IF_NZ goto loop2;
-
-
-done:
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    RET;
-
-// INCLUDE "data/pokemon/dex_entry_pointers.asm"
-
-}
-
-uint8_t* GetDexEntryPagePointer_Conv(species_t b, uint8_t c){
+uint8_t* GetDexEntryPagePointer(species_t b, uint8_t c){
     // CALL(aGetDexEntryPointer);
     const struct DexEntry* entry = GetDexEntryPointer(b);
     // PUSH_HL;

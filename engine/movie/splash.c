@@ -329,29 +329,7 @@ void GameFreakPresents_WaitForTimer(void){
     // RET;
 }
 
-void GameFreakLogoSpriteAnim(void){
-    LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
-    ADD_HL_BC;
-    LD_E_hl;
-    LD_D(0);
-    LD_HL(mGameFreakLogoSpriteAnim_scenes);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
-
-
-//scenes:
-    //dw ['GameFreakLogo_Init'];
-    //dw ['GameFreakLogo_Bounce'];
-    //dw ['GameFreakLogo_Ditto'];
-    //dw ['GameFreakLogo_Transform'];
-    //dw ['GameFreakLogo_Done'];
-}
-
-void GameFreakLogoSpriteAnim_Conv(struct SpriteAnim* bc){
+void GameFreakLogoSpriteAnim(struct SpriteAnim* bc){
     // LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
     // ADD_HL_BC;
     // LD_E_hl;

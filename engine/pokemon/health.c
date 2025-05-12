@@ -70,7 +70,7 @@ void HealPartyMon(struct PartyMon* pmon){
 
     // FARCALL(aRestoreAllPP);
     // RET;
-    RestoreAllPP_Conv(pmon);
+    RestoreAllPP(pmon);
 }
 
 //  e = bc * (6 * 8) / de

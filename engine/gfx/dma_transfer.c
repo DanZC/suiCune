@@ -6,6 +6,10 @@
 
 static void CallInSafeGFXMode(void(*hl)(void));
 
+static void HDMATransfer_Wait127Scanlines_toBGMap(uint16_t hl);
+static void HDMATransfer_Wait123Scanlines(uint16_t hl, uint16_t de, uint8_t c);
+static void HDMATransfer_Wait127Scanlines(uint16_t hl, uint16_t de, uint8_t c);
+
 static void PadTilemapForHDMATransfer(uint8_t* hl, const uint8_t* de);
 static void PadAttrmapForHDMATransfer(uint8_t* hl, const uint8_t* de);
 static void PadMapForHDMATransfer(uint8_t* hl, const uint8_t* de, uint8_t c);
@@ -229,14 +233,14 @@ static void OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function(void) {
     // gb_write(rVBK, 0x1);
     // LD_HL(wScratchAttrmap);
     // CALL(mHDMATransfer_Wait123Scanlines_toBGMap);
-    // HDMATransfer_Wait123Scanlines_toBGMap_Conv(wram->wScratchAttrmap);
+    // HDMATransfer_Wait123Scanlines_toBGMap(wram->wScratchAttrmap);
     CopyBytes(gb.vram + VRAM_BANK_SIZE + (hram->hBGMapAddress & 0x1ff0), wram->wScratchAttrmap, sizeof(wram->wScratchAttrmap));
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x0);
     // LD_HL(wScratchTilemap);
     // CALL(mHDMATransfer_Wait123Scanlines_toBGMap);
-    // HDMATransfer_Wait123Scanlines_toBGMap_Conv(wram->wScratchTilemap);
+    // HDMATransfer_Wait123Scanlines_toBGMap(wram->wScratchTilemap);
     CopyBytes(gb.vram + (hram->hBGMapAddress & 0x1ff0), wram->wScratchTilemap, sizeof(wram->wScratchTilemap));
     // POP_AF;
     // LDH_addr_A(rVBK);
@@ -271,13 +275,13 @@ static void Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap_Function(void)
     gb_write(rVBK, 0x1);
     // LD_HL(wScratchAttrmap);
     // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
-    HDMATransfer_Wait127Scanlines_toBGMap_Conv(wScratchAttrmap);
+    HDMATransfer_Wait127Scanlines_toBGMap(wScratchAttrmap);
     // LD_A(0x0);
     // LDH_addr_A(rVBK);
     gb_write(rVBK, 0x0);
     // LD_HL(wScratchTilemap);
     // CALL(mHDMATransfer_Wait127Scanlines_toBGMap);
-    HDMATransfer_Wait127Scanlines_toBGMap_Conv(wScratchTilemap);
+    HDMATransfer_Wait127Scanlines_toBGMap(wScratchTilemap);
     // RET;
 }
 
@@ -348,56 +352,31 @@ loop:
     RET;
 }
 
-void HDMATransfer_Wait127Scanlines_toBGMap(void) {
-    //  HDMA transfer from hl to [hBGMapAddress]
-    //  hBGMapAddress -> de
-    //  2 * SCREEN_HEIGHT -> c
-    LDH_A_addr(hBGMapAddress + 1);
-    LD_D_A;
-    LDH_A_addr(hBGMapAddress);
-    LD_E_A;
-    LD_C(2 * SCREEN_HEIGHT);
-    JR(mHDMATransfer_Wait127Scanlines);
-}
-
 //  HDMA transfer from hl to [hBGMapAddress]
 //  hBGMapAddress -> de
 //  2 * SCREEN_HEIGHT -> c
-void HDMATransfer_Wait127Scanlines_toBGMap_Conv(uint16_t hl) {
+static void HDMATransfer_Wait127Scanlines_toBGMap(uint16_t hl) {
     // LDH_A_addr(hBGMapAddress + 1);
     // LD_D_A;
     // LDH_A_addr(hBGMapAddress);
     // LD_E_A;
     // LD_C(2 * SCREEN_HEIGHT);
     // JR(mHDMATransfer_Wait127Scanlines);
-    return HDMATransfer_Wait127Scanlines_Conv(hl, hram->hBGMapAddress, 2 * SCREEN_HEIGHT);
+    return HDMATransfer_Wait127Scanlines(hl, hram->hBGMapAddress, 2 * SCREEN_HEIGHT);
 }
 
-void HDMATransfer_Wait123Scanlines_toBGMap(void) {
-    //  HDMA transfer from hl to [hBGMapAddress]
-    //  hBGMapAddress -> de
-    //  2 * SCREEN_HEIGHT -> c
-    //  $7b --> b
-    LDH_A_addr(hBGMapAddress + 1);
-    LD_D_A;
-    LDH_A_addr(hBGMapAddress);
-    LD_E_A;
-    LD_C(2 * SCREEN_HEIGHT);
-    JR(mHDMATransfer_Wait123Scanlines);
-}
-
-void HDMATransfer_Wait123Scanlines_toBGMap_Conv(uint16_t hl) {
-    //  HDMA transfer from hl to [hBGMapAddress]
-    //  hBGMapAddress -> de
-    //  2 * SCREEN_HEIGHT -> c
-    //  $7b --> b
+//  HDMA transfer from hl to [hBGMapAddress]
+//  hBGMapAddress -> de
+//  2 * SCREEN_HEIGHT -> c
+//  $7b --> b
+void HDMATransfer_Wait123Scanlines_toBGMap(uint16_t hl) {
     // LDH_A_addr(hBGMapAddress + 1);
     // LD_D_A;
     // LDH_A_addr(hBGMapAddress);
     // LD_E_A;
     // LD_C(2 * SCREEN_HEIGHT);
     // JR(mHDMATransfer_Wait123Scanlines);
-    return HDMATransfer_Wait123Scanlines_Conv(hl, gb_read16(hBGMapAddress), 2 * SCREEN_HEIGHT);
+    return HDMATransfer_Wait123Scanlines(hl, gb_read16(hBGMapAddress), 2 * SCREEN_HEIGHT);
 }
 
 void HDMATransfer_NoDI(void) {
@@ -464,94 +443,18 @@ loop3:
     RET;
 }
 
-void HDMATransfer_Wait123Scanlines(void) {
-    LD_B(0x7b);
-    JR(mv_continue_HDMATransfer);
-}
-
-void HDMATransfer_Wait123Scanlines_Conv(uint16_t hl, uint16_t de, uint8_t c) {
+static void HDMATransfer_Wait123Scanlines(uint16_t hl, uint16_t de, uint8_t c) {
     // LD_B(0x7b);
     // JR(mv_continue_HDMATransfer);
-    return v_continue_HDMATransfer_Conv(hl, de, c, 0x7b);
+    return v_continue_HDMATransfer(hl, de, c, 0x7b);
 }
 
-void HDMATransfer_Wait127Scanlines(void) {
-    LD_B(0x7f);
-    return v_continue_HDMATransfer();
-}
-
-void HDMATransfer_Wait127Scanlines_Conv(uint16_t hl, uint16_t de, uint8_t c) {
+static void HDMATransfer_Wait127Scanlines(uint16_t hl, uint16_t de, uint8_t c) {
     // LD_B(0x7f);
-    return v_continue_HDMATransfer_Conv(hl, de, c, 0x7f);
+    return v_continue_HDMATransfer(hl, de, c, 0x7f);
 }
 
-void v_continue_HDMATransfer(void) {
-    //  a lot of waiting around for hardware registers
-    // [rHDMA1, rHDMA2] = hl & $fff0
-    LD_A_H;
-    LDH_addr_A(rHDMA1);
-    LD_A_L;
-    AND_A(0xf0);  // high nybble
-    LDH_addr_A(rHDMA2);
-    // [rHDMA3, rHDMA4] = de & $1ff0
-    LD_A_D;
-    AND_A(0x1f);  // lower 5 bits
-    LDH_addr_A(rHDMA3);
-    LD_A_E;
-    AND_A(0xf0);  // high nybble
-    LDH_addr_A(rHDMA4);
-    // e = c | %10000000
-    LD_A_C;
-    DEC_C;
-    OR_A(0x80);
-    LD_E_A;
-    // d = b - c + 1
-    LD_A_B;
-    SUB_A_C;
-    LD_D_A;
-    // while [rLY] >= d: pass
-
-ly_loop:
-    LDH_A_addr(rLY);
-    CP_A_D;
-    // IF_NC goto ly_loop;
-
-    NOP;
-    // while [rSTAT] & 3: pass
-
-rstat_loop_1:
-    LDH_A_addr(rSTAT);
-    AND_A(0x3);
-    // IF_NZ goto rstat_loop_1;
-    //  while not [rSTAT] & 3: pass
-
-rstat_loop_2:
-    LDH_A_addr(rSTAT);
-    AND_A(0x3);
-    // IF_Z goto rstat_loop_2;
-    //  load the 5th byte of HDMA
-    LD_A_E;
-    DEC_A;  // patch
-    LDH_addr_A(rHDMA5);
-    // wait until rLY advances (c + 1) times
-    LDH_A_addr(rLY);
-    INC_C;
-    LD_HL(rLY);
-
-final_ly_loop:
-    CP_A_hl;
-    // IF_Z goto final_ly_loop;
-    LD_A_hl;
-    DEC_C;
-    // IF_NZ goto final_ly_loop;
-    // LD_HL(rHDMA5);
-    // RES_hl(7);
-    NOP;
-
-    RET;
-}
-
-void v_continue_HDMATransfer_Conv(uint16_t hl, uint16_t de, uint8_t c, uint8_t b) {
+void v_continue_HDMATransfer(uint16_t hl, uint16_t de, uint8_t c, uint8_t b) {
     //  a lot of waiting around for hardware registers
     // [rHDMA1, rHDMA2] = hl & $fff0
     // LD_A_H;
@@ -693,52 +596,7 @@ static void PadMapForHDMATransfer(uint8_t* hl, const uint8_t* de, uint8_t c) {
     // RET;
 }
 
-void HDMATransfer2bpp(void) {
-    // 2bpp when [rLCDC] & $80
-    // switch to WRAM bank 6
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awScratchTilemap));
-    LDH_addr_A(rSVBK);
-
-    PUSH_BC;
-    PUSH_HL;
-
-    // Copy c tiles of the 2bpp from b:de to wScratchTilemap
-    LD_A_B;  // bank
-    LD_L_C;  // number of tiles
-    LD_H(0x0);
-    // multiply by 16 (16 bytes of a 2bpp = 8 x 8 tile)
-    ADD_HL_HL;
-    ADD_HL_HL;
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_B_H;
-    LD_C_L;
-    LD_H_D;  // address
-    LD_L_E;
-    LD_DE(wScratchTilemap);
-    CALL(mFarCopyBytes);
-
-    POP_HL;
-    POP_BC;
-
-    PUSH_BC;
-    CALL(mDelayFrame);
-    POP_BC;
-
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wScratchTilemap);
-    CALL(mHDMATransfer_Wait127Scanlines);
-
-    // restore the previous bank
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-}
-
-void HDMATransfer2bpp_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
+void HDMATransfer2bpp(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
     // 2bpp when [rLCDC] & $80
     // switch to WRAM bank 6
     // LDH_A_addr(rSVBK);
@@ -765,7 +623,7 @@ void HDMATransfer2bpp_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
     // LD_L_E;
     // LD_DE(wScratchTilemap);
     // CALL(mFarCopyBytes);
-    FarCopyBytes_Conv(wScratchTilemap, b, de, c * LEN_2BPP_TILE);
+    FarCopyBytes(wScratchTilemap, b, de, c * LEN_2BPP_TILE);
 
     // POP_HL;
     // POP_BC;
@@ -779,7 +637,7 @@ void HDMATransfer2bpp_Conv(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
     // LD_E_L;
     // LD_HL(wScratchTilemap);
     // CALL(mHDMATransfer_Wait127Scanlines);
-    HDMATransfer_Wait123Scanlines_Conv(wScratchTilemap, hl, c);
+    HDMATransfer_Wait123Scanlines(wScratchTilemap, hl, c);
 
     // restore the previous bank
     // POP_AF;

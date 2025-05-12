@@ -108,15 +108,7 @@ wild:
 
 }
 
-void AnimateMon_Menu(void){
-    LD_E(ANIM_MON_MENU);
-    LD_D(0x0);
-    CALL(aAnimateFrontpic);
-    RET;
-
-}
-
-void AnimateMon_Menu_Conv(uint8_t* hl){
+void AnimateMon_Menu(uint8_t* hl){
     // LD_E(ANIM_MON_MENU);
     // LD_D(0x0);
     // CALL(aAnimateFrontpic);
@@ -124,15 +116,7 @@ void AnimateMon_Menu_Conv(uint8_t* hl){
     return AnimateFrontpic(hl, 0x0, ANIM_MON_MENU);
 }
 
-void AnimateMon_Trade(void){
-    LD_E(ANIM_MON_TRADE);
-    LD_D(0x0);
-    CALL(aAnimateFrontpic);
-    RET;
-
-}
-
-void AnimateMon_Trade_Conv(uint8_t* hl){
+void AnimateMon_Trade(uint8_t* hl){
     // LD_E(ANIM_MON_TRADE);
     // LD_D(0x0);
     // CALL(aAnimateFrontpic);
@@ -140,15 +124,7 @@ void AnimateMon_Trade_Conv(uint8_t* hl){
     return AnimateFrontpic(hl, 0x0, ANIM_MON_TRADE);
 }
 
-void AnimateMon_Evolve(void){
-    LD_E(ANIM_MON_EVOLVE);
-    LD_D(0x0);
-    CALL(aAnimateFrontpic);
-    RET;
-
-}
-
-void AnimateMon_Evolve_Conv(uint8_t* hl){
+void AnimateMon_Evolve(uint8_t* hl){
     // LD_E(ANIM_MON_EVOLVE);
     // LD_D(0x0);
     // CALL(aAnimateFrontpic);
@@ -156,15 +132,7 @@ void AnimateMon_Evolve_Conv(uint8_t* hl){
     return AnimateFrontpic(hl, 0x0, ANIM_MON_EVOLVE);
 }
 
-void AnimateMon_Hatch(void){
-    LD_E(ANIM_MON_HATCH);
-    LD_D(0x0);
-    CALL(aAnimateFrontpic);
-    RET;
-
-}
-
-void AnimateMon_Hatch_Conv(uint8_t* hl){
+void AnimateMon_Hatch(uint8_t* hl){
     // LD_E(ANIM_MON_HATCH);
     // LD_D(0x0);
     // CALL(aAnimateFrontpic);

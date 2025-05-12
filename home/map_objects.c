@@ -440,7 +440,7 @@ static void ApplyDeletionToMapObject_CheckStopFollow(uint8_t a) {
 
 // ok:
     // FARCALL(aStopFollow);
-    StopFollow_Conv();
+    StopFollow();
     // LD_A(-1);
     // LD_addr_A(wObjectFollow_Leader);
     wram->wObjectFollow_Leader = 0xff;
@@ -470,7 +470,7 @@ void ApplyDeletionToMapObject(uint8_t mapObjIdx){
     // POP_AF;
     // CALL(aGetObjectStruct);
     // FARCALL(aDeleteMapObject);
-    DeleteMapObject_Conv(GetObjectStruct(id));
+    DeleteMapObject(GetObjectStruct(id));
     // RET;
 }
 
@@ -772,10 +772,10 @@ void UpdateSprites(void){
         return;
 
     // FARCALL(aUpdateAllObjectsFrozen);
-    UpdateAllObjectsFrozen_Conv();
+    UpdateAllObjectsFrozen();
     // FARCALL(av_UpdateSprites);
 
-    v_UpdateSprites_Conv();
+    v_UpdateSprites();
     // RET;
 
 }
@@ -787,7 +787,7 @@ struct Object* GetObjectStruct(uint8_t a){
     // LD_B_H;
     // LD_C_L;
     // RET;
-    // return AddNTimes_Conv(OBJECT_LENGTH, wObjectStructs, a);
+    // return AddNTimes(OBJECT_LENGTH, wObjectStructs, a);
     return &wram->wPlayerStruct + a;
 }
 
