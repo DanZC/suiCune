@@ -184,9 +184,9 @@ const struct MenuHeader CeladonPrizeRoom_TMMenuHeader = {
         .verticalMenu = {
             .count = 4, // items
             .options = (const char*[]) {
-                "TM32    " _s(CELADONGAMECORNERPRIZEROOM_TM32_COINS) "@"
-                "TM29    " _s(CELADONGAMECORNERPRIZEROOM_TM29_COINS) "@"
-                "TM15    " _s(CELADONGAMECORNERPRIZEROOM_TM15_COINS) "@"
+                "TM32    " _s(CELADONGAMECORNERPRIZEROOM_TM32_COINS) "@",
+                "TM29    " _s(CELADONGAMECORNERPRIZEROOM_TM29_COINS) "@",
+                "TM15    " _s(CELADONGAMECORNERPRIZEROOM_TM15_COINS) "@",
                 "CANCEL@"
             },
         },
