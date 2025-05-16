@@ -1172,8 +1172,13 @@ struct wram_s
                         uint8_t wc9b1;
                         uint8_t wc9b2;
                         uint8_t wc9b3[2];
-                        uint8_t wc9b5;
-                        uint8_t wc9b6[121];
+                        union {
+                            struct {
+                                uint8_t wc9b5;
+                                uint8_t wc9b6[121];
+                            };
+                            uint8_t wc9b5_arr[122];
+                        };
                         uint8_t wMobileSDK_ReceivePacketBufferAlt[11];
                         uint16_t wMobileSDK_ReceivedBytes;
                         uint8_t wMobileSDK_ReceivePacketBuffer[250];

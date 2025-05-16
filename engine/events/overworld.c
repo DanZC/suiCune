@@ -103,7 +103,7 @@ void GetPartyNickname(void){
     // LD_A_addr(wCurPartyMon);
     // CALL(aGetNickname);
     // CALL(aCopyName1);
-    CopyName1(wram->wPartyMonNickname[wram->wCurPartyMon]);
+    CopyName1(GetCurNickname());
 //  copy text from wStringBuffer2 to wStringBuffer3
     wram->wStringBuffer2[STRING_BUFFER_LENGTH - 1] = 0x50; // Just in case string doesn't terminate
     // LD_DE(wStringBuffer2);

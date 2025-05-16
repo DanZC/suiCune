@@ -721,7 +721,7 @@ void Function110236(mobile_api_data_s* data){
     // asm_11024e:
         // XOR_A_A;
         // LD_hli_A;
-        (&wram->wc800)[bc] = 0x0;
+        wram->wram0[0x800 + bc] = 0x0;
         // DEC_BC;
         // LD_A_C;
         // OR_A_B;
@@ -6182,7 +6182,8 @@ void Function111c06(void){
     // LD_HL(wMobileSDK_ReceivePacketBuffer + 4);
     // LD_B(0x2);
     // CALL(aMobileSDK_CopyBytes);
-    MobileSDK_CopyBytes(&wram->wc872, wram->wMobileSDK_ReceivePacketBuffer + 4, 0x2);
+    wram->wc872 = wram->wMobileSDK_ReceivePacketBuffer[4];
+    wram->wc873 = wram->wMobileSDK_ReceivePacketBuffer[5];
     // LD_A(0x2);
     // LD_addr_A(wc807);
     wram->wc807 = 0x2;
@@ -10534,7 +10535,7 @@ char* Function113026(char* hl){
         // LD_DE(wc9b5);
         // LD_B_C;
         // CALL(aMobileSDK_CopyBytes);
-        de = MobileSDK_CopyBytes(&wram->wc9b5, wram->wMobileSDK_PacketBuffer + 18, b);
+        de = MobileSDK_CopyBytes(wram->wc9b5_arr, wram->wMobileSDK_PacketBuffer + 18, b);
         // XOR_A_A;
         // LD_de_A;
         *de = 0;

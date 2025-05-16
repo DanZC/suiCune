@@ -127,7 +127,7 @@ void LoadContestantName(uint8_t a){
     //assert ['BUG_CONTEST_PLAYER == 1'];
     // DEC_A;
     // IF_Z goto player;
-    if(a == 1) {
+    if(a == BUG_CONTEST_PLAYER) {
     // player:
         // LD_HL(wPlayerName);
         // LD_DE(wBugContestWinnerName);

@@ -75,7 +75,7 @@ enum {
 // - DecorationIDs (see data/decorations/decorations.asm)
 enum {
 // FindOwnedBeds.beds values (see engine/overworld/decorations.asm)
-    BEDS,
+    BEDS = 1,
     DECO_FEATHERY_BED,
     DECO_PINK_BED,
     DECO_POLKADOT_BED,
@@ -185,4 +185,4 @@ enum {
 };
 
 #define NUM_NON_TROPHY_DECOS DECOFLAG_GOLD_TROPHY_DOLL
-#define NUM_DECO_CATEGORIES (DECO_SILVER_TROPHY_DOLL - DECOFLAG_SILVER_TROPHY_DOLL)
+#define NUM_DECO_CATEGORIES (DECO_SILVER_TROPHY_DOLL - DECOFLAG_SILVER_TROPHY_DOLL - 1)
