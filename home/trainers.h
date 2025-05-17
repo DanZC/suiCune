@@ -9,7 +9,7 @@ bool TalkToTrainer(void);
 bool LoadTrainer_continue(void);
 struct FacingDist FacingPlayerDistance_bc(struct Object* bc);
 struct FacingDist FacingPlayerDistance(struct Object* bc);
-void CheckTrainerFlag(void);
+bool CheckTrainerFlag(struct Object* bc);
 void PrintWinLossText(void);
 
 extern const struct TextCmd* gSeenTextPointer;

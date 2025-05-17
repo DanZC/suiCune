@@ -24,10 +24,10 @@ void v_InitScrollingMenu(const struct MenuData* data){
     // LD_addr_A(wMenuJoypad);
     wram->wMenuJoypad = 0;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // INC_A;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = TRUE;
+    hram.hInMenu = TRUE;
     // CALL(aInitScrollingMenuCursor);
     InitScrollingMenuCursor(data);
     // CALL(aScrollingMenu_InitFlags);
@@ -40,7 +40,7 @@ void v_InitScrollingMenu(const struct MenuData* data){
     ApplyTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
@@ -60,13 +60,13 @@ void v_ScrollingMenu(const struct MenuData* data){
             ScrollingMenu_InitDisplay(data);
             // LD_A(1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+            hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // LD_C(3);
             // CALL(aDelayFrames);
             DelayFrames(3);
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_NONE;
+            hram.hBGMapMode = BGMAPMODE_NONE;
             // RET;
         }
         // goto loop;
@@ -90,14 +90,14 @@ void v_ScrollingMenu(const struct MenuData* data){
         (wram->wMenuJoypad & A_BUTTON)? 'A': ' ');
     // LD_A(0);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0;
+    hram.hInMenu = 0;
     // RET;
 }
 
 static void ScrollingMenu_InitDisplay(const struct MenuData* data){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
@@ -124,11 +124,11 @@ static u8_flag_s ScrollingMenuJoyAction(const struct MenuData* data){
         // LDH_A_addr(hJoyLast);
         // AND_A(D_PAD);
         // LD_B_A;
-        uint8_t pad_last = hram->hJoyLast & (D_PAD);
+        uint8_t pad_last = hram.hJoyLast & (D_PAD);
         // LDH_A_addr(hJoyPressed);
         // AND_A(BUTTONS);
         // OR_A_B;
-        uint8_t input = (hram->hJoyPressed & (BUTTONS)) | pad_last;
+        uint8_t input = (hram.hJoyPressed & (BUTTONS)) | pad_last;
         // BIT_A(A_BUTTON_F);
         // JP_NZ (mScrollingMenuJoyAction_a_button);
         if(bit_test(input, A_BUTTON_F)) {

@@ -264,7 +264,7 @@ void BattleTowerText(uint8_t c){
     // generate a random number between 0 and 24
         // LDH_A_addr(hRandomAdd);
         // AND_A(0x1f);
-        a = hram->hRandomAdd & 0x1f;
+        a = hram.hRandomAdd & 0x1f;
         // CP_A(25);
         // IF_C goto okay0;
         if(a >= 25) {
@@ -282,7 +282,7 @@ void BattleTowerText(uint8_t c){
     // generate a random number between 0 and 14
         // LDH_A_addr(hRandomAdd);
         // AND_A(0xf);
-        a = hram->hRandomAdd & 0xf;
+        a = hram.hRandomAdd & 0xf;
         // CP_A(15);
         // IF_C goto okay1;
         if(a >= 15) {

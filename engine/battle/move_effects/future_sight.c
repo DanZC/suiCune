@@ -16,8 +16,8 @@ void BattleCommand_CheckFutureSight(void){
     // IF_Z goto ok;
     // LD_HL(wEnemyFutureSightCount);
     // LD_DE(wEnemyFutureSightDamage);
-    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
-    uint16_t de = (hram->hBattleTurn == TURN_PLAYER)? wram->wPlayerFutureSightDamage: wram->wEnemyFutureSightDamage;
+    uint8_t* hl = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
+    uint16_t de = (hram.hBattleTurn == TURN_PLAYER)? wram->wPlayerFutureSightDamage: wram->wEnemyFutureSightDamage;
 
 // ok:
 
@@ -71,7 +71,7 @@ void BattleCommand_FutureSight(void){
     // AND_A_A;
     // IF_Z goto GotFutureSightCount;
     // LD_HL(wEnemyFutureSightCount);
-    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
+    uint8_t* hl = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
 
 // GotFutureSightCount:
     // LD_A_hl;
@@ -106,7 +106,7 @@ void BattleCommand_FutureSight(void){
     // AND_A_A;
     // IF_Z goto StoreDamage;
     // LD_DE(wEnemyFutureSightDamage);
-    uint16_t* de = (uint16_t*)((hram->hBattleTurn == TURN_PLAYER)? wram_ptr(wPlayerFutureSightDamage): wram_ptr(wEnemyFutureSightDamage));
+    uint16_t* de = (uint16_t*)((hram.hBattleTurn == TURN_PLAYER)? wram_ptr(wPlayerFutureSightDamage): wram_ptr(wEnemyFutureSightDamage));
 
 // StoreDamage:
     // LD_HL(wCurDamage);

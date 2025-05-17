@@ -44,7 +44,7 @@ void VBlank(void)
     // PUSH_DE;
     // PUSH_HL;
 
-    switch(hram->hVBlank & 7)
+    switch(hram.hVBlank & 7)
     {
         case 7:
         case 0: VBlank0(); break;
@@ -81,7 +81,7 @@ static void VBlank0(void) {
     // inc frame counter
     // LD_HL(hVBlankCounter);
     // INC_hl;
-    hram->hVBlankCounter++;
+    hram.hVBlankCounter++;
 
     // advance random variables
     // LDH_A_addr(rDIV);
@@ -90,8 +90,8 @@ static void VBlank0(void) {
     // ADC_A_B;
     // LDH_addr_A(hRandomAdd);
     temp = gb_read(rDIV);
-    carry = ((uint16_t)temp + (uint16_t)hram->hRandomAdd > 0xff)? 1: 0;
-    hram->hRandomAdd = (temp + hram->hRandomAdd + REG_F_C) & 0xff;
+    carry = ((uint16_t)temp + (uint16_t)hram.hRandomAdd > 0xff)? 1: 0;
+    hram.hRandomAdd = (temp + hram.hRandomAdd + REG_F_C) & 0xff;
     REG_F_C = carry;
 
     // LDH_A_addr(rDIV);
@@ -100,29 +100,29 @@ static void VBlank0(void) {
     // SBC_A_B;
     // LDH_addr_A(hRandomSub);
     temp = gb_read(rDIV);
-    carry = (temp > hram->hRandomSub)? 1: 0;
-    hram->hRandomSub = (temp - hram->hRandomSub - REG_F_C) & 0xff;
+    carry = (temp > hram.hRandomSub)? 1: 0;
+    hram.hRandomSub = (temp - hram.hRandomSub - REG_F_C) & 0xff;
     REG_F_C = carry;
 
     // LDH_A_addr(hROMBank);
     // LDH_addr_A(hROMBankBackup);
-    hram->hROMBankBackup = hram->hROMBank;
+    hram.hROMBankBackup = hram.hROMBank;
 
     // LDH_A_addr(hSCX);
     // LDH_addr_A(rSCX);
-    gb_write(rSCX, hram->hSCX);
+    gb_write(rSCX, hram.hSCX);
 
     // LDH_A_addr(hSCY);
     // LDH_addr_A(rSCY);
-    gb_write(rSCY, hram->hSCY);
+    gb_write(rSCY, hram.hSCY);
 
     // LDH_A_addr(hWY);
     // LDH_addr_A(rWY);
-    gb_write(rWY, hram->hWY);
+    gb_write(rWY, hram.hWY);
 
     // LDH_A_addr(hWX);
     // LDH_addr_A(rWX);
-    gb_write(rWX, hram->hWX);
+    gb_write(rWX, hram.hWX);
 
     // There's only time to call one of these in one vblank.
     // Calls are in order of priority.
@@ -157,7 +157,7 @@ done:
     // LDH_A_addr(hOAMUpdate);
     // AND_A_A;
     // IF_NZ goto done_oam;
-    if(hram->hOAMUpdate == 0)
+    if(hram.hOAMUpdate == 0)
         TransferVirtualOAM();
     
     // vblank-sensitive operations are done
@@ -201,7 +201,7 @@ done:
 
     // LDH_A_addr(hSeconds);
     // LDH_addr_A(hUnusedBackup);
-    hram->hUnusedBackup = hram->hSeconds;
+    hram.hUnusedBackup = hram.hSeconds;
 }
 
 //  sound
@@ -233,14 +233,14 @@ static void VBlank1(void) {
     // CALL(aVBlank1);
     // LDH_A_addr(hROMBank);
     // LDH_addr_A(hROMBankBackup);
-    hram->hROMBankBackup = hram->hROMBank;
+    hram.hROMBankBackup = hram.hROMBank;
 
     // LDH_A_addr(hSCX);
     // LDH_addr_A(rSCX);
     // LDH_A_addr(hSCY);
     // LDH_addr_A(rSCY);
-    gb_write(rSCX, hram->hSCX);
-    gb_write(rSCY, hram->hSCY);
+    gb_write(rSCX, hram.hSCX);
+    gb_write(rSCY, hram.hSCY);
 
     // CALL(aUpdatePals);
     // IF_C goto done;
@@ -308,7 +308,7 @@ static void VBlank1(void) {
 
 //  update pals for either dmg or cgb
 bool UpdatePals(void) {
-    if(hram->hCGB != 0)
+    if(hram.hCGB != 0)
         return UpdateCGBPals();
 
     // update gb pals
@@ -329,20 +329,20 @@ static void VBlank3(void) {
     // CALL(aVBlank3);
     // LDH_A_addr(hROMBank);
     // LDH_addr_A(hROMBankBackup);
-    hram->hROMBankBackup = hram->hROMBank;
+    hram.hROMBankBackup = hram.hROMBank;
 
     // LDH_A_addr(hSCX);
     // LDH_addr_A(rSCX);
     // LDH_A_addr(hSCY);
     // LDH_addr_A(rSCY);
-    gb_write(rSCX, hram->hSCX);
-    gb_write(rSCY, hram->hSCY);
+    gb_write(rSCX, hram.hSCX);
+    gb_write(rSCY, hram.hSCY);
 
     // LDH_A_addr(hCGBPalUpdate);
     // AND_A_A;
     // CALL_NZ(aForceUpdateCGBPals);
     // IF_C goto done;
-    if(hram->hCGBPalUpdate == 0 || !ForceUpdateCGBPals()) {
+    if(hram.hCGBPalUpdate == 0 || !ForceUpdateCGBPals()) {
 
         // CALL(aUpdateBGMap);
         UpdateBGMap();
@@ -411,7 +411,7 @@ static void VBlank4(void) {
     // CALL(aVBlank4);
     // LDH_A_addr(hROMBank);
     // LDH_addr_A(hROMBankBackup);
-    hram->hROMBankBackup = hram->hROMBank;
+    hram.hROMBankBackup = hram.hROMBank;
 
     // CALL(aUpdateBGMap);
     UpdateBGMap();
@@ -449,11 +449,11 @@ static void VBlank4(void) {
 static void VBlank5(void) {
     // LDH_A_addr(hROMBank);
     // LDH_addr_A(hROMBankBackup);
-    hram->hROMBankBackup = hram->hROMBank;
+    hram.hROMBankBackup = hram.hROMBank;
 
     // LDH_A_addr(hSCX);
     // LDH_addr_A(rSCX);
-    gb_write(rSCX, hram->hSCX);
+    gb_write(rSCX, hram.hSCX);
 
     // CALL(aUpdatePalsIfCGB);
     // IF_C goto done;
@@ -508,12 +508,12 @@ static void VBlank5(void) {
 static void VBlank6(void) {
     // LDH_A_addr(hROMBank);
     // LDH_addr_A(hROMBankBackup);
-    hram->hROMBankBackup = hram->hROMBank;
+    hram.hROMBankBackup = hram.hROMBank;
 
     // inc frame counter
     // LD_HL(hVBlankCounter);
     // INC_hl;
-    hram->hVBlankCounter++;
+    hram.hVBlankCounter++;
 
     // CALL(aUpdateCGBPals);
     // IF_C goto done;

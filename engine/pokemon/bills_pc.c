@@ -82,13 +82,13 @@ void v_DepositPKMN(void){
     wram->wVramState = 0;
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hram.hMapAnims = 0;
     // CALL(aBillsPC_InitRAM);
     BillsPC_InitRAM();
     // XOR_A_A;
@@ -118,7 +118,7 @@ void v_DepositPKMN(void){
     ClearSprites();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // POP_AF;
     // LD_addr_A(wVramState);
     wram->wVramState = vramState;
@@ -143,7 +143,7 @@ static void v_DepositPKMN_RunJumptable(void) {
     // Init:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aCopyBoxmonSpecies);
@@ -181,7 +181,7 @@ static void v_DepositPKMN_RunJumptable(void) {
         // LD_A_hl;
         // AND_A(B_BUTTON);
         // IF_NZ goto b_button;
-        if(hram->hJoyPressed & B_BUTTON) {
+        if(hram.hJoyPressed & B_BUTTON) {
         b_button:
             // LD_A(0x4);
             // LD_addr_A(wJumptableIndex);
@@ -192,7 +192,7 @@ static void v_DepositPKMN_RunJumptable(void) {
         // LD_A_hl;
         // AND_A(A_BUTTON);
         // IF_NZ goto a_button;
-        if(hram->hJoyPressed & A_BUTTON) {
+        if(hram.hJoyPressed & A_BUTTON) {
         // a_button:
             species_t a;
             // CALL(aBillsPC_GetSelectedPokemonSpecies);
@@ -221,14 +221,14 @@ static void v_DepositPKMN_RunJumptable(void) {
         BillsPC_UpdateSelectionCursor();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_RefreshTextboxes);
         BillsPC_RefreshTextboxes();
         // CALL(aPCMonInfo);
         PCMonInfo();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -245,7 +245,7 @@ static void v_DepositPKMN_RunJumptable(void) {
     // WhatsUp:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aBillsPC_GetSelectedPokemonSpecies);
@@ -475,13 +475,13 @@ void v_WithdrawPKMN(void){
     wram->wVramState = 0x0;
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hram.hMapAnims = FALSE;
     // CALL(aBillsPC_InitRAM);
     BillsPC_InitRAM();
     // LD_A(NUM_BOXES + 1);
@@ -511,7 +511,7 @@ void v_WithdrawPKMN(void){
     ClearSprites();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // POP_AF;
     // LD_addr_A(wVramState);
     wram->wVramState = vramState;
@@ -538,7 +538,7 @@ static void v_WithdrawPKMN_RunJumptable(void){
         wram->wBillsPC_LoadedBox = NUM_BOXES + 1;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aCopyBoxmonSpecies);
@@ -577,7 +577,7 @@ static void v_WithdrawPKMN_RunJumptable(void){
         // LD_A_hl;
         // AND_A(B_BUTTON);
         // IF_NZ goto b_button;
-        if(hram->hJoyPressed & B_BUTTON) {
+        if(hram.hJoyPressed & B_BUTTON) {
         b_button:
             // LD_A(0x4);
             // LD_addr_A(wJumptableIndex);
@@ -588,7 +588,7 @@ static void v_WithdrawPKMN_RunJumptable(void){
         // LD_A_hl;
         // AND_A(A_BUTTON);
         // IF_NZ goto a_button;
-        if(hram->hJoyPressed & A_BUTTON) {
+        if(hram.hJoyPressed & A_BUTTON) {
         // a_button:
             // CALL(aBillsPC_GetSelectedPokemonSpecies);
             species_t a = BillsPC_GetSelectedPokemonSpecies();
@@ -615,14 +615,14 @@ static void v_WithdrawPKMN_RunJumptable(void){
         BillsPC_UpdateSelectionCursor();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_RefreshTextboxes);
         BillsPC_RefreshTextboxes();
         // CALL(aPCMonInfo);
         PCMonInfo();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -643,7 +643,7 @@ static void v_WithdrawPKMN_RunJumptable(void){
     // PrepSubmenu:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aBillsPC_GetSelectedPokemonSpecies);
@@ -855,13 +855,13 @@ void v_MovePKMNWithoutMail(void){
     wram->wVramState = 0x0;
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hram.hMapAnims = FALSE;
     // CALL(aBillsPC_InitRAM);
     BillsPC_InitRAM();
     // LD_A_addr(wCurBox);
@@ -893,7 +893,7 @@ void v_MovePKMNWithoutMail(void){
     ClearSprites();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // POP_AF;
     // LD_addr_A(wVramState);
     wram->wVramState = vramState;
@@ -942,7 +942,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
     // Init:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aCopyBoxmonSpecies);
@@ -980,7 +980,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // LD_A_hl;
         // AND_A(B_BUTTON);
         // IF_NZ goto b_button;
-        if(hram->hJoyPressed & B_BUTTON) {
+        if(hram.hJoyPressed & B_BUTTON) {
         b_button:
             // LD_A(0x6);
             // LD_addr_A(wJumptableIndex);
@@ -991,7 +991,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // LD_A_hl;
         // AND_A(A_BUTTON);
         // IF_NZ goto a_button;
-        else if(hram->hJoyPressed & A_BUTTON) {
+        else if(hram.hJoyPressed & A_BUTTON) {
         // a_button:
             // CALL(aBillsPC_GetSelectedPokemonSpecies);
             species_t species = BillsPC_GetSelectedPokemonSpecies();
@@ -1033,14 +1033,14 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         BillsPC_UpdateSelectionCursor();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_RefreshTextboxes);
         BillsPC_RefreshTextboxes();
         // CALL(aPCMonInfo);
         PCMonInfo();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -1058,7 +1058,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
     // PrepSubmenu:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aClearSprites);
         ClearSprites();
         // CALL(aBillsPC_GetSelectedPokemonSpecies);
@@ -1162,7 +1162,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
     // PrepInsertCursor:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aCopyBoxmonSpecies);
         CopyBoxmonSpecies();
         // LD_DE(mPCString_MoveToWhere);
@@ -1192,7 +1192,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // LD_A_hl;
         // AND_A(B_BUTTON);
         // IF_NZ goto b_button_2;
-        if(hram->hJoyPressed & B_BUTTON) {
+        if(hram.hJoyPressed & B_BUTTON) {
         // b_button_2:
             // LD_A_addr(wBillsPC_BackupScrollPosition);
             // LD_addr_A(wBillsPC_ScrollPosition);
@@ -1212,7 +1212,7 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         // LD_A_hl;
         // AND_A(A_BUTTON);
         // IF_NZ goto a_button_2;
-        else if(hram->hJoyPressed & A_BUTTON){
+        else if(hram.hJoyPressed & A_BUTTON){
         // a_button_2:
             // CALL(aBillsPC_CheckSpaceInDestination);
             // IF_C goto no_space;
@@ -1257,12 +1257,12 @@ static void v_MovePKMNWithoutMail_RunJumptable(void){
         BillsPC_UpdateInsertCursor();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_RefreshTextboxes);
         BillsPC_RefreshTextboxes();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aDelayFrame);
         DelayFrame();
         // CALL(aDelayFrame);
@@ -1363,12 +1363,12 @@ static u8_flag_s Withdraw_UpDown(void){
     // LD_A_hl;
     // AND_A(D_UP);
     // JR_NZ (mBillsPC_PressUp);
-    if(hram->hJoyLast & D_UP)
+    if(hram.hJoyLast & D_UP)
         return BillsPC_PressUp();
     // LD_A_hl;
     // AND_A(D_DOWN);
     // JR_NZ (mBillsPC_PressDown);
-    if(hram->hJoyLast & D_DOWN)
+    if(hram.hJoyLast & D_DOWN)
         return BillsPC_PressDown(wram->wBillsPC_NumMonsOnScreen, wram->wBillsPC_NumMonsInBox);
 
 // empty:
@@ -1390,12 +1390,12 @@ static u8_flag_s MoveMonWithoutMail_DPad(void){
         // LD_A_hl;
         // AND_A(D_UP);
         // JR_NZ (mBillsPC_PressUp);
-        if(hram->hJoyLast & D_UP)
+        if(hram.hJoyLast & D_UP)
             return BillsPC_PressUp();
         // LD_A_hl;
         // AND_A(D_DOWN);
         // JR_NZ (mBillsPC_PressDown);
-        if(hram->hJoyLast & D_DOWN)
+        if(hram.hJoyLast & D_DOWN)
             return BillsPC_PressDown(d, e);
     }
 
@@ -1403,12 +1403,12 @@ static u8_flag_s MoveMonWithoutMail_DPad(void){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // JR_NZ (mBillsPC_PressLeft);
-    if(hram->hJoyLast & D_LEFT)
+    if(hram.hJoyLast & D_LEFT)
         return BillsPC_PressLeft();
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // JR_NZ (mBillsPC_PressRight);
-    if(hram->hJoyLast & D_RIGHT)
+    if(hram.hJoyLast & D_RIGHT)
         return BillsPC_PressRight();
     // JR(mBillsPC_JoypadDidNothing);
     return BillsPC_JoypadDidNothing();
@@ -1428,12 +1428,12 @@ static u8_flag_s MoveMonWithoutMail_DPad_2(void){
         // LD_A_hl;
         // AND_A(D_UP);
         // JR_NZ (mBillsPC_PressUp);
-        if(hram->hJoyLast & D_UP)
+        if(hram.hJoyLast & D_UP)
             return BillsPC_PressUp();
         // LD_A_hl;
         // AND_A(D_DOWN);
         // JR_NZ (mBillsPC_PressDown);
-        if(hram->hJoyLast & D_DOWN)
+        if(hram.hJoyLast & D_DOWN)
             return BillsPC_PressDown(d, e);
     }
 
@@ -1441,12 +1441,12 @@ static u8_flag_s MoveMonWithoutMail_DPad_2(void){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // JR_NZ (mBillsPC_PressLeft);
-    if(hram->hJoyLast & D_LEFT)
+    if(hram.hJoyLast & D_LEFT)
         return BillsPC_PressLeft();
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // JR_NZ (mBillsPC_PressRight);
-    if(hram->hJoyLast & D_RIGHT)
+    if(hram.hJoyLast & D_RIGHT)
         return BillsPC_PressRight();
     // JR(mBillsPC_JoypadDidNothing);
     return BillsPC_JoypadDidNothing();
@@ -2547,21 +2547,21 @@ void StatsScreenDPad(void){
     // LD_A_hl;
     // AND_A(A_BUTTON | B_BUTTON | D_RIGHT | D_LEFT);
     // LD_addr_A(wMenuJoypad);
-    wram->wMenuJoypad = hram->hJoyPressed & (A_BUTTON | B_BUTTON | D_RIGHT | D_LEFT);
+    wram->wMenuJoypad = hram.hJoyPressed & (A_BUTTON | B_BUTTON | D_RIGHT | D_LEFT);
     // IF_NZ goto pressed_a_b_right_left;
     if(wram->wMenuJoypad != 0)
         return;
     // LD_A_hl;
     // AND_A(D_DOWN | D_UP);
     // LD_addr_A(wMenuJoypad);
-    wram->wMenuJoypad = hram->hJoyPressed & (D_DOWN | D_UP);
+    wram->wMenuJoypad = hram.hJoyPressed & (D_DOWN | D_UP);
     // IF_NZ goto pressed_down_up;
     if(wram->wMenuJoypad != 0) {
     // pressed_down_up:
         // CALL(av_StatsScreenDPad);
         // AND_A_A;
         // IF_Z goto did_nothing;
-        if(v_StatsScreenDPad(&hram->hJoyPressed).a == 0) {
+        if(v_StatsScreenDPad(&hram.hJoyPressed).a == 0) {
         // did_nothing:
             // XOR_A_A;
             // LD_addr_A(wMenuJoypad);
@@ -3346,7 +3346,7 @@ void v_ChangeBox(void){
     // loop:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aBillsPC_PrintBoxName);
         BillsPC_PrintBoxName();
         // CALL(aBillsPC_PlaceChooseABoxString);
@@ -3384,7 +3384,7 @@ void v_ChangeBox(void){
 void BillsPC_ClearTilemap(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
@@ -3729,7 +3729,7 @@ static void BillsPC_PlaceChangeBoxString(uint8_t* de){
     PlaceStringSimple(de, coord(1, 16, wram->wTilemap));
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 
 }

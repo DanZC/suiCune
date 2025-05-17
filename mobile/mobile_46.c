@@ -813,9 +813,9 @@ void BattleTowerRoomMenu_InitRAM(void){
     gb_write(rIE, (1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
     // LD_A(0x1);
     // LDH_addr_A(hMobileReceive);
-    hram->hMobileReceive = 0x1;
+    hram.hMobileReceive = 0x1;
     // LDH_addr_A(hMobile);
-    hram->hMobile = 0x1;
+    hram.hMobile = 0x1;
     // NOP;
     // FARCALL(aStubbed_Function106462);
     Stubbed_Function106462();
@@ -856,11 +856,11 @@ void BattleTowerRoomMenu_Cleanup(void){
     // NOP;
     // XOR_A_A;
     // LDH_addr_A(hMobileReceive);
-    hram->hMobileReceive = 0;
+    hram.hMobileReceive = 0;
     // LDH_addr_A(hMobile);
-    hram->hMobile = 0;
+    hram.hMobile = 0;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0;
+    hram.hVBlank = 0;
     // CALL(aNormalSpeed);
     NormalSpeed();
     // XOR_A_A;
@@ -1520,7 +1520,7 @@ bool Function118821(void){
     // LDH_A_addr(hJoyDown);
     // CP_A(0x5);
     // IF_NZ goto asm_11884a;
-    if(wram->wc319 < 0x3 || wram->wc319 == 0x4 || hram->hJoyDown != (A_BUTTON | SELECT)) {
+    if(wram->wc319 < 0x3 || wram->wc319 == 0x4 || hram.hJoyDown != (A_BUTTON | SELECT)) {
     // asm_11884a:
         // AND_A_A;
         // RET;
@@ -1548,7 +1548,7 @@ bool Function11884c(void){
     // LDH_A_addr(hJoyDown);
     // CP_A(0x5);
     // IF_NZ goto asm_118864;
-    if(hram->hJoyDown == (SELECT | A_BUTTON)) {
+    if(hram.hJoyDown == (SELECT | A_BUTTON)) {
         mobile_api_data_s data = {};
         // LD_A(MOBILEAPI_05);
         // CALL(aMobileAPI);
@@ -1905,7 +1905,7 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // IF_NZ goto b_button;
-    if(hram->hJoyPressed & B_BUTTON){
+    if(hram.hJoyPressed & B_BUTTON){
     // b_button:
         // CALL(aPlayClickSFX);
         PlayClickSFX();
@@ -1914,7 +1914,7 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto a_button;
-    else if(hram->hJoyPressed & A_BUTTON){
+    else if(hram.hJoyPressed & A_BUTTON){
     // a_button:
         // CALL(aPlayClickSFX);
         PlayClickSFX();
@@ -1966,7 +1966,7 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto d_down;
-    else if(hram->hJoyPressed & D_DOWN){
+    else if(hram.hJoyPressed & D_DOWN){
     // d_down:
         // LD_HL(wcd4f);
         // DEC_hl;
@@ -1982,7 +1982,7 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto d_up;
-    else if(hram->hJoyPressed & D_UP){
+    else if(hram.hJoyPressed & D_UP){
     // d_up:
         // LD_A_addr(wcd4a);
         // LD_HL(wcd4f);
@@ -2219,7 +2219,7 @@ void BattleTowerRoomMenu_Mobile_17(void){
     // ld a, [hl]
     // and $01
     // jp nz, Jump_046_4c02
-    if(hram->hJoyPressed & A_BUTTON) {
+    if(hram.hJoyPressed & A_BUTTON) {
     // selection made
     // Jump_046_4c02:
         // xor a
@@ -2259,7 +2259,7 @@ void BattleTowerRoomMenu_Mobile_17(void){
     // ld a, [hl]
     // and $80
     // jr nz, jr_046_4ba0
-    else if(hram->hJoyPressed & D_DOWN) {
+    else if(hram.hJoyPressed & D_DOWN) {
     jr_046_4ba0:
         // xor a
         // ld [wcd8a], a;$cd7e
@@ -2296,7 +2296,7 @@ void BattleTowerRoomMenu_Mobile_17(void){
     // ld a, [hl]
     // and $40
     // jr nz, jr_046_4bcc
-    else if(hram->hJoyPressed & D_UP) {
+    else if(hram.hJoyPressed & D_UP) {
     jr_046_4bcc:
         // xor a
         // ld [wcd8a], a;$cd7e
@@ -2341,21 +2341,21 @@ void BattleTowerRoomMenu_Mobile_17(void){
     // ld a, [hl]
     // and $20
     // jr nz, jr_046_4ba0
-    else if(hram->hJoyPressed & D_LEFT) {
+    else if(hram.hJoyPressed & D_LEFT) {
         goto jr_046_4ba0;
     }
 
     // ld a, [hl]
     // and $10
     // jr nz, jr_046_4bcc
-    else if(hram->hJoyPressed & D_RIGHT) {
+    else if(hram.hJoyPressed & D_RIGHT) {
         goto jr_046_4bcc;
     }
 
     // ld a, [hl]
     // and $02
     // jp nz, Jump_046_4c2d
-    else if(hram->hJoyPressed & B_BUTTON) {
+    else if(hram.hJoyPressed & B_BUTTON) {
     // Jump_046_4c2d:
         // call PlayClickSFX;$1fcc
         PlayClickSFX();
@@ -2420,16 +2420,16 @@ void BattleTowerRoomMenu_Mobile_18(void){
     // ld a, l
     // and $0f
     // ldh [hDividend + 0], a;$b3
-    hram->hMultiplicand[0] = hl & 0xf;
+    hram.hMultiplicand[0] = hl & 0xf;
     // ld a, l
     // and $f0
     // swap a
     // ldh [hDividend + 1], a;$b4
-    hram->hMultiplicand[1] = (hl & 0xf0) >> 4;
+    hram.hMultiplicand[1] = (hl & 0xf0) >> 4;
     // ld a, h
     // and $0f
     // ldh [hDividend + 2], a;$b5
-    hram->hMultiplicand[2] = (hl & 0xf00) >> 8;
+    hram.hMultiplicand[2] = (hl & 0xf00) >> 8;
     // call Function11a80c;Call_046_6d3d
     Function11a80c();
     // call RemovedFunction12;Call_046_4e2b
@@ -6826,7 +6826,7 @@ bool BattleTowerRoomMenu2(void){
     // LDH_addr_A(rSVBK);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
     return result;
 }
@@ -7378,7 +7378,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto a_button;
-    if(hram->hJoyPressed & A_BUTTON){
+    if(hram.hJoyPressed & A_BUTTON){
     // a_button:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -7418,7 +7418,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // IF_NZ goto b_button;
-    else if(hram->hJoyPressed & B_BUTTON){
+    else if(hram.hJoyPressed & B_BUTTON){
     // b_button:
         // CALL(aPlayClickSFX);
         PlayClickSFX();
@@ -7435,7 +7435,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto d_up;
-    else if(hram->hJoyPressed & D_UP){
+    else if(hram.hJoyPressed & D_UP){
     // d_up:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -7463,7 +7463,7 @@ bool BattleTowerRoomMenu2_UpdateYesNoMenu(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto d_down;
-    else if(hram->hJoyPressed & D_DOWN){
+    else if(hram.hJoyPressed & D_DOWN){
     // d_down:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -7967,7 +7967,7 @@ bool Function11a536(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto asm_11a5a7;
-    if(hram->hJoyPressed & A_BUTTON) {
+    if(hram.hJoyPressed & A_BUTTON) {
     asm_11a5a7:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -7981,7 +7981,7 @@ bool Function11a536(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // IF_NZ goto asm_11a5a2;
-    else if(hram->hJoyPressed & B_BUTTON) {
+    else if(hram.hJoyPressed & B_BUTTON) {
     // asm_11a5a2:
         // LD_A(0x1);
         // LD_addr_A(wMobileInactivityTimerMinutes);
@@ -7991,7 +7991,7 @@ bool Function11a536(void){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_11a564;
-    else if(hram->hJoyPressed & D_UP) {
+    else if(hram.hJoyPressed & D_UP) {
     // asm_11a564:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -8017,7 +8017,7 @@ bool Function11a536(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_11a583;
-    else if(hram->hJoyPressed & D_DOWN) {
+    else if(hram.hJoyPressed & D_DOWN) {
     // asm_11a583:
         // XOR_A_A;
         // LD_addr_A(wcd8a);
@@ -8257,19 +8257,19 @@ void MenuHeader_11a804(void){
 
 void Function11a80c(void){
     // LD_DE(hDivisor);
-    uint8_t* de = &hram->hDivisor;
+    uint8_t* de = &hram.hDivisor;
     // LD_BC(hDividend);
     // LD_HL(mUnknown_11a89a);
     // CALL(aFunction11a88c);
-    Function11a88c(de, hram->hMultiplicand, Unknown_11a89a);
+    Function11a88c(de, hram.hMultiplicand, Unknown_11a89a);
     // LD_BC(hQuotient + 1);
     // LD_HL(mUnknown_11a8ba);
     // CALL(aFunction11a88c);
-    Function11a88c(de + 2, hram->hMultiplicand + 1, Unknown_11a89a);
+    Function11a88c(de + 2, hram.hMultiplicand + 1, Unknown_11a89a);
     // LD_BC(hPrintNumBuffer + 2);
     // LD_HL(mUnknown_11a8da);
     // CALL(aFunction11a88c);
-    Function11a88c(de + 4, hram->hMultiplicand + 2, Unknown_11a89a);
+    Function11a88c(de + 4, hram.hMultiplicand + 2, Unknown_11a89a);
     // XOR_A_A;
     // LD_B_A;
     uint8_t b = 0;
@@ -8280,12 +8280,12 @@ void Function11a80c(void){
     // AND_A(0xf);
     // CALL(aFunction11a884);
     // LD_E_A;
-    uint8_t e = Function11a884(hram->hPrintNumBuffer[6] & 0xf, hram->hPrintNumBuffer[4] & 0xf, &b);
+    uint8_t e = Function11a884(hram.hPrintNumBuffer[6] & 0xf, hram.hPrintNumBuffer[4] & 0xf, &b);
     // LDH_A_addr(hPrintNumBuffer + 8);
     // AND_A(0xf);
     // CALL(aFunction11a884);
     // LD_addr_A(wcd62);
-    wram->wcd62[0] = Function11a884(hram->hPrintNumBuffer[8] & 0xf, e, &b);
+    wram->wcd62[0] = Function11a884(hram.hPrintNumBuffer[8] & 0xf, e, &b);
     // LD_E_B;
     e = b;
     // XOR_A_A;
@@ -8296,19 +8296,19 @@ void Function11a80c(void){
     // SWAP_A;
     // CALL(aFunction11a884);
     // LD_E_A;
-    e = Function11a884((hram->hPrintNumBuffer[4] & 0xf0) >> 8, e, &b);
+    e = Function11a884((hram.hPrintNumBuffer[4] & 0xf0) >> 8, e, &b);
     // LDH_A_addr(hPrintNumBuffer + 6);
     // AND_A(0xf0);
     // SWAP_A;
     // CALL(aFunction11a884);
     // LD_E_A;
-    e = Function11a884((hram->hPrintNumBuffer[6] & 0xf0) >> 8, e, &b);
+    e = Function11a884((hram.hPrintNumBuffer[6] & 0xf0) >> 8, e, &b);
     // LDH_A_addr(hPrintNumBuffer + 8);
     // AND_A(0xf0);
     // SWAP_A;
     // CALL(aFunction11a884);
     // LD_addr_A(wcd63);
-    wram->wcd63[0] = Function11a884((hram->hPrintNumBuffer[8] & 0xf0) >> 8, e, &b);
+    wram->wcd63[0] = Function11a884((hram.hPrintNumBuffer[8] & 0xf0) >> 8, e, &b);
     // LD_E_B;
     e = b;
     // XOR_A_A;
@@ -8318,17 +8318,17 @@ void Function11a80c(void){
     // AND_A(0xf);
     // CALL(aFunction11a884);
     // LD_E_A;
-    e = Function11a884((hram->hPrintNumBuffer[5] & 0xf), e, &b);
+    e = Function11a884((hram.hPrintNumBuffer[5] & 0xf), e, &b);
     // LDH_A_addr(hPrintNumBuffer + 7);
     // AND_A(0xf);
     // CALL(aFunction11a884);
     // LD_E_A;
-    e = Function11a884((hram->hPrintNumBuffer[7] & 0xf), e, &b);
+    e = Function11a884((hram.hPrintNumBuffer[7] & 0xf), e, &b);
     // LDH_A_addr(hPrintNumBuffer + 9);
     // AND_A(0xf);
     // CALL(aFunction11a884);
     // LD_addr_A(wcd64);
-    wram->wcd64[0] = Function11a884((hram->hPrintNumBuffer[9] & 0xf), e, &b);
+    wram->wcd64[0] = Function11a884((hram.hPrintNumBuffer[9] & 0xf), e, &b);
     // RET;
 }
 
@@ -8577,7 +8577,7 @@ void Function11a971(void){
     // LD_A_hl;
     // AND_A_A;
     // IF_Z goto asm_11a97f;
-    if(hram->hJoyDown != 0 || wram->wc31f == 0) {
+    if(hram.hJoyDown != 0 || wram->wc31f == 0) {
     // asm_11a97f:
         // LD_A_addr(wOptions);
         // AND_A(0x7);
@@ -8837,7 +8837,7 @@ void Function11ac3e(void){
 void Function11ac51(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
@@ -8852,13 +8852,13 @@ void Function11ac51(void){
     wram->wVramState = 0;
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hram.hMapAnims = 0;
     // LD_addr_A(wcd49);
     wram->wcd49 = 0;
     // LD_addr_A(wcd4a);
@@ -8904,7 +8904,7 @@ void Function11ac51(void){
     ClearSprites();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // POP_AF;
     // LD_addr_A(wVramState);
     wram->wVramState = vramState;
@@ -9025,7 +9025,7 @@ void Function11ad1b(void){
     wram->wcd82[0] = wram->wMenuCursorY;
     // DEC_A;
     // LDH_addr_A(hObjectStructIndex);
-    hram->hObjectStructIndex = wram->wMenuCursorY - 1;
+    hram.hObjectStructIndex = wram->wMenuCursorY - 1;
     // LD_A(0x10);
     // LD_addr_A(wCurIconTile);
     wram->wCurIconTile = 0x10;
@@ -9136,13 +9136,13 @@ void Function11adc4(void){
     // LD_A_hl;
     // AND_A_A;
     // RET_Z ;
-    if(hram->hJoyPressed == 0)
+    if(hram.hJoyPressed == 0)
         return;
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_11ade6;
     uint8_t a;
-    if(hram->hJoyPressed & D_UP) {
+    if(hram.hJoyPressed & D_UP) {
     // asm_11ade6:
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
@@ -9155,7 +9155,7 @@ void Function11adc4(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_11aded;
-    else if(hram->hJoyPressed & D_DOWN) {
+    else if(hram.hJoyPressed & D_DOWN) {
     // asm_11aded:
         // LD_A_addr(wMenuCursorY);
         // INC_A;
@@ -9182,7 +9182,7 @@ void Function11adc4(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto asm_11ae06;
-    else if(hram->hJoyPressed & A_BUTTON) {
+    else if(hram.hJoyPressed & A_BUTTON) {
     // asm_11ae06:
         // CALL(aPlayClickSFX);
         PlayClickSFX();
@@ -9225,7 +9225,7 @@ void Function11adc4(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // RET_Z ;
-    else if(hram->hJoyPressed & B_BUTTON) {
+    else if(hram.hJoyPressed & B_BUTTON) {
         // CALL(aPlayClickSFX);
         PlayClickSFX();
         // XOR_A_A;
@@ -9303,13 +9303,13 @@ void Function11ae98(void){
     // LD_A_hl;
     // AND_A_A;
     // RET_Z ;
-    if(hram->hJoyPressed == 0)
+    if(hram.hJoyPressed == 0)
         return;
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_11aec1;
     uint8_t a;
-    if(hram->hJoyPressed & D_UP) {
+    if(hram.hJoyPressed & D_UP) {
     // asm_11aec1:
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
@@ -9322,7 +9322,7 @@ void Function11ae98(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_11aec8;
-    else if(hram->hJoyPressed & D_DOWN) {
+    else if(hram.hJoyPressed & D_DOWN) {
     // asm_11aec8:
         // LD_A_addr(wMenuCursorY);
         // INC_A;
@@ -9349,7 +9349,7 @@ void Function11ae98(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto asm_11aee1;
-    else if(hram->hJoyPressed & A_BUTTON) {
+    else if(hram.hJoyPressed & A_BUTTON) {
     // asm_11aee1:
         // CALL(aPlayClickSFX);
         PlayClickSFX();
@@ -9369,7 +9369,7 @@ void Function11ae98(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // RET_Z ;
-    else if(hram->hJoyPressed & B_BUTTON) {
+    else if(hram.hJoyPressed & B_BUTTON) {
         // CALL(aPlayClickSFX);
         PlayClickSFX();
 
@@ -9442,13 +9442,13 @@ void Function11af4e(void){
     // LD_A_hl;
     // AND_A_A;
     // RET_Z ;
-    if(hram->hJoyPressed == 0)
+    if(hram.hJoyPressed == 0)
         return;
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_11af77;
     uint8_t a;
-    if(hram->hJoyPressed & D_UP) {
+    if(hram.hJoyPressed & D_UP) {
     // asm_11af77:
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
@@ -9461,7 +9461,7 @@ void Function11af4e(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_11af7e;
-    else if(hram->hJoyPressed & D_DOWN) {
+    else if(hram.hJoyPressed & D_DOWN) {
     // asm_11af7e:
         // LD_A_addr(wMenuCursorY);
         // INC_A;
@@ -9488,7 +9488,7 @@ void Function11af4e(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto asm_11af97;
-    else if(hram->hJoyPressed & A_BUTTON) {
+    else if(hram.hJoyPressed & A_BUTTON) {
     // asm_11af97:
         // CALL(aPlayClickSFX);
         PlayClickSFX();
@@ -9507,7 +9507,7 @@ void Function11af4e(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // RET_Z ;
-    else if(hram->hJoyPressed & B_BUTTON) {
+    else if(hram.hJoyPressed & B_BUTTON) {
         // CALL(aPlayClickSFX);
         PlayClickSFX();
 
@@ -9848,7 +9848,7 @@ void Function11b0ff(void){
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // IF_NZ goto asm_11b141;
-    if(hram->hJoyPressed & B_BUTTON) {
+    if(hram.hJoyPressed & B_BUTTON) {
     // asm_11b141:
         // LD_HL(wJumptableIndex);
         // LD_A(0x7);
@@ -9860,7 +9860,7 @@ void Function11b0ff(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto asm_11b131;
-    else if(hram->hJoyPressed & A_BUTTON) {
+    else if(hram.hJoyPressed & A_BUTTON) {
     // asm_11b131:
         // CALL(aFunction11b20b);
         Function11b20b();
@@ -9928,12 +9928,12 @@ void Function11b0ff(void){
         wram->wcd4c = (wram->wcd4c + 1) & 0x3;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aFunction11b099);
         Function11b099();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // RET;
     }
     else {
@@ -9962,7 +9962,7 @@ bool Function11b175(void){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_11b19a;
-    if(hram->hJoyLast & D_UP) {
+    if(hram.hJoyLast & D_UP) {
     // asm_11b19a:
         // LD_HL(wc7d1);
         // LD_A_hl;
@@ -9989,7 +9989,7 @@ bool Function11b175(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_11b1ae;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hram.hJoyLast & D_DOWN) {
     // asm_11b1ae:
         // LD_HL(wc7d1);
         // LD_A_hl;
@@ -10027,7 +10027,7 @@ bool Function11b175(void){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // IF_NZ goto asm_11b1c6;
-    else if(hram->hJoyLast & D_LEFT) {
+    else if(hram.hJoyLast & D_LEFT) {
     // asm_11b1c6:
         // LD_HL(wc7d0);
         // LD_A_hl;
@@ -10054,7 +10054,7 @@ bool Function11b175(void){
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // IF_NZ goto asm_11b1d8;
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hram.hJoyLast & D_RIGHT) {
     // asm_11b1d8:
         // LD_HL(wc7d0);
         // LD_A_D;
@@ -10959,16 +10959,16 @@ static void Function11b570_SaveData(void){
 
     // LDH_A_addr(hRTCMinutes);
     // LD_hli_A;
-    *(hl++) = hram->hRTCMinutes;
+    *(hl++) = hram.hRTCMinutes;
     // LDH_A_addr(hRTCHours);
     // LD_hli_A;
-    *(hl++) = hram->hRTCHours;
+    *(hl++) = hram.hRTCHours;
     // LDH_A_addr(hRTCDayLo);
     // LD_hli_A;
-    *(hl++) = hram->hRTCDayLo;
+    *(hl++) = hram.hRTCDayLo;
     // LDH_A_addr(hRTCDayHi);
     // LD_hl_A;
-    *(hl++) = hram->hRTCDayHi;
+    *(hl++) = hram.hRTCDayHi;
 
     // CALL(aCloseSRAM);
     CloseSRAM();
@@ -11462,28 +11462,28 @@ void Function11b879(void){
     // LDH_A_addr(hRTCDayHi);
     // CP_A_hl;
     // RET_NZ ;
-    if(hram->hRTCDayHi != wram->wcd4c)
+    if(hram.hRTCDayHi != wram->wcd4c)
         return;
     // DEC_HL;
     // LDH_A_addr(hRTCDayLo);
     // CP_A_hl;
     // RET_NZ ;
-    if(hram->hRTCDayLo != wram->wcd4b)
+    if(hram.hRTCDayLo != wram->wcd4b)
         return;
     // LD_HL(wcd4a);
     // LDH_A_addr(hRTCHours);
     // CP_A_hl;
     // IF_NC goto asm_11b8d8;
-    if(hram->hRTCHours < wram->wcd4a) {
+    if(hram.hRTCHours < wram->wcd4a) {
         // LD_A(0x18);
         // SUB_A_hl;
         // LD_HL(hRTCHours);
         // ADD_A_hl;
         // LD_addr_A(wcd4c);
-        wram->wcd4c = (24 - wram->wcd4a) + hram->hRTCHours;
+        wram->wcd4c = (24 - wram->wcd4a) + hram.hRTCHours;
         // LDH_A_addr(hRTCMinutes);
         // LD_addr_A(wcd4b);
-        wram->wcd4b = hram->hRTCMinutes;
+        wram->wcd4b = hram.hRTCMinutes;
         // XOR_A_A;
         // LD_addr_A(wcd4a);
         wram->wcd4a = 0;
@@ -11493,10 +11493,10 @@ void Function11b879(void){
     // asm_11b8d8:
         // LDH_A_addr(hRTCMinutes);
         // LD_addr_A(wcd4b);
-        wram->wcd4b = hram->hRTCMinutes;
+        wram->wcd4b = hram.hRTCMinutes;
         // LDH_A_addr(hRTCHours);
         // LD_addr_A(wcd4c);
-        wram->wcd4c = hram->hRTCHours;
+        wram->wcd4c = hram.hRTCHours;
     }
 
 // asm_11b8e2:

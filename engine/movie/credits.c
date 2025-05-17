@@ -103,7 +103,7 @@ void Credits(uint8_t b){
 
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = LOW(rSCX);
+    hram.hLCDCPointer = LOW(rSCX);
 
     // CALL(aGetCreditsPalette);
     GetCreditsPalette();
@@ -111,19 +111,19 @@ void Credits(uint8_t b){
     SetPalettes();
     // LDH_A_addr(hVBlank);
     // PUSH_AF;
-    uint8_t vblank = hram->hVBlank;
+    uint8_t vblank = hram.hVBlank;
     // LD_A(0x5);
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0x5;
+    hram.hVBlank = 0x5;
 #if BUGFIX_CREDITS_HINMENU_NOT_PRESERVED
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
 #endif
     // LD_A(TRUE);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = TRUE;
+    hram.hInMenu = TRUE;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_addr_A(wCreditsPos);
     // LD_addr_A(wCreditsPos + 1);
     wram->wCreditsPos = 0;
@@ -151,15 +151,15 @@ void Credits(uint8_t b){
     ClearBGPalettes();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0x0;
+    hram.hLCDCPointer = 0x0;
     // LDH_addr_A(hBGMapAddress);
-    hram->hBGMapAddress = (hram->hBGMapAddress & 0xff00) | 0x0;
+    hram.hBGMapAddress = (hram.hBGMapAddress & 0xff00) | 0x0;
 #if BUGFIX_CREDITS_HINMENU_NOT_PRESERVED
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
 #endif
     // POP_AF;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = vblank;
+    hram.hVBlank = vblank;
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -169,7 +169,7 @@ bool Credits_HandleAButton(void){
     // LDH_A_addr(hJoypadDown);
     // AND_A(A_BUTTON);
     // RET_Z ;
-    if(hram->hJoypadDown & A_BUTTON) {
+    if(hram.hJoypadDown & A_BUTTON) {
         // LD_A_addr(wJumptableIndex);
         // BIT_A(7);
         return bit_test(wram->wJumptableIndex, 7) != 0;
@@ -182,7 +182,7 @@ void Credits_HandleBButton(void){
     // LDH_A_addr(hJoypadDown);
     // AND_A(B_BUTTON);
     // RET_Z ;
-    if((hram->hJoypadDown & B_BUTTON) == 0)
+    if((hram.hJoypadDown & B_BUTTON) == 0)
         return;
     // LD_A_addr(wJumptableIndex);
     // BIT_A(6);
@@ -276,7 +276,7 @@ void Credits_LoopBack(void){
 void Credits_PrepBGMapUpdate(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // JP(mCredits_Next);
     return Credits_Next();
 }
@@ -300,7 +300,7 @@ void Credits_UpdateGFXRequestPath(void){
 void Credits_RequestGFX(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(8);
     // LD_addr_A(wRequested2bppSize);
     // JP(mCredits_Next);
@@ -390,7 +390,7 @@ void ParseCredits(void){
 //  starting from line 5.
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 5, wTilemap);
     // LD_BC(SCREEN_WIDTH * 12);
     // LD_A(0x7f);
@@ -435,10 +435,10 @@ void ParseCredits(void){
 
                 // XOR_A_A;
                 // LDH_addr_A(hBGMapThird);
-                hram->hBGMapThird = 0x0;
+                hram.hBGMapThird = 0x0;
                 // LD_A(1);
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+                hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
 
             // done:
                 // JP(mCredits_Next);
@@ -609,10 +609,10 @@ static void ConstructCreditsTilemap_InitTopPortion(tile_t* hl) {
 void ConstructCreditsTilemap(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0xc);
     // LDH_addr_A(hBGMapAddress);
-    hram->hBGMapAddress = (hram->hBGMapAddress & 0xff00) | 0xc;
+    hram.hBGMapAddress = (hram.hBGMapAddress & 0xff00) | 0xc;
 
     // LD_A(0x28);
     // hlcoord(0, 0, wTilemap);
@@ -664,9 +664,9 @@ void ConstructCreditsTilemap(void){
     WaitBGMap2();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LDH_addr_A(hBGMapAddress);
-    hram->hBGMapAddress = (hram->hBGMapAddress & 0xff00) | 0x0;
+    hram.hBGMapAddress = (hram.hBGMapAddress & 0xff00) | 0x0;
     // hlcoord(0, 0, wTilemap);
     // CALL(aConstructCreditsTilemap_InitTopPortion);
     ConstructCreditsTilemap_InitTopPortion(coord(0, 0, wram->wTilemap));

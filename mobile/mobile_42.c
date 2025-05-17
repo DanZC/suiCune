@@ -171,10 +171,10 @@ void RunMobileTradeAnim_Frontpics(const uint8_t* de){
     gTradeAnimAddress = de;
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
-    uint8_t mapAnims = hram->hMapAnims;
+    uint8_t mapAnims = hram.hMapAnims;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hram.hMapAnims = FALSE;
     // LD_HL(wVramState);
     // LD_A_hl;
     // PUSH_AF;
@@ -205,7 +205,7 @@ void RunMobileTradeAnim_Frontpics(const uint8_t* de){
     wram->wVramState = vramState;
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = mapAnims;
+    hram.hMapAnims = mapAnims;
     // RET;
 }
 
@@ -217,10 +217,10 @@ void RunMobileTradeAnim_NoFrontpics(const uint8_t* de){
     gTradeAnimAddress = de;
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
-    uint8_t mapAnims = hram->hMapAnims;
+    uint8_t mapAnims = hram.hMapAnims;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hram.hMapAnims = FALSE;
     // LD_HL(wVramState);
     // LD_A_hl;
     // PUSH_AF;
@@ -251,7 +251,7 @@ void RunMobileTradeAnim_NoFrontpics(const uint8_t* de){
     wram->wVramState = vramState;
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = mapAnims;
+    hram.hMapAnims = mapAnims;
     // RET;
 }
 
@@ -295,15 +295,15 @@ void Function1080b7(void){
 
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
 
@@ -384,15 +384,15 @@ void Function108157(void){
     EnableLCD();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // XOR_A_A;  // SPRITE_ANIM_DICT_DEFAULT
@@ -565,15 +565,15 @@ bool MobileTradeAnim_JumptableLoop(void){
 // StopAnim:
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // CALL(aLoadStandardFont);
     LoadStandardFont();
     // CALL(aLoadFontsBattleExtra);
@@ -687,16 +687,16 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
     PlayMusic2(MUSIC_EVOLUTION);
     // LD_A(0x80);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x80;
+    hram.hSCX = 0x80;
     // XOR_A_A;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LD_A(0x87);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x87;
+    hram.hWX = 0x87;
     // LD_A(0x50);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x50;
+    hram.hWY = 0x50;
     // CALL(aMobileTradeAnim_DisplayMonToBeSent);
     MobileTradeAnim_DisplayMonToBeSent();
     // LD_A_addr(wPlayerTrademonSpecies);
@@ -718,18 +718,18 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
     // CALL(aWaitBGMap);
     WaitBGMap();
 
-    while(hram->hWX != 0x7) {
+    while(hram.hWX != 0x7) {
     // loop:
         // LDH_A_addr(hWX);
         // CP_A(0x7);
         // IF_Z goto okay;
         // SUB_A(0x4);
         // LDH_addr_A(hWX);
-        hram->hWX -= 0x4;
+        hram.hWX -= 0x4;
         // LDH_A_addr(hSCX);
         // SUB_A(0x4);
         // LDH_addr_A(hSCX);
-        hram->hSCX -= 0x4;
+        hram.hSCX -= 0x4;
         // CALL(aDelayFrame);
         DelayFrame();
         // goto loop;
@@ -738,10 +738,10 @@ void MobileTradeAnim_ShowPlayerMonToBeSent(void){
 // okay:
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LD_A_addr(wPlayerTrademonSpecies);
     // CALL(aGetCryIndex);
     int16_t cryIndex = GetCryIndex(wram->wPlayerTrademon.species);
@@ -802,15 +802,15 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
     DeinitializeAllSprites();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL);
     // CALL(aInitSpriteAnimStruct);
@@ -831,15 +831,15 @@ void MobileTradeAnim_ShowOTMonFromTrade(void){
     MobileTradeAnim_DisplayReceivedMon();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x50);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x50;
+    hram.hWY = 0x50;
     // LD_A_addr(wOTTrademonSpecies);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wOTTrademon.species;
@@ -874,16 +874,16 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
     PlayMusic2(MUSIC_EVOLUTION);
     // LD_A(0x80);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x80;
+    hram.hSCX = 0x80;
     // XOR_A_A;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LD_A(0x87);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x87;
+    hram.hWX = 0x87;
     // LD_A(0x50);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x50;
+    hram.hWY = 0x50;
     // CALL(aMobileTradeAnim_DisplayMonToBeSent);
     MobileTradeAnim_DisplayMonToBeSent();
     // LD_A_addr(wPlayerTrademonSpecies);
@@ -920,18 +920,18 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
     // CALL(aWaitBGMap);
     WaitBGMap();
 
-    while(hram->hWX != 0x7) {
+    while(hram.hWX != 0x7) {
     // loop:
         // LDH_A_addr(hWX);
         // CP_A(0x7);
         // IF_Z goto done;
         // SUB_A(0x4);
         // LDH_addr_A(hWX);
-        hram->hWX -= 0x4;
+        hram.hWX -= 0x4;
         // LDH_A_addr(hSCX);
         // SUB_A(0x4);
         // LDH_addr_A(hSCX);
-        hram->hSCX -= 0x4;
+        hram.hSCX -= 0x4;
         // CALL(aDelayFrame);
         DelayFrame();
         // goto loop;
@@ -940,10 +940,10 @@ void MobileTradeAnim_ShowPlayerMonForGTS(void){
 // done:
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LD_A_addr(wPlayerTrademonSpecies);
     // CALL(aGetCryIndex);
     int16_t cry = GetCryIndex(wram->wPlayerTrademon.species);
@@ -1018,15 +1018,15 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x06, TradePoofGFX, 0, 12);
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL);
     // CALL(aInitSpriteAnimStruct);
@@ -1047,15 +1047,15 @@ void MobileTradeAnim_ShowOTMonFromGTS(void){
     MobileTradeAnim_DisplayReceivedMon();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x50);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x50;
+    hram.hWY = 0x50;
     // LD_A_addr(wOTTrademonSpecies);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wOTTrademon.species;
@@ -1123,15 +1123,15 @@ void MobileTradeAnim_GetOddEgg(void){
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x06, TradePoofGFX, 0, 12);
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // depixel4(10, 11, 4, 0);
     // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_OT_BALL);
     // CALL(aInitSpriteAnimStruct);
@@ -1152,15 +1152,15 @@ void MobileTradeAnim_GetOddEgg(void){
     Function108a33();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x50);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x50;
+    hram.hWY = 0x50;
     // LD_A_addr(wOTTrademonSpecies);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wOTTrademon.species;
@@ -1200,7 +1200,7 @@ void MobileTradeAnim_02(void){
     ClearTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
@@ -1213,16 +1213,16 @@ void MobileTradeAnim_02(void){
     EnableLCD();
     // LD_A(0xc);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0xc;
+    hram.hSCX = 0xc;
     // LD_A(0x78);
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x78;
+    hram.hSCY = 0x78;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x5);
@@ -1254,7 +1254,7 @@ void MobileTradeAnim_10(void){
     ClearTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aDisableLCD);
     DisableLCD();
     // CALL(aMobileTradeAnim_ClearBGMap);
@@ -1279,16 +1279,16 @@ void MobileTradeAnim_10(void){
     EnableLCD();
     // LD_A(0xc);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0xc;
+    hram.hSCX = 0xc;
     // LD_A(0x78);
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x78;
+    hram.hSCY = 0x78;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x5);
@@ -1318,7 +1318,7 @@ void MobileTradeAnim_11(void){
     ClearTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aDisableLCD);
     DisableLCD();
     // LD_A(0x1);
@@ -1341,16 +1341,16 @@ void MobileTradeAnim_11(void){
     EnableLCD();
     // LD_A(0x80);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x80;
+    hram.hSCX = 0x80;
     // LD_A(0x90);
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x90;
+    hram.hSCY = 0x90;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x5);
@@ -1370,7 +1370,7 @@ void MobileTradeAnim_11(void){
     Function108b5a();
     // LD_A(0xe0);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0xe0;
+    hram.hSCX = 0xe0;
     // LD_DE(MUSIC_EVOLUTION);
     // CALL(aPlayMusic2);
     PlayMusic2(MUSIC_EVOLUTION);
@@ -1390,7 +1390,7 @@ void MobileTradeAnim_GiveTrademon1(void){
     // CALL(aFunction108af4);
     Function108af4();
 
-    while(hram->hSCX != 0xe0) {
+    while(hram.hSCX != 0xe0) {
     // loop:
         // LDH_A_addr(hSCX);
         // CP_A(0xe0);
@@ -1398,10 +1398,10 @@ void MobileTradeAnim_GiveTrademon1(void){
         // DEC_A;
         // DEC_A;
         // LDH_addr_A(hSCX);
-        hram->hSCX -= 2;
+        hram.hSCX -= 2;
         // CP_A(0xf8);
         // IF_NZ goto next;
-        if(hram->hSCX == 0xf8) {
+        if(hram.hSCX == 0xf8) {
             // depixel4(10, 11, 4, 0);
             // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE);
             // CALL(aInitSpriteAnimStruct);
@@ -1415,7 +1415,7 @@ void MobileTradeAnim_GiveTrademon1(void){
         // goto loop;
     }
 
-    while(hram->hSCY != 0xf8) {
+    while(hram.hSCY != 0xf8) {
     // loop2:
         // LDH_A_addr(hSCY);
         // CP_A(0xf8);
@@ -1423,10 +1423,10 @@ void MobileTradeAnim_GiveTrademon1(void){
         // DEC_A;
         // DEC_A;
         // LDH_addr_A(hSCY);
-        hram->hSCY -= 2;
+        hram.hSCY -= 2;
         // CP_A(0x40);
         // IF_Z goto init;
-        if(hram->hSCY == 0x40) {
+        if(hram.hSCY == 0x40) {
         // init:
             // depixel4(10, 11, 4, 0);
             // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE);
@@ -1439,7 +1439,7 @@ void MobileTradeAnim_GiveTrademon1(void){
         }
         // CP_A(0x30);
         // IF_Z goto delete;
-        else if(hram->hSCY == 0x30) {
+        else if(hram.hSCY == 0x30) {
         // delete:
             // CALL(aMobileTradeAnim_DeleteSprites);
             MobileTradeAnim_DeleteSprites();
@@ -1447,7 +1447,7 @@ void MobileTradeAnim_GiveTrademon1(void){
         }
         // CP_A(0x68);
         // IF_Z goto replace;
-        else if(hram->hSCY == 0x68) {
+        else if(hram.hSCY == 0x68) {
         // replace:
             // CALL(aMobileTradeAnim_DeleteSprites);
             MobileTradeAnim_DeleteSprites();
@@ -1497,14 +1497,14 @@ void MobileTradeAnim_GiveTrademon2(void){
     // CALL(aInitSpriteAnimStruct);
     InitSpriteAnimStruct(SPRITE_ANIM_INDEX_MOBILE_TRADE_SENT_PULSE, pixel4(9, 10, 2, 0));
 
-    while(hram->hSCY != 0x90) {
+    while(hram.hSCY != 0x90) {
     // loop:
         // LDH_A_addr(hSCY);
         // CP_A(0x90);
         // IF_Z goto done;
         // SUB_A(0x8);
         // LDH_addr_A(hSCY);
-        hram->hSCY -= 0x8;
+        hram.hSCY -= 0x8;
         // LD_C(1);
         // CALL(aWaitMobileTradeSpriteAnims);
         WaitMobileTradeSpriteAnims(1);
@@ -1578,14 +1578,14 @@ void MobileTradeAnim_GetTrademon1(void){
     // CALL(aWaitMobileTradeSpriteAnims);
     WaitMobileTradeSpriteAnims(40);
 
-    while(hram->hSCY != 0xf8) {
+    while(hram.hSCY != 0xf8) {
     // loop:
         // LDH_A_addr(hSCY);
         // CP_A(0xf8);
         // IF_Z goto done;
         // ADD_A(0x8);
         // LDH_addr_A(hSCY);
-        hram->hSCY += 0x8;
+        hram.hSCY += 0x8;
         // LD_C(1);
         // CALL(aWaitMobileTradeSpriteAnims);
         WaitMobileTradeSpriteAnims(1);
@@ -1624,7 +1624,7 @@ void MobileTradeAnim_GetTrademon2(void){
     // CALL(aFunction108af4);
     Function108af4();
 
-    while(hram->hSCY != 0x78) {
+    while(hram.hSCY != 0x78) {
     // asm_1088ad:
         // LDH_A_addr(hSCY);
         // CP_A(0x78);
@@ -1632,10 +1632,10 @@ void MobileTradeAnim_GetTrademon2(void){
         // INC_A;
         // INC_A;
         // LDH_addr_A(hSCY);
-        hram->hSCY += 2;
+        hram.hSCY += 2;
         // CP_A(0x30);
         // IF_Z goto asm_1088c5;
-        if(hram->hSCY == 0x30) {
+        if(hram.hSCY == 0x30) {
         // asm_1088c5:
             // depixel4(10, 11, 4, 0);
             // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE);
@@ -1645,7 +1645,7 @@ void MobileTradeAnim_GetTrademon2(void){
         }
         // CP_A(0x40);
         // IF_Z goto asm_1088dd;
-        else if(hram->hSCY == 0x40) {
+        else if(hram.hSCY == 0x40) {
         // asm_1088dd:
             // CALL(aMobileTradeAnim_DeleteSprites);
             MobileTradeAnim_DeleteSprites();
@@ -1656,7 +1656,7 @@ void MobileTradeAnim_GetTrademon2(void){
         }
         // CP_A(0x68);
         // IF_Z goto asm_1088cf;
-        else if(hram->hSCY == 0x68) {
+        else if(hram.hSCY == 0x68) {
         // asm_1088cf:
             // depixel4(10, 11, 4, 0);
             // LD_A(SPRITE_ANIM_INDEX_MOBILE_TRADE_CABLE_BULGE);
@@ -1676,7 +1676,7 @@ void MobileTradeAnim_GetTrademon2(void){
         // goto asm_1088ad;
     }
 
-    while(hram->hSCX != 0xc) {
+    while(hram.hSCX != 0xc) {
     // asm_1088ee:
         // LDH_A_addr(hSCX);
         // CP_A(0xc);
@@ -1684,10 +1684,10 @@ void MobileTradeAnim_GetTrademon2(void){
         // INC_A;
         // INC_A;
         // LDH_addr_A(hSCX);
-        hram->hSCX += 2;
+        hram.hSCX += 2;
         // CP_A(-8);
         // IF_NZ goto asm_1088e7;
-        if(hram->hSCX != (uint8_t)-8) 
+        if(hram.hSCX != (uint8_t)-8) 
             goto asm_1088e7;
         // CALL(aMobileTradeAnim_DeleteSprites);
         MobileTradeAnim_DeleteSprites();
@@ -1796,7 +1796,7 @@ void asm_108966(const uint8_t* de){
     // hlcoord(7, 2, wTilemap);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0;
+    hram.hGraphicStartTile = 0;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger(coord(7, 2, wram->wTilemap), 7, 7);
@@ -1817,7 +1817,7 @@ void Function10898a(species_t species, uint16_t dvs){
     // hlcoord(7, 2, wTilemap);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0;
+    hram.hGraphicStartTile = 0;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger(coord(7, 2, wram->wTilemap), 7, 7);
@@ -1894,7 +1894,7 @@ void MobileTradeAnim_DisplayEggData(void){
     MobileTradeAnim_ClearTilemap();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = (hram->hBGMapAddress & 0xff) | (vBGMap1 & 0xff00);
+    hram.hBGMapAddress = (hram.hBGMapAddress & 0xff) | (vBGMap1 & 0xff00);
     // hlcoord(5, 0, wTilemap);
     // LD_B(6);
     // LD_C(9);
@@ -1918,7 +1918,7 @@ void Function108a33(void){
     MobileTradeAnim_ClearTilemap();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = (hram->hBGMapAddress & 0xff) | (vBGMap1 & 0xff00);
+    hram.hBGMapAddress = (hram.hBGMapAddress & 0xff) | (vBGMap1 & 0xff00);
     // hlcoord(5, 0, wTilemap);
     // LD_B(6);
     // LD_C(9);
@@ -1946,7 +1946,7 @@ void MobileTradeAnim_LoadMonTemplate(void){
     MobileTradeAnim_ClearTilemap();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = (hram->hBGMapAddress & 0xff) | (vBGMap1 & 0xff00);
+    hram.hBGMapAddress = (hram.hBGMapAddress & 0xff) | (vBGMap1 & 0xff00);
     // hlcoord(4, 0, wTilemap);
     // LD_B(6);
     // LD_C(10);
@@ -1966,7 +1966,7 @@ void MobileTradeAnim_MonDisplay_UpdateBGMap(void){
     WaitTop();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = (hram->hBGMapAddress & 0xff) | (vBGMap0 & 0xff00);
+    hram.hBGMapAddress = (hram.hBGMapAddress & 0xff) | (vBGMap0 & 0xff00);
     // RET;
 }
 
@@ -2152,7 +2152,7 @@ void Function108b5a(void){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -2186,7 +2186,7 @@ void Function108b78(uint16_t* hl, uint8_t c){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -2276,7 +2276,7 @@ void Function108bec(void){
     };
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LD_HL(mFunction108bec_MobilePlayerWillTradeMonText);
     // CALL(aPrintText);
     PrintText(MobilePlayerWillTradeMonText);
@@ -2304,7 +2304,7 @@ void Function108c16(void){
     };
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LD_HL(mFunction108c16_MobileTakeGoodCareOfMonText);
     // CALL(aPrintText);
     PrintText(MobileTakeGoodCareOfMonText);
@@ -2321,7 +2321,7 @@ void Function108c2b(void){
     };
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LD_HL(mFunction108c2b_MobilePlayersMonTrade2Text);
     // CALL(aPrintText);
     PrintText(MobilePlayersMonTrade2Text);
@@ -2342,7 +2342,7 @@ void Function108c40(void){
     };
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LD_A_addr(wcf65);
     // AND_A(0b10000000);
     // IF_Z goto Getmon;

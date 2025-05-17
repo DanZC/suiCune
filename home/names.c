@@ -102,7 +102,7 @@ void GetName_GB(void){
     // PUSH_HL;
     // PUSH_BC;
     // PUSH_DE;
-    uint8_t tempBank = hram->hROMBank;
+    uint8_t tempBank = hram.hROMBank;
     uint16_t de;
 
     // LD_A_addr(wNamedObjectType);
@@ -179,22 +179,21 @@ void GetName_GB(void){
 //  ath string starting from hl.
 //  Not used.
 void GetNthString(void){
-    AND_A_A;
-    RET_Z ;
+    // AND_A_A;
+    // RET_Z ;
 
-    PUSH_BC;
-    LD_B_A;
-    LD_C(0x50);
+    // PUSH_BC;
+    // LD_B_A;
+    // LD_C(0x50);
 
-readChar:
-        LD_A_hli;
-    CP_A_C;
-    IF_NZ goto readChar;
-    DEC_B;
-    IF_NZ goto readChar;
-    POP_BC;
-    RET;
-
+// readChar:
+    // LD_A_hli;
+    // CP_A_C;
+    // IF_NZ goto readChar;
+    // DEC_B;
+    // IF_NZ goto readChar;
+    // POP_BC;
+    // RET;
 }
 
 //  Return the address of the
@@ -357,7 +356,7 @@ void GetPokemonName_GB(void){
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
     // PUSH_HL;
-    uint8_t tempBank = hram->hROMBank;
+    uint8_t tempBank = hram.hROMBank;
 
     // LD_A(BANK(aPokemonNames));
     // RST(aBankswitch);

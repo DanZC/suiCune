@@ -12,7 +12,7 @@ void PlaceGraphic(uint8_t* hl, uint8_t b, uint8_t c){
     // IF_NZ goto right;
     if(wram->wBoxAlignment == 0) {
         // LDH_A_addr(hGraphicStartTile);
-        a = hram->hGraphicStartTile;
+        a = hram.hGraphicStartTile;
     // x1:
         do {
             // PUSH_BC;
@@ -54,7 +54,7 @@ void PlaceGraphic(uint8_t* hl, uint8_t b, uint8_t c){
         hl += c - 1;
 
         // LDH_A_addr(hGraphicStartTile);
-        a = hram->hGraphicStartTile;
+        a = hram.hGraphicStartTile;
 
         do {
         // x2:
@@ -99,7 +99,7 @@ void PlaceGraphicYStagger(uint8_t* hl, uint8_t b, uint8_t c){
     // IF_NZ goto right;
     if(wram->wBoxAlignment == 0) {
         // LDH_A_addr(hGraphicStartTile);
-        a = hram->hGraphicStartTile;
+        a = hram.hGraphicStartTile;
     // y1:
         do {
             // PUSH_BC;
@@ -141,7 +141,7 @@ void PlaceGraphicYStagger(uint8_t* hl, uint8_t b, uint8_t c){
         hl += b - 1;
 
         // LDH_A_addr(hGraphicStartTile);
-        a = hram->hGraphicStartTile;
+        a = hram.hGraphicStartTile;
 
         do {
         // x2:

@@ -254,10 +254,10 @@ void CrystalIntro(void){
     wbank_push(MBANK(awGBCPalettes));
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t in_menu = hram->hInMenu;
+    uint8_t in_menu = hram.hInMenu;
     // LDH_A_addr(hVBlank);
     // PUSH_AF;
-    uint8_t vblank_num = hram->hVBlank;
+    uint8_t vblank_num = hram.hVBlank;
     // CALL(aCrystalIntro_InitRAMAddrs);
     CrystalIntro_InitRAMAddrs();
 
@@ -277,7 +277,7 @@ void CrystalIntro(void){
         // LDH_A_addr(hJoyLast);
         // AND_A(BUTTONS);
         // IF_NZ goto ShutOffMusic;
-        if(hram->hJoyLast & (BUTTONS)) {
+        if(hram.hJoyLast & (BUTTONS)) {
             // LD_DE(MUSIC_NONE);
             // CALL(aPlayMusic);
             PlayMusic(MUSIC_NONE);
@@ -306,20 +306,20 @@ void CrystalIntro(void){
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
-    hram->hSCX = 0;
-    hram->hSCY = 0;
+    hram.hSCX = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // POP_AF;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = vblank_num;
+    hram.hVBlank = vblank_num;
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = in_menu;
+    hram.hInMenu = in_menu;
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -329,13 +329,13 @@ void CrystalIntro(void){
 static void CrystalIntro_InitRAMAddrs(void){
     // XOR_A_A;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0;
+    hram.hVBlank = 0;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hram.hMapAnims = 0;
     // REG_A = 0;
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = 0;
@@ -458,7 +458,7 @@ static void IntroScene1(void){
     ClearTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -508,18 +508,18 @@ static void IntroScene1(void){
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
-    hram->hSCX = 0;
-    hram->hSCY = 0;
+    hram.hSCX = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
@@ -578,7 +578,7 @@ static void IntroScene3(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -623,18 +623,18 @@ static void IntroScene3(void){
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
-    hram->hSCX = 0;
-    hram->hSCY = 0;
+    hram.hSCX = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // CALL(aIntro_ResetLYOverrides);
     Intro_ResetLYOverrides();
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     wram->wIntroSceneFrameCounter = 0;
@@ -680,8 +680,8 @@ static void IntroScene5(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     // LDH_addr_A(hLCDCPointer);
-    hram->hBGMapMode = BGMAPMODE_NONE;
-    hram->hLCDCPointer = 0;
+    hram.hBGMapMode = BGMAPMODE_NONE;
+    hram.hLCDCPointer = 0;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -731,18 +731,18 @@ static void IntroScene5(void){
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
-    hram->hSCX = 0;
-    hram->hSCY = 0;
+    hram.hSCX = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
@@ -827,7 +827,7 @@ static void IntroScene7(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
@@ -892,14 +892,14 @@ static void IntroScene7(void){
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
-    hram->hSCX = 0;
-    hram->hSCY = 0;
+    hram.hSCX = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // CALL(aIntro_ResetLYOverrides);
     Intro_ResetLYOverrides();
     // FARCALL(aClearSpriteAnims);
@@ -913,7 +913,7 @@ static void IntroScene7(void){
     // LD_addr_A(wGlobalAnimXOffset);
     wram->wGlobalAnimXOffset = 0xf0;
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
@@ -975,7 +975,7 @@ static void IntroScene9(void){
 //  Set up the next scene (same bg).
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0;
+    hram.hLCDCPointer = 0;
     // CALL(aClearSprites);
     ClearSprites();
     // hlcoord(0, 0, wAttrmap);
@@ -996,14 +996,14 @@ static void IntroScene9(void){
     ByteFill(coord(0, 15, wram->wAttrmap), 3 * SCREEN_WIDTH, 0x3);
     // LD_A(0x2);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_ATTRS;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_ATTRS;
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
     DelayFrames(3);
     // LD_A(LOW(vBGMap0 + 0xc));  // $c
     // LDH_addr_A(hBGMapAddress);
-    hram->hBGMapAddress = vBGMap0 + 0xc;
+    hram.hBGMapAddress = vBGMap0 + 0xc;
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
@@ -1011,8 +1011,8 @@ static void IntroScene9(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     // LDH_addr_A(hBGMapAddress);
-    hram->hBGMapMode = BGMAPMODE_NONE;
-    hram->hBGMapAddress = vBGMap0 + 0x0;
+    hram.hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapAddress = vBGMap0 + 0x0;
     // LD_addr_A(wGlobalAnimXOffset);
     wram->wGlobalAnimXOffset = 0;
     // XOR_A_A;
@@ -1084,8 +1084,8 @@ static void IntroScene11(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     // LDH_addr_A(hLCDCPointer);
-    hram->hBGMapMode = BGMAPMODE_NONE;
-    hram->hLCDCPointer = 0;
+    hram.hBGMapMode = BGMAPMODE_NONE;
+    hram.hLCDCPointer = 0;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -1129,18 +1129,18 @@ static void IntroScene11(void){
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
-    hram->hSCX = 0;
-    hram->hSCY = 0;
+    hram.hSCX = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     wram->wIntroSceneFrameCounter = 0;
@@ -1277,7 +1277,7 @@ static void IntroScene13(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -1325,14 +1325,14 @@ static void IntroScene13(void){
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
-    hram->hSCX = 0;
-    hram->hSCY = 0;
+    hram.hSCX = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // depixel4(13, 11, 4, 0);
@@ -1346,7 +1346,7 @@ static void IntroScene13(void){
     // LD_addr_A(wGlobalAnimXOffset);
     wram->wGlobalAnimXOffset = 0;
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
@@ -1362,7 +1362,7 @@ static void IntroScene14(void){
     // LDH_A_addr(hSCX);
     // SUB_A(10);
     // LDH_addr_A(hSCX);
-    hram->hSCX -= 10;
+    hram.hSCX -= 10;
     // LD_HL(wIntroSceneFrameCounter);
     // LD_A_hl;
     // INC_hl;
@@ -1432,7 +1432,7 @@ static void IntroScene15(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -1488,20 +1488,20 @@ static void IntroScene15(void){
     // wbank_pop;
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LD_A(0x90);
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x90;
+    hram.hSCY = 0x90;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     //depixel ['8', '5']
     // depixel2(8, 5);
     // LD_A(SPRITE_ANIM_INDEX_INTRO_UNOWN_F);
@@ -1543,11 +1543,11 @@ static void IntroScene16(void){
     // LDH_A_addr(hSCY);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hSCY == 0)
+    if(hram.hSCY == 0)
         return;
     // ADD_A(8);
     // LDH_addr_A(hSCY);
-    hram->hSCY += 8;
+    hram.hSCY += 8;
     // RET;
     // return;
 
@@ -1564,7 +1564,7 @@ static void IntroScene17(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -1609,18 +1609,18 @@ static void IntroScene17(void){
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
-    hram->hSCX = 0;
-    hram->hSCY = 0;
+    hram.hSCX = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
@@ -1649,11 +1649,11 @@ static void IntroScene18(void){
     // LDH_A_addr(hSCX);
     // CP_A(0x60);
     // RET_Z ;
-    if(hram->hSCX == 0x60)
+    if(hram.hSCX == 0x60)
         return;
     // ADD_A(8);
     // LDH_addr_A(hSCX);
-    hram->hSCX += 8;
+    hram.hSCX += 8;
     // RET;
     // return;
 }
@@ -1669,7 +1669,7 @@ static void IntroScene19(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -1726,16 +1726,16 @@ static void IntroScene19(void){
     // wbank_pop;
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LD_A(0xd8);
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0xd8;
+    hram.hSCY = 0xd8;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // LD_HL(wSpriteAnimDict);
@@ -1745,7 +1745,7 @@ static void IntroScene19(void){
     wram->wSpriteAnimDict[0] = SPRITE_ANIM_DICT_DEFAULT;
     wram->wSpriteAnimDict[1] = 0x7f;
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     //depixel ['12', '0']
     // depixel2(12, 0);
     // LD_A(SPRITE_ANIM_INDEX_INTRO_SUICUNE_AWAY);
@@ -1827,7 +1827,7 @@ static void Intro_Scene20_AppearUnown(uint8_t pal){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 
     // return Intro_FadeUnownWordPals();
@@ -1883,7 +1883,7 @@ static void IntroScene20(void){
     // LDH_A_addr(hSCY);
     // INC_A;
     // LDH_addr_A(hSCY);
-    hram->hSCY++;
+    hram.hSCY++;
     // RET;
 
 
@@ -1908,7 +1908,7 @@ static void IntroScene21(void){
     DelayFrames(3);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
     wram->wIntroSceneFrameCounter = 0;
@@ -2033,7 +2033,7 @@ static void Intro_Scene24_ApplyPaletteFade(uint8_t a){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 
 
@@ -2102,7 +2102,7 @@ static void IntroScene26(void){
     DelayFrames(TRANSITION_WAIT_FRAMES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LDH_addr_A(rVBK);
     // gb_write(rVBK, 0x1);
@@ -2149,18 +2149,18 @@ static void IntroScene26(void){
     // XOR_A_A;
     // LDH_addr_A(hSCX);
     // LDH_addr_A(hSCY);
-    hram->hSCX = 0;
-    hram->hSCY = 0;
+    hram.hSCX = 0;
+    hram.hSCY = 0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // CALL(aIntro_SetCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // XOR_A_A;
     // LD_addr_A(wIntroSceneFrameCounter);
     // LD_addr_A(wIntroSceneTimer);
@@ -2440,7 +2440,7 @@ static void CrystalIntro_UnownFade(uint8_t a){
     // wbank_pop;
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -2539,7 +2539,7 @@ static void Intro_FadeUnownWordPals(uint8_t a){
     // wbank_pop;
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -2598,7 +2598,7 @@ static void Intro_Scene16_AnimateSuicune(void){
     // PrepareForSuicuneSwap:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // RET;
         return;
     }
@@ -2635,7 +2635,7 @@ static void Intro_ColoredSuicuneFrameSwap(void){
     } while(--bc != 0);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -2698,7 +2698,7 @@ static void Intro_ClearBGPals(void){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // CALL(aDelayFrame);
     // CALL(aDelayFrame);
     DelayFrames(2);
@@ -2827,7 +2827,7 @@ static void Intro_ResetLYOverrides(void){
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
     // RET;
-    hram->hLCDCPointer = LOW(rSCX);
+    hram.hLCDCPointer = LOW(rSCX);
 }
 
 static void Intro_PerspectiveScrollBG(void){
@@ -2862,7 +2862,7 @@ static void Intro_PerspectiveScrollBG(void){
     ByteFill(&wram->wLYOverrides[0x5f], 0x31, wram->wLYOverrides[0x5f] + 2);
     // LD_A_addr(wLYOverrides + 0);
     // LDH_addr_A(hSCX);
-    hram->hSCX = wram->wLYOverrides[0];
+    hram.hSCX = wram->wLYOverrides[0];
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;

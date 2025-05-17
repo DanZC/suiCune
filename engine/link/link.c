@@ -59,9 +59,9 @@ void LinkCommunications(void){
     UpdateSprites();
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LD_C(80);
     // CALL(aDelayFrames);
     DelayFrames(80);
@@ -288,13 +288,13 @@ void Gen2ToGen2LinkComms(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // IF_NZ goto player_1;
-    if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // LD_C(3);
         // CALL(aDelayFrames);
         // DelayFrames(3);
         // XOR_A_A;
         // LDH_addr_A(hSerialSend);
-        hram->hSerialSend = 0;
+        hram.hSerialSend = 0;
         // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
@@ -307,7 +307,7 @@ void Gen2ToGen2LinkComms(void){
         // DelayFrame();
         // XOR_A_A;
         // LDH_addr_A(hSerialSend);
-        hram->hSerialSend = 0;
+        hram.hSerialSend = 0;
         // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
@@ -647,7 +647,7 @@ void Gen2ToGen2LinkComms(void){
     PlayMusic(MUSIC_NONE);
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
-    if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // LD_C(66);
         // CALL_Z (aDelayFrames);
         DelayFrames(66);
@@ -765,7 +765,7 @@ void LinkTimeout(void){
     // LD_hl_A;
     wram->wLinkTimeoutFrames = 0;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0;
+    hram.hVBlank = 0;
     // PUSH_DE;
     // hlcoord(0, 12, wTilemap);
     // LD_B(4);
@@ -799,13 +799,13 @@ void ExchangeBytes(void* de_, const void* hl_, uint16_t bc){
     const uint8_t* hl = hl_;
     // LD_A(TRUE);
     // LDH_addr_A(hSerialIgnoringInitialData);
-    hram->hSerialIgnoringInitialData = TRUE;
+    hram.hSerialIgnoringInitialData = TRUE;
 
     while(1) {
     // loop:
         // LD_A_hl;
         // LDH_addr_A(hSerialSend);
-        hram->hSerialSend = *hl;
+        hram.hSerialSend = *hl;
         // CALL(aSerial_ExchangeByte);
         uint8_t byte = Serial_ExchangeByte(hl);
         // PUSH_BC;
@@ -822,7 +822,7 @@ void ExchangeBytes(void* de_, const void* hl_, uint16_t bc){
         // LD_A_B;
         // POP_BC;
         // IF_Z goto load;
-        if(hram->hSerialIgnoringInitialData == FALSE) {
+        if(hram.hSerialIgnoringInitialData == FALSE) {
         // load:
             // LD_de_A;
             // INC_DE;
@@ -840,7 +840,7 @@ void ExchangeBytes(void* de_, const void* hl_, uint16_t bc){
         --hl;
         // XOR_A_A;
         // LDH_addr_A(hSerialIgnoringInitialData);
-        hram->hSerialIgnoringInitialData = FALSE;
+        hram.hSerialIgnoringInitialData = FALSE;
         // goto loop;
     }
 }
@@ -1625,7 +1625,7 @@ static void Link_CopyRandomNumbers(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // RET_Z ;
-    if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK)
+    if(hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK)
         return;
     // LD_HL(wEnemyMonSpecies);
     // CALL(aLink_FindFirstNonControlCharacter_AllowZero);
@@ -2216,10 +2216,10 @@ LinkTradePartymonMenuCheckCancel:
             // LDH_A_addr(hJoyLast);
             // AND_A_A;
             // IF_Z goto loop2;
-        } while(hram->hJoyLast == 0);
+        } while(hram.hJoyLast == 0);
         // BIT_A(A_BUTTON_F);
         // IF_NZ goto a_button;
-        if(!bit_test(hram->hJoyLast, A_BUTTON_F)) {
+        if(!bit_test(hram.hJoyLast, A_BUTTON_F)) {
             // PUSH_AF;
             // LD_A(0x7f);
             // ldcoord_a(9, 17, wTilemap);
@@ -2227,7 +2227,7 @@ LinkTradePartymonMenuCheckCancel:
             // POP_AF;
             // BIT_A(D_UP_F);
             // IF_Z goto d_up;
-            if(bit_test(hram->hJoyLast, D_UP_F)) {
+            if(bit_test(hram.hJoyLast, D_UP_F)) {
                 // LD_A_addr(wOTPartyCount);
                 // LD_addr_A(wMenuCursorY);
                 wram->wMenuCursorY = wram->wOTPartyCount;
@@ -2765,10 +2765,10 @@ void LinkTradePartymonMenuCheckCancel(void){
             // LDH_A_addr(hJoyLast);
             // AND_A_A;
             // IF_Z goto loop2;
-        } while(hram->hJoyLast == 0);
+        } while(hram.hJoyLast == 0);
         // BIT_A(A_BUTTON_F);
         // IF_NZ goto a_button;
-        if(!bit_test(hram->hJoyLast, A_BUTTON_F)) {
+        if(!bit_test(hram.hJoyLast, A_BUTTON_F)) {
             // PUSH_AF;
             // LD_A(0x7f);
             // ldcoord_a(9, 17, wTilemap);
@@ -2776,7 +2776,7 @@ void LinkTradePartymonMenuCheckCancel(void){
             // POP_AF;
             // BIT_A(D_UP_F);
             // IF_Z goto d_up;
-            if(bit_test(hram->hJoyLast, D_UP_F)) {
+            if(bit_test(hram.hJoyLast, D_UP_F)) {
                 // LD_A_addr(wOTPartyCount);
                 // LD_addr_A(wMenuCursorY);
                 wram->wMenuCursorY = wram->wOTPartyCount;
@@ -2828,7 +2828,7 @@ void ExitLinkCommunications(void){
     // LDH_addr_A(rSB);
     // gb_write(rSB, 0);
     // LDH_addr_A(hSerialSend);
-    // hram->hSerialSend = 0;
+    // hram.hSerialSend = 0;
     // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
     // LDH_addr_A(rSC);
     // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
@@ -3248,7 +3248,7 @@ void LinkTrade(void){
         // LDH_A_addr(hSerialConnectionStatus);
         // CP_A(USING_EXTERNAL_CLOCK);
         // IF_Z goto player_2;
-        if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
+        if(hram.hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
             // PREDEF(pTradeAnimation);
             TradeAnimation();
             // goto done_animation;
@@ -3565,12 +3565,12 @@ void WaitForOtherPlayerToExit(void){
     DelayFrames(3);
     // LD_A(CONNECTION_NOT_ESTABLISHED);
     // LDH_addr_A(hSerialConnectionStatus);
-    hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
+    hram.hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
     // XOR_A_A;
     // LDH_addr_A(rSB);
     // gb_write(rSB, 0);
     // LDH_addr_A(hSerialReceive);
-    hram->hSerialReceive = 0;
+    hram.hSerialReceive = 0;
     // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
     // LDH_addr_A(rSC);
     // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
@@ -3585,7 +3585,7 @@ void WaitForOtherPlayerToExit(void){
     // LDH_addr_A(rSB);
     // gb_write(rSB, 0);
     // LDH_addr_A(hSerialReceive);
-    hram->hSerialReceive = 0;
+    hram.hSerialReceive = 0;
     // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
     // LDH_addr_A(rSC);
     // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
@@ -3600,7 +3600,7 @@ void WaitForOtherPlayerToExit(void){
     // LDH_addr_A(rSB);
     gb_write(rSB, 0);
     // LDH_addr_A(hSerialReceive);
-    hram->hSerialReceive = 0;
+    hram.hSerialReceive = 0;
     // LDH_addr_A(rSC);
     gb_write(rSC, 0);
     // LD_C(3);
@@ -3608,7 +3608,7 @@ void WaitForOtherPlayerToExit(void){
     DelayFrames(3);
     // LD_A(CONNECTION_NOT_ESTABLISHED);
     // LDH_addr_A(hSerialConnectionStatus);
-    hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
+    hram.hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
     gOtherPlayerGender = 0;
     // LDH_A_addr(rIF);
     // PUSH_AF;
@@ -3628,7 +3628,7 @@ void WaitForOtherPlayerToExit(void){
     // LD_hl_A;
     wram->wLinkTimeoutFrames = 0;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0;
+    hram.hVBlank = 0;
     // LD_addr_A(wLinkMode);
     wram->wLinkMode = LINK_NULL;
     NetworkCloseConnection();
@@ -3680,7 +3680,7 @@ void WaitForLinkedFriend(void){
         // gb_write(rSB, USING_INTERNAL_CLOCK);
         // XOR_A_A;
         // LDH_addr_A(hSerialReceive);
-        hram->hSerialReceive = 0;
+        hram.hSerialReceive = 0;
         // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (0 << rSC_ON) | (0 << rSC_CLOCK));
@@ -3703,7 +3703,7 @@ void WaitForLinkedFriend(void){
     // LD_addr_A(wLinkTimeoutFrames);
     wram->wLinkTimeoutFrames = 0x02ff;
 
-    while(hram->hSerialConnectionStatus != USING_INTERNAL_CLOCK && hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
+    while(hram.hSerialConnectionStatus != USING_INTERNAL_CLOCK && hram.hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
     // loop:
         // LDH_A_addr(hSerialConnectionStatus);
         // CP_A(USING_INTERNAL_CLOCK);
@@ -3712,13 +3712,13 @@ void WaitForLinkedFriend(void){
         // IF_Z goto connected;
         // LD_A(CONNECTION_NOT_ESTABLISHED);
         // LDH_addr_A(hSerialConnectionStatus);
-        hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
+        hram.hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
         // LD_A(USING_INTERNAL_CLOCK);
         // LDH_addr_A(rSB);
         gb_write(rSB, USING_INTERNAL_CLOCK);
         // XOR_A_A;
         // LDH_addr_A(hSerialReceive);
-        hram->hSerialReceive = 0;
+        hram.hSerialReceive = 0;
         // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         gb_write(rSC, (0 << rSC_ON) | (0 << rSC_CLOCK));
@@ -3790,7 +3790,7 @@ void CheckLinkTimeout_Receptionist(void){
     WaitBGMap();
     // LD_A(0x2);
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0x2;
+    hram.hVBlank = 0x2;
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aDelayFrame);
@@ -3799,7 +3799,7 @@ void CheckLinkTimeout_Receptionist(void){
     Link_CheckCommunicationError();
     // XOR_A_A;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0;
+    hram.hVBlank = 0;
     // LD_A_addr(wScriptVar);
     // AND_A_A;
     // RET_NZ ;
@@ -3822,7 +3822,7 @@ void CheckLinkTimeout_Gen2(void){
     // CALL(aWaitBGMap);
     // LD_A(0x2);
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0x2;
+    hram.hVBlank = 0x2;
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aDelayFrame);
@@ -3836,7 +3836,7 @@ void CheckLinkTimeout_Gen2(void){
     // exit:
         // XOR_A_A;
         // LDH_addr_A(hVBlank);
-        hram->hVBlank = 0;
+        hram.hVBlank = 0;
         // RET;
         return;
     }
@@ -3880,7 +3880,7 @@ void CheckLinkTimeout_Gen2(void){
         // exit:
             // XOR_A_A;
             // LDH_addr_A(hVBlank);
-            hram->hVBlank = 0;
+            hram.hVBlank = 0;
             wram->wScriptVar = TRUE;
             // RET;
             return;
@@ -3944,7 +3944,7 @@ static void Link_CheckCommunicationError_ConvertDW(uint16_t hl) {
 void Link_CheckCommunicationError(void){
     // XOR_A_A;
     // LDH_addr_A(hSerialReceivedNewData);
-    hram->hSerialReceivedNewData = FALSE;
+    hram.hSerialReceivedNewData = FALSE;
     // LD_A_addr(wLinkTimeoutFrames);
     // LD_H_A;
     // LD_A_addr(wLinkTimeoutFrames + 1);
@@ -4036,7 +4036,7 @@ void CheckBothSelectedSameRoom(void){
         wram->wLinkMode = wram->wChosenCableClubRoom + 1;
         // XOR_A_A;
         // LDH_addr_A(hVBlank);
-        hram->hVBlank = 0;
+        hram.hVBlank = 0;
         // LD_A(TRUE);
         // LD_addr_A(wScriptVar);
         wram->wScriptVar = TRUE;
@@ -4077,7 +4077,7 @@ void TradeCenter(void){
     EnableSpriteUpdates();
     // XOR_A_A;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0;
+    hram.hVBlank = 0;
     // RET;
 
 }
@@ -4094,7 +4094,7 @@ void Colosseum(void){
     EnableSpriteUpdates();
     // XOR_A_A;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0;
+    hram.hVBlank = 0;
     // RET;
 }
 
@@ -4124,13 +4124,13 @@ void Link_ResetSerialRegistersAfterLinkClosure(void){
     DelayFrames(3);
     // LD_A(CONNECTION_NOT_ESTABLISHED);
     // LDH_addr_A(hSerialConnectionStatus);
-    hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
+    hram.hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
     // LD_A(USING_INTERNAL_CLOCK);
     // LDH_addr_A(rSB);
     gb_write(rSB, USING_INTERNAL_CLOCK);
     // XOR_A_A;
     // LDH_addr_A(hSerialReceive);
-    hram->hSerialReceive = 0;
+    hram.hSerialReceive = 0;
     // LDH_addr_A(rSC);
     gb_write(rSC, 0);
     // RET;
@@ -4146,7 +4146,7 @@ uint8_t Link_EnsureSync(uint8_t a){
     wram->wLinkPlayerSyncBuffer[1] = a + 0xd0;
     // LD_A(0x2);
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0x2;
+    hram.hVBlank = 0x2;
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aDelayFrame);
@@ -4177,7 +4177,7 @@ uint8_t Link_EnsureSync(uint8_t a){
 // done:
     // XOR_A_A;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0;
+    hram.hVBlank = 0;
     // LD_A_B;
     // AND_A(0xf);
     // RET;
@@ -4194,7 +4194,7 @@ void CableClubCheckWhichChris(void){
 
 // yes:
     // LD_addr_A(wScriptVar);
-    wram->wScriptVar = (hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK)? TRUE: FALSE;
+    wram->wScriptVar = (hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK)? TRUE: FALSE;
     // RET;
 }
 

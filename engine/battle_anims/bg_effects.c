@@ -660,10 +660,10 @@ static void BattleBGEffect_HideMon(struct BattleBGEffect* bc) {
             // POP_BC;
             // XOR_A_A;
             // LDH_addr_A(hBGMapThird);
-            hram->hBGMapThird = 0x0;
+            hram.hBGMapThird = 0x0;
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+            hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // RET;
         } return;
         // if (index == 1) return BattleBGEffects_IncAnonJumptableIndex();
@@ -678,7 +678,7 @@ static void BattleBGEffect_HideMon(struct BattleBGEffect* bc) {
         // four:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_NONE;
+            hram.hBGMapMode = BGMAPMODE_NONE;
             // CALL(aEndBattleBGEffect);
             EndBattleBGEffect(bc);
             // RET;
@@ -819,7 +819,7 @@ static void BattleBGEffect_BattlerObj_1Row(struct BattleBGEffect* bc) {
             ClearBox(hl, c, b);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+            hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // POP_BC;
             // RET;
         } return;
@@ -835,7 +835,7 @@ static void BattleBGEffect_BattlerObj_1Row(struct BattleBGEffect* bc) {
         // five:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_NONE;
+            hram.hBGMapMode = BGMAPMODE_NONE;
             // CALL(aEndBattleBGEffect);
             EndBattleBGEffect(bc);
             // RET;
@@ -935,7 +935,7 @@ static void BattleBGEffect_BattlerObj_2Row(struct BattleBGEffect* bc) {
             ClearBox(hl, c, b);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+            hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // POP_BC;
             // RET;
         } return;
@@ -951,7 +951,7 @@ static void BattleBGEffect_BattlerObj_2Row(struct BattleBGEffect* bc) {
         // five:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_NONE;
+            hram.hBGMapMode = BGMAPMODE_NONE;
             // CALL(aEndBattleBGEffect);
             EndBattleBGEffect(bc);
             // RET;
@@ -1078,10 +1078,10 @@ anon_dw:
         // okay2:
             // XOR_A_A;
             // LDH_addr_A(hBGMapThird);
-            hram->hBGMapThird = 0x0;
+            hram.hBGMapThird = 0x0;
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+            hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // CALL(aBattleBGEffects_IncAnonJumptableIndex);
             BattleBGEffects_IncAnonJumptableIndex(bc);
             // LD_HL(BG_EFFECT_STRUCT_PARAM);
@@ -1099,7 +1099,7 @@ anon_dw:
         // four:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_NONE;
+            hram.hBGMapMode = BGMAPMODE_NONE;
             // LD_HL(BG_EFFECT_STRUCT_PARAM);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -1438,7 +1438,7 @@ static void BattleBGEffect_RunPicResizeScript(struct BattleBGEffect* bc, const u
             BattleBGEffects_IncAnonJumptableIndex(bc);
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+            hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // RET;
             return;
         } return;
@@ -1451,7 +1451,7 @@ static void BattleBGEffect_RunPicResizeScript(struct BattleBGEffect* bc, const u
         // restart:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_NONE;
+            hram.hBGMapMode = BGMAPMODE_NONE;
             // LD_HL(BG_EFFECT_STRUCT_JT_INDEX);
             // ADD_HL_BC;
             // LD_hl(0x0);
@@ -1463,7 +1463,7 @@ static void BattleBGEffect_RunPicResizeScript(struct BattleBGEffect* bc, const u
         end:
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_NONE;
+            hram.hBGMapMode = BGMAPMODE_NONE;
             // CALL(aEndBattleBGEffect);
             EndBattleBGEffect(bc);
             // RET;
@@ -1507,7 +1507,7 @@ static void BattleBGEffect_Surf_RotatewSurfWaveBGEffect(void){
         // LDH_A_addr(hLYOverrideStart);
         // CP_A_E;
         // IF_NC goto load_zero;
-        if(hram->hLYOverrideStart >= e){
+        if(hram.hLYOverrideStart >= e){
         // load_zero:
             // XOR_A_A;
             de[e] = 0;
@@ -1558,7 +1558,7 @@ static void BattleBGEffect_Surf(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLCDCPointer);
             // AND_A_A;
             // RET_Z;
-            if(hram->hLCDCPointer == 0)
+            if(hram.hLCDCPointer == 0)
                 return;
             // PUSH_BC;
             // CALL(aBattleBGEffect_Surf_RotatewSurfWaveBGEffect);
@@ -1591,13 +1591,13 @@ static void BattleBGEffect_Whirlpool(struct BattleBGEffect* bc) {
             BattleBGEffects_ClearLYOverrides();
             // LD_A(LOW(rSCY));
             // LDH_addr_A(hLCDCPointer);
-            hram->hLCDCPointer = LOW(rSCY);
+            hram.hLCDCPointer = LOW(rSCY);
             // XOR_A_A;
             // LDH_addr_A(hLYOverrideStart);
-            hram->hLYOverrideStart = 0x0;
+            hram.hLYOverrideStart = 0x0;
             // LD_A(0x5e);
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd = 0x5e;
+            hram.hLYOverrideEnd = 0x5e;
             // LD_DE((2 << 8) | 2);
             // CALL(aDeformScreen);
             DeformScreen(2, 2);
@@ -1705,13 +1705,13 @@ static void BattleBGEffect_Psychic(struct BattleBGEffect* bc) {
             BattleBGEffects_ClearLYOverrides();
             // LD_A(LOW(rSCX));
             // LDH_addr_A(hLCDCPointer);
-            hram->hLCDCPointer = LOW(rSCX);
+            hram.hLCDCPointer = LOW(rSCX);
             // XOR_A_A;
             // LDH_addr_A(hLYOverrideStart);
-            hram->hLYOverrideStart = 0x0;
+            hram.hLYOverrideStart = 0x0;
             // LD_A(0x5f);
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd = 0x5f;
+            hram.hLYOverrideEnd = 0x5f;
             // LD_DE((6 << 8) | 5);
             // CALL(aDeformScreen);
             DeformScreen(6, 5);
@@ -1839,13 +1839,13 @@ static void BattleBGEffect_DoubleTeam_UpdateLYOverrides(uint8_t a){
     // LD_H(HIGH(wLYOverridesBackup));
     // LDH_A_addr(hLYOverrideStart);
     // LD_L_A;
-    uint8_t l = hram->hLYOverrideStart;
+    uint8_t l = hram.hLYOverrideStart;
     // LDH_A_addr(hLYOverrideEnd);
     // SUB_A_L;
     // SRL_A;
-    uint8_t carry = (hram->hLYOverrideEnd - hram->hLYOverrideStart) & 1;
+    uint8_t carry = (hram.hLYOverrideEnd - hram.hLYOverrideStart) & 1;
     // PUSH_AF;
-    uint8_t a2 = (hram->hLYOverrideEnd - hram->hLYOverrideStart) / 2;
+    uint8_t a2 = (hram.hLYOverrideEnd - hram.hLYOverrideStart) / 2;
 
     do {
     // loop:
@@ -1887,7 +1887,7 @@ static void BattleBGEffect_DoubleTeam(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // INC_A;
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd++;
+            hram.hLYOverrideEnd++;
             // LD_HL(BG_EFFECT_STRUCT_BATTLE_TURN);
             // ADD_HL_BC;
             // LD_hl(0x0);
@@ -1991,10 +1991,10 @@ static void BattleBGEffect_AcidArmor(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // LD_L_A;
             // LD_hl(0x0);
-            wram->wLYOverridesBackup[hram->hLYOverrideEnd] = 0x0;
+            wram->wLYOverridesBackup[hram.hLYOverrideEnd] = 0x0;
             // DEC_L;
             // LD_hl(0x0);
-            wram->wLYOverridesBackup[hram->hLYOverrideEnd - 1] = 0x0;
+            wram->wLYOverridesBackup[hram.hLYOverrideEnd - 1] = 0x0;
             // RET;
             return;
         // if (index == 1) goto one;
@@ -2003,7 +2003,7 @@ static void BattleBGEffect_AcidArmor(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // LD_L_A;
             // LD_H(HIGH(wLYOverridesBackup));
-            uint8_t l = hram->hLYOverrideEnd;
+            uint8_t l = hram.hLYOverrideEnd;
             // LD_E_L;
             // LD_D_H;
             // DEC_DE;
@@ -2019,12 +2019,12 @@ static void BattleBGEffect_AcidArmor(struct BattleBGEffect* bc) {
                 // LDH_A_addr(hLYOverrideStart);
                 // CP_A_L;
                 // IF_NZ goto loop;
-            } while(hram->hLYOverrideStart != l);
+            } while(hram.hLYOverrideStart != l);
             // LD_hl(0x90);
             wram->wLYOverridesBackup[l] = 0x90;
             // LDH_A_addr(hLYOverrideEnd);
             // LD_L_A;
-            l = hram->hLYOverrideEnd;
+            l = hram.hLYOverrideEnd;
             // LD_A_hl;
             uint8_t a = wram->wLYOverridesBackup[l];
             // CP_A(0x1);
@@ -2081,7 +2081,7 @@ static void BattleBGEffect_Withdraw(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // INC_A;
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd++;
+            hram.hLYOverrideEnd++;
             // LD_HL(BG_EFFECT_STRUCT_BATTLE_TURN);
             // ADD_HL_BC;
             // LD_hl(0x1);
@@ -2149,7 +2149,7 @@ static void BattleBGEffect_Dig(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // INC_A;
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd++;
+            hram.hLYOverrideEnd++;
             // LD_HL(BG_EFFECT_STRUCT_BATTLE_TURN);
             // ADD_HL_BC;
             // LD_hl(0x2);
@@ -2193,7 +2193,7 @@ static void BattleBGEffect_Dig(struct BattleBGEffect* bc) {
             // ADD_HL_BC;
             // CP_A_hl;
             // RET_C;
-            if(bc->battleTurn < hram->hLYOverrideEnd - hram->hLYOverrideStart - 1)
+            if(bc->battleTurn < hram.hLYOverrideEnd - hram.hLYOverrideStart - 1)
                 return;
             // LD_A_hl;
             // PUSH_AF;
@@ -2250,7 +2250,7 @@ static void BattleBGEffect_Tackle(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // INC_A;
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd++;
+            hram.hLYOverrideEnd++;
             // LD_HL(BG_EFFECT_STRUCT_PARAM);
             // ADD_HL_BC;
             // LD_hl(0);
@@ -2306,7 +2306,7 @@ static void BattleBGEffect_BodySlam(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // INC_A;
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd++;
+            hram.hLYOverrideEnd++;
             // LD_HL(BG_EFFECT_STRUCT_PARAM);
             // ADD_HL_BC;
             // LD_hl(0);
@@ -2423,28 +2423,28 @@ static void Rollout_FillLYOverridesBackup(uint8_t a) {
     // LDH_A_addr(hLYOverrideEnd);
     // SUB_A_D;
     // LD_D_A;
-    uint8_t d = hram->hLYOverrideEnd - hram->hLYOverrideStart;
+    uint8_t d = hram.hLYOverrideEnd - hram.hLYOverrideStart;
     // LD_H(HIGH(wLYOverridesBackup));
     // LDH_A_addr(hSCY);
     // OR_A_A;
     // IF_NZ goto skip1;
     uint8_t* hl;
-    if(hram->hSCY != 0){
+    if(hram.hSCY != 0){
     // skip1:
         // LDH_A_addr(hLYOverrideEnd);
         // DEC_A;
         // LD_L_A;
-        hl = wram->wLYOverridesBackup + (hram->hLYOverrideEnd - 1);
+        hl = wram->wLYOverridesBackup + (hram.hLYOverrideEnd - 1);
         // LD_hl(0x0);
         *hl = 0x0;
     }
     // LDH_A_addr(hLYOverrideStart);
     // OR_A_A;
     // IF_Z goto skip2;
-    else if(hram->hLYOverrideStart != 0) {
+    else if(hram.hLYOverrideStart != 0) {
         // DEC_A;
         // LD_L_A;
-        hl = wram->wLYOverridesBackup + (hram->hLYOverrideStart - 1);
+        hl = wram->wLYOverridesBackup + (hram.hLYOverrideStart - 1);
         // LD_hl(0x0);
         *hl = 0x0;
         // goto skip2;
@@ -2456,14 +2456,14 @@ static void Rollout_FillLYOverridesBackup(uint8_t a) {
     // LDH_A_addr(hLYOverrideStart);
     // SUB_A_L;
     // IF_NC goto skip3;
-    if(hram->hLYOverrideStart < hram->hSCY){
+    if(hram.hLYOverrideStart < hram.hSCY){
         // XOR_A_A;
         hl = wram->wLYOverridesBackup;
         // DEC_D;
         --d;
     }
     else {
-        hl = wram->wLYOverridesBackup + (hram->hLYOverrideStart - hram->hSCY);
+        hl = wram->wLYOverridesBackup + (hram.hLYOverrideStart - hram.hSCY);
     }
 
 // skip3:
@@ -2517,7 +2517,7 @@ static void VitalThrow_MoveBackwards(struct BattleBGEffect* bc) {
     // LDH_A_addr(hLYOverrideEnd);
     // INC_A;
     // LDH_addr_A(hLYOverrideEnd);
-    hram->hLYOverrideEnd++;
+    hram.hLYOverrideEnd++;
     // LD_HL(BG_EFFECT_STRUCT_PARAM);
     // ADD_HL_BC;
     // LD_hl(0x0);
@@ -2585,7 +2585,7 @@ static void BattleBGEffect_WobbleMon(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // INC_A;
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd++;
+            hram.hLYOverrideEnd++;
             // LD_HL(BG_EFFECT_STRUCT_PARAM);
             // ADD_HL_BC;
             // LD_hl(0x0);
@@ -2640,7 +2640,7 @@ static void BattleBGEffect_Flail(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // INC_A;
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd++;
+            hram.hLYOverrideEnd++;
             // XOR_A_A;
             // LD_HL(BG_EFFECT_STRUCT_BATTLE_TURN);
             // ADD_HL_BC;
@@ -2778,7 +2778,7 @@ static void BattleBGEffect_BounceDown(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // INC_A;
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd++;
+            hram.hLYOverrideEnd++;
             // LD_HL(BG_EFFECT_STRUCT_BATTLE_TURN);
             // ADD_HL_BC;
             // LD_hl(0x1);
@@ -3021,7 +3021,7 @@ static void BattleBGEffect_FadeMonsToBlackRepeating(struct BattleBGEffect* bc) {
     // IF_NZ goto cgb;
     // index = gb_read(REG_BC + BG_EFFECT_STRUCT_JT_INDEX);
     // CALL(aBattleBGEffects_AnonJumptable);
-    if(hram->hCGB == 0) {
+    if(hram.hCGB == 0) {
     // anon_dw:
 
     //     if (index == 0) goto zero;
@@ -3324,7 +3324,7 @@ static void BattleBGEffect_VibrateMon(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // INC_A;
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideEnd++;
+            hram.hLYOverrideEnd++;
             // LD_HL(BG_EFFECT_STRUCT_BATTLE_TURN);
             // ADD_HL_BC;
             // LD_hl(0x1);
@@ -3387,13 +3387,13 @@ static void BattleBGEffect_WobblePlayer(struct BattleBGEffect* bc) {
             BattleBGEffects_ClearLYOverrides();
             // LD_A(LOW(rSCX));
             // LDH_addr_A(hLCDCPointer);
-            hram->hLCDCPointer = LOW(rSCX);
+            hram.hLCDCPointer = LOW(rSCX);
             // XOR_A_A;
             // LDH_addr_A(hLYOverrideStart);
-            hram->hLYOverrideStart = 0x0;
+            hram.hLYOverrideStart = 0x0;
             // LD_A(0x37);
             // LDH_addr_A(hLYOverrideEnd);
-            hram->hLYOverrideStart = 0x37;
+            hram.hLYOverrideStart = 0x37;
             // LD_HL(BG_EFFECT_STRUCT_PARAM);
             // ADD_HL_BC;
             // LD_hl(0x0);
@@ -3451,7 +3451,7 @@ static void BattleBGEffect_Rollout(struct BattleBGEffect* bc) {
     DelayFrame();
     // POP_AF;
     // LDH_addr_A(hSCY);
-    hram->hSCY = a;
+    hram.hSCY = a;
     // XOR_A(0xff);
     // INC_A;
     // LD_addr_A(wAnimObject1YOffset);
@@ -3467,7 +3467,7 @@ static void BattleBGEffect_ShakeScreenX(struct BattleBGEffect* bc) {
 
 // skip:
     // LDH_addr_A(hSCX);
-    hram->hSCX = BattleBGEffects_GetShakeAmount(bc).a;
+    hram.hSCX = BattleBGEffects_GetShakeAmount(bc).a;
     // RET;
 }
 
@@ -3479,7 +3479,7 @@ static void BattleBGEffect_ShakeScreenY(struct BattleBGEffect* bc) {
 
 // skip:
     // LDH_addr_A(hSCY);
-    hram->hSCY = BattleBGEffects_GetShakeAmount(bc).a;
+    hram.hSCY = BattleBGEffects_GetShakeAmount(bc).a;
     // RET;
 }
 
@@ -3545,14 +3545,14 @@ static void BattleBGEffect_WobbleScreen(struct BattleBGEffect* bc) {
     // finish:
         // XOR_A_A;
         // LDH_addr_A(hSCX);
-        hram->hSCX = 0x0;
+        hram.hSCX = 0x0;
         // RET;
         return;
     }
     // LD_D(0x6);
     // CALL(aBattleBGEffects_Sine);
     // LDH_addr_A(hSCX);
-    hram->hSCX = Sine(bc->param, 0x6);
+    hram.hSCX = Sine(bc->param, 0x6);
     // LD_HL(BG_EFFECT_STRUCT_PARAM);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -3834,7 +3834,7 @@ static void BGEffects_LoadBGPal0_OBPal1(uint8_t a) {
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -3866,7 +3866,7 @@ static void BGEffects_LoadBGPal1_OBPal0(uint8_t a) {
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -3950,7 +3950,7 @@ static void BattleBGEffects_SetLYOverrides(uint8_t a) {
 static void BattleBGEffect_SetLCDStatCustoms1(struct BattleBGEffect* bc, uint8_t a) {
     // SET_PC(aBattleBGEffect_SetLCDStatCustoms1);
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = a;
+    hram.hLCDCPointer = a;
     // CALL(aBGEffect_CheckBattleTurn);
     // IF_NZ goto player_turn;
     // LD_DE((0x00 << 8) | 0x36);
@@ -3963,17 +3963,17 @@ static void BattleBGEffect_SetLCDStatCustoms1(struct BattleBGEffect* bc, uint8_t
 // okay:
     // LD_A_D;
     // LDH_addr_A(hLYOverrideStart);
-    hram->hLYOverrideStart = HIGH(de);
+    hram.hLYOverrideStart = HIGH(de);
     // LD_A_E;
     // LDH_addr_A(hLYOverrideEnd);
-    hram->hLYOverrideEnd = LOW(de);
+    hram.hLYOverrideEnd = LOW(de);
     // RET;
 }
 
 static void BattleBGEffect_SetLCDStatCustoms2(struct BattleBGEffect* bc, uint8_t a) {
     // SET_PC(aBattleBGEffect_SetLCDStatCustoms2);
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = a;
+    hram.hLCDCPointer = a;
     // CALL(aBGEffect_CheckBattleTurn);
     // IF_NZ goto player_turn;
     // LD_DE((0x00 << 8) | 0x36);
@@ -3986,10 +3986,10 @@ static void BattleBGEffect_SetLCDStatCustoms2(struct BattleBGEffect* bc, uint8_t
 // okay:
     // LD_A_D;
     // LDH_addr_A(hLYOverrideStart);
-    hram->hLYOverrideStart = HIGH(de);
+    hram.hLYOverrideStart = HIGH(de);
     // LD_A_E;
     // LDH_addr_A(hLYOverrideEnd);
-    hram->hLYOverrideEnd = LOW(de);
+    hram.hLYOverrideEnd = LOW(de);
     // RET;
 }
 
@@ -3997,14 +3997,14 @@ static void BattleAnim_ResetLCDStatCustom(struct BattleBGEffect* bc) {
     // SET_PC(aBattleAnim_ResetLCDStatCustom);
     // XOR_A_A;
     // LDH_addr_A(hLYOverrideStart);
-    hram->hLYOverrideStart = 0x0;
+    hram.hLYOverrideStart = 0x0;
     // LDH_addr_A(hLYOverrideEnd);
-    hram->hLYOverrideEnd = 0x0;
+    hram.hLYOverrideEnd = 0x0;
     // CALL(aBattleBGEffects_ClearLYOverrides);
     BattleBGEffects_ClearLYOverrides();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0x0;
+    hram.hLCDCPointer = 0x0;
     // CALL(aEndBattleBGEffect);
     EndBattleBGEffect(bc);
     // RET;
@@ -4014,7 +4014,7 @@ void BattleBGEffects_ResetVideoHRAM(void) {
     // SET_PC(aBattleBGEffects_ResetVideoHRAM);
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0x0;
+    hram.hLCDCPointer = 0x0;
     // LD_A(0b11100100);
     // LDH_addr_A(rBGP);
     gb_write(rBGP, 0b11100100);
@@ -4023,9 +4023,9 @@ void BattleBGEffects_ResetVideoHRAM(void) {
     // LD_addr_A(wOBP1);
     wram->wOBP1 = 0b11100100;
     // LDH_addr_A(hLYOverrideStart);
-    hram->hLYOverrideStart = 0b11100100; // Is this correct?
+    hram.hLYOverrideStart = 0b11100100; // Is this correct?
     // LDH_addr_A(hLYOverrideEnd);
-    hram->hLYOverrideEnd = 0b11100100; // Is this correct?
+    hram.hLYOverrideEnd = 0b11100100; // Is this correct?
     // CALL(aBattleBGEffects_ClearLYOverrides);
     BattleBGEffects_ClearLYOverrides();
     // RET;
@@ -4058,7 +4058,7 @@ static void DeformScreen(uint8_t d, uint8_t e) {
         // LDH_A_addr(hLYOverrideEnd);
         // CP_A_C;
         // IF_C goto next;
-        if(hram->hLYOverrideStart < c && hram->hLYOverrideEnd >= c){
+        if(hram.hLYOverrideStart < c && hram.hLYOverrideEnd >= c){
             // LD_A_addr(wBattleSineWaveTempAmplitude);
             // LD_D_A;
             // LD_A_addr(wBattleSineWaveTempProgress);
@@ -4131,7 +4131,7 @@ static uint8_t DeformWater_GetLYOverrideBackupAddrOffset(void){
     // LD_E_A;
     // LD_D(0);
     // RET;
-    return wram->wBattleSineWaveTempProgress + hram->hLYOverrideStart;
+    return wram->wBattleSineWaveTempProgress + hram.hLYOverrideStart;
 }
 
 static void DeformWater(uint8_t d, uint8_t e, uint8_t a) {
@@ -4174,7 +4174,7 @@ static void DeformWater(uint8_t d, uint8_t e, uint8_t a) {
         // LDH_A_addr(hLYOverrideEnd);
         // CP_A_C;
         // IF_C goto skip1;
-        if(hram->hLYOverrideEnd >= c2){
+        if(hram.hLYOverrideEnd >= c2){
             // LD_A_E;
             // LD_bc_A;
             hl[c2] = e2;
@@ -4186,7 +4186,7 @@ static void DeformWater(uint8_t d, uint8_t e, uint8_t a) {
         // LDH_A_addr(hLYOverrideStart);
         // CP_A_L;
         // IF_NC goto skip2;
-        if(hram->hLYOverrideStart < c){
+        if(hram.hLYOverrideStart < c){
             // LD_hl_E;
             hl[c] = e2;
             // DEC_HL;
@@ -4213,7 +4213,7 @@ static void BattleBGEffect_WavyScreenFX(void) {
     // PUSH_BC;
     // LDH_A_addr(hLYOverrideStart);
     // LD_L_A;
-    uint8_t l = hram->hLYOverrideStart;
+    uint8_t l = hram.hLYOverrideStart;
     // INC_A;
     // LD_E_A;
     uint8_t e = l + 1;
@@ -4223,10 +4223,10 @@ static void BattleBGEffect_WavyScreenFX(void) {
     // SUB_A_L;
     // AND_A_A;
     // IF_Z goto done;
-    if(hram->hLYOverrideEnd == l)
+    if(hram.hLYOverrideEnd == l)
         return;
     // LD_C_A;
-    uint8_t c = hram->hLYOverrideEnd - l;
+    uint8_t c = hram.hLYOverrideEnd - l;
     // LD_A_hl;
     // PUSH_AF;
     uint8_t a = wram->wLYOverridesBackup[l];
@@ -4259,8 +4259,8 @@ static void BGEffect_FillLYOverridesBackup(uint8_t a) {
     // SUB_A_L;
     // LD_D_A;
     // POP_AF;
-    uint8_t d = hram->hLYOverrideEnd - hram->hLYOverrideStart;
-    uint8_t* hl = wram->wLYOverridesBackup + hram->hLYOverrideStart;
+    uint8_t d = hram.hLYOverrideEnd - hram.hLYOverrideStart;
+    uint8_t* hl = wram->wLYOverridesBackup + hram.hLYOverrideStart;
 
     do {
     // loop:
@@ -4285,11 +4285,11 @@ static void BGEffect_DisplaceLYOverridesBackup(uint8_t a) {
     // SUB_A_L;
     // SUB_A_E;
     // LD_D_A;
-    uint8_t d = hram->hLYOverrideEnd - hram->hLYOverrideStart - a;
+    uint8_t d = hram.hLYOverrideEnd - hram.hLYOverrideStart - a;
     // LD_H(HIGH(wLYOverridesBackup));
     // LDH_A_addr(hLYOverrideStart);
     // LD_L_A;
-    uint8_t l = hram->hLYOverrideStart;
+    uint8_t l = hram.hLYOverrideStart;
     // LD_A(0x90);
 
     do {
@@ -4320,7 +4320,7 @@ static uint8_t BGEffect_CheckBattleTurn(struct BattleBGEffect* bc) {
     // AND_A(0x1);
     // XOR_A_hl;
     // RET;
-    return (hram->hBattleTurn & 0x1) ^ bc->battleTurn;
+    return (hram.hBattleTurn & 0x1) ^ bc->battleTurn;
 }
 
 static bool BGEffect_CheckFlyDigStatus(struct BattleBGEffect* bc) {
@@ -4331,7 +4331,7 @@ static bool BGEffect_CheckFlyDigStatus(struct BattleBGEffect* bc) {
     // AND_A(0x1);
     // XOR_A_hl;
     // IF_NZ goto player;
-    if((hram->hBattleTurn & 0x1) ^ bc->battleTurn){
+    if((hram.hBattleTurn & 0x1) ^ bc->battleTurn){
     // player:
         // LD_A_addr(wPlayerSubStatus3);  // PlayerSubStatus3
         // AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
@@ -4349,7 +4349,7 @@ static bool BattleBGEffects_CheckSGB(void) {
     // LDH_A_addr(hSGB);
     // AND_A_A;
     // RET;
-    return hram->hSGB != 0;
+    return hram.hSGB != 0;
 }
 
 uint8_t BattleBGEffects_Sine(uint8_t e, uint8_t d) {

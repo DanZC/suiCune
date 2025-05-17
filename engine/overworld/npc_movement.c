@@ -355,7 +355,7 @@ struct Object* CheckFacingObject(void){
     // LD_BC(wObjectStructs);  // redundant
     // LD_A(0);
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = 0;
+    hram.hMapObjectIndex = 0;
     // CALL(aIsNPCAtCoord);
     struct Object* bc = IsNPCAtCoord(res.x, res.y);
     // RET_NC ;
@@ -436,7 +436,7 @@ struct Object* IsNPCAtCoord(uint8_t d, uint8_t e){
     // LD_BC(wObjectStructs);
     struct Object* bc = &wram->wPlayerStruct;
     // XOR_A_A;
-    hram->hObjectStructIndex = 0;
+    hram.hObjectStructIndex = 0;
 
     do {
     // loop:
@@ -468,7 +468,7 @@ struct Object* IsNPCAtCoord(uint8_t d, uint8_t e){
                 // LDH_A_addr(hObjectStructIndex);
                 // CP_A_L;
                 // IF_NZ goto yes;
-                if(hram->hMapObjectIndex != hram->hObjectStructIndex)
+                if(hram.hMapObjectIndex != hram.hObjectStructIndex)
                     return bc;
             }
         }
@@ -491,7 +491,7 @@ struct Object* IsNPCAtCoord(uint8_t d, uint8_t e){
                 // LDH_A_addr(hObjectStructIndex);
                 // CP_A_L;
                 // IF_NZ goto yes;
-                if(hram->hMapObjectIndex != hram->hObjectStructIndex)
+                if(hram.hMapObjectIndex != hram.hObjectStructIndex)
                     return bc;
             }
         }
@@ -516,7 +516,7 @@ struct Object* IsNPCAtCoord(uint8_t d, uint8_t e){
         // LDH_A_addr(hObjectStructIndex);
         // CP_A_L;
         // IF_NZ goto yes;
-        if(hram->hMapObjectIndex != hram->hObjectStructIndex)
+        if(hram.hMapObjectIndex != hram.hObjectStructIndex)
             return bc;
 
 
@@ -529,9 +529,9 @@ struct Object* IsNPCAtCoord(uint8_t d, uint8_t e){
         // INC_A;
         // CP_A(NUM_OBJECT_STRUCTS);
         // IF_NZ goto loop;
-    } while(bc++, ++hram->hObjectStructIndex != NUM_OBJECT_STRUCTS);
+    } while(bc++, ++hram.hObjectStructIndex != NUM_OBJECT_STRUCTS);
 
-    hram->hObjectStructIndex--;
+    hram.hObjectStructIndex--;
     // AND_A_A;
     // RET;
     return NULL;

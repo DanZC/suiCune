@@ -400,7 +400,7 @@ void PrintCrystalTextFromGB(uint16_t ptr) {
             case TX_RAM: printf("text_ram \""); PrintCrystalStringFromGB(gb_read16(ptr)); ptr += 2; printf("\"\n"); break;
             case TX_FAR: 
                 printf("text_far \"");
-                oldbank = hram->hROMBank;
+                oldbank = hram.hROMBank;
                 Bankswitch(gb_read(ptr++));
                 PrintCrystalStringFromGB(gb_read16(ptr)); 
                 ptr += 2;

@@ -557,7 +557,7 @@ void GameboyCheck(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto cgb;
-    if(hram->hCGB != 0) {
+    if(hram.hCGB != 0) {
     // cgb:
         // LD_A(GBCHECK_CGB);
         wram->wScriptVar = GBCHECK_CGB;
@@ -565,7 +565,7 @@ void GameboyCheck(void){
     // LDH_A_addr(hSGB);
     // AND_A_A;
     // IF_NZ goto sgb;
-    else if(hram->hSGB != 0) {
+    else if(hram.hSGB != 0) {
     // sgb:
         // LD_A(GBCHECK_SGB);
         // goto done;

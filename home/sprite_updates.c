@@ -4,7 +4,7 @@
 void DisableSpriteUpdates(void){
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hram.hMapAnims = 0;
     // LD_A_addr(wVramState);
     // RES_A(0);
     // LD_addr_A(wVramState);
@@ -25,6 +25,6 @@ void EnableSpriteUpdates(void){
     bit_set(wram->wVramState, 0);
     // LD_A(0x1);
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0x1;
+    hram.hMapAnims = 0x1;
     // RET;
 }

@@ -437,13 +437,13 @@ void PlaceMoveTargetsName(struct TextPrintState* state) {
     // LDH_A_addr(hBattleTurn);
     // XOR_A(1);
     // JR(mPlaceBattlersName);
-    return PlaceBattlersName(state, (hram->hBattleTurn ^ 1) != 0);
+    return PlaceBattlersName(state, (hram.hBattleTurn ^ 1) != 0);
 }
 
 void PlaceMoveUsersName(struct TextPrintState* state) {
     // LDH_A_addr(hBattleTurn);
     // fallthrough
-    return PlaceBattlersName(state, hram->hBattleTurn != TURN_PLAYER);
+    return PlaceBattlersName(state, hram.hBattleTurn != TURN_PLAYER);
 }
 
 void PlaceBattlersName(struct TextPrintState* state, bool is_enemy) {
@@ -953,18 +953,18 @@ void Text_WaitBGMap(void) {
     // PUSH_BC;
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t temp = hram->hOAMUpdate;
+    uint8_t temp = hram.hOAMUpdate;
 
     // LD_A(1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 1;
+    hram.hOAMUpdate = 1;
 
     // CALL(aWaitBGMap);
     WaitBGMap();
 
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = temp;
+    hram.hOAMUpdate = temp;
 
     // POP_BC;
     // RET;
@@ -1293,7 +1293,7 @@ void TextCommand_FAR_GB(struct TextPrintState* state) {
     // PEEK("");
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
-    uint8_t oldBank = hram->hROMBank;
+    uint8_t oldBank = hram.hROMBank;
 
     // LD_A_hli;
     // LD_E_A;
@@ -1308,7 +1308,7 @@ void TextCommand_FAR_GB(struct TextPrintState* state) {
     printf("text_far bank %d, $%04x\n", newBank, de_v);
 
     // LDH_addr_A(hROMBank);
-    hram->hROMBank = newBank;
+    hram.hROMBank = newBank;
     // LD_addr_A(MBC3RomBank);
     gb_write(MBC3RomBank, newBank);
 
@@ -1330,7 +1330,7 @@ void TextCommand_FAR_GB(struct TextPrintState* state) {
     // POP_AF;
     // LDH_addr_A(hROMBank);
     // LD_addr_A(MBC3RomBank);
-    hram->hROMBank = oldBank;
+    hram.hROMBank = oldBank;
     gb_write(MBC3RomBank, oldBank);
 
     // RET;
@@ -1791,7 +1791,7 @@ void TextCommand_PAUSE_GB(struct TextPrintState* state) {
     // LDH_A_addr(hJoyDown);
     // AND_A(A_BUTTON | B_BUTTON);
     // IF_NZ goto done;
-    if(((hram->hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
+    if(((hram.hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
     {
         // LD_C(30);
         // CALL(aDelayFrames);
@@ -1815,7 +1815,7 @@ void TextCommand_PAUSE(struct TextCmdState* state, const struct TextCmd* cmd) {
     // LDH_A_addr(hJoyDown);
     // AND_A(A_BUTTON | B_BUTTON);
     // IF_NZ goto done;
-    if(((hram->hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
+    if(((hram.hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
     {
         // LD_C(30);
         // CALL(aDelayFrames);
@@ -2011,7 +2011,7 @@ void TextCommand_DOTS_GB(struct TextPrintState* state) {
         // LDH_A_addr(hJoyDown);
         // AND_A(A_BUTTON | B_BUTTON);
         // IF_NZ goto next;
-        if(((hram->hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
+        if(((hram.hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
         {
             // LD_C(10);
             // CALL(aDelayFrames);
@@ -2053,7 +2053,7 @@ void TextCommand_DOTS(struct TextCmdState* state, const struct TextCmd* cmd) {
         // LDH_A_addr(hJoyDown);
         // AND_A(A_BUTTON | B_BUTTON);
         // IF_NZ goto next;
-        if(((hram->hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
+        if(((hram.hJoyDown) & (A_BUTTON | B_BUTTON)) == 0)
         {
             // LD_C(10);
             // CALL(aDelayFrames);

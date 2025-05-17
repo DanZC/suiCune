@@ -1000,31 +1000,32 @@ static void ClearBottomLine(void){
     ByteFill(coord(1, 16, wram->wTilemap), SCREEN_WIDTH - 2, 0x7f);
 }
 
+// Unused
 void PokedexShow_GetDexEntryBank(void){
-    PUSH_HL;
-    PUSH_DE;
-    LD_A_addr(wCurPartySpecies);
-    DEC_A;
-    RLCA;
-    RLCA;
-    maskbits(NUM_DEX_ENTRY_BANKS, 0);
-    LD_HL(mPokedexShow_GetDexEntryBank_PokedexEntryBanks);
-    LD_D(0);
-    LD_E_A;
-    ADD_HL_DE;
-    LD_A_hl;
-    POP_DE;
-    POP_HL;
-    RET;
+    // PUSH_HL;
+    // PUSH_DE;
+    // LD_A_addr(wCurPartySpecies);
+    // DEC_A;
+    // RLCA;
+    // RLCA;
+    // maskbits(NUM_DEX_ENTRY_BANKS, 0);
+    // LD_HL(mPokedexShow_GetDexEntryBank_PokedexEntryBanks);
+    // LD_D(0);
+    // LD_E_A;
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 
 
-PokedexEntryBanks:
+// PokedexEntryBanks:
     //db ['BANK("Pokedex Entries 001-064")'];
     //db ['BANK("Pokedex Entries 065-128")'];
     //db ['BANK("Pokedex Entries 129-192")'];
     //db ['BANK("Pokedex Entries 193-251")'];
 
-    return PokedexShow1();
+    // return PokedexShow1();
 }
 
 static const txt_cmd_s PokedexShowText[] = {
@@ -2181,17 +2182,17 @@ static void BuenasPassword1(void){
         StartRadioStation();
         // LDH_A_addr(hBGMapMode);
         // PUSH_AF;
-        uint8_t bgMapMode = hram->hBGMapMode;
+        uint8_t bgMapMode = hram.hBGMapMode;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // LD_DE(mBuenasPasswordChannelName);
         // hlcoord(2, 9, wTilemap);
         // CALL(aPlaceString);
         PlaceStringSimple(U82C(BuenasPasswordChannelName), coord(2, 9, wram->wTilemap));
         // POP_AF;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = bgMapMode;
+        hram.hBGMapMode = bgMapMode;
         // LD_HL(mBuenaRadioText1);
         // LD_A(BUENAS_PASSWORD_2);
         // JP(mNextRadioLine);
@@ -2516,14 +2517,14 @@ static void BuenasPassword19(void){
 static void BuenasPassword20(void){
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t bgMapMode = hram->hBGMapMode;
+    uint8_t bgMapMode = hram.hBGMapMode;
     // FARCALL(aNoRadioMusic);
     NoRadioMusic();
     // FARCALL(aNoRadioName);
     NoRadioName();
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = bgMapMode;
+    hram.hBGMapMode = bgMapMode;
     // LD_HL(wDailyFlags2);
     // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
     bit_reset(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
@@ -2562,7 +2563,7 @@ static bool BuenasPasswordCheckTime(void){
     // LDH_A_addr(hHours);
     // CP_A(NITE_HOUR);
     // RET;
-    return hram->hHours < NITE_HOUR;
+    return hram.hHours < NITE_HOUR;
 }
 
 static void CopyRadioTextToRAM(const struct TextCmd* hl){

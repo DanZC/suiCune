@@ -14,7 +14,7 @@ void BattleCommand_CheckCurl(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_DE(wEnemyRolloutCount);
-    uint8_t* de = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* de = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // ok:
     // LD_A(BATTLE_VARS_SUBSTATUS1);
@@ -50,7 +50,7 @@ void BattleCommand_RolloutPower(void){
     // AND_A_A;
     // IF_Z goto got_rollout_count;
     // LD_HL(wEnemyRolloutCount);
-    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* hl = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
 
 // got_rollout_count:
     // LD_A_hl;

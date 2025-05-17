@@ -99,7 +99,7 @@ void MobileTimer(void){
     // LDH_A_addr(hMobile);
     // AND_A_A;
     // IF_Z goto pop_ret;
-    if(hram->hMobile) {
+    if(hram.hMobile) {
         // XOR_A_A;
         // LDH_addr_A(rTAC);
         gb_write(rTAC, 0x0);
@@ -157,22 +157,21 @@ void MobileTimer(void){
     // RET;
 }
 
+//  //  unreferenced
 void Function3ed7(void){
-    //  //  unreferenced
-    LD_addr_A(0xdc02);
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(aFunction114243));
-    RST(aBankswitch);
+    // LD_addr_A(0xdc02);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(aFunction114243));
+    // RST(aBankswitch);
 
-    CALL(aFunction114243);
-    POP_BC;
-    LD_A_B;
-    RST(aBankswitch);
+    // CALL(aFunction114243);
+    // POP_BC;
+    // LD_A_B;
+    // RST(aBankswitch);
 
-    LD_A_addr(0xdc02);
-    RET;
-
+    // LD_A_addr(0xdc02);
+    // RET;
 }
 
 // MobileHome_DrawBox?
@@ -195,33 +194,31 @@ tile_t* Function3eea(tile_t* hl, uint8_t b, uint8_t c){
     return MobileHome_PlaceBox(hl, b, c);
 }
 
+//  //  unreferenced
 void Function3efd(void){
-    //  //  unreferenced
-    PUSH_HL;
-    hlcoord(0, 12, wTilemap);
-    LD_B(4);
-    LD_C(18);
-    CALL(aFunction3efd_fill_attr);
-    POP_HL;
-    CALL(aPrintTextboxText);
-    RET;
+    // PUSH_HL;
+    // hlcoord(0, 12, wTilemap);
+    // LD_B(4);
+    // LD_C(18);
+    // CALL(aFunction3efd_fill_attr);
+    // POP_HL;
+    // CALL(aPrintTextboxText);
+    // RET;
 
-
-fill_attr:
-        PUSH_HL;
-    PUSH_BC;
-    LD_DE(wAttrmap - wTilemap);
-    ADD_HL_DE;
-    INC_B;
-    INC_B;
-    INC_C;
-    INC_C;
-    CALL(aFunction3f35);
-    POP_BC;
-    POP_HL;
-    CALL(aTextboxBorder);
-    RET;
-
+// fill_attr:
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_DE(wAttrmap - wTilemap);
+    // ADD_HL_DE;
+    // INC_B;
+    // INC_B;
+    // INC_C;
+    // INC_C;
+    // CALL(aFunction3f35);
+    // POP_BC;
+    // POP_HL;
+    // CALL(aTextboxBorder);
+    // RET;
 }
 
 // MobileHome_MobileTextbox
@@ -348,50 +345,69 @@ void Function3f7c(void){
     // RET;
 }
 
-void Function3f88(void){
-        LD_HL(wDecompressScratch);
-    LD_B(0);
+void Function3f88(const uint8_t* de, uint8_t c){
+    // LD_HL(wDecompressScratch);
+    uint8_t* hl = wram->wDecompressScratch;
+    // LD_B(0);
+    // uint8_t b = 0;
 
-row:
-        PUSH_BC;
-    LD_C(1 * LEN_2BPP_TILE / 2);
+    do {
+    // row:
+        // PUSH_BC;
+        // LD_C(1 * LEN_2BPP_TILE / 2);
+        uint8_t c2 = 1 * LEN_2BPP_TILE / 2;
 
-col:
-        LD_A_de;
-    INC_DE;
-    CPL;
-    LD_hl(0);
-    INC_HL;
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_BC;
-    DEC_C;
-    IF_NZ goto row;
-    RET;
+        do {
+        // col:
+            // LD_A_de;
+            uint8_t a = *(de++);
+            // INC_DE;
+            // CPL;
+            // LD_hl(0);
+            // INC_HL;
+            *(hl++) = 0;
+            // LD_hli_A;
+            *(hl++) = ~a;
+            // DEC_C;
+            // IF_NZ goto col;
+        } while(--c2 != 0);
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto row;
+    } while(--c != 0); // Supposed to be b?
+    // RET;
 
 }
 
-void Function3f9f(void){
-        LD_HL(wDecompressScratch);
+void Function3f9f(const uint8_t* de, uint8_t c){
+    // LD_HL(wDecompressScratch);
+    uint8_t* hl = wram->wDecompressScratch;
 
-row:
-        PUSH_BC;
-    LD_C(1 * LEN_2BPP_TILE / 2);
+    do {
+    // row:
+        // PUSH_BC;
+        // LD_C(1 * LEN_2BPP_TILE / 2);
+        uint8_t c2 = 1 * LEN_2BPP_TILE / 2;
 
-col:
-        LD_A_de;
-    INC_DE;
-    INC_DE;
-    CPL;
-    LD_hl(0x0);
-    INC_HL;
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_BC;
-    DEC_C;
-    IF_NZ goto row;
-    RET;
-
+        do {
+        // col:
+            // LD_A_de;
+            // INC_DE;
+            uint8_t a = *(de++);
+            // INC_DE;
+            de++;
+            // CPL;
+            // LD_hl(0x0);
+            // INC_HL;
+            *(hl++) = 0;
+            // LD_hli_A;
+            *(hl++) = ~a;
+            // DEC_C;
+            // IF_NZ goto col;
+        } while(--c2 != 0);
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto row;
+    } while(--c != 0);
+    // RET;
 }

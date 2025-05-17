@@ -19,10 +19,10 @@
 void v_UnownPuzzle(void){
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearTilemap);
@@ -31,7 +31,7 @@ void v_UnownPuzzle(void){
     ClearSprites();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aDisableLCD);
     // LD_HL(STARTOF("Miscellaneous"));  // includes wPuzzlePieces
     // LD_BC(SIZEOF("Miscellaneous"));
@@ -67,9 +67,9 @@ void v_UnownPuzzle(void){
     PlaceStartCancelBox();
     // XOR_A_A;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LDH_addr_A(rWY);
     gb_write(rWY, 0);
     // LD_addr_A(wJumptableIndex);
@@ -117,7 +117,7 @@ void v_UnownPuzzle(void){
         // LDH_A_addr(hVBlankCounter);
         // AND_A(0x10);
         // IF_Z goto clear;
-        if(wram->wHoldingUnownPuzzlePiece != 0 || (hram->hVBlankCounter & 0x10)) {
+        if(wram->wHoldingUnownPuzzlePiece != 0 || (hram.hVBlankCounter & 0x10)) {
         // holding_piece:
             // CALL(aRedrawUnownPuzzlePieces);
             RedrawUnownPuzzlePieces();
@@ -138,7 +138,7 @@ void v_UnownPuzzle(void){
 // quit:
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearTilemap);
@@ -268,18 +268,18 @@ static void UnownPuzzleJumptable_Function(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(START);
     // JP_NZ (mUnownPuzzle_Quit);
-    if(hram->hJoyPressed & START)
+    if(hram.hJoyPressed & START)
         return UnownPuzzle_Quit();
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // JP_NZ (mUnownPuzzle_A);
-    if(hram->hJoyPressed & A_BUTTON)
+    if(hram.hJoyPressed & A_BUTTON)
         return UnownPuzzle_A();
     // LD_HL(hJoyLast);
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto d_up;
-    if(hram->hJoyLast & D_UP) {
+    if(hram.hJoyLast & D_UP) {
     // d_up:
         // LD_HL(wUnownPuzzleCursorPosition);
         // LD_A_hl;
@@ -295,7 +295,7 @@ static void UnownPuzzleJumptable_Function(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto d_down;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hram.hJoyLast & D_DOWN) {
     // d_down:
         // LD_HL(wUnownPuzzleCursorPosition);
         // LD_A_hl;
@@ -324,7 +324,7 @@ static void UnownPuzzleJumptable_Function(void){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // IF_NZ goto d_left;
-    else if(hram->hJoyLast & D_LEFT) {
+    else if(hram.hJoyLast & D_LEFT) {
     // d_left:
         // LD_HL(wUnownPuzzleCursorPosition);
         // LD_A_hl;
@@ -366,7 +366,7 @@ static void UnownPuzzleJumptable_Function(void){
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // IF_NZ goto d_right;
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hram.hJoyLast & D_RIGHT) {
     // d_right:
         // LD_HL(wUnownPuzzleCursorPosition);
         // LD_A_hl;

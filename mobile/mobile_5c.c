@@ -450,15 +450,15 @@ const char PichuBorderMobileGFX[] = "gfx/mobile/pichu_border.png";
 void Function1719c8(void){
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // CALL(aFunction1719d6);
     Function1719d6();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // RET;
 }
 
@@ -783,7 +783,7 @@ void Function171b85(void){
     // LD_A_hl;
     // AND_A(0x2);
     // JP_NZ (mFunction171b9f);
-    if(hram->hJoyPressed & B_BUTTON) {
+    if(hram.hJoyPressed & B_BUTTON) {
         // LD_A(0x80);
         // LD_addr_A(wcd49);
         wram->wcd49 = 0x80;
@@ -793,7 +793,7 @@ void Function171b85(void){
     // LD_A_hl;
     // AND_A(0x1);
     // JP_NZ (mFunction171bbd);
-    if(hram->hJoyPressed & A_BUTTON) {
+    if(hram.hJoyPressed & A_BUTTON) {
         // CALL(aPlayClickSFX);
         PlayClickSFX();
         // LD_A(0x8);
@@ -808,7 +808,7 @@ void Function171b85(void){
     // LD_A_hl;
     // AND_A(0x40);
     // JR_NZ (masm_171ba5);
-    if(hram->hJoyPressed & D_UP) {
+    if(hram.hJoyPressed & D_UP) {
         // LD_A_addr(wcd4a);
         // AND_A_A;
         // RET_Z ;
@@ -823,7 +823,7 @@ void Function171b85(void){
     // LD_A_hl;
     // AND_A(0x80);
     // JR_NZ (masm_171baf);
-    if(hram->hJoyPressed & D_DOWN) {
+    if(hram.hJoyPressed & D_DOWN) {
         // LD_A_addr(wcd4b);
         // LD_C_A;
         // LD_A_addr(wcd4a);
@@ -846,12 +846,12 @@ void Function171bcc(void){
     // LD_A_hl;
     // AND_A(0x2);
     // JP_NZ (mFunction171bdc);
-    if(hram->hJoyPressed & B_BUTTON)
+    if(hram.hJoyPressed & B_BUTTON)
         return Function171bdc();
     // LD_A_hl;
     // AND_A(0x1);
     // JP_NZ (mFunction171beb);
-    if(hram->hJoyPressed & A_BUTTON)
+    if(hram.hJoyPressed & A_BUTTON)
         return Function171beb();
     // RET;
 

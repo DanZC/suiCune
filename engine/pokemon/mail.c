@@ -787,7 +787,7 @@ void MailboxPC(void){
         CopyMenuHeader(&MailboxPC_TopMenuHeader);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aInitScrollingMenu);
         InitScrollingMenu();
         // CALL(aUpdateSprites);

@@ -151,7 +151,7 @@ uint8_t Kurt_SelectApricorn(void){
         wram->wMenuCursorPosition = wram->wMenuSelection;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aInitScrollingMenu);
         InitScrollingMenu();
         // CALL(aUpdateSprites);
@@ -218,7 +218,7 @@ bool Kurt_SelectQuantity(void){
     // loop:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aMenuBox);
         MenuBox();
         // CALL(aUpdateSprites);

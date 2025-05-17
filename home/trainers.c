@@ -17,7 +17,7 @@ Script_fn_t gScriptAfterPointer = NULL;
 bool CheckTrainerBattle(void){
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
-    uint8_t oldBank = hram->hROMBank;
+    uint8_t oldBank = hram.hROMBank;
 
     // CALL(aSwitchToMapScriptsBank);
     SwitchToMapScriptsBank();
@@ -125,7 +125,7 @@ bool v_CheckTrainerBattle(void){
             // POP_DE;
             // POP_AF;
             // LDH_addr_A(hLastTalked);
-            hram->hLastTalked = a;
+            hram.hLastTalked = a;
             // LD_A_B;
             // LD_addr_A(wSeenTrainerDistance);
             wram->wSeenTrainerDistance = fdist.dist;
@@ -172,7 +172,7 @@ bool LoadTrainer_continue(void){
 
     // LDH_A_addr(hLastTalked);
     // CALL(aGetMapObject);
-    struct MapObject* bc = GetMapObject(hram->hLastTalked);
+    struct MapObject* bc = GetMapObject(hram.hLastTalked);
 
     // LD_HL(MAPOBJECT_SCRIPT_POINTER);
     // ADD_HL_BC;
@@ -326,31 +326,33 @@ struct FacingDist FacingPlayerDistance(struct Object* bc){
     // RET;
 }
 
-void CheckTrainerFlag(void){
-    //  //  unreferenced
-    PUSH_BC;
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_SCRIPT_POINTER);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    CALL(aGetMapScriptsBank);
-    CALL(aGetFarWord);
-    LD_D_H;
-    LD_E_L;
-    PUSH_DE;
-    LD_B(CHECK_FLAG);
-    CALL(aEventFlagAction);
-    POP_DE;
-    LD_A_C;
-    AND_A_A;
-    POP_BC;
-    RET;
-
+//  //  unreferenced
+bool CheckTrainerFlag(struct Object* bc){
+    // PUSH_BC;
+    // LD_HL(OBJECT_MAP_OBJECT_INDEX);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aGetMapObject);
+    struct MapObject* mbc = GetMapObject(bc->mapObjectIndex);
+    // LD_HL(MAPOBJECT_SCRIPT_POINTER);
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // CALL(aGetMapScriptsBank);
+    // CALL(aGetFarWord);
+    // LD_D_H;
+    // LD_E_L;
+    // PUSH_DE;
+    // LD_B(CHECK_FLAG);
+    // CALL(aEventFlagAction);
+    uint8_t c = EventFlagAction(mbc->objectScript, CHECK_FLAG);
+    // POP_DE;
+    // LD_A_C;
+    // AND_A_A;
+    // POP_BC;
+    // RET;
+    return c != 0;
 }
 
 void PrintWinLossText(void){

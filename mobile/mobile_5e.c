@@ -246,32 +246,32 @@ void Function17a751(void){
 void Function17a770(void){
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t oamUpdate = hram->hOAMUpdate;
+    uint8_t oamUpdate = hram.hOAMUpdate;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hram.hOAMUpdate = 0x1;
     // CALL(aHideSprites);
     HideSprites();
     // CALL(aFunction17a9cb);
     Function17a9cb();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = oamUpdate;
+    hram.hOAMUpdate = oamUpdate;
     // RET;
 }
 
 void Function17a781(void){
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // CALL(aJoyTextDelay);
     JoyTextDelay();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // RET;
 }
 
@@ -408,7 +408,7 @@ void Function17a81a(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(0x3);
     // RET_Z ;
-    if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) == 0)
+    if((hram.hJoyPressed & (A_BUTTON | B_BUTTON)) == 0)
         return;
     // CALL(aExitMenu);
     ExitMenu();
@@ -437,7 +437,7 @@ uint8_t Function17a83c(void){
     // OR_A_C;
     // LD_C_A;
     // RET;
-    return (hram->hJoyLast & 0xf0) | (hram->hJoyPressed & 0xb);
+    return (hram.hJoyLast & 0xf0) | (hram.hJoyPressed & 0xb);
 }
 
 bool Function17a848(uint8_t c){

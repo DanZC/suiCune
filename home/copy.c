@@ -93,7 +93,7 @@ void ByteFill_GB(uint16_t ptr, uint16_t len, uint8_t value){
 //  DEPRECATED: Use wram variable directly.
 uint8_t GetFarByte(uint8_t a, uint16_t hl){
     // bankswitch to new bank
-    uint8_t temp = hram->hROMBank;
+    uint8_t temp = hram.hROMBank;
     Bankswitch(a);
 
     // get byte from new bank
@@ -110,7 +110,7 @@ uint8_t GetFarByte(uint8_t a, uint16_t hl){
 //  DEPRECATED: Use wram variable directly.
 uint16_t GetFarWord(uint8_t a, uint16_t hl){
     // bankswitch to new bank
-    uint8_t temp = hram->hROMBank;
+    uint8_t temp = hram.hROMBank;
     Bankswitch(a);
 
 // get word from new bank, put it in hl
@@ -153,28 +153,27 @@ uint8_t GetFarWRAMByte(uint8_t bank, uint16_t address){
     gb_write(rSVBK, bank);
     // LD_A_hl;
     // LDH_addr_A(hFarByte);
-    hram->hFarByte = gb_read(address);
+    hram.hFarByte = gb_read(address);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, svbk);
     // LDH_A_addr(hFarByte);
     // RET;
-    return hram->hFarByte;
+    return hram.hFarByte;
 }
 
 
+//  //  unreferenced
 void GetFarWRAMWord(void){
-    //  //  unreferenced
-    LDH_addr_A(hTempBank);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LDH_A_addr(hTempBank);
-    LDH_addr_A(rSVBK);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // LDH_addr_A(hTempBank);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LDH_A_addr(hTempBank);
+    // LDH_addr_A(rSVBK);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }

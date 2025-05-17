@@ -44,21 +44,20 @@ uint16_t GetPartyLocation_GB(uint16_t hl, uint8_t a){
 //  Probably used in gen 1 to convert index number to dex number
 //  Not required in gen 2 because index number == dex number
 void GetDexNumber(void){
-    PUSH_HL;
-    LD_A_B;
-    DEC_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_HL(mBaseData + BASE_DEX_NO);
-    LD_BC(BASE_DATA_SIZE);
-    CALL(aAddNTimes);
-    LD_A(BANK(aBaseData));
-    CALL(aGetFarWord);
-    LD_B_L;
-    LD_C_H;
-    POP_HL;
-    RET;
-
+    // PUSH_HL;
+    // LD_A_B;
+    // DEC_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_HL(mBaseData + BASE_DEX_NO);
+    // LD_BC(BASE_DATA_SIZE);
+    // CALL(aAddNTimes);
+    // LD_A(BANK(aBaseData));
+    // CALL(aGetFarWord);
+    // LD_B_L;
+    // LD_C_H;
+    // POP_HL;
+    // RET;
 }
 
 // DEPRECATED: Use UserPartyMon and get its field instead.
@@ -66,7 +65,7 @@ uint16_t UserPartyAttr(uint8_t a){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_NZ goto ot;
-    if(hram->hBattleTurn != TURN_PLAYER)
+    if(hram.hBattleTurn != TURN_PLAYER)
     {
         // JR(mOTPartyAttr);
         return OTPartyAttr(a);
@@ -80,7 +79,7 @@ struct PartyMon* UserPartyMon(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ot;
-    if(hram->hBattleTurn != TURN_PLAYER)
+    if(hram.hBattleTurn != TURN_PLAYER)
     {
         // JR(mOTPartyAttr);
         return wram->wOTPartyMon + wram->wCurOTMon;
@@ -95,7 +94,7 @@ uint16_t OpponentPartyAttr(uint8_t a){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ot;
-    if(hram->hBattleTurn == TURN_PLAYER)
+    if(hram.hBattleTurn == TURN_PLAYER)
     {
         // JR(mOTPartyAttr);
         return OTPartyAttr(a);
@@ -109,7 +108,7 @@ struct PartyMon* OpponentPartyMon(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ot;
-    if(hram->hBattleTurn == TURN_PLAYER)
+    if(hram.hBattleTurn == TURN_PLAYER)
     {
         // JR(mOTPartyAttr);
         return wram->wOTPartyMon + wram->wCurOTMon;
@@ -163,20 +162,20 @@ void ResetDamage(void){
 void SetPlayerTurn(void){
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_PLAYER; // Player's turn
+    hram.hBattleTurn = TURN_PLAYER; // Player's turn
 }
 
 void SetEnemyTurn(void){
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_ENEMY; // Enemy's turn
+    hram.hBattleTurn = TURN_ENEMY; // Enemy's turn
 }
 
 void UpdateOpponentInParty(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JR_Z (mUpdateEnemyMonInParty);
-    if(hram->hBattleTurn == TURN_PLAYER)
+    if(hram.hBattleTurn == TURN_PLAYER)
         return UpdateEnemyMonInParty();
 
     // JR(mUpdateBattleMonInParty);
@@ -187,7 +186,7 @@ void UpdateUserInParty(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JR_Z (mUpdateBattleMonInParty);
-    if(hram->hBattleTurn == TURN_PLAYER)
+    if(hram.hBattleTurn == TURN_PLAYER)
         return UpdateBattleMonInParty();
     
     // JR(mUpdateEnemyMonInParty);
@@ -265,28 +264,27 @@ void UpdateBattleHuds(void){
 
 // Unused
 void FarCopyRadioText(void){
-        INC_HL;
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A_hli;
-    LD_E_A;
-    LD_A_hli;
-    LD_D_A;
-    LD_A_hli;
-    LDH_addr_A(hROMBank);
-    LD_addr_A(MBC3RomBank);
-    LD_A_E;
-    LD_L_A;
-    LD_A_D;
-    LD_H_A;
-    LD_DE(wRadioText);
-    LD_BC(2 * SCREEN_WIDTH);
-    CALL(aCopyBytes);
-    POP_AF;
-    LDH_addr_A(hROMBank);
-    LD_addr_A(MBC3RomBank);
-    RET;
-
+    // INC_HL;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A_hli;
+    // LD_E_A;
+    // LD_A_hli;
+    // LD_D_A;
+    // LD_A_hli;
+    // LDH_addr_A(hROMBank);
+    // LD_addr_A(MBC3RomBank);
+    // LD_A_E;
+    // LD_L_A;
+    // LD_A_D;
+    // LD_H_A;
+    // LD_DE(wRadioText);
+    // LD_BC(2 * SCREEN_WIDTH);
+    // CALL(aCopyBytes);
+    // POP_AF;
+    // LDH_addr_A(hROMBank);
+    // LD_addr_A(MBC3RomBank);
+    // RET;
 }
 
 // For mobile link battles only.
@@ -444,7 +442,7 @@ void PushLYOverrides(void){
     // LDH_A_addr(hLCDCPointer);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hLCDCPointer == 0)
+    if(hram.hLCDCPointer == 0)
         return;
 
     // LD_A(LOW(wLYOverridesBackup));

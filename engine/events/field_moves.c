@@ -119,7 +119,7 @@ void ShakeHeadbuttTree(void){
     WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aClearSpriteAnims);
     ClearSpriteAnims();
     // LD_HL(wVirtualOAMSprite36);
@@ -147,7 +147,7 @@ const uint16_t TreeRelativeLocationTable[] = {
 void HideHeadbuttTree(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A_addr(wPlayerDirection);
     // AND_A(0b00001100);
     // SRL_A;
@@ -176,7 +176,7 @@ void HideHeadbuttTree(void){
     WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
@@ -295,7 +295,7 @@ void Cut_SpawnAnimateLeaves(void){
 void Cut_StartWaiting(void){
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
 //  Cut_WaitAnimSFX
     // LD_HL(wJumptableIndex);
     // INC_hl;

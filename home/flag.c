@@ -71,7 +71,7 @@ bool CheckBPressedDebug(void){
     // LDH_A_addr(hJoyDown);
     // BIT_A(B_BUTTON_F);
     // RET;
-    return bit_test(wram->wDebugFlags, DEBUG_FIELD_F) && bit_test(hram->hJoyDown, B_BUTTON_F);
+    return bit_test(wram->wDebugFlags, DEBUG_FIELD_F) && bit_test(hram.hJoyDown, B_BUTTON_F);
 }
 
 //  DEPRECATED: Just return z/0

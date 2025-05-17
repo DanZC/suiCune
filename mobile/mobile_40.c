@@ -174,9 +174,9 @@ void SetRAMStateForMobile(void){
     wram->wBGMapBuffer[0] = gb_read(rIE);
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0x0;
+    hram.hMapAnims = 0x0;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0x0;
+    hram.hLCDCPointer = 0x0;
     // RET;
 
 }
@@ -199,14 +199,14 @@ void EnableMobile(void){
     gb_write(rIE, IE_DEFAULT);
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0x0;
+    hram.hMapAnims = 0x0;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0x0;
+    hram.hLCDCPointer = 0x0;
     // LD_A(0x01);
     // LDH_addr_A(hMobileReceive);
-    hram->hMobileReceive = 0x01;
+    hram.hMobileReceive = 0x01;
     // LDH_addr_A(hMobile);
-    hram->hMobile = 0x01;
+    hram.hMobile = 0x01;
     // NOP;
 
     // RET;
@@ -216,12 +216,12 @@ void DisableMobile(void){
     // NOP;
     // XOR_A_A;
     // LDH_addr_A(hMobileReceive);
-    hram->hMobileReceive = 0x0;
+    hram.hMobileReceive = 0x0;
     // LDH_addr_A(hMobile);
-    hram->hMobile = 0x0;
+    hram.hMobile = 0x0;
     // XOR_A_A;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0x0;
+    hram.hVBlank = 0x0;
     // CALL(aNormalSpeed);
     // XOR_A_A;
     // LDH_addr_A(rIF);
@@ -322,9 +322,9 @@ void Function1000fa(void){
     gb_write(rIE, gb_read(rIE) & (0x1f ^ (1 << SERIAL | 1 << TIMER)));
     // XOR_A_A;
     // LDH_addr_A(hMobileReceive);
-    hram->hMobileReceive = 0x0;
+    hram.hMobileReceive = 0x0;
     // LDH_addr_A(hMobile);
-    hram->hMobile = 0x0;
+    hram.hMobile = 0x0;
     // NOP;
 
     // LD_A_addr(wLinkMode);
@@ -672,12 +672,12 @@ void Function1002c9(void){
 void Function1002dc(void){
     // LD_A(MAPSETUP_LINKRETURN);
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = MAPSETUP_LINKRETURN;
+    hram.hMapEntryMethod = MAPSETUP_LINKRETURN;
     // FARCALL(aRunMapSetupScript);
     RunMapSetupScript();
     // XOR_A_A;
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = 0;
+    hram.hMapEntryMethod = 0;
     // CALL(aLoadStandardFont);
     LoadStandardFont();
     // RET;
@@ -690,7 +690,7 @@ void Function1002ed(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // CALL(aDelayFrame);
     DelayFrame();
     // RET;
@@ -1585,13 +1585,13 @@ void Function100665(void){
     // LD_HL(wcd36);
     // LDH_A_addr(hHours);
     // LD_hli_A;
-    wram->wcd36 = hram->hHours;
+    wram->wcd36 = hram.hHours;
     // LDH_A_addr(hMinutes);
     // LD_hli_A;
-    wram->wcd37 = hram->hMinutes;
+    wram->wcd37 = hram.hMinutes;
     // LDH_A_addr(hSeconds);
     // LD_hl_A;
-    wram->wcd38 = hram->hSeconds;
+    wram->wcd38 = hram.hSeconds;
     // RET;
 }
 
@@ -1695,7 +1695,7 @@ void Function1006dc(uint8_t* de, const uint8_t* hl){
     // LD_C_A;
     uint8_t c = hl[2];
     // LDH_A_addr(hSeconds);
-    uint8_t a = hram->hSeconds;
+    uint8_t a = hram.hSeconds;
     // SUB_A_C;
     // IF_NC goto asm_1006e5;
     if((cy = a < c)) {
@@ -1711,7 +1711,7 @@ void Function1006dc(uint8_t* de, const uint8_t* hl){
     // LD_C_A;
     c = hl[1] + cy;
     // LDH_A_addr(hMinutes);
-    a = hram->hMinutes;
+    a = hram.hMinutes;
     // SBC_A_C;
     // IF_NC goto asm_1006f0;
     if((cy = a < c)) {
@@ -1727,7 +1727,7 @@ void Function1006dc(uint8_t* de, const uint8_t* hl){
     // LD_C_A;
     c = hl[0] + cy;
     // LDH_A_addr(hHours);
-    a = hram->hHours;
+    a = hram.hHours;
     // SBC_A_C;
     // IF_NC goto asm_1006fb;
     if((cy = a < c)) {
@@ -1786,13 +1786,13 @@ void Function100720(void){
     UpdateTime();
     // LDH_A_addr(hHours);
     // LD_addr_A(wcd72);
-    wram->wcd72 = hram->hHours;
+    wram->wcd72 = hram.hHours;
     // LDH_A_addr(hMinutes);
     // LD_addr_A(wcd73);
-    wram->wcd73 = hram->hMinutes;
+    wram->wcd73 = hram.hMinutes;
     // LDH_A_addr(hSeconds);
     // LD_addr_A(wcd74);
-    wram->wcd74 = hram->hSeconds;
+    wram->wcd74 = hram.hSeconds;
     // LD_A(BANK(sMobileBattleTimer));
     // LD_HL(sMobileBattleTimer);
     // CALL(aOpenSRAM);
@@ -1822,13 +1822,13 @@ void Function100754(void){
     UpdateTime();
     // LDH_A_addr(hHours);
     // LD_addr_A(wcd72);
-    wram->wcd72 = hram->hHours;
+    wram->wcd72 = hram.hHours;
     // LDH_A_addr(hMinutes);
     // LD_addr_A(wcd73);
-    wram->wcd73 = hram->hMinutes;
+    wram->wcd73 = hram.hMinutes;
     // LDH_A_addr(hSeconds);
     // LD_addr_A(wcd74);
-    wram->wcd74 = hram->hSeconds;
+    wram->wcd74 = hram.hSeconds;
     // LD_A_addr(wcd6d);
     // LD_addr_A(wcd6b);
     wram->wcd6b = wram->wcd6d;
@@ -1990,13 +1990,13 @@ u8_pair_flag_s Function1007f6(void){
     u8_pair_flag_s res = Function100826(&wram->wcd6c);
     // LDH_A_addr(hHours);
     // LD_addr_A(wcd72);
-    wram->wcd72 = hram->hHours;
+    wram->wcd72 = hram.hHours;
     // LDH_A_addr(hMinutes);
     // LD_addr_A(wcd73);
-    wram->wcd73 = hram->hMinutes;
+    wram->wcd73 = hram.hMinutes;
     // LDH_A_addr(hSeconds);
     // LD_addr_A(wcd74);
-    wram->wcd74 = hram->hSeconds;
+    wram->wcd74 = hram.hSeconds;
     // RET;
     return res;
 }
@@ -2166,17 +2166,17 @@ u8_pair_s MobileBattleGetRemainingTime(void){
 void Function1008e0(void){
     // LDH_A_addr(hBGMapMode);
     // LD_B_A;
-    uint8_t bg_map_mode = hram->hBGMapMode;
+    uint8_t bg_map_mode = hram.hBGMapMode;
     // LDH_A_addr(hVBlank);
     // LD_C_A;
-    uint8_t vblank = hram->hVBlank;
+    uint8_t vblank = hram.hVBlank;
     // PUSH_BC;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x03);
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = 0x03;
+    hram.hVBlank = 0x03;
     // CALL(aFunction100970);
     Function100970();
     // CALL(aFunction100902);
@@ -2188,10 +2188,10 @@ void Function1008e0(void){
     // POP_BC;
     // LD_A_C;
     // LDH_addr_A(hVBlank);
-    hram->hVBlank = vblank;
+    hram.hVBlank = vblank;
     // LD_A_B;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = bg_map_mode;
+    hram.hBGMapMode = bg_map_mode;
     // RET;
 }
 
@@ -2363,7 +2363,7 @@ bool Function1009f3(void){
     // AND_A(SELECT + A_BUTTON);
     // CP_A(SELECT + A_BUTTON);
     // IF_NZ goto select_a;
-    if((hram->hJoyDown & (SELECT + A_BUTTON)) == (SELECT + A_BUTTON)) {
+    if((hram.hJoyDown & (SELECT + A_BUTTON)) == (SELECT + A_BUTTON)) {
         // LD_HL(wcd2a);
         // SET_hl(4);
         bit_set(wram->wcd2a, 4);
@@ -2741,7 +2741,7 @@ static uint8_t Mobile_MoveSelectionScreen_GetMoveSelection(void){
 Top:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMobile_MoveSelectionScreen_ListMoves);
     Mobile_MoveSelectionScreen_ListMoves();
     // CALL(aFunction100c98);
@@ -2986,7 +2986,7 @@ bool Mobile_PartyMenuSelect(void){
     // LD_B_A;
     // BIT_B(1);
     // IF_NZ goto done;
-    if(bit_test(hram->hJoyLast, B_BUTTON_F))
+    if(bit_test(hram.hJoyLast, B_BUTTON_F))
         goto done;
     // LD_A_addr(wMenuCursorY);
     // DEC_A;
@@ -3103,7 +3103,7 @@ void Function100d67(void){
     CopyMenuHeader(&Function100d67_MenuHeader);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
     MenuBox();
     // CALL(aUpdateSprites);
@@ -3418,7 +3418,7 @@ void Function100ed4(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -4506,7 +4506,7 @@ bool Function101418(void){
     // AND_A(SELECT + A_BUTTON);
     // CP_A(SELECT + A_BUTTON);
     // IF_Z goto asm_101425;
-    if((hram->hJoyDown & (SELECT + A_BUTTON)) == (SELECT + A_BUTTON)) {
+    if((hram.hJoyDown & (SELECT + A_BUTTON)) == (SELECT + A_BUTTON)) {
     // asm_101425:
         // LD_A(0xf7);
         // LD_addr_A(wcd2b);
@@ -4661,7 +4661,7 @@ void Function1014b7(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(0x03);
     // IF_NZ goto asm_1014c5;
-    if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) == 0) {
+    if((hram.hJoyPressed & (A_BUTTON | B_BUTTON)) == 0) {
         // LD_HL(wcd42);
         // DEC_hl;
         // RET_NZ ;
@@ -5574,7 +5574,7 @@ void Function101913(void){
     bit_reset(wram->wcd29, 7);
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LD_A_addr(wcd21);
     switch(wram->wcd21) {
     // CP_A(0x01);
@@ -5700,7 +5700,7 @@ static void v_StartMobileBattle_CopyOTDetails(void){
 
 // got_link_player_number:
     // LDH_addr_A(hSerialConnectionStatus);
-    hram->hSerialConnectionStatus = (wram->wcd2f == 0)? USING_INTERNAL_CLOCK: USING_EXTERNAL_CLOCK;
+    hram.hSerialConnectionStatus = (wram->wcd2f == 0)? USING_INTERNAL_CLOCK: USING_EXTERNAL_CLOCK;
     // RET;
 }
 
@@ -5770,7 +5770,7 @@ void StartMobileBattle(void){
     wram->wDisableTextAcceleration = 0x0;
     // LD_A(CONNECTION_NOT_ESTABLISHED);
     // LDH_addr_A(hSerialConnectionStatus);
-    hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
+    hram.hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
     // POP_AF;
     // LD_addr_A(wOptions);
     wram->wOptions = options;
@@ -7809,7 +7809,7 @@ void Function1024de(void){
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON | B_BUTTON);
         // RET_Z ;
-        if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) == 0)
+        if((hram.hJoyPressed & (A_BUTTON | B_BUTTON)) == 0)
             return;
     }
 
@@ -8241,7 +8241,7 @@ void Function1026f3(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(A_BUTTON_F);
     // IF_NZ goto asm_102723;
-    if(bit_test(hram->hJoyPressed, A_BUTTON_F)) {
+    if(bit_test(hram.hJoyPressed, A_BUTTON_F)) {
     // asm_102723:
         // hlcoord(9, 17, wTilemap);
         // LD_hl(0xec);
@@ -8259,7 +8259,7 @@ void Function1026f3(void){
     }
     // BIT_A(D_UP_F);
     // IF_NZ goto asm_102712;
-    else if(bit_test(hram->hJoyPressed, D_UP_F)) {
+    else if(bit_test(hram.hJoyPressed, D_UP_F)) {
     // asm_102712:
         // hlcoord(9, 17, wTilemap);
         // LD_hl(0x7f);
@@ -8275,7 +8275,7 @@ void Function1026f3(void){
     }
     // BIT_A(D_DOWN_F);
     // IF_NZ goto asm_102702;
-    else if(bit_test(hram->hJoyPressed, D_DOWN_F)) {
+    else if(bit_test(hram.hJoyPressed, D_DOWN_F)) {
     // asm_102702:
         // hlcoord(9, 17, wTilemap);
         // LD_hl(0x7f);
@@ -8367,15 +8367,15 @@ void Function10278c(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(A_BUTTON_F);
     // JR_NZ (masm_1027c6);
-    if(bit_test(hram->hJoyPressed, A_BUTTON_F))
+    if(bit_test(hram.hJoyPressed, A_BUTTON_F))
         return asm_1027c6();
     // BIT_A(B_BUTTON_F);
     // JR_NZ (masm_1027e2);
-    else if(bit_test(hram->hJoyPressed, B_BUTTON_F))
+    else if(bit_test(hram.hJoyPressed, B_BUTTON_F))
         return asm_1027e2();
     // BIT_A(D_RIGHT_F);
     // IF_NZ goto asm_10279b;
-    else if(bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    else if(bit_test(hram.hJoyPressed, D_RIGHT_F)) {
     // asm_10279b:
         // LD_A(0x03);
         // LD_addr_A(wcd4a);
@@ -8406,15 +8406,15 @@ void Function1027b7(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(A_BUTTON_F);
     // JR_NZ (masm_1027d1);
-    if(bit_test(hram->hJoyPressed, A_BUTTON_F))
+    if(bit_test(hram.hJoyPressed, A_BUTTON_F))
         return asm_1027d1();
     // BIT_A(B_BUTTON_F);
     // JR_NZ (masm_1027e2);
-    else if(bit_test(hram->hJoyPressed, B_BUTTON_F))
+    else if(bit_test(hram.hJoyPressed, B_BUTTON_F))
         return asm_1027e2();
     // BIT_A(D_LEFT_F);
     // JR_NZ (mFunction102770);
-    else if(bit_test(hram->hJoyPressed, D_LEFT_F))
+    else if(bit_test(hram.hJoyPressed, D_LEFT_F))
         return Function102770();
     // RET;
 }
@@ -9929,7 +9929,7 @@ void Function10305d(void){
 void Function10306e(void){
     // LD_A(0x01);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hram.hOAMUpdate = 0x1;
     // CALL(aClearSprites);
     ClearSprites();
     // LD_DE(wVirtualOAM);
@@ -9937,7 +9937,7 @@ void Function10306e(void){
     Function1030cd(wram->wVirtualOAMSprite);
     // XOR_A_A;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x0;
+    hram.hOAMUpdate = 0x0;
     // RET;
 }
 
@@ -10194,7 +10194,7 @@ bool Function103302(void){
 void Function103309(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(wd1ea);
     // LD_BC(10);
     // XOR_A_A;
@@ -10322,8 +10322,8 @@ void Function1033af(void){
     // IF_NZ goto left;
     // BIT_A(D_RIGHT_F);
     // IF_NZ goto right;
-    if(bit_test(hram->hJoyPressed, D_LEFT_F)
-    || bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    if(bit_test(hram.hJoyPressed, D_LEFT_F)
+    || bit_test(hram.hJoyPressed, D_RIGHT_F)) {
     // left:
     // right:
     a_return:
@@ -10346,7 +10346,7 @@ void Function1033af(void){
     }
     // BIT_A(B_BUTTON_F);
     // IF_NZ goto b;
-    else if(bit_test(hram->hJoyPressed, B_BUTTON_F)) {
+    else if(bit_test(hram.hJoyPressed, B_BUTTON_F)) {
     // b:
         // CALL(aPlayClickSFX);
         PlayClickSFX();
@@ -10358,7 +10358,7 @@ void Function1033af(void){
     }
     // BIT_A(A_BUTTON_F);
     // IF_NZ goto a;
-    else if(bit_test(hram->hJoyPressed, A_BUTTON_F)) {
+    else if(bit_test(hram.hJoyPressed, A_BUTTON_F)) {
     // a:
         // LD_A_addr(wd1f3);
         // CP_A(3);
@@ -10378,7 +10378,7 @@ void Function1033af(void){
     }
     // BIT_A(D_UP_F);
     // IF_NZ goto up;
-    else if(bit_test(hram->hJoyPressed, D_UP_F)) {
+    else if(bit_test(hram.hJoyPressed, D_UP_F)) {
     // up:
         // LD_A_addr(wd1f0);
         // DEC_A;
@@ -10396,7 +10396,7 @@ void Function1033af(void){
     }
     // BIT_A(D_DOWN_F);
     // IF_NZ goto down;
-    else if(bit_test(hram->hJoyPressed, D_DOWN_F)) {
+    else if(bit_test(hram.hJoyPressed, D_DOWN_F)) {
     // down:
         // LD_A_addr(wd1f0);
         // INC_A;

@@ -154,7 +154,7 @@ void PokemonCenterPC(void){
     // loop:
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aPokemonCenterPC_ChooseWhichPCListToUse);
         // LD_addr_A(wWhichIndexSet);
         wram->wWhichIndexSet = PokemonCenterPC_ChooseWhichPCListToUse();
@@ -591,7 +591,7 @@ static void PlayerWithdrawItemMenu_Submenu(void) {
     MenuTextbox(PlayersPCWithdrewItemsText);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aExitMenu);
     ExitMenu();
     // RET;

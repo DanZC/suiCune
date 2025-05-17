@@ -164,13 +164,13 @@ void DrawDexEntryScreenRightEdge(void){
     // LDH_A_addr(hBGMapAddress + 1);
     // LD_H_A;
     // PUSH_HL;
-    uint16_t bgMapAddress = hram->hBGMapAddress;
+    uint16_t bgMapAddress = hram.hBGMapAddress;
     // INC_HL;
     // LD_A_L;
     // LDH_addr_A(hBGMapAddress);
     // LD_A_H;
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress++;
+    hram.hBGMapAddress++;
     // hlcoord(19, 0, wTilemap);
     // LD_hl(0x66);
     *coord(19, 0, wram->wTilemap) = 0x66;
@@ -196,7 +196,7 @@ void DrawDexEntryScreenRightEdge(void){
     // LDH_addr_A(hBGMapAddress);
     // LD_A_H;
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = bgMapAddress;
+    hram.hBGMapAddress = bgMapAddress;
     // RET;
 }
 

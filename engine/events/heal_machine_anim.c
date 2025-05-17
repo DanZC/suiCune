@@ -217,7 +217,7 @@ static void HealMachineAnim_LoadPalettes(void) {
     CopyBytes(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_TREE, buf, PALETTE_SIZE);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -356,7 +356,7 @@ static void HealMachineAnim_FlashPalettes(void){
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 

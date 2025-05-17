@@ -33,12 +33,12 @@ static void TMHMPocket_ConvertItemToTMHMNumber(void){
 bool TMHMPocket(void){
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // CALL(aTMHM_PocketLoop);
     bool exit = TMHM_PocketLoop();
     // LD_A(0x0);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x0;
+    hram.hInMenu = 0x0;
     // RET_NC ;
     if(!exit)
         return false;
@@ -290,7 +290,7 @@ const txt_cmd_s TMHMNotCompatibleText[] = {
 bool TMHM_PocketLoop(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aTMHM_DisplayPocketItems);
     uint8_t d = TMHM_DisplayPocketItems();
     // LD_A(2);
@@ -377,7 +377,7 @@ bool TMHM_PocketLoop(void){
         printf("wTMHMPocketCursor: %d\n", wram->wTMHMPocketCursor);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // LD_A_addr(w2DMenuFlags2);
         // BIT_A(7);
         // JP_NZ (mTMHM_ScrollPocket);

@@ -11,7 +11,7 @@ void Timer(void){
     // LDH_A_addr(hMobile);
     // AND_A_A;
     // IF_Z goto not_mobile;
-    if(hram->hMobile) {
+    if(hram.hMobile) {
         // CALL(aMobileTimer);
         MobileTimer();
     }
@@ -48,27 +48,27 @@ void GetClock(void){
     gb_write(MBC3SRamBank, RTC_S);
     // REG_A = gb_read(de);
     // maskbits(60, 0);
-    hram->hRTCSeconds = gb_read(MBC3RTC) & 0x3f;
+    hram.hRTCSeconds = gb_read(MBC3RTC) & 0x3f;
 
     gb_write(MBC3SRamBank, RTC_M);
     // REG_A = gb_read(de);
     // maskbits(60, 0);
     // gb_write(hRTCMinutes, REG_A);
-    hram->hRTCMinutes = gb_read(MBC3RTC) & 0x3f;
+    hram.hRTCMinutes = gb_read(MBC3RTC) & 0x3f;
 
     gb_write(MBC3SRamBank, RTC_H);
     // REG_A = gb_read(de);
     // maskbits(24, 0);
     // gb_write(hRTCHours, REG_A);
-    hram->hRTCHours = gb_read(MBC3RTC) & 0x1f;
+    hram.hRTCHours = gb_read(MBC3RTC) & 0x1f;
 
     gb_write(MBC3SRamBank, RTC_DL);
     // REG_A = gb_read(de);
-    hram->hRTCDayLo = gb_read(MBC3RTC);
+    hram.hRTCDayLo = gb_read(MBC3RTC);
 
     gb_write(MBC3SRamBank, RTC_DH);
     // REG_A = gb_read(de);
-    hram->hRTCDayHi = gb_read(MBC3RTC);
+    hram.hRTCDayHi = gb_read(MBC3RTC);
 
 //  unlatch clock / disable clock r/w
     CloseSRAM();
@@ -83,16 +83,16 @@ uint8_t FixDays(void){
     // LDH_A_addr(hRTCDayHi);  // DH
     // BIT_A(0);
     // IF_Z goto daylo;
-    if(bit_test(hram->hRTCDayHi, 0)) {
+    if(bit_test(hram.hRTCDayHi, 0)) {
     //  reset dh (bit 8)
         // RES_A(0);
         // LDH_addr_A(hRTCDayHi);
-        bit_reset(hram->hRTCDayHi, 0);
+        bit_reset(hram.hRTCDayHi, 0);
 
     //  mod 140
     //  mod twice since bit 8 (DH) was set
         // LDH_A_addr(hRTCDayLo);
-        uint8_t a = hram->hRTCDayLo;
+        uint8_t a = hram.hRTCDayLo;
 
         // uint8_t carry;
         // do {
@@ -112,7 +112,7 @@ uint8_t FixDays(void){
 
     //  update dl
         // LDH_addr_A(hRTCDayLo);
-        hram->hRTCDayLo = (a | 0x100) % 140;
+        hram.hRTCDayLo = (a | 0x100) % 140;
 
     //  flag for sRTCStatusFlags
         // LD_A(0b01000000);
@@ -125,7 +125,7 @@ uint8_t FixDays(void){
         // LDH_A_addr(hRTCDayLo);
         // CP_A(140);
         // IF_C goto quit;
-        if(hram->hRTCDayLo < 140) {
+        if(hram.hRTCDayLo < 140) {
             return 0;
         }
 
@@ -137,7 +137,7 @@ uint8_t FixDays(void){
 
     //  update dl
         // LDH_addr_A(hRTCDayLo);
-        hram->hRTCDayLo %= 140;
+        hram.hRTCDayLo %= 140;
 
     //  flag for sRTCStatusFlags
         // LD_A(0b00100000);
@@ -164,7 +164,7 @@ uint8_t FixDays(void){
 void FixTime(void){
 //  second
     uint8_t carry = 0;
-    uint8_t curr_sec = hram->hRTCSeconds;
+    uint8_t curr_sec = hram.hRTCSeconds;
     uint8_t start_sec = wram->wStartSecond;
     uint8_t sec = curr_sec + start_sec;
     if(sec >= 60)
@@ -172,11 +172,11 @@ void FixTime(void){
         sec -= 60;
         carry = 1;
     }
-    hram->hSeconds = sec;
+    hram.hSeconds = sec;
 
 //  minute
     // REG_F_C = 0;  // carry is set, so turn it off
-    uint8_t curr_min = hram->hRTCMinutes;
+    uint8_t curr_min = hram.hRTCMinutes;
     uint8_t start_min = wram->wStartMinute;
     uint8_t min = curr_min + start_min + carry;
     carry = 0;
@@ -185,11 +185,11 @@ void FixTime(void){
         min -= 60;
         carry = 1;
     }
-    hram->hMinutes = min;
+    hram.hMinutes = min;
 
 //  hour
     // REG_F_C = 0;  // carry is set, so turn it off
-    uint8_t curr_hr = hram->hRTCHours;
+    uint8_t curr_hr = hram.hRTCHours;
     uint8_t start_hr = wram->wStartHour;
     uint8_t hr = curr_hr + start_hr + carry;
     carry = 0;
@@ -198,11 +198,11 @@ void FixTime(void){
         hr -= 24;
         carry = 1;
     }
-    hram->hHours = hr;
+    hram.hHours = hr;
 
 //  day
     // REG_F_C = 0;  // carry is set, so turn it off
-    uint8_t curr_day = hram->hRTCDayLo;
+    uint8_t curr_day = hram.hRTCDayLo;
     uint8_t start_day = wram->wStartDay;
     uint8_t day = curr_day + start_day + carry;
     wram->wCurDay = day;
@@ -233,7 +233,7 @@ void InitDayOfWeek(uint8_t day){
     // LD_addr_A(wStringBuffer2 + 3);
 
     // JR(mInitTime);  // useless
-    return InitTime(day, hram->hHours, hram->hMinutes, hram->hSeconds);
+    return InitTime(day, hram.hHours, hram.hMinutes, hram.hSeconds);
 }
 
 void InitTime(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
@@ -243,11 +243,11 @@ void InitTime(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
 }
 
 static void ClearClock_ClearhRTC() {
-    hram->hRTCSeconds = 0;
-    hram->hRTCMinutes = 0;
-    hram->hRTCHours = 0;
-    hram->hRTCDayLo = 0;
-    hram->hRTCDayHi = 0;
+    hram.hRTCSeconds = 0;
+    hram.hRTCMinutes = 0;
+    hram.hRTCHours = 0;
+    hram.hRTCDayLo = 0;
+    hram.hRTCDayHi = 0;
 }
 
 void ClearClock(void){
@@ -276,19 +276,19 @@ void SetClock(void){
 
 //  seconds
     gb_write(hl, RTC_S);
-    gb_write(de, hram->hRTCSeconds);
+    gb_write(de, hram.hRTCSeconds);
 //  minutes
     gb_write(hl, RTC_M);
-    gb_write(de, hram->hRTCMinutes);
+    gb_write(de, hram.hRTCMinutes);
 //  hours
     gb_write(hl, RTC_H);
-    gb_write(de, hram->hRTCHours);
+    gb_write(de, hram.hRTCHours);
 //  day lo
     gb_write(hl, RTC_DL);
-    gb_write(de, hram->hRTCDayLo);
+    gb_write(de, hram.hRTCDayLo);
 //  day hi
     gb_write(hl, RTC_DH);
-    uint8_t dayhi = hram->hRTCDayHi;
+    uint8_t dayhi = hram.hRTCDayHi;
     bit_reset(dayhi, 6);  // make sure timer is active
     gb_write(de, dayhi);
 

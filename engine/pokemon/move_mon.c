@@ -61,7 +61,7 @@ bool TryAddMonToParty(species_t species, uint8_t level){
     // LD_de_A;
     // LD_A_de;  // Why are we doing this?
     // LDH_addr_A(hMoveMon);  // HRAM backup
-    hram->hMoveMon = ++*partyCount;
+    hram.hMoveMon = ++*partyCount;
     // ADD_A_E;
     // LD_E_A;
     // IF_NC goto loadspecies;
@@ -73,19 +73,19 @@ bool TryAddMonToParty(species_t species, uint8_t level){
 // The terminator is usually here, but it'll be back.
     // LD_A_addr(wCurPartySpecies);
     // LD_de_A;
-    partySpecies[hram->hMoveMon - 1] = species;
+    partySpecies[hram.hMoveMon - 1] = species;
 // Load the terminator into the next slot.
     // INC_DE;
     // LD_A(-1);
     // LD_de_A;
-    partySpecies[hram->hMoveMon] = (species_t)-1;
+    partySpecies[hram.hMoveMon] = (species_t)-1;
 // Now let's load the OT name.
     // LD_HL(wPartyMonOTs);
     // LD_A_addr(wMonType);
     // AND_A(0xf);
     // IF_Z goto loadOTname;
     // LD_HL(wOTPartyMonOTs);
-    uint8_t* ot = (wram->wMonType & 0xf)? wram->wOTPartyMonOT[hram->hMoveMon - 1]: wram->wPartyMonOT[hram->hMoveMon - 1];
+    uint8_t* ot = (wram->wMonType & 0xf)? wram->wOTPartyMonOT[hram.hMoveMon - 1]: wram->wPartyMonOT[hram.hMoveMon - 1];
 
 // loadOTname:
     // LDH_A_addr(hMoveMon);  // Restore index from backup
@@ -114,7 +114,7 @@ bool TryAddMonToParty(species_t species, uint8_t level){
         // LD_HL(wStringBuffer1);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wPartyMonNickname[hram->hMoveMon - 1], GetPokemonName(species), MON_NAME_LENGTH);
+        CopyBytes(wram->wPartyMonNickname[hram.hMoveMon - 1], GetPokemonName(species), MON_NAME_LENGTH);
     }
 
 // skipnickname:
@@ -129,7 +129,7 @@ bool TryAddMonToParty(species_t species, uint8_t level){
     // DEC_A;
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
-    return GeneratePartyMonStats(de + (hram->hMoveMon - 1), species, level, wram->wMonType, wram->wBattleMode);
+    return GeneratePartyMonStats(de + (hram.hMoveMon - 1), species, level, wram->wMonType, wram->wBattleMode);
 }
 
 //  wBattleMode specifies whether it's a wild mon or not.

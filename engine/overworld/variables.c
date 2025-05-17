@@ -37,7 +37,7 @@ static const struct VarAction VarActionTable[] = {
     [VAR_BADGES]            = {.fun=VarAction_CountBadges, RETVAR_EXECUTE},
     [VAR_MOVEMENT]          = {.var=wram_ptr(wPlayerState), RETVAR_ADDR_DE},
     [VAR_FACING]            = {.fun=VarAction_PlayerFacing, RETVAR_EXECUTE},
-    [VAR_HOUR]              = {.var=hram_ptr(hHours), RETVAR_STRBUF2},
+    [VAR_HOUR]              = {.var=&hram.hHours, RETVAR_STRBUF2},
     [VAR_WEEKDAY]           = {.fun=VarAction_DayOfWeek, RETVAR_EXECUTE},
     [VAR_MAPGROUP]          = {.var=wram_ptr(wMapGroup), RETVAR_STRBUF2},
     [VAR_MAPNUMBER]         = {.var=wram_ptr(wMapNumber), RETVAR_STRBUF2},

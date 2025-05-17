@@ -83,8 +83,8 @@ void CatchTutorial(void){
             // XOR_A_A;
             // LDH_addr_A(hJoyDown);
             // LDH_addr_A(hJoyPressed);
-            hram->hJoyDown = 0;
-            hram->hJoyPressed = 0;
+            hram.hJoyDown = 0;
+            hram.hJoyPressed = 0;
             // LD_A_addr(wOptions);
             // PUSH_AF;
             uint8_t options = wram->wOptions;

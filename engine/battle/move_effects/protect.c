@@ -33,7 +33,7 @@ bool ProtectChance(void){
     // AND_A_A;
     // IF_Z goto got_count;
     // LD_DE(wEnemyProtectCount);
-    uint8_t* de = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerProtectCount: &wram->wEnemyProtectCount;
+    uint8_t* de = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerProtectCount: &wram->wEnemyProtectCount;
 
 // got_count:
     // CALL(aCheckOpponentWentFirst);

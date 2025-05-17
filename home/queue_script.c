@@ -24,7 +24,7 @@ void QueueFunc(void (*hl)(void)) {
 void QueueScript_GB(uint16_t hl){
     // LDH_A_addr(hROMBank);
 
-    return FarQueueScript_GB(hram->hROMBank, hl);
+    return FarQueueScript_GB(hram.hROMBank, hl);
 }
 
 //  Push pointer a:hl to wQueuedScriptBank.

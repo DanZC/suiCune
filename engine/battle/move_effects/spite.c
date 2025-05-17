@@ -21,7 +21,7 @@ void BattleCommand_Spite(void){
     // AND_A_A;
     // IF_Z goto got_moves;
     // LD_HL(wBattleMonMoves);
-    struct BattleMon* mon = (hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon: &wram->wBattleMon;
+    struct BattleMon* mon = (hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon: &wram->wBattleMon;
 
 // got_moves:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
@@ -102,7 +102,7 @@ void BattleCommand_Spite(void){
         // LD_A_addr(wBattleMode);
         // DEC_A;
         // IF_NZ goto not_wildmon;
-        if(hram->hBattleTurn == TURN_PLAYER && wram->wBattleMode == WILD_BATTLE) {
+        if(hram.hBattleTurn == TURN_PLAYER && wram->wBattleMode == WILD_BATTLE) {
             // LD_HL(wWildMonPP);
             // ADD_HL_BC;
             pp = wram->wWildMonPP;

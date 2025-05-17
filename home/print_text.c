@@ -33,12 +33,12 @@ void PrintLetterDelay(void) {
     // LD_HL(hOAMUpdate);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t tempOAM = hram->hOAMUpdate;
+    uint8_t tempOAM = hram.hOAMUpdate;
 
     //  orginally turned oam update off...
     //     ld a, 1
     // LD_hl_A;
-    hram->hOAMUpdate = tempOAM; // Remove this?
+    hram.hOAMUpdate = tempOAM; // Remove this?
 
     //  force fast scroll?
     // LD_A_addr(wTextboxFlags);
@@ -84,7 +84,7 @@ void PrintLetterDelay(void) {
         // end:
             // POP_AF;
             // LDH_addr_A(hOAMUpdate);
-            hram->hOAMUpdate = tempOAM;
+            hram.hOAMUpdate = tempOAM;
 
             // POP_BC;
             // POP_DE;
@@ -97,12 +97,12 @@ void PrintLetterDelay(void) {
         // LDH_A_addr(hJoyDown);
         // BIT_A(A_BUTTON_F);
         // IF_Z goto checkb;
-        else if(!bit_test(hram->hJoyDown, A_BUTTON_F))
+        else if(!bit_test(hram.hJoyDown, A_BUTTON_F))
         {
         // checkb:
             // BIT_A(B_BUTTON_F);
             // IF_Z goto wait;
-            if(!bit_test(hram->hJoyDown, B_BUTTON_F))
+            if(!bit_test(hram.hJoyDown, B_BUTTON_F))
             {
             // wait:
                 // LD_A_addr(wTextDelayFrames);
@@ -115,7 +115,7 @@ void PrintLetterDelay(void) {
             // end:
                 // POP_AF;
                 // LDH_addr_A(hOAMUpdate);
-                hram->hOAMUpdate = tempOAM;
+                hram.hOAMUpdate = tempOAM;
 
                 // POP_BC;
                 // POP_DE;
@@ -130,7 +130,7 @@ void PrintLetterDelay(void) {
         // end:
             // POP_AF;
             // LDH_addr_A(hOAMUpdate);
-            hram->hOAMUpdate = tempOAM;
+            hram.hOAMUpdate = tempOAM;
 
             // POP_BC;
             // POP_DE;
@@ -147,7 +147,7 @@ void PrintLetterDelay(void) {
     // end:
         // POP_AF;
         // LDH_addr_A(hOAMUpdate);
-        hram->hOAMUpdate = tempOAM;
+        hram.hOAMUpdate = tempOAM;
 
         // POP_BC;
         // POP_DE;
@@ -272,34 +272,36 @@ uint8_t* MobilePrintNum(uint8_t* hl, const void* de, uint8_t b, uint8_t c) {
     return v_MobilePrintNum(hl, de, b, c);
 }
 
+// UNUSED
 void FarPrintText(void) {
-        LDH_addr_A(hTempBank);
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LDH_A_addr(hTempBank);
-    RST(aBankswitch);
+    // LDH_addr_A(hTempBank);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LDH_A_addr(hTempBank);
+    // RST(aBankswitch);
 
-    CALL(aPrintText);
+    // CALL(aPrintText);
 
-    POP_AF;
-    RST(aBankswitch);
-    RET;
+    // POP_AF;
+    // RST(aBankswitch);
+    // RET;
 }
 
+// UNUSED
 void CallPointerAt(void) {
-        LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A_hli;
-    RST(aBankswitch);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A_hli;
+    // RST(aBankswitch);
 
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
 
-    CALL(av_hl_);
+    // CALL(av_hl_);
 
-    POP_HL;
-    LD_A_H;
-    RST(aBankswitch);
-    RET;
+    // POP_HL;
+    // LD_A_H;
+    // RST(aBankswitch);
+    // RET;
 }

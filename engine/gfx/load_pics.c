@@ -99,7 +99,7 @@ void GetAnimatedFrontpic(uint8_t* de, uint8_t frame){
     uint8_t svbk = gb_read(rSVBK);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(av_GetFrontpic);
     v_GetFrontpic(de, frame);
     // CALL(aGetAnimatedEnemyFrontpic);
@@ -429,7 +429,7 @@ void GetTrainerPic(uint8_t* de, uint8_t tclass){
     WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(mTrainerPicPointers);
     // LD_A_addr(wTrainerClass);
     // DEC_A;
@@ -464,7 +464,7 @@ void GetTrainerPic(uint8_t* de, uint8_t tclass){
     WaitBGMap();
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 

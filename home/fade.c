@@ -29,34 +29,32 @@ static const uint8_t IncGradGBPalTable[][3] = {
 static void RotatePalettesRight(const uint8_t* pal, uint8_t amount);
 static void RotatePalettesLeft(const uint8_t* pal, uint8_t amount);
 
+//  //  unreferenced
 void TimeOfDayFade(void){
-    //  //  unreferenced
-    LD_A_addr(wTimeOfDayPal);
-    LD_B_A;
-    LD_HL(mIncGradGBPalTable_11);
-    LD_A_L;
-    SUB_A_B;
-    LD_L_A;
-    IF_NC goto okay;
-    DEC_H;
+    // LD_A_addr(wTimeOfDayPal);
+    // LD_B_A;
+    // LD_HL(mIncGradGBPalTable_11);
+    // LD_A_L;
+    // SUB_A_B;
+    // LD_L_A;
+    // IF_NC goto okay;
+    // DEC_H;
 
-
-okay:
-        LD_A_hli;
-    LDH_addr_A(rBGP);
-    LD_A_hli;
-    LDH_addr_A(rOBP0);
-    LD_A_hli;
-    LDH_addr_A(rOBP1);
-    RET;
-
+// okay:
+    // LD_A_hli;
+    // LDH_addr_A(rBGP);
+    // LD_A_hli;
+    // LDH_addr_A(rOBP0);
+    // LD_A_hli;
+    // LDH_addr_A(rOBP1);
+    // RET;
 }
 
 void RotateFourPalettesRight(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB) {
+    if(hram.hCGB) {
         // LD_HL(mIncGradGBPalTable_00);
         // LD_B(4);
         // JR(mRotatePalettesRight);
@@ -72,7 +70,7 @@ void RotateThreePalettesRight(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB) {
+    if(hram.hCGB) {
         // LD_HL(mIncGradGBPalTable_05);
         // LD_B(3);
         // JR(mRotatePalettesRight);
@@ -114,7 +112,7 @@ void RotateFourPalettesLeft(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB) {
+    if(hram.hCGB) {
         // LD_HL(mIncGradGBPalTable_04 - 1);
         // LD_B(4);
         // JR(mRotatePalettesLeft);
@@ -131,7 +129,7 @@ void RotateThreePalettesLeft(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram->hCGB) {
+    if(hram.hCGB) {
         // LD_HL(mIncGradGBPalTable_07 - 1);
         // LD_B(3);
         // JR(mRotatePalettesLeft);

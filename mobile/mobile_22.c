@@ -310,14 +310,14 @@ void Mobile22_PromptButton(void){
 void Mobile22_SetBGMapMode0(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
 void Mobile22_SetBGMapMode1(void){
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -1721,7 +1721,7 @@ void Function897d5(const uint8_t* bc){
     // asm_897f3:
         // LD_A(0x37);
         // LDH_addr_A(hGraphicStartTile);
-        hram->hGraphicStartTile = 0x37;
+        hram.hGraphicStartTile = 0x37;
         // hlcoord(12, 3, wTilemap);
         // LD_BC((7 << 8) | 7);
         // PREDEF(pPlaceGraphic);

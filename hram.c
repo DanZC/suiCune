@@ -3,7 +3,7 @@
 
 #define check_field(_fld) static_assert(offsetof(struct hram_s, _fld) == (_fld - 0xff80), "");
 
-struct hram_s* hram;
+struct hram_s hram;
 
 check_field(hROMBankBackup)
 check_field(hFarByte)

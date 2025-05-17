@@ -40,9 +40,9 @@ void v_Option(void){
     // LD_HL(hInMenu);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_hl(TRUE);
-    hram->hInMenu = TRUE;
+    hram.hInMenu = TRUE;
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // hlcoord(0, 0, wTilemap);
@@ -67,7 +67,7 @@ void v_Option(void){
         // PUSH_BC;
         // XOR_A_A;
         // LDH_addr_A(hJoyLast);
-        hram->hJoyLast = 0;
+        hram.hJoyLast = 0;
         // CALL(aGetOptionPointer);
         GetOptionPointer();
         // POP_BC;
@@ -85,7 +85,7 @@ void v_Option(void){
     wram->wJumptableIndex = 0;
     // INC_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aWaitBGMap);
     WaitBGMap();
     // LD_B(SCGB_DIPLOMA);
@@ -101,7 +101,7 @@ void v_Option(void){
         // LDH_A_addr(hJoyPressed);
         // AND_A(START | B_BUTTON);
         // IF_NZ goto ExitOptions;
-        if(hram->hJoyPressed & (START | B_BUTTON))
+        if(hram.hJoyPressed & (START | B_BUTTON))
             break;
         // CALL(aOptionsControl);
         // IF_C goto dpad;
@@ -135,7 +135,7 @@ void v_Option(void){
     WaitSFX();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // RET;
 }
 
@@ -208,7 +208,7 @@ static bool Options_TextSpeed(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
-    if(bit_test(hram->hJoyPressed, D_LEFT_F)) {
+    if(bit_test(hram.hJoyPressed, D_LEFT_F)) {
     // LeftPressed:
         // LD_A_C;
         // AND_A_A;
@@ -227,7 +227,7 @@ static bool Options_TextSpeed(void){
     }
     // BIT_A(D_RIGHT_F);
     // IF_Z goto NonePressed;
-    else if(bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    else if(bit_test(hram.hJoyPressed, D_RIGHT_F)) {
         // LD_A_C;  // right pressed
         // CP_A(OPT_TEXT_SPEED_SLOW);
         // IF_C goto Increase;
@@ -308,7 +308,7 @@ bool Options_BattleScene(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
-    if(bit_test(hram->hJoyPressed, D_LEFT_F) || bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    if(bit_test(hram.hJoyPressed, D_LEFT_F) || bit_test(hram.hJoyPressed, D_RIGHT_F)) {
         bit_toggle(wram->wOptions, BATTLE_SCENE);
     }
     // BIT_A(D_RIGHT_F);
@@ -357,7 +357,7 @@ bool Options_BattleStyle(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
-    if(bit_test(hram->hJoyPressed, D_LEFT_F) || bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    if(bit_test(hram.hJoyPressed, D_LEFT_F) || bit_test(hram.hJoyPressed, D_RIGHT_F)) {
     // LeftPressed:
         // BIT_hl(BATTLE_SHIFT);
         // IF_Z goto ToggleSet;
@@ -403,7 +403,7 @@ bool Options_Sound(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
-    if(bit_test(hram->hJoyPressed, D_LEFT_F) || bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    if(bit_test(hram.hJoyPressed, D_LEFT_F) || bit_test(hram.hJoyPressed, D_RIGHT_F)) {
     // LeftPressed:
         // BIT_hl(STEREO);
         // IF_Z goto SetStereo;
@@ -478,7 +478,7 @@ bool Options_Print(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
-    if(bit_test(hram->hJoyPressed, D_LEFT_F)) {
+    if(bit_test(hram.hJoyPressed, D_LEFT_F)) {
     // LeftPressed:
         // LD_A_C;
         // AND_A_A;
@@ -497,7 +497,7 @@ bool Options_Print(void){
     }
     // BIT_A(D_RIGHT_F);
     // IF_Z goto NonePressed;
-    else if(bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    else if(bit_test(hram.hJoyPressed, D_RIGHT_F)) {
         // LD_A_C;
         // CP_A(OPT_PRINT_DARKEST);
         // IF_C goto Increase;
@@ -592,7 +592,7 @@ bool Options_MenuAccount(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
-    if(bit_test(hram->hJoyPressed, D_LEFT_F) || bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    if(bit_test(hram.hJoyPressed, D_LEFT_F) || bit_test(hram.hJoyPressed, D_RIGHT_F)) {
         bit_toggle(wram->wOptions2, MENU_ACCOUNT);
     }
     // BIT_A(D_RIGHT_F);
@@ -638,7 +638,7 @@ bool Options_Frame(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
-    if(bit_test(hram->hJoyPressed, D_LEFT_F)) {
+    if(bit_test(hram.hJoyPressed, D_LEFT_F)) {
     // LeftPressed:
         // LD_A_hl;
         // DEC_A;
@@ -650,7 +650,7 @@ bool Options_Frame(void){
     }
     // BIT_A(D_RIGHT_F);
     // IF_NZ goto RightPressed;
-    else if(bit_test(hram->hJoyPressed, D_RIGHT_F)) {
+    else if(bit_test(hram.hJoyPressed, D_RIGHT_F)) {
     // RightPressed:
         // LD_A_hl;
         // INC_A;
@@ -685,7 +685,7 @@ static bool Options_Cancel(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // IF_NZ goto Exit;
-    if(hram->hJoyPressed & A_BUTTON) {
+    if(hram.hJoyPressed & A_BUTTON) {
     // Exit:
         // SCF;
         // RET;
@@ -701,7 +701,7 @@ static bool OptionsControl(void){
     // LDH_A_addr(hJoyLast);
     // CP_A(D_DOWN);
     // IF_Z goto DownPressed;
-    if(hram->hJoyLast == D_DOWN) {
+    if(hram.hJoyLast == D_DOWN) {
     // DownPressed:
         // LD_A_hl;
         // CP_A(OPT_CANCEL);  // maximum option index
@@ -732,7 +732,7 @@ static bool OptionsControl(void){
     }
     // CP_A(D_UP);
     // IF_Z goto UpPressed;
-    else if(hram->hJoyLast == D_UP) {
+    else if(hram.hJoyLast == D_UP) {
     // UpPressed:
         // LD_A_hl;
 

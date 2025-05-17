@@ -151,7 +151,7 @@ void PrintDayOfWeek(tile_t* de, uint8_t b) {
 static void NewGame_ClearTilemapEtc(void) {
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0x0;
+    hram.hMapAnims = 0x0;
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aLoadFontsExtra);
@@ -215,7 +215,7 @@ void NewGame(void) {
 
     // LD_A(MAPSETUP_WARP);
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = MAPSETUP_WARP;
+    hram.hMapEntryMethod = MAPSETUP_WARP;
     // JP(mFinishContinueFunction);
     return Intro_SetJumptableIndex(INTRO_CONTINUE);
 }
@@ -246,7 +246,7 @@ void DebugRoom(void) {
 static void ResetWRAM(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(av_ResetWRAM);
     v_ResetWRAM();
     // RET;
@@ -299,7 +299,7 @@ static void v_ResetWRAM(void) {
     DelayFrame();
     // LDH_A_addr(hRandomSub);
     // LD_addr_A(wPlayerID);
-    uint8_t pid_lo = hram->hRandomSub;
+    uint8_t pid_lo = hram.hRandomSub;
 
     // LDH_A_addr(rLY);
     // LDH_addr_A(hUnusedBackup);
@@ -307,7 +307,7 @@ static void v_ResetWRAM(void) {
     DelayFrame();
     // LDH_A_addr(hRandomAdd);
     // LD_addr_A(wPlayerID + 1);
-    uint8_t pid_hi = hram->hRandomAdd;
+    uint8_t pid_hi = hram.hRandomAdd;
     wram->wPlayerID = (pid_hi << 8) | pid_lo;
 
     // CALL(aRandom);
@@ -620,7 +620,7 @@ bool Continue(void) {
         DisplaySaveInfoOnContinue();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C(20);
         // CALL(aDelayFrames);
         DelayFrames(20);
@@ -665,7 +665,7 @@ bool Continue(void) {
             if(wram->wSpawnAfterChampion != SPAWN_LANCE){
                 // LD_A(MAPSETUP_CONTINUE);
                 // LDH_addr_A(hMapEntryMethod);
-                hram->hMapEntryMethod = MAPSETUP_CONTINUE;
+                hram.hMapEntryMethod = MAPSETUP_CONTINUE;
                 // JP(mFinishContinueFunction);
                 Intro_SetJumptableIndex(INTRO_CONTINUE);
                 return true;
@@ -707,7 +707,7 @@ static void PostCreditsSpawn(void) {
     wram->wSpawnAfterChampion = 0;
     // LD_A(MAPSETUP_WARP);
     // LDH_addr_A(hMapEntryMethod);
-    hram->hMapEntryMethod = MAPSETUP_WARP;
+    hram.hMapEntryMethod = MAPSETUP_WARP;
     // RET;
 }
 
@@ -768,11 +768,11 @@ static bool ConfirmContinue(void) {
         // LD_HL(hJoyPressed);
         // BIT_hl(A_BUTTON_F);
         // IF_NZ goto PressA;
-        if(bit_test(hram->hJoyPressed, A_BUTTON_F))
+        if(bit_test(hram.hJoyPressed, A_BUTTON_F))
             return true;
         // BIT_hl(B_BUTTON_F);
         // IF_Z goto loop;
-    } while(!bit_test(hram->hJoyPressed, B_BUTTON_F));
+    } while(!bit_test(hram.hJoyPressed, B_BUTTON_F));
     // SCF;
     // RET;
     return false;
@@ -931,7 +931,7 @@ static const struct MenuHeader MenuHeader_NoDex = {
 static void Continue_LoadMenuHeader(uint8_t d, uint8_t e) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(mContinue_LoadMenuHeader_MenuHeader_Dex);
     // LD_A_addr(wStatusFlags);
     // BIT_A(STATUSFLAGS_POKEDEX_F);
@@ -1431,7 +1431,7 @@ static void Intro_RotatePalettesLeftFrontpic(void) {
 static void Intro_WipeInFrontpic(void) {
     // LD_A(0x77);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x77;
+    hram.hWX = 0x77;
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_A(0b11100100);
@@ -1446,10 +1446,10 @@ static void Intro_WipeInFrontpic(void) {
         // SUB_A(0x8);
         // CP_A(-1);
         // RET_Z;
-        if(hram->hWX == 0x7) // hWX - 8 == -1/0xff
+        if(hram.hWX == 0x7) // hWX - 8 == -1/0xff
             return;
         // LDH_addr_A(hWX);
-        hram->hWX -= 0x8;
+        hram.hWX -= 0x8;
         // goto loop;
     }
 }
@@ -1460,7 +1460,7 @@ static void Intro_PrepTrainerPic(uint8_t tclass) {
     GetTrainerPic(vram->vTiles2, tclass);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x0;
+    hram.hGraphicStartTile = 0x0;
     // hlcoord(6, 4, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
@@ -1475,7 +1475,7 @@ static void ShrinkFrame(const char* path) {
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles2, path, 0, 7 * 7);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0;
+    hram.hGraphicStartTile = 0;
     // hlcoord(6, 4, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
@@ -1604,17 +1604,17 @@ void StartTitleScreen(void){
     WaitBGMap2();
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0x0;
+    hram.hLCDCPointer = 0x0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LD_B(SCGB_DIPLOMA);
     // CALL(aGetSGBLayout);
     GetSGBLayout(SCGB_DIPLOMA);
@@ -1728,24 +1728,24 @@ static void TitleScreenEntrance(void){
     // LDH_A_addr(hSCX);
     // AND_A_A;
     // IF_Z goto done;
-    if(hram->hSCX != 0) {
+    if(hram.hSCX != 0) {
         // SUB_A(4);
         // LDH_addr_A(hSCX);
-        hram->hSCX -= 4;
+        hram.hSCX -= 4;
 
     //  Lay out a base (all lines scrolling together).
         // LD_E_A;
         // LD_HL(wLYOverrides);
         // LD_BC(8 * 10);  // logo height
         // CALL(aByteFill);
-        ByteFill(wram->wLYOverrides, 8 * 10, hram->hSCX);
+        ByteFill(wram->wLYOverrides, 8 * 10, hram.hSCX);
 
     //  Reversed signage for every other line's position.
     //  This is responsible for the interlaced effect.
         // LD_A_E;
         // XOR_A(0xff);
         // INC_A;
-        uint8_t a = -hram->hSCX;
+        uint8_t a = -hram.hSCX;
 
         // LD_B(8 * 10 / 2);  // logo height / 2
         // LD_HL(wLYOverrides + 1);
@@ -1773,7 +1773,7 @@ static void TitleScreenEntrance(void){
     wram->wJumptableIndex++;
     // XOR_A_A;
     // LDH_addr_A(hLCDCPointer);
-    hram->hLCDCPointer = 0;
+    hram.hLCDCPointer = 0;
 
 //  Play the title screen music.
     // LD_DE(MUSIC_TITLE);
@@ -1782,7 +1782,7 @@ static void TitleScreenEntrance(void){
 
     // LD_A(0x88);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x88;
+    hram.hWY = 0x88;
     // RET;
 }
 
@@ -1826,7 +1826,7 @@ static void TitleScreenMain(void) {
         // AND_A(D_UP + B_BUTTON + SELECT);
         // CP_A(D_UP + B_BUTTON + SELECT);
         // IF_Z goto delete_save_data;
-        if((hram->hJoyDown & (D_UP + B_BUTTON + SELECT)) == (D_UP + B_BUTTON + SELECT)) {
+        if((hram.hJoyDown & (D_UP + B_BUTTON + SELECT)) == (D_UP + B_BUTTON + SELECT)) {
         // delete_save_data:
             // LD_A(TITLESCREENOPTION_DELETE_SAVE_DATA);
             wram->wTitleScreenSelectedOption = TITLESCREENOPTION_DELETE_SAVE_DATA;
@@ -1838,22 +1838,22 @@ static void TitleScreenMain(void) {
             // LDH_A_addr(hClockResetTrigger);
             // CP_A(0x34);
             // IF_Z goto check_clock_reset;
-            if(hram->hClockResetTrigger == 0x34) {
+            if(hram.hClockResetTrigger == 0x34) {
             //  Keep Select pressed, and hold Left + Up.
             //  Then let go of Select.
             // check_clock_reset:
                 // BIT_hl(SELECT_F);
                 // IF_NZ goto check_start;
-                if(!bit_test(hram->hJoyDown, SELECT_F)) {
+                if(!bit_test(hram.hJoyDown, SELECT_F)) {
                     // XOR_A_A;
                     // LDH_addr_A(hClockResetTrigger);
-                    hram->hClockResetTrigger = 0;
+                    hram.hClockResetTrigger = 0;
 
                     // LD_A_hl;
                     // AND_A(D_LEFT + D_UP);
                     // CP_A(D_LEFT + D_UP);
                     // IF_Z goto reset_clock;
-                    if((hram->hJoyDown & (D_LEFT + D_UP)) == (D_LEFT + D_UP)) {
+                    if((hram.hJoyDown & (D_LEFT + D_UP)) == (D_LEFT + D_UP)) {
                     // reset_clock:
                         // LD_A(TITLESCREENOPTION_RESET_CLOCK);
                         // LD_addr_A(wTitleScreenSelectedOption);
@@ -1873,10 +1873,10 @@ static void TitleScreenMain(void) {
             // AND_A(D_DOWN + B_BUTTON + SELECT);
             // CP_A(D_DOWN + B_BUTTON + SELECT);
             // IF_NZ goto check_start;
-            else if((hram->hJoyDown & (D_DOWN + B_BUTTON + SELECT)) == (D_DOWN + B_BUTTON + SELECT)) {
+            else if((hram.hJoyDown & (D_DOWN + B_BUTTON + SELECT)) == (D_DOWN + B_BUTTON + SELECT)) {
                 // LD_A(0x34);
                 // LDH_addr_A(hClockResetTrigger);
-                hram->hClockResetTrigger = 0x34;
+                hram.hClockResetTrigger = 0x34;
                 // goto check_start;
             }
 
@@ -1886,7 +1886,7 @@ static void TitleScreenMain(void) {
             // LD_A_hl;
             // AND_A(START | A_BUTTON);
             // IF_NZ goto incave;
-            if(hram->hJoyDown & (START | A_BUTTON)) {
+            if(hram.hJoyDown & (START | A_BUTTON)) {
             // incave:
                 // LD_A(TITLESCREENOPTION_MAIN_MENU);
                 // goto done;
@@ -2077,16 +2077,16 @@ void GameInit(void) {
     // LDH_addr_A(hBGMapAddress + 1);
     // XOR_A_A;  // LOW(vBGMap0)
     // LDH_addr_A(hBGMapAddress);
-    hram->hBGMapAddress = vBGMap0;
+    hram.hBGMapAddress = vBGMap0;
     // LDH_addr_A(hJoyDown);
-    hram->hJoyDown = 0x0;
+    hram.hJoyDown = 0x0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // CALL(aWaitBGMap);
     WaitBGMap();
 

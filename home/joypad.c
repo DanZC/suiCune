@@ -19,9 +19,9 @@ void Joypad(void) {
 
 void ClearJoypad(void) {
     //  Pressed this frame (delta)
-    hram->hJoyPressed = 0;
+    hram.hJoyPressed = 0;
     //  Currently pressed
-    hram->hJoyDown = 0;
+    hram.hJoyDown = 0;
 }
 
 //  This is called automatically every frame in VBlank.
@@ -76,19 +76,19 @@ void UpdateJoypad(void) {
     gb_write(rJOYP, 0x30);
 
     //  To get the delta we xor the last frame's input with the new one.
-    uint8_t last_frame = hram->hJoypadDown;  // last frame
+    uint8_t last_frame = hram.hJoypadDown;  // last frame
     uint8_t last_changed = last_frame ^ input;
 
     //  Released this frame:
-    hram->hJoypadReleased = last_changed & last_frame;
+    hram.hJoypadReleased = last_changed & last_frame;
     //  Pressed this frame:
-    hram->hJoypadPressed =  last_changed & input;
+    hram.hJoypadPressed =  last_changed & input;
 
     //  Add any new presses to the list of collective presses:
-    hram->hJoypadSum |= (last_changed & input);
+    hram.hJoypadSum |= (last_changed & input);
 
     //  Currently pressed:
-    hram->hJoypadDown = input;
+    hram.hJoypadDown = input;
 
     //  Now that we have the input, we can do stuff with it.
 
@@ -160,8 +160,8 @@ void GetJoypad(void) {
                     input = NO_INPUT;
                 }
             }
-            hram->hJoyPressed = input;  // pressed
-            hram->hJoyDown = input;     // input
+            hram.hJoyPressed = input;  // pressed
+            hram.hJoyDown = input;     // input
         }
         else 
         {
@@ -174,15 +174,15 @@ void GetJoypad(void) {
     {
 
         //  To get deltas, take this and last frame's input.
-        uint8_t real_input = hram->hJoypadDown;  // real input
-        uint8_t last_input = hram->hJoyDown;  // last frame mirror
+        uint8_t real_input = hram.hJoypadDown;  // real input
+        uint8_t last_input = hram.hJoyDown;  // last frame mirror
         //LDH_A_addr(hJoypadDown);  // real input
         //LD_B_A;
         //LDH_A_addr(hJoyDown);  // last frame mirror
         //LD_E_A;
 
         //  Released this frame:
-        hram->hJoyReleased = (real_input ^ last_input) & last_input;
+        hram.hJoyReleased = (real_input ^ last_input) & last_input;
         //XOR_A_B;
         //LD_D_A;
         //AND_A_E;
@@ -192,13 +192,13 @@ void GetJoypad(void) {
         //LD_A_D;
         //AND_A_B;
         //LDH_addr_A(hJoyPressed);
-        hram->hJoyPressed = (real_input ^ last_input) & real_input;
+        hram.hJoyPressed = (real_input ^ last_input) & real_input;
 
         //  It looks like the collective presses got commented out here.
         //LD_C_A;
 
         //  Currently pressed:
-        hram->hJoyDown = real_input;  // frame input
+        hram.hJoyDown = real_input;  // frame input
         //LD_A_B;
         //LDH_addr_A(hJoyDown);  // frame input
     }
@@ -217,9 +217,9 @@ void StartAutoInput(const uint8_t* hl) {
     //  Start reading the stream immediately.
     wram->wAutoInputLength = 0;
     //  Reset input mirrors.
-    hram->hJoyPressed = 0;   // pressed this frame
-    hram->hJoyReleased = 0;  // released this frame
-    hram->hJoyDown = 0;      // currently pressed
+    hram.hJoyPressed = 0;   // pressed this frame
+    hram.hJoyReleased = 0;  // released this frame
+    hram.hJoyDown = 0;      // currently pressed
 
     wram->wInputType = AUTO_INPUT;
 }
@@ -232,35 +232,34 @@ void StopAutoInput(void) {
     wram->wInputType = 0;
 }
 
+//  //  unreferenced
 void JoyTitleScreenInput(void) {
-        //  //  unreferenced
+// loop:
+    // CALL(aDelayFrame);
 
-loop:
-        CALL(aDelayFrame);
-
-    PUSH_BC;
-    CALL(aJoyTextDelay);
-    POP_BC;
+    // PUSH_BC;
+    // CALL(aJoyTextDelay);
+    // POP_BC;
 
     //  Save data can be deleted by pressing Up + B + Select.
-    LDH_A_addr(hJoyDown);
-    CP_A(D_UP | SELECT | B_BUTTON);
-    IF_Z goto keycombo;
+    // LDH_A_addr(hJoyDown);
+    // CP_A(D_UP | SELECT | B_BUTTON);
+    // IF_Z goto keycombo;
 
     //  Press Start or A to start the game.
-    LDH_A_addr(hJoyLast);
-    AND_A(START | A_BUTTON);
-    IF_NZ goto keycombo;
+    // LDH_A_addr(hJoyLast);
+    // AND_A(START | A_BUTTON);
+    // IF_NZ goto keycombo;
 
-    DEC_C;
-    IF_NZ goto loop;
+    // DEC_C;
+    // IF_NZ goto loop;
 
-    AND_A_A;
-    RET;
+    // AND_A_A;
+    // RET;
 
-keycombo:
-        SCF;
-    RET;
+// keycombo:
+    // SCF;
+    // RET;
 }
 
 void JoyWaitAorB(void) {
@@ -274,7 +273,7 @@ void JoyWaitAorB(void) {
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON | B_BUTTON);
         // RET_NZ;
-        if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) != 0)
+        if((hram.hJoyPressed & (A_BUTTON | B_BUTTON)) != 0)
             break;
         
         // CALL(aUpdateTimeAndPals);
@@ -287,11 +286,11 @@ void JoyWaitAorB(void) {
 void WaitButton(void) {
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t tempOAMUpdate = hram->hOAMUpdate;
+    uint8_t tempOAMUpdate = hram.hOAMUpdate;
 
     // LD_A(1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 1;
+    hram.hOAMUpdate = 1;
 
     // CALL(aWaitBGMap);
     WaitBGMap();
@@ -301,7 +300,7 @@ void WaitButton(void) {
 
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = tempOAMUpdate;
+    hram.hOAMUpdate = tempOAMUpdate;
     
     // RET;
 }
@@ -314,22 +313,22 @@ void JoyTextDelay(void) {
     // AND_A_A;
     // LDH_A_addr(hJoyPressed);
     // IF_Z goto ok;
-    if(hram->hInMenu != 0)
+    if(hram.hInMenu != 0)
     {
         // LDH_A_addr(hJoyDown);
         // LDH_addr_A(hJoyLast);
-        hram->hJoyLast = hram->hJoyDown;
+        hram.hJoyLast = hram.hJoyDown;
     }
     else 
     {
         // LDH_addr_A(hJoyLast);
-        hram->hJoyLast = hram->hJoyPressed;
+        hram.hJoyLast = hram.hJoyPressed;
     }
 
     // LDH_A_addr(hJoyPressed);
     // AND_A_A;
     // IF_Z goto checkframedelay;
-    if(hram->hJoyPressed == 0)
+    if(hram.hJoyPressed == 0)
     {
 // checkframedelay:
         // LD_A_addr(wTextDelayFrames);
@@ -348,7 +347,7 @@ void JoyTextDelay(void) {
 
         // XOR_A_A;
         // LDH_addr_A(hJoyLast);
-        hram->hJoyLast = 0;
+        hram.hJoyLast = 0;
 
         // RET;
         return;
@@ -371,19 +370,19 @@ void JoyTextDelay(void) {
 void WaitPressAorB_BlinkCursor(void) {
     // LDH_A_addr(hMapObjectIndex);
     // PUSH_AF;
-    uint8_t mapObjIdx = hram->hMapObjectIndex;
+    uint8_t mapObjIdx = hram.hMapObjectIndex;
 
     // LDH_A_addr(hObjectStructIndex);
     // PUSH_AF;
-    uint8_t objStructIdx = hram->hObjectStructIndex;
+    uint8_t objStructIdx = hram.hObjectStructIndex;
 
     // XOR_A_A;
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = 0;
+    hram.hMapObjectIndex = 0;
 
     // LD_A(6);
     // LDH_addr_A(hObjectStructIndex);
-    hram->hObjectStructIndex = 6;
+    hram.hObjectStructIndex = 6;
 
     do {
         DelayFrame();
@@ -399,15 +398,15 @@ void WaitPressAorB_BlinkCursor(void) {
         // LDH_A_addr(hJoyLast);
         // AND_A(A_BUTTON | B_BUTTON);
         // IF_Z goto loop;
-    } while((hram->hJoyLast & (A_BUTTON | B_BUTTON)) == 0);
+    } while((hram.hJoyLast & (A_BUTTON | B_BUTTON)) == 0);
 
     // POP_AF;
     // LDH_addr_A(hObjectStructIndex);
-    hram->hObjectStructIndex = objStructIdx;
+    hram.hObjectStructIndex = objStructIdx;
 
     // POP_AF;
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = mapObjIdx;
+    hram.hMapObjectIndex = mapObjIdx;
 
     // RET;
     return;
@@ -421,7 +420,7 @@ void SimpleWaitPressAorB(void) {
         DelayFrame();
         // LDH_A_addr(hJoyLast);
         // AND_A(A_BUTTON | B_BUTTON);
-    } while((hram->hJoyLast & (A_BUTTON | B_BUTTON)) == 0);
+    } while((hram.hJoyLast & (A_BUTTON | B_BUTTON)) == 0);
     // IF_Z goto loop;
     // RET;
 }
@@ -430,11 +429,11 @@ static void PromptButton_wait_input(void) {
     // PEEK("");
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t temp = hram->hOAMUpdate;
+    uint8_t temp = hram.hOAMUpdate;
 
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 1;
+    hram.hOAMUpdate = 1;
 
     // LD_A_addr(wInputType);
     // OR_A_A;
@@ -453,7 +452,7 @@ static void PromptButton_wait_input(void) {
             // LDH_A_addr(hVBlankCounter);
             // AND_A(0b00010000);  // bit 4, a
             // IF_Z goto cursor_off;
-            if((hram->hVBlankCounter & 0b00010000) == 0)
+            if((hram.hVBlankCounter & 0b00010000) == 0)
             {
             // cursor_off:
                 // lda_coord(17, 17, wTilemap);
@@ -476,13 +475,13 @@ static void PromptButton_wait_input(void) {
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON | B_BUTTON);
         // IF_NZ goto received_input;
-        if((hram->hJoyPressed & (A_BUTTON | B_BUTTON)) != 0)
+        if((hram.hJoyPressed & (A_BUTTON | B_BUTTON)) != 0)
         {
             // PEEK("received_input");
         // received_input:
             // POP_AF;
             // LDH_addr_A(hOAMUpdate);
-            hram->hOAMUpdate = temp;
+            hram.hOAMUpdate = temp;
 
             // RET;
             return;
@@ -493,7 +492,7 @@ static void PromptButton_wait_input(void) {
 
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
 
         // CALL(aDelayFrame);
         DelayFrame();
@@ -541,31 +540,31 @@ void BlinkCursor(uint8_t* hl) {
         // LDH_A_addr(hMapObjectIndex);
         // AND_A_A;
         // RET_Z;
-        if(hram->hMapObjectIndex == 0)
+        if(hram.hMapObjectIndex == 0)
             return;
         
         // DEC_A;
         // LDH_addr_A(hMapObjectIndex);
 
         // RET_NZ;
-        if(--hram->hMapObjectIndex != 0)
+        if(--hram.hMapObjectIndex != 0)
             return;
         
         // DEC_A;
         // LDH_addr_A(hMapObjectIndex);
-        hram->hMapObjectIndex--;
+        hram.hMapObjectIndex--;
 
         // LDH_A_addr(hObjectStructIndex);
         // DEC_A;
         // LDH_addr_A(hObjectStructIndex);
 
         // RET_NZ;
-        if(--hram->hObjectStructIndex != 0)
+        if(--hram.hObjectStructIndex != 0)
             return;
         
         // LD_A(6);
         // LDH_addr_A(hObjectStructIndex);
-        hram->hObjectStructIndex = 6;
+        hram.hObjectStructIndex = 6;
 
         // LD_A(0xee);
         // LD_hl_A;
@@ -580,7 +579,7 @@ void BlinkCursor(uint8_t* hl) {
     // LDH_addr_A(hMapObjectIndex);
 
     // RET_NZ;
-    if(--hram->hMapObjectIndex != 0)
+    if(--hram.hMapObjectIndex != 0)
         return;
     
     // LDH_A_addr(hObjectStructIndex);
@@ -588,7 +587,7 @@ void BlinkCursor(uint8_t* hl) {
     // LDH_addr_A(hObjectStructIndex);
 
     // RET_NZ;
-    if(--hram->hObjectStructIndex != 0)
+    if(--hram.hObjectStructIndex != 0)
         return;
 
     // LD_A(0x7a);
@@ -597,11 +596,11 @@ void BlinkCursor(uint8_t* hl) {
 
     // LD_A(-1);
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = 0xff;
+    hram.hMapObjectIndex = 0xff;
 
     // LD_A(6);
     // LDH_addr_A(hObjectStructIndex);
-    hram->hObjectStructIndex = 6;
+    hram.hObjectStructIndex = 6;
     
     // RET;
     return;

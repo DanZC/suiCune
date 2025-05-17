@@ -263,7 +263,7 @@ u8_flag_s ChooseRandomCaller(void){
     // LDH_A_addr(hRandomAdd);
     // SWAP_A;
     // AND_A(0x1f);
-    uint8_t a = ((hram->hRandomAdd >> 4) | (hram->hRandomAdd << 4)) & 0x1f;
+    uint8_t a = ((hram.hRandomAdd >> 4) | (hram.hRandomAdd << 4)) & 0x1f;
 //  Compute that number modulo the number of available callers.
     // CALL(aSimpleDivide);
     uint8_t rem = a % wram->wNumAvailableCallers;

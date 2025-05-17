@@ -3,17 +3,18 @@
 
 // Unused
 void FarCall(void) {
-    JP(mFarCall_hl);
+    // JP(mFarCall_hl);
 }
 
 void Bankswitch(uint8_t new_bank) {
-    hram->hROMBank = new_bank;
+    hram.hROMBank = new_bank;
     gb_write(MBC3RomBank, new_bank);
 }
 
+// UNUSED
 void JumpTable(void) {
-    REG_HL = gb_read16(REG_HL + (REG_A * 2));
-    JP_hl;
+    // REG_HL = gb_read16(REG_HL + (REG_A * 2));
+    // JP_hl;
 }
 
 // void JumpTable(void) {
@@ -31,6 +32,6 @@ void JumpTable(void) {
 
 // Unused
 void Start(void) {
-    NOP;
-    JP(mv_Start);
+    // NOP;
+    // JP(mv_Start);
 }

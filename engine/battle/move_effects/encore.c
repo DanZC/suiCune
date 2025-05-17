@@ -17,8 +17,8 @@ void BattleCommand_Encore(void){
     // IF_Z goto ok;
     // LD_HL(wBattleMonMoves);
     // LD_DE(wPlayerEncoreCount);
-    struct BattleMon* mon = (hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon: &wram->wBattleMon;
-    uint8_t* de = (hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyEncoreCount: &wram->wPlayerEncoreCount;
+    struct BattleMon* mon = (hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon: &wram->wBattleMon;
+    uint8_t* de = (hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyEncoreCount: &wram->wPlayerEncoreCount;
 
 // ok:
     // LD_A(BATTLE_VARS_LAST_MOVE_OPP);
@@ -81,7 +81,7 @@ void BattleCommand_Encore(void){
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_Z goto force_last_enemy_move;
-        if(hram->hBattleTurn != TURN_PLAYER) {
+        if(hram.hBattleTurn != TURN_PLAYER) {
             // PUSH_HL;
             // LD_A_addr(wLastPlayerMove);
             // LD_B_A;

@@ -608,7 +608,7 @@ static void PokeAnim_InitAnim(uint8_t b, uint8_t c){
 static void PokeAnim_DoAnimScript(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 
     while(1) {
     // loop:
@@ -1228,7 +1228,7 @@ static void PokeAnim_SetVBank1(void){
     // LDH_addr_A(rSVBK);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aPokeAnim_SetVBank1_SetFlag);
     PokeAnim_SetVBank1_SetFlag();
 

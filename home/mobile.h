@@ -9,5 +9,5 @@ void Function3f20(void);
 void Function3f35(uint8_t* hl, uint8_t b, uint8_t c);
 tile_t* MobileHome_PlaceBox(tile_t* hl, uint8_t b, uint8_t c);
 void Function3f7c(void);
-void Function3f88(void);
-void Function3f9f(void);
+void Function3f88(const uint8_t* de, uint8_t c);
+void Function3f9f(const uint8_t* de, uint8_t c);

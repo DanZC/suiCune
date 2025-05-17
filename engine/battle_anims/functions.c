@@ -1658,13 +1658,13 @@ void BattleAnimFunction_Surf(struct BattleAnim* bc) {
         bc->jumptableIndex++;
         // LD_A(LOW(rSCY));
         // LDH_addr_A(hLCDCPointer);
-        hram->hLCDCPointer = LOW(rSCY);
+        hram.hLCDCPointer = LOW(rSCY);
         // LD_A(0x58);
         // LDH_addr_A(hLYOverrideStart);
-        hram->hLYOverrideStart = 0x58;
+        hram.hLYOverrideStart = 0x58;
         // LD_A(0x5e);
         // LDH_addr_A(hLYOverrideEnd);
-        hram->hLYOverrideEnd = 0x5e;
+        hram.hLYOverrideEnd = 0x5e;
         // RET;
         return;
 
@@ -1683,7 +1683,7 @@ void BattleAnimFunction_Surf(struct BattleAnim* bc) {
             bc->jumptableIndex++;
             // XOR_A_A;
             // LDH_addr_A(hLYOverrideStart);
-            hram->hLYOverrideStart = 0x0;
+            hram.hLYOverrideStart = 0x0;
             // RET;
             return;
         }
@@ -1709,7 +1709,7 @@ void BattleAnimFunction_Surf(struct BattleAnim* bc) {
         if(bc->yOffset + bc->yCoord < 0x10)
             return;
         // LDH_addr_A(hLYOverrideStart);
-        hram->hLYOverrideStart = bc->yOffset + bc->yCoord - 0x10;
+        hram.hLYOverrideStart = bc->yOffset + bc->yCoord - 0x10;
         // LD_HL(BATTLEANIMSTRUCT_XOFFSET);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -1747,17 +1747,17 @@ void BattleAnimFunction_Surf(struct BattleAnim* bc) {
             if(bc->yCoord < 0x10)
                 return;
             // LDH_addr_A(hLYOverrideStart);
-            hram->hLYOverrideStart = bc->yCoord - 0x10;
+            hram.hLYOverrideStart = bc->yCoord - 0x10;
             // RET;
             return;
         }
         // XOR_A_A;
         // LDH_addr_A(hLCDCPointer);
-        hram->hLCDCPointer = 0;
+        hram.hLCDCPointer = 0;
         // LDH_addr_A(hLYOverrideStart);
-        hram->hLYOverrideStart = 0;
+        hram.hLYOverrideStart = 0;
         // LDH_addr_A(hLYOverrideEnd);
-        hram->hLYOverrideEnd = 0;
+        hram.hLYOverrideEnd = 0;
         fallthrough;
 
     case 4:
@@ -3392,7 +3392,7 @@ void BattleAnimFunction_Sound(struct BattleAnim* bc) {
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
         // IF_Z goto got_turn;
-        if(hram->hBattleTurn != TURN_PLAYER) {
+        if(hram.hBattleTurn != TURN_PLAYER) {
             // enemy
             // LD_HL(BATTLEANIMSTRUCT_PARAM);
             // ADD_HL_BC;
@@ -4764,7 +4764,7 @@ static void BattleAnimFunction_SkyAttack_SkyAttack_CyclePalette(struct BattleAni
 
 // sgb:
     // LD_HL(mBattleAnimFunction_SkyAttack_SGBPals);
-    const uint8_t* hl = (hram->hSGB == 0)? GBCPals: SGBPals;
+    const uint8_t* hl = (hram.hSGB == 0)? GBCPals: SGBPals;
 
 // got_pals:
     // ADD_HL_DE;
@@ -4807,7 +4807,7 @@ void BattleAnimFunction_SkyAttack(struct BattleAnim* bc) {
         // LD_HL(BATTLEANIMSTRUCT_VAR1);
         // ADD_HL_BC;
         // LD_hl_A;
-        bc->var1 = (hram->hBattleTurn)? 0xcc: 0xf0;
+        bc->var1 = (hram.hBattleTurn)? 0xcc: 0xf0;
         // RET;
         return;
 

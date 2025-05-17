@@ -53,48 +53,49 @@ bool v_InterpretBattleMenu(void){
     return Get2DMenuSelection(data);
 }
 
+// UNUSED
 void v_InterpretMobileMenu(void){
-    LD_HL(mCopyMenuData);
-    LD_A_addr(wMenuData_2DMenuItemStringsBank);
-    RST(aFarCall);
+    // LD_HL(mCopyMenuData);
+    // LD_A_addr(wMenuData_2DMenuItemStringsBank);
+    // RST(aFarCall);
 
-    CALL(aDraw2DMenu);
-    FARCALL(aMobileTextBorder);
-    CALL(aUpdateSprites);
-    CALL(aApplyTilemap);
-    CALL(aInit2DMenuCursorPosition);
-    LD_HL(w2DMenuFlags1);
-    SET_hl(7);
+    // CALL(aDraw2DMenu);
+    // FARCALL(aMobileTextBorder);
+    // CALL(aUpdateSprites);
+    // CALL(aApplyTilemap);
+    // CALL(aInit2DMenuCursorPosition);
+    // LD_HL(w2DMenuFlags1);
+    // SET_hl(7);
 
-loop:
-    CALL(aDelayFrame);
-    FARCALL(aFunction10032e);
-    LD_A_addr(wcd2b);
-    AND_A_A;
-    IF_NZ goto quit;
-    CALL(aMobileMenuJoypad);
-    LD_A_addr(wMenuJoypadFilter);
-    AND_A_C;
-    IF_Z goto loop;
-    CALL(aMobile_GetMenuSelection);
-    RET;
+// loop:
+    // CALL(aDelayFrame);
+    // FARCALL(aFunction10032e);
+    // LD_A_addr(wcd2b);
+    // AND_A_A;
+    // IF_NZ goto quit;
+    // CALL(aMobileMenuJoypad);
+    // LD_A_addr(wMenuJoypadFilter);
+    // AND_A_C;
+    // IF_Z goto loop;
+    // CALL(aMobile_GetMenuSelection);
+    // RET;
 
 
-quit:
-    LD_A_addr(w2DMenuNumCols);
-    LD_C_A;
-    LD_A_addr(w2DMenuNumRows);
-    CALL(aSimpleMultiply);
-    LD_addr_A(wMenuCursorPosition);
-    AND_A_A;
-    RET;
+// quit:
+    // LD_A_addr(w2DMenuNumCols);
+    // LD_C_A;
+    // LD_A_addr(w2DMenuNumRows);
+    // CALL(aSimpleMultiply);
+    // LD_addr_A(wMenuCursorPosition);
+    // AND_A_A;
+    // RET;
 
 }
 
 void Draw2DMenu(const struct MenuData* data){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
     MenuBox();
     // CALL(aPlace2DMenuItemStrings);
@@ -390,12 +391,12 @@ void v_ScrollingMenuJoypad(void){
     bit_reset(wram->w2DMenuFlags2, 7);
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t temp = hram->hBGMapMode;
+    uint8_t temp = hram.hBGMapMode;
     // CALL(aMenuJoypadLoop);
     MenuJoypadLoop();
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = temp;
+    hram.hBGMapMode = temp;
     // RET;
 }
 
@@ -405,7 +406,7 @@ uint8_t MobileMenuJoypad(void){
     bit_reset(wram->w2DMenuFlags2, 7);
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t bgMapMode = hram->hBGMapMode;
+    uint8_t bgMapMode = hram.hBGMapMode;
     // CALL(aMove2DMenuCursor);
     Move2DMenuCursor();
     // CALL(aDo2DMenuRTCJoypad);
@@ -418,7 +419,7 @@ uint8_t MobileMenuJoypad(void){
 // skip_joypad:
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = bgMapMode;
+    hram.hBGMapMode = bgMapMode;
     // CALL(aGetMenuJoypad);
     // LD_C_A;
     // RET;
@@ -471,18 +472,18 @@ static void MenuJoypadLoop_BGMap_OAM(void) {
 // BGMap_OAM:
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t temp = hram->hOAMUpdate;
+    uint8_t temp = hram.hOAMUpdate;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hram.hOAMUpdate = 0x1;
     // CALL(aWaitBGMap);
     WaitBGMap();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = temp;
+    hram.hOAMUpdate = temp;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
@@ -995,7 +996,7 @@ void v_ExitMenu(void){
     printf("gWindowStackPointer = %d\n", gWindowStackPointer - 1);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;

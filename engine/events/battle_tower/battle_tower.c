@@ -1267,7 +1267,7 @@ void Function1704e1_JumptableLoop(void){
             // LD_A_hl;
             // AND_A(B_BUTTON);
             // IF_NZ goto pressed_a_or_b;
-            if(hram->hJoyPressed & (A_BUTTON | B_BUTTON)) {
+            if(hram.hJoyPressed & (A_BUTTON | B_BUTTON)) {
             // pressed_a_or_b:
                 // LD_HL(wJumptableIndex);
                 // SET_hl(7);
@@ -1278,7 +1278,7 @@ void Function1704e1_JumptableLoop(void){
             // LD_A_hl;
             // AND_A(D_UP);
             // IF_NZ goto pressed_up;
-            else if(hram->hJoyPressed & D_UP) {
+            else if(hram.hJoyPressed & D_UP) {
             // pressed_up:
                 // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
                 // AND_A_A;
@@ -1296,7 +1296,7 @@ void Function1704e1_JumptableLoop(void){
             // LD_A_hl;
             // AND_A(D_DOWN);
             // IF_NZ goto pressed_down;
-            else if(hram->hJoyPressed & D_DOWN) {
+            else if(hram.hJoyPressed & D_DOWN) {
             // pressed_down:
                 // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
                 // CP_A(60);
@@ -2425,10 +2425,10 @@ void LoadOpponentTrainerAndPokemonWithOTSprite(void){
     // LD_hli_A;
     wram->wUsedSprites[a << 1] = wram->wBTTempOTSprite;
     // LDH_addr_A(hUsedSpriteIndex);
-    hram->hUsedSpriteIndex = wram->wBTTempOTSprite;
+    hram.hUsedSpriteIndex = wram->wBTTempOTSprite;
     // LD_A_hl;
     // LDH_addr_A(hUsedSpriteTile);
-    hram->hUsedSpriteTile = wram->wUsedSprites[(a << 1) + 1];
+    hram.hUsedSpriteTile = wram->wUsedSprites[(a << 1) + 1];
     // FARCALL(aGetUsedSprite);
     GetUsedSprite();
     // RET;

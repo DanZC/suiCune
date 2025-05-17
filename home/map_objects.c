@@ -84,28 +84,28 @@ uint8_t GetSpriteVTile(uint8_t a, uint8_t mapObjIdx){
     // RET;
 }
 
-void DoesSpriteHaveFacings(void){
-        PUSH_DE;
-    PUSH_HL;
+bool DoesSpriteHaveFacings(uint8_t a){
+    // PUSH_DE;
+    // PUSH_HL;
 
-    LD_B_A;
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A(BANK(av_DoesSpriteHaveFacings));
-    RST(aBankswitch);
+    // LD_B_A;
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A(BANK(av_DoesSpriteHaveFacings));
+    // RST(aBankswitch);
 
-    LD_A_B;
-    CALL(av_DoesSpriteHaveFacings);
-    LD_C_A;
+    // LD_A_B;
+    // CALL(av_DoesSpriteHaveFacings);
+    return v_DoesSpriteHaveFacings(a);
+    // LD_C_A;
 
-    POP_DE;
-    LD_A_D;
-    RST(aBankswitch);
+    // POP_DE;
+    // LD_A_D;
+    // RST(aBankswitch);
 
-    POP_HL;
-    POP_DE;
-    RET;
-
+    // POP_HL;
+    // POP_DE;
+    // RET;
 }
 
 uint8_t GetPlayerStandingTile(void){
@@ -282,7 +282,7 @@ struct MapObject* GetMapObject(uint8_t a){
 struct Object* CheckObjectVisibility(uint8_t a){
     // LDH_addr_A(hMapObjectIndex);
     // CALL(aGetMapObject);
-    hram->hMapObjectIndex = a;
+    hram.hMapObjectIndex = a;
     struct MapObject* mobj = GetMapObject(a);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
     // ADD_HL_BC;
@@ -292,7 +292,7 @@ struct Object* CheckObjectVisibility(uint8_t a){
     if(mobj->structId == 0xff) 
         return NULL;
     // LDH_addr_A(hObjectStructIndex);
-    hram->hObjectStructIndex = mobj->structId;
+    hram.hObjectStructIndex = mobj->structId;
     // CALL(aGetObjectStruct);
     // AND_A_A;
     // RET;
@@ -368,12 +368,12 @@ bool CheckObjectTime(struct MapObject* bc){
             // LD_A_E;
             // CP_A_hl;
             // IF_C goto no;
-            if(e < hram->hHours)
+            if(e < hram.hHours)
                 return true;
             // LD_A_hl;
             // CP_A_D;
             // IF_NC goto yes;
-            if(hram->hHours >= d)
+            if(hram.hHours >= d)
                 return false;
             // goto no;
             return true;
@@ -382,12 +382,12 @@ bool CheckObjectTime(struct MapObject* bc){
             // LD_A_hl;
             // CP_A_D;
             // IF_NC goto yes;
-            if(hram->hHours >= d)
+            if(hram.hHours >= d)
                 return false;
             // CP_A_E;
             // IF_C goto yes;
             // IF_Z goto yes;
-            if(hram->hHours <= e)
+            if(hram.hHours <= e)
                 return false;
             // goto no;
             return true;
@@ -407,13 +407,14 @@ bool CheckObjectTime(struct MapObject* bc){
     }
 }
 
-void CopyMapObjectStruct(void){
-    //  //  unreferenced
-    LDH_addr_A(hMapObjectIndex);
-    CALL(aGetMapObject);
-    CALL(aCopyObjectStruct);
-    RET;
-
+//  //  unreferenced
+uint8_t CopyMapObjectStruct(uint8_t a){
+    // LDH_addr_A(hMapObjectIndex);
+    hram.hMapObjectIndex = a;
+    // CALL(aGetMapObject);
+    // CALL(aCopyObjectStruct);
+    // RET;
+    return CopyObjectStruct(GetMapObject(a), a);
 }
 
 void UnmaskCopyMapObjectStruct(uint8_t a){
@@ -451,7 +452,7 @@ static void ApplyDeletionToMapObject_CheckStopFollow(uint8_t a) {
 
 void ApplyDeletionToMapObject(uint8_t mapObjIdx){
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = mapObjIdx;
+    hram.hMapObjectIndex = mapObjIdx;
     // CALL(aGetMapObject);
     struct MapObject* bc = GetMapObject(mapObjIdx);
     // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
@@ -499,37 +500,47 @@ void CopyPlayerObjectTemplate(const struct ObjEvent* hl, uint8_t a){
     // RET;
 }
 
-void DeleteFollowerMapObject(void){
-    //  //  unreferenced
-    CALL(aGetMapObject);
-    LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
-    ADD_HL_BC;
-    LD_A_hl;
-    PUSH_AF;
-    LD_hl(-1);
-    INC_HL;
-    LD_BC(MAPOBJECT_LENGTH - 1);
-    XOR_A_A;
-    CALL(aByteFill);
-    POP_AF;
-    CP_A(-1);
-    RET_Z ;
-    CP_A(NUM_OBJECT_STRUCTS);
-    RET_NC ;
-    LD_B_A;
-    LD_A_addr(wObjectFollow_Leader);
-    CP_A_B;
-    IF_NZ goto ok;
-    LD_A(-1);
-    LD_addr_A(wObjectFollow_Leader);
+//  //  unreferenced
+void DeleteFollowerMapObject(uint8_t a){
+    // CALL(aGetMapObject);
+    struct MapObject* bc = GetMapObject(a);
+    // LD_HL(MAPOBJECT_OBJECT_STRUCT_ID);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // PUSH_AF;
+    uint8_t id = bc->structId;
+    // LD_hl(-1);
+    // INC_HL;
+    // LD_BC(MAPOBJECT_LENGTH - 1);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill(bc, sizeof(*bc), 0);
+    bc->structId = 0xff;
+    // POP_AF;
+    // CP_A(-1);
+    // RET_Z ;
+    if(id == 0xff)
+        return;
+    // CP_A(NUM_OBJECT_STRUCTS);
+    // RET_NC ;
+    if(id >= NUM_OBJECT_STRUCTS)
+        return;
+    // LD_B_A;
+    // LD_A_addr(wObjectFollow_Leader);
+    // CP_A_B;
+    // IF_NZ goto ok;
+    if(wram->wObjectFollow_Leader == id) {
+        // LD_A(-1);
+        // LD_addr_A(wObjectFollow_Leader);
+        wram->wObjectFollow_Leader = 0xff;
+    }
 
-
-ok:
-        LD_A_B;
-    CALL(aGetObjectStruct);
-    FARCALL(aDeleteMapObject);
-    RET;
-
+// ok:
+    // LD_A_B;
+    // CALL(aGetObjectStruct);
+    // FARCALL(aDeleteMapObject);
+    DeleteMapObject(GetObjectStruct(id));
+    // RET;
 }
 
 //  Load the movement data pointer for object a.
@@ -538,7 +549,7 @@ bool LoadMovementDataPointer(uint8_t a, const uint8_t* hl){
     wram->wMovementObject = a;
     // LDH_A_addr(hROMBank);
     // LD_addr_A(wMovementDataBank);
-    wram->wMovementDataBank = hram->hROMBank;
+    wram->wMovementDataBank = hram.hROMBank;
     // LD_A_L;
     // LD_addr_A(wMovementDataAddress);
     // LD_A_H;
@@ -748,20 +759,20 @@ uint8_t v_GetMovementByte(const uint8_t* hl, struct Object* bc){
     return *de;
 }
 
+//  //  unreferenced
 void SetVramState_Bit0(void){
-    //  //  unreferenced
-    LD_HL(wVramState);
-    SET_hl(0);
-    RET;
-
+    // LD_HL(wVramState);
+    // SET_hl(0);
+    bit_set(wram->wVramState, 0);
+    // RET;
 }
 
+//  //  unreferenced
 void ResetVramState_Bit0(void){
-    //  //  unreferenced
-    LD_HL(wVramState);
-    RES_hl(0);
-    RET;
-
+    // LD_HL(wVramState);
+    // RES_hl(0);
+    bit_reset(wram->wVramState, 0);
+    // RET;
 }
 
 void UpdateSprites(void){

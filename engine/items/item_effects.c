@@ -759,7 +759,7 @@ void PokeBallEffect(void){
     wram->wFXAnimID = ANIM_THROW_POKE_BALL;
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_PLAYER;
+    hram.hBattleTurn = TURN_PLAYER;
     // LD_addr_A(wThrownBallWobbleCount);
     wram->wThrownBallWobbleCount = 0;
     // LD_addr_A(wNumHits);
@@ -1246,25 +1246,26 @@ uint8_t ParkBallMultiplier(uint8_t b){
     return 0xff;
 }
 
+// Unused
 void GetPokedexEntryBank(void){
 //  This function is buggy.
 //  It gets the wrong bank for Kadabra (64), Tauros (128), and Sunflora (192).
 //  Uncomment the line below to fix this.
-    PUSH_HL;
-    PUSH_DE;
-    LD_A_addr(wEnemyMonSpecies);
+    // PUSH_HL;
+    // PUSH_DE;
+    // LD_A_addr(wEnemyMonSpecies);
 // dec a
-    RLCA;
-    RLCA;
-    maskbits(NUM_DEX_ENTRY_BANKS, 0);
-    LD_HL(mGetPokedexEntryBank_PokedexEntryBanks);
-    LD_D(0);
-    LD_E_A;
-    ADD_HL_DE;
-    LD_A_hl;
-    POP_DE;
-    POP_HL;
-    RET;
+    // RLCA;
+    // RLCA;
+    // maskbits(NUM_DEX_ENTRY_BANKS, 0);
+    // LD_HL(mGetPokedexEntryBank_PokedexEntryBanks);
+    // LD_D(0);
+    // LD_E_A;
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 
 
 // PokedexEntryBanks:
@@ -2736,7 +2737,7 @@ void ItemActionText(uint8_t text){
 void ItemActionTextWaitButton(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(wTilemapEnd - wTilemap);
     // LD_A(0x7f);
@@ -2747,7 +2748,7 @@ void ItemActionTextWaitButton(void){
     ItemActionText(wram->wPartyMenuActionText);
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_C(50);
     // CALL(aDelayFrames);
     DelayFrames(50);
@@ -3290,7 +3291,7 @@ void XItemEffect(void){
     // LD_B_hl;
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_PLAYER;
+    hram.hBattleTurn = TURN_PLAYER;
     // LD_addr_A(wAttackMissed);
     wram->wAttackMissed = FALSE;
     // LD_addr_A(wEffectFailed);
@@ -3920,7 +3921,7 @@ void UseBallInTrainerBattle(void){
     // LD_addr_A(wBattleAnimParam);
     wram->wBattleAnimParam = 0;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_PLAYER;
+    hram.hBattleTurn = TURN_PLAYER;
     // LD_addr_A(wNumHits);
     wram->wNumHits = 0;
     // PREDEF(pPlayBattleAnim);

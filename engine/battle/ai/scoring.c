@@ -348,7 +348,7 @@ void AI_Types(void){
         // PUSH_DE;
         // LD_A(1);
         // LDH_addr_A(hBattleTurn);
-        hram->hBattleTurn = TURN_ENEMY;
+        hram.hBattleTurn = TURN_ENEMY;
         // CALLFAR(aBattleCheckTypeMatchup);
         uint8_t matchup = BattleCheckTypeMatchup();
         // POP_DE;
@@ -746,7 +746,7 @@ static void AI_Smart_LeechHit(uint8_t* hl){
     // PUSH_HL;
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_ENEMY;
+    hram.hBattleTurn = TURN_ENEMY;
     // CALLFAR(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup();
     // POP_HL;
@@ -908,7 +908,7 @@ static void AI_Smart_LockOn(uint8_t* hl){
 
         // LD_A(1);
         // LDH_addr_A(hBattleTurn);
-        hram->hBattleTurn = TURN_ENEMY;
+        hram.hBattleTurn = TURN_ENEMY;
 
         // PUSH_HL;
         // PUSH_BC;
@@ -2061,7 +2061,7 @@ static void AI_Smart_Mimic(uint8_t* hl){
 
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_ENEMY;
+    hram.hBattleTurn = TURN_ENEMY;
     // CALLFAR(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup();
 
@@ -2551,7 +2551,7 @@ static void AI_Smart_PriorityHit(uint8_t* hl){
 //  Greatly encourage this move if it will KO the player.
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_ENEMY;
+    hram.hBattleTurn = TURN_ENEMY;
     // PUSH_HL;
     // CALLFAR(aEnemyAttackDamage);
     EnemyAttackDamage(&gBattleCmdState);
@@ -2627,7 +2627,7 @@ static void AI_Smart_Conversion2(uint8_t* hl){
 
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_PLAYER;
+    hram.hBattleTurn = TURN_PLAYER;
 
     // CALLFAR(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup();
@@ -3547,7 +3547,7 @@ static void AI_Smart_HiddenPower(uint8_t* hl){
     // PUSH_HL;
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_ENEMY;
+    hram.hBattleTurn = TURN_ENEMY;
 
 //  Calculate Hidden Power's type and base power based on enemy's DVs.
     // CALLFAR(aHiddenPowerDamage);
@@ -4495,7 +4495,7 @@ void AI_Aggressive(void){
 void AIDamageCalc(void){
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_ENEMY;
+    hram.hBattleTurn = TURN_ENEMY;
     // LD_A_addr(wEnemyMoveStruct + MOVE_EFFECT);
     // LD_DE(1);
     // LD_HL(mConstantDamageEffects);
@@ -4642,7 +4642,7 @@ void AI_Status(void){
         // PUSH_DE;
         // LD_A(1);
         // LDH_addr_A(hBattleTurn);
-        hram->hBattleTurn = TURN_ENEMY;
+        hram.hBattleTurn = TURN_ENEMY;
         // CALLFAR(aBattleCheckTypeMatchup);
         uint8_t matchup = BattleCheckTypeMatchup();
         // POP_DE;

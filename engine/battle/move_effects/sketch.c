@@ -59,7 +59,7 @@ void BattleCommand_Sketch(void){
     // AND_A_A;
     // IF_Z goto get_last_move;
     // LD_HL(wEnemyMonMoves);
-    struct BattleMon* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* hl = (hram.hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
 
 // get_last_move:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
@@ -133,7 +133,7 @@ void BattleCommand_Sketch(void){
     // LD_A_addr(wBattleMode);
     // DEC_A;
     // IF_NZ goto user_trainer;
-    if(hram->hBattleTurn != 0 && wram->wBattleMode == WILD_BATTLE) {
+    if(hram.hBattleTurn != 0 && wram->wBattleMode == WILD_BATTLE) {
     //  wildmon
         // LD_A_hl;
         // PUSH_BC;

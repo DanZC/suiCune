@@ -164,7 +164,7 @@ void DisplayUnownWords(void){
     LoadMenuHeader(hdr);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
     MenuBox();
     // CALL(aUpdateSprites);

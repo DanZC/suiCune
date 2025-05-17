@@ -76,25 +76,26 @@ void Multiply(void){
 //  All values are big endian.
 //  DEPRECATED: Just divide the values using the / operator.
 void Divide(void){
-    PUSH_HL;
-    PUSH_DE;
-    PUSH_BC;
-    HOMECALL(av_Divide);
-    POP_BC;
-    POP_DE;
-    POP_HL;
-    RET;
-
+    // PUSH_HL;
+    // PUSH_DE;
+    // PUSH_BC;
+    // HOMECALL(av_Divide);
+    // POP_BC;
+    // POP_DE;
+    // POP_HL;
+    // RET;
 }
 
-void SubtractAbsolute(void){
-    //  //  unreferenced
+//  //  unreferenced
 //  Return |a - b|, sign in carry.
-    SUB_A_B;
-    RET_NC ;
-    CPL;
-    ADD_A(1);
-    SCF;
-    RET;
-
+u8_flag_s SubtractAbsolute(uint8_t a, uint8_t b){
+    // SUB_A_B;
+    // RET_NC ;
+    if(a >= b)
+        return u8_flag(a - b, false);
+    // CPL;
+    // ADD_A(1);
+    // SCF;
+    // RET;
+    return u8_flag(-(a - b), true);
 }

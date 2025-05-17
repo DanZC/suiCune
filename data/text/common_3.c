@@ -635,7 +635,7 @@ const txt_cmd_s v_MartFinalPriceText[] = {
     text_start("(S)"
         t_line "will be ¥@"
         )
-    text_decimal(hram_ptr(hMoneyTemp), 3, 6)
+    text_decimal(hram.hMoneyTemp, 3, 6)
     text_start("."
         t_done )
 
@@ -672,7 +672,7 @@ const txt_cmd_s v_HerbalLadyFinalPriceText[] = {
     text_start("(S)"
         t_line "will be ¥@"
         )
-    text_decimal(hram_ptr(hMoneyTemp), 3, 6)
+    text_decimal(hram.hMoneyTemp, 3, 6)
     text_start("."
         t_done )
 
@@ -724,7 +724,7 @@ const txt_cmd_s v_BargainShopFinalPriceText[] = {
     text_start(" costs"
         t_line "¥@"
         )
-    text_decimal(hram_ptr(hMoneyTemp), 3, 6)
+    text_decimal(hram.hMoneyTemp, 3, 6)
     text_start(". Want it?"
         t_done )
 
@@ -786,7 +786,7 @@ const txt_cmd_s v_PharmacyFinalPriceText[] = {
     text_start("(S)"
         t_line "will cost ¥@"
         )
-    text_decimal(hram_ptr(hMoneyTemp), 3, 6)
+    text_decimal(hram.hMoneyTemp, 3, 6)
     text_start("."
         t_done )
 
@@ -836,7 +836,7 @@ const txt_cmd_s v_MartSellPriceText[] = {
     text_start("I can pay you"
         t_line "¥@"
         )
-    text_decimal(hram_ptr(hMoneyTemp), 3, 6)
+    text_decimal(hram.hMoneyTemp, 3, 6)
     text_start("."
 
         t_para "Is that OK?"
@@ -895,7 +895,7 @@ const txt_cmd_s v_MartAskMoreText[] = {
 const txt_cmd_s v_MartBoughtText[] = {
     text_start("Got ¥@"
         )
-    text_decimal(hram_ptr(hMoneyTemp), 3, 6)
+    text_decimal(hram.hMoneyTemp, 3, 6)
     text_start(" for"
         t_line "@"
         )

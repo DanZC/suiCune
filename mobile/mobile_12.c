@@ -959,7 +959,7 @@ void Function48304(void){
     // LDH_A_addr(hJoyPressed);
     // BIT_A(0);
     // IF_Z goto asm_48377;
-    if(bit_test(hram->hJoyPressed, A_BUTTON_F)) {
+    if(bit_test(hram.hJoyPressed, A_BUTTON_F)) {
         // CALL(aFunction483bb);
         Function483bb();
         // LD_A_addr(wd003);
@@ -1574,10 +1574,10 @@ void Function4876f(void){
     LoadMenuHeader(&MenuHeader_0x48509);
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // hlcoord(10, 5, wTilemap);
     // LD_B(0x1);
     // LD_C(0x8);
@@ -1691,7 +1691,7 @@ void Function4876f(void){
     #endif
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // JP(mFunction4840c);
 }
 
@@ -1733,18 +1733,18 @@ u8_flag_s Function4880e(void){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // JP_NZ (mFunction488b9);
-    if(hram->hJoyPressed & A_BUTTON)
+    if(hram.hJoyPressed & A_BUTTON)
         return Function488b9();
     // LDH_A_addr(hJoyPressed);
     // AND_A(B_BUTTON);
     // JP_NZ (mFunction488b4);
-    if(hram->hJoyPressed & B_BUTTON)
+    if(hram.hJoyPressed & B_BUTTON)
         return Function488b4();
     // LD_HL(hJoyLast);
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_48843;
-    if(hram->hJoyLast & D_UP) {
+    if(hram.hJoyLast & D_UP) {
     // asm_48843:
         // LD_HL(wd473);
         // LD_A_hl;
@@ -1762,7 +1762,7 @@ u8_flag_s Function4880e(void){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_48838;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hram.hJoyLast & D_DOWN) {
     // asm_48838:
         // LD_HL(wd473);
         // LD_A_hl;
@@ -1780,7 +1780,7 @@ u8_flag_s Function4880e(void){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // IF_NZ goto asm_4884f;
-    else if(hram->hJoyLast & D_LEFT) {
+    else if(hram.hJoyLast & D_LEFT) {
     // asm_4884f:
         // LD_A_addr(wd473);
         // CP_A(0x5b);
@@ -1799,7 +1799,7 @@ u8_flag_s Function4880e(void){
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // IF_NZ goto asm_4885f;
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hram.hJoyLast & D_RIGHT) {
     // asm_4885f:
         // LD_A_addr(wd473);
         // CP_A(0xa);
@@ -1956,10 +1956,10 @@ void Function488d3(void){
     LoadMenuHeader(&MenuHeader_0x4850e);
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     #if defined(_CRYSTAL_JP)
     // hlcoord(10, 9, wTilemap);
     // LD_B(0x1);
@@ -2049,7 +2049,7 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
         // JP_NZ (mFunction4896e);
         // BIT_A(1);
         // JP_NZ (mFunction4896e);
-        if(hram->hJoyDown == 0 || bit_test(hram->hJoyDown, A_BUTTON_F) || bit_test(hram->hJoyDown, B_BUTTON_F)) {
+        if(hram.hJoyDown == 0 || bit_test(hram.hJoyDown, A_BUTTON_F) || bit_test(hram.hJoyDown, B_BUTTON_F)) {
             // return Function4896e(bc, de, d); // inlined
             b = 0;
         }
@@ -2180,7 +2180,7 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
     ClearBox(coord(11, 9, wram->wTilemap), 8, 1);
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // JP(mFunction4840c);
 }
 
@@ -2228,7 +2228,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
 
         // bit B_BUTTON_F, a
         // jp nz, InputZipcodeCharacters_B0 ; If button B is pressed, jump to InputZipcodeCharacters_B0.
-        if(hram->hJoyDown == 0 || bit_test(hram->hJoyDown, A_BUTTON_F) || bit_test(hram->hJoyDown, B_BUTTON_F)) {
+        if(hram.hJoyDown == 0 || bit_test(hram.hJoyDown, A_BUTTON_F) || bit_test(hram.hJoyDown, B_BUTTON_F)) {
             // return Function4896e(bc, de, d); // inlined
         // InputZipcodeCharacters_B0:
             // pop bc
@@ -2397,7 +2397,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
     // call ClearBox
     // pop af
     // ldh [hInMenu], a
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // jp ReturnToMobileProfileMenu
 }
 
@@ -2606,7 +2606,7 @@ void Function489ea(tile_t* hl){
 void DisplayZipCodeRightAlign(void){
     // xor a
     // ldh [hInMenu], a // Bypassing the regular control of this value.
-    hram->hInMenu = 0; // Bypassing the regular control of this value.
+    hram.hInMenu = 0; // Bypassing the regular control of this value.
 
     // push de
     // We first clear the area.
@@ -2706,7 +2706,7 @@ void DisplayZipCodeWithOffset(tile_t* hl, uint8_t b) {
         // ldh a, [hInMenu]
         // and a
         // jr nz, .inc_screen_coord // When the user is in a menu, it means they're editing the zipcode. WHen editing it, we shouldn't skip double spaces as it will break the input system.
-        if(!hram->hInMenu) {
+        if(!hram.hInMenu) {
             // ld a, [hl]
             // cp " "
             // jr nz, .inc_screen_coord
@@ -2884,12 +2884,12 @@ u8_flag_s InputZipcodeCharacters(uint8_t* d){
     // ldh a, [hJoyPressed]
     // and A_BUTTON
     // jp nz, ExitAndSaveZipcode
-    if(hram->hJoyPressed & A_BUTTON)
-        return Function48c0f(hram->hJoyPressed & A_BUTTON);
+    if(hram.hJoyPressed & A_BUTTON)
+        return Function48c0f(hram.hJoyPressed & A_BUTTON);
     // ldh a, [hJoyPressed]
     // and B_BUTTON
     // jp nz, ExitAndDontSaveZipcode
-    if(hram->hJoyPressed & B_BUTTON)
+    if(hram.hJoyPressed & B_BUTTON)
         return Function48c0d();
     // ld hl, wZipCode + 0
     // push de
@@ -2907,7 +2907,7 @@ u8_flag_s InputZipcodeCharacters(uint8_t* d){
     // ld a, [hl]
     // and D_UP
     // jr nz, .press_up
-    if(hram->hJoyLast & D_UP) {
+    if(hram.hJoyLast & D_UP) {
     // .press_up ; press up, zip code number menu
         // call Zipcode_GetCharPoolLengthForGivenCharSlot
         // ld e, a
@@ -2929,7 +2929,7 @@ u8_flag_s InputZipcodeCharacters(uint8_t* d){
     // ld a, [hl]
     // and D_DOWN
     // jr nz, .press_down
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hram.hJoyLast & D_DOWN) {
     // .press_down ; press down, zip code number menu
         // pop af
         // sub 1 ; We use this because dec doesn't set the carry flag.
@@ -2948,7 +2948,7 @@ u8_flag_s InputZipcodeCharacters(uint8_t* d){
     // ld a, [hl]
     // and D_LEFT
     // jp nz, .press_left
-    else if(hram->hJoyLast & D_LEFT) {
+    else if(hram.hJoyLast & D_LEFT) {
     // .press_left
         // push de
         #if defined(_CRYSTAL_AU)
@@ -3027,7 +3027,7 @@ u8_flag_s InputZipcodeCharacters(uint8_t* d){
     // ld a, [hl]
     // and D_RIGHT
     // jr nz, .press_right
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hram.hJoyLast & D_RIGHT) {
     // .press_right
         // push de
         #if defined(_CRYSTAL_AU)
@@ -3159,12 +3159,12 @@ u8_flag_s Function48ab5(uint8_t* d){
     // LDH_A_addr(hJoyPressed);
     // AND_A(A_BUTTON);
     // JP_NZ (mFunction48c0f);
-    if(hram->hJoyPressed & A_BUTTON)
-        return Function48c0f(hram->hJoyPressed & A_BUTTON);
+    if(hram.hJoyPressed & A_BUTTON)
+        return Function48c0f(hram.hJoyPressed & A_BUTTON);
     // LDH_A_addr(hJoyPressed);
     // AND_A(B_BUTTON);
     // JP_NZ (mFunction48c0d);
-    if(hram->hJoyPressed & B_BUTTON)
+    if(hram.hJoyPressed & B_BUTTON)
         return Function48c0d();
     // LD_A_D;
     // AND_A_A;
@@ -3278,7 +3278,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto asm_48b8d;
-    if(hram->hJoyLast & D_UP) {
+    if(hram.hJoyLast & D_UP) {
     // asm_48b8d:
         // POP_AF;
         // LD_B_A;
@@ -3301,7 +3301,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto asm_48b55;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hram.hJoyLast & D_DOWN) {
     // asm_48b55:
         // POP_AF;
         // LD_B_A;
@@ -3323,13 +3323,13 @@ u8_flag_s Function48ab5(uint8_t* d){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // JP_NZ (mFunction48bd7);
-    else if(hram->hJoyLast & D_LEFT) {
+    else if(hram.hJoyLast & D_LEFT) {
         return Function48bd7(d);
     }
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // IF_NZ goto asm_48b9d;
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hram.hJoyLast & D_RIGHT) {
     // asm_48b9d:
         // PUSH_DE;
         // hlcoord(10, 9, wTilemap);

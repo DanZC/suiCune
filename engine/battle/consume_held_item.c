@@ -12,7 +12,7 @@ void ConsumeHeldItem(void){
     struct PartyMon* pmon;
     struct BattleMon* bmon;
     uint8_t curMon;
-    if(hram->hBattleTurn == TURN_PLAYER) {
+    if(hram.hBattleTurn == TURN_PLAYER) {
         // LD_HL(wOTPartyMon1Item);
         pmon = wram->wOTPartyMon;
         // LD_DE(wEnemyMonItem);
@@ -62,7 +62,7 @@ void ConsumeHeldItem(void){
             // LD_A_addr(wBattleMode);
             // DEC_A;
             // IF_Z goto done;
-            if(hram->hBattleTurn != TURN_PLAYER || wram->wBattleMode != WILD_BATTLE) {
+            if(hram.hBattleTurn != TURN_PLAYER || wram->wBattleMode != WILD_BATTLE) {
             // ourturn:
                 // LD_hl(NO_ITEM);
                 pmon[curMon].mon.item = NO_ITEM;

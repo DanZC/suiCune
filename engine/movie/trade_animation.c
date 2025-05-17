@@ -279,7 +279,7 @@ static void RunTradeAnimScript_TradeAnimLayout(void) {
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto NotCGB;
-    if(hram->hCGB) {
+    if(hram.hCGB) {
         // LD_A(0x1);
         // LDH_addr_A(rVBK);
         // LD_HL(vTiles0);
@@ -328,15 +328,15 @@ static void RunTradeAnimScript_TradeAnimLayout(void) {
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * TRADEANIM_LEFT_ARROW, TradeArrowLeftGFX, 0, 1);
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aGetTrademonFrontpic);
     GetTrademonFrontpic();
     // CALL(aEnableLCD);
@@ -374,10 +374,10 @@ void RunTradeAnimScript(const uint8_t* de){
     gTradeAnimAddress = de;
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
-    uint8_t mapAnims = hram->hMapAnims;
+    uint8_t mapAnims = hram.hMapAnims;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hram.hMapAnims = FALSE;
     // LD_HL(wVramState);
     // LD_A_hl;
     // PUSH_AF;
@@ -416,7 +416,7 @@ void RunTradeAnimScript(const uint8_t* de){
     wram->wVramState = vramState;
     // POP_AF;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = mapAnims;
+    hram.hMapAnims = mapAnims;
     // RET;
     return;
 }
@@ -532,13 +532,13 @@ void TradeAnim_InitTubeAnim(uint16_t de, uint8_t b, uint8_t a){
 
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x70);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x70;
+    hram.hWY = 0x70;
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aLoadTradeBubbleGFX);
@@ -592,10 +592,10 @@ void TradeAnim_TubeToOT2(void){
     // LDH_A_addr(hSCX);
     // ADD_A(0x2);
     // LDH_addr_A(hSCX);
-    hram->hSCX += 0x2;
+    hram.hSCX += 0x2;
     // CP_A(0x50);
     // RET_NZ ;
-    if(hram->hSCX != 0x50)
+    if(hram.hSCX != 0x50)
         return;
     // LD_A(TRADEANIMSTATE_1);
     // CALL(aTradeAnim_TubeAnimJumptable);
@@ -611,10 +611,10 @@ void TradeAnim_TubeToOT3(void){
     // LDH_A_addr(hSCX);
     // ADD_A(0x2);
     // LDH_addr_A(hSCX);
-    hram->hSCX += 0x2;
+    hram.hSCX += 0x2;
     // CP_A(0xa0);
     // RET_NZ ;
-    if(hram->hSCX != 0xa0)
+    if(hram.hSCX != 0xa0)
         return;
     // LD_A(TRADEANIMSTATE_2);
     // CALL(aTradeAnim_TubeAnimJumptable);
@@ -631,10 +631,10 @@ void TradeAnim_TubeToOT4(void){
     // LDH_A_addr(hSCX);
     // ADD_A(0x2);
     // LDH_addr_A(hSCX);
-    hram->hSCX += 0x2;
+    hram.hSCX += 0x2;
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hSCX != 0)
+    if(hram.hSCX != 0)
         return;
     // CALL(aTradeAnim_IncrementJumptableIndex);
     TradeAnim_IncrementJumptableIndex();
@@ -648,10 +648,10 @@ void TradeAnim_TubeToPlayer3(void){
     // LDH_A_addr(hSCX);
     // SUB_A(0x2);
     // LDH_addr_A(hSCX);
-    hram->hSCX -= 0x2;
+    hram.hSCX -= 0x2;
     // CP_A(0xb0);
     // RET_NZ ;
-    if(hram->hSCX != 0xb0)
+    if(hram.hSCX != 0xb0)
         return;
     // LD_A(TRADEANIMSTATE_1);
     // CALL(aTradeAnim_TubeAnimJumptable);
@@ -668,10 +668,10 @@ void TradeAnim_TubeToPlayer4(void){
     // LDH_A_addr(hSCX);
     // SUB_A(0x2);
     // LDH_addr_A(hSCX);
-    hram->hSCX -= 0x2;
+    hram.hSCX -= 0x2;
     // CP_A(0x60);
     // RET_NZ ;
-    if(hram->hSCX != 0x60)
+    if(hram.hSCX != 0x60)
         return;
     // XOR_A_A;  // TRADEANIMSTATE_0
     // CALL(aTradeAnim_TubeAnimJumptable);
@@ -687,10 +687,10 @@ void TradeAnim_TubeToPlayer5(void){
     // LDH_A_addr(hSCX);
     // SUB_A(0x2);
     // LDH_addr_A(hSCX);
-    hram->hSCX -= 0x2;
+    hram.hSCX -= 0x2;
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hSCX != 0)
+    if(hram.hSCX != 0)
         return;
     // CALL(aTradeAnim_IncrementJumptableIndex);
     TradeAnim_IncrementJumptableIndex();
@@ -734,10 +734,10 @@ void TradeAnim_TubeToPlayer8(void){
     ByteFill(bgcoord(0, 0, vram->vBGMap0), VRAM_End - vBGMap0, 0x7f);
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aLoadTradeBallAndCableGFX);
@@ -914,7 +914,7 @@ void TradeAnim_PlaceTrademonStatsOnTubeAnim(uint8_t a){
     WaitTop();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = vBGMap1;
+    hram.hBGMapAddress = vBGMap1;
     // CALL(aClearTilemap);
     ClearTilemap();
     // hlcoord(0, 0, wTilemap);
@@ -962,7 +962,7 @@ void TradeAnim_PlaceTrademonStatsOnTubeAnim(uint8_t a){
     WaitTop();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = vBGMap0;
+    hram.hBGMapAddress = vBGMap0;
     // CALL(aClearTilemap);
     ClearTilemap();
     // RET;
@@ -975,7 +975,7 @@ void TradeAnim_EnterLinkTube1(void){
     WaitTop();
     // LD_A(0xa0);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0xa0;
+    hram.hSCX = 0xa0;
     // CALL(aDelayFrame);
     DelayFrame();
     // hlcoord(8, 2, wTilemap);
@@ -1009,7 +1009,7 @@ void TradeAnim_EnterLinkTube2(void){
     // LDH_A_addr(hSCX);
     // AND_A_A;
     // IF_Z goto done;
-    if(hram->hSCX == 0) {
+    if(hram.hSCX == 0) {
     // done:
         // LD_C(80);
         // CALL(aDelayFrames);
@@ -1021,7 +1021,7 @@ void TradeAnim_EnterLinkTube2(void){
     }
     // ADD_A(0x4);
     // LDH_addr_A(hSCX);
-    hram->hSCX += 0x4;
+    hram.hSCX += 0x4;
     // RET;
 }
 
@@ -1029,13 +1029,13 @@ void TradeAnim_ExitLinkTube(void){
     // LDH_A_addr(hSCX);
     // CP_A(0xa0);
     // IF_Z goto done;
-    if(hram->hSCX == 0xa0) {
+    if(hram.hSCX == 0xa0) {
     // done:
         // CALL(aClearTilemap);
         ClearTilemap();
         // XOR_A_A;
         // LDH_addr_A(hSCX);
-        hram->hSCX = 0x0;
+        hram.hSCX = 0x0;
         // CALL(aTradeAnim_AdvanceScriptPointer);
         TradeAnim_AdvanceScriptPointer();
         // RET;
@@ -1043,20 +1043,20 @@ void TradeAnim_ExitLinkTube(void){
     }
     // SUB_A(0x4);
     // LDH_addr_A(hSCX);
-    hram->hSCX -= 0x4;
+    hram.hSCX -= 0x4;
     // RET;
 }
 
 void TradeAnim_SetupGivemonScroll(void){
     // LD_A(0x8f);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x8f;
+    hram.hWX = 0x8f;
     // LD_A(0x88);
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x88;
+    hram.hSCX = 0x88;
     // LD_A(0x50);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x50;
+    hram.hWY = 0x50;
     // CALL(aTradeAnim_AdvanceScriptPointer);
     TradeAnim_AdvanceScriptPointer();
     // RET;
@@ -1066,14 +1066,14 @@ void TradeAnim_DoGivemonScroll(void){
     // LDH_A_addr(hWX);
     // CP_A(0x7);
     // IF_Z goto done;
-    if(hram->hWX == 0x7) {
+    if(hram.hWX == 0x7) {
     // done:
         // LD_A(0x7);
         // LDH_addr_A(hWX);
-        hram->hWX = 0x7; // useless?
+        hram.hWX = 0x7; // useless?
         // XOR_A_A;
         // LDH_addr_A(hSCX);
-        hram->hSCX = 0x0;
+        hram.hSCX = 0x0;
         // CALL(aTradeAnim_AdvanceScriptPointer);
         TradeAnim_AdvanceScriptPointer();
         // RET;
@@ -1081,21 +1081,21 @@ void TradeAnim_DoGivemonScroll(void){
     }
     // SUB_A(0x4);
     // LDH_addr_A(hWX);
-    hram->hWX -= 0x4;
+    hram.hWX -= 0x4;
     // LDH_A_addr(hSCX);
     // SUB_A(0x4);
     // LDH_addr_A(hSCX);
-    hram->hSCX -= 0x4;
+    hram.hSCX -= 0x4;
     // RET;
 }
 
 void TradeAnim_FrontpicScrollStart(void){
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x50);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x50;
+    hram.hWY = 0x50;
     // CALL(aTradeAnim_AdvanceScriptPointer);
     TradeAnim_AdvanceScriptPointer();
     // RET;
@@ -1104,10 +1104,10 @@ void TradeAnim_FrontpicScrollStart(void){
 void TradeAnim_TextboxScrollStart(void){
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // CALL(aTradeAnim_AdvanceScriptPointer);
     TradeAnim_AdvanceScriptPointer();
     // RET;
@@ -1118,22 +1118,22 @@ void TradeAnim_ScrollOutRight(void){
     WaitTop();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = vBGMap1;
+    hram.hBGMapAddress = vBGMap1;
     // CALL(aWaitBGMap);
     WaitBGMap();
     // LD_A(0x7);
     // LDH_addr_A(hWX);
-    hram->hWX = 0x7;
+    hram.hWX = 0x7;
     // XOR_A_A;
     // LDH_addr_A(hWY);
-    hram->hWY = 0x0;
+    hram.hWY = 0x0;
     // CALL(aDelayFrame);
     DelayFrame();
     // CALL(aWaitTop);
     WaitTop();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = vBGMap0;
+    hram.hBGMapAddress = vBGMap0;
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aTradeAnim_IncrementJumptableIndex);
@@ -1146,22 +1146,22 @@ void TradeAnim_ScrollOutRight2(void){
     // LDH_A_addr(hWX);
     // CP_A(0xa1);
     // IF_NC goto done;
-    if(hram->hWX >= 0xa1) {
+    if(hram.hWX >= 0xa1) {
     // done:
         // LD_A(HIGH(vBGMap1));
         // LDH_addr_A(hBGMapAddress + 1);
-        hram->hBGMapAddress = vBGMap1;
+        hram.hBGMapAddress = vBGMap1;
         // CALL(aWaitBGMap);
         WaitBGMap();
         // LD_A(0x7);
         // LDH_addr_A(hWX);
-        hram->hWX = 0x7;
+        hram.hWX = 0x7;
         // LD_A(0x90);
         // LDH_addr_A(hWY);
-        hram->hWY = 0x90;
+        hram.hWY = 0x90;
         // LD_A(HIGH(vBGMap0));
         // LDH_addr_A(hBGMapAddress + 1);
-        hram->hBGMapAddress = vBGMap0;
+        hram.hBGMapAddress = vBGMap0;
         // CALL(aTradeAnim_AdvanceScriptPointer);
         TradeAnim_AdvanceScriptPointer();
         // RET;
@@ -1169,7 +1169,7 @@ void TradeAnim_ScrollOutRight2(void){
     }
     // ADD_A(0x4);
     // LDH_addr_A(hWX);
-    hram->hWX += 0x4;
+    hram.hWX += 0x4;
     // RET;
 }
 
@@ -1297,7 +1297,7 @@ void TradeAnim_ShowFrontpic(const uint8_t* de){
     // hlcoord(7, 2, wTilemap);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x0;
+    hram.hGraphicStartTile = 0x0;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger(coord(7, 2, wram->wTilemap), 7, 7);
@@ -1434,7 +1434,7 @@ void TrademonStats_MonTemplate(void){
     TradeAnim_BlankTilemap();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = vBGMap1;
+    hram.hBGMapAddress = vBGMap1;
     // hlcoord(3, 0, wTilemap);
     // LD_B(0x6);
     // LD_C(0xd);
@@ -1457,7 +1457,7 @@ void TrademonStats_Egg(void){
     TradeAnim_BlankTilemap();
     // LD_A(HIGH(vBGMap1));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = vBGMap1;
+    hram.hBGMapAddress = vBGMap1;
     // hlcoord(3, 0, wTilemap);
     // LD_B(6);
     // LD_C(13);
@@ -1479,7 +1479,7 @@ void TrademonStats_WaitBGMap(void){
     WaitTop();
     // LD_A(HIGH(vBGMap0));
     // LDH_addr_A(hBGMapAddress + 1);
-    hram->hBGMapAddress = vBGMap0;
+    hram.hBGMapAddress = vBGMap0;
     // RET;
 }
 
@@ -1957,7 +1957,7 @@ void TradeAnim_NormalPals(void){
     // LD_A(0b11100100);  // 3,2,1,0
     // IF_Z goto not_sgb;
     // LD_A(0xf0);
-    const uint8_t a = (hram->hSGB == 0)? 0b11100100: 0xf0;
+    const uint8_t a = (hram.hSGB == 0)? 0b11100100: 0xf0;
 
 // not_sgb:
     // CALL(aDmgToCgbObjPal0);

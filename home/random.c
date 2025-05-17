@@ -26,24 +26,24 @@ uint8_t Random(void) {
         arr[3] = (n >> 24) & 0xff;
     }
 
-    hram->hRandomAdd = arr[i];
-    hram->hRandomSub = arr[i + 1];
+    hram.hRandomAdd = arr[i];
+    hram.hRandomSub = arr[i + 1];
     i += 2;
     i &= 0x3;
-    return hram->hRandomSub;
+    return hram.hRandomSub;
 #else
     uint8_t f = REG_F;
 
     uint16_t temp;
-    temp = (gb_read(rDIV) + hram->hRandomAdd + REG_F_C);
+    temp = (gb_read(rDIV) + hram.hRandomAdd + REG_F_C);
     advance_div();
     REG_F_C = (temp & 0xFF00)? 1 : 0;
-    hram->hRandomAdd = (uint8_t)temp;
+    hram.hRandomAdd = (uint8_t)temp;
 
-    temp = (gb_read(rDIV) - hram->hRandomSub - REG_F_C);
+    temp = (gb_read(rDIV) - hram.hRandomSub - REG_F_C);
     REG_F_C = (temp & 0xFF00)? 1 : 0;
     advance_div();
-    hram->hRandomSub = (uint8_t)temp;
+    hram.hRandomSub = (uint8_t)temp;
 
     REG_F = f;
 
@@ -80,7 +80,7 @@ uint8_t RandomRange(uint8_t a){
     uint8_t value;
     do {
         Random();
-        value = hram->hRandomAdd;
+        value = hram.hRandomAdd;
     } while(value > 0xFF - b);
 
     return value % a;

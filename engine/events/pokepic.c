@@ -33,7 +33,7 @@ void Pokepic(void){
     DelayFrames(10);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
@@ -52,7 +52,7 @@ void Pokepic(void){
     uint8_t* hl = Coord2Tile(wram->wMenuBorderLeftCoord + 1, wram->wMenuBorderTopCoord + 1);
     // LD_A(0x80);
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x80;
+    hram.hGraphicStartTile = 0x80;
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger(hl, 7, 7);
@@ -74,7 +74,7 @@ void ClosePokepic(void){
     GetMemSGBLayout();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aOverworldTextModeSwitch);
     OverworldTextModeSwitch();
     // CALL(aApplyTilemap);

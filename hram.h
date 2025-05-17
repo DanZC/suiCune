@@ -1,16 +1,10 @@
 #pragma once
 #include "constants.h"
 
-#if defined(__cplusplus) || defined(_MSC_VER)
 #pragma pack(push, 1)
-#endif
 
-#if defined(__cplusplus) || defined(_MSC_VER)
-struct hram_s
-#else
 // A struct representing HRAM.
-struct __attribute__((packed)) hram_s
-#endif
+struct hram_s
 {
     uint8_t padding[hROMBankBackup - 0xff80];
     // 0
@@ -88,7 +82,6 @@ struct __attribute__((packed)) hram_s
     uint8_t hGraphicStartTile;
     // 36
     uint8_t hMoveMon;
-#if defined(__cplusplus) || defined(_MSC_VER)
     // 37
     union {
         struct {
@@ -97,33 +90,15 @@ struct __attribute__((packed)) hram_s
             // 38
             uint8_t hObjectStructIndex;
         };
-        struct  {
+        struct {
             // 37
             uint8_t hConnectionStripLength;
             // 38
             uint8_t hConnectedMapWidth;
         };
     };
-#else
-    // 37
-    union {
-        struct __attribute__((packed)) {
-            // 37
-            uint8_t hMapObjectIndex;
-            // 38
-            uint8_t hObjectStructIndex;
-        };
-        struct __attribute__((packed)) {
-            // 37
-            uint8_t hConnectionStripLength;
-            // 38
-            uint8_t hConnectedMapWidth;
-        };
-    };
-#endif
     // 39
     uint16_t hEnemyMonSpeed;
-#if defined(__cplusplus) || defined(_MSC_VER)
     // 41
     union {
         struct {
@@ -218,102 +193,6 @@ struct __attribute__((packed)) hram_s
             uint8_t hMGPrevTIMA;
         };
     };
-#else
-    // 41
-    union {
-        struct __attribute__((packed)) {
-            // 41
-            union {
-                struct __attribute__((packed)) {
-                    // 41
-                    uint8_t unused_41;
-                    // 42
-                    uint8_t hMultiplicand[3];
-                    // 45
-                    uint8_t hMultiplier;
-                };
-                struct __attribute__((packed)) {
-                    // 41
-                    uint32_t hProduct;
-                };
-                struct __attribute__((packed)) {
-                    // 41
-                    uint32_t hDividend;
-                    // 45
-                    uint8_t hDivisor;
-                };
-                struct __attribute__((packed)) {
-                    // 41
-                    uint32_t hQuotient;
-                    // 45
-                    uint8_t hRemainder;
-                };
-            };
-            // 46
-            uint8_t hMathBuffer[5];
-        };
-        struct __attribute__((packed)) {
-            // 41
-            uint8_t hPrintNumBuffer[10];
-        };
-        struct __attribute__((packed)) {
-            // 41
-            uint8_t hMGExchangedByte;
-            // 42
-            uint8_t hMGExchangedWord[2];
-            // 44
-            uint8_t hMGNumBits;
-            // 45
-            uint16_t hMGChecksum;
-            // 47
-            uint8_t unused_47;
-            // 48
-            uint8_t hMGUnusedMsgLength;
-            // 49
-            uint8_t hMGRole;
-            // 50
-            uint8_t hMGStatusFlags;
-        };
-    };
-    // 51
-    union {
-        struct __attribute__((packed)) {
-            // 51
-            uint8_t hUsedSpriteIndex;
-            // 52
-            uint8_t hUsedSpriteTile;
-        };
-        struct __attribute__((packed)) {
-            // 51
-            uint8_t hCurSpriteXCoord;
-            // 52
-            uint8_t hCurSpriteYCoord;
-            // 53
-            uint8_t hCurSpriteXPixel;
-            // 54
-            uint8_t hCurSpriteYPixel;
-            // 55
-            uint8_t hCurSpriteTile;
-            // 56
-            uint8_t hCurSpriteOAMFlags;
-        };
-    };
-    // 57
-    union {
-        struct __attribute__((packed)) {
-            // 57
-            uint8_t hMoneyTemp[3];
-        };
-        struct __attribute__((packed)) {
-            // 57
-            uint8_t hMGJoypadPressed;
-            // 58
-            uint8_t hMGJoypadReleased;
-            // 59
-            uint8_t hMGPrevTIMA;
-        };
-    };
-#endif
     // 60
     uint8_t hLCDCPointer;
     // 61
@@ -390,17 +269,15 @@ struct __attribute__((packed)) hram_s
     uint8_t unused_98[19];
 };
 
-#if defined(__cplusplus) || defined(_MSC_VER)
 #pragma pack(pop)
-#endif
 
-extern struct hram_s* hram;
+extern struct hram_s hram;
 
 #define _s_impl(_x) #_x
 #define _s(_x) _s_impl(_x)
 
 #define CHECK_HRAM_FLD(_fld) do {\
-        if((uint8_t*)&hram->_fld != &gb.hram[_fld - IO_ADDR]) {\
-            printf("Bad casted field %s ptr %p != %p\n", _s(_fld), (uint8_t*)&hram->_fld, &gb.hram[_fld - HRAM_Begin]);\
+        if((uint8_t*)&hram._fld != &gb.hram[_fld - IO_ADDR]) {\
+            printf("Bad casted field %s ptr %p != %p\n", _s(_fld), (uint8_t*)&hram._fld, &gb.hram[_fld - HRAM_Begin]);\
         }\
     } while(0)

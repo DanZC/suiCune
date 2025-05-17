@@ -11,7 +11,7 @@ uint8_t HiddenPowerDamage(void){
     // AND_A_A;
     // IF_Z goto got_dvs;
     // LD_HL(wEnemyMonDVs);
-    uint16_t dvs = (hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.dvs: wram->wEnemyMon.dvs;
+    uint16_t dvs = (hram.hBattleTurn == TURN_PLAYER)? wram->wBattleMon.dvs: wram->wEnemyMon.dvs;
 
 // got_dvs:
 

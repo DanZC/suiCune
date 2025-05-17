@@ -14,71 +14,71 @@ void v_Multiply(void){
     // LDH_addr_A(hMathBuffer + 2);
     // LDH_addr_A(hMathBuffer + 3);
     // LDH_addr_A(hMathBuffer + 4);
-    hram->unused_41 = 0; // hMultiplicand - 1
-    hram->hMathBuffer[1] = 0;
-    hram->hMathBuffer[2] = 0;
-    hram->hMathBuffer[3] = 0;
-    hram->hMathBuffer[4] = 0;
+    hram.unused_41 = 0; // hMultiplicand - 1
+    hram.hMathBuffer[1] = 0;
+    hram.hMathBuffer[2] = 0;
+    hram.hMathBuffer[3] = 0;
+    hram.hMathBuffer[4] = 0;
 
     uint8_t carry = 0;
     do {
         // LDH_A_addr(hMultiplier);
-        uint8_t a = hram->hMultiplier;
+        uint8_t a = hram.hMultiplier;
 
         // SRL_A;
         // LDH_addr_A(hMultiplier);
-        hram->hMultiplier = a >> 1;
+        hram.hMultiplier = a >> 1;
 
         // IF_NC goto next;
         if(a & 1)
         {
             // LDH_A_addr(hMathBuffer + 4);
             // LD_C_A;
-            c = hram->hMathBuffer[4];
+            c = hram.hMathBuffer[4];
 
             // LDH_A_addr(hMultiplicand + 2);
             // ADD_A_C;
-            a = hram->hMultiplicand[2];
+            a = hram.hMultiplicand[2];
             carry = ((uint16_t)a + (uint16_t)c) > 0xff? 1: 0;
 
             // LDH_addr_A(hMathBuffer + 4);
-            hram->hMathBuffer[4] = a + c;
+            hram.hMathBuffer[4] = a + c;
 
             // LDH_A_addr(hMathBuffer + 3);
             // LD_C_A;
-            c = hram->hMathBuffer[3];
+            c = hram.hMathBuffer[3];
 
             // LDH_A_addr(hMultiplicand + 1);
             // ADC_A_C;
-            a = hram->hMultiplicand[1];
+            a = hram.hMultiplicand[1];
             carry = ((uint16_t)a + (uint16_t)c + (uint16_t)carry) > 0xff? 1: 0;
             
             // LDH_addr_A(hMathBuffer + 3);
-            hram->hMathBuffer[3] = a + c + carry;
+            hram.hMathBuffer[3] = a + c + carry;
 
             // LDH_A_addr(hMathBuffer + 2);
             // LD_C_A;
-            c = hram->hMathBuffer[2];
+            c = hram.hMathBuffer[2];
 
             // LDH_A_addr(hMultiplicand + 0);
             // ADC_A_C;
-            a = hram->hMultiplicand[0];
+            a = hram.hMultiplicand[0];
             carry = ((uint16_t)a + (uint16_t)c + (uint16_t)carry) > 0xff? 1: 0;
 
             // LDH_addr_A(hMathBuffer + 2);
-            hram->hMathBuffer[2] = a + c + carry;
+            hram.hMathBuffer[2] = a + c + carry;
 
             // LDH_A_addr(hMathBuffer + 1);
             // LD_C_A;
-            c = hram->hMathBuffer[1];
+            c = hram.hMathBuffer[1];
 
             // LDH_A_addr(hMultiplicand - 1);
             // ADC_A_C;
-            a = hram->unused_41; // hMultiplicand - 1
+            a = hram.unused_41; // hMultiplicand - 1
             carry = ((uint16_t)a + (uint16_t)c + (uint16_t)carry) > 0xff? 1: 0;
 
             // LDH_addr_A(hMathBuffer + 1);
-            hram->hMathBuffer[1] = a + c + carry;
+            hram.hMathBuffer[1] = a + c + carry;
         }
 
         // DEC_B;
@@ -91,12 +91,12 @@ void v_Multiply(void){
         // LDH_A_addr(hMultiplicand + 2);
         // ADD_A_A;
         // LDH_addr_A(hMultiplicand + 2);
-        a = hram->hMultiplicand[2];
+        a = hram.hMultiplicand[2];
         carry = ((uint16_t)a + (uint16_t)a) > 0xff? 1: 0;
-        hram->hMultiplicand[2] = a + a;
+        hram.hMultiplicand[2] = a + a;
 
         // LDH_A_addr(hMultiplicand + 1);
-        a = hram->hMultiplicand[1];
+        a = hram.hMultiplicand[1];
 
         // RLA;
         {
@@ -106,10 +106,10 @@ void v_Multiply(void){
         }
 
         // LDH_addr_A(hMultiplicand + 1);
-        hram->hMultiplicand[1] = a;
+        hram.hMultiplicand[1] = a;
 
         // LDH_A_addr(hMultiplicand + 0);
-        a = hram->hMultiplicand[0];
+        a = hram.hMultiplicand[0];
 
         // RLA;
         {
@@ -119,10 +119,10 @@ void v_Multiply(void){
         }
 
         // LDH_addr_A(hMultiplicand + 0);
-        hram->hMultiplicand[0] = a;
+        hram.hMultiplicand[0] = a;
 
         // LDH_A_addr(hMultiplicand - 1);
-        a = hram->unused_41; // hMultiplicand - 1
+        a = hram.unused_41; // hMultiplicand - 1
 
         // RLA;
         {
@@ -132,7 +132,7 @@ void v_Multiply(void){
         }
 
         // LDH_addr_A(hMultiplicand - 1);
-        hram->unused_41 = a;
+        hram.unused_41 = a;
 
         // goto loop;
     } while(1);
@@ -150,8 +150,8 @@ done:
 
     // LDH_A_addr(hMathBuffer + 1);
     // LDH_addr_A(hProduct + 0);
-    hram->hProduct = (hram->hMathBuffer[1]) | (hram->hMathBuffer[2] << 8)
-        | (hram->hMathBuffer[3] << 16) | (hram->hMathBuffer[4] << 24);
+    hram.hProduct = (hram.hMathBuffer[1]) | (hram.hMathBuffer[2] << 8)
+        | (hram.hMathBuffer[3] << 16) | (hram.hMathBuffer[4] << 24);
 
     // RET;
     return;

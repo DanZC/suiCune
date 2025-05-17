@@ -23,7 +23,7 @@ void BattleCommand_Mimic(void){
     // AND_A_A;
     // IF_Z goto player_turn;
     // LD_HL(wEnemyMonMoves);
-    struct BattleMon* mon = (hram->hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* mon = (hram.hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
 
 // player_turn:
     // CALL(aCheckHiddenOpponent);

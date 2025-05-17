@@ -225,7 +225,7 @@ void DoBattle(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // IF_Z goto player_2;
-    if(wram->wLinkMode == LINK_NULL || hram->hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
+    if(wram->wLinkMode == LINK_NULL || hram.hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
     // not_linked:
         // LD_A_addr(wBattleMode);
         printf("wBattleMode = %s\n", (wram->wBattleMode == TRAINER_BATTLE)? "trainer": "wild");
@@ -342,7 +342,7 @@ void DoBattle(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // IF_NZ goto not_linked_2;
-    if(wram->wLinkMode != LINK_NULL && hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+    if(wram->wLinkMode != LINK_NULL && hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // XOR_A_A;
         // LD_addr_A(wEnemySwitchMonIndex);
         wram->wEnemySwitchMonIndex = 0;
@@ -586,7 +586,7 @@ void HandleBetweenTurnEffects(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto CheckEnemyFirst;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
     // CheckEnemyFirst:
         // CALL(aCheckFaint_EnemyThenPlayer);
         // RET_C ;
@@ -843,7 +843,7 @@ void HandleBerserkGene(void){
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto reverse;
 
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
         HandleBerserkGene_enemy();
         HandleBerserkGene_player();
     }
@@ -951,7 +951,7 @@ bool DetermineMoveOrder(void){
             // LDH_A_addr(hSerialConnectionStatus);
             // CP_A(USING_INTERNAL_CLOCK);
             // IF_Z goto player_2b;
-            if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+            if(hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
             // player_2b:
                 // CALL(aBattleRandom);
                 // CP_A_E;
@@ -1019,7 +1019,7 @@ bool DetermineMoveOrder(void){
         // LDH_A_addr(hSerialConnectionStatus);
         // CP_A(USING_INTERNAL_CLOCK);
         // IF_Z goto player_2c;
-        if(hram->hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
+        if(hram.hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
             // CALL(aBattleRandom);
             // CP_A(50 percent + 1);
             // JP_C (mDetermineMoveOrder_player_first);
@@ -1053,7 +1053,7 @@ bool DetermineMoveOrder(void){
         // LDH_A_addr(hSerialConnectionStatus);
         // CP_A(USING_INTERNAL_CLOCK);
         // IF_Z goto player_2;
-        if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+        if(hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // player_2:
             // CALL(aBattleRandom);
             // CP_A(50 percent + 1);
@@ -1200,7 +1200,7 @@ not_encored:
 // struggle:
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // POP_AF;
     // RET_NZ ;
     if(selected)
@@ -1367,7 +1367,7 @@ void HandleEncore(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto player_1;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
     // player_1:
         // CALL(aHandleEncore_do_enemy);
         HandleEncore_do_enemy();
@@ -1752,7 +1752,7 @@ static bool HasUserFainted(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JR_Z (mHasPlayerFainted);
-    if(hram->hBattleTurn == TURN_PLAYER)
+    if(hram.hBattleTurn == TURN_PLAYER)
         return HasPlayerFainted();
     return HasEnemyFainted();
 }
@@ -1819,7 +1819,7 @@ bool ResidualDamage(void){
         // AND_A_A;
         // IF_Z goto check_toxic;
         // LD_DE(wEnemyToxicCount);
-        uint8_t* toxicCount = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerToxicCount: &wram->wEnemyToxicCount;
+        uint8_t* toxicCount = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerToxicCount: &wram->wEnemyToxicCount;
 
     // check_toxic:
         // LD_A(BATTLE_VARS_SUBSTATUS5);
@@ -1889,7 +1889,7 @@ bool ResidualDamage(void){
         SubtractHPFromUser(amount);
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aRestoreHP);
         RestoreHP(amount);
         // LD_HL(mLeechSeedSapsText);
@@ -1972,7 +1972,7 @@ bool ResidualDamage(void){
     // AND_A_A;
     // IF_Z goto check_fainted;
     // LD_HL(wEnemyMonHP);
-    uint16_t hp = (hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.hp: wram->wEnemyMon.hp;
+    uint16_t hp = (hram.hBattleTurn == TURN_PLAYER)? wram->wBattleMon.hp: wram->wEnemyMon.hp;
 
 // check_fainted:
     // LD_A_hli;
@@ -1999,7 +1999,7 @@ static void HandlePerishSong_do_it(void){
     // AND_A_A;
     // IF_Z goto got_count;
     // LD_HL(wEnemyPerishCount);
-    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerPerishCount: &wram->wEnemyPerishCount;
+    uint8_t* hl = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerPerishCount: &wram->wEnemyPerishCount;
 
 // got_count:
     // LD_A(BATTLE_VARS_SUBSTATUS1);
@@ -2028,7 +2028,7 @@ static void HandlePerishSong_do_it(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_NZ goto kill_enemy;
-    if(hram->hBattleTurn == TURN_PLAYER) {
+    if(hram.hBattleTurn == TURN_PLAYER) {
         // LD_HL(wBattleMonHP);
         // XOR_A_A;
         // LD_hli_A;
@@ -2072,7 +2072,7 @@ void HandlePerishSong(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto EnemyFirst;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
     // EnemyFirst:
         // CALL(aSetEnemyTurn);
         SetEnemyTurn();
@@ -2102,8 +2102,8 @@ static void HandleWrap_do_it(void){
     // IF_Z goto got_addrs;
     // LD_HL(wEnemyWrapCount);
     // LD_DE(wEnemyTrappingMove);
-    uint8_t* wrapCount = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
-    move_t* trappingMove = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerTrappingMove: &wram->wEnemyTrappingMove;
+    uint8_t* wrapCount = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
+    move_t* trappingMove = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerTrappingMove: &wram->wEnemyTrappingMove;
 
 // got_addrs:
     // LD_A_hl;
@@ -2167,7 +2167,7 @@ void HandleWrap(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto EnemyFirst;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
     // EnemyFirst:
         // CALL(aSetEnemyTurn);
         SetEnemyTurn();
@@ -2193,7 +2193,7 @@ void SwitchTurnCore(void){
     // LDH_A_addr(hBattleTurn);
     // XOR_A(1);
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn ^= 1;
+    hram.hBattleTurn ^= 1;
     // RET;
 }
 
@@ -2219,8 +2219,8 @@ static void HandleLeftovers_do_it(void) {
 
 
 // got_hp:
-    uint16_t hp = BigEndianToNative16((hram->hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
-    uint16_t maxHP = BigEndianToNative16((hram->hBattleTurn == 0)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
+    uint16_t hp = BigEndianToNative16((hram.hBattleTurn == 0)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
+    uint16_t maxHP = BigEndianToNative16((hram.hBattleTurn == 0)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
 //  Don't restore if we're already at max HP
     // LD_A_hli;
     // LD_B_A;
@@ -2251,7 +2251,7 @@ void HandleLeftovers(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto DoEnemyFirst;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
     // DoEnemyFirst:
         // CALL(aSetEnemyTurn);
         SetEnemyTurn();
@@ -2289,7 +2289,7 @@ static void HandleMysteryberry_do_it(void){
     // LD_E_L;
     uint8_t* pp;
     move_t* moves;
-    if(hram->hBattleTurn == TURN_PLAYER) {
+    if(hram.hBattleTurn == TURN_PLAYER) {
         // LD_HL(wPartyMon1Moves);
         pp = wram->wPartyMon[wram->wCurBattleMon].mon.PP;
         moves = wram->wPartyMon[wram->wCurBattleMon].mon.moves;
@@ -2363,7 +2363,7 @@ static void HandleMysteryberry_do_it(void){
             // LD_HL(wEnemyMonPP);
             uint8_t* pp2;
             move_t* moves2;
-            if(hram->hBattleTurn == TURN_PLAYER){
+            if(hram.hBattleTurn == TURN_PLAYER){
                 moves2 = wram->wBattleMon.moves;
                 pp2 = wram->wBattleMon.pp;
             }
@@ -2393,7 +2393,7 @@ static void HandleMysteryberry_do_it(void){
                 // LD_A_addr(wPlayerSubStatus5);
                 // IF_Z goto check_transform;
                 // LD_A_addr(wEnemySubStatus5);
-                uint8_t ss5 = (hram->hBattleTurn == TURN_PLAYER)? wram->wPlayerSubStatus5: wram->wEnemySubStatus5;
+                uint8_t ss5 = (hram.hBattleTurn == TURN_PLAYER)? wram->wPlayerSubStatus5: wram->wEnemySubStatus5;
 
             // check_transform:
                 // BIT_A(SUBSTATUS_TRANSFORMED);
@@ -2408,7 +2408,7 @@ static void HandleMysteryberry_do_it(void){
 
         // skip_checks:
             // CALLFAR(aGetUserItem);
-            item_t* userItem = (hram->hBattleTurn == TURN_PLAYER)? &wram->wBattleMon.item: &wram->wEnemyMon.item;
+            item_t* userItem = (hram.hBattleTurn == TURN_PLAYER)? &wram->wBattleMon.item: &wram->wEnemyMon.item;
             // LD_A_hl;
             // LD_addr_A(wNamedObjectIndex);
             item_t temp = *userItem;
@@ -2416,14 +2416,14 @@ static void HandleMysteryberry_do_it(void){
             // LD_hl_A;
             *userItem = NO_ITEM;
             // CALL(aGetPartymonItem);
-            item_t* partyItem = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPartyMon[wram->wCurBattleMon].mon.item: &wram->wOTPartyMon[wram->wCurOTMon].mon.item;
+            item_t* partyItem = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPartyMon[wram->wCurBattleMon].mon.item: &wram->wOTPartyMon[wram->wCurOTMon].mon.item;
             // LDH_A_addr(hBattleTurn);
             // AND_A_A;
             // IF_Z goto consume_item;
             // LD_A_addr(wBattleMode);
             // DEC_A;
             // IF_Z goto skip_consumption;
-            if(hram->hBattleTurn == TURN_PLAYER || wram->wBattleMode != WILD_BATTLE){
+            if(hram.hBattleTurn == TURN_PLAYER || wram->wBattleMode != WILD_BATTLE){
                 // CALL(aGetOTPartymonItem);
 
             // consume_item:
@@ -2462,7 +2462,7 @@ void HandleMysteryberry(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto DoEnemyFirst;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
     // DoEnemyFirst:
         // CALL(aSetEnemyTurn);
         SetEnemyTurn();
@@ -2490,7 +2490,7 @@ static void HandleFutureSight_do_it(void){
     // AND_A_A;
     // IF_Z goto okay;
     // LD_HL(wEnemyFutureSightCount);
-    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
+    uint8_t* hl = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerFutureSightCount: &wram->wEnemyFutureSightCount;
 
 // okay:
     // LD_A_hl;
@@ -2550,7 +2550,7 @@ void HandleFutureSight(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto enemy_first;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
     // enemy_first:
         // CALL(aSetEnemyTurn);
         SetEnemyTurn();
@@ -2649,7 +2649,7 @@ void HandleDefrost(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto enemy_first;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK) {
     // enemy_first:
         // CALL(aHandleDefrost_do_enemy_turn);
         HandleDefrost_do_enemy_turn();
@@ -2665,7 +2665,7 @@ void HandleDefrost(void){
 
 static void HandleSafeguard_print(uint8_t a){
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = a;
+    hram.hBattleTurn = a;
     // LD_HL(mBattleText_SafeguardFaded);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox(BattleText_SafeguardFaded);
@@ -2712,7 +2712,7 @@ void HandleSafeguard(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto player1;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
     // player1:
         // CALL(aHandleSafeguard_CheckEnemy);
         HandleSafeguard_CheckEnemy();
@@ -2808,7 +2808,7 @@ void HandleScreens(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto Both;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
     // Both:
         // CALL(aHandleScreens_CheckEnemy);
         HandleScreens_CheckEnemy();
@@ -2835,7 +2835,7 @@ static void HandleWeather_SandstormDamage(void) {
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wEnemyMonType1);
-    uint8_t* types = (hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.types: wram->wEnemyMon.types;
+    uint8_t* types = (hram.hBattleTurn == TURN_PLAYER)? wram->wBattleMon.types: wram->wEnemyMon.types;
 
 // ok:
     // LD_A_hli;
@@ -2935,7 +2935,7 @@ void HandleWeather(void){
         // LDH_A_addr(hSerialConnectionStatus);
         // CP_A(USING_EXTERNAL_CLOCK);
         // IF_Z goto enemy_first;
-        if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
+        if(hram.hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
         //  player first
             // CALL(aSetPlayerTurn);
             SetPlayerTurn();
@@ -2980,7 +2980,7 @@ static void SubtractHP(uint16_t bc){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wEnemyMonHP);
-    uint16_t* hp = (uint16_t*)((hram->hBattleTurn == TURN_PLAYER)? wram_ptr(wBattleMonHP): wram_ptr(wEnemyMonHP));
+    uint16_t* hp = (uint16_t*)((hram.hBattleTurn == TURN_PLAYER)? wram_ptr(wBattleMonHP): wram_ptr(wEnemyMonHP));
 
 // ok:
     // INC_HL;
@@ -3113,7 +3113,7 @@ uint16_t GetMaxHP(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wEnemyMonMaxHP);
-    uint16_t hp = BigEndianToNative16((hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
+    uint16_t hp = BigEndianToNative16((hram.hBattleTurn == TURN_PLAYER)? wram->wBattleMon.maxHP: wram->wEnemyMon.maxHP);
 
 // ok:
     // LD_A_hli;
@@ -3158,7 +3158,7 @@ bool CheckUserHasEnoughHP(uint16_t bc){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wEnemyMonHP + 1);
-    uint16_t hp = BigEndianToNative16((hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
+    uint16_t hp = BigEndianToNative16((hram.hBattleTurn == TURN_PLAYER)? wram->wBattleMon.hp: wram->wEnemyMon.hp);
 // ok:
     // LD_A_C;
     // SUB_A_hl;
@@ -3175,8 +3175,8 @@ void RestoreHP(uint16_t bc){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wBattleMonMaxHP);
-    uint16_t* maxhp = (uint16_t*)((hram->hBattleTurn == TURN_PLAYER)? wram_ptr(wEnemyMonMaxHP): wram_ptr(wBattleMonMaxHP));
-    uint16_t*    hp = (uint16_t*)((hram->hBattleTurn == TURN_PLAYER)? wram_ptr(wEnemyMonHP): wram_ptr(wBattleMonHP));
+    uint16_t* maxhp = (uint16_t*)((hram.hBattleTurn == TURN_PLAYER)? wram_ptr(wEnemyMonMaxHP): wram_ptr(wBattleMonMaxHP));
+    uint16_t*    hp = (uint16_t*)((hram.hBattleTurn == TURN_PLAYER)? wram_ptr(wEnemyMonHP): wram_ptr(wBattleMonHP));
 
 ok:
     // LD_A_hli;
@@ -3240,7 +3240,7 @@ void UpdateHPBarBattleHuds(void){
 }
 
 void UpdateHPBar(void){
-    if(hram->hBattleTurn == TURN_PLAYER) {
+    if(hram.hBattleTurn == TURN_PLAYER) {
         // hlcoord(10, 9, wTilemap);
         // LDH_A_addr(hBattleTurn);
         // AND_A_A;
@@ -3292,7 +3292,7 @@ void HandleEnemyMonFaint(void){
 
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_C(60);
     // CALL(aDelayFrames);
     DelayFrames(60);
@@ -3370,7 +3370,7 @@ void DoubleSwitch(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto player_1;
-    if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
         // CALL(aClearSprites);
         ClearSprites();
         // hlcoord(1, 0, wTilemap);
@@ -4877,7 +4877,7 @@ static void MonFaintedAnimation(tile_t* de, tile_t* hl){
 static void SlideBattlePicOut_DoFrame(uint8_t* hl) {
     // LDH_A_addr(hMapObjectIndex);
     // LD_C_A;
-    uint8_t c = hram->hMapObjectIndex;
+    uint8_t c = hram.hMapObjectIndex;
     // CP_A(0x8);
     // IF_NZ goto back;
     if(c == 0x8) {
@@ -4914,7 +4914,7 @@ static void SlideBattlePicOut_DoFrame(uint8_t* hl) {
 
 static void SlideBattlePicOut(uint8_t* hl, uint8_t a){
     // LDH_addr_A(hMapObjectIndex);
-    hram->hMapObjectIndex = a;
+    hram.hMapObjectIndex = a;
     // LD_C_A;
     uint8_t c = a;
 
@@ -5599,7 +5599,7 @@ static bool OfferSwitch(void){
 static void ClearEnemyMonBox(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aExitMenu);
     ExitMenu();
     // CALL(aClearSprites);
@@ -5697,7 +5697,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
     UpdateEnemyHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -6357,12 +6357,12 @@ void SendOutPlayerMon(void){
     WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aGetBattleMonBackpic);
     GetBattleMonBackpic();
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0;
+    hram.hGraphicStartTile = 0;
     // LD_addr_A(wBattleMenuCursorPosition);
     wram->wBattleMenuCursorPosition = 0;
     // LD_addr_A(wCurMoveNum);
@@ -6427,7 +6427,7 @@ void SendOutPlayerMon(void){
     UpdatePlayerHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -6502,7 +6502,7 @@ void SpikesDamage(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto ok;
-    if(hram->hBattleTurn == TURN_PLAYER) {
+    if(hram.hBattleTurn == TURN_PLAYER) {
         hl = &wram->wPlayerScreens;
         de = wram->wBattleMon.types;
         bc = UpdatePlayerHUD;
@@ -6578,7 +6578,7 @@ bool PursuitSwitch(void){
     // LD_HL(mDoEnemyTurn);
     // LD_A_addr(wLastPlayerMon);
     // LD_addr_A(wCurBattleMon);
-    if(hram->hBattleTurn != TURN_PLAYER) {
+    if(hram.hBattleTurn != TURN_PLAYER) {
         wram->wCurBattleMon = wram->wLastPlayerMon;
         DoEnemyTurn();
     }
@@ -6603,7 +6603,7 @@ bool PursuitSwitch(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto check_enemy_fainted;
-    if(hram->hBattleTurn != TURN_PLAYER) {
+    if(hram.hBattleTurn != TURN_PLAYER) {
         // LD_A_addr(wLastPlayerMon);
         // CALL(aUpdateBattleMon);
         UpdateBattleMon(wram->wLastPlayerMon);
@@ -6670,10 +6670,10 @@ bool PursuitSwitch(void){
 void RecallPlayerMon(void){
     // LDH_A_addr(hBattleTurn);
     // PUSH_AF;
-    uint8_t turn = hram->hBattleTurn;
+    uint8_t turn = hram.hBattleTurn;
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_PLAYER;
+    hram.hBattleTurn = TURN_PLAYER;
     // LD_addr_A(wNumHits);
     wram->wNumHits = 0;
     // LD_DE(ANIM_RETURN_MON);
@@ -6681,7 +6681,7 @@ void RecallPlayerMon(void){
     Call_PlayBattleAnim(ANIM_RETURN_MON);
     // POP_AF;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = turn;
+    hram.hBattleTurn = turn;
     // RET;
 }
 
@@ -6689,7 +6689,7 @@ void HandleHealingItems(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto player_1;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
     // player_1:
         // CALL(aSetEnemyTurn);
         SetEnemyTurn();
@@ -6744,8 +6744,8 @@ void HandleHPHealingItem(void){
     // IF_Z goto go;
     // LD_DE(wBattleMonHP + 1);
     // LD_HL(wBattleMonMaxHP);
-    uint8_t* hp_    = (uint8_t*)((hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon.hp    : &wram->wBattleMon.hp);
-    uint8_t* maxhp_ = (uint8_t*)((hram->hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon.maxHP : &wram->wBattleMon.maxHP);
+    uint8_t* hp_    = (uint8_t*)((hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon.hp    : &wram->wBattleMon.hp);
+    uint8_t* maxhp_ = (uint8_t*)((hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon.maxHP : &wram->wBattleMon.maxHP);
 
 // go:
 //  If, and only if, Pokemon's HP is less than half max, use the item.
@@ -6826,12 +6826,12 @@ void HandleHPHealingItem(void){
     // hlcoord(2, 2, wTilemap);
     // IF_Z goto got_hp_bar_coords;
     // hlcoord(10, 9, wTilemap);
-    uint8_t* hl = (hram->hBattleTurn == TURN_PLAYER)?  coord(2, 2, wram->wTilemap): coord(10, 9, wram->wTilemap);
+    uint8_t* hl = (hram.hBattleTurn == TURN_PLAYER)?  coord(2, 2, wram->wTilemap): coord(10, 9, wram->wTilemap);
 
 // got_hp_bar_coords:
     // LD_addr_A(wWhichHPBar);
     // PREDEF(pAnimateHPBar);
-    AnimateHPBar(hl, hram->hBattleTurn);
+    AnimateHPBar(hl, hram.hBattleTurn);
     return UseOpponentItem();
 }
 
@@ -6947,7 +6947,7 @@ bool UseHeldStatusHealingItem(void){
     // CALL(aSwitchTurnCore);
     // LD_A(BANK(aCalcPlayerStats));  // aka BANK(CalcEnemyStats)
     // RST(aFarCall);
-    if(hram->hBattleTurn == TURN_PLAYER) {
+    if(hram.hBattleTurn == TURN_PLAYER) {
         SwitchTurnCore();
         CalcEnemyStats();
         SwitchTurnCore();
@@ -7005,7 +7005,7 @@ void UseConfusionHealingItem(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_NZ goto do_partymon;
-    if(hram->hBattleTurn == TURN_PLAYER) {
+    if(hram.hBattleTurn == TURN_PLAYER) {
         item_t *hl, *bc;
         // CALL(aGetOTPartymonItem);
         GetOTPartymonItem(&hl, &bc);
@@ -7039,7 +7039,7 @@ void UseConfusionHealingItem(void){
 
 static void HandleStatBoostingHeldItems_HandleItem(item_t* hl, item_t* bc, uint8_t a){
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = a;
+    hram.hBattleTurn = a;
     // LD_D_H;
     // LD_E_L;
     // PUSH_DE;
@@ -7126,7 +7126,7 @@ void HandleStatBoostingHeldItems(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto player_1;
-    if(hram->hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
+    if(hram.hSerialConnectionStatus == USING_EXTERNAL_CLOCK){
     // player_1:
         // CALL(aHandleStatBoostingHeldItems_DoEnemy);
         HandleStatBoostingHeldItems_DoEnemy();
@@ -7205,7 +7205,7 @@ void UpdatePlayerHUD(void){
 uint8_t DrawPlayerHUD(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 
 // Clear the area
     // hlcoord(9, 7, wTilemap);
@@ -7416,7 +7416,7 @@ static uint8_t DrawEnemyHUD_draw_bar(uint8_t c, uint8_t e, uint8_t d) {
 uint8_t DrawEnemyHUD(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 
     // hlcoord(1, 0, wTilemap);
     // LD_BC((4 << 8) | 11);
@@ -7630,7 +7630,7 @@ bool BattleMenu(void){
 BattleMenu_begin:
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadTempTilemapToTilemap);
     LoadTempTilemapToTilemap();
 
@@ -7682,7 +7682,7 @@ BattleMenu_begin:
     // next:
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_A_addr(wBattleMenuCursorPosition);
         // CP_A(0x1);
         // JP_Z (mBattleMenu_Fight);
@@ -7819,7 +7819,7 @@ BattleMenu_begin:
             // ball:
                 // XOR_A_A;
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = BGMAPMODE_NONE;
+                hram.hBGMapMode = BGMAPMODE_NONE;
                 // CALL(av_LoadBattleFontsHPBar);
                 v_LoadBattleFontsHPBar();
                 // CALL(aClearSprites);
@@ -8425,7 +8425,7 @@ bool PlayerSwitch(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_EXTERNAL_CLOCK);
     // IF_Z goto player_1;
-    if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK){
+    if(hram.hSerialConnectionStatus != USING_EXTERNAL_CLOCK){
         // CALL(aBattleMonEntrance);
         BattleMonEntrance();
         // CALL(aEnemyMonEntrance);
@@ -8651,7 +8651,7 @@ MoveSelectionScreen:
     CopyBytes(wram->wListMoves_MoveIndicesBuffer, moves, sizeof(*moves) * NUM_MOVES);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 
     tile_t* hl;
     uint8_t b;
@@ -8810,7 +8810,7 @@ MoveSelectionScreen:
     // interpret_joypad:
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aScrollingMenuJoypad);
         uint8_t joypad = ScrollingMenuJoypad();
         // BIT_A(D_UP_F);
@@ -9064,7 +9064,7 @@ void MoveInfoBox(void){
     static const char Type[] = "TYPE/";
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 
     // hlcoord(0, 8, wTilemap);
     // LD_B(3);
@@ -10282,9 +10282,9 @@ void BattleWinSlideInEnemyTrainerFrontpic(void){
         // RET_Z ;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // LDH_addr_A(hBGMapThird);
-        hram->hBGMapThird = 0x0;
+        hram.hBGMapThird = 0x0;
         // LD_D(0x0);
         uint8_t d = 0x0;
         // PUSH_BC;
@@ -10307,7 +10307,7 @@ void BattleWinSlideInEnemyTrainerFrontpic(void){
 
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C(4);
         // CALL(aDelayFrames);
         DelayFrames(4);
@@ -10333,7 +10333,7 @@ void ApplyStatusEffectOnEnemyStats(void){
 
 static void ApplyStatusEffectOnStats(uint8_t turn){
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = turn;
+    hram.hBattleTurn = turn;
     // CALL(aApplyPrzEffectOnSpeed);
     ApplyPrzEffectOnSpeed(turn);
     // JP(mApplyBrnEffectOnAttack);
@@ -11343,7 +11343,7 @@ void GiveExperiencePoints(void){
                 LoadTilemapToTempTilemap();
                 // LD_A(0x1);
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+                hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
             }
 
         // skip_active_mon_update:
@@ -11534,13 +11534,13 @@ static void AnimateExpBar_LoopBarAnimation(uint8_t b, uint8_t c){
         // POP_DE;
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C_D;
         // CALL(aDelayFrames);
         DelayFrames(d);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // POP_BC;
         // LD_A_C;
         // CP_A_B;
@@ -11557,13 +11557,13 @@ static void AnimateExpBar_LoopBarAnimation(uint8_t b, uint8_t c){
         // POP_DE;
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C_D;
         // CALL(aDelayFrames);
         DelayFrames(d);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // DEC_D;
         // IF_NZ goto min_number_of_frames;
         // LD_D(1);
@@ -11580,7 +11580,7 @@ static void AnimateExpBar_LoopBarAnimation(uint8_t b, uint8_t c){
 // end_animation:
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -12254,16 +12254,16 @@ void DropPlayerSub(void){
 static void GetBattleMonBackpic_DoAnim(void (*hl)(void)){
     // LDH_A_addr(hBattleTurn);
     // PUSH_AF;
-    uint8_t turn = hram->hBattleTurn;
+    uint8_t turn = hram.hBattleTurn;
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_PLAYER;
+    hram.hBattleTurn = TURN_PLAYER;
     // LD_A(BANK(aBattleAnimCommands));
     // RST(aFarCall);
     hl();
     // POP_AF;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = turn;
+    hram.hBattleTurn = turn;
     // RET;
 }
 
@@ -12312,7 +12312,7 @@ void DropEnemySub(void){
 static void GetEnemyMonFrontpic_DoAnim(void (*hl)(void)){
     // LDH_A_addr(hBattleTurn);
     // PUSH_AF;
-    uint8_t turn = hram->hBattleTurn;
+    uint8_t turn = hram.hBattleTurn;
     // CALL(aSetEnemyTurn);
     SetEnemyTurn();
     // LD_A(BANK(aBattleAnimCommands));
@@ -12320,7 +12320,7 @@ static void GetEnemyMonFrontpic_DoAnim(void (*hl)(void)){
     hl();
     // POP_AF;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = turn;
+    hram.hBattleTurn = turn;
     // RET;
 }
 
@@ -12371,7 +12371,7 @@ void BattleIntro(void){
     wram->wBattleMenuCursorPosition = 0;
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hram.hMapAnims = FALSE;
     // FARCALL(aPlayBattleMusic);
     PlayBattleMusic();
     // FARCALL(aShowLinkBattleParticipants);
@@ -12401,7 +12401,7 @@ void BattleIntro(void){
     gb_write(rLCDC, gb_read(rLCDC) | (1 << rLCDC_WINDOW_TILEMAP));
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aEmptyBattleTextbox);
     EmptyBattleTextbox();
     // hlcoord(9, 7, wTilemap);
@@ -12421,7 +12421,7 @@ void BattleIntro(void){
         UpdateEnemyHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -12518,7 +12518,7 @@ static void InitEnemyTrainer(uint8_t tclass){
     GetTrainerPic(vram->vTiles2, tclass);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0;
+    hram.hGraphicStartTile = 0;
     // DEC_A;
     // LD_addr_A(wEnemyItemState);
     wram->wEnemyItemState = 0xff;
@@ -12615,7 +12615,7 @@ static void InitEnemyWildmon(void){
     // LD_addr_A(wTrainerClass);
     wram->wTrainerClass = 0;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0;
+    hram.hGraphicStartTile = 0;
     // hlcoord(12, 0, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);
@@ -13676,34 +13676,34 @@ static void InitBattleDisplay(void){
     InitBattleDisplay_BlankBGMap();
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hram.hMapAnims = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LDH_addr_A(rWY);
     gb_write(rWY, 0x90);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aBattleIntroSlidingPics);
     BattleIntroSlidingPics();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_A(0x31);
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x31;
+    hram.hGraphicStartTile = 0x31;
     // hlcoord(2, 6, wTilemap);
     // LD_BC((6 << 8) | 6);
     // PREDEF(pPlaceGraphic);
     PlaceGraphic(coord(2, 6, wram->wTilemap), 6, 6);
     // XOR_A_A;
     // LDH_addr_A(hWY);
-    hram->hWY = 0;
+    hram.hWY = 0;
     // LDH_addr_A(rWY);
     gb_write(rWY, 0x0);
     // CALL(aWaitBGMap);
@@ -13717,10 +13717,10 @@ static void InitBattleDisplay(void){
     SetPalettes();
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // XOR_A_A;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // RET;
     return;
 
@@ -13844,7 +13844,7 @@ static void CopyBackpic(void){
     CopyBackpic_LoadTrainerBackpicAsOAM();
     // LD_A(0x31);
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0x31;
+    hram.hGraphicStartTile = 0x31;
     // hlcoord(2, 6, wTilemap);
     // LD_BC((6 << 8) | 6);
     // PREDEF(pPlaceGraphic);
@@ -13885,7 +13885,7 @@ static void BattleStartMessage(void){
             wram->wNumHits = 0;
             // LD_A(1);
             // LDH_addr_A(hBattleTurn);
-            hram->hBattleTurn = TURN_ENEMY;
+            hram.hBattleTurn = TURN_ENEMY;
             // LD_A(1);
             // LD_addr_A(wBattleAnimParam);
             wram->wBattleAnimParam = 1;

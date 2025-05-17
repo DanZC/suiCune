@@ -16,7 +16,7 @@ void BlankScreen(void){
     DisableSpriteUpdates();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearSprites);
@@ -139,7 +139,7 @@ void WriteObjectXY(uint8_t b){
     // LDH_A_addr(hMapObjectIndex);
     // LD_B_A;
     // CALL(aCopyDECoordsToMapObject);
-    CopyDECoordsToMapObject(bc->nextMapX, bc->nextMapY, hram->hMapObjectIndex);
+    CopyDECoordsToMapObject(bc->nextMapX, bc->nextMapY, hram.hMapObjectIndex);
     // AND_A_A;
     // RET;
 }
@@ -320,7 +320,7 @@ void InitializeVisibleSprites(void){
     do {
     // loop:
         // LDH_addr_A(hMapObjectIndex);
-        hram->hMapObjectIndex = a;
+        hram.hMapObjectIndex = a;
         // LD_HL(MAPOBJECT_SPRITE);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -435,7 +435,7 @@ void CheckObjectEnteringVisibleRange(void){
         do {
         // loop_v:
             // LDH_addr_A(hMapObjectIndex);
-            hram->hMapObjectIndex = a;
+            hram.hMapObjectIndex = a;
             // LD_HL(MAPOBJECT_SPRITE);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -511,7 +511,7 @@ void CheckObjectEnteringVisibleRange(void){
         do {
         // loop_h:
             // LDH_addr_A(hMapObjectIndex);
-            hram->hMapObjectIndex = a;
+            hram.hMapObjectIndex = a;
             // LD_HL(MAPOBJECT_SPRITE);
             // ADD_HL_BC;
             // LD_A_hl;
@@ -757,7 +757,7 @@ static void TrainerWalkToPlayer_GetPathToPlayer(uint8_t b, uint8_t c, uint8_t d)
 void TrainerWalkToPlayer(void){
     // LDH_A_addr(hLastTalked);
     // CALL(aInitMovementBuffer);
-    InitMovementBuffer(hram->hLastTalked);
+    InitMovementBuffer(hram.hLastTalked);
     // LD_A(movement_step_sleep);
     // CALL(aAppendToMovementBuffer);
     AppendToMovementBuffer(movement_step_sleep);
@@ -770,7 +770,7 @@ void TrainerWalkToPlayer(void){
         // LD_C(PLAYER);
         // LD_D(1);
         // CALL(aTrainerWalkToPlayer_GetPathToPlayer);
-        TrainerWalkToPlayer_GetPathToPlayer(hram->hLastTalked, PLAYER, 1);
+        TrainerWalkToPlayer_GetPathToPlayer(hram.hLastTalked, PLAYER, 1);
         // CALL(aDecrementMovementBufferCount);
         DecrementMovementBufferCount();
     }
@@ -916,7 +916,7 @@ void FollowNotExact(uint8_t c, uint8_t b){
     // LD_HL(OBJECT_RANGE);
     // ADD_HL_DE;
     // LD_hl_A;
-    de->range = hram->hObjectStructIndex;
+    de->range = hram.hObjectStructIndex;
     // LD_HL(OBJECT_MOVEMENTTYPE);
     // ADD_HL_DE;
     // LD_hl(SPRITEMOVEDATA_FOLLOWNOTEXACT);

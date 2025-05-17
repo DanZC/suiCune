@@ -72,7 +72,7 @@ static bool DebugSpecialPhoneCall(script_s* s){
 static void DebugPhoneCall(void){
     LoadCallerScript(0x00);
     gQueuedScriptAddr = DebugSpecialPhoneCall;
-    hram->hMenuReturn = HMENURETURN_SCRIPT;
+    hram.hMenuReturn = HMENURETURN_SCRIPT;
     wram->wSpecialPhoneCallID = SPECIALCALL_BIKESHOP;
 }
 
@@ -86,7 +86,7 @@ static bool DebugShowCatchTutorialScript(script_s* s){
 
 static void DebugShowCatchTutorial(void){
     gQueuedScriptAddr = DebugShowCatchTutorialScript;
-    hram->hMenuReturn = HMENURETURN_SCRIPT;
+    hram.hMenuReturn = HMENURETURN_SCRIPT;
 }
 
 static void DebugUnownPrinter(void){
@@ -110,7 +110,7 @@ static bool DebugWildBattleScript(script_s* s){
 static void DebugWildBattle(species_t species, uint8_t level){
     Script_loadwildmon(&gCurScript, species, level);
     gQueuedScriptAddr = DebugWildBattleScript;
-    hram->hMenuReturn = HMENURETURN_SCRIPT;
+    hram.hMenuReturn = HMENURETURN_SCRIPT;
 }
 
 enum {
@@ -155,19 +155,19 @@ static void DebugFlagMenu(void) {
     uint16_t flag = EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1;
     while(1) {
         GetJoypad();
-        if(hram->hJoyPressed & (B_BUTTON))
+        if(hram.hJoyPressed & (B_BUTTON))
             break;
 
-        if(hram->hJoyPressed & (D_DOWN)) {
+        if(hram.hJoyPressed & (D_DOWN)) {
             if(flag == 0) flag = EVENT_BATTLE_TOWER_OUTSIDE_SAILOR;
             else flag--;
         }
-        if(hram->hJoyPressed & (D_UP)) {
+        if(hram.hJoyPressed & (D_UP)) {
             if(flag == EVENT_BATTLE_TOWER_OUTSIDE_SAILOR) flag = 0;
             else flag++;
         }
 
-        if(hram->hJoyPressed & (A_BUTTON)) {
+        if(hram.hJoyPressed & (A_BUTTON)) {
             PlayClickSFX();
             if(EventFlagAction(flag, CHECK_FLAG))
                 EventFlagAction(flag, RESET_FLAG);
@@ -229,7 +229,7 @@ const struct MenuHeader MenuHeader = {
             switch(wram->wMenuCursorY - 1) {
             case DEBUGFIELDITEM_TELEPORT: {
                 FadeToMenu();
-                hram->hMapAnims = 0;
+                hram.hMapAnims = 0;
                 ClearSprites();
                 LoadStandardMenuHeader();
                 uint8_t spawn = EntireFlyMap();
@@ -242,7 +242,7 @@ const struct MenuHeader MenuHeader = {
                 gQueuedScriptAddr = DebugTeleportScript;
                 wram->wDefaultSpawnpoint = spawn;
                 CloseWindow();
-                hram->hMenuReturn = HMENURETURN_SCRIPT;
+                hram.hMenuReturn = HMENURETURN_SCRIPT;
                 ExitAllMenus();
             } break;
             case DEBUGFIELDITEM_FLAG:
@@ -268,11 +268,11 @@ const struct MenuHeader MenuHeader = {
             }
         }
     }
-    uint8_t oamUpdate = hram->hOAMUpdate;
-    hram->hOAMUpdate = 1;
+    uint8_t oamUpdate = hram.hOAMUpdate;
+    hram.hOAMUpdate = 1;
     LoadFontsExtra();
-    hram->hOAMUpdate = oamUpdate;
+    hram.hOAMUpdate = oamUpdate;
     CloseWindow();
     v_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap();
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 }

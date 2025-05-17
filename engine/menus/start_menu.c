@@ -277,7 +277,7 @@ static bool StartMenu_GetInput(void) {
 //  Return carry on exit, and no-carry on selection.
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aStartMenu__DrawMenuAccount);
     StartMenu_DrawMenuAccount();
     // CALL(aSetUpMenu);
@@ -534,15 +534,15 @@ static const struct MenuHeader menuHeader = {
                 {
                     // LDH_A_addr(hOAMUpdate);
                     // PUSH_AF;
-                    uint8_t oamUpdate = hram->hOAMUpdate;
+                    uint8_t oamUpdate = hram.hOAMUpdate;
                     // LD_A(1);
                     // LDH_addr_A(hOAMUpdate);
-                    hram->hOAMUpdate = 1;
+                    hram.hOAMUpdate = 1;
                     // CALL(aLoadFontsExtra);
                     LoadFontsExtra();
                     // POP_AF;
                     // LDH_addr_A(hOAMUpdate);
-                    hram->hOAMUpdate = oamUpdate;
+                    hram.hOAMUpdate = oamUpdate;
                 }
                 // fallthrough
             case STARTMENURET_RETURN_END:
@@ -575,7 +575,7 @@ static const struct MenuHeader menuHeader = {
                 ExitMenu();
                 // LD_A(HMENURETURN_SCRIPT);
                 // LDH_addr_A(hMenuReturn);
-                hram->hMenuReturn = HMENURETURN_SCRIPT;
+                hram.hMenuReturn = HMENURETURN_SCRIPT;
                 goto ReturnEnd2;
             case STARTMENURET_EXIT_MENU_RUN_SCRIPT:
             // ExitMenuRunScript:
@@ -583,7 +583,7 @@ static const struct MenuHeader menuHeader = {
                 ExitMenu();
                 // LD_A(HMENURETURN_SCRIPT);
                 // LDH_addr_A(hMenuReturn);
-                hram->hMenuReturn = HMENURETURN_SCRIPT;
+                hram.hMenuReturn = HMENURETURN_SCRIPT;
                 // RET;
                 return;
             case STARTMENURET_RETURN_REDRAW:

@@ -346,7 +346,7 @@ static bool TryWildEncounter_EncounterRate(void) {
 bool TryWildEncounter(void){
     // CALL(aTryWildEncounter_EncounterRate);
     // IF_NC goto no_battle;
-    if(TryWildEncounter_EncounterRate() && ChooseWildEncounter() && !CheckRepelEffect() && !bit_test(hram->hJoyDown, B_BUTTON_F))
+    if(TryWildEncounter_EncounterRate() && ChooseWildEncounter() && !CheckRepelEffect() && !bit_test(hram.hJoyDown, B_BUTTON_F))
         return true;
     // CALL(aChooseWildEncounter);
     // IF_NZ goto no_battle;

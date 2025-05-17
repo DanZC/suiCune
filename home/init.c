@@ -15,7 +15,7 @@ void Reset(void) {
     InitSound();
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hram.hMapAnims = 0;
     // CALL(aClearPalettes);
     ClearPalettes();
     // XOR_A_A;
@@ -48,10 +48,10 @@ void v_Start(void) {
 
 // load:
     // LDH_addr_A(hCGB);
-    hram->hCGB = (REG_A == 0x11)? TRUE: FALSE;
+    hram.hCGB = (REG_A == 0x11)? TRUE: FALSE;
     // LD_A(TRUE);
     // LDH_addr_A(hSystemBooted);
-    hram->hSystemBooted = TRUE;
+    hram.hSystemBooted = TRUE;
     // return Init();
 }
 
@@ -122,21 +122,21 @@ void Init(void) {
     //  Clear HRAM
     // LDH_A_addr(hCGB);
     // PUSH_AF;
-    uint8_t cgb = hram->hCGB;
+    uint8_t cgb = hram.hCGB;
     // LDH_A_addr(hSystemBooted);
     // PUSH_AF;
-    uint8_t systemBooted = hram->hSystemBooted;
+    uint8_t systemBooted = hram.hSystemBooted;
     // XOR_A_A;
     // LD_HL(HRAM_Begin);
     // LD_BC(HRAM_End - HRAM_Begin);
     // CALL(aByteFill);
-    ByteFill(hram, sizeof(*hram), 0);
+    ByteFill(&hram, sizeof(hram), 0);
     // POP_AF;
     // LDH_addr_A(hSystemBooted);
-    hram->hSystemBooted = systemBooted;
+    hram.hSystemBooted = systemBooted;
     // POP_AF;
     // LDH_addr_A(hCGB);
-    hram->hCGB = cgb;
+    hram.hCGB = cgb;
 
     // CALL(aClearWRAM);
     ClearWRAM();
@@ -161,11 +161,11 @@ void Init(void) {
 
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hram.hMapAnims = 0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0;
+    hram.hSCX = 0;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0;
+    hram.hSCY = 0;
     // LDH_addr_A(rJOYP);
     gb_write(rJOYP, 0);
 
@@ -175,13 +175,13 @@ void Init(void) {
 
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // LDH_addr_A(rWY);
     gb_write(rWY, 0x90);
 
     // LD_A(7);
     // LDH_addr_A(hWX);
-    hram->hWX = 7;
+    hram.hWX = 7;
     // LDH_addr_A(rWX);
     gb_write(rWX, 7);
 
@@ -199,7 +199,7 @@ void Init(void) {
 
     // LD_A(CONNECTION_NOT_ESTABLISHED);
     // LDH_addr_A(hSerialConnectionStatus);
-    hram->hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
+    hram.hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
 
     // FARCALL(aInitCGBPals);
     InitCGBPals();
@@ -208,7 +208,7 @@ void Init(void) {
     // LDH_addr_A(hBGMapAddress + 1);
     // XOR_A_A;  // LOW(vBGMap1)
     // LDH_addr_A(hBGMapAddress);
-    hram->hBGMapAddress = vBGMap1;
+    hram.hBGMapAddress = vBGMap1;
 
     // FARCALL(aStartClock);
     StartClock();

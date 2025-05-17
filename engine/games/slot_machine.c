@@ -583,7 +583,7 @@ void SlotsAction_WaitStart(void){
     SlotsAction_Next();
     // XOR_A_A;
     // LDH_addr_A(hJoypadSum);
-    hram->hJoypadSum = 0x0;
+    hram.hJoypadSum = 0x0;
     // RET;
 }
 
@@ -592,7 +592,7 @@ void SlotsAction_WaitReel1(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // RET_Z ;
-    if((hram->hJoypadSum & A_BUTTON) == 0)
+    if((hram.hJoypadSum & A_BUTTON) == 0)
         return;
     // CALL(aSlotsAction_Next);
     SlotsAction_Next();
@@ -619,7 +619,7 @@ void SlotsAction_WaitStopReel1(void){
     SlotsAction_Next();
     // XOR_A_A;
     // LDH_addr_A(hJoypadSum);
-    hram->hJoypadSum = 0x0;
+    hram.hJoypadSum = 0x0;
     return SlotsAction_WaitReel2();
 }
 
@@ -628,7 +628,7 @@ void SlotsAction_WaitReel2(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // RET_Z ;
-    if((hram->hJoypadSum & A_BUTTON) == 0)
+    if((hram.hJoypadSum & A_BUTTON) == 0)
         return;
     // CALL(aSlotsAction_Next);
     SlotsAction_Next();
@@ -655,7 +655,7 @@ void SlotsAction_WaitStopReel2(void){
     SlotsAction_Next();
     // XOR_A_A;
     // LDH_addr_A(hJoypadSum);
-    hram->hJoypadSum = 0x0;
+    hram.hJoypadSum = 0x0;
     return SlotsAction_WaitReel3();
 }
 
@@ -664,7 +664,7 @@ void SlotsAction_WaitReel3(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // RET_Z ;
-    if((hram->hJoypadSum & A_BUTTON) == 0)
+    if((hram.hJoypadSum & A_BUTTON) == 0)
         return;
     // CALL(aSlotsAction_Next);
     SlotsAction_Next();
@@ -691,7 +691,7 @@ void SlotsAction_WaitStopReel3(void){
     SlotsAction_Next();
     // XOR_A_A;
     // LDH_addr_A(hJoypadSum);
-    hram->hJoypadSum = 0x0;
+    hram.hJoypadSum = 0x0;
     // RET;
 }
 
@@ -3005,7 +3005,7 @@ void Slots_AnimateGolem(struct SpriteAnim* bc){
                 // LD_hl_A;
                 bc->var2 = (bc->var2 ^ 0xff) + 1;
                 // LDH_addr_A(hSCY);
-                hram->hSCY = bc->var2;
+                hram.hSCY = bc->var2;
             }
             // RET;
             return;
@@ -3018,7 +3018,7 @@ void Slots_AnimateGolem(struct SpriteAnim* bc){
         // LD_hl_A;
         bc->jumptableIndex = 0x0;
         // LDH_addr_A(hSCY);
-        hram->hSCY = 0x0;
+        hram.hSCY = 0x0;
         // RET;
     } return;
     }

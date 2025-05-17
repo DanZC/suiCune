@@ -812,7 +812,7 @@ void AIUpdateHUD(void){
     UpdateEnemyHUD();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_HL(wEnemyItemState);
     // DEC_hl;
     wram->wEnemyItemState--;
@@ -1032,7 +1032,7 @@ bool AI_Switch(void){
     bit_reset(wram->wEnemySubStatus4, SUBSTATUS_RAGE);
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
-    hram->hBattleTurn = TURN_PLAYER;
+    hram.hBattleTurn = TURN_PLAYER;
     // CALLFAR(aPursuitSwitch);
     bool fainted = PursuitSwitch();
 

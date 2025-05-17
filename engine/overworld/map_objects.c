@@ -1293,7 +1293,7 @@ void MovementFunction_RandomWalkY(struct Object* bc) {
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00000001);
     // JP(mv_RandomWalkContinue);
-    v_RandomWalkContinue(bc, hram->hRandomAdd & 0b00000001);
+    v_RandomWalkContinue(bc, hram.hRandomAdd & 0b00000001);
 }
 
 void MovementFunction_RandomWalkX(struct Object* bc) {
@@ -1304,7 +1304,7 @@ void MovementFunction_RandomWalkX(struct Object* bc) {
     // AND_A(0b00000001);
     // OR_A(0b00000010);
     // JP(mv_RandomWalkContinue);
-    v_RandomWalkContinue(bc, (hram->hRandomAdd & 0b00000001) | 0b00000010);
+    v_RandomWalkContinue(bc, (hram.hRandomAdd & 0b00000001) | 0b00000010);
 }
 
 void MovementFunction_RandomWalkXY(struct Object* bc) {
@@ -1314,7 +1314,7 @@ void MovementFunction_RandomWalkXY(struct Object* bc) {
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00000011);
     // JP(mv_RandomWalkContinue);
-    v_RandomWalkContinue(bc, hram->hRandomAdd & 0b00000011);
+    v_RandomWalkContinue(bc, hram.hRandomAdd & 0b00000011);
 }
 
 void MovementFunction_RandomSpinSlow(struct Object* bc) {
@@ -1326,7 +1326,7 @@ void MovementFunction_RandomSpinSlow(struct Object* bc) {
     // LD_HL(OBJECT_FACING);
     // ADD_HL_BC;
     // LD_hl_A;
-    bc->facing = hram->hRandomAdd & 0b00001100;
+    bc->facing = hram.hRandomAdd & 0b00001100;
     // JP(mRandomStepDuration_Slow);
     return RandomStepDuration_Slow(bc);
 }
@@ -1342,7 +1342,7 @@ void MovementFunction_RandomSpinFast(struct Object* bc) {
     Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00001100);
-    uint8_t a = hram->hRandomAdd & 0b00001100;
+    uint8_t a = hram.hRandomAdd & 0b00001100;
     // CP_A_D;
     // IF_NZ goto keep;
     if(a == (bc->facing & 0b00001100)) {
@@ -2018,7 +2018,7 @@ void v_RandomWalkContinue(struct Object* bc, uint8_t a) {
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_hl;
     // IF_Z goto centered;
-    if(wram->wCenteredObject == hram->hMapObjectIndex) {
+    if(wram->wCenteredObject == hram.hMapObjectIndex) {
     // centered:
         // LD_HL(OBJECT_STEP_TYPE);
         // ADD_HL_BC;
@@ -2044,7 +2044,7 @@ void RandomStepDuration_Slow(struct Object* bc) {
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b01111111);
     // JR(mv_SetRandomStepDuration);
-    return v_SetRandomStepDuration(bc, hram->hRandomAdd & 0b01111111);
+    return v_SetRandomStepDuration(bc, hram.hRandomAdd & 0b01111111);
 }
 
 void RandomStepDuration_Fast(struct Object* bc) {
@@ -2053,7 +2053,7 @@ void RandomStepDuration_Fast(struct Object* bc) {
     Random();
     // LDH_A_addr(hRandomAdd);
     // AND_A(0b00011111);
-    return v_SetRandomStepDuration(bc, hram->hRandomAdd & 0b00011111);
+    return v_SetRandomStepDuration(bc, hram.hRandomAdd & 0b00011111);
 }
 
 void v_SetRandomStepDuration(struct Object* bc, uint8_t a) {
@@ -3306,7 +3306,7 @@ static void ApplyMovementToFollower(uint8_t a) {
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_D;
     // RET_NZ;
-    if(hram->hMapObjectIndex != wram->wObjectFollow_Leader)
+    if(hram.hMapObjectIndex != wram->wObjectFollow_Leader)
         return;
     // LD_A_E;
     // CP_A(movement_step_sleep);
@@ -3609,7 +3609,7 @@ static void CopyTempObjectData(struct Object* bc, const uint8_t* de) {
     wram->wTempObjectCopyMovement = de[2];
     // LDH_A_addr(hMapObjectIndex);
     // LD_hli_A;
-    wram->wTempObjectCopyRange = hram->hMapObjectIndex;
+    wram->wTempObjectCopyRange = hram.hMapObjectIndex;
     // PUSH_HL;
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
@@ -3644,7 +3644,7 @@ void UpdateAllObjectsFrozen(void) {
 // loop:
     for(uint8_t a = 0; a < NUM_OBJECT_STRUCTS; ++a) {
         // LDH_addr_A(hMapObjectIndex);
-        hram->hMapObjectIndex = a;
+        hram.hMapObjectIndex = a;
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto ok;
         if(DoesObjectHaveASprite(&bc[a])) {
@@ -3677,9 +3677,9 @@ void RespawnPlayerAndOpponent(void) {
     // LDH_A_addr(hLastTalked);
     // AND_A_A;
     // IF_Z goto skip_opponent;
-    if(bit_test(wram->wBattleScriptFlags, 7) && hram->hLastTalked != 0) {
+    if(bit_test(wram->wBattleScriptFlags, 7) && hram.hLastTalked != 0) {
         // CALL(aRespawnObject);
-        RespawnObject(hram->hLastTalked);
+        RespawnObject(hram.hLastTalked);
     }
 
 // skip_opponent:
@@ -3736,7 +3736,7 @@ void HideAllObjects(void) {
     // XOR_A_A;
     // LD_BC(wObjectStructs);
     struct Object* bc = &wram->wPlayerStruct;
-    hram->hMapObjectIndex = 0;
+    hram.hMapObjectIndex = 0;
 
     do {
     // loop:
@@ -3753,7 +3753,7 @@ void HideAllObjects(void) {
         // INC_A;
         // CP_A(NUM_OBJECT_STRUCTS);
         // IF_NZ goto loop;
-    } while(++hram->hMapObjectIndex != NUM_OBJECT_STRUCTS);
+    } while(++hram.hMapObjectIndex != NUM_OBJECT_STRUCTS);
     // RET;
 }
 
@@ -3909,7 +3909,7 @@ static bool CheckObjectCoveredByTextbox(struct Object* bc) {
         // ok3:
 
         // LDH_addr_A(hCurSpriteXCoord);
-        hram->hCurSpriteXCoord = x;
+        hram.hCurSpriteXCoord = x;
 
         // //  Check whether the object fits in the screen height.
         // LD_A_addr(wPlayerBGMapOffsetY);
@@ -3954,7 +3954,7 @@ static bool CheckObjectCoveredByTextbox(struct Object* bc) {
         // ok6:
 
         //     LDH_addr_A(hCurSpriteYCoord);
-            hram->hCurSpriteYCoord = y;
+            hram.hCurSpriteYCoord = y;
 
             //  Account for big objects that are twice as wide and high.
             // LD_HL(OBJECT_PALETTE);
@@ -3977,17 +3977,17 @@ static bool CheckObjectCoveredByTextbox(struct Object* bc) {
 
         //     LD_A_D;
         //     LDH_addr_A(hCurSpriteXPixel);
-            hram->hCurSpriteXPixel = d;
+            hram.hCurSpriteXPixel = d;
 
         // loop:
             do {
                 // LDH_A_addr(hCurSpriteXPixel);
                 // LD_D_A;
-                d = hram->hCurSpriteXPixel;
+                d = hram.hCurSpriteXPixel;
                 // LDH_A_addr(hCurSpriteYCoord);
                 // ADD_A_E;
                 // DEC_A;
-                uint8_t ycoord = (hram->hCurSpriteYCoord + e) - 1;
+                uint8_t ycoord = (hram.hCurSpriteYCoord + e) - 1;
                 // CP_A(SCREEN_HEIGHT);
                 // IF_NC goto ok9;
                 if(ycoord >= SCREEN_HEIGHT) 
@@ -3999,7 +3999,7 @@ static bool CheckObjectCoveredByTextbox(struct Object* bc) {
                     // LDH_A_addr(hCurSpriteXCoord);
                     // ADD_A_D;
                     // DEC_A;
-                    uint8_t xcoord = (hram->hCurSpriteXCoord + d) - 1;
+                    uint8_t xcoord = (hram.hCurSpriteXCoord + d) - 1;
                     // CP_A(SCREEN_WIDTH);
                     // IF_NC goto ok8;
                     if(xcoord >= SCREEN_WIDTH)
@@ -4066,7 +4066,7 @@ void DoStepsForAllObjects(void) {
     // loop:
 
         // LDH_addr_A(hMapObjectIndex);
-        hram->hMapObjectIndex = a;
+        hram.hMapObjectIndex = a;
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto next;
         if(DoesObjectHaveASprite(bc + a)) {
@@ -4213,7 +4213,7 @@ bool SetLeaderIfVisible(uint8_t a) {
         return false;
     // LDH_A_addr(hObjectStructIndex);
     // LD_addr_A(wObjectFollow_Leader);
-    wram->wObjectFollow_Leader = hram->hObjectStructIndex;
+    wram->wObjectFollow_Leader = hram.hObjectStructIndex;
     // RET;
     return true;
 }
@@ -4256,7 +4256,7 @@ bool SetFollowerIfVisible(uint8_t a) {
     bc->stepType = STEP_TYPE_RESET;
     // LDH_A_addr(hObjectStructIndex);
     // LD_addr_A(wObjectFollow_Follower);
-    wram->wObjectFollow_Follower = hram->hObjectStructIndex;
+    wram->wObjectFollow_Follower = hram.hObjectStructIndex;
     // RET;
     return true;
 }
@@ -4486,13 +4486,13 @@ void v_UpdateSprites(void) {
     
     // XOR_A_A;
     // LDH_addr_A(hUsedSpriteIndex);
-    hram->hUsedSpriteIndex = 0;
+    hram.hUsedSpriteIndex = 0;
     // LDH_A_addr(hOAMUpdate);
-    uint8_t temp = hram->hOAMUpdate;
+    uint8_t temp = hram.hOAMUpdate;
     // PUSH_AF;
     // LD_A(1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 1;
+    hram.hOAMUpdate = 1;
     // CALL(aInitSprites);
     InitSprites();
     // CALL(av_UpdateSprites_fill);
@@ -4511,9 +4511,9 @@ void v_UpdateSprites(void) {
     // LDH_A_addr(hUsedSpriteIndex);
     // CP_A_B;
     // RET_NC;
-    uint8_t sprite_idx = hram->hUsedSpriteIndex >> 2;
+    uint8_t sprite_idx = hram.hUsedSpriteIndex >> 2;
     if(sprite_idx >= b) {
-        hram->hOAMUpdate = temp;
+        hram.hOAMUpdate = temp;
         return;
     }
     
@@ -4535,7 +4535,7 @@ void v_UpdateSprites(void) {
     // RET;
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = temp;
+    hram.hOAMUpdate = temp;
 }
 
 #define PRIORITY_LOW (0x10)
@@ -4690,7 +4690,7 @@ static bool InitSprites_InitSprite(struct Object* bc) {
     uint8_t tile = bc->spriteTile;
     // AND_A(~(1 << 7));
     // LDH_addr_A(hCurSpriteTile);
-    hram->hCurSpriteTile = tile & ~(1 << 7);
+    hram.hCurSpriteTile = tile & ~(1 << 7);
     // XOR_A_A;
     // BIT_hl(7);
     // IF_NZ goto not_vram1;
@@ -4732,7 +4732,7 @@ static bool InitSprites_InitSprite(struct Object* bc) {
 // not_overhead:
 
     // LDH_addr_A(hCurSpriteOAMFlags);
-    hram->hCurSpriteOAMFlags = (bit_test(flags2, OVERHEAD_F))? PRIORITY: 0;
+    hram.hCurSpriteOAMFlags = (bit_test(flags2, OVERHEAD_F))? PRIORITY: 0;
     // LD_HL(OBJECT_SPRITE_X);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -4744,7 +4744,7 @@ static bool InitSprites_InitSprite(struct Object* bc) {
     // LD_A_addr(wPlayerBGMapOffsetX);
     // ADD_A_E;
     // LDH_addr_A(hCurSpriteXPixel);
-    hram->hCurSpriteXPixel = bc->spriteX + bc->spriteXOffset + 8 + wram->wPlayerBGMapOffsetX;
+    hram.hCurSpriteXPixel = bc->spriteX + bc->spriteXOffset + 8 + wram->wPlayerBGMapOffsetX;
 
     // LD_HL(OBJECT_SPRITE_Y);
     // ADD_HL_BC;
@@ -4757,7 +4757,7 @@ static bool InitSprites_InitSprite(struct Object* bc) {
     // LD_A_addr(wPlayerBGMapOffsetY);
     // ADD_A_E;
     // LDH_addr_A(hCurSpriteYPixel);
-    hram->hCurSpriteYPixel = bc->spriteY + bc->spriteYOffset + 12 + wram->wPlayerBGMapOffsetY;
+    hram.hCurSpriteYPixel = bc->spriteY + bc->spriteYOffset + 12 + wram->wPlayerBGMapOffsetY;
     // LD_HL(OBJECT_FACING_STEP);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -4779,14 +4779,14 @@ static bool InitSprites_InitSprite(struct Object* bc) {
         // LDH_A_addr(hUsedSpriteIndex);
         // LD_C_A;
         // LD_B(HIGH(wVirtualOAM));
-        struct SpriteOAM* bc = wram->wVirtualOAMSprite + (hram->hUsedSpriteIndex >> 2);
+        struct SpriteOAM* bc = wram->wVirtualOAMSprite + (hram.hUsedSpriteIndex >> 2);
         // LD_A_hli;
         a = hl->count;
         // LDH_addr_A(hUsedSpriteTile);
-        hram->hUsedSpriteTile = a;
+        hram.hUsedSpriteTile = a;
 
         // ADD_A_C;
-        a += hram->hUsedSpriteIndex;
+        a += hram.hUsedSpriteIndex;
         // CP_A(LOW(wVirtualOAMEnd));
         if(a >= LOW(wVirtualOAMEnd)) {
 
@@ -4806,13 +4806,13 @@ static bool InitSprites_InitSprite(struct Object* bc) {
             // INC_HL;
             // LD_bc_A;  // y
             // INC_C;
-            bc[idx].yCoord = hram->hCurSpriteYPixel + hl->data[idx].y;
+            bc[idx].yCoord = hram.hCurSpriteYPixel + hl->data[idx].y;
             // LDH_A_addr(hCurSpriteXPixel);
             // ADD_A_hl;
             // INC_HL;
             // LD_bc_A;  // x
             // INC_C;
-            bc[idx].xCoord = hram->hCurSpriteXPixel + hl->data[idx].x;
+            bc[idx].xCoord = hram.hCurSpriteXPixel + hl->data[idx].x;
             // LD_E_hl;
             // INC_HL;
             uint8_t attr = hl->data[idx].attr;
@@ -4820,7 +4820,7 @@ static bool InitSprites_InitSprite(struct Object* bc) {
             // BIT_E(ABSOLUTE_TILE_ID_F);
             // IF_Z goto nope1;
             // XOR_A_A;
-            a = (!bit_test(attr, ABSOLUTE_TILE_ID_F))? hram->hCurSpriteTile: 0;
+            a = (!bit_test(attr, ABSOLUTE_TILE_ID_F))? hram.hCurSpriteTile: 0;
 
         // nope1:
 
@@ -4834,7 +4834,7 @@ static bool InitSprites_InitSprite(struct Object* bc) {
             // IF_Z goto nope2;
             // LDH_A_addr(hCurSpriteOAMFlags);
             // OR_A_E;
-            a = (bit_test(attr, RELATIVE_ATTRIBUTES_F))? hram->hCurSpriteOAMFlags | attr: attr;
+            a = (bit_test(attr, RELATIVE_ATTRIBUTES_F))? hram.hCurSpriteOAMFlags | attr: attr;
 
         // nope2:
 
@@ -4846,13 +4846,13 @@ static bool InitSprites_InitSprite(struct Object* bc) {
             // LDH_A_addr(hUsedSpriteTile);
             // DEC_A;
             // LDH_addr_A(hUsedSpriteTile);
-            a = --hram->hUsedSpriteTile;
+            a = --hram.hUsedSpriteTile;
             // IF_NZ goto addsprite;
             idx++;
             if(a != 0) continue;
             // LD_A_C;
             // LDH_addr_A(hUsedSpriteIndex);
-            hram->hUsedSpriteIndex += sizeof(struct SpriteOAM) * idx;
+            hram.hUsedSpriteIndex += sizeof(struct SpriteOAM) * idx;
             break;
         } while(1);
     }

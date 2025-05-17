@@ -39,7 +39,7 @@ static void MonSubmenu_GetTopCoord(void){
 void MonSubmenu(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aGetMonSubmenuItems);
     GetMonSubmenuItems();
     // FARCALL(aFreezeMonIcons);
@@ -54,7 +54,7 @@ void MonSubmenu(void){
 
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aMonMenuLoop);
     // LD_addr_A(wMenuSelection);
     wram->wMenuSelection = MonMenuLoop();
@@ -382,7 +382,7 @@ bool BattleMonMenu(void){
     CopyMenuHeader(&BattleMonMenu_MenuHeader);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
     MenuBox();
     // CALL(aUpdateSprites);

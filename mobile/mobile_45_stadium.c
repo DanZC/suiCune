@@ -27,15 +27,15 @@ void GiveOddEgg(void){
 void Function11765d(void){
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // CALL(aFunction11766b);
     Function11766b();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // RET;
 }
 
@@ -211,50 +211,50 @@ void Function117764(void){
     // LD_A_hl;
     // AND_A(SELECT);
     // JR_NZ (mFunction117764_select);
-    if(hram->hJoyPressed & SELECT) {
+    if(hram.hJoyPressed & SELECT) {
         return Function117764_select();
     }
     // LD_A_hl;
     // AND_A(START);
     // JR_NZ (mFunction117764_start);
-    else if(hram->hJoyPressed & START) {
+    else if(hram.hJoyPressed & START) {
         return Function117764_start();
     }
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // JP_NZ (mFunction117764_a_button);
-    else if(hram->hJoyPressed & A_BUTTON) {
+    else if(hram.hJoyPressed & A_BUTTON) {
         return Function117764_a_button();
     }
     // LD_A_hl;
     // AND_A(B_BUTTON);
     // JR_NZ (mFunction117764_b_button);
-    else if(hram->hJoyPressed & B_BUTTON) {
+    else if(hram.hJoyPressed & B_BUTTON) {
         return Function117764_b_button();
     }
     // LD_HL(hJoyLast);
     // LD_A_hl;
     // AND_A(D_UP);
     // JR_NZ (mFunction117764_d_up);
-    else if(hram->hJoyLast & D_UP) {
+    else if(hram.hJoyLast & D_UP) {
         return Function117764_d_up();
     }
     // LD_A_hl;
     // AND_A(D_DOWN);
     // JR_NZ (mFunction117764_d_down);
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hram.hJoyLast & D_DOWN) {
         return Function117764_d_down();
     }
     // LD_A_hl;
     // AND_A(D_LEFT);
     // JP_NZ (mFunction117764_d_left);
-    else if(hram->hJoyLast & D_LEFT) {
+    else if(hram.hJoyLast & D_LEFT) {
         return Function117764_d_left();
     }
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // JP_NZ (mFunction117764_d_right);
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hram.hJoyLast & D_RIGHT) {
         return Function117764_d_right();
     }
     // RET;
@@ -545,7 +545,7 @@ void Function1178e8(void){
     // LDH_A_addr(hJoyPressed);
     // CP_A(B_BUTTON);
     // IF_Z goto b_button;
-    if(hram->hJoyPressed == B_BUTTON) {
+    if(hram.hJoyPressed == B_BUTTON) {
     b_button:
         // CALL(aExitMenu);
         ExitMenu();
@@ -556,7 +556,7 @@ void Function1178e8(void){
     }
     // CP_A(A_BUTTON);
     // IF_Z goto a_button;
-    else if(hram->hJoyPressed == A_BUTTON) {
+    else if(hram.hJoyPressed == A_BUTTON) {
     // a_button:
         // CALL(aPlayClickSFX);
         PlayClickSFX();
@@ -575,7 +575,7 @@ void Function1178e8(void){
     }
     // CP_A(D_DOWN);
     // IF_Z goto d_down;
-    else if(hram->hJoyPressed == D_DOWN) {
+    else if(hram.hJoyPressed == D_DOWN) {
     // d_down:
         // LD_A_addr(wcd4e);
         // AND_A_A;
@@ -598,7 +598,7 @@ void Function1178e8(void){
     }
     // CP_A(D_UP);
     // RET_NZ ;
-    else if(hram->hJoyPressed == D_UP) {
+    else if(hram.hJoyPressed == D_UP) {
         // LD_A_addr(wcd4e);
         // AND_A_A;
         // RET_Z ;
@@ -769,15 +769,15 @@ const char Unknown_117a47[] =
 void MobileStudium(void){
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // CALL(aFunction117a8d);
     Function117a8d();
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // RET;
 }
 
@@ -921,7 +921,7 @@ void Function117b4f(void){
     // LDH_A_addr(hJoyPressed);
     // CP_A(B_BUTTON);
     // IF_Z goto b_button;
-    if(hram->hJoyPressed == B_BUTTON) {
+    if(hram.hJoyPressed == B_BUTTON) {
     b_button:
         // CALL(aExitMenu);
         ExitMenu();
@@ -937,7 +937,7 @@ void Function117b4f(void){
     }
     // CP_A(A_BUTTON);
     // IF_Z goto a_button;
-    else if(hram->hJoyPressed == A_BUTTON) {
+    else if(hram.hJoyPressed == A_BUTTON) {
     // a_button:
         // CALL(aPlayClickSFX);
         PlayClickSFX();
@@ -957,7 +957,7 @@ void Function117b4f(void){
     }
     // CP_A(D_DOWN);
     // IF_Z goto d_down;
-    else if(hram->hJoyPressed == D_DOWN) {
+    else if(hram.hJoyPressed == D_DOWN) {
     // d_down:
         // LD_A_addr(wcf64);
         // AND_A_A;
@@ -980,7 +980,7 @@ void Function117b4f(void){
     }
     // CP_A(D_UP);
     // RET_NZ ;
-    else if(hram->hJoyPressed == D_UP) {
+    else if(hram.hJoyPressed == D_UP) {
         // LD_A_addr(wcf64);
         // AND_A_A;
         // RET_Z ;
@@ -1006,7 +1006,7 @@ void Function117bb6(void){
     Function117c89();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // FARCALL(aFunction118284);
     //  TODO: Convert Function118284
     // CALL(aClearSprites);

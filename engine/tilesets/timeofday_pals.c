@@ -479,7 +479,7 @@ static const uint8_t* GetTimePalFade(uint8_t c){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_NZ goto cgb;
-    if(hram->hCGB != 0) {
+    if(hram.hCGB != 0) {
     // cgb:
         // LD_HL(mGetTimePalFade_cgbfade);
         // LD_B(0);

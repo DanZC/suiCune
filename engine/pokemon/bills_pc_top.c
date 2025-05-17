@@ -41,7 +41,7 @@ static void v_BillsPC_LogIn(void) {
     };
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader();
     // CALL(aClearPCItemScreen);
@@ -122,7 +122,7 @@ static void v_BillsPC_UseBillsPC(void) {
         // LD_addr_A(wWhichIndexSet);
         wram->wWhichIndexSet = 0;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aDoNthMenu);
         u8_flag_s menuRes = DoNthMenu();
         // IF_C goto cancel;
@@ -368,7 +368,7 @@ void ClearPCItemScreen(void){
     // XOR_A_A;
     DisableSpriteUpdates();
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearSprites);

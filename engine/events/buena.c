@@ -266,7 +266,7 @@ static void PrintBlueCardBalance_DrawBox(const uint8_t* de) {
     // PUSH_DE;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_HL(mBlueCardBalanceMenuHeader);
     // CALL(aCopyMenuHeader);
     CopyMenuHeader(&BlueCardBalanceMenuHeader);
@@ -403,7 +403,7 @@ uint8_t Buena_PrizeMenu(void){
     // LD_addr_A(wWhichIndexSet);
     wram->wWhichIndexSet = 0;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aInitScrollingMenu);
     InitScrollingMenu();
     // CALL(aUpdateSprites);

@@ -18,7 +18,7 @@ void Serial(void){
     // LDH_A_addr(hMobileReceive);
     // AND_A_A;
     // IF_NZ goto mobile;
-    if(hram->hMobileReceive != FALSE) {
+    if(hram.hMobileReceive != FALSE) {
     // mobile:
         // CALL(aMobileReceive);
         MobileReceive();
@@ -41,7 +41,7 @@ void Serial(void){
     // LDH_A_addr(hSerialConnectionStatus);
     // INC_A;  // is it equal to CONNECTION_NOT_ESTABLISHED?
     // IF_Z goto establish_connection;
-    else if(hram->hSerialConnectionStatus == CONNECTION_NOT_ESTABLISHED) {
+    else if(hram.hSerialConnectionStatus == CONNECTION_NOT_ESTABLISHED) {
     // establish_connection:
         // LDH_A_addr(rSB);
         uint8_t status = gb_read(rSB);
@@ -52,9 +52,9 @@ void Serial(void){
         if(status == USING_EXTERNAL_CLOCK || status == USING_INTERNAL_CLOCK) {
         // player1:
             // LDH_addr_A(hSerialReceive);
-            hram->hSerialReceive = status;
+            hram.hSerialReceive = status;
             // LDH_addr_A(hSerialConnectionStatus);
-            hram->hSerialConnectionStatus = status;
+            hram.hSerialConnectionStatus = status;
             // CP_A(USING_INTERNAL_CLOCK);
             // IF_Z goto _player2;
             if(status == USING_INTERNAL_CLOCK) {
@@ -89,16 +89,16 @@ void Serial(void){
     else {
         // LDH_A_addr(rSB);
         // LDH_addr_A(hSerialReceive);
-        hram->hSerialReceive = gb_read(rSB);
+        hram.hSerialReceive = gb_read(rSB);
 
         // LDH_A_addr(hSerialSend);
         // LDH_addr_A(rSB);
-        gb_write(rSB, hram->hSerialSend);
+        gb_write(rSB, hram.hSerialSend);
 
         // LDH_A_addr(hSerialConnectionStatus);
         // CP_A(USING_INTERNAL_CLOCK);
         // IF_Z goto player2;
-        if(hram->hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
+        if(hram.hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
             // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
             // LDH_addr_A(rSC);
             gb_write(rSC, (0 << rSC_ON) | (0 << rSC_CLOCK));
@@ -112,10 +112,10 @@ void Serial(void){
 // player2:
     // LD_A(TRUE);
     // LDH_addr_A(hSerialReceivedNewData);
-    hram->hSerialReceivedNewData = TRUE;
+    hram.hSerialReceivedNewData = TRUE;
     // LD_A(SERIAL_NO_DATA_BYTE);
     // LDH_addr_A(hSerialSend);
-    hram->hSerialSend = SERIAL_NO_DATA_BYTE;
+    hram.hSerialSend = SERIAL_NO_DATA_BYTE;
 
 // end:
     // POP_HL;
@@ -131,16 +131,16 @@ uint8_t* Serial_ExchangeBytes(void* de_, const void* hl_, uint16_t bc){
     const uint8_t* hl = hl_;
     // LD_A(TRUE);
     // LDH_addr_A(hSerialIgnoringInitialData);
-    hram->hSerialIgnoringInitialData = TRUE;
+    hram.hSerialIgnoringInitialData = TRUE;
 
     while(1) {
     // loop:
         // LD_A_hl;
         // LDH_addr_A(hSerialSend);
-        hram->hSerialSend = *hl;
+        hram.hSerialSend = *hl;
         // CALL(aSerial_ExchangeByte);
         uint8_t byte;
-        Network_SafeExchangeBytes(&byte, &hram->hSerialSend, 1);
+        Network_SafeExchangeBytes(&byte, &hram.hSerialSend, 1);
         // PUSH_BC;
         // LD_B_A;
         // INC_HL;
@@ -159,7 +159,7 @@ uint8_t* Serial_ExchangeBytes(void* de_, const void* hl_, uint16_t bc){
         // LD_A_B;
         // POP_BC;
         // IF_Z goto load;
-        if(!hram->hSerialIgnoringInitialData) {
+        if(!hram.hSerialIgnoringInitialData) {
         // load:
             // LD_de_A;
             // INC_DE;
@@ -182,7 +182,7 @@ uint8_t* Serial_ExchangeBytes(void* de_, const void* hl_, uint16_t bc){
             continue;
         // XOR_A_A;
         // LDH_addr_A(hSerialIgnoringInitialData);
-        hram->hSerialIgnoringInitialData = 0;
+        hram.hSerialIgnoringInitialData = 0;
         // goto loop;
     }
 }
@@ -196,18 +196,18 @@ uint8_t Serial_ExchangeByte(const uint8_t* hl){
 timeout_loop:
     // XOR_A_A;
     // LDH_addr_A(hSerialReceivedNewData);
-    hram->hSerialReceivedNewData = 0;
+    hram.hSerialReceivedNewData = 0;
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // IF_NZ goto not_player_2;
-    if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
         // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
-        Network_SendByte(hram->hSerialSend);
+        Network_SendByte(hram.hSerialSend);
     }
 
 // not_player_2:
@@ -216,11 +216,11 @@ timeout_loop:
         // LDH_A_addr(hSerialReceivedNewData);
         // AND_A_A;
         // IF_NZ goto await_new_data;
-        if(hram->hSerialReceivedNewData != 0)
+        if(hram.hSerialReceivedNewData != 0)
             goto await_new_data;
         // LDH_A_addr(hSerialConnectionStatus);
         // CP_A(USING_EXTERNAL_CLOCK);
-        if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK || !CheckLinkTimeoutFramesNonzero()) {
+        if(hram.hSerialConnectionStatus != USING_EXTERNAL_CLOCK || !CheckLinkTimeoutFramesNonzero()) {
         // not_player_1_or_timed_out:
             // LDH_A_addr(rIE);
             // AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
@@ -243,7 +243,7 @@ timeout_loop:
             // LDH_A_addr(hSerialConnectionStatus);
             // CP_A(USING_EXTERNAL_CLOCK);
             // IF_Z goto await_new_data;
-            if(hram->hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
+            if(hram.hSerialConnectionStatus != USING_EXTERNAL_CLOCK) {
 
                 // LD_A(255);
 
@@ -255,7 +255,7 @@ timeout_loop:
         await_new_data:
             // XOR_A_A;
             // LDH_addr_A(hSerialReceivedNewData);
-            hram->hSerialReceivedNewData = 0;
+            hram.hSerialReceivedNewData = 0;
             // LDH_A_addr(rIE);
             // AND_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
             // SUB_A(1 << SERIAL);
@@ -275,8 +275,8 @@ timeout_loop:
             // LDH_A_addr(hSerialReceive);
             // CP_A(SERIAL_NO_DATA_BYTE);
             // RET_NZ ;
-            if(hram->hSerialReceive != SERIAL_NO_DATA_BYTE)
-                return hram->hSerialReceive;
+            if(hram.hSerialReceive != SERIAL_NO_DATA_BYTE)
+                return hram.hSerialReceive;
             // CALL(aCheckLinkTimeoutFramesNonzero);
             // IF_Z goto timed_out;
             if(!CheckLinkTimeoutFramesNonzero()) {
@@ -291,7 +291,7 @@ timeout_loop:
                 }
                 // LD_A_hl;
                 // LDH_addr_A(hSerialSend);
-                hram->hSerialSend = *hl;
+                hram.hSerialSend = *hl;
                 // CALL(aDelayFrame);
                 DelayFrame();
                 // JP(mSerial_ExchangeByte_timeout_loop);
@@ -389,7 +389,7 @@ void Serial_ExchangeSyncBytes(void){
         DelayFrame();
         result = Network_SafeExchangeBytes(de, hl, 2);
     } while(!result);
-    // hram->hSerialIgnoringInitialData = TRUE;
+    // hram.hSerialIgnoringInitialData = TRUE;
 
     // do {
         // uint8_t b, ignore;
@@ -399,18 +399,18 @@ void Serial_ExchangeSyncBytes(void){
         //     DelayFrame();
         //     // LD_A_hl;
         //     // LDH_addr_A(hSerialSend);
-        //     hram->hSerialSend = *hl;
+        //     hram.hSerialSend = *hl;
         //     // CALL(aSerial_ExchangeByte);
         //     // LD_B_A;
         //     b = Serial_ExchangeByte(hl);
         //     // INC_HL;
         //     hl++;
         //     // LDH_A_addr(hSerialIgnoringInitialData);
-        //     ignore = hram->hSerialIgnoringInitialData;
+        //     ignore = hram.hSerialIgnoringInitialData;
         //     // AND_A_A;
         //     // LD_A(FALSE);
         //     // LDH_addr_A(hSerialIgnoringInitialData);
-        //     hram->hSerialIgnoringInitialData = FALSE;
+        //     hram.hSerialIgnoringInitialData = FALSE;
         //     // IF_NZ goto exchange;
         // } while(ignore);
         // LD_A_B;
@@ -525,11 +525,11 @@ static void LinkTransfer_Receive(uint8_t b) {
     // AND_A(0xf0);
     // CP_A_B;
     // RET_NZ ;
-    if((hram->hSerialReceive & 0xf0) != b)
+    if((hram.hSerialReceive & 0xf0) != b)
         return;
     // XOR_A_A;
     // LDH_addr_A(hSerialReceive);
-    hram->hSerialReceive = 0;
+    hram.hSerialReceive = 0;
     // LD_A_addr(wOtherPlayerLinkMode);
     // AND_A(0xf);
     // LD_addr_A(wOtherPlayerLinkAction);
@@ -575,11 +575,11 @@ void LinkTransfer(void){
     // LD_A_addr(wPlayerLinkAction);
     // ADD_A_B;
     // LDH_addr_A(hSerialSend);
-    // hram->hSerialSend += wram->wPlayerLinkAction;
+    // hram.hSerialSend += wram->wPlayerLinkAction;
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // IF_NZ goto player_1;
-    if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
@@ -599,36 +599,41 @@ void LinkTransfer(void){
 void LinkDataReceived(void){
     // XOR_A_A;
     // LDH_addr_A(hSerialSend);
-    hram->hSerialSend = 0;
+    hram.hSerialSend = 0;
     // LDH_A_addr(hSerialConnectionStatus);
     // CP_A(USING_INTERNAL_CLOCK);
     // RET_NZ ;
-    if(hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
+    if(hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK) {
         // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (0 << rSC_ON) | (1 << rSC_CLOCK));
         // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
         // LDH_addr_A(rSC);
         // gb_write(rSC, (1 << rSC_ON) | (1 << rSC_CLOCK));
-        // Network_SendByte(hram->hSerialSend);
+        // Network_SendByte(hram.hSerialSend);
     }
     // RET;
 }
 
-void SetBitsForTimeCapsuleRequestIfNotLinked(void){
-    //  //  unreferenced
+//  //  unreferenced
 //  Similar to SetBitsForTimeCapsuleRequest (see engine/link/link.asm).
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    RET_NZ ;
-    LD_A(USING_INTERNAL_CLOCK);
-    LDH_addr_A(rSB);
-    XOR_A_A;
-    LDH_addr_A(hSerialReceive);
-    LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    RET;
-
+void SetBitsForTimeCapsuleRequestIfNotLinked(void){
+    // LD_A_addr(wLinkMode);
+    // AND_A_A;
+    // RET_NZ ;
+    if(wram->wLinkMode != LINK_NULL)
+        return;
+    // LD_A(USING_INTERNAL_CLOCK);
+    // LDH_addr_A(rSB);
+    gb_write(rSB, USING_INTERNAL_CLOCK);
+    // XOR_A_A;
+    // LDH_addr_A(hSerialReceive);
+    hram.hSerialReceive = 0;
+    // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
+    // LDH_addr_A(rSC);
+    gb_write(rSC, (0 << rSC_ON) | (0 << rSC_CLOCK));
+    // LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
+    // LDH_addr_A(rSC);
+    gb_write(rSC, (1 << rSC_ON) | (0 << rSC_CLOCK));
+    // RET;
 }

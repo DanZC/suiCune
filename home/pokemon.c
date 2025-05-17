@@ -126,7 +126,7 @@ void v_PrepMonFrontpic(tile_t* hl){
         // POP_HL;
         // XOR_A_A;
         // LDH_addr_A(hGraphicStartTile);
-        hram->hGraphicStartTile = 0;
+        hram.hGraphicStartTile = 0;
         // LD_BC((7 << 8) | 7);
         // PREDEF(pPlaceGraphic);
         PlaceGraphicYStagger(hl, 7, 7);
@@ -287,15 +287,14 @@ void Print8BitNumLeftAlign(tile_t* hl, uint8_t a, uint8_t c){
     return;
 }
 
+//  //  unreferenced
 void GetNthMove(void){
-    //  //  unreferenced
-    LD_HL(wListMoves_MoveIndicesBuffer);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    LD_A_hl;
-    RET;
-
+    // LD_HL(wListMoves_MoveIndicesBuffer);
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // RET;
 }
 
 void GetBaseData(species_t species){

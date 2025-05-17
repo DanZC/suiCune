@@ -30,8 +30,8 @@ void BattleCommand_ClearHazards(void){
     // IF_Z goto got_screens_wrap;
     // LD_HL(wEnemyScreens);
     // LD_DE(wEnemyWrapCount);
-    uint8_t* screens = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerScreens: &wram->wEnemyScreens;
-    uint8_t* wrap    = (hram->hBattleTurn == TURN_PLAYER)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
+    uint8_t* screens = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerScreens: &wram->wEnemyScreens;
+    uint8_t* wrap    = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
 
 // got_screens_wrap:
     // BIT_hl(SCREENS_SPIKES);

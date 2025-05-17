@@ -37,9 +37,9 @@ void InitDisplayForHallOfFame(void){
     ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
     // XOR_A_A;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // CALL(aEnableLCD);
     EnableLCD();
     // LD_HL(mInitDisplayForHallOfFame_SavingRecordText);
@@ -93,9 +93,9 @@ void InitDisplayForRedCredits(void){
     } while(--c != 0);
     // XOR_A_A;
     // LDH_addr_A(hSCY);
-    hram->hSCY = 0x0;
+    hram.hSCY = 0x0;
     // LDH_addr_A(hSCX);
-    hram->hSCX = 0x0;
+    hram.hSCX = 0x0;
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap2);

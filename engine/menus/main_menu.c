@@ -318,7 +318,7 @@ static uint8_t MainMenu_GetWhichMenu(void){
     // CP_A(TRUE);
     // LD_A(MAINMENU_CONTINUE);
     // RET_NZ ;
-    if(hram->hCGB != TRUE)
+    if(hram.hCGB != TRUE)
         return MAINMENU_CONTINUE;
     // LD_A(MBANK(asNumDailyMysteryGiftPartnerIDs));
     // CALL(aOpenSRAM);
@@ -511,14 +511,14 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
     // LDH_A_addr(hHours);
     // LD_C_A;
     // FARCALL(aPrintHour);
-    uint8_t* hl = PrintHour(coord(4, 16, wram->wTilemap), hram->hHours);
+    uint8_t* hl = PrintHour(coord(4, 16, wram->wTilemap), hram.hHours);
     // LD_hl(0x9c);
     *(hl++) = CHAR_COLON2;
     // INC_HL;
     // LD_DE(hMinutes);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum(hl, &hram->hMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl, &hram.hMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // RET;
     return;
 
@@ -542,7 +542,7 @@ static void MainMenu_PrintCurrentTimeAndDay(void){
         return;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMainMenu_PrintCurrentTimeAndDay_PlaceBox);
     MainMenu_PrintCurrentTimeAndDay_PlaceBox();
     // LD_HL(wOptions);
@@ -558,14 +558,14 @@ static void MainMenu_PrintCurrentTimeAndDay(void){
     wram->wOptions = temp;
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
 static void ClearTilemapEtc(void){
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hram.hMapAnims = 0;
     // CALL(aClearTilemap);
     ClearTilemap();
     // CALL(aLoadFontsExtra);

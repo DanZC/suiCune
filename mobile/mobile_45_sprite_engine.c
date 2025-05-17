@@ -653,7 +653,7 @@ void Function116294(void){
     // LDH_addr_A(rSVBK);
     // LD_A(0x30);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x30;
+    hram.hWY = 0x30;
     // RET;
 }
 
@@ -827,7 +827,7 @@ void Function11636e(void){
     ByteFill(wram->wVirtualOAMSprite, 16 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // CALL(aUpdateSprites);
     UpdateSprites();
     // POP_AF;
@@ -884,7 +884,7 @@ void Function1163c0(void){
     DelayFrame();
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // CALL(aUpdateSprites);
     UpdateSprites();
     // FARCALL(av_ClearSprites);
@@ -933,7 +933,7 @@ void Function116441(void){
     Function17d405();
     // LD_A(0x90);
     // LDH_addr_A(hWY);
-    hram->hWY = 0x90;
+    hram.hWY = 0x90;
     // FARCALL(aReloadMapPart);
     ReloadMapPart();
     // LD_A(0x8);

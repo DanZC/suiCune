@@ -58,7 +58,7 @@ void v_AnimateTileset(void){
     // LD_L_A;
     // INC_A;
     // LDH_addr_A(hTileAnimFrame);
-    uint8_t l = hram->hTileAnimFrame++;
+    uint8_t l = hram.hTileAnimFrame++;
 
     // LD_H(0);
     // ADD_HL_HL;
@@ -357,7 +357,7 @@ void DoneTileAnimation(uint8_t* de){
     (void)de;
     // XOR_A_A;
     // LDH_addr_A(hTileAnimFrame);
-    hram->hTileAnimFrame = 0;
+    hram.hTileAnimFrame = 0;
 }
 
 //  Do nothing this frame.
@@ -392,17 +392,16 @@ void ScrollTileRightLeft(uint8_t* de){
     return ScrollTileRight(de);
 }
 
-void ScrollTileUpDown(void){
 //  //  unreferenced
 //  Scroll up for 4 ticks, then down for 4 ticks.
-    LD_A_addr(wTileAnimationTimer);
-    INC_A;
-    AND_A(0b111);
-    LD_addr_A(wTileAnimationTimer);
-    AND_A(0b100);
-    JR_NZ (mScrollTileDown);
-    JR(mScrollTileUp);
-
+void ScrollTileUpDown(void){
+    // LD_A_addr(wTileAnimationTimer);
+    // INC_A;
+    // AND_A(0b111);
+    // LD_addr_A(wTileAnimationTimer);
+    // AND_A(0b100);
+    // JR_NZ (mScrollTileDown);
+    // JR(mScrollTileUp);
 }
 
 void ScrollTileLeft(uint8_t* de){
@@ -885,7 +884,7 @@ void AnimateFlowerTile(uint8_t* de){
     // LD_SP_HL;
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x03);
     // JP(mWriteTile);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x03, FlowerTileFrames[e + (hram->hCGB & 1)], 0, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x03, FlowerTileFrames[e + (hram.hCGB & 1)], 0, 1);
 }
 
 void AnimateLavaBubbleTile1(uint8_t* de){
@@ -1123,7 +1122,7 @@ void AnimateWaterPalette(uint8_t* de){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hram.hCGB == 0)
         return;
 
 //  Don't update a non-standard palette order
@@ -1204,7 +1203,7 @@ void FlickeringCaveEntrancePalette(uint8_t* de){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hram.hCGB == 0)
         return;
 
 //  Don't update a non-standard palette order
@@ -1235,7 +1234,7 @@ void FlickeringCaveEntrancePalette(uint8_t* de){
     // LDH_A_addr(hVBlankCounter);
     // AND_A(0b10);
     // IF_NZ goto color1;
-    if((hram->hVBlankCounter & 0b10)) {
+    if((hram.hVBlankCounter & 0b10)) {
     // color1:
         // LD_HL(wBGPals1 + PALETTE_SIZE * PAL_BG_YELLOW + PAL_COLOR_SIZE * 1);
         gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_YELLOW + PAL_COLOR_SIZE * 1 + 0]);

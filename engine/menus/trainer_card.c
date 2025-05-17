@@ -74,7 +74,7 @@ void TrainerCard(void){
         // LDH_A_addr(hJoyLast);
         // AND_A(B_BUTTON);
         // IF_NZ goto quit;
-        if(bit_test(wram->wJumptableIndex, 7) || bit_test(hram->hJoyLast, B_BUTTON))
+        if(bit_test(wram->wJumptableIndex, 7) || bit_test(hram.hJoyLast, B_BUTTON))
             break;
         // CALL(aTrainerCard_RunJumptable);
         // Jumptable:
@@ -220,7 +220,7 @@ void TrainerCard_Page1_Joypad(void){
     // LD_A_hl;
     // AND_A(D_RIGHT | A_BUTTON);
     // IF_NZ goto pressed_right_a;
-    if(hram->hJoyLast & (D_RIGHT | A_BUTTON)) {
+    if(hram.hJoyLast & (D_RIGHT | A_BUTTON)) {
     // pressed_right_a:
         // LD_A(TRAINERCARDSTATE_PAGE2_LOADGFX);
         // LD_addr_A(wJumptableIndex);
@@ -276,7 +276,7 @@ void TrainerCard_Page2_Joypad(void){
     // LD_A_hl;
     // AND_A(A_BUTTON);
     // IF_NZ goto Quit;
-    if(hram->hJoyLast & A_BUTTON) {
+    if(hram.hJoyLast & A_BUTTON) {
     // Quit:
         // LD_A(TRAINERCARDSTATE_QUIT);
         // LD_addr_A(wJumptableIndex);
@@ -287,7 +287,7 @@ void TrainerCard_Page2_Joypad(void){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // IF_NZ goto d_left;
-    if(hram->hJoyLast & D_LEFT) {
+    if(hram.hJoyLast & D_LEFT) {
     // d_left:
         // LD_A(TRAINERCARDSTATE_PAGE1_LOADGFX);
         // LD_addr_A(wJumptableIndex);
@@ -343,7 +343,7 @@ void TrainerCard_Page3_Joypad(void){
     // LD_A_hl;
     // AND_A(D_LEFT);
     // IF_NZ goto left;
-    if(hram->hJoyLast & D_LEFT) {
+    if(hram.hJoyLast & D_LEFT) {
     // left:
         // LD_A(TRAINERCARDSTATE_PAGE2_LOADGFX);
         // LD_addr_A(wJumptableIndex);
@@ -354,7 +354,7 @@ void TrainerCard_Page3_Joypad(void){
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // IF_NZ goto right;
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hram.hJoyLast & D_RIGHT) {
     // right:
         // LD_A(TRAINERCARDSTATE_PAGE1_LOADGFX);
         // LD_addr_A(wJumptableIndex);
@@ -410,7 +410,7 @@ void TrainerCard_PrintTopHalfOfCard(void){
     // LD_BC((5 << 8) | 7);
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0;
+    hram.hGraphicStartTile = 0;
     // PREDEF(pPlaceGraphic);
     PlaceGraphicYStagger(coord(14, 1, wram->wTilemap), 5, 7);
     // RET;
@@ -687,7 +687,7 @@ void TrainerCard_Page1_PrintGameTime(void){
     // LDH_A_addr(hVBlankCounter);
     // AND_A(0x1f);
     // RET_NZ ;
-    if(hram->hVBlankCounter & 0x1f)
+    if(hram.hVBlankCounter & 0x1f)
         return;
     // hlcoord(15, 12, wTilemap);
     // LD_A_hl;
@@ -701,7 +701,7 @@ static void TrainerCard_Page2_3_AnimateBadges(const struct JohtoBadgesOAM* hl){
     // LDH_A_addr(hVBlankCounter);
     // AND_A(0b111);
     // RET_NZ ;
-    if(hram->hVBlankCounter & 0b111)
+    if(hram.hVBlankCounter & 0b111)
         return;
     // LD_A_addr(wTrainerCardBadgeFrameCounter);
     // INC_A;

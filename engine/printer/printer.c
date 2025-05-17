@@ -95,7 +95,7 @@ void PrintDexEntry(void){
 
     // XOR_A_A;
     // LDH_addr_A(hPrinter);
-    hram->hPrinter = 0x0;
+    hram.hPrinter = 0x0;
     // CALL(aPrinter_PlayMusic);
     Printer_PlayMusic();
 
@@ -141,7 +141,7 @@ void PrintDexEntry(void){
         DelayFrames(12);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aPrinter_StartTransmission);
         // LD_A((0 << 4) | 3);
         // LD_addr_A(wPrinterMargins);
@@ -213,7 +213,7 @@ void PrintPCBox(uint32_t de, uint8_t c){
 
     // XOR_A_A;
     // LDH_addr_A(hPrinter);
-    hram->hPrinter = 0;
+    hram.hPrinter = 0;
     // LD_addr_A(wFinishedPrintingBox);
     wram->wFinishedPrintingBox = 0;
     // CALL(aPrinter_PlayMusic);
@@ -234,7 +234,7 @@ void PrintPCBox(uint32_t de, uint8_t c){
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aPrintPCBox_Page1);
     PrintPCBox_Page1();
     // LD_A((1 << 4) | 0);  // to be loaded to wPrinterMargins
@@ -250,7 +250,7 @@ void PrintPCBox(uint32_t de, uint8_t c){
         DelayFrames(12);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aPrintPCBox_Page2);
         PrintPCBox_Page2();
         // LD_A((0 << 4) | 0);  // to be loaded to wPrinterMargins
@@ -267,7 +267,7 @@ void PrintPCBox(uint32_t de, uint8_t c){
 
             // XOR_A_A;
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_NONE;
+            hram.hBGMapMode = BGMAPMODE_NONE;
             // CALL(aPrintPCBox_Page3);
             PrintPCBox_Page3();
             // LD_A((0 << 4) | 0);  // to be loaded to wPrinterMargins
@@ -284,7 +284,7 @@ void PrintPCBox(uint32_t de, uint8_t c){
 
                 // XOR_A_A;
                 // LDH_addr_A(hBGMapMode);
-                hram->hBGMapMode = BGMAPMODE_NONE;
+                hram.hBGMapMode = BGMAPMODE_NONE;
                 // CALL(aPrintPCBox_Page4);
                 PrintPCBox_Page4();
                 // LD_A((0 << 4) | 3);  // to be loaded to wPrinterMargins
@@ -333,7 +333,7 @@ void PrintUnownStamp(void){
 
     // XOR_A_A;
     // LDH_addr_A(hPrinter);
-    hram->hPrinter = 0x0;
+    hram.hPrinter = 0x0;
     // CALL(aPrinter_PlayMusic);
     Printer_PlayMusic();
 
@@ -352,7 +352,7 @@ void PrintUnownStamp(void){
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aLoadTilemapToTempTilemap);
     LoadTilemapToTempTilemap();
     // FARCALL(aPlaceUnownPrinterFrontpic);
@@ -437,7 +437,7 @@ void PrintMail(void){
     uint8_t queueLength = wram->wPrinterQueueLength;
     // XOR_A_A;
     // LDH_addr_A(hPrinter);
-    hram->hPrinter = 0x0;
+    hram.hPrinter = 0x0;
     // CALL(aPrinter_PlayMusic);
     Printer_PlayMusic();
 
@@ -451,7 +451,7 @@ void PrintMail(void){
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 
     // LD_A((1 << 4) | 3);  // to be loaded to wPrinterMargins
     // CALL(aPrinter_PrepareTilemapForPrint);
@@ -492,7 +492,7 @@ void PrintPartymon(void){
     uint8_t queueLength = wram->wPrinterQueueLength;
     // XOR_A_A;
     // LDH_addr_A(hPrinter);
-    hram->hPrinter = 0x0;
+    hram.hPrinter = 0x0;
     // CALL(aPrinter_PlayMusic);
     Printer_PlayMusic();
 
@@ -505,7 +505,7 @@ void PrintPartymon(void){
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // FARCALL(aPrintPartyMonPage1);
     PrintPartyMonPage1();
     // LD_A((1 << 4) | 0);  // to be loaded to wPrinterMargins
@@ -534,7 +534,7 @@ void PrintPartymon(void){
 
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // FARCALL(aPrintPartyMonPage2);
         PrintPartyMonPage2();
         // LD_A((0 << 4) | 3);  // to be loaded to wPrinterMargins
@@ -583,7 +583,7 @@ void v_PrintDiploma(void){
 
     // XOR_A_A;
     // LDH_addr_A(hPrinter);
-    hram->hPrinter = 0x0;
+    hram.hPrinter = 0x0;
     // CALL(aPrinter_PlayMusic);
     Printer_PlayMusic();
 
@@ -622,7 +622,7 @@ void v_PrintDiploma(void){
         LoadTilemapToTempTilemap();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
 
         // FARCALL(aPrintDiplomaPage2);
         PrintDiplomaPage2();
@@ -667,7 +667,7 @@ bool CheckCancelPrint(void){
     // LDH_A_addr(hJoyDown);
     // AND_A(B_BUTTON);
     // IF_NZ goto pressed_b;
-    if(hram->hJoyDown & B_BUTTON) {
+    if(hram.hJoyDown & B_BUTTON) {
     // pressed_b:
         // LD_A_addr(wUnusedGameboyPrinterSafeCancelFlag);
         // CP_A(0x0c);
@@ -697,7 +697,7 @@ bool CheckCancelPrint(void){
     // cancel:
         // LD_A(0x1);
         // LDH_addr_A(hPrinter);
-        hram->hPrinter = 0x1;
+        hram.hPrinter = 0x1;
         // SCF;
         // RET;
         return true;
@@ -729,13 +729,13 @@ void Printer_CopyBufferToTilemap(void){
 void Printer_ResetJoypadRegisters(void){
     // XOR_A_A;
     // LDH_addr_A(hJoyReleased);
-    hram->hJoyReleased = 0;
+    hram.hJoyReleased = 0;
     // LDH_addr_A(hJoyPressed);
-    hram->hJoyPressed = 0;
+    hram.hJoyPressed = 0;
     // LDH_addr_A(hJoyDown);
-    hram->hJoyDown = 0;
+    hram.hJoyDown = 0;
     // LDH_addr_A(hJoyLast);
-    hram->hJoyLast = 0;
+    hram.hJoyLast = 0;
     // RET;
 }
 
@@ -808,7 +808,7 @@ void PlacePrinterStatusString(void){
     // PUSH_AF;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 5, wTilemap);
     // LD_BC((10 << 8) | 18);
     // CALL(aTextbox);
@@ -833,7 +833,7 @@ void PlacePrinterStatusString(void){
     PlaceStringSimple(U82C(String_PressBToCancel), coord(2, 15, wram->wTilemap));
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // XOR_A_A;
     // LD_addr_A(wPrinterStatus);
     wram->wPrinterStatus = 0x0;

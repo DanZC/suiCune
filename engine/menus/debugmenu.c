@@ -151,8 +151,8 @@ static void DebugMenu_MenuBox(void) {
 
 void DebugMenu(void) {
     PEEK("");
-    uint8_t inMenu = hram->hInMenu;
-    hram->hInMenu = 1;
+    uint8_t inMenu = hram.hInMenu;
+    hram.hInMenu = 1;
 
     if(sDebugMenuTilemapBuffer) {
         free(sDebugMenuTilemapBuffer); // also frees sDebugMenuAttrmapBuffer
@@ -170,13 +170,13 @@ void DebugMenu(void) {
     {
         wram->wDisableTextAcceleration = 0;
         GetJoypad();
-        int8_t dir = -((hram->hJoyPressed & D_UP)? 1: 0) + ((hram->hJoyPressed & D_DOWN)? 1: 0);
+        int8_t dir = -((hram.hJoyPressed & D_UP)? 1: 0) + ((hram.hJoyPressed & D_DOWN)? 1: 0);
         if(dir != 0) {
             DebugMenu_MoveCursor(dir);
             DelayFrame();
             continue;
         }
-        if(hram->hJoyPressed & (A_BUTTON)) {
+        if(hram.hJoyPressed & (A_BUTTON)) {
             uint8_t numberOfOptions = sizeof(debugMenuOptions) / sizeof(DebugMenuOption);
             if(cursorIndex == MAX_OPTIONS_PER_PAGE || 
                 currentPage * MAX_OPTIONS_PER_PAGE + cursorIndex >= numberOfOptions) {
@@ -191,7 +191,7 @@ void DebugMenu(void) {
             DebugMenu_PlaceCursor();
             continue;
         }
-        if(hram->hJoyPressed & (B_BUTTON))
+        if(hram.hJoyPressed & (B_BUTTON))
             break;
         DelayFrame();
     }
@@ -202,7 +202,7 @@ void DebugMenu(void) {
     sDebugMenuTilemapBuffer = NULL;
     sDebugMenuAttrmapBuffer = NULL;
 
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
 }
 
 static void Handler_Fight(void) {
@@ -365,7 +365,7 @@ void DebugMenu_SoundTest(void) {
     {
         wram->wDisableTextAcceleration = 0;
         GetJoypad();
-        int8_t dir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
+        int8_t dir = -((hram.hJoyPressed & D_LEFT)? 1: 0) + ((hram.hJoyPressed & D_RIGHT)? 1: 0);
         if(dir != 0) {
             if(editingWhich == 0) {
                 int newTrack = musicTrack + dir;
@@ -396,27 +396,27 @@ void DebugMenu_SoundTest(void) {
             DelayFrame();
             continue;
         }
-        if(hram->hJoyPressed & (D_DOWN)) {
+        if(hram.hJoyPressed & (D_DOWN)) {
             editingWhich = 1;
             wram->wTilemap[coordidx(1, 2)] = CHAR_SPACE;
             wram->wTilemap[coordidx(SCREEN_WIDTH - 2, 2)] = CHAR_SPACE;
             wram->wTilemap[coordidx(1, 6)] = CHAR_LEFT_ARROW;
             wram->wTilemap[coordidx(SCREEN_WIDTH - 2, 6)] = CHAR_RIGHT_ARROW;
         }
-        if(hram->hJoyPressed & (D_UP)) {
+        if(hram.hJoyPressed & (D_UP)) {
             editingWhich = 0;
             wram->wTilemap[coordidx(1, 6)] = CHAR_SPACE;
             wram->wTilemap[coordidx(SCREEN_WIDTH - 2, 6)] = CHAR_SPACE;
             wram->wTilemap[coordidx(1, 2)] = CHAR_LEFT_ARROW;
             wram->wTilemap[coordidx(SCREEN_WIDTH - 2, 2)] = CHAR_RIGHT_ARROW;
         }
-        if(hram->hJoyPressed & (B_BUTTON)) {
+        if(hram.hJoyPressed & (B_BUTTON)) {
             PlayMusic(MUSIC_NONE);
             DelayFrame();
         }
-        if(hram->hJoyPressed & (SELECT)) 
+        if(hram.hJoyPressed & (SELECT)) 
             break;
-        if(hram->hJoyPressed & (A_BUTTON)) {
+        if(hram.hJoyPressed & (A_BUTTON)) {
             if(editingWhich == 0) {
                 PlayMusic(MUSIC_NONE);
                 DelayFrame();
@@ -574,8 +574,8 @@ void DebugMenu_BattleTest(void) {
     {
         wram->wDisableTextAcceleration = 0;
         GetJoypad();
-        int8_t hdir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
-        int8_t vdir = -((hram->hJoyPressed & D_UP)? 1: 0) + ((hram->hJoyPressed & D_DOWN)? 1: 0);
+        int8_t hdir = -((hram.hJoyPressed & D_LEFT)? 1: 0) + ((hram.hJoyPressed & D_RIGHT)? 1: 0);
+        int8_t vdir = -((hram.hJoyPressed & D_UP)? 1: 0) + ((hram.hJoyPressed & D_DOWN)? 1: 0);
         if(hdir > 0) {
             DebugMenu_BattleTest_GetNextTrainer(&tclass, &tid);
             ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
@@ -596,9 +596,9 @@ void DebugMenu_BattleTest(void) {
             ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, 7);
             DebugMenu_BattleTest_PlaceTrainerName(tclass, tid);
         }
-        if(hram->hJoyPressed & (B_BUTTON)) 
+        if(hram.hJoyPressed & (B_BUTTON)) 
             break;
-        if(hram->hJoyPressed & (A_BUTTON)) {
+        if(hram.hJoyPressed & (A_BUTTON)) {
             DebugMenu_BattleTest_StartBattle(tclass, tid);
             Textbox(wram->wTilemap + coordidx(TEXTBOX_X, TEXTBOX_Y), TEXTBOX_INNERH, TEXTBOX_INNERW);
             PlaceStringSimple(Utf8ToCrystal("A- FIGHT  LR- MV<LINE>B- BACK@"), wram->wTilemap + coordidx(TEXTBOX_INNERX, TEXTBOX_INNERY));
@@ -612,7 +612,7 @@ void DebugMenu_BattleTest(void) {
 }
 
 void DebugMenu_GFXTest(void) {
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     ClearBox(wram->wTilemap + coordidx(0, 0), SCREEN_WIDTH, SCREEN_HEIGHT);
     ByteFill(vram->vTiles0, 2048, 0);
     ByteFill(vram->vTiles1, 2048, 0);
@@ -637,10 +637,10 @@ void DebugMenu_GFXTest(void) {
     {
         wram->wDisableTextAcceleration = 0;
         GetJoypad();
-        if(hram->hJoyPressed & (B_BUTTON)) 
+        if(hram.hJoyPressed & (B_BUTTON)) 
             break;
-        if(hram->hJoyPressed & (A_BUTTON))  {
-            hram->hGraphicStartTile = 0;
+        if(hram.hJoyPressed & (A_BUTTON))  {
+            hram.hGraphicStartTile = 0;
             PlaceGraphic(coord(0, 0, wram->wTilemap), 7, 7);
         }
         DelayFrame();
@@ -734,10 +734,10 @@ void DebugMenu_Pics(void) {
     {
         GetJoypad();
 
-        if(hram->hJoyPressed & (B_BUTTON))
+        if(hram.hJoyPressed & (B_BUTTON))
             break;
         
-        int8_t dir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
+        int8_t dir = -((hram.hJoyPressed & D_LEFT)? 1: 0) + ((hram.hJoyPressed & D_RIGHT)? 1: 0);
         if(dir < 0) {
             if(s == BULBASAUR) s = CELEBI;
             else s--;
@@ -753,7 +753,7 @@ void DebugMenu_Pics(void) {
             continue;
         }
 
-        if(hram->hJoyPressed & (A_BUTTON)) {
+        if(hram.hJoyPressed & (A_BUTTON)) {
             DebugMenu_Pics_DoAnim(s);
         }
         DelayFrame();
@@ -899,7 +899,7 @@ static void DebugMenu_BattleAnim_PlaceText(uint16_t move) {
     char buffer[64];
     sprintf(buffer, "MOVE - 0x%02X@", move);
     PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 1, wram->wTilemap));
-    sprintf(buffer, "TURN - %s@", (hram->hBattleTurn == TURN_PLAYER)? "PLAYER": "ENEMY");
+    sprintf(buffer, "TURN - %s@", (hram.hBattleTurn == TURN_PLAYER)? "PLAYER": "ENEMY");
     PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 2, wram->wTilemap));
     sprintf(buffer, "B - BACK@");
     PlaceStringSimple(U82C(buffer), coord(TEXTBOX_INNERX, TEXTBOX_Y + 3, wram->wTilemap));
@@ -951,10 +951,10 @@ void DebugMenu_BattleAnim(void) {
     wram->wTempBattleMonSpecies = wram->wPartyMon[0].mon.species;
     wram->wTempEnemyMonSpecies = wram->wOTPartySpecies[0];
     GetSGBLayout(SCGB_BATTLE_COLORS);
-    hram->hGraphicStartTile = 0x31;
+    hram.hGraphicStartTile = 0x31;
     PlaceGraphicYStagger(coord(2, 6, wram->wTilemap), 6, 6);
     GetEnemyMonFrontpic();
-    hram->hGraphicStartTile = 0;
+    hram.hGraphicStartTile = 0;
     PlaceGraphicYStagger(coord(12, 0, wram->wTilemap), 7, 7);
     SpeechTextbox();
     DebugMenu_BattleAnim_PlaceText(anim);
@@ -962,11 +962,11 @@ void DebugMenu_BattleAnim(void) {
 
     while(1) {
         GetJoypad();
-        if(hram->hJoyPressed & (B_BUTTON))
+        if(hram.hJoyPressed & (B_BUTTON))
             break;
         
-        int8_t dir = -((hram->hJoyPressed & D_LEFT)? 1: 0) + ((hram->hJoyPressed & D_RIGHT)? 1: 0);
-        int8_t dir2 = -((hram->hJoyPressed & D_DOWN)? 1: 0) + ((hram->hJoyPressed & D_UP)? 1: 0);
+        int8_t dir = -((hram.hJoyPressed & D_LEFT)? 1: 0) + ((hram.hJoyPressed & D_RIGHT)? 1: 0);
+        int8_t dir2 = -((hram.hJoyPressed & D_DOWN)? 1: 0) + ((hram.hJoyPressed & D_UP)? 1: 0);
 
         if(dir < 0) {
             anim--;
@@ -994,20 +994,20 @@ void DebugMenu_BattleAnim(void) {
             DebugMenu_BattleAnim_PlaceText(anim);
         }
 
-        if(hram->hJoyPressed & SELECT) {
-            hram->hBattleTurn ^= 1;
+        if(hram.hJoyPressed & SELECT) {
+            hram.hBattleTurn ^= 1;
             SpeechTextbox();
             DebugMenu_BattleAnim_PlaceText(anim);
         }
 
-        if(hram->hJoyPressed & (A_BUTTON)) {
+        if(hram.hJoyPressed & (A_BUTTON)) {
             if(anim == NUM_BATTLE_ANIMS + 1) {
                 wram->wFXAnimID = ANIM_THROW_POKE_BALL;
                 wram->wBattleAnimParam = POKE_BALL;
             }
             else if(anim == GROWL || anim == ROAR) {
                 wram->wFXAnimID = anim;
-                wram->wBattleAnimParam = (hram->hBattleTurn == TURN_PLAYER)? wram->wBattleMon.species: wram->wEnemyMon.species;
+                wram->wBattleAnimParam = (hram.hBattleTurn == TURN_PLAYER)? wram->wBattleMon.species: wram->wEnemyMon.species;
             }
             else {
                 wram->wFXAnimID = anim;

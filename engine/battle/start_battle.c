@@ -35,7 +35,7 @@ void ShowLinkBattleParticipants(void){
 void FindFirstAliveMonAndStartBattle(void){
     // XOR_A_A;
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = 0;
+    hram.hMapAnims = 0;
     // CALL(aDelayFrame);
     DelayFrame();
     // LD_B(PARTY_LENGTH);
@@ -70,20 +70,20 @@ void FindFirstAliveMonAndStartBattle(void){
     v_LoadBattleFontsHPBar();
     // LD_A(1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // CALL(aClearSprites);
     ClearSprites();
     // CALL(aClearTilemap);
     ClearTilemap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LDH_addr_A(hWY);
-    hram->hWY = 0x0;
+    hram.hWY = 0x0;
     // LDH_addr_A(rWY);
     gb_write(rWY, 0x0);
     // LDH_addr_A(hMapAnims);
-    hram->hMapAnims = FALSE;
+    hram.hMapAnims = FALSE;
     // RET;
 }
 
@@ -316,7 +316,7 @@ void ClearBattleRAM(void){
     // XOR_A_A;  // LOW(vBGMap0)
     // LD_hli_A;
     // LD_hl(HIGH(vBGMap0));
-    hram->hBGMapAddress = vBGMap0;
+    hram.hBGMapAddress = vBGMap0;
     // RET;
 
 }

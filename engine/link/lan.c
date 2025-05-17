@@ -134,7 +134,7 @@ void LANConnection_Host(void) {
         DelayFrame();
 
         GetJoypad();
-        uint8_t pad = hram->hJoyPressed;
+        uint8_t pad = hram.hJoyPressed;
         if(pad & B_BUTTON) {
             CloseWindow();
             PrintText(Text_Cancelled);
@@ -161,7 +161,7 @@ void LANConnection_Host(void) {
                     CloseWindow();
                     wram->wScriptVar = TRUE;
                     gOtherPlayerGender = candidate->gender;
-                    hram->hSerialConnectionStatus = USING_INTERNAL_CLOCK;
+                    hram.hSerialConnectionStatus = USING_INTERNAL_CLOCK;
                     return;
                 }
                 else {
@@ -280,7 +280,7 @@ void LANConnection_Join(void) {
                 if(success) {
                     wram->wScriptVar = TRUE;
                     gOtherPlayerGender = candidate->gender;
-                    hram->hSerialConnectionStatus = USING_EXTERNAL_CLOCK;
+                    hram.hSerialConnectionStatus = USING_EXTERNAL_CLOCK;
                     return;
                 }
                 else {
@@ -296,13 +296,13 @@ void LANConnection_Join(void) {
                 return;
             }
         }
-        else if(hram->hJoyPressed & D_DOWN) {
+        else if(hram.hJoyPressed & D_DOWN) {
             selection++;
             if(selection > candidateCount)
                 selection = 0;
             PlaceLANConnectionMenuCursor(selection);
         }
-        else if(hram->hJoyPressed & D_UP) {
+        else if(hram.hJoyPressed & D_UP) {
             if(selection == 0)
                 selection = candidateCount;
             else

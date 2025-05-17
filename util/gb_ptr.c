@@ -70,7 +70,7 @@ void* AbsGBBankAddrToRAMAddr(uint8_t bank, uint16_t addr) {
         return wram->wram0 + (0x1000 * bank) + (addr - WRAM0_Begin);
     }
     if(addr >= HRAM_Begin && addr < HRAM_End) {
-        return (uint8_t*)hram + (addr - HRAM_Begin);
+        return (uint8_t*)&hram + (addr - HRAM_Begin);
     }
     if(addr >= VRAM_Begin && addr < VRAM_End) {
         return (uint8_t*)vram + (VRAM_BANK_SIZE * bank) + (addr - VRAM_Begin);
@@ -95,7 +95,7 @@ void* AbsGBToRAMAddr(uint32_t hl) {
         return wram->wram0 + (0x1000 * ba.bank) + (ba.addr - WRAM1_Begin);
     }
     if(ba.addr >= HRAM_Begin && ba.addr < HRAM_End) {
-        return (uint8_t*)hram + (ba.addr - HRAM_Begin);
+        return (uint8_t*)&hram + (ba.addr - HRAM_Begin);
     }
     if(ba.addr >= VRAM_Begin && ba.addr < VRAM_End) {
         return (uint8_t*)vram + (VRAM_BANK_SIZE * ba.bank) + (ba.addr - VRAM_Begin);
@@ -113,8 +113,8 @@ uint16_t RAMAddrToGB(void* addr) {
         return WRAM0_Begin + (p - wram->wram0);
     if((p - wram->wram1) >= 0 && (p - wram->wram1) < 0x6000)
         return WRAM1_Begin + ((p - wram->wram1) % 0x1000);
-    if((p - (uint8_t*)hram) >= 0 && (p - (uint8_t*)hram) < (long long)sizeof(*hram))
-        return HRAM_Begin + (p - (uint8_t*)hram);
+    if((p - (uint8_t*)&hram) >= 0 && (p - (uint8_t*)&hram) < (long long)sizeof(hram))
+        return HRAM_Begin + (p - (uint8_t*)&hram);
     if((p - (uint8_t*)vram) >= 0 && (p - (uint8_t*)vram) < (long long)sizeof(*vram))
         return VRAM_Begin + (p - (uint8_t*)vram);
     if((p - ((struct priv_t*)gb.direct.priv)->rom) >= 0 && (p - ((struct priv_t*)gb.direct.priv)->rom) < ROM_BANK_SIZE)
@@ -133,8 +133,8 @@ uint32_t RAMAddrToAbsGB(void* addr) {
         return WRAM0_Begin + (wram->wram0 - p);
     if((wram->wram1 - p) >= 0 && (wram->wram1 - p) < 0x6000)
         return (WRAM1_Begin + (wram->wram1 - p)) | (((wram->wram0 - p) / 0x1000) << 16);
-    if(((uint8_t*)hram - p) >= 0 && ((uint8_t*)hram - p) < (long long)sizeof(*hram))
-        return HRAM_Begin + ((uint8_t*)hram - p);
+    if(((uint8_t*)&hram - p) >= 0 && ((uint8_t*)&hram - p) < (long long)sizeof(hram))
+        return HRAM_Begin + ((uint8_t*)&hram - p);
     if(((uint8_t*)vram - p) >= 0 && ((uint8_t*)vram - p) < (long long)sizeof(*vram))
         return (VRAM_Begin + ((uint8_t*)vram - p)) | ((((uint8_t*)vram - p) / VRAM_BANK_SIZE) << 16);
     return 0;
@@ -153,12 +153,12 @@ uint32_t BankAddrToAbsRAMAddr(uint8_t bank, uint16_t addr) {
 }
 
 static void SafeCallGBInternal(uint32_t address) {
-    uint8_t bank = hram->hROMBank;
+    uint8_t bank = hram.hROMBank;
     gb_write(MBC3RomBank, BANK(address));
-    hram->hROMBank = BANK(address);
+    hram.hROMBank = BANK(address);
     CALL(address);
     gb_write(MBC3RomBank, bank);
-    hram->hROMBank = bank;
+    hram.hROMBank = bank;
 }
 
 void SafeCallGB(uint32_t address, struct cpu_registers_s* regs) {

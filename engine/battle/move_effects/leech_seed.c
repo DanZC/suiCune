@@ -19,7 +19,7 @@ void BattleCommand_LeechSeed(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_DE(wBattleMonType1);
-    uint8_t* types = (hram->hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.types: wram->wBattleMon.types;
+    uint8_t* types = (hram.hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.types: wram->wBattleMon.types;
 
 // ok:
 

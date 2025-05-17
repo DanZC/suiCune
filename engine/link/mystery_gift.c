@@ -462,13 +462,13 @@ uint8_t ExchangeMysteryGiftData(void){
         // JP_Z (mEndOrContinueMysteryGiftIRCommunication);
         // CP_A(MG_OKAY);
         // IF_NZ goto restart;
-        if(hram->hMGStatusFlags != MG_OKAY)
+        if(hram.hMGStatusFlags != MG_OKAY)
             return EndOrContinueMysteryGiftIRCommunication();
 
         // LDH_A_addr(hMGRole);
         // CP_A(IR_SENDER);
         // JR_Z (mSenderExchangeMysteryGiftDataPayloads);
-        if(hram->hMGRole == IR_SENDER) {
+        if(hram.hMGRole == IR_SENDER) {
             SenderExchangeMysteryGiftDataPayloads();
             return EndOrContinueMysteryGiftIRCommunication();
         }
@@ -477,7 +477,7 @@ uint8_t ExchangeMysteryGiftData(void){
         // LD_B(1);
         // CALL(aTryReceivingIRDataBlock);
         // IF_NZ goto failed;
-        if(TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1)) {
+        if(TryReceivingIRDataBlock(&hram.hMGExchangedByte, 1)) {
             // CALL(aReceiveMysteryGiftDataPayload_GotRegionPrefix);
             // JP_NZ (mEndOrContinueMysteryGiftIRCommunication);
             if(!ReceiveMysteryGiftDataPayload_GotRegionPrefix())
@@ -607,7 +607,7 @@ bool ReceiveMysteryGiftDataPayload(void){
     // LD_B(1);
     // CALL(aTryReceivingIRDataBlock);
     // RET_NZ ;
-    if(!TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1))
+    if(!TryReceivingIRDataBlock(&hram.hMGExchangedByte, 1))
         return false;
 // fallthrough
     return ReceiveMysteryGiftDataPayload_GotRegionPrefix();
@@ -620,17 +620,17 @@ bool ReceiveMysteryGiftDataPayload_GotRegionPrefix(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET_NZ ;
-    if(hram->hMGStatusFlags != MG_OKAY)
+    if(hram.hMGStatusFlags != MG_OKAY)
         return false;
 // Verify the received region prefix
     // LDH_A_addr(hMGExchangedByte);
     // CP_A(REGION_PREFIX);
     // JP_NZ (mWrongMysteryGiftRegion);
-    if(hram->hMGExchangedByte != REGION_PREFIX)
+    if(hram.hMGExchangedByte != REGION_PREFIX)
         return WrongMysteryGiftRegion();
     // LD_A(REGION_CODE);
     // LDH_addr_A(hMGExchangedByte);
-    hram->hMGExchangedByte = REGION_CODE;
+    hram.hMGExchangedByte = REGION_CODE;
 // Switch roles
     // CALL(aBeginSendingIRCommunication);
     // RET_NZ ;
@@ -641,7 +641,7 @@ bool ReceiveMysteryGiftDataPayload_GotRegionPrefix(void){
     // LD_B(1);
     // CALL(aTrySendingIRDataBlock);
     // RET_NZ ;
-    if(!TrySendingIRDataBlock(&hram->hMGExchangedByte, 1))
+    if(!TrySendingIRDataBlock(&hram.hMGExchangedByte, 1))
         return false;
 // Send an empty block
     // CALL(aSendEmptyIRDataBlock);
@@ -649,7 +649,7 @@ bool ReceiveMysteryGiftDataPayload_GotRegionPrefix(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET_NZ ;
-    if(hram->hMGStatusFlags != MG_OKAY)
+    if(hram.hMGStatusFlags != MG_OKAY)
         return false;
 // Switch roles
     // CALL(aBeginReceivingIRCommunication);
@@ -670,19 +670,19 @@ bool ReceiveMysteryGiftDataPayload_GotRegionPrefix(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET;
-    return hram->hMGStatusFlags == MG_OKAY;
+    return hram.hMGStatusFlags == MG_OKAY;
 }
 
 bool SendMysteryGiftDataPayload(void){
 // Send the region prefix
     // LD_A(REGION_PREFIX);
     // LDH_addr_A(hMGExchangedByte);
-    hram->hMGExchangedByte = REGION_PREFIX;
+    hram.hMGExchangedByte = REGION_PREFIX;
     // LD_HL(hMGExchangedByte);
     // LD_B(1);
     // CALL(aTrySendingIRDataBlock);
     // RET_NZ ;
-    if(!TrySendingIRDataBlock(&hram->hMGExchangedByte, 1))
+    if(!TrySendingIRDataBlock(&hram.hMGExchangedByte, 1))
         return false;
 // Send an empty block
     // CALL(aSendEmptyIRDataBlock);
@@ -690,7 +690,7 @@ bool SendMysteryGiftDataPayload(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET_NZ ;
-    if(hram->hMGStatusFlags != MG_OKAY)
+    if(hram.hMGStatusFlags != MG_OKAY)
         return false;
 // Switch roles
     // CALL(aBeginReceivingIRCommunication);
@@ -702,7 +702,7 @@ bool SendMysteryGiftDataPayload(void){
     // LD_B(1);
     // CALL(aTryReceivingIRDataBlock);
     // RET_NZ ;
-    if(!TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1))
+    if(!TryReceivingIRDataBlock(&hram.hMGExchangedByte, 1))
         return false;
 // Receive an empty block
     // CALL(aReceiveEmptyIRDataBlock);
@@ -710,13 +710,13 @@ bool SendMysteryGiftDataPayload(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET_NZ ;
-    if(hram->hMGStatusFlags != MG_OKAY)
+    if(hram.hMGStatusFlags != MG_OKAY)
         return false;
 // Verify the received region code
     // LDH_A_addr(hMGExchangedByte);
     // CP_A(REGION_CODE);
     // JP_NZ (mWrongMysteryGiftRegion);
-    if(hram->hMGExchangedByte != REGION_CODE)
+    if(hram.hMGExchangedByte != REGION_CODE)
         return WrongMysteryGiftRegion();
 // Switch roles
     // CALL(aBeginSendingIRCommunication);
@@ -737,7 +737,7 @@ bool SendMysteryGiftDataPayload(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET;
-    return hram->hMGStatusFlags == MG_OKAY;
+    return hram.hMGStatusFlags == MG_OKAY;
 }
 
 uint8_t EndOrContinueMysteryGiftIRCommunication(void){
@@ -750,8 +750,8 @@ begin:
 // Quit if there was a communication error
     // CP_A(MG_OKAY);
     // IF_NZ goto quit;
-    if(hram->hMGStatusFlags == MG_CANCELED 
-    || hram->hMGStatusFlags != MG_OKAY)
+    if(hram.hMGStatusFlags == MG_CANCELED 
+    || hram.hMGStatusFlags != MG_OKAY)
         goto quit;
 // Quit if all messages are sent/received
     // LD_HL(wMysteryGiftMessageCount);
@@ -783,7 +783,7 @@ begin:
     // LDH_A_addr(hMGRole);
     // CP_A(IR_SENDER);
     // IF_Z goto sender;
-    if(hram->hMGRole == IR_SENDER) {
+    if(hram.hMGRole == IR_SENDER) {
     // sender:
         // CALL(aBeginSendingIRCommunication);
         // JR_NZ (mEndOrContinueMysteryGiftIRCommunication);
@@ -807,7 +807,7 @@ begin:
 quit:;
     // LDH_A_addr(hMGStatusFlags);
     // PUSH_AF;
-    uint8_t statusFlags = hram->hMGStatusFlags;
+    uint8_t statusFlags = hram.hMGStatusFlags;
     // CALL(aEndIRCommunication);
     EndIRCommunication();
     // XOR_A_A;
@@ -848,7 +848,7 @@ uint8_t ExchangeNameCardData(void){
     // LDH_A_addr(hMGRole);
     // CP_A(IR_SENDER);
     // IF_Z goto sender;
-    if(hram->hMGRole == IR_SENDER) {
+    if(hram.hMGRole == IR_SENDER) {
     // sender:
     // Send the data payload
         // CALL(aSendNameCardDataPayload);
@@ -911,7 +911,7 @@ bool ReceiveNameCardDataPayload(void){
     // LD_B(1);
     // CALL(aTryReceivingIRDataBlock);
     // RET_NZ ;
-    if(!TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1))
+    if(!TryReceivingIRDataBlock(&hram.hMGExchangedByte, 1))
         return false;
 // Receive an empty block
     // CALL(aReceiveEmptyIRDataBlock);
@@ -919,17 +919,17 @@ bool ReceiveNameCardDataPayload(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET_NZ ;
-    if(hram->hMGStatusFlags != MG_OKAY)
+    if(hram.hMGStatusFlags != MG_OKAY)
         return false;
 // Verify the received Name Card prefix
     // LDH_A_addr(hMGExchangedByte);
     // CP_A(NAME_CARD_PREFIX);
     // JP_NZ (mWrongMysteryGiftRegion);
-    if(hram->hMGExchangedByte != NAME_CARD_PREFIX)
+    if(hram.hMGExchangedByte != NAME_CARD_PREFIX)
         return WrongMysteryGiftRegion();
     // SWAP_A;
     // LDH_addr_A(hMGExchangedByte);
-    hram->hMGExchangedByte = (hram->hMGExchangedByte >> 4) | (hram->hMGExchangedByte << 4);
+    hram.hMGExchangedByte = (hram.hMGExchangedByte >> 4) | (hram.hMGExchangedByte << 4);
 // Switch roles
     // CALL(aBeginSendingIRCommunication);
     // RET_NZ ;
@@ -940,7 +940,7 @@ bool ReceiveNameCardDataPayload(void){
     // LD_B(1);
     // CALL(aTrySendingIRDataBlock);
     // RET_NZ ;
-    if(!TrySendingIRDataBlock(&hram->hMGExchangedByte, 1))
+    if(!TrySendingIRDataBlock(&hram.hMGExchangedByte, 1))
         return false;
 // Send an empty block
     // CALL(aSendEmptyIRDataBlock);
@@ -948,7 +948,7 @@ bool ReceiveNameCardDataPayload(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET_NZ ;
-    if(hram->hMGStatusFlags != MG_OKAY)
+    if(hram.hMGStatusFlags != MG_OKAY)
         return false;
 // Switch roles
     // CALL(aBeginReceivingIRCommunication);
@@ -969,19 +969,19 @@ bool ReceiveNameCardDataPayload(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET;
-    return hram->hMGStatusFlags == MG_OKAY;
+    return hram.hMGStatusFlags == MG_OKAY;
 }
 
 bool SendNameCardDataPayload(void){
 // Send the Name Card prefix
     // LD_A(NAME_CARD_PREFIX);
     // LDH_addr_A(hMGExchangedByte);
-    hram->hMGExchangedByte = NAME_CARD_PREFIX;
+    hram.hMGExchangedByte = NAME_CARD_PREFIX;
     // LD_HL(hMGExchangedByte);
     // LD_B(1);
     // CALL(aTrySendingIRDataBlock);
     // RET_NZ ;
-    if(!TrySendingIRDataBlock(&hram->hMGExchangedByte, 1))
+    if(!TrySendingIRDataBlock(&hram.hMGExchangedByte, 1))
         return false;
 // Send an empty block
     // CALL(aSendEmptyIRDataBlock);
@@ -989,7 +989,7 @@ bool SendNameCardDataPayload(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET_NZ ;
-    if(hram->hMGStatusFlags != MG_OKAY)
+    if(hram.hMGStatusFlags != MG_OKAY)
         return false;
 // Switch roles
     // CALL(aBeginReceivingIRCommunication);
@@ -1001,7 +1001,7 @@ bool SendNameCardDataPayload(void){
     // LD_B(1);
     // CALL(aTryReceivingIRDataBlock);
     // RET_NZ ;
-    if(!TryReceivingIRDataBlock(&hram->hMGExchangedByte, 1))
+    if(!TryReceivingIRDataBlock(&hram.hMGExchangedByte, 1))
         return false;
 // Receive an empty block
     // CALL(aReceiveEmptyIRDataBlock);
@@ -1009,14 +1009,14 @@ bool SendNameCardDataPayload(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET_NZ ;
-    if(hram->hMGStatusFlags != MG_OKAY)
+    if(hram.hMGStatusFlags != MG_OKAY)
         return false;
 // Verify the received swapped Name Card prefix
     // LDH_A_addr(hMGExchangedByte);
     // SWAP_A;
     // CP_A(NAME_CARD_PREFIX);
     // JP_NZ (mWrongMysteryGiftRegion);
-    if(((hram->hMGExchangedByte >> 4) | (hram->hMGExchangedByte << 4)) != NAME_CARD_PREFIX)
+    if(((hram.hMGExchangedByte >> 4) | (hram.hMGExchangedByte << 4)) != NAME_CARD_PREFIX)
         return WrongMysteryGiftRegion();
 // Switch roles
     // CALL(aBeginSendingIRCommunication);
@@ -1037,13 +1037,13 @@ bool SendNameCardDataPayload(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET;
-    return hram->hMGStatusFlags == MG_OKAY;
+    return hram.hMGStatusFlags == MG_OKAY;
 }
 
 uint8_t EndNameCardIRCommunication(void){
     // NOP;
     // LDH_A_addr(hMGStatusFlags);
-    uint8_t statusFlags = hram->hMGStatusFlags;
+    uint8_t statusFlags = hram.hMGStatusFlags;
     // PUSH_AF;
     // CALL(aEndIRCommunication);
     EndIRCommunication();
@@ -1063,7 +1063,7 @@ uint8_t EndNameCardIRCommunication(void){
 bool WrongMysteryGiftRegion(void){
     // LD_A(MG_WRONG_PREFIX);
     // LDH_addr_A(hMGStatusFlags);
-    hram->hMGStatusFlags |= MG_WRONG_PREFIX;
+    hram.hMGStatusFlags |= MG_WRONG_PREFIX;
     // AND_A_A;
     // RET;
     return false;
@@ -1077,7 +1077,7 @@ bool BeginSendingIRCommunication(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET;
-    return hram->hMGStatusFlags == MG_OKAY;
+    return hram.hMGStatusFlags == MG_OKAY;
 }
 
 bool BeginReceivingIRCommunication(void){
@@ -1088,7 +1088,7 @@ bool BeginReceivingIRCommunication(void){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET;
-    return hram->hMGStatusFlags == MG_OKAY;
+    return hram.hMGStatusFlags == MG_OKAY;
 }
 
 bool TrySendingIRDataBlock(const uint8_t* hl, uint8_t b){
@@ -1097,7 +1097,7 @@ bool TrySendingIRDataBlock(const uint8_t* hl, uint8_t b){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET;
-    return hram->hMGStatusFlags == MG_OKAY;
+    return hram.hMGStatusFlags == MG_OKAY;
 }
 
 bool TryReceivingIRDataBlock(uint8_t* hl, uint8_t b){
@@ -1106,7 +1106,7 @@ bool TryReceivingIRDataBlock(uint8_t* hl, uint8_t b){
     // LDH_A_addr(hMGStatusFlags);
     // CP_A(MG_OKAY);
     // RET;
-    return hram->hMGStatusFlags == MG_OKAY;
+    return hram.hMGStatusFlags == MG_OKAY;
 }
 
 void InitializeIRCommunicationInterrupts(void){
@@ -1164,7 +1164,7 @@ void BeginIRCommunication(void){
     ToggleIRCommunication(rRP_ENABLE_READ_MASK);
     // LD_A(IR_RECEIVER);
     // LDH_addr_A(hMGRole);
-    hram->hMGRole = IR_RECEIVER;
+    hram.hMGRole = IR_RECEIVER;
     // RET;
 }
 
@@ -1247,11 +1247,11 @@ void InitializeIRCommunicationRoles(void){
 
     // LD_A(IR_RECEIVER);
     // LDH_addr_A(hMGRole);
-    hram->hMGRole = (hram->hSerialConnectionStatus == USING_INTERNAL_CLOCK)
+    hram.hMGRole = (hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK)
         ? IR_SENDER
         : IR_RECEIVER;
 
-    if(hram->hMGRole == IR_SENDER) {
+    if(hram.hMGRole == IR_SENDER) {
         SendIRHelloMessage();
         return;
     }
@@ -1301,7 +1301,7 @@ void ReceiveIRHelloMessage(void){
         if(err == NETWORK_XCHG_ERROR_RECV)
             return InfraredLEDReceiveTimedOut();
         else if(err == NETWORK_XCHG_OK) {
-            hram->hMGStatusFlags = MG_OKAY;
+            hram.hMGStatusFlags = MG_OKAY;
             return;
         }
         DelayFrame();
@@ -1345,7 +1345,7 @@ wait_loop:
 void SendIRHelloMessage(void){
     // LD_A(IR_SENDER);
     // LDH_addr_A(hMGRole);
-    hram->hMGRole = IR_SENDER;
+    hram.hMGRole = IR_SENDER;
 
     // LD_C(LOW(rRP));
     // LD_D(0);
@@ -1367,7 +1367,7 @@ void SendIRHelloMessage(void){
         if(err == NETWORK_XCHG_ERROR_RECV)
             return InfraredLEDReceiveTimedOut();
         else if(err == NETWORK_XCHG_OK) {
-            hram->hMGStatusFlags = MG_OKAY;
+            hram.hMGStatusFlags = MG_OKAY;
             return;
         }
         DelayFrame();
@@ -1398,7 +1398,7 @@ void ToggleIRCommunication(uint8_t a){
     (void)a;
     // LD_A(MG_START_END);
     // LDH_addr_A(hMGStatusFlags);
-    hram->hMGStatusFlags = MG_START_END;
+    hram.hMGStatusFlags = MG_START_END;
     // RET;
 }
 
@@ -1411,7 +1411,7 @@ void SendIRDataBlock(const uint8_t* hl, uint8_t b){
     // XOR_A_A;
     // LDH_addr_A(hMGChecksum + 0);
     // LDH_addr_A(hMGChecksum + 1);
-    hram->hMGChecksum = 0;
+    hram.hMGChecksum = 0;
     // PUSH_HL;
     // PUSH_BC;
     // LD_C(LOW(rRP));
@@ -1420,37 +1420,37 @@ void SendIRDataBlock(const uint8_t* hl, uint8_t b){
     // LD_HL(hMGExchangedWord);
     // LD_A(MESSAGE_PREFIX);
     // LD_hli_A;
-    hram->hMGExchangedWord[0] = MESSAGE_PREFIX;
+    hram.hMGExchangedWord[0] = MESSAGE_PREFIX;
     // LD_hl_B;
-    hram->hMGExchangedWord[1] = b;
+    hram.hMGExchangedWord[1] = b;
     // DEC_HL;
     // LD_B(2);
     // CALL(aSendIRDataMessage);
-    SendIRDataMessage(hram->hMGExchangedWord, 2);
+    SendIRDataMessage(hram.hMGExchangedWord, 2);
     // POP_BC;
     // POP_HL;
     // CALL(aSendIRDataMessage);
     SendIRDataMessage(hl, b);
     // LDH_A_addr(hMGChecksum + 0);
     // LDH_addr_A(hMGExchangedWord + 0);
-    hram->hMGExchangedWord[0] = LOW(hram->hMGChecksum);
+    hram.hMGExchangedWord[0] = LOW(hram.hMGChecksum);
     // LDH_A_addr(hMGChecksum + 1);
     // LDH_addr_A(hMGExchangedWord + 1);
-    hram->hMGExchangedWord[1] = HIGH(hram->hMGChecksum);
+    hram.hMGExchangedWord[1] = HIGH(hram.hMGChecksum);
     // PUSH_HL;
     // LD_HL(hMGExchangedWord);
     // LD_B(2);
     // CALL(aSendIRDataMessage);
-    SendIRDataMessage(hram->hMGExchangedWord, 2);
+    SendIRDataMessage(hram.hMGExchangedWord, 2);
     // LD_HL(hMGStatusFlags);
     // LD_B(1);
     // CALL(aReceiveIRDataMessage);
-    ReceiveIRDataMessage(&hram->hMGStatusFlags, 1);
+    ReceiveIRDataMessage(&hram.hMGStatusFlags, 1);
     // LDH_A_addr(hMGExchangedWord + 0);
     // LDH_addr_A(hMGChecksum + 0);
     // LDH_A_addr(hMGExchangedWord + 1);
     // LDH_addr_A(hMGChecksum + 1);
-    hram->hMGChecksum = hram->hMGExchangedWord[0] | (hram->hMGExchangedWord[1] << 8);
+    hram.hMGChecksum = hram.hMGExchangedWord[0] | (hram.hMGExchangedWord[1] << 8);
     // POP_HL;
     // RET;
 }
@@ -1465,7 +1465,7 @@ void SendIRDataMessage(const uint8_t* hl, uint8_t b){
             }
             fprintf(stderr, "Error sending byte: %02x\n", hl[i]);
         }
-        hram->hMGChecksum += hl[i];
+        hram.hMGChecksum += hl[i];
     }
     // LD_C(LOW(rRP));
 
@@ -1552,7 +1552,7 @@ void InfraredLEDReceiveTimedOut(void){
     // LDH_A_addr(hMGStatusFlags);
     // OR_A(MG_TIMED_OUT);
     // LDH_addr_A(hMGStatusFlags);
-    hram->hMGStatusFlags |= MG_TIMED_OUT;
+    hram.hMGStatusFlags |= MG_TIMED_OUT;
     // RET;
 }
 
@@ -1560,7 +1560,7 @@ void ReceivedWrongIRChecksum(void){
     // LDH_A_addr(hMGStatusFlags);
     // OR_A(MG_WRONG_CHECKSUM);
     // LDH_addr_A(hMGStatusFlags);
-    hram->hMGStatusFlags |= MG_WRONG_CHECKSUM;
+    hram.hMGStatusFlags |= MG_WRONG_CHECKSUM;
     // RET;
 }
 
@@ -1568,7 +1568,7 @@ void ReceivedWrongIRMessagePrefix(void){
     // LDH_A_addr(hMGStatusFlags);
     // OR_A(MG_WRONG_PREFIX);
     // LDH_addr_A(hMGStatusFlags);
-    hram->hMGStatusFlags |= MG_WRONG_PREFIX;
+    hram.hMGStatusFlags |= MG_WRONG_PREFIX;
     // RET;
 }
 
@@ -1581,17 +1581,17 @@ void ReceiveIRDataBlock(uint8_t* hl, uint8_t b){
     // XOR_A_A;
     // LDH_addr_A(hMGChecksum + 0);
     // LDH_addr_A(hMGChecksum + 1);
-    hram->hMGChecksum = 0;
+    hram.hMGChecksum = 0;
     // PUSH_BC;
     // PUSH_HL;
     // LD_HL(hMGExchangedWord);
     // LD_B(2);
     // CALL(aReceiveIRDataMessage);
-    ReceiveIRDataMessage((uint8_t*)&hram->hMGExchangedWord, 2);
+    ReceiveIRDataMessage((uint8_t*)&hram.hMGExchangedWord, 2);
     // LDH_A_addr(hMGExchangedWord + 1);
     // LDH_addr_A(hMGUnusedMsgLength);
     // LD_B_A;
-    uint8_t b2 = hram->hMGExchangedWord[1];
+    uint8_t b2 = hram.hMGExchangedWord[1];
     // POP_HL;
     // POP_AF;
     // CP_A_B;
@@ -1601,7 +1601,7 @@ void ReceiveIRDataBlock(uint8_t* hl, uint8_t b){
     // LDH_A_addr(hMGExchangedWord + 0);
     // CP_A(MESSAGE_PREFIX);
     // JP_NZ (mReceivedWrongIRMessagePrefix);
-    if(hram->hMGExchangedWord[0] != MESSAGE_PREFIX)
+    if(hram.hMGExchangedWord[0] != MESSAGE_PREFIX)
         return ReceivedWrongIRMessagePrefix();
     // CALL(aReceiveIRDataMessage);
     ReceiveIRDataMessage(hl, b2);
@@ -1609,13 +1609,13 @@ void ReceiveIRDataBlock(uint8_t* hl, uint8_t b){
     // LD_D_A;
     // LDH_A_addr(hMGChecksum + 1);
     // LD_E_A;
-    uint16_t de = hram->hMGChecksum;
+    uint16_t de = hram.hMGChecksum;
     // PUSH_HL;
     // PUSH_DE;
     // LD_HL(hMGExchangedWord);
     // LD_B(2);
     // CALL(aReceiveIRDataMessage);
-    ReceiveIRDataMessage(hram->hMGExchangedWord, 2);
+    ReceiveIRDataMessage(hram.hMGExchangedWord, 2);
     // POP_DE;
     // LD_HL(hMGExchangedWord);
     // LD_A_hli;
@@ -1625,7 +1625,7 @@ void ReceiveIRDataBlock(uint8_t* hl, uint8_t b){
     // XOR_A_E;
     // OR_A_B;
     // CALL_NZ (aReceivedWrongIRChecksum);
-    if(de != (hram->hMGExchangedWord[0] | hram->hMGExchangedWord[1] << 8))
+    if(de != (hram.hMGExchangedWord[0] | hram.hMGExchangedWord[1] << 8))
         ReceivedWrongIRChecksum();
     // PUSH_DE;
 
@@ -1635,7 +1635,7 @@ void ReceiveIRDataBlock(uint8_t* hl, uint8_t b){
     // LD_HL(hMGStatusFlags);
     // LD_B(1);
     // CALL(aSendIRDataMessage);
-    SendIRDataMessage(&hram->hMGStatusFlags, 1);
+    SendIRDataMessage(&hram.hMGStatusFlags, 1);
 
     // POP_DE;
     // POP_HL;
@@ -1643,7 +1643,7 @@ void ReceiveIRDataBlock(uint8_t* hl, uint8_t b){
     // LDH_addr_A(hMGChecksum + 0);
     // LD_A_E;
     // LDH_addr_A(hMGChecksum + 1);
-    hram->hMGChecksum = de;
+    hram.hMGChecksum = de;
     // RET;
 }
 
@@ -1674,7 +1674,7 @@ bool ReceiveIRDataMessage(uint8_t* hl, uint8_t b){
             return false;
         }
         hl[i] = byte;
-        hram->hMGChecksum += byte;
+        hram.hMGChecksum += byte;
     }
     return true;
 

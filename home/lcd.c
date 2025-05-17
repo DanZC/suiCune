@@ -3,20 +3,23 @@
 
 //  LCD handling
 
+//  //  unreferenced
 void Function547(void) {
-        //  //  unreferenced
-    LDH_A_addr(hLCDCPointer);
-    CP_A(LOW(rSCX));
-    RET_NZ;
-    LD_C_A;
-    LD_A_addr(wLYOverrides);
-    LDH_c_A;
-    RET;
+    // LDH_A_addr(hLCDCPointer);
+    // CP_A(LOW(rSCX));
+    // RET_NZ;
+    if(hram.hLCDCPointer != LOW(rSCX))
+        return;
+    // LD_C_A;
+    // LD_A_addr(wLYOverrides);
+    // LDH_c_A;
+    gb_write(0xFF00 | LOW(rSCX), wram->wLYOverrides[gb.gb_reg.LY]);
+    // RET;
 }
 
 void LCD(void) {  // called from the rendering function, once per line
-    if (hram->hLCDCPointer) {
-        gb_write(0xFF00 | hram->hLCDCPointer, wram->wLYOverrides[gb.gb_reg.LY]);
+    if (hram.hLCDCPointer) {
+        gb_write(0xFF00 | hram.hLCDCPointer, wram->wLYOverrides[gb.gb_reg.LY]);
     }
 }
 

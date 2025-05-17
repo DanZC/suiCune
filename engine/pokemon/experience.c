@@ -189,9 +189,9 @@ uint32_t CalcExpAtLevel(uint8_t d){
     lvl += qt;
     lvl &= 0xffffff;
 
-    hram->hMultiplicand[0] = (uint8_t)((lvl >> 16) & 0xff);
-    hram->hMultiplicand[1] = (uint8_t)((lvl >> 8) & 0xff);
-    hram->hMultiplicand[2] = (uint8_t)(lvl & 0xff);
+    hram.hMultiplicand[0] = (uint8_t)((lvl >> 16) & 0xff);
+    hram.hMultiplicand[1] = (uint8_t)((lvl >> 8) & 0xff);
+    hram.hMultiplicand[2] = (uint8_t)(lvl & 0xff);
     // RET;
     return lvl;
 

@@ -45,7 +45,7 @@ void v_GiveOddEgg(void){
         // IF_Z goto ok;
         // goto next;
 
-        uint16_t value = hram->hRandomAdd | (hram->hRandomSub << 8);
+        uint16_t value = hram.hRandomAdd | (hram.hRandomSub << 8);
     // ok:
         // LDH_A_addr(hRandomAdd);
         // CP_A_E;

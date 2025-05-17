@@ -60,7 +60,7 @@ void PhotoStudio(void){
     // LDH_A_addr(hPrinter);
     // AND_A_A;
     // IF_NZ goto cancel;
-    if(hram->hPrinter != 0x0) {
+    if(hram.hPrinter != 0x0) {
     // cancel:
         // LD_HL(mPhotoStudio_NoPhotoText);
         // goto print_text;

@@ -72,13 +72,13 @@ void MovePlayerPic(uint8_t* hl, int16_t de){
         // PUSH_DE;
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // LD_BC((7 << 8) | 7);
         // PREDEF(pPlaceGraphic);
         PlaceGraphicYStagger(hl, 7, 7);
         // XOR_A_A;
         // LDH_addr_A(hBGMapThird);
-        hram->hBGMapThird = 0;
+        hram.hBGMapThird = 0;
         // CALL(aWaitBGMap);
         WaitBGMap();
         // CALL(aDelayFrame);
@@ -213,7 +213,7 @@ void HOF_LoadTrainerFrontpic(void){
     WaitBGMap();
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
 
 //  Get class
     // LD_E(CHRIS);
@@ -246,7 +246,7 @@ void HOF_LoadTrainerFrontpic(void){
     WaitBGMap();
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+    hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // RET;
 }
 
@@ -282,7 +282,7 @@ void DrawIntroPlayerPic(void){
 //  Draw
     // XOR_A_A;
     // LDH_addr_A(hGraphicStartTile);
-    hram->hGraphicStartTile = 0;
+    hram.hGraphicStartTile = 0;
     // hlcoord(6, 4, wTilemap);
     // LD_BC((7 << 8) | 7);
     // PREDEF(pPlaceGraphic);

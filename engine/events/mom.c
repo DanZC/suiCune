@@ -47,10 +47,10 @@ static const struct MenuHeader BankOfMom_MenuHeader = {
 void BankOfMom(void){
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
-    uint8_t inMenu = hram->hInMenu;
+    uint8_t inMenu = hram.hInMenu;
     // LD_A(0x1);
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = 0x1;
+    hram.hInMenu = 0x1;
     // XOR_A_A;
     // LD_addr_A(wJumptableIndex);
     wram->wJumptableIndex = 0;
@@ -452,7 +452,7 @@ void BankOfMom(void){
 // done:
     // POP_AF;
     // LDH_addr_A(hInMenu);
-    hram->hInMenu = inMenu;
+    hram.hInMenu = inMenu;
     // RET;
     return;
 }
@@ -564,8 +564,8 @@ void DSTChecks(void){
     // IF_NZ goto loop;
 // fallthrough
 
-    if((!bit_test(wram->wDST, 7) && hram->hHours == 23)    // within one hour of 23:00 outside of DST?
-    || ( bit_test(wram->wDST, 7) && hram->hHours == 0))    // within one hour of 00:00 in DST?
+    if((!bit_test(wram->wDST, 7) && hram.hHours == 23)    // within one hour of 23:00 outside of DST?
+    || ( bit_test(wram->wDST, 7) && hram.hHours == 0))    // within one hour of 00:00 in DST?
     {
     // LostBooklet:
         // CALL(aDSTChecks_ClearBox);
@@ -663,7 +663,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // PUSH_DE;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC((6 << 8) | 18);
     // CALL(aTextbox);
@@ -753,7 +753,7 @@ static void Mom_WithdrawDepositMenuJoypad_dpadaction(void) {
     // LD_A_hl;
     // AND_A(D_UP);
     // IF_NZ goto incrementdigit;
-    if(hram->hJoyLast & D_UP) {
+    if(hram.hJoyLast & D_UP) {
     // incrementdigit:
         // LD_HL(mMom_WithdrawDepositMenuJoypad_DigitQuantities);
         // CALL(aMom_WithdrawDepositMenuJoypad_getdigitquantity);
@@ -769,7 +769,7 @@ static void Mom_WithdrawDepositMenuJoypad_dpadaction(void) {
     // LD_A_hl;
     // AND_A(D_DOWN);
     // IF_NZ goto decrementdigit;
-    else if(hram->hJoyLast & D_DOWN) {
+    else if(hram.hJoyLast & D_DOWN) {
     // decrementdigit:
         // LD_HL(mMom_WithdrawDepositMenuJoypad_DigitQuantities);
         // CALL(aMom_WithdrawDepositMenuJoypad_getdigitquantity);
@@ -785,7 +785,7 @@ static void Mom_WithdrawDepositMenuJoypad_dpadaction(void) {
     // LD_A_hl;
     // AND_A(D_LEFT);
     // IF_NZ goto movecursorleft;
-    else if(hram->hJoyLast & D_LEFT) {
+    else if(hram.hJoyLast & D_LEFT) {
     // movecursorleft:
         // LD_HL(wMomBankDigitCursorPosition);
         // LD_A_hl;
@@ -801,7 +801,7 @@ static void Mom_WithdrawDepositMenuJoypad_dpadaction(void) {
     // LD_A_hl;
     // AND_A(D_RIGHT);
     // IF_NZ goto movecursorright;
-    else if(hram->hJoyLast & D_RIGHT) {
+    else if(hram.hJoyLast & D_RIGHT) {
     // movecursorright:
         // LD_HL(wMomBankDigitCursorPosition);
         // LD_A_hl;
@@ -829,7 +829,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
         // LD_A_hl;
         // AND_A(B_BUTTON);
         // IF_NZ goto pressedB;
-        if(hram->hJoyPressed & B_BUTTON) {
+        if(hram.hJoyPressed & B_BUTTON) {
         // pressedB:
             // SCF;
             // RET;
@@ -838,7 +838,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
         // LD_A_hl;
         // AND_A(A_BUTTON);
         // IF_NZ goto pressedA;
-        if(hram->hJoyPressed & A_BUTTON) {
+        if(hram.hJoyPressed & A_BUTTON) {
         // pressedA:
             // AND_A_A;
             // RET;
@@ -848,7 +848,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
         Mom_WithdrawDepositMenuJoypad_dpadaction();
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // hlcoord(12, 6, wTilemap);
         // LD_BC(7);
         // LD_A(0x7f);
@@ -862,7 +862,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
         // LDH_A_addr(hVBlankCounter);
         // AND_A(0x10);
         // IF_NZ goto skip;
-        if((hram->hVBlankCounter & 0x10) == 0) {
+        if((hram.hVBlankCounter & 0x10) == 0) {
             // hlcoord(13, 6, wTilemap);
             // LD_A_addr(wMomBankDigitCursorPosition);
             // LD_C_A;

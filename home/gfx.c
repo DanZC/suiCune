@@ -22,92 +22,95 @@ void Get2bppViaHDMA(uint8_t b, uint16_t de, uint16_t hl, uint8_t c) {
     // RET;
 }
 
+// UNUSED
 void Get1bppViaHDMA(void) {
-    LDH_A_addr(rLCDC);
-    BIT_A(rLCDC_ENABLE);
-    JP_Z(mCopy1bpp);
+    // LDH_A_addr(rLCDC);
+    // BIT_A(rLCDC_ENABLE);
+    // JP_Z(mCopy1bpp);
 
-    HOMECALL(aHDMATransfer1bpp);
+    // HOMECALL(aHDMATransfer1bpp);
 
-    RET;
+    // RET;
 }
 
+// UNUSED
 void FarCopyBytesDouble_DoubleBankSwitch(void) {
-    LDH_addr_A(hTempBank);
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LDH_A_addr(hTempBank);
-    RST(aBankswitch);
+    // LDH_addr_A(hTempBank);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LDH_A_addr(hTempBank);
+    // RST(aBankswitch);
 
-    CALL(aFarCopyBytesDouble);
+    // CALL(aFarCopyBytesDouble);
 
-    POP_AF;
-    RST(aBankswitch);
-    RET;
+    // POP_AF;
+    // RST(aBankswitch);
+    // RET;
 }
 
+// UNUSED
 void SafeHDMATransfer(void) {
     //  //  unreferenced
-    DEC_C;
-    LDH_A_addr(hBGMapMode);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A_B;
-    RST(aBankswitch);
+    // DEC_C;
+    // LDH_A_addr(hBGMapMode);
+    // PUSH_AF;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A_B;
+    // RST(aBankswitch);
 
-loop:
+// loop:
     //  load the source and target MSB and LSB
-    LD_A_D;
-    LDH_addr_A(rHDMA1);  // source MSB
-    LD_A_E;
-    AND_A(0xf0);
-    LDH_addr_A(rHDMA2);  // source LSB
-    LD_A_H;
-    AND_A(0x1f);
-    LDH_addr_A(rHDMA3);  // target MSB
-    LD_A_L;
-    AND_A(0xf0);
-    LDH_addr_A(rHDMA4);  // target LSB
+    // LD_A_D;
+    // LDH_addr_A(rHDMA1);  // source MSB
+    // LD_A_E;
+    // AND_A(0xf0);
+    // LDH_addr_A(rHDMA2);  // source LSB
+    // LD_A_H;
+    // AND_A(0x1f);
+    // LDH_addr_A(rHDMA3);  // target MSB
+    // LD_A_L;
+    // AND_A(0xf0);
+    // LDH_addr_A(rHDMA4);  // target LSB
                          //  stop when c < TILES_PER_CYCLE
-    LD_A_C;
-    CP_A(TILES_PER_CYCLE);
-    IF_C goto done;
+    // LD_A_C;
+    // CP_A(TILES_PER_CYCLE);
+    // IF_C goto done;
     //  decrease c by TILES_PER_CYCLE
-    SUB_A(TILES_PER_CYCLE);
-    LD_C_A;
+    // SUB_A(TILES_PER_CYCLE);
+    // LD_C_A;
     //  DMA transfer state
-    LD_A(0xf);
-    LDH_addr_A(hDMATransfer);
-    CALL(aDelayFrame);
+    // LD_A(0xf);
+    // LDH_addr_A(hDMATransfer);
+    // CALL(aDelayFrame);
     //  add $100 to hl and de
-    LD_A_L;
-    ADD_A(LOW(0x100));
-    LD_L_A;
-    LD_A_H;
-    ADC_A(HIGH(0x100));
-    LD_H_A;
-    LD_A_E;
-    ADD_A(LOW(0x100));
-    LD_E_A;
-    LD_A_D;
-    ADC_A(HIGH(0x100));
-    LD_D_A;
-    goto loop;
+    // LD_A_L;
+    // ADD_A(LOW(0x100));
+    // LD_L_A;
+    // LD_A_H;
+    // ADC_A(HIGH(0x100));
+    // LD_H_A;
+    // LD_A_E;
+    // ADD_A(LOW(0x100));
+    // LD_E_A;
+    // LD_A_D;
+    // ADC_A(HIGH(0x100));
+    // LD_D_A;
+    // goto loop;
 
-done:
-    LD_A_C;
-    AND_A(0x7f);  // pretty silly, considering at most bits 0-2 would be set
-    LDH_addr_A(hDMATransfer);
-    CALL(aDelayFrame);
-    POP_AF;
-    RST(aBankswitch);
+// done:
+    // LD_A_C;
+    // AND_A(0x7f);  // pretty silly, considering at most bits 0-2 would be set
+    // LDH_addr_A(hDMATransfer);
+    // CALL(aDelayFrame);
+    // POP_AF;
+    // RST(aBankswitch);
 
-    POP_AF;
-    LDH_addr_A(hBGMapMode);
-    RET;
+    // POP_AF;
+    // LDH_addr_A(hBGMapMode);
+    // RET;
 }
 
 void UpdatePlayerSprite(void) {
@@ -136,10 +139,11 @@ void LoadFontsExtra(void) {
     v_LoadFontsExtra2();
 }
 
+//  //  unreferenced
 void LoadFontsExtra2(void) {
-    //  //  unreferenced
-    FARCALL(av_LoadFontsExtra2);
-    RET;
+    // FARCALL(av_LoadFontsExtra2);
+    v_LoadFontsExtra2();
+    // RET;
 }
 
 void DecompressRequest2bpp(uint8_t b, uint16_t hl, uint8_t c) {
@@ -184,7 +188,7 @@ void FarCopyBytes(uint16_t de, uint8_t a, uint16_t hl, uint16_t bc) {
 void FarCopyBytesDouble(uint16_t de, uint8_t a, uint16_t hl, uint16_t bc) {
     // LDH_addr_A(hTempBank);
     // LDH_A_addr(hROMBank);
-    uint8_t temp = hram->hROMBank;
+    uint8_t temp = hram.hROMBank;
     // PUSH_AF;
     // LDH_A_addr(hTempBank);
     // RST(aBankswitch);

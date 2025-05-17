@@ -276,7 +276,7 @@ static uint8_t LinkTradeMenu_GetJoypad(void){
     // AND_A(BUTTONS);
     // OR_A_B;
     // LD_B_A;
-    uint8_t b = (hram->hJoyLast & (D_PAD)) | (hram->hJoyPressed & (BUTTONS));
+    uint8_t b = (hram.hJoyLast & (D_PAD)) | (hram.hJoyPressed & (BUTTONS));
     // POP_AF;
     // LD_A_B;
     // POP_BC;
@@ -288,18 +288,18 @@ static uint8_t LinkTradeMenu_GetJoypad(void){
 static void LinkTradeMenu_UpdateBGMapAndOAM(void) {
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t oam = hram->hOAMUpdate;
+    uint8_t oam = hram.hOAMUpdate;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hram.hOAMUpdate = 0x1;
     // CALL(aWaitBGMap);
     WaitBGMap();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = oam;
+    hram.hOAMUpdate = oam;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // RET;
 }
 
@@ -482,12 +482,12 @@ static void LinkTradeMenu_MenuAction(void) {
     bit_reset(wram->w2DMenuFlags2, 7);
     // LDH_A_addr(hBGMapMode);
     // PUSH_AF;
-    uint8_t mapMode = hram->hBGMapMode;
+    uint8_t mapMode = hram.hBGMapMode;
     // CALL(aLinkTradeMenu_loop);
     LinkTradeMenu_loop();
     // POP_AF;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = mapMode;
+    hram.hBGMapMode = mapMode;
     // RET;
 }
 

@@ -340,7 +340,7 @@ MasterLoop:
 
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aClearSprites);
         ClearSprites();
 

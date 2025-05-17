@@ -219,12 +219,12 @@ static void v_CardFlip_CardFlip(void){
         PlaySFX(SFX_TRANSACTION);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // CALL(aCardFlip_PrintCoinBalance);
         CardFlip_PrintCoinBalance();
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // CALL(aWaitSFX);
         WaitSFX();
         // CALL(av_CardFlip_Increment);
@@ -241,7 +241,7 @@ static void v_CardFlip_CardFlip(void){
         };
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_NONE;
+        hram.hBGMapMode = BGMAPMODE_NONE;
         // hlcoord(0, 0, wTilemap);
         // LD_BC((12 << 8) | 9);
         // CALL(aCardFlip_FillGreenBox);
@@ -254,7 +254,7 @@ static void v_CardFlip_CardFlip(void){
         coord(9, 0, wram->wTilemap)[SCREEN_WIDTH * wram->wCardFlipNumCardsPlayed] = CARDFLIP_LIGHT_ON;
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C(20);
         // CALL(aDelayFrames);
         DelayFrames(20);
@@ -263,7 +263,7 @@ static void v_CardFlip_CardFlip(void){
         PlaceCardFaceDown(coord(2, 0, wram->wTilemap));
         // LD_A(0x1);
         // LDH_addr_A(hBGMapMode);
-        hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+        hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
         // LD_C(20);
         // CALL(aDelayFrames);
         DelayFrames(20);
@@ -286,7 +286,7 @@ static void v_CardFlip_CardFlip(void){
             // LDH_A_addr(hJoyLast);
             // AND_A(A_BUTTON);
             // IF_NZ goto next;
-            if(hram->hJoyLast & A_BUTTON)
+            if(hram.hJoyLast & A_BUTTON)
                 break;
             // LD_DE(SFX_KINESIS);
             // CALL(aPlaySFX);
@@ -365,7 +365,7 @@ static void v_CardFlip_CardFlip(void){
             // LDH_A_addr(hJoyLast);
             // AND_A(A_BUTTON);
             // IF_NZ goto betdone;
-            if(hram->hJoyLast & A_BUTTON)
+            if(hram.hJoyLast & A_BUTTON)
                 break;
             // CALL(aChooseCard_HandleJoypad);
             ChooseCard_HandleJoypad();
@@ -388,7 +388,7 @@ static void v_CardFlip_CardFlip(void){
     // CheckTheCard:
         // XOR_A_A;
         // LDH_addr_A(hVBlankCounter);
-        hram->hVBlankCounter = 0x0;
+        hram.hVBlankCounter = 0x0;
         // CALL(aCardFlip_UpdateCursorOAM);
         CardFlip_UpdateCursorOAM();
         // CALL(aWaitSFX);
@@ -476,7 +476,7 @@ static void v_CardFlip_CardFlip(void){
             CardFlip_InitTilemap();
             // LD_A(0x1);
             // LDH_addr_A(hBGMapMode);
-            hram->hBGMapMode = BGMAPMODE_UPDATE_TILES;
+            hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
             // CALL(aCardFlip_ShuffleDeck);
             CardFlip_ShuffleDeck();
             // LD_HL(mv_CardFlip_CardFlipShuffledText);
@@ -598,7 +598,7 @@ void PlaceCardFaceDown(tile_t* hl){
     };
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_DE(mPlaceCardFaceDown_FaceDownCardTilemap);
     // LD_BC((6 << 8) | 5);
     // CALL(aCardFlip_CopyToBox);
@@ -632,7 +632,7 @@ void CardFlip_DisplayCardFaceUp(tile_t* hl){
     #undef _C
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // PUSH_HL;
     // PUSH_HL;
 // Flip the card face up.
@@ -700,7 +700,7 @@ void CardFlip_DisplayCardFaceUp(tile_t* hl){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hram.hCGB == 0)
         return;
 
 // Set the attributes
@@ -751,7 +751,7 @@ void CardFlip_PrintCoinBalance(void){
 void CardFlip_InitTilemap(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_HEIGHT * SCREEN_WIDTH);
     // LD_A(0x29);
@@ -888,7 +888,7 @@ void CardFlip_ShiftDigitsUpOnePixel(void){
 void CardFlip_BlankDiscardedCardSlot(void){
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A_addr(wCardFlipFaceUpCard);
     // LD_E_A;
     // LD_D(0);
@@ -1671,7 +1671,7 @@ void PlaceOAMCardBorder(uint8_t card){
 void ChooseCard_HandleJoypad(void){
     // LD_HL(hJoyLast);
     // LD_A_hl;
-    uint8_t input = hram->hJoyLast;
+    uint8_t input = hram.hJoyLast;
     uint8_t* hl;
     // AND_A(D_LEFT);
     // JP_NZ (mChooseCard_HandleJoypad_d_left);
@@ -2103,7 +2103,7 @@ void CardFlip_UpdateCursorOAM(void){
     // LDH_A_addr(hVBlankCounter);
     // AND_A(0x4);
     // RET_NZ ;
-    if(hram->hCGB == 0 && (hram->hVBlankCounter & 0x4) != 0)
+    if(hram.hCGB == 0 && (hram.hVBlankCounter & 0x4) != 0)
         return;
 
 // skip:
@@ -2130,7 +2130,7 @@ void CardFlip_InitAttrPals(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // RET_Z ;
-    if(hram->hCGB == 0)
+    if(hram.hCGB == 0)
         return;
 
     // hlcoord(0, 0, wAttrmap);

@@ -51,10 +51,10 @@ void PlayMusic(uint16_t music) {
 
     // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
     // PUSH_AF;                   // push af
-    uint8_t oldbank = hram->hROMBank;
+    uint8_t oldbank = hram.hROMBank;
     // LD_A(BANK(av_PlayMusic));  // ld a, BANK(_PlayMusic) ; aka BANK(_InitSound)
     // LDH_addr_A(hROMBank);      // ldh [hROMBank], a
-    hram->hROMBank = BANK(av_PlayMusic);
+    hram.hROMBank = BANK(av_PlayMusic);
     // LD_addr_A(MBC3RomBank);    // ld [MBC3RomBank], a
     gb_write(MBC3RomBank, BANK(av_PlayMusic));
 
@@ -72,7 +72,7 @@ void PlayMusic(uint16_t music) {
 // end:
     // POP_AF;                  // pop af
     // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
-    hram->hROMBank = oldbank;
+    hram.hROMBank = oldbank;
     // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
     gb_write(MBC3RomBank, oldbank);
     // POP_AF;                  // pop af
@@ -92,10 +92,10 @@ void PlayMusic2(uint16_t de) {
 
     // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
     // PUSH_AF;                   // push af
-    uint8_t oldbank = hram->hROMBank;
+    uint8_t oldbank = hram.hROMBank;
     // LD_A(BANK(av_PlayMusic));  // ld a, BANK(_PlayMusic)
     // LDH_addr_A(hROMBank);      // ldh [hROMBank], a
-    hram->hROMBank = BANK(av_PlayMusic);
+    hram.hROMBank = BANK(av_PlayMusic);
     // LD_addr_A(MBC3RomBank);    // ld [MBC3RomBank], a
     gb_write(MBC3RomBank, BANK(av_PlayMusic));
 
@@ -108,7 +108,7 @@ void PlayMusic2(uint16_t de) {
 
     // POP_AF;                  // pop af
     // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
-    hram->hROMBank = oldbank;
+    hram.hROMBank = oldbank;
     // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
     gb_write(MBC3RomBank, oldbank);
 
@@ -195,9 +195,9 @@ void PlaySFX(uint16_t de) {
         // LD_A(BANK(av_PlaySFX));  // ld a, BANK(_PlaySFX)
         // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
         // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
-        uint8_t oldbank = hram->hROMBank;
-        hram->hROMBank = BANK(av_PlaySFX);
-        gb_write(MBC3RomBank, hram->hROMBank);
+        uint8_t oldbank = hram.hROMBank;
+        hram.hROMBank = BANK(av_PlaySFX);
+        gb_write(MBC3RomBank, hram.hROMBank);
 
         // LD_A_E;              // ld a, e
         // LD_addr_A(wCurSFX);  // ld [wCurSFX], a
@@ -208,7 +208,7 @@ void PlaySFX(uint16_t de) {
         // POP_AF;                  // pop af
         // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
         // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
-        hram->hROMBank = oldbank;
+        hram.hROMBank = oldbank;
         gb_write(MBC3RomBank, oldbank);
     }
 

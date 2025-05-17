@@ -54,8 +54,8 @@ uint8_t ScrollingMenuJoypad(void) {
 }
 
 uint8_t GetMenuJoypad(void) {
-    uint8_t pad_last = (hram->hJoyLast & (D_PAD));
-    uint8_t button_last = (hram->hJoyPressed & (BUTTONS));
+    uint8_t pad_last = (hram.hJoyLast & (D_PAD));
+    uint8_t button_last = (hram.hJoyPressed & (BUTTONS));
     return (pad_last | button_last);
 }
 
@@ -510,16 +510,17 @@ void LoadStandardMenuHeader(void) {
     LoadMenuHeader(&header);
 }
 
+// UNUSED
 void Call_ExitMenu(void) {
-    CALL(aExitMenu);
-    RET;
+    // CALL(aExitMenu);
+    // RET;
 }
 
 // Displays a vertical menu. Returns true if the player cancels out of the menu.
 bool VerticalMenu(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     // CALL(aMenuBox);
     MenuBox();
     // CALL(aUpdateSprites);
@@ -780,7 +781,7 @@ void DrawVariableLengthMenuBox(void) {
 void MenuWriteText(void) {
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
-    hram->hBGMapMode = BGMAPMODE_NONE;
+    hram.hBGMapMode = BGMAPMODE_NONE;
     const struct MenuData* data = GetMenuData();
     // CALL(aGetMenuIndexSet);              // sort out the text
     const uint8_t* idxSet = GetMenuIndexSet(data);
@@ -790,15 +791,15 @@ void MenuWriteText(void) {
     SafeUpdateSprites();
     // LDH_A_addr(hOAMUpdate);
     // PUSH_AF;
-    uint8_t oam = hram->hOAMUpdate;
+    uint8_t oam = hram.hOAMUpdate;
     // LD_A(0x1);
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = 0x1;
+    hram.hOAMUpdate = 0x1;
     // CALL(aApplyTilemap);
     ApplyTilemap();
     // POP_AF;
     // LDH_addr_A(hOAMUpdate);
-    hram->hOAMUpdate = oam;
+    hram.hOAMUpdate = oam;
     // RET;
 }
 
@@ -1040,15 +1041,15 @@ void PlaceNthMenuStrings(const char** strings, uint8_t* de, uint8_t selection) {
     // RET;
 }
 
+//  //  unreferenced
 void GetNthMenuStrings(void) {
-    //  //  unreferenced
-    CALL(aGetMenuDataPointerTableEntry);
-    INC_HL;
-    INC_HL;
-    LD_A_hli;
-    LD_D_hl;
-    LD_E_A;
-    RET;
+    // CALL(aGetMenuDataPointerTableEntry);
+    // INC_HL;
+    // INC_HL;
+    // LD_A_hli;
+    // LD_D_hl;
+    // LD_E_A;
+    // RET;
 }
 
 u8_flag_s MenuJumptable(void) {
@@ -1062,18 +1063,19 @@ u8_flag_s MenuJumptable(void) {
     return data->setupMenu.labelList[wram->wMenuSelection].function();
 }
 
+// UNUSED
 void GetMenuDataPointerTableEntry(void) {
-    LD_E_A;
-    LD_D(0);
-    LD_HL(wMenuDataPointerTableAddr);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    ADD_HL_DE;
-    RET;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(wMenuDataPointerTableAddr);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // RET;
 }
 
 void ClearWindowData(void) {
@@ -1184,11 +1186,11 @@ u8_flag_s InterpretBattleMenu(void) {
     return u8_flag(wram->wMenuCursorPosition, c);
 }
 
+//  //  unreferenced
 void InterpretMobileMenu(void) {
-    //  //  unreferenced
-    LDH_A_addr(hROMBank);
-    LD_addr_A(wMenuData_2DMenuItemStringsBank);
-    FARCALL(av_InterpretMobileMenu);
-    LD_A_addr(wMenuCursorPosition);
-    RET;
+    // LDH_A_addr(hROMBank);
+    // LD_addr_A(wMenuData_2DMenuItemStringsBank);
+    // FARCALL(av_InterpretMobileMenu);
+    // LD_A_addr(wMenuCursorPosition);
+    // RET;
 }

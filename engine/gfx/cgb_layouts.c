@@ -9,7 +9,7 @@
 //  Replaces the functionality of sgb.asm to work with CGB hardware.
 
 bool CheckCGB(void) {
-    return hram->hCGB != 0;
+    return hram.hCGB != 0;
 }
 
 void (*const CGBLayoutJumptable[])(void) = {
@@ -285,7 +285,7 @@ void v_CGB_PokegearPals(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -360,7 +360,7 @@ void v_CGB_StatsScreenHPPals(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -433,7 +433,7 @@ void v_CGB_Pokedex(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -496,7 +496,7 @@ void v_CGB_BillsPC(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -566,7 +566,7 @@ void v_CGB_PokedexUnownMode(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -636,7 +636,7 @@ void v_CGB_SlotMachine(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -825,7 +825,7 @@ void v_CGB_Evolution(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -850,7 +850,7 @@ void v_CGB_Evolution2(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -1047,7 +1047,7 @@ void v_CGB_TrainerCard(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 
@@ -1081,7 +1081,7 @@ void v_CGB_MoveList(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -1113,7 +1113,7 @@ void v_CGB_PokedexSearchOption(void){
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 
 }
@@ -1246,7 +1246,7 @@ static const uint16_t KrisPackPals[] = {
     ApplyPals();
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
-    hram->hCGBPalUpdate = TRUE;
+    hram.hCGBPalUpdate = TRUE;
     // RET;
 }
 

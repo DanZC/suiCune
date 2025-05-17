@@ -142,11 +142,11 @@ static void ReadAnyMail_loop(void){
         // LDH_A_addr(hJoyPressed);
         // AND_A(A_BUTTON | B_BUTTON | START);
         // IF_Z goto loop;
-        if((hram->hJoyPressed & (A_BUTTON | B_BUTTON | START)) == 0)
+        if((hram.hJoyPressed & (A_BUTTON | B_BUTTON | START)) == 0)
             continue;
         // AND_A(START);
         // IF_NZ goto pressed_start;
-        if((hram->hJoyPressed & START) == 0) {
+        if((hram.hJoyPressed & START) == 0) {
             // RET;
             return;
         }
@@ -222,7 +222,7 @@ void ReadAnyMail(const struct MailMsg* de){
     SetPalettes();
     // XOR_A_A;
     // LDH_addr_A(hJoyPressed);
-    hram->hJoyPressed = 0x0;
+    hram.hJoyPressed = 0x0;
     // CALL(aReadAnyMail_loop);
     ReadAnyMail_loop();
     // CALL(aClearBGPalettes);

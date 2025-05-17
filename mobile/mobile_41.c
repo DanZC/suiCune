@@ -522,7 +522,7 @@ void StubbedTrainerRankings_Splash(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hBattleTurn != TURN_PLAYER)
+    if(hram.hBattleTurn != TURN_PLAYER)
         return;
     // LD_HL(sTrainerRankingSplash);
     // JR(mStubbedTrainerRankings_Increment3Byte);
@@ -575,7 +575,7 @@ void StubbedTrainerRankings_Selfdestruct(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
-    if(hram->hBattleTurn != TURN_PLAYER)
+    if(hram.hBattleTurn != TURN_PLAYER)
         return;
     // LD_HL(sTrainerRankingSelfdestruct);
     // JR(mStubbedTrainerRankings_Increment3Byte);
@@ -836,7 +836,7 @@ static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
         // LDH_A_addr(hPrintNumBuffer + 3);
         // SUB_A_B;
         // LDH_addr_A(hPrintNumBuffer + 7);
-        hram->hPrintNumBuffer[7] = SubCarry8(hram->hPrintNumBuffer[3], b, cy, &cy);
+        hram.hPrintNumBuffer[7] = SubCarry8(hram.hPrintNumBuffer[3], b, cy, &cy);
         // LD_A_de;
         // DEC_DE;
         // LD_B_A;
@@ -844,7 +844,7 @@ static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
         // LDH_A_addr(hPrintNumBuffer + 2);
         // SBC_A_B;
         // LDH_addr_A(hPrintNumBuffer + 6);
-        hram->hPrintNumBuffer[6] = SubCarry8(hram->hPrintNumBuffer[2], b, cy, &cy);
+        hram.hPrintNumBuffer[6] = SubCarry8(hram.hPrintNumBuffer[2], b, cy, &cy);
         // LD_A_de;
         // DEC_DE;
         // LD_B_A;
@@ -852,7 +852,7 @@ static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
         // LDH_A_addr(hPrintNumBuffer + 1);
         // SBC_A_B;
         // LDH_addr_A(hPrintNumBuffer + 5);
-        hram->hPrintNumBuffer[5] = SubCarry8(hram->hPrintNumBuffer[1], b, cy, &cy);
+        hram.hPrintNumBuffer[5] = SubCarry8(hram.hPrintNumBuffer[1], b, cy, &cy);
         // LD_A_de;
         b = (num >> 24) & 0xff;
         // INC_DE;
@@ -862,7 +862,7 @@ static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
         // LDH_A_addr(hPrintNumBuffer + 0);
         // SBC_A_B;
         // LDH_addr_A(hPrintNumBuffer + 4);
-        hram->hPrintNumBuffer[4] = SubCarry8(hram->hPrintNumBuffer[0], b, cy, &cy);
+        hram.hPrintNumBuffer[4] = SubCarry8(hram.hPrintNumBuffer[0], b, cy, &cy);
         // IF_C goto asm_1062eb;
         if(cy)
             break;
@@ -874,7 +874,7 @@ static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
         // LDH_addr_A(hPrintNumBuffer + 2);
         // LDH_A_addr(hPrintNumBuffer + 7);
         // LDH_addr_A(hPrintNumBuffer + 3);
-        CopyBytes(hram->hPrintNumBuffer, hram->hPrintNumBuffer + 4, 4);
+        CopyBytes(hram.hPrintNumBuffer, hram.hPrintNumBuffer + 4, 4);
         // INC_C;
         c++;
         // goto asm_1062b4;
@@ -884,12 +884,12 @@ static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
     // LDH_A_addr(hPrintNumBuffer + 8);
     // OR_A_C;
     // IF_Z goto LoadMinusTenIfNegative;
-    if((hram->hPrintNumBuffer[8] | c) == 0) {
+    if((hram.hPrintNumBuffer[8] | c) == 0) {
     // LoadMinusTenIfNegative:
         // LDH_A_addr(hPrintNumBuffer + 9);
         // BIT_A(7);
         // RET_Z ;
-        if(!bit_test(hram->hPrintNumBuffer[9], 7))
+        if(!bit_test(hram.hPrintNumBuffer[9], 7))
             return;
         // LD_hl(-10);
         *hl = 0xf6;
@@ -901,7 +901,7 @@ static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
         // ADD_A_C;
         // LD_hl_A;
         // LDH_addr_A(hPrintNumBuffer + 8);
-        hram->hPrintNumBuffer[8] = *hl = 0xf6 + c;
+        hram.hPrintNumBuffer[8] = *hl = 0xf6 + c;
         // RET;
         return;
     }
@@ -916,9 +916,9 @@ static uint8_t* v_MobilePrintNum_Function1062ff(uint8_t* hl) {
     // LDH_A_addr(hPrintNumBuffer + 8);
     // AND_A_A;
     // RET_Z ;
-    if(!bit_test(hram->hPrintNumBuffer[9], 7)
-    && bit_test(hram->hPrintNumBuffer[9], 6)
-    && hram->hPrintNumBuffer[8] == 0)
+    if(!bit_test(hram.hPrintNumBuffer[9], 7)
+    && bit_test(hram.hPrintNumBuffer[9], 6)
+    && hram.hPrintNumBuffer[8] == 0)
         return hl;
 
 // asm_10630d:
@@ -952,9 +952,9 @@ uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c){
     // LDH_addr_A(hPrintNumBuffer + 0);
     // LDH_addr_A(hPrintNumBuffer + 1);
     // LDH_addr_A(hPrintNumBuffer + 2);
-    hram->hPrintNumBuffer[0] = 0;
-    hram->hPrintNumBuffer[1] = 0;
-    hram->hPrintNumBuffer[2] = 0;
+    hram.hPrintNumBuffer[0] = 0;
+    hram.hPrintNumBuffer[1] = 0;
+    hram.hPrintNumBuffer[2] = 0;
     // LD_A_B;
     // AND_A(0xf);
     // CP_A(0x1);
@@ -968,7 +968,7 @@ uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c){
     default:
         // LD_A_de;
         // LDH_addr_A(hPrintNumBuffer + 0);
-        hram->hPrintNumBuffer[0] = *(de++);
+        hram.hPrintNumBuffer[0] = *(de++);
         // INC_DE;
         fallthrough;
 
@@ -976,7 +976,7 @@ uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c){
     // three_bytes:
         // LD_A_de;
         // LDH_addr_A(hPrintNumBuffer + 1);
-        hram->hPrintNumBuffer[1] = *(de++);
+        hram.hPrintNumBuffer[1] = *(de++);
         // INC_DE;
         fallthrough;
 
@@ -984,7 +984,7 @@ uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c){
     // two_bytes:
         // LD_A_de;
         // LDH_addr_A(hPrintNumBuffer + 2);
-        hram->hPrintNumBuffer[2] = *(de++);
+        hram.hPrintNumBuffer[2] = *(de++);
         // INC_DE;
         fallthrough;
 
@@ -992,7 +992,7 @@ uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c){
     // one_byte:
         // LD_A_de;
         // LDH_addr_A(hPrintNumBuffer + 3);
-        hram->hPrintNumBuffer[3] = *(de++);
+        hram.hPrintNumBuffer[3] = *(de++);
         // INC_DE;
         break;
 
@@ -1003,10 +1003,10 @@ uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c){
     // PUSH_DE;
     // XOR_A_A;
     // LDH_addr_A(hPrintNumBuffer + 8);
-    hram->hPrintNumBuffer[8] = 0;
+    hram.hPrintNumBuffer[8] = 0;
     // LD_A_B;
     // LDH_addr_A(hPrintNumBuffer + 9);
-    hram->hPrintNumBuffer[9] = b;
+    hram.hPrintNumBuffer[9] = b;
     // LD_A_C;
     uint8_t a = c;
     // CP_A(2);
@@ -1072,8 +1072,8 @@ uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c){
     // SUB_A(10);
     // INC_C;
     // goto mod_ten_loop;
-    uint8_t quot = hram->hPrintNumBuffer[3] / 10;
-    uint8_t rem = hram->hPrintNumBuffer[3] % 10;
+    uint8_t quot = hram.hPrintNumBuffer[3] / 10;
+    uint8_t rem = hram.hPrintNumBuffer[3] % 10;
 
 // simple_divide_done:
     // LD_B_A;
@@ -1081,13 +1081,13 @@ uint8_t* v_MobilePrintNum(uint8_t* hl, const void* de_, uint8_t b, uint8_t c){
     // OR_A_C;
     // LDH_addr_A(hPrintNumBuffer + 8);
     // IF_NZ goto create_digit;
-    if((hram->hPrintNumBuffer[8] | quot) == 0) {
+    if((hram.hPrintNumBuffer[8] | quot) == 0) {
         // CALL(av_MobilePrintNum_LoadMinusTenIfNegative);
     // inlined
         // LDH_A_addr(hPrintNumBuffer + 9);
         // BIT_A(7);
         // RET_Z ;
-        if(bit_test(hram->hPrintNumBuffer[9], 7)) {
+        if(bit_test(hram.hPrintNumBuffer[9], 7)) {
             // LD_hl(-10);
             *hl = 0xf6;
             // RET;
@@ -1419,9 +1419,9 @@ void Function106442(void){
     MobileAPI(MOBILEAPI_1B, &(mobile_api_data_s){0});
     // XOR_A_A;
     // LDH_addr_A(hMobile);
-    hram->hMobile = 0x0;
+    hram.hMobile = 0x0;
     // LDH_addr_A(hMobileReceive);
-    hram->hMobileReceive = 0x0;
+    hram.hMobileReceive = 0x0;
     // LD_A_addr(wMobileCommsJumptableIndex);
     // INC_A;
     // LD_addr_A(wMobileCommsJumptableIndex);

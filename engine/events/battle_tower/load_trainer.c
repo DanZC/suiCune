@@ -34,7 +34,7 @@ void LoadOpponentTrainerAndPokemon(void){
 
     // LDH_A_addr(hRandomAdd);
     // LD_B_A;
-    uint8_t b = hram->hRandomAdd;
+    uint8_t b = hram.hRandomAdd;
     uint8_t a, c;
     uint8_t* hl;
 
@@ -47,7 +47,7 @@ void LoadOpponentTrainerAndPokemon(void){
             // LDH_A_addr(hRandomAdd);
             // ADD_A_B;
             // LD_B_A;  // b contains the nr of the trainer
-            b = hram->hRandomAdd + b;
+            b = hram.hRandomAdd + b;
         #if defined(_CRYSTAL11)
             // maskbits(BATTLETOWER_NUM_UNIQUE_TRAINERS, 0);
             // CP_A(BATTLETOWER_NUM_UNIQUE_TRAINERS);
@@ -162,7 +162,7 @@ void LoadRandomBattleTowerMon(struct BattleTowerPartyMon* de){
 
             // LDH_A_addr(hRandomAdd);
             // LD_B_A;
-            uint8_t b = hram->hRandomAdd;
+            uint8_t b = hram.hRandomAdd;
 
             do {
             // resample:
@@ -171,7 +171,7 @@ void LoadRandomBattleTowerMon(struct BattleTowerPartyMon* de){
                 // LDH_A_addr(hRandomAdd);
                 // ADD_A_B;
                 // LD_B_A;
-                b += hram->hRandomAdd;
+                b += hram.hRandomAdd;
                 // maskbits(BATTLETOWER_NUM_UNIQUE_MON, 0);
                 b &= 0x1f;
                 // CP_A(BATTLETOWER_NUM_UNIQUE_MON);
