@@ -19,6 +19,7 @@
 #include "../events/specials.h"
 #include "../overworld/init_map.h"
 #include "../overworld/map_setup.h"
+#include "../pokemon/move_mon.h"
 #include "../pokegear/pokegear.h"
 #include "../phone/phone.h"
 #include "../../mobile/mobile_5f.h"
@@ -76,17 +77,80 @@ static void DebugPhoneCall(void){
     wram->wSpecialPhoneCallID = SPECIALCALL_BIKESHOP;
 }
 
-static bool DebugShowCatchTutorialScript(script_s* s){
-    SCRIPT_BEGIN
-    loadwildmon(PIDGEY, 5)
-    catchtutorial(BATTLETYPE_TUTORIAL)
-    s_end
-    SCRIPT_END
+// static bool DebugShowCatchTutorialScript(script_s* s){
+//     SCRIPT_BEGIN
+//     loadwildmon(PIDGEY, 5)
+//     catchtutorial(BATTLETYPE_TUTORIAL)
+//     s_end
+//     SCRIPT_END
+// }
+
+// static void DebugShowCatchTutorial(void){
+//     gQueuedScriptAddr = DebugShowCatchTutorialScript;
+//     hram.hMenuReturn = HMENURETURN_SCRIPT;
+// }
+
+static void DebugAddPokemon(species_t species, uint8_t level, item_t item) {
+    wram->wCurPartySpecies = species;
+    wram->wCurPartyLevel = level;
+    wram->wCurItem = item;
+    GivePoke(0, NULL, NULL);
 }
 
-static void DebugShowCatchTutorial(void){
-    gQueuedScriptAddr = DebugShowCatchTutorialScript;
-    hram.hMenuReturn = HMENURETURN_SCRIPT;
+static struct MenuHeader DebugWildBattleMenu_MenuHeader = {
+    .coord = menu_coords(0, 0, 15, 8),
+    .flags = MENU_BACKUP_TILES,
+    .data = NULL,
+    .defaultOption = 0,
+};
+
+static void DebugAddPokemonMenu(void) {
+    LoadStandardMenuHeader();
+    Textbox(coord(0, 0, wram->wTilemap), 8, 15);
+    WaitBGMap();
+    species_t species = BULBASAUR;
+    uint8_t level = 2;
+    while(1) {
+        GetJoypad();
+        if(hram.hJoyPressed & (B_BUTTON))
+            break;
+
+        if(hram.hJoyPressed & (D_DOWN)) {
+            if(species == BULBASAUR) species = NUM_POKEMON;
+            else --species;
+        }
+        if(hram.hJoyPressed & (D_UP)) {
+            if(species == NUM_POKEMON) species = BULBASAUR;
+            else ++species;
+        }
+
+        if(hram.hJoyPressed & (D_LEFT)) {
+            if(level > 5) --level; else level = 100;
+        }
+        if(hram.hJoyPressed & (D_RIGHT)) {
+            if(level < 100) ++level; else level = 5;
+        }
+
+        if(hram.hJoyPressed & (A_BUTTON)) {
+            PlayClickSFX();
+            WaitSFX();
+            CloseWindow();
+            WaitBGMap();
+            DebugAddPokemon(species, level, NO_ITEM);
+            return;
+        }
+
+        char buffer[48];
+        sprintf(buffer, "SPECIES - % 3d<LF>"
+                        "LVL     - % 3d", species, level);
+        ClearBox(coord(2, 2, wram->wTilemap), 11, 6);
+        PlaceStringSimple(U82C(buffer), coord(2, 2, wram->wTilemap));
+
+        DelayFrame();
+    }
+
+    CloseWindow();
+    WaitBGMap();
 }
 
 static void DebugUnownPrinter(void){
@@ -111,6 +175,55 @@ static void DebugWildBattle(species_t species, uint8_t level){
     Script_loadwildmon(&gCurScript, species, level);
     gQueuedScriptAddr = DebugWildBattleScript;
     hram.hMenuReturn = HMENURETURN_SCRIPT;
+}
+
+static void DebugWildBattleMenu(void) {
+    LoadMenuHeader(&DebugWildBattleMenu_MenuHeader);
+    Textbox(coord(0, 0, wram->wTilemap), 8, 15);
+    WaitBGMap();
+    species_t species = BULBASAUR;
+    uint8_t level = 2;
+    while(1) {
+        GetJoypad();
+        if(hram.hJoyPressed & (B_BUTTON))
+            break;
+
+        if(hram.hJoyPressed & (D_DOWN)) {
+            if(species == BULBASAUR) species = NUM_POKEMON;
+            else --species;
+        }
+        if(hram.hJoyPressed & (D_UP)) {
+            if(species == NUM_POKEMON) species = BULBASAUR;
+            else ++species;
+        }
+
+        if(hram.hJoyPressed & (D_LEFT)) {
+            if(level > 5) --level; else level = 100;
+        }
+        if(hram.hJoyPressed & (D_RIGHT)) {
+            if(level < 100) ++level; else level = 5;
+        }
+
+        if(hram.hJoyPressed & (A_BUTTON)) {
+            PlayClickSFX();
+            WaitSFX();
+            CloseWindow();
+            WaitBGMap();
+            DebugWildBattle(species, level);
+            return;
+        }
+
+        char buffer[48];
+        sprintf(buffer, "SPECIES - % 3d<LF>"
+                        "LVL     - % 3d", species, level);
+        ClearBox(coord(2, 2, wram->wTilemap), 11, 6);
+        PlaceStringSimple(U82C(buffer), coord(2, 2, wram->wTilemap));
+
+        DelayFrame();
+    }
+
+    CloseWindow();
+    WaitBGMap();
 }
 
 enum {
@@ -201,7 +314,7 @@ const struct MenuHeader MenuHeader = {
             .options = (const char*[]) {
                 "TELEPORT@",
                 "PHONE@",
-                "TUTORIAL@",
+                "POKEMON@",
                 "UNOWN@",
                 "FLAG@",
                 "WILD@",
@@ -252,13 +365,13 @@ const struct MenuHeader MenuHeader = {
                 DebugPhoneCall();
                 break;
             case DEBUGFIELDITEM_TUTORIAL:
-                DebugShowCatchTutorial();
-                break;
+                DebugAddPokemonMenu();
+                goto loop;
             case DEBUGFIELDITEM_UNOWN:
                 DebugUnownPrinter();
                 goto loop;
             case DEBUGFIELDITEM_WILD_BATTLE:
-                DebugWildBattle(CHARIZARD, 45);
+                DebugWildBattleMenu();
                 break;
             case DEBUGFIELDITEM_MOBILE:
                 DebugMobileConnection();

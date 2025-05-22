@@ -2722,6 +2722,7 @@ static void Mobile_MoveSelectionScreen_ListMoves(void){
     // LD_B(8);
     // LD_C(8);
     // CALL(aTextbox);
+#if defined(_CRYSTAL_JP)
     Textbox(coord(0, 8, wram->wTilemap), 8, 8);
     // LD_HL(wBattleMonMoves);
     // LD_DE(wListMoves_MoveIndicesBuffer);
@@ -2735,6 +2736,12 @@ static void Mobile_MoveSelectionScreen_ListMoves(void){
     // PREDEF(pListMoves);
     ListMoves(coord(2, 10, wram->wTilemap));
     // RET;
+#else
+    Textbox(coord(4, 17 - NUM_MOVES - 1, wram->wTilemap), 4, 14);
+    CopyBytes(wram->wListMoves_MoveIndicesBuffer, wram->wBattleMon.moves, sizeof(wram->wBattleMon.moves));
+    wram->wListMovesLineSpacing = SCREEN_WIDTH;
+    ListMoves(coord(6, 17 - NUM_MOVES, wram->wTilemap));
+#endif
 }
 
 static uint8_t Mobile_MoveSelectionScreen_GetMoveSelection(void){
@@ -2917,6 +2924,7 @@ uint8_t Mobile_MoveSelectionScreen(void){
 }
 
 void Function100c98(void){
+#if defined(_CRYSTAL_JP)
     static const uint8_t data[] = {
         10, 1,  // cursor start y, x
         (uint8_t)-1, 1,  // rows, columns
@@ -2924,6 +2932,15 @@ void Function100c98(void){
         (2 << 4) | 0,  // cursor offsets
         D_UP | D_DOWN | A_BUTTON | B_BUTTON  // accepted buttons
     };
+#else
+    static const uint8_t data[] = {
+        13, 5,  // cursor start y, x
+        (uint8_t)-1, 1,  // rows, columns
+        0xa0, 0x00,  // flags
+        (1 << 4) | 0,  // cursor offsets
+        D_UP | D_DOWN | A_BUTTON | B_BUTTON  // accepted buttons
+    };
+#endif
     // LD_DE(mFunction100c98_data);
     // CALL(aLoad2DMenuData);
     Load2DMenuData(data);
