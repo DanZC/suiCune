@@ -1,0 +1,2972 @@
+{
+  "DIGLETTS_CAVE": {
+    "encounter_rates": [
+      4,
+      2,
+      8
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 3,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 6,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 12,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 24,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 24,
+          "species": "DUGTRIO"
+        },
+        {
+          "level": 24,
+          "species": "DUGTRIO"
+        },
+        {
+          "level": 24,
+          "species": "DUGTRIO"
+        }
+      ],
+      "day": [
+        {
+          "level": 2,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 4,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 8,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 16,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 16,
+          "species": "DUGTRIO"
+        },
+        {
+          "level": 16,
+          "species": "DUGTRIO"
+        },
+        {
+          "level": 16,
+          "species": "DUGTRIO"
+        }
+      ],
+      "nite": [
+        {
+          "level": 4,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 8,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 16,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 32,
+          "species": "DIGLETT"
+        },
+        {
+          "level": 32,
+          "species": "DUGTRIO"
+        },
+        {
+          "level": 32,
+          "species": "DUGTRIO"
+        },
+        {
+          "level": 32,
+          "species": "DUGTRIO"
+        }
+      ]
+    }
+  },
+  "MOUNT_MOON": {
+    "encounter_rates": [
+      6,
+      6,
+      6
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 6,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 8,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 8,
+          "species": "SANDSHREW"
+        },
+        {
+          "level": 12,
+          "species": "PARAS"
+        },
+        {
+          "level": 10,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 8,
+          "species": "CLEFAIRY"
+        },
+        {
+          "level": 8,
+          "species": "CLEFAIRY"
+        }
+      ],
+      "day": [
+        {
+          "level": 6,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 8,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 8,
+          "species": "SANDSHREW"
+        },
+        {
+          "level": 12,
+          "species": "PARAS"
+        },
+        {
+          "level": 10,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 8,
+          "species": "CLEFAIRY"
+        },
+        {
+          "level": 8,
+          "species": "CLEFAIRY"
+        }
+      ],
+      "nite": [
+        {
+          "level": 6,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 8,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 8,
+          "species": "CLEFAIRY"
+        },
+        {
+          "level": 12,
+          "species": "PARAS"
+        },
+        {
+          "level": 10,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 12,
+          "species": "CLEFAIRY"
+        },
+        {
+          "level": 12,
+          "species": "CLEFAIRY"
+        }
+      ]
+    }
+  },
+  "ROCK_TUNNEL_1F": {
+    "encounter_rates": [
+      6,
+      6,
+      6
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 10,
+          "species": "CUBONE"
+        },
+        {
+          "level": 11,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 12,
+          "species": "MACHOP"
+        },
+        {
+          "level": 12,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 15,
+          "species": "MACHOKE"
+        },
+        {
+          "level": 12,
+          "species": "MAROWAK"
+        },
+        {
+          "level": 12,
+          "species": "MAROWAK"
+        }
+      ],
+      "day": [
+        {
+          "level": 10,
+          "species": "CUBONE"
+        },
+        {
+          "level": 11,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 12,
+          "species": "MACHOP"
+        },
+        {
+          "level": 12,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 15,
+          "species": "MACHOKE"
+        },
+        {
+          "level": 12,
+          "species": "MAROWAK"
+        },
+        {
+          "level": 12,
+          "species": "MAROWAK"
+        }
+      ],
+      "nite": [
+        {
+          "level": 12,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 11,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 12,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 17,
+          "species": "HAUNTER"
+        },
+        {
+          "level": 15,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 15,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 15,
+          "species": "ZUBAT"
+        }
+      ]
+    }
+  },
+  "ROCK_TUNNEL_B1F": {
+    "encounter_rates": [
+      6,
+      6,
+      6
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 12,
+          "species": "CUBONE"
+        },
+        {
+          "level": 14,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 16,
+          "species": "ONIX"
+        },
+        {
+          "level": 12,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 15,
+          "species": "MAROWAK"
+        },
+        {
+          "level": 15,
+          "species": "KANGASKHAN"
+        },
+        {
+          "level": 15,
+          "species": "KANGASKHAN"
+        }
+      ],
+      "day": [
+        {
+          "level": 12,
+          "species": "CUBONE"
+        },
+        {
+          "level": 14,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 16,
+          "species": "ONIX"
+        },
+        {
+          "level": 12,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 15,
+          "species": "MAROWAK"
+        },
+        {
+          "level": 15,
+          "species": "KANGASKHAN"
+        },
+        {
+          "level": 15,
+          "species": "KANGASKHAN"
+        }
+      ],
+      "nite": [
+        {
+          "level": 12,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 14,
+          "species": "GEODUDE"
+        },
+        {
+          "level": 16,
+          "species": "ONIX"
+        },
+        {
+          "level": 15,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 15,
+          "species": "HAUNTER"
+        },
+        {
+          "level": 15,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 15,
+          "species": "GOLBAT"
+        }
+      ]
+    }
+  },
+  "VICTORY_ROAD": {
+    "encounter_rates": [
+      6,
+      6,
+      6
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 34,
+          "species": "GRAVELER"
+        },
+        {
+          "level": 32,
+          "species": "RHYHORN"
+        },
+        {
+          "level": 33,
+          "species": "ONIX"
+        },
+        {
+          "level": 34,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 35,
+          "species": "SANDSLASH"
+        },
+        {
+          "level": 35,
+          "species": "RHYDON"
+        },
+        {
+          "level": 35,
+          "species": "RHYDON"
+        }
+      ],
+      "day": [
+        {
+          "level": 34,
+          "species": "GRAVELER"
+        },
+        {
+          "level": 32,
+          "species": "RHYHORN"
+        },
+        {
+          "level": 33,
+          "species": "ONIX"
+        },
+        {
+          "level": 34,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 35,
+          "species": "SANDSLASH"
+        },
+        {
+          "level": 35,
+          "species": "RHYDON"
+        },
+        {
+          "level": 35,
+          "species": "RHYDON"
+        }
+      ],
+      "nite": [
+        {
+          "level": 34,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 34,
+          "species": "GRAVELER"
+        },
+        {
+          "level": 32,
+          "species": "ONIX"
+        },
+        {
+          "level": 36,
+          "species": "GRAVELER"
+        },
+        {
+          "level": 38,
+          "species": "GRAVELER"
+        },
+        {
+          "level": 40,
+          "species": "GRAVELER"
+        },
+        {
+          "level": 40,
+          "species": "GRAVELER"
+        }
+      ]
+    }
+  },
+  "TOHJO_FALLS": {
+    "encounter_rates": [
+      6,
+      6,
+      6
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 22,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 22,
+          "species": "RATICATE"
+        },
+        {
+          "level": 24,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 21,
+          "species": "SLOWPOKE"
+        },
+        {
+          "level": 20,
+          "species": "RATTATA"
+        },
+        {
+          "level": 23,
+          "species": "SLOWPOKE"
+        },
+        {
+          "level": 23,
+          "species": "SLOWPOKE"
+        }
+      ],
+      "day": [
+        {
+          "level": 22,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 22,
+          "species": "RATICATE"
+        },
+        {
+          "level": 24,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 21,
+          "species": "SLOWPOKE"
+        },
+        {
+          "level": 20,
+          "species": "RATTATA"
+        },
+        {
+          "level": 23,
+          "species": "SLOWPOKE"
+        },
+        {
+          "level": 23,
+          "species": "SLOWPOKE"
+        }
+      ],
+      "nite": [
+        {
+          "level": 22,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 22,
+          "species": "RATICATE"
+        },
+        {
+          "level": 24,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 21,
+          "species": "SLOWPOKE"
+        },
+        {
+          "level": 20,
+          "species": "RATTATA"
+        },
+        {
+          "level": 23,
+          "species": "SLOWPOKE"
+        },
+        {
+          "level": 23,
+          "species": "SLOWPOKE"
+        }
+      ]
+    }
+  },
+  "ROUTE_1": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 2,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 2,
+          "species": "RATTATA"
+        },
+        {
+          "level": 3,
+          "species": "SENTRET"
+        },
+        {
+          "level": 3,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 6,
+          "species": "FURRET"
+        },
+        {
+          "level": 4,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 4,
+          "species": "PIDGEY"
+        }
+      ],
+      "day": [
+        {
+          "level": 2,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 2,
+          "species": "RATTATA"
+        },
+        {
+          "level": 3,
+          "species": "SENTRET"
+        },
+        {
+          "level": 3,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 6,
+          "species": "FURRET"
+        },
+        {
+          "level": 4,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 4,
+          "species": "PIDGEY"
+        }
+      ],
+      "nite": [
+        {
+          "level": 2,
+          "species": "HOOTHOOT"
+        },
+        {
+          "level": 2,
+          "species": "RATTATA"
+        },
+        {
+          "level": 3,
+          "species": "RATTATA"
+        },
+        {
+          "level": 3,
+          "species": "HOOTHOOT"
+        },
+        {
+          "level": 6,
+          "species": "RATICATE"
+        },
+        {
+          "level": 4,
+          "species": "HOOTHOOT"
+        },
+        {
+          "level": 4,
+          "species": "HOOTHOOT"
+        }
+      ]
+    }
+  },
+  "ROUTE_2": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 3,
+          "species": "CATERPIE"
+        },
+        {
+          "level": 3,
+          "species": "LEDYBA"
+        },
+        {
+          "level": 5,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 7,
+          "species": "BUTTERFREE"
+        },
+        {
+          "level": 7,
+          "species": "LEDIAN"
+        },
+        {
+          "level": 4,
+          "species": "PIKACHU"
+        },
+        {
+          "level": 4,
+          "species": "PIKACHU"
+        }
+      ],
+      "day": [
+        {
+          "level": 3,
+          "species": "CATERPIE"
+        },
+        {
+          "level": 3,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 5,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 7,
+          "species": "BUTTERFREE"
+        },
+        {
+          "level": 7,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 4,
+          "species": "PIKACHU"
+        },
+        {
+          "level": 4,
+          "species": "PIKACHU"
+        }
+      ],
+      "nite": [
+        {
+          "level": 3,
+          "species": "HOOTHOOT"
+        },
+        {
+          "level": 3,
+          "species": "SPINARAK"
+        },
+        {
+          "level": 5,
+          "species": "HOOTHOOT"
+        },
+        {
+          "level": 7,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 7,
+          "species": "ARIADOS"
+        },
+        {
+          "level": 4,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 4,
+          "species": "NOCTOWL"
+        }
+      ]
+    }
+  },
+  "ROUTE_3": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 5,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 5,
+          "species": "RATTATA"
+        },
+        {
+          "level": 8,
+          "species": "EKANS"
+        },
+        {
+          "level": 10,
+          "species": "RATICATE"
+        },
+        {
+          "level": 10,
+          "species": "ARBOK"
+        },
+        {
+          "level": 10,
+          "species": "SANDSHREW"
+        },
+        {
+          "level": 10,
+          "species": "SANDSHREW"
+        }
+      ],
+      "day": [
+        {
+          "level": 5,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 5,
+          "species": "RATTATA"
+        },
+        {
+          "level": 8,
+          "species": "EKANS"
+        },
+        {
+          "level": 10,
+          "species": "RATICATE"
+        },
+        {
+          "level": 10,
+          "species": "ARBOK"
+        },
+        {
+          "level": 10,
+          "species": "SANDSHREW"
+        },
+        {
+          "level": 10,
+          "species": "SANDSHREW"
+        }
+      ],
+      "nite": [
+        {
+          "level": 5,
+          "species": "RATTATA"
+        },
+        {
+          "level": 10,
+          "species": "RATTATA"
+        },
+        {
+          "level": 10,
+          "species": "RATICATE"
+        },
+        {
+          "level": 6,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 5,
+          "species": "RATTATA"
+        },
+        {
+          "level": 6,
+          "species": "CLEFAIRY"
+        },
+        {
+          "level": 6,
+          "species": "CLEFAIRY"
+        }
+      ]
+    }
+  },
+  "ROUTE_4": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 5,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 5,
+          "species": "RATTATA"
+        },
+        {
+          "level": 8,
+          "species": "EKANS"
+        },
+        {
+          "level": 10,
+          "species": "RATICATE"
+        },
+        {
+          "level": 10,
+          "species": "ARBOK"
+        },
+        {
+          "level": 10,
+          "species": "SANDSHREW"
+        },
+        {
+          "level": 10,
+          "species": "SANDSHREW"
+        }
+      ],
+      "day": [
+        {
+          "level": 5,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 5,
+          "species": "RATTATA"
+        },
+        {
+          "level": 8,
+          "species": "EKANS"
+        },
+        {
+          "level": 10,
+          "species": "RATICATE"
+        },
+        {
+          "level": 10,
+          "species": "ARBOK"
+        },
+        {
+          "level": 10,
+          "species": "SANDSHREW"
+        },
+        {
+          "level": 10,
+          "species": "SANDSHREW"
+        }
+      ],
+      "nite": [
+        {
+          "level": 5,
+          "species": "RATTATA"
+        },
+        {
+          "level": 10,
+          "species": "RATTATA"
+        },
+        {
+          "level": 10,
+          "species": "RATICATE"
+        },
+        {
+          "level": 6,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 5,
+          "species": "RATTATA"
+        },
+        {
+          "level": 6,
+          "species": "CLEFAIRY"
+        },
+        {
+          "level": 6,
+          "species": "CLEFAIRY"
+        }
+      ]
+    }
+  },
+  "ROUTE_5": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 13,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 13,
+          "species": "SNUBBULL"
+        },
+        {
+          "level": 15,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 12,
+          "species": "ABRA"
+        },
+        {
+          "level": 14,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 14,
+          "species": "ABRA"
+        },
+        {
+          "level": 14,
+          "species": "ABRA"
+        }
+      ],
+      "day": [
+        {
+          "level": 13,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 13,
+          "species": "SNUBBULL"
+        },
+        {
+          "level": 15,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 12,
+          "species": "ABRA"
+        },
+        {
+          "level": 14,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 14,
+          "species": "ABRA"
+        },
+        {
+          "level": 14,
+          "species": "ABRA"
+        }
+      ],
+      "nite": [
+        {
+          "level": 13,
+          "species": "HOOTHOOT"
+        },
+        {
+          "level": 13,
+          "species": "MEOWTH"
+        },
+        {
+          "level": 15,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 12,
+          "species": "ABRA"
+        },
+        {
+          "level": 14,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 14,
+          "species": "ABRA"
+        },
+        {
+          "level": 14,
+          "species": "ABRA"
+        }
+      ]
+    }
+  },
+  "ROUTE_6": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 13,
+          "species": "RATTATA"
+        },
+        {
+          "level": 13,
+          "species": "SNUBBULL"
+        },
+        {
+          "level": 14,
+          "species": "MAGNEMITE"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        },
+        {
+          "level": 12,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 15,
+          "species": "GRANBULL"
+        },
+        {
+          "level": 15,
+          "species": "GRANBULL"
+        }
+      ],
+      "day": [
+        {
+          "level": 13,
+          "species": "RATTATA"
+        },
+        {
+          "level": 13,
+          "species": "SNUBBULL"
+        },
+        {
+          "level": 14,
+          "species": "MAGNEMITE"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        },
+        {
+          "level": 12,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 15,
+          "species": "GRANBULL"
+        },
+        {
+          "level": 15,
+          "species": "GRANBULL"
+        }
+      ],
+      "nite": [
+        {
+          "level": 13,
+          "species": "MEOWTH"
+        },
+        {
+          "level": 13,
+          "species": "DROWZEE"
+        },
+        {
+          "level": 14,
+          "species": "MAGNEMITE"
+        },
+        {
+          "level": 15,
+          "species": "PSYDUCK"
+        },
+        {
+          "level": 12,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        }
+      ]
+    }
+  },
+  "ROUTE_7": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 17,
+          "species": "RATTATA"
+        },
+        {
+          "level": 17,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 18,
+          "species": "SNUBBULL"
+        },
+        {
+          "level": 18,
+          "species": "RATICATE"
+        },
+        {
+          "level": 18,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 16,
+          "species": "ABRA"
+        },
+        {
+          "level": 16,
+          "species": "ABRA"
+        }
+      ],
+      "day": [
+        {
+          "level": 17,
+          "species": "RATTATA"
+        },
+        {
+          "level": 17,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 18,
+          "species": "SNUBBULL"
+        },
+        {
+          "level": 18,
+          "species": "RATICATE"
+        },
+        {
+          "level": 18,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 16,
+          "species": "ABRA"
+        },
+        {
+          "level": 16,
+          "species": "ABRA"
+        }
+      ],
+      "nite": [
+        {
+          "level": 17,
+          "species": "MEOWTH"
+        },
+        {
+          "level": 17,
+          "species": "MURKROW"
+        },
+        {
+          "level": 18,
+          "species": "HOUNDOUR"
+        },
+        {
+          "level": 18,
+          "species": "PERSIAN"
+        },
+        {
+          "level": 18,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 16,
+          "species": "ABRA"
+        },
+        {
+          "level": 16,
+          "species": "ABRA"
+        }
+      ]
+    }
+  },
+  "ROUTE_8": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 17,
+          "species": "SNUBBULL"
+        },
+        {
+          "level": 19,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 16,
+          "species": "ABRA"
+        },
+        {
+          "level": 17,
+          "species": "GROWLITHE"
+        },
+        {
+          "level": 16,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 18,
+          "species": "KADABRA"
+        },
+        {
+          "level": 18,
+          "species": "KADABRA"
+        }
+      ],
+      "day": [
+        {
+          "level": 17,
+          "species": "SNUBBULL"
+        },
+        {
+          "level": 19,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 16,
+          "species": "ABRA"
+        },
+        {
+          "level": 17,
+          "species": "GROWLITHE"
+        },
+        {
+          "level": 16,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 18,
+          "species": "KADABRA"
+        },
+        {
+          "level": 18,
+          "species": "KADABRA"
+        }
+      ],
+      "nite": [
+        {
+          "level": 17,
+          "species": "MEOWTH"
+        },
+        {
+          "level": 20,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 16,
+          "species": "ABRA"
+        },
+        {
+          "level": 17,
+          "species": "HAUNTER"
+        },
+        {
+          "level": 16,
+          "species": "JIGGLYPUFF"
+        },
+        {
+          "level": 18,
+          "species": "KADABRA"
+        },
+        {
+          "level": 18,
+          "species": "KADABRA"
+        }
+      ]
+    }
+  },
+  "ROUTE_9": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 15,
+          "species": "RATTATA"
+        },
+        {
+          "level": 15,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        },
+        {
+          "level": 15,
+          "species": "FEAROW"
+        },
+        {
+          "level": 15,
+          "species": "FEAROW"
+        },
+        {
+          "level": 18,
+          "species": "MAROWAK"
+        },
+        {
+          "level": 18,
+          "species": "MAROWAK"
+        }
+      ],
+      "day": [
+        {
+          "level": 15,
+          "species": "RATTATA"
+        },
+        {
+          "level": 15,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        },
+        {
+          "level": 15,
+          "species": "FEAROW"
+        },
+        {
+          "level": 15,
+          "species": "FEAROW"
+        },
+        {
+          "level": 18,
+          "species": "MAROWAK"
+        },
+        {
+          "level": 18,
+          "species": "MAROWAK"
+        }
+      ],
+      "nite": [
+        {
+          "level": 15,
+          "species": "RATTATA"
+        },
+        {
+          "level": 15,
+          "species": "VENONAT"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        },
+        {
+          "level": 15,
+          "species": "VENOMOTH"
+        },
+        {
+          "level": 15,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 18,
+          "species": "RATICATE"
+        },
+        {
+          "level": 18,
+          "species": "RATICATE"
+        }
+      ]
+    }
+  },
+  "ROUTE_10_NORTH": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 15,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 17,
+          "species": "VOLTORB"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        },
+        {
+          "level": 15,
+          "species": "FEAROW"
+        },
+        {
+          "level": 15,
+          "species": "MAROWAK"
+        },
+        {
+          "level": 16,
+          "species": "ELECTABUZZ"
+        },
+        {
+          "level": 16,
+          "species": "ELECTABUZZ"
+        }
+      ],
+      "day": [
+        {
+          "level": 15,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 17,
+          "species": "VOLTORB"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        },
+        {
+          "level": 15,
+          "species": "FEAROW"
+        },
+        {
+          "level": 15,
+          "species": "MAROWAK"
+        },
+        {
+          "level": 18,
+          "species": "ELECTABUZZ"
+        },
+        {
+          "level": 18,
+          "species": "ELECTABUZZ"
+        }
+      ],
+      "nite": [
+        {
+          "level": 15,
+          "species": "VENONAT"
+        },
+        {
+          "level": 17,
+          "species": "VOLTORB"
+        },
+        {
+          "level": 15,
+          "species": "RATICATE"
+        },
+        {
+          "level": 15,
+          "species": "VENOMOTH"
+        },
+        {
+          "level": 15,
+          "species": "ZUBAT"
+        },
+        {
+          "level": 16,
+          "species": "ELECTABUZZ"
+        },
+        {
+          "level": 16,
+          "species": "ELECTABUZZ"
+        }
+      ]
+    }
+  },
+  "ROUTE_11": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 14,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 13,
+          "species": "RATICATE"
+        },
+        {
+          "level": 15,
+          "species": "MAGNEMITE"
+        },
+        {
+          "level": 16,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 16,
+          "species": "RATTATA"
+        },
+        {
+          "level": 16,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 16,
+          "species": "HOPPIP"
+        }
+      ],
+      "day": [
+        {
+          "level": 14,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 13,
+          "species": "RATICATE"
+        },
+        {
+          "level": 15,
+          "species": "MAGNEMITE"
+        },
+        {
+          "level": 16,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 16,
+          "species": "RATTATA"
+        },
+        {
+          "level": 16,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 16,
+          "species": "HOPPIP"
+        }
+      ],
+      "nite": [
+        {
+          "level": 14,
+          "species": "DROWZEE"
+        },
+        {
+          "level": 13,
+          "species": "MEOWTH"
+        },
+        {
+          "level": 15,
+          "species": "MAGNEMITE"
+        },
+        {
+          "level": 16,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 16,
+          "species": "RATICATE"
+        },
+        {
+          "level": 16,
+          "species": "HYPNO"
+        },
+        {
+          "level": 16,
+          "species": "HYPNO"
+        }
+      ]
+    }
+  },
+  "ROUTE_13": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 23,
+          "species": "NIDORINO"
+        },
+        {
+          "level": 23,
+          "species": "NIDORINA"
+        },
+        {
+          "level": 25,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 25,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 27,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 27,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 25,
+          "species": "CHANSEY"
+        }
+      ],
+      "day": [
+        {
+          "level": 23,
+          "species": "NIDORINO"
+        },
+        {
+          "level": 23,
+          "species": "NIDORINA"
+        },
+        {
+          "level": 25,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 25,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 27,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 27,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 25,
+          "species": "CHANSEY"
+        }
+      ],
+      "nite": [
+        {
+          "level": 23,
+          "species": "VENONAT"
+        },
+        {
+          "level": 23,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 25,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 25,
+          "species": "VENOMOTH"
+        },
+        {
+          "level": 25,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 25,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 25,
+          "species": "CHANSEY"
+        }
+      ]
+    }
+  },
+  "ROUTE_14": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 26,
+          "species": "NIDORINO"
+        },
+        {
+          "level": 26,
+          "species": "NIDORINA"
+        },
+        {
+          "level": 28,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 28,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 30,
+          "species": "SKIPLOOM"
+        },
+        {
+          "level": 30,
+          "species": "SKIPLOOM"
+        },
+        {
+          "level": 28,
+          "species": "CHANSEY"
+        }
+      ],
+      "day": [
+        {
+          "level": 26,
+          "species": "NIDORINO"
+        },
+        {
+          "level": 26,
+          "species": "NIDORINA"
+        },
+        {
+          "level": 28,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 28,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 30,
+          "species": "SKIPLOOM"
+        },
+        {
+          "level": 30,
+          "species": "SKIPLOOM"
+        },
+        {
+          "level": 28,
+          "species": "CHANSEY"
+        }
+      ],
+      "nite": [
+        {
+          "level": 26,
+          "species": "VENONAT"
+        },
+        {
+          "level": 26,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 28,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 28,
+          "species": "VENOMOTH"
+        },
+        {
+          "level": 28,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 28,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 28,
+          "species": "CHANSEY"
+        }
+      ]
+    }
+  },
+  "ROUTE_15": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 23,
+          "species": "NIDORINO"
+        },
+        {
+          "level": 23,
+          "species": "NIDORINA"
+        },
+        {
+          "level": 25,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 25,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 27,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 27,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 25,
+          "species": "CHANSEY"
+        }
+      ],
+      "day": [
+        {
+          "level": 23,
+          "species": "NIDORINO"
+        },
+        {
+          "level": 23,
+          "species": "NIDORINA"
+        },
+        {
+          "level": 25,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 25,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 27,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 27,
+          "species": "HOPPIP"
+        },
+        {
+          "level": 25,
+          "species": "CHANSEY"
+        }
+      ],
+      "nite": [
+        {
+          "level": 23,
+          "species": "VENONAT"
+        },
+        {
+          "level": 23,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 25,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 25,
+          "species": "VENOMOTH"
+        },
+        {
+          "level": 25,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 25,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 25,
+          "species": "CHANSEY"
+        }
+      ]
+    }
+  },
+  "ROUTE_16": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 26,
+          "species": "GRIMER"
+        },
+        {
+          "level": 27,
+          "species": "FEAROW"
+        },
+        {
+          "level": 28,
+          "species": "GRIMER"
+        },
+        {
+          "level": 29,
+          "species": "FEAROW"
+        },
+        {
+          "level": 29,
+          "species": "FEAROW"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        }
+      ],
+      "day": [
+        {
+          "level": 26,
+          "species": "GRIMER"
+        },
+        {
+          "level": 27,
+          "species": "FEAROW"
+        },
+        {
+          "level": 28,
+          "species": "GRIMER"
+        },
+        {
+          "level": 29,
+          "species": "FEAROW"
+        },
+        {
+          "level": 29,
+          "species": "SLUGMA"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        }
+      ],
+      "nite": [
+        {
+          "level": 26,
+          "species": "GRIMER"
+        },
+        {
+          "level": 27,
+          "species": "GRIMER"
+        },
+        {
+          "level": 28,
+          "species": "GRIMER"
+        },
+        {
+          "level": 29,
+          "species": "MURKROW"
+        },
+        {
+          "level": 29,
+          "species": "MURKROW"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        }
+      ]
+    }
+  },
+  "ROUTE_17": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 30,
+          "species": "FEAROW"
+        },
+        {
+          "level": 29,
+          "species": "GRIMER"
+        },
+        {
+          "level": 31,
+          "species": "GRIMER"
+        },
+        {
+          "level": 32,
+          "species": "FEAROW"
+        },
+        {
+          "level": 33,
+          "species": "GRIMER"
+        },
+        {
+          "level": 33,
+          "species": "MUK"
+        },
+        {
+          "level": 33,
+          "species": "MUK"
+        }
+      ],
+      "day": [
+        {
+          "level": 30,
+          "species": "FEAROW"
+        },
+        {
+          "level": 29,
+          "species": "SLUGMA"
+        },
+        {
+          "level": 29,
+          "species": "GRIMER"
+        },
+        {
+          "level": 32,
+          "species": "FEAROW"
+        },
+        {
+          "level": 32,
+          "species": "SLUGMA"
+        },
+        {
+          "level": 33,
+          "species": "MUK"
+        },
+        {
+          "level": 33,
+          "species": "MUK"
+        }
+      ],
+      "nite": [
+        {
+          "level": 30,
+          "species": "GRIMER"
+        },
+        {
+          "level": 29,
+          "species": "GRIMER"
+        },
+        {
+          "level": 31,
+          "species": "GRIMER"
+        },
+        {
+          "level": 32,
+          "species": "GRIMER"
+        },
+        {
+          "level": 33,
+          "species": "GRIMER"
+        },
+        {
+          "level": 33,
+          "species": "MUK"
+        },
+        {
+          "level": 33,
+          "species": "MUK"
+        }
+      ]
+    }
+  },
+  "ROUTE_18": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 26,
+          "species": "GRIMER"
+        },
+        {
+          "level": 27,
+          "species": "FEAROW"
+        },
+        {
+          "level": 28,
+          "species": "GRIMER"
+        },
+        {
+          "level": 29,
+          "species": "FEAROW"
+        },
+        {
+          "level": 29,
+          "species": "FEAROW"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        }
+      ],
+      "day": [
+        {
+          "level": 26,
+          "species": "GRIMER"
+        },
+        {
+          "level": 27,
+          "species": "FEAROW"
+        },
+        {
+          "level": 28,
+          "species": "GRIMER"
+        },
+        {
+          "level": 29,
+          "species": "FEAROW"
+        },
+        {
+          "level": 29,
+          "species": "SLUGMA"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        }
+      ],
+      "nite": [
+        {
+          "level": 26,
+          "species": "GRIMER"
+        },
+        {
+          "level": 27,
+          "species": "GRIMER"
+        },
+        {
+          "level": 28,
+          "species": "GRIMER"
+        },
+        {
+          "level": 29,
+          "species": "GRIMER"
+        },
+        {
+          "level": 29,
+          "species": "GRIMER"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        },
+        {
+          "level": 30,
+          "species": "MUK"
+        }
+      ]
+    }
+  },
+  "ROUTE_21": {
+    "encounter_rates": [
+      6,
+      6,
+      6
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 30,
+          "species": "TANGELA"
+        },
+        {
+          "level": 25,
+          "species": "RATTATA"
+        },
+        {
+          "level": 35,
+          "species": "TANGELA"
+        },
+        {
+          "level": 20,
+          "species": "RATICATE"
+        },
+        {
+          "level": 30,
+          "species": "MR__MIME"
+        },
+        {
+          "level": 28,
+          "species": "MR__MIME"
+        },
+        {
+          "level": 28,
+          "species": "MR__MIME"
+        }
+      ],
+      "day": [
+        {
+          "level": 30,
+          "species": "TANGELA"
+        },
+        {
+          "level": 25,
+          "species": "RATTATA"
+        },
+        {
+          "level": 35,
+          "species": "TANGELA"
+        },
+        {
+          "level": 20,
+          "species": "RATICATE"
+        },
+        {
+          "level": 28,
+          "species": "MR__MIME"
+        },
+        {
+          "level": 30,
+          "species": "MR__MIME"
+        },
+        {
+          "level": 30,
+          "species": "MR__MIME"
+        }
+      ],
+      "nite": [
+        {
+          "level": 30,
+          "species": "TANGELA"
+        },
+        {
+          "level": 25,
+          "species": "RATTATA"
+        },
+        {
+          "level": 35,
+          "species": "TANGELA"
+        },
+        {
+          "level": 20,
+          "species": "RATICATE"
+        },
+        {
+          "level": 30,
+          "species": "TANGELA"
+        },
+        {
+          "level": 28,
+          "species": "TANGELA"
+        },
+        {
+          "level": 28,
+          "species": "TANGELA"
+        }
+      ]
+    }
+  },
+  "ROUTE_22": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 3,
+          "species": "RATTATA"
+        },
+        {
+          "level": 3,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 5,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 4,
+          "species": "DODUO"
+        },
+        {
+          "level": 6,
+          "species": "PONYTA"
+        },
+        {
+          "level": 7,
+          "species": "FEAROW"
+        },
+        {
+          "level": 7,
+          "species": "FEAROW"
+        }
+      ],
+      "day": [
+        {
+          "level": 3,
+          "species": "RATTATA"
+        },
+        {
+          "level": 3,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 5,
+          "species": "SPEAROW"
+        },
+        {
+          "level": 4,
+          "species": "DODUO"
+        },
+        {
+          "level": 6,
+          "species": "PONYTA"
+        },
+        {
+          "level": 7,
+          "species": "FEAROW"
+        },
+        {
+          "level": 7,
+          "species": "FEAROW"
+        }
+      ],
+      "nite": [
+        {
+          "level": 3,
+          "species": "RATTATA"
+        },
+        {
+          "level": 3,
+          "species": "POLIWAG"
+        },
+        {
+          "level": 5,
+          "species": "RATTATA"
+        },
+        {
+          "level": 4,
+          "species": "POLIWAG"
+        },
+        {
+          "level": 6,
+          "species": "RATTATA"
+        },
+        {
+          "level": 7,
+          "species": "RATTATA"
+        },
+        {
+          "level": 7,
+          "species": "RATTATA"
+        }
+      ]
+    }
+  },
+  "ROUTE_24": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 8,
+          "species": "CATERPIE"
+        },
+        {
+          "level": 10,
+          "species": "CATERPIE"
+        },
+        {
+          "level": 12,
+          "species": "METAPOD"
+        },
+        {
+          "level": 12,
+          "species": "ABRA"
+        },
+        {
+          "level": 10,
+          "species": "BELLSPROUT"
+        },
+        {
+          "level": 14,
+          "species": "BUTTERFREE"
+        },
+        {
+          "level": 14,
+          "species": "BUTTERFREE"
+        }
+      ],
+      "day": [
+        {
+          "level": 8,
+          "species": "CATERPIE"
+        },
+        {
+          "level": 12,
+          "species": "SUNKERN"
+        },
+        {
+          "level": 10,
+          "species": "CATERPIE"
+        },
+        {
+          "level": 12,
+          "species": "ABRA"
+        },
+        {
+          "level": 10,
+          "species": "BELLSPROUT"
+        },
+        {
+          "level": 14,
+          "species": "BUTTERFREE"
+        },
+        {
+          "level": 14,
+          "species": "BUTTERFREE"
+        }
+      ],
+      "nite": [
+        {
+          "level": 10,
+          "species": "VENONAT"
+        },
+        {
+          "level": 10,
+          "species": "ODDISH"
+        },
+        {
+          "level": 12,
+          "species": "ODDISH"
+        },
+        {
+          "level": 12,
+          "species": "ABRA"
+        },
+        {
+          "level": 10,
+          "species": "BELLSPROUT"
+        },
+        {
+          "level": 14,
+          "species": "GLOOM"
+        },
+        {
+          "level": 14,
+          "species": "GLOOM"
+        }
+      ]
+    }
+  },
+  "ROUTE_25": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 10,
+          "species": "CATERPIE"
+        },
+        {
+          "level": 10,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 12,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 12,
+          "species": "METAPOD"
+        },
+        {
+          "level": 10,
+          "species": "BELLSPROUT"
+        },
+        {
+          "level": 14,
+          "species": "BUTTERFREE"
+        },
+        {
+          "level": 14,
+          "species": "BUTTERFREE"
+        }
+      ],
+      "day": [
+        {
+          "level": 10,
+          "species": "CATERPIE"
+        },
+        {
+          "level": 10,
+          "species": "PIDGEY"
+        },
+        {
+          "level": 12,
+          "species": "PIDGEOTTO"
+        },
+        {
+          "level": 12,
+          "species": "METAPOD"
+        },
+        {
+          "level": 10,
+          "species": "BELLSPROUT"
+        },
+        {
+          "level": 14,
+          "species": "BUTTERFREE"
+        },
+        {
+          "level": 14,
+          "species": "BUTTERFREE"
+        }
+      ],
+      "nite": [
+        {
+          "level": 10,
+          "species": "ODDISH"
+        },
+        {
+          "level": 10,
+          "species": "HOOTHOOT"
+        },
+        {
+          "level": 10,
+          "species": "VENONAT"
+        },
+        {
+          "level": 12,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 10,
+          "species": "BELLSPROUT"
+        },
+        {
+          "level": 14,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 14,
+          "species": "NOCTOWL"
+        }
+      ]
+    }
+  },
+  "ROUTE_26": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 28,
+          "species": "DODUO"
+        },
+        {
+          "level": 28,
+          "species": "SANDSLASH"
+        },
+        {
+          "level": 32,
+          "species": "PONYTA"
+        },
+        {
+          "level": 30,
+          "species": "RATICATE"
+        },
+        {
+          "level": 30,
+          "species": "DODUO"
+        },
+        {
+          "level": 30,
+          "species": "ARBOK"
+        },
+        {
+          "level": 30,
+          "species": "ARBOK"
+        }
+      ],
+      "day": [
+        {
+          "level": 28,
+          "species": "DODUO"
+        },
+        {
+          "level": 28,
+          "species": "SANDSLASH"
+        },
+        {
+          "level": 32,
+          "species": "PONYTA"
+        },
+        {
+          "level": 30,
+          "species": "RATICATE"
+        },
+        {
+          "level": 30,
+          "species": "DODUO"
+        },
+        {
+          "level": 30,
+          "species": "ARBOK"
+        },
+        {
+          "level": 30,
+          "species": "ARBOK"
+        }
+      ],
+      "nite": [
+        {
+          "level": 28,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 28,
+          "species": "RATICATE"
+        },
+        {
+          "level": 32,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 30,
+          "species": "RATICATE"
+        },
+        {
+          "level": 30,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 30,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 30,
+          "species": "QUAGSIRE"
+        }
+      ]
+    }
+  },
+  "ROUTE_27": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 28,
+          "species": "DODUO"
+        },
+        {
+          "level": 28,
+          "species": "ARBOK"
+        },
+        {
+          "level": 30,
+          "species": "RATICATE"
+        },
+        {
+          "level": 30,
+          "species": "DODUO"
+        },
+        {
+          "level": 32,
+          "species": "PONYTA"
+        },
+        {
+          "level": 30,
+          "species": "DODRIO"
+        },
+        {
+          "level": 30,
+          "species": "DODRIO"
+        }
+      ],
+      "day": [
+        {
+          "level": 28,
+          "species": "DODUO"
+        },
+        {
+          "level": 28,
+          "species": "ARBOK"
+        },
+        {
+          "level": 30,
+          "species": "RATICATE"
+        },
+        {
+          "level": 30,
+          "species": "DODUO"
+        },
+        {
+          "level": 32,
+          "species": "PONYTA"
+        },
+        {
+          "level": 30,
+          "species": "DODRIO"
+        },
+        {
+          "level": 30,
+          "species": "DODRIO"
+        }
+      ],
+      "nite": [
+        {
+          "level": 28,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 28,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 30,
+          "species": "RATICATE"
+        },
+        {
+          "level": 30,
+          "species": "QUAGSIRE"
+        },
+        {
+          "level": 32,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 32,
+          "species": "NOCTOWL"
+        },
+        {
+          "level": 32,
+          "species": "NOCTOWL"
+        }
+      ]
+    }
+  },
+  "ROUTE_28": {
+    "encounter_rates": [
+      10,
+      10,
+      10
+    ],
+    "encounters": {
+      "morn": [
+        {
+          "level": 39,
+          "species": "TANGELA"
+        },
+        {
+          "level": 40,
+          "species": "PONYTA"
+        },
+        {
+          "level": 40,
+          "species": "RAPIDASH"
+        },
+        {
+          "level": 42,
+          "species": "ARBOK"
+        },
+        {
+          "level": 41,
+          "species": "DODUO"
+        },
+        {
+          "level": 43,
+          "species": "DODRIO"
+        },
+        {
+          "level": 43,
+          "species": "DODRIO"
+        }
+      ],
+      "day": [
+        {
+          "level": 39,
+          "species": "TANGELA"
+        },
+        {
+          "level": 40,
+          "species": "PONYTA"
+        },
+        {
+          "level": 40,
+          "species": "RAPIDASH"
+        },
+        {
+          "level": 42,
+          "species": "ARBOK"
+        },
+        {
+          "level": 41,
+          "species": "DODUO"
+        },
+        {
+          "level": 43,
+          "species": "DODRIO"
+        },
+        {
+          "level": 43,
+          "species": "DODRIO"
+        }
+      ],
+      "nite": [
+        {
+          "level": 39,
+          "species": "TANGELA"
+        },
+        {
+          "level": 40,
+          "species": "POLIWHIRL"
+        },
+        {
+          "level": 40,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 40,
+          "species": "POLIWHIRL"
+        },
+        {
+          "level": 42,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 42,
+          "species": "GOLBAT"
+        },
+        {
+          "level": 42,
+          "species": "GOLBAT"
+        }
+      ]
+    }
+  }
+}

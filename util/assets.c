@@ -1,5 +1,4 @@
-#define NO_PHYSFS
-#ifndef NO_PHYSFS
+#if defined(USE_PHYSFS)
 #include <physfs.h>
 #endif
 #include <stdlib.h>
@@ -19,7 +18,7 @@ int64_t fsize(FILE* file) {
 
 // Loads asset file from archive to a heap-allocated buffer.
 asset_s LoadAsset(const char* filename) {
-    #if !defined(NO_PHYSFS)
+    #if defined(USE_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
         fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
@@ -36,7 +35,7 @@ asset_s LoadAsset(const char* filename) {
         fprintf(stderr, "%s Error: Bad malloc.", __func__);
         return (asset_s){NULL, 0};
     }
-    PHYSFS_readBytes(file, buf, (size_t)size);
+    size_t read = (size_t)PHYSFS_readBytes(file, buf, (size_t)size);
     PHYSFS_close(file);
     #else 
     FILE* file = fopen(filename, "rb");
@@ -65,7 +64,7 @@ asset_s LoadAsset(const char* filename) {
 // If the buffer size is less than the size of the file being loaded, the 
 // data loaded will be truncated to the buffer size.
 asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
-#if !defined(NO_PHYSFS)
+#if defined(USE_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
         fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
@@ -78,7 +77,7 @@ asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
         return (asset_s){NULL, 0};
     }
     size_t rsize = ((size_t)size > buf_size)? buf_size: (size_t)size;
-    PHYSFS_readBytes(file, buffer, rsize);
+    size_t read = (size_t)PHYSFS_readBytes(file, buffer, rsize);
     PHYSFS_close(file);
 #else 
     FILE* file = fopen(filename, "rb");
@@ -106,7 +105,7 @@ asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
 
 // Loads text asset file from archive to a heap-allocated buffer.
 asset_s LoadTextAsset(const char* filename) {
-#if !defined(NO_PHYSFS)
+#if defined(USE_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
         fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
@@ -123,7 +122,7 @@ asset_s LoadTextAsset(const char* filename) {
         fprintf(stderr, "%s Error: Bad malloc.", __func__);
         return (asset_s){NULL, 0};
     }
-    PHYSFS_readBytes(file, buf, (size_t)size);
+    size_t read = (size_t)PHYSFS_readBytes(file, buf, (size_t)size);
     PHYSFS_close(file);
     buf[size] = '\0';
 #else 
@@ -159,6 +158,27 @@ void LoadAssetIfNotLoaded(asset_s* asset, const char* filename) {
 // Just a wrapper for free() which makes intent more clear.
 void FreeAsset(asset_s asset) {
     free(asset.ptr);
+}
+
+bool WriteAsset(const char* filename, const void* buffer, size_t buf_size) {
+#if defined(USE_PHYSFS)
+    PHYSFS_File* file = PHYSFS_openWrite(filename);
+    if(!file) {
+        fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
+        return false;
+    }
+    PHYSFS_writeBytes(file, buffer, (size_t)buf_size);
+    PHYSFS_close(file);
+#else 
+    FILE* file = fopen(filename, "wb");
+    if(!file) {
+        fprintf(stderr, "%s Error: %s", __func__, filename);
+        return false;
+    }
+    size_t written = fwrite(buffer, 1, buf_size, file);
+    fclose(file);
+#endif
+    return true;
 }
 
 // Converts an 8x8 1bpp grayscale square from a src image with stride width to GB pixel format and writes the result
@@ -697,7 +717,7 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
         fprintf(stderr, "%s Error: Segment size is 0.", __func__);
         return (asset_s){NULL, 0};
     }
-#if !defined(NO_PHYSFS)
+#if defined(USE_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
         fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
@@ -716,8 +736,9 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
     size_t asize = (size_t)size - (segment_size * start);
     size_t scount = (count > asize / segment_size)? asize / segment_size: count;
     scount = (scount > buf_size / segment_size)? buf_size / segment_size: scount;
+    size_t read = 0;
     if(scount != 0)
-        PHYSFS_readBytes(file, buffer, segment_size * scount);
+        read = (size_t)PHYSFS_readBytes(file, buffer, segment_size * scount);
     PHYSFS_close(file);
 #else
     FILE* file = fopen(filename, "rb");

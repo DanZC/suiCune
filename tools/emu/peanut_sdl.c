@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NO_PHYSFS
 // #define DEBUG_WINDOW
 #define USE_ROM_FILE 0
 #ifdef _MSC_VER
@@ -20,7 +19,7 @@
 #else
 #include <SDL2/SDL.h>
 #endif // _MSVC_VER
-#if !defined(NO_PHYSFS)
+#if defined(USE_PHYSFS)
 #include <physfs.h>
 #endif
 
@@ -3692,7 +3691,7 @@ int main(int argc, char* argv[]) {
     SDL_setenv("SDL_AUDIODRIVER", "directsound", SDL_TRUE);
 #endif
 
-#if !defined(NO_PHYSFS)
+#if defined(USE_PHYSFS)
     if(!PHYSFS_init(argv[0])) {
         char buf[128];
         snprintf(buf, sizeof(buf),
@@ -3702,7 +3701,17 @@ int main(int argc, char* argv[]) {
         goto out;
     }
 
-    PHYSFS_mount("./assets.zip", NULL, 1);
+    PHYSFS_mount(".", NULL, 1);
+    PHYSFS_mount("./base_assets.zip", NULL, 1);
+#if defined(_CRYSTAL_JP)
+    PHYSFS_mount("./crystal_j.zip", NULL, 1);
+#elif defined(_CRYSTAL_AU)
+    PHYSFS_mount("./crystal_a.zip", NULL, 1);
+    PHYSFS_mount("./crystal_ue_11.zip", NULL, 1);
+#else
+    PHYSFS_mount("./crystal_ue_11.zip", NULL, 1);
+#endif
+    PHYSFS_mount("./crystal_ue_10.zip", NULL, 1);
 #endif
 
     /* Initialise frontend implementation, in this case, SDL2. */

@@ -123,6 +123,11 @@ startproject "suiCune"
 			trigger = "fastbg",
 			description = "Draws BG Map in single frame"
 		}
+
+		newoption {
+			trigger = "physfs",
+			description = "Use PhysFS for asset loading."
+		}
 		
 		filter { "options:bugfix" }
 			defines { "BUGFIX=1" }
@@ -132,6 +137,10 @@ startproject "suiCune"
 		
 		filter { "options:fastbg" }
 			defines { "ENHANCEMENT_DRAW_BG_IN_ONE_FRAME=1" }
+
+		filter { "options:physfs" }
+			defines { "USE_PHYSFS=1" }
+			links { "physfs" }
 		
 		filter {}
 		

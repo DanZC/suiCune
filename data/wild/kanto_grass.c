@@ -1,6 +1,8 @@
 #include "../../constants.h"
 #include "kanto_grass.h"
 
+struct WildGrassMons* KantoGrassWildMons;
+#if 0
 // Kanto Pokémon in grass
 const struct WildGrassMons KantoGrassWildMons[] = {
     {MAP_ID(DIGLETTS_CAVE),
@@ -968,3 +970,4 @@ const struct WildGrassMons KantoGrassWildMons[] = {
         { { { 0 } }, { { 0 } }, { { 0 } } }
     },
 };
+#endif

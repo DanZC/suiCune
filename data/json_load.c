@@ -5,6 +5,7 @@
 #include "json_load.h"
 #include "../engine/items/mart.h"
 #include "wild/johto_grass.h"
+#include "wild/kanto_grass.h"
 #include "wild/johto_water.h"
 #include "wild/kanto_water.h"
 #include "pokemon/base_stats.h"
@@ -201,10 +202,12 @@ static void JSONLoadWildWaterEncounterTable(struct WildWaterMons** table, const 
 
 const char JohtoGrassJSONPath[] = "data/wild/johto_grass.json";
 const char JohtoWaterJSONPath[] = "data/wild/johto_water.json";
+const char KantoGrassJSONPath[] = "data/wild/kanto_grass.json";
 const char KantoWaterJSONPath[] = "data/wild/kanto_water.json";
 
 void JSONLoadWildEncounters(void) {
     JSONLoadWildGrassEncounterTable(&JohtoGrassWildMons, JohtoGrassJSONPath);
+    JSONLoadWildGrassEncounterTable(&KantoGrassWildMons, KantoGrassJSONPath);
     JSONLoadWildWaterEncounterTable(&JohtoWaterWildMons, JohtoWaterJSONPath);
     JSONLoadWildWaterEncounterTable(&KantoWaterWildMons, KantoWaterJSONPath);
 }

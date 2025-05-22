@@ -12,6 +12,7 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
 asset_s LoadTextAsset(const char* filename);
 bool IsAssetValid(asset_s asset);
 void FreeAsset(asset_s asset);
+bool WriteAsset(const char* filename, const void* buffer, size_t buf_size);
 
 void LoadPNG1bppAssetToVRAM(void* dest, const char* filename);
 void LoadPNG1bppAssetSectionToVRAM(void* dest, const char* filename, int start_tile, int tile_count);

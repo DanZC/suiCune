@@ -27,6 +27,10 @@ ifeq ($(USE_PCG), 1)
 	EXTRA_CFLAGS += -DENHANCEMENT_USE_PCG=1
 endif
 
+ifeq ($(USE_PHYSFS), 1)
+	EXTRA_CFLAGS += -DUSE_PHYSFS=1
+endif
+
 # File extension ".exe" is automatically appended on MinGW and MSVC builds, even
 # if we don't ask for it.
 ifeq ($(OS),Windows_NT)
@@ -117,6 +121,10 @@ endif
 endif
 
 LDLIBS += -lm
+
+ifeq ($(USE_PHYSFS), 1)
+	LDLIBS += -lphysfs
+endif
 
 CFLAGS += $(EXTRA_CFLAGS)
 
