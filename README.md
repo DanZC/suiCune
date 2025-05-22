@@ -1,13 +1,13 @@
 # suiCune
 
-This is an attempt at a PC port of Pokemon Crystal. It currently runs, but is not recommended to be used for any projects until completed. Additionally, it may be prone to crashes/buggy behavior. The maintainer is not to be held liable for any mishaps.
+suiCune is an in development PC port of Pokemon Crystal. The game's code is rewritten in C99 and uses SDL2 to emulate the graphics and sound of the Gameboy Color. It currently runs, but is not recommended to be used for any projects until completed. Additionally, it may be prone to crashes/buggy behavior. The maintainer is not to be held liable for any mishaps.
 
-The goal is to get assets to load from outside files, and to be able to rewrite parts of the game in C. A good example to look at is audio/engine.c.
+The project restores the networking features present in the original Japanese release of Pokemon Crystal. These features relied on the Japanese-exclusive [Mobile Adapter GB](https://bulbapedia.bulbagarden.net/wiki/Mobile_Game_Boy_Adapter), which allowed the GameBoy Color to connect to the internet via a cellphone. The adapter is emulated using [libmobile](https://github.com/REONTeam/libmobile) and the game utilizes custom servers to recreate the original features. For more information on how to set up the game to use a custom server, see [here](./SERVER.md)
 
 
 **Overview**
 
-The project starts off with a modified version of pokecrystal, with no reliance on some GameBoy specific features, like interrupts. The game is emulated, and parts of the ASM are converted to C macros. As these are converted, they are set up to re-direct the emulation code, to these macros. Since this is technically C, the workflow works as follows:
+The project started off with a modified version of pokecrystal, with no reliance on some GameBoy specific features, like interrupts. The game was emulated, and parts of the ASM were converted to C macros. As these were converted, they were set up to re-direct the emulation code, to these macros. Since this is technically C, the workflow works as follows:
 - Convert an ASM script to C macros
 - Check that it works, make adjustments if needed
 - After it's working, it's technically C, so the functions should be able to be re-written in actual C, and recompiled for testing
