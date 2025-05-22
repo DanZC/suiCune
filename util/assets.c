@@ -175,7 +175,7 @@ bool WriteAsset(const char* filename, const void* buffer, size_t buf_size) {
         fprintf(stderr, "%s Error: %s", __func__, filename);
         return false;
     }
-    size_t written = fwrite(buffer, 1, buf_size, file);
+    fwrite(buffer, 1, buf_size, file);
     fclose(file);
 #endif
     return true;
