@@ -6498,7 +6498,7 @@ void BattleCommand_StatDown(void){
     // LD_A_addr(wLoweredStat);
     // AND_A(0xf);
     // LD_C_A;
-    uint8_t c = wram->wLoweredStat & 0x7f;
+    uint8_t c = wram->wLoweredStat & 0xf;
     // LD_B(0);
     // ADD_HL_BC;
     // LD_B_hl;

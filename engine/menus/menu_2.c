@@ -332,7 +332,7 @@ bool FindApricornsInBag(void){
         if(CheckItem(GetItemPocket(ITEM_POCKET), a)) {
             // LD_A_hl;
             // CALL(aFindApricornsInBag_addtobuffer);
-            FindApricornsInBag_addtobuffer(hl->item);
+            FindApricornsInBag_addtobuffer(hl->value);
         }
 
     // nope:

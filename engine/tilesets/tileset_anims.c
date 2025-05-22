@@ -745,7 +745,7 @@ void ForestTreeLeftAnimation2(uint8_t* de){
 
     //  Offset by 1 frame from ForestTreeLeftAnimation
         // XOR_A(0b10);
-        uint8_t f = GetForestTreeFrame(wram->wTileAnimationTimer) ^ 0b10;
+        uint8_t f = GetForestTreeFrame(wram->wTileAnimationTimer) ^ 0b1;
 
     //  hl = ForestTreeLeftFrames + a * 8
     //  (a was pre-multiplied by 2 from GetForestTreeFrame)
@@ -793,7 +793,7 @@ void ForestTreeRightAnimation2(uint8_t* de){
 
     //  Offset by 1 frame from ForestTreeRightAnimation
         // XOR_A(0b10);
-        uint8_t f = GetForestTreeFrame(wram->wTileAnimationTimer) ^ 0b10;
+        uint8_t f = GetForestTreeFrame(wram->wTileAnimationTimer) ^ 0b1;
 
     //  hl = ForestTreeRightFrames + a * 8
     //  (a was pre-multiplied by 2 from GetForestTreeFrame)
@@ -846,7 +846,7 @@ uint8_t GetForestTreeFrame(uint8_t a){
 // even:
     // XOR_A_A;
     // RET;
-    return (a & 1)? 2: 0;
+    return (a & 1)? 1: 0;
 }
 
 void AnimateFlowerTile(uint8_t* de){

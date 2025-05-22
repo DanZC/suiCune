@@ -11260,16 +11260,7 @@ void GiveExperiencePoints(void){
             // PUSH_BC;
             // LD_B(TRUE);
             // PREDEF(pCalcMonStats);
-#if !defined(_MSC_VER)
-            // MSVC doesn't like this
-            const uint16_t* statxp = (uint16_t*)((uint8_t*)bc + offsetof(struct BoxMon, statExp));
-            uint16_t* stats = (uint16_t*)((uint8_t*)bc + offsetof(struct PartyMon, maxHP));
-#else
-            // GCC doesn't like this
-            const uint16_t* statxp = ((const struct BoxMon*)bc)->statExp;
-            uint16_t* stats = ((const struct PartyMon*)bc)->maxHP;
-#endif
-            CalcMonStats(stats, statxp, bc->mon.DVs, TRUE);
+            CalcMonStats_PartyMon(bc, TRUE);
             // POP_BC;
             // POP_DE;
             // LD_HL(MON_MAXHP + 1);
@@ -11280,7 +11271,7 @@ void GiveExperiencePoints(void){
             // LD_A_hl;
             // SBC_A_D;
             // LD_D_A;
-            maxHP = BigEndianToNative16(bc->maxHP) - maxHP;
+            uint16_t diff = BigEndianToNative16(bc->maxHP) - maxHP;
             // DEC_HL;
             // LD_A_hl;
             // ADD_A_E;
@@ -11288,7 +11279,10 @@ void GiveExperiencePoints(void){
             // LD_A_hl;
             // ADC_A_D;
             // LD_hl_A;
-            bc->HP = NativeToBigEndian16(BigEndianToNative16(bc->HP) + maxHP);
+            uint16_t hp = BigEndianToNative16(bc->HP) + diff;
+            if(hp > maxHP)
+                hp = maxHP;
+            bc->HP = NativeToBigEndian16(hp);
             // LD_A_addr(wCurBattleMon);
             // LD_D_A;
             // LD_A_addr(wCurPartyMon);
