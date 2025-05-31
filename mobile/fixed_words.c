@@ -841,10 +841,10 @@ static void EZChat_MasterLoop_DoJumptableFunction(void){
         case EZCHAT_10: return Function11cbf5(); //dw ['Function11cbf5'];  // 10
         case EZCHAT_MENU_WARN_EMPTY_MESSAGE: return Function11ccef(); //dw ['Function11ccef'];  // 11
         case EZCHAT_12: return Function11cd04(); //dw ['Function11cd04'];  // 12
-        //dw ['Function11cd20'];  // 13
-        //dw ['Function11cd54'];  // 14
-        //dw ['Function11ce0b'];  // 15
-        //dw ['Function11ce2b'];  // 16
+        case EZCHAT_DRAW_SORT_BY_MENU: return Function11cd20(); //dw ['Function11cd20'];  // 13
+        case EZCHAT_MENU_SORT_BY_MENU: return Function11cd54(); //dw ['Function11cd54'];  // 14
+        case EZCHAT_DRAW_SORT_BY_CHARACTER: return Function11ce0b(); //dw ['Function11ce0b'];  // 15
+        case EZCHAT_MENU_SORT_BY_CHARACTER: return Function11ce2b();//dw ['Function11ce2b'];  // 16
     }
 }
 
@@ -1465,6 +1465,7 @@ enum {
 
 // EZChatDraw_CategoryMenu
 void Function11c52c(void){
+    DelayFrame();
     // CALL(aEZChat_ClearBottom12Rows);
     EZChat_ClearBottom12Rows();
     // CALL(aEZChat_PlaceCategoryNames);
@@ -1532,8 +1533,9 @@ void Function11c53d(void){
     // a:
         // LD_A_addr(wcd21);
         // CP_A(15);
+        uint8_t sel = (wram->wEZChatCategorySelection & 0xf);
         // IF_C goto got_category;
-        if(wram->wEZChatCategorySelection < EZCHAT_CATEGORY_CANC) {
+        if(sel < EZCHAT_CATEGORY_CANC) {
         // got_category:
             // LD_A(0x8);
             a = EZCHAT_DRAW_WORD_SUBMENU;
@@ -1541,7 +1543,7 @@ void Function11c53d(void){
         }
         // SUB_A(0xf);
         // IF_Z goto done;
-        else if(wram->wEZChatCategorySelection == EZCHAT_CATEGORY_CANC) {
+        else if(sel == EZCHAT_CATEGORY_CANC) {
         // done:
             // LD_A_addr(wcd20);
             // CALL(aFunction11ca6a);
@@ -1554,7 +1556,7 @@ void Function11c53d(void){
         }
         // DEC_A;
         // IF_Z goto mode;
-        else if(wram->wEZChatCategorySelection == EZCHAT_CATEGORY_MODE) {
+        else if(sel == EZCHAT_CATEGORY_MODE) {
         // mode:
             // LD_A(0x13);
             a = EZCHAT_DRAW_SORT_BY_MENU;
@@ -1594,7 +1596,7 @@ void Function11c53d(void){
             a = e;
             // cp EZCHAT_CATEGORY_MODE
             // jr c, .continue_normal_up
-            if(a > EZCHAT_CATEGORY_CANC) {
+            if(a >= EZCHAT_CATEGORY_CANC) {
                 // ld a, EZCHAT_CATEGORY_CANC
                 a = EZCHAT_CATEGORY_CANC;
             }
@@ -1674,7 +1676,7 @@ void Function11c53d(void){
     // .print_down
         // ld a, e
         // add EZCHAT_CATEGORIES_COLUMNS << 4
-        a = e + (EZCHAT_CATEGORIES_COLUMNS << 4);
+        a += (EZCHAT_CATEGORIES_COLUMNS << 4);
         // cp EZCHAT_EMPTY_VALUE
         // jr nz, .continue_print_down
         if(a == EZCHAT_EMPTY_VALUE) {
@@ -1702,7 +1704,7 @@ void Function11c53d(void){
         // jr z, .left_okay
         // bit 0, a
         // ret z
-        if((a & 0xf) != 0 && !bit_test(a, 0))
+        if((a & 0xf) != EZCHAT_CATEGORY_OK && !bit_test(a, 0))
             return;
     // .left_okay
         // ld a, [hl]
@@ -2772,7 +2774,7 @@ void EZChat_RenderWordChoices(void){
         // add hl, de
         // ld a, [wEZChatPageOffset]
         // ld e, a
-        e = *hl;
+        e = wram->wEZChatPageOffset;
         // ld d, $80
         d = 0x80;
         // jr .loop
@@ -2907,9 +2909,9 @@ void Function11c86e(void){
     else {
     // asm_11c88a:
         // hlcoord(2, 17, wTilemap);
-        uint8_t* hl = coord(2, 17, wram->wTilemap);
+        uint8_t* hl = coord(1, 17, wram->wTilemap);
         // LD_C(0x7);
-        uint8_t c = 0x7;
+        uint8_t c = 0x8;
         // LD_A(0x7f);
 
         do {
@@ -2925,14 +2927,15 @@ void Function11c86e(void){
     // LD_HL(wcd28);
     // LD_A_addr(wcd26);
     // ADD_A(0xc);
+    u8_pair_flag_s res = EZChatGetValidWordsLine(EZCHAT_WORDS_PER_COL);
     // IF_C goto asm_11c8b7;
     // CP_A_hl;
     // IF_NC goto asm_11c8b7;
-    if((uint16_t)wram->wcd26 + 0xc < 0xff && (uint16_t)wram->wcd26 + 0xc < wram->wcd28) {
+    if(res.flag && res.a < wram->wEZChatLoadedItems[0]) {
         // hlcoord(16, 17, wTilemap);
         // LD_DE(mMobileString_Next);
         // CALL(aPlaceString);
-        PlaceStringSimple(U82C(MobileString_Next), coord(16, 17, wram->wTilemap));
+        PlaceStringSimple(U82C(MobileString_Next), coord(15, 17, wram->wTilemap));
         // hlcoord(11, 17, wTilemap);
         uint8_t* hl = coord(11, 17, wram->wTilemap);
         // LD_A(0x3);
@@ -2959,7 +2962,7 @@ void Function11c86e(void){
         // hlcoord(11, 17, wTilemap);
         uint8_t* hl = coord(11, 17, wram->wTilemap);
         // LD_C(0x7);
-        uint8_t c = 0x7;
+        uint8_t c = 0x9;
 
         do {
         // asm_11c8c2:
@@ -4134,263 +4137,470 @@ const char String_11cd10[] =
            "Please enter a"     //db ['"なにか\u3000ことば¯いれてください@"'];
     t_next "phrase or word.@";
 
+// EZChatDraw_SortByMenu
 void Function11cd20(void){
-    CALL(aEZChat_ClearBottom12Rows);
-    LD_DE(mUnknown_11cfc6);
-    CALL(aFunction11cfce);
-    hlcoord(1, 14, wTilemap);
-    LD_A_addr(wcd2b);
-    LD_addr_A(wcd2c);
-    AND_A_A;
-    IF_NZ goto asm_11cd3a;
-    LD_DE(mString_11cdc7);
-    goto asm_11cd3d;
+    // CALL(aEZChat_ClearBottom12Rows);
+    EZChat_ClearBottom12Rows();
+    // LD_DE(mUnknown_11cfc6);
+    // CALL(aFunction11cfce);
+    Function11cfce(Unknown_11cfc6);
+    // hlcoord(1, 14, wTilemap);
+    // LD_A_addr(wcd2b);
+    // LD_addr_A(wcd2c);
+    wram->wcd2c = wram->wcd2b;
+    // AND_A_A;
+    // IF_NZ goto asm_11cd3a;
+    // LD_DE(mString_11cdc7);
+    // goto asm_11cd3d;
 
-asm_11cd3a:
-    LD_DE(mString_11cdd9);
+// asm_11cd3a:
+    // LD_DE(mString_11cdd9);
 
-asm_11cd3d:
-    CALL(aPlaceString);
-    hlcoord(4, 8, wTilemap);
-    LD_DE(mString_11cdf5);
-    CALL(aPlaceString);
-    CALL(aFunction11cdaa);
-    LD_HL(wcd24);
-    RES_hl(5);
-    CALL(aFunction11cfb5);
+// asm_11cd3d:
+    const char* de = (wram->wcd2c == 0)? String_11cdc7: String_11cdd9;
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(de), coord(1, 14, wram->wTilemap));
+    // hlcoord(4, 8, wTilemap);
+    // LD_DE(mString_11cdf5);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(String_11cdf5), coord(4, 8, wram->wTilemap));
+    // CALL(aFunction11cdaa);
+    Function11cdaa();
+    // LD_HL(wcd24);
+    // RES_hl(5);
+    bit_reset(wram->wcd24, 5);
+    // CALL(aFunction11cfb5);
+    Function11cfb5();
 
     return Function11cd54();
 }
 
+// EZChatMenu_SortByMenu
 void Function11cd54(void){
-    LD_HL(wcd2c);
-    LD_DE(hJoypadPressed);
-    LD_A_de;
-    AND_A(A_BUTTON);
-    IF_NZ goto asm_11cd6f;
-    LD_A_de;
-    AND_A(B_BUTTON);
-    IF_NZ goto asm_11cd73;
-    LD_A_de;
-    AND_A(D_UP);
-    IF_NZ goto asm_11cd8b;
-    LD_A_de;
-    AND_A(D_DOWN);
-    IF_NZ goto asm_11cd94;
-    RET;
+    // LD_HL(wcd2c);
+    bit_reset(wram->wcd2c, 7);
+    uint8_t a;
+    // LD_DE(hJoypadPressed);
+    // LD_A_de;
+    // AND_A(A_BUTTON);
+    // IF_NZ goto asm_11cd6f;
+    if(hram.hJoypadPressed & A_BUTTON) {
+    // asm_11cd6f:
+        // LD_A_hl;
+        // LD_addr_A(wcd2b);
+        // ld a, [hl]
+        a = wram->wcd2c;
+        // bit 0, a
+        // jr z, .a_skip_setting_7
+        if(bit_test(a, 0))
+        // set 7, a
+            bit_set(a, 7);
+        // jr .a_ok
+    // .a_skip_setting_7
+        else
+            bit_reset(a, 7);
+        // res 7, a
+    // .a_ok
+        // ld [wEZChatCategoryMode], a
+        wram->wEZChatCategoryMode = a;
+        goto b;
+    }
+    // LD_A_de;
+    // AND_A(B_BUTTON);
+    // IF_NZ goto asm_11cd73;
+    if(hram.hJoypadPressed & B_BUTTON) {
+    // asm_11cd73:
+        // LD_A_addr(wcd2b);
+        // AND_A_A;
+        // IF_NZ goto asm_11cd7d;
+        // LD_A(0x6);
+        // goto asm_11cd7f;
+    b:
+        // ld a, [wEZChatCategoryMode]
+        // bit 0, a
+        // jr nz, .asm_11cd7d
+        if(!bit_test(wram->wEZChatCategoryMode, 0)) {
+            // ld a, EZCHAT_DRAW_CATEGORY_MENU
+            a = EZCHAT_DRAW_CATEGORY_MENU;
+            // jr .jump_to_index
+        }
+        else {
+        // .asm_11cd7d
+            // ld a, EZCHAT_DRAW_SORT_BY_CHARACTER
+            a = EZCHAT_DRAW_SORT_BY_CHARACTER;
+        }
+    // jump_to_index:
+        // ld [wJumptableIndex], a
+        wram->wJumptableIndex = a;
+        // ld hl, wEZChatSpritesMask
+        // set 5, [hl]
+        bit_set(wram->wEZChatSpritesMask, 5);
+        // call PlayClickSFX
+        PlayClickSFX();
+        // ret
+        return;
+    }
+    // LD_A_de;
+    // AND_A(D_UP);
+    const char* de;
+    // IF_NZ goto asm_11cd8b;
+    if(hram.hJoypadPressed & D_UP) {
+    // asm_11cd8b:
+        // LD_A_hl;
+        // AND_A_A;
+        // RET_Z ;
+        if(wram->wcd2c == 0)
+            return;
+        // DEC_hl;
+        --wram->wcd2c;
+        // LD_DE(mString_11cdc7);
+        de = String_11cdc7;
+        // goto asm_11cd9b;
+    }
+    // LD_A_de;
+    // AND_A(D_DOWN);
+    // IF_NZ goto asm_11cd94;
+    else if(hram.hJoypadPressed & D_DOWN) {
+    // asm_11cd94:
+        // LD_A_hl;
+        // AND_A_A;
+        // RET_NZ ;
+        if(wram->wcd2c != 0)
+            return;
+        // INC_hl;
+        wram->wcd2c++;
+        // LD_DE(mString_11cdd9);
+        de = String_11cdd9;
+    }
+    else {
+        // RET;
+        return;
+    }
 
+// asm_11cd9b:
+    // PUSH_DE;
+    // LD_DE(mUnknown_11cfc6);
+    // CALL(aFunction11cfce);
+    Function11cfce(Unknown_11cfc6);
+    // POP_DE;
+    // hlcoord(1, 14, wTilemap);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(de), coord(1, 14, wram->wTilemap));
+    // RET;
 
-asm_11cd6f:
-    LD_A_hl;
-    LD_addr_A(wcd2b);
+// asm_11cd7d:
+    // LD_A(0x15);
 
-asm_11cd73:
-    LD_A_addr(wcd2b);
-    AND_A_A;
-    IF_NZ goto asm_11cd7d;
-    LD_A(0x6);
-    goto asm_11cd7f;
-
-
-asm_11cd7d:
-    LD_A(0x15);
-
-asm_11cd7f:
-    LD_addr_A(wJumptableIndex);
-    LD_HL(wcd24);
-    SET_hl(5);
-    CALL(aPlayClickSFX);
-    RET;
-
-
-asm_11cd8b:
-    LD_A_hl;
-    AND_A_A;
-    RET_Z ;
-    DEC_hl;
-    LD_DE(mString_11cdc7);
-    goto asm_11cd9b;
-
-
-asm_11cd94:
-    LD_A_hl;
-    AND_A_A;
-    RET_NZ ;
-    INC_hl;
-    LD_DE(mString_11cdd9);
-
-asm_11cd9b:
-    PUSH_DE;
-    LD_DE(mUnknown_11cfc6);
-    CALL(aFunction11cfce);
-    POP_DE;
-    hlcoord(1, 14, wTilemap);
-    CALL(aPlaceString);
-    RET;
-
+// asm_11cd7f:
+    // LD_addr_A(wJumptableIndex);
+    // LD_HL(wcd24);
+    // SET_hl(5);
+    // CALL(aPlayClickSFX);
+    // RET;
 }
 
 void Function11cdaa(void){
-    LD_A(0x2);
-    hlcoord(0, 6, wAttrmap);
-    LD_BC(6 * SCREEN_WIDTH);
-    CALL(aByteFill);
-    LD_A(0x7);
-    hlcoord(0, 12, wAttrmap);
-    LD_BC(4 * SCREEN_WIDTH);
-    CALL(aByteFill);
-    FARCALL(aReloadMapPart);
-    RET;
-
+    // LD_A(0x2);
+    // hlcoord(0, 6, wAttrmap);
+    // LD_BC(6 * SCREEN_WIDTH);
+    // CALL(aByteFill);
+    ByteFill(coord(0, 6, wram->wAttrmap), 6 * SCREEN_WIDTH, 0x2);
+    // LD_A(0x7);
+    // hlcoord(0, 12, wAttrmap);
+    // LD_BC(4 * SCREEN_WIDTH);
+    // CALL(aByteFill);
+    ByteFill(coord(0, 12, wram->wAttrmap), 4 * SCREEN_WIDTH, 0x7);
+    // FARCALL(aReloadMapPart);
+    ReloadMapPart();
+    // RET;
 }
 
-void String_11cdc7(void){
+// EZChatString_SortByCategory
 //  Words will be displayed by category
-    //db ['"ことば¯しゅるいべつに"'];
-    //next ['"えらべます@"']
+const char String_11cdc7[] =
+            "Words are listed"  //db ['"ことば¯しゅるいべつに"'];
+    t_next  "by category.@";    //next ['"えらべます@"']
 
-    return String_11cdd9();
-}
-
-void String_11cdd9(void){
+// EZChatString_SortByAlphabetical
 //  Words will be displayed in alphabetical order
-    //db ['"ことば¯アイウエオ\u3000の"'];
-    //next ['"じゅんばんで\u3000ひょうじ\u3000します@"']
+const char String_11cdd9[] = 
+            "Words are listed"  //db ['"ことば¯アイウエオ\u3000の"'];
+    t_next  "alphabetically.@"; //next ['"じゅんばんで\u3000ひょうじ\u3000します@"']
 
-    return String_11cdf5();
-}
+const char String_11cdf5[] =
+            "GROUP MODE"    //db ['"しゅるいべつ\u3000モード"'];  // Category mode
+    t_next  "A to Z MODE@"; //next ['"アイウエオ\u3000\u3000モード@"']  // ABC mode
 
-void String_11cdf5(void){
-    //db ['"しゅるいべつ\u3000モード"'];  // Category mode
-    //next ['"アイウエオ\u3000\u3000モード@"']  // ABC mode
 
-    return Function11ce0b();
-}
+struct Neighbors {
+    uint8_t up;
+    uint8_t right;
+    uint8_t down;
+    uint8_t left;
+};
 
+const struct Neighbors NeighboringCharacters[] = { // Sort Menu Letter tile values or coordinates?
+	// table_width 4, .NeighboringCharacters
+	//                         Up                  Right                 Down                  Left
+	[EZCHAT_SORTED_A]       = {EZCHAT_SORTED_NULL, EZCHAT_SORTED_B,      EZCHAT_SORTED_J,      EZCHAT_SORTED_NULL},
+	[EZCHAT_SORTED_B]       = {EZCHAT_SORTED_NULL, EZCHAT_SORTED_C,      EZCHAT_SORTED_K,      EZCHAT_SORTED_A},
+	[EZCHAT_SORTED_C]       = {EZCHAT_SORTED_NULL, EZCHAT_SORTED_D,      EZCHAT_SORTED_L,      EZCHAT_SORTED_B},
+    [EZCHAT_SORTED_D]       = {EZCHAT_SORTED_NULL, EZCHAT_SORTED_E,      EZCHAT_SORTED_M,      EZCHAT_SORTED_C},
+    [EZCHAT_SORTED_E]       = {EZCHAT_SORTED_NULL, EZCHAT_SORTED_F,      EZCHAT_SORTED_N,      EZCHAT_SORTED_D},
+    [EZCHAT_SORTED_F]       = {EZCHAT_SORTED_NULL, EZCHAT_SORTED_G,      EZCHAT_SORTED_O,      EZCHAT_SORTED_E},
+    [EZCHAT_SORTED_G]       = {EZCHAT_SORTED_NULL, EZCHAT_SORTED_H,      EZCHAT_SORTED_P,      EZCHAT_SORTED_F},
+    [EZCHAT_SORTED_H]       = {EZCHAT_SORTED_NULL, EZCHAT_SORTED_I,      EZCHAT_SORTED_Q,      EZCHAT_SORTED_G},
+    [EZCHAT_SORTED_I]       = {EZCHAT_SORTED_NULL, EZCHAT_SORTED_NULL,   EZCHAT_SORTED_R,      EZCHAT_SORTED_H},
+    [EZCHAT_SORTED_J]       = {EZCHAT_SORTED_A,    EZCHAT_SORTED_K,      EZCHAT_SORTED_S,      EZCHAT_SORTED_NULL},
+    [EZCHAT_SORTED_K]       = {EZCHAT_SORTED_B,    EZCHAT_SORTED_L,      EZCHAT_SORTED_T,      EZCHAT_SORTED_J},
+    [EZCHAT_SORTED_L]       = {EZCHAT_SORTED_C,    EZCHAT_SORTED_M,      EZCHAT_SORTED_U,      EZCHAT_SORTED_K},
+    [EZCHAT_SORTED_M]       = {EZCHAT_SORTED_D,    EZCHAT_SORTED_N,      EZCHAT_SORTED_V,      EZCHAT_SORTED_L},
+    [EZCHAT_SORTED_N]       = {EZCHAT_SORTED_E,    EZCHAT_SORTED_O,      EZCHAT_SORTED_W,      EZCHAT_SORTED_M},
+    [EZCHAT_SORTED_O]       = {EZCHAT_SORTED_F,    EZCHAT_SORTED_P,      EZCHAT_SORTED_X,      EZCHAT_SORTED_N},
+    [EZCHAT_SORTED_P]       = {EZCHAT_SORTED_G,    EZCHAT_SORTED_Q,      EZCHAT_SORTED_Y,      EZCHAT_SORTED_O},
+    [EZCHAT_SORTED_Q]       = {EZCHAT_SORTED_H,    EZCHAT_SORTED_R,      EZCHAT_SORTED_Z,      EZCHAT_SORTED_P},
+    [EZCHAT_SORTED_R]       = {EZCHAT_SORTED_I,    EZCHAT_SORTED_NULL,   EZCHAT_SORTED_CANCEL, EZCHAT_SORTED_Q},
+    [EZCHAT_SORTED_S]       = {EZCHAT_SORTED_J,    EZCHAT_SORTED_T,      EZCHAT_SORTED_ETC,    EZCHAT_SORTED_NULL},
+    [EZCHAT_SORTED_T]       = {EZCHAT_SORTED_K,    EZCHAT_SORTED_U,      EZCHAT_SORTED_ETC,    EZCHAT_SORTED_S},
+    [EZCHAT_SORTED_U]       = {EZCHAT_SORTED_L,    EZCHAT_SORTED_V,      EZCHAT_SORTED_ETC,    EZCHAT_SORTED_T},
+    [EZCHAT_SORTED_V]       = {EZCHAT_SORTED_M,    EZCHAT_SORTED_W,      EZCHAT_SORTED_MODE,   EZCHAT_SORTED_U},
+    [EZCHAT_SORTED_W]       = {EZCHAT_SORTED_N,    EZCHAT_SORTED_X,      EZCHAT_SORTED_MODE,   EZCHAT_SORTED_V},
+    [EZCHAT_SORTED_X]       = {EZCHAT_SORTED_O,    EZCHAT_SORTED_Y,      EZCHAT_SORTED_MODE,   EZCHAT_SORTED_W},
+    [EZCHAT_SORTED_Y]       = {EZCHAT_SORTED_P,    EZCHAT_SORTED_Z,      EZCHAT_SORTED_CANCEL, EZCHAT_SORTED_X},
+    [EZCHAT_SORTED_Z]       = {EZCHAT_SORTED_Q,    EZCHAT_SORTED_NULL,   EZCHAT_SORTED_CANCEL, EZCHAT_SORTED_Y},
+    [EZCHAT_SORTED_ETC]     = {EZCHAT_SORTED_S,    EZCHAT_SORTED_NULL,   EZCHAT_SORTED_ERASE,  EZCHAT_SORTED_NULL},
+    [EZCHAT_SORTED_ERASE]   = {EZCHAT_SORTED_ETC,  EZCHAT_SORTED_MODE,   EZCHAT_SORTED_NULL,   EZCHAT_SORTED_NULL},
+    [EZCHAT_SORTED_MODE]    = {EZCHAT_SORTED_V,    EZCHAT_SORTED_CANCEL, EZCHAT_SORTED_NULL,   EZCHAT_SORTED_ERASE},
+    [EZCHAT_SORTED_CANCEL]  = {EZCHAT_SORTED_Y,    EZCHAT_SORTED_NULL,   EZCHAT_SORTED_NULL,   EZCHAT_SORTED_MODE},
+};
+static_assert(lengthof(NeighboringCharacters) == NUM_EZCHAT_SORTED, "");
+
+// EZChatDraw_SortByCharacter
 void Function11ce0b(void){
-    CALL(aEZChat_ClearBottom12Rows);
-    hlcoord(1, 7, wTilemap);
-    LD_DE(mString_11cf79);
-    CALL(aPlaceString);
-    hlcoord(1, 17, wTilemap);
-    LD_DE(mEZChatString_Stop_Mode_Cancel);
-    CALL(aPlaceString);
-    CALL(aFunction11c618);
-    LD_HL(wcd24);
-    RES_hl(2);
-    CALL(aFunction11cfb5);
+    // CALL(aEZChat_ClearBottom12Rows);
+    EZChat_ClearBottom12Rows();
+    // hlcoord(1, 7, wTilemap);
+    // LD_DE(mString_11cf79);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(EZChatScript_SortByCharacterTable), coord(1, 7, wram->wTilemap));
+    // hlcoord(1, 17, wTilemap);
+    // LD_DE(mEZChatString_Stop_Mode_Cancel);
+    // CALL(aPlaceString);
+    PlaceStringSimple(U82C(EZChatString_Stop_Mode_Cancel), coord(1, 17, wram->wTilemap));
+    // CALL(aFunction11c618);
+    Function11c618();
+    // LD_HL(wcd24);
+    // RES_hl(2);
+    bit_reset(wram->wEZChatSpritesMask, 2);
+    // CALL(aFunction11cfb5);
+    Function11cfb5();
 
     return Function11ce2b();
 }
 
+// EZChatMenu_SortByCharacter
 void Function11ce2b(void){
-    LD_A_addr(wcd22);
-    SLA_A;
-    SLA_A;
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mUnknown_11ceb9);
-    ADD_HL_BC;
+    uint8_t a;
+    // LD_A_addr(wcd22);
+    // SLA_A;
+    // SLA_A;
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mUnknown_11ceb9);
+    // ADD_HL_BC;
+    struct Neighbors neighbors = NeighboringCharacters[wram->wEZChatSortedSelection];
 
-    LD_DE(hJoypadPressed);
-    LD_A_de;
-    AND_A(START);
-    IF_NZ goto start;
-    LD_A_de;
-    AND_A(SELECT);
-    IF_NZ goto select;
-    LD_A_de;
-    AND_A(A_BUTTON);
-    IF_NZ goto a;
-    LD_A_de;
-    AND_A(B_BUTTON);
-    IF_NZ goto b;
+    // LD_DE(hJoypadPressed);
+    // LD_A_de;
+    // AND_A(START);
+    // IF_NZ goto start;
+    if(hram.hJoypadPressed & START) {
+    // start:
+        // LD_HL(wcd24);
+        // SET_hl(0);
+        bit_set(wram->wEZChatSpritesMask, 0);
+        // LD_A(0x8);
+        // LD_addr_A(wcd20);
+        wram->wEZChatSelection = EZCHAT_MAIN_OK;
+        goto b;
+    }
+    // LD_A_de;
+    // AND_A(SELECT);
+    // IF_NZ goto select;
+    else if(hram.hJoypadPressed & SELECT) {
+    // select:
+        // LD_A_addr(wcd2b);
+        // XOR_A(0x1);
+        // LD_addr_A(wcd2b);
+        wram->wEZChatCategoryMode ^= (1 << 0) | (1 << 7);
+        // LD_A(0x6);
+        a = EZCHAT_DRAW_CATEGORY_MENU;
+        // goto load;
+    }
+    // LD_A_de;
+    // AND_A(A_BUTTON);
+    // IF_NZ goto a;
+    else if(hram.hJoypadPressed & A_BUTTON) {
+    // a:
+        // LD_A_addr(wcd22);
+        // CP_A(NUM_KANA);
+        // IF_C goto place;
+    #if defined(_CRYSTAL_JP)
+        if(wram->wEZChatSortedSelection < NUM_KANA)
+    #else
+        if(wram->wEZChatSortedSelection < EZCHAT_SORTED_ERASE)
+    #endif
+        {
+        // place:
+            // ld hl, wc6a8 ; $c68a + 30
+            // ld c, a
+            // ld b, 0
+            // add hl, bc
+            // add hl, bc
+            // ld a, [hl]
+            // and a
+            //	jr nz, .valid ; Removed to be more in line with Gen 3
+            //	ld de, SFX_WRONG
+            //	call PlaySFX
+            //	jp WaitSFX
+            // ret z
+            if(wram->wc6a8[wram->wEZChatSortedSelection * 2] == 0)
+                return;
+        // .valid
+            // ld a, EZCHAT_DRAW_WORD_SUBMENU
+            a = EZCHAT_DRAW_WORD_SUBMENU;
+            // jr .load
+        }
+        // SUB_A(NUM_KANA);
+        // IF_Z goto done;
+    #if defined(_CRYSTAL_JP)
+        else if(wram->wEZChatSortedSelection == NUM_KANA)
+    #else
+        else if(wram->wEZChatSortedSelection == EZCHAT_SORTED_ERASE)
+    #endif
+        {
+        // done:
+            // ld a, [wEZChatSelection]
+            // call EZChatDraw_EraseWordsLoop
+            Function11ca6a(wram->wEZChatSelection);
+            // call EZChatMenu_RerenderMessage
+            EZChatMenu_RerenderMessage();
+            // call PlayClickSFX
+            PlayClickSFX();
+            // ret
+            return;
+        }
+        // DEC_A;
+        // IF_Z goto mode;
+    #if defined(_CRYSTAL_JP)
+        else if(wram->wEZChatSortedSelection == NUM_KANA + 1)
+    #else
+        else if(wram->wEZChatSortedSelection == EZCHAT_SORTED_MODE)
+    #endif
+        {
+        // mode:
+            // LD_A(0x13);
+            a = EZCHAT_DRAW_SORT_BY_MENU;
+        }
+        // goto b;
+        else {
+            goto b;
+        }
+    }
+    // LD_A_de;
+    // AND_A(B_BUTTON);
+    // IF_NZ goto b;
+    else if(hram.hJoypadPressed & B_BUTTON) {
+    b:
+        // LD_A(0x4);
+        a = EZCHAT_DRAW_CHAT_WORDS;
+        // goto load;
+    }
 
-    LD_DE(hJoyLast);
-    LD_A_de;
-    AND_A(D_UP);
-    IF_NZ goto up;
-    LD_A_de;
-    AND_A(D_DOWN);
-    IF_NZ goto down;
-    LD_A_de;
-    AND_A(D_LEFT);
-    IF_NZ goto left;
-    LD_A_de;
-    AND_A(D_RIGHT);
-    IF_NZ goto right;
+    // LD_DE(hJoyLast);
+    // LD_A_de;
+    // AND_A(D_UP);
+    // IF_NZ goto up;
+    else if(hram.hJoyLast & D_UP) {
+    // up:
+        // LD_A_hl;
+        // CP_A(0xff);
+        // RET_Z ;
+        if(neighbors.up == EZCHAT_SORTED_NULL)
+            return;
+        // LD_addr_A(wcd22);
+        wram->wEZChatSortedSelection = neighbors.up;
+        // RET;
+        return;
+    }
+    // LD_A_de;
+    // AND_A(D_DOWN);
+    // IF_NZ goto down;
+    else if(hram.hJoyLast & D_DOWN) {
+        if(neighbors.down == EZCHAT_SORTED_NULL)
+            return;
+        // LD_addr_A(wcd22);
+        wram->wEZChatSortedSelection = neighbors.down;
+        // RET;
+        return;
+    }
+    // LD_A_de;
+    // AND_A(D_LEFT);
+    // IF_NZ goto left;
+    else if(hram.hJoyLast & D_LEFT) {
+        if(neighbors.left == EZCHAT_SORTED_NULL)
+            return;
+        // LD_addr_A(wcd22);
+        wram->wEZChatSortedSelection = neighbors.left;
+        // RET;
+        return;
+    }
+    // LD_A_de;
+    // AND_A(D_RIGHT);
+    // IF_NZ goto right;
+    else if(hram.hJoyLast & D_RIGHT) {
+        if(neighbors.right == EZCHAT_SORTED_NULL)
+            return;
+        // LD_addr_A(wcd22);
+        wram->wEZChatSortedSelection = neighbors.right;
+        // RET;
+        return;
+    }
 
-    RET;
+    else {
+        // RET;
+        return;
+    }
 
+// place:
+    // LD_A(0x8);
+    // goto load;
 
-a:
-    LD_A_addr(wcd22);
-    CP_A(NUM_KANA);
-    IF_C goto place;
-    SUB_A(NUM_KANA);
-    IF_Z goto done;
-    DEC_A;
-    IF_Z goto mode;
-    goto b;
+// load:
+    // LD_addr_A(wJumptableIndex);
+    wram->wJumptableIndex = a;
+    // LD_HL(wcd24);
+    // SET_hl(2);
+    bit_set(wram->wEZChatSpritesMask, 2);
+    // CALL(aPlayClickSFX);
+    PlayClickSFX();
+    // RET;
+    return;
 
+// done:
+    // LD_A_addr(wcd20);
+    // CALL(aFunction11ca6a);
+    // CALL(aPlayClickSFX);
+    // RET;
 
-start:
-    LD_HL(wcd24);
-    SET_hl(0);
-    LD_A(0x8);
-    LD_addr_A(wcd20);
+// left:
+    // INC_HL;
 
-b:
-    LD_A(0x4);
-    goto load;
+// down:
+    // INC_HL;
 
-
-select:
-    LD_A_addr(wcd2b);
-    XOR_A(0x1);
-    LD_addr_A(wcd2b);
-    LD_A(0x6);
-    goto load;
-
-
-place:
-    LD_A(0x8);
-    goto load;
-
-
-mode:
-    LD_A(0x13);
-
-load:
-    LD_addr_A(wJumptableIndex);
-    LD_HL(wcd24);
-    SET_hl(2);
-    CALL(aPlayClickSFX);
-    RET;
-
-
-done:
-    LD_A_addr(wcd20);
-    CALL(aFunction11ca6a);
-    CALL(aPlayClickSFX);
-    RET;
-
-
-left:
-    INC_HL;
-
-down:
-    INC_HL;
-
-right:
-    INC_HL;
-
-up:
-    LD_A_hl;
-    CP_A(0xff);
-    RET_Z ;
-    LD_addr_A(wcd22);
-    RET;
+// right:
+    // INC_HL;
 
 }
 
@@ -4497,15 +4707,22 @@ void Unknown_11ceb9(void){
 }
 
 void String_11cf79(void){
-//  Hiragana table
-    //db ['"あいうえお\u3000なにぬねの\u3000や\u3000ゆ\u3000よ"'];
-    //next ['"かきくけこ\u3000はひふへほ\u3000わ"']
-    //next ['"さしすせそ\u3000まみむめも\u3000そのた"']
-    //next ['"たちつてと\u3000らりるれろ"']
-    //db ['"@"'];
-
-    return Function11cfb5();
 }
+
+// String_11cf79
+const char EZChatScript_SortByCharacterTable[] =
+#if defined(_CRYSTAL_JP)
+//  Hiragana table
+            "あいうえお\u3000なにぬねの\u3000や\u3000ゆ\u3000よ"
+    t_next  "かきくけこ\u3000はひふへほ\u3000わ"
+    t_next  "さしすせそ\u3000まみむめも\u3000そのた"
+    t_next  "たちつてと\u3000らりるれろ";
+#else
+            "A B C D E F G H I"
+    t_next  "J K L M N O P Q R"
+    t_next  "S T U V W X Y Z"
+    t_next  "others";
+#endif
 
 // IncrementJumptableIndex
 void Function11cfb5(void){
@@ -4757,10 +4974,10 @@ void Function11d035(const uint8_t* de){
     *hl2 = 0x7d;
     // POP_HL;
     // PUSH_HL;
-    hl2 = hl;
     // INC_HL;
+    hl2 = hl + 1;
     // PUSH_HL;
-    tile_t* bc = hl2 + 1;
+    tile_t* bc = hl2;
     // CALL(aFunction11d035_AddNMinusOneTimes);
     hl2 += y2 * SCREEN_WIDTH;
     // POP_BC;
@@ -4804,6 +5021,7 @@ void Function11d035(const uint8_t* de){
     // ADD_HL_BC;
     hl2 += (*de - 1);
     // POP_BC;
+    bc = hl;
     // INC_DE;
     de++;
     // LD_A_de;
@@ -4835,9 +5053,9 @@ void Function11d035(const uint8_t* de){
     // loop3:
         // LD_A(0x7c);
         // LD_hl_A;
-        *hl = 0x7c;
+        *bc = 0x7c;
         // ADD_HL_DE;
-        hl += SCREEN_WIDTH;
+        bc += SCREEN_WIDTH;
         // DEC_B;
         // IF_NZ goto loop3;
     } while(--b != 0);
@@ -5475,8 +5693,8 @@ static const uint8_t FramesetsIDs_Two[] = {
             // jr z, .continue_two
             // cp EZCHAT_MENU_SORT_BY_CHARACTER
             // jr nz, .null_cursor_out
-            if(wram->wJumptableIndex != EZCHAT_DRAW_CATEGORY_MENU 
-            && wram->wJumptableIndex != EZCHAT_MENU_CATEGORY_MENU)
+            if(wram->wJumptableIndex != EZCHAT_DRAW_SORT_BY_CHARACTER 
+            && wram->wJumptableIndex != EZCHAT_MENU_SORT_BY_CHARACTER)
                 goto null_cursor_out;
         // .continue_two
             // ld hl, .FramesetsIDs_Two
@@ -5946,7 +6164,7 @@ void EZChat_GetSeenPokemonByKana(void){
     //  add de to w3_d000
         // LD_HL(w3_d000);
         // ADD_HL_DE;
-        uint8_t* hl2 = wram->w3_d000 + (offset * 2);
+        uint8_t* hl2 = wram->w3_d000 + offset;
     //  recover de from wcd2d (default: w5_d800)
         // LD_A_addr(wcd2d);
         // LD_E_A;
@@ -6230,6 +6448,7 @@ const char* const MobileEZChatCategoryNames[] = {
     [EZCHAT_TIME]           = "TIME@@",     //db ['"じかん@@@"'];  // 0c
     [EZCHAT_FAREWELLS]      = "ENDINGS@@",  //db ['"むすび@@@"'];  // 0d
     [EZCHAT_THISANDTHAT]    = "MISC.@",     //db ['"あれこれ@@"'];  // 0e
+    [EZCHAT_THISANDTHAT+1]  = "@",          //db ['"あれこれ@@"'];  // 0f
 };
 
 #define ezchat_word(_w, _x) {.word = _w, .start = _x}
@@ -7139,32 +7358,32 @@ const u16_pair_s EZChat_SortedWords[] = {
     //macro_11f23c ['0x15']  // wa
 #else
     u16_pair(  20,  51), // A
-    u16_pair(  71,  31), // B
-    u16_pair( 102,  40), // C
-    u16_pair( 142,  35), // D
-    u16_pair( 177,  26), // E
-    u16_pair( 203,  39), // F
-    u16_pair( 242,  39), // G
-    u16_pair( 281,  51), // H
-    u16_pair( 332,  24), // I
-    u16_pair( 356,   3), // J
-    u16_pair( 359,   3), // K
-    u16_pair( 362,  31), // L
-    u16_pair( 393,  36), // M
-    u16_pair( 429,  26), // N
-    u16_pair( 455,  24), // O
-    u16_pair( 479,  25), // P
-    u16_pair( 504,   2), // Q
-    u16_pair( 506,  19), // R
-    u16_pair( 525,  69), // S
-    u16_pair( 594,  69), // T
-    u16_pair( 663,  13), // U
-    u16_pair( 676,   5), // V
-    u16_pair( 681,  59), // W
-    u16_pair( 740,   0), // X
-    u16_pair( 740,  17), // Y
-    u16_pair( 757,   0), // Z
-    u16_pair(2048,  10), // !?
+    u16_pair( 122,  31), // B
+    u16_pair( 184,  40), // C
+    u16_pair( 264,  35), // D
+    u16_pair( 334,  26), // E
+    u16_pair( 386,  39), // F
+    u16_pair( 464,  39), // G
+    u16_pair( 542,  51), // H
+    u16_pair( 644,  24), // I
+    u16_pair( 692,   3), // J
+    u16_pair( 698,   3), // K
+    u16_pair( 704,  31), // L
+    u16_pair( 766,  36), // M
+    u16_pair( 838,  26), // N
+    u16_pair( 890,  24), // O
+    u16_pair( 938,  25), // P
+    u16_pair( 988,   2), // Q
+    u16_pair( 992,  19), // R
+    u16_pair(1030,  69), // S
+    u16_pair(1168,  69), // T
+    u16_pair(1306,  13), // U
+    u16_pair(1332,   5), // V
+    u16_pair(1342,  59), // W
+    u16_pair(1460,   0), // X
+    u16_pair(1460,  17), // Y
+    u16_pair(1494,   0), // Z
+    u16_pair(   0,  10), // !?
 #endif
     //dw ['NULL', '0x09'];  // end
 
