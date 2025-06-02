@@ -10537,7 +10537,7 @@ static void ApplyStatLevelMultiplier(uint8_t c){
     // LD_C_B;
     // LD_B(0);
     // ADD_HL_BC;
-    const uint8_t* mul = StatLevelMultipliers_Applied[(b - 1) << 1];
+    const uint8_t* mul = StatLevelMultipliers_Applied[b - 1];
     // XOR_A_A;
     // LDH_addr_A(hMultiplicand + 0);
     // LD_A_de;
@@ -10581,7 +10581,7 @@ static void ApplyStatLevelMultiplier(uint8_t c){
     // IF_NZ goto okay4;
     hl2[0] = HIGH(n);
     hl2[1] = LOW(n);
-    if((n & 0xffff) != 0) {
+    if((n & 0xffff) == 0) {
         // INC_hl;
         hl2[1]++;
     }
@@ -11268,10 +11268,11 @@ void GiveExperiencePoints(void){
             // LD_A_hld;
             // SUB_A_E;
             // LD_E_A;
+            uint16_t curMaxHP = BigEndianToNative16(bc->maxHP);
             // LD_A_hl;
             // SBC_A_D;
             // LD_D_A;
-            uint16_t diff = BigEndianToNative16(bc->maxHP) - maxHP;
+            uint16_t diff = curMaxHP - maxHP;
             // DEC_HL;
             // LD_A_hl;
             // ADD_A_E;
@@ -11280,8 +11281,8 @@ void GiveExperiencePoints(void){
             // ADC_A_D;
             // LD_hl_A;
             uint16_t hp = BigEndianToNative16(bc->HP) + diff;
-            if(hp > maxHP)
-                hp = maxHP;
+            if(hp > curMaxHP)
+                hp = curMaxHP;
             bc->HP = NativeToBigEndian16(hp);
             // LD_A_addr(wCurBattleMon);
             // LD_D_A;
@@ -11298,9 +11299,10 @@ void GiveExperiencePoints(void){
                 wram->wBattleMon.hp = bc->HP;
                 // LD_DE(wBattleMonMaxHP);
                 // PUSH_BC;
+                wram->wBattleMon.maxHP = bc->maxHP;
                 // LD_BC(PARTYMON_STRUCT_LENGTH - MON_MAXHP);
                 // CALL(aCopyBytes);
-                CopyBytes(wram->wBattleMon.stats, bc->stats, PARTYMON_STRUCT_LENGTH - MON_MAXHP);
+                CopyBytes(wram->wBattleMon.stats, bc->stats, PARTYMON_STRUCT_LENGTH - MON_ATK);
                 // POP_BC;
                 // LD_HL(MON_LEVEL);
                 // ADD_HL_BC;

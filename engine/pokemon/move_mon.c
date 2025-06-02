@@ -2055,7 +2055,6 @@ void ComputeNPCTrademonStats(uint8_t curPartyMon){
     // LD_D_H;
     // LD_E_L;
     // PUSH_DE;
-    uint16_t max_hp = bc->maxHP;
     // LD_A(MON_STAT_EXP - 1);
     // CALL(aGetPartyParamLocation);
     // LD_B(TRUE);
@@ -2069,7 +2068,7 @@ void ComputeNPCTrademonStats(uint8_t curPartyMon){
     // LD_hli_A;
     // LD_A_de;
     // LD_hl_A;
-    bc->HP = max_hp;
+    bc->HP = bc->maxHP;
     // RET;
 }
 
