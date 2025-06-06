@@ -90,7 +90,7 @@ bool v_TossItem(item_pocket_u* hl, item_t item, uint8_t count){
             // LD_H_D;
             // LD_L_E;
             // JP(mTossKeyItem);
-            return TossKeyItem(item, count);
+            return TossKeyItem(item, wram->wCurItemQuantity);
         //dw ['.Ball'];
         case BALL:
         // Ball:
@@ -508,7 +508,7 @@ static item_t* TossKeyItem_Toss(item_t item){
             wram->wNumKeyItems--;
             // SCF;
             // RET;
-            return hl;
+            return hl - 1;
         }
         // CP_A(-1);
         // IF_NZ goto loop3;
@@ -518,7 +518,7 @@ static item_t* TossKeyItem_Toss(item_t item){
     return NULL;
 }
 
-bool TossKeyItem(item_t item, uint8_t count){
+bool TossKeyItem(item_t item, uint8_t index){
     // LD_A_addr(wCurItemQuantity);
     // LD_E_A;
     // LD_D(0);
@@ -527,7 +527,7 @@ bool TossKeyItem(item_t item, uint8_t count){
     // LD_A_hl;
     // CP_A_E;
     // IF_NC goto ok;
-    if(wram->wNumKeyItems < count){
+    if(wram->wNumKeyItems < index){
         // CALL(aTossKeyItem_Toss);
         hl = TossKeyItem_Toss(item);
         // RET_NC ;
@@ -541,7 +541,7 @@ bool TossKeyItem(item_t item, uint8_t count){
         --wram->wNumKeyItems;
         // INC_HL;
         // ADD_HL_DE;
-        hl = wram->wKeyItems + count;
+        hl = wram->wKeyItems + index;
     }
 
 // ok2:

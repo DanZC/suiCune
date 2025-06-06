@@ -565,7 +565,7 @@ static void PlayerWithdrawItemMenu_Submenu(void) {
     wram->wPCItemQuantity = wram->wCurItemQuantity;
     // LD_HL(wNumItems);
     // CALL(aReceiveItem);
-    bool ok = ReceiveItem(GetItemPocket(ITEM_POCKET), wram->wCurItem, wram->wCurItemQuantity);
+    bool ok = ReceiveItem(GetItemPocket(ITEM_POCKET), wram->wCurItem, wram->wItemQuantityChange);
     // IF_NC goto PackFull;
     if(!ok) {
     // PackFull:

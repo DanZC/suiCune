@@ -7,7 +7,7 @@ bool PutItemInPocket(item_quantity_pocket_s* pocket, item_t item, uint8_t count)
 bool RemoveItemFromPocket(item_quantity_pocket_s* hl, item_t item, item_t count);
 bool CheckTheItem(item_quantity_pocket_s* pocket, item_t item);
 bool ReceiveKeyItem(item_t item);
-bool TossKeyItem(item_t item, uint8_t count);
+bool TossKeyItem(item_t item, uint8_t index);
 bool CheckKeyItems(item_t c);
 bool ReceiveTMHM(uint8_t id, uint8_t count);
 bool TossTMHM(uint8_t tmhm, uint8_t count);
