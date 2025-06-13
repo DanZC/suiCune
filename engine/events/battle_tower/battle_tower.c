@@ -323,9 +323,10 @@ void BattleTower_GenerateFakeRecord(void){
     }
 
     OpenSRAM(MBANK(as4_a013));
-    CopyBytes(gBattleRecord.EZChatStart, GBToRAMAddr(s4_a013), EASY_CHAT_MESSAGE_LENGTH);
-    CopyBytes(gBattleRecord.EZChatWin, GBToRAMAddr(s4_a013) + 1 * EASY_CHAT_MESSAGE_LENGTH, EASY_CHAT_MESSAGE_LENGTH);
-    CopyBytes(gBattleRecord.EZChatLose, GBToRAMAddr(s4_a013) + 2 * EASY_CHAT_MESSAGE_LENGTH, EASY_CHAT_MESSAGE_LENGTH);
+    uint8_t* a013 = GBToRAMAddr(s4_a013);
+    CopyBytes(gBattleRecord.EZChatStart, a013, EASY_CHAT_MESSAGE_LENGTH);
+    CopyBytes(gBattleRecord.EZChatWin, a013 + 1 * EASY_CHAT_MESSAGE_LENGTH, EASY_CHAT_MESSAGE_LENGTH);
+    CopyBytes(gBattleRecord.EZChatLose, a013 + 2 * EASY_CHAT_MESSAGE_LENGTH, EASY_CHAT_MESSAGE_LENGTH);
     CloseSRAM();
 
     OpenSRAM(MBANK(as5_a894));  // aka BANK(s5_a948)
@@ -2016,7 +2017,7 @@ void BattleTowerAction_EggTicket(void){
             // RET;
             return;
 
-        different:
+        different:;
             // POP_AF;
             // POP_HL;
         }

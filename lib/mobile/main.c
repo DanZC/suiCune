@@ -2270,7 +2270,7 @@ void Function110a5b(mobile_api_data_s* data){
     gMobile_wc827 = data->de;
     // INC_DE;
     // INC_DE;
-    data->de += 2;
+    data->de = (void*)((uint8_t*)data->de + 2);
     // DEC_BC;
     // DEC_BC;
     data->bc -= 2;
@@ -2358,7 +2358,7 @@ void Function110af4(mobile_api_data_s* data){
     gMobile_wc827 = data->de;
     // INC_DE;
     // INC_DE;
-    data->de += 2;
+    data->de = (void*)((uint8_t*)data->de + 2);
     // LD_A_E;
     // LD_hli_A;
     // LD_A_D;
@@ -3000,6 +3000,7 @@ char* Function110d37(char* de, uint16_t hl){
 
 // MobileAPI_15
 void Function110ddd(mobile_api_data_s* data){
+    char* hl4;
     // LD_A_addr(wc821);
     // BIT_A(2);
     // LD_A_addr(wc86a);
@@ -3236,7 +3237,7 @@ asm_110eb3:
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    char* hl4 = (char*)gMobile_wc97f_wc980;
+    hl4 = (char*)gMobile_wc97f_wc980;
     // LD_C(0x12);
     // CALL(aFunction11039a);
     // JP_C (mFunction110ddd_asm_110df9);
@@ -11600,12 +11601,13 @@ void Function1134cb(uint8_t* hl, uint8_t a){
     // DEC_A;
     // IF_Z goto asm_1134fc;
     else if(a == 0x3) {
+        uint8_t* hl2;
     asm_1134fc:
         // LD_HL(wc86e);
         // LD_A_hli;
         // LD_H_hl;
         // LD_L_A;
-        uint8_t* hl2 = gMobile_wc86e_wc86f;
+        hl2 = gMobile_wc86e_wc86f;
         // LD_A_addr(wMobileSDK_ReceivePacketBuffer + 6);
         // CP_A(0xf0);
         // IF_C goto asm_11350b;

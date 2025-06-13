@@ -148,6 +148,7 @@ startproject "suiCune"
 		
 		filter "system:Windows"
 			files { "icon.rc" }
+			links { "ws2_32" }
 			cdialect "c99"
 
 		filter {"system:Windows", "files:icon.rc" }
