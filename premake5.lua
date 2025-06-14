@@ -16,8 +16,6 @@ startproject "suiCune"
 	warnings "extra"
 
 	syslibdirs {
-        ".\\deps\\SDL2\\lib\\x86\\",
-        ".\\deps\\physfs\\lib\\x86\\",
 		".\\lib\\libmobile\\"
 	}
 
@@ -51,9 +49,17 @@ startproject "suiCune"
 
 	filter "platforms:x86"
 		architecture "x86"
+		syslibdirs {
+			".\\deps\\SDL2\\lib\\x86\\",
+			".\\deps\\physfs\\lib\\x86\\",
+		}
 
 	filter "platforms:x86_64"
 		architecture "x86_64"
+		syslibdirs {
+			".\\deps\\SDL2\\lib\\x64\\",
+			".\\deps\\physfs\\lib\\x64\\",
+		}
 
 	project "libmobile"
 		targetname "libmobile"
