@@ -19,7 +19,11 @@ static bool MainMenuJoypadLoop(void);
 static void MainMenu_PrintCurrentTimeAndDay(void);
 static void ClearTilemapEtc(void);
 
+#if DEBUG
 #define SHOW_DEBUG_MENU 1
+#else
+#define SHOW_DEBUG_MENU 0
+#endif
 void DebugMenu(void);
 
 // MainMenuItems indexes

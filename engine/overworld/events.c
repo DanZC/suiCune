@@ -1382,9 +1382,11 @@ static u8_flag_s CheckMenuOW(void){
     // LDH_A_addr(hJoyPressed);
     uint8_t a = hram.hJoyPressed;
 
+#if DEBUG
     if(bit_test(a, SELECT_F) && bit_test(hram.hJoyDown, B_BUTTON_F)) {
         return u8_flag(CallScript(DebugFieldMenuScript), true);
     }
+#endif
     // BIT_A(SELECT_F);
     // IF_NZ goto Select;
     if(bit_test(a, SELECT_F)) {
