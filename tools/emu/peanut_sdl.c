@@ -1153,16 +1153,19 @@ void gb_draw_line(void) {
     gb.display.lcd_draw_line(pixels, gb.gb_reg.LY);
 }
 
-/**
- * Internal function used to step the CPU.
- */
-
 #include "macros.h"
 #include "../../functions.h"
 #include "../../data/constant_strings.h"
 #include "../../data/gb_map_pointers.h"
 #include "../../data/script_pointers.h"
 #include "../../data/json_load.h"
+#if DEBUG
+#include "../../util/serialize.h"
+#endif
+
+/**
+ * Internal function used to step the CPU.
+ */
 
 void gb_run_frame(void) {
     uint8_t opcode;
@@ -3918,6 +3921,13 @@ int main(int argc, char* argv[]) {
     PopulateMapPointerTable();
     PopulateMapScriptTable();
     JSONLoadTables();
+
+#if DEBUG
+    if(!Test_Serialization()) {
+        ret = EXIT_FAILURE;
+        goto out;
+    }
+#endif
 
     SDL_AudioDeviceID dev;
 

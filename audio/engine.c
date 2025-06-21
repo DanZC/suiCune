@@ -828,7 +828,6 @@ uint8_t GetMusicByte(void) {
     //  advances to next byte in music data
     if(curChan->musicBank < NUM_AUDIO_BANKS) {
         wram->wCurMusicByte = GetAudioDataByte(curChan->musicBank, curChan->musicAddress);
-        // printf("Got music byte: %02x\n", wram->wCurMusicByte);
     }
     else {
         uint32_t address = (curChan->musicBank << 14) | (curChan->musicAddress & 0x3FFF);

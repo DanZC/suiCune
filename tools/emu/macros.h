@@ -10,12 +10,16 @@
 
 #define INC_PC(x) gb.cpu_reg.pc += x;
 
+#if DEBUG
 #define PEEK(message)                                                                                                                                                                                 \
     do {                                                                                                                                                                                              \
         uint16_t temp = gb_read(REG_SP);                                                                                                                                                              \
         temp |= (gb_read(REG_SP + 1) << 8);                                                                                                                                                           \
         printf("%d#%s::%s: SP@%X:%X PC@%X:%X, AF:%X%X, BC:%X, DE:%X, HL:%X,\n", gb.nestedCalls, __func__, message, REG_SP, temp, gb.selected_rom_bank, REG_PC, REG_A, REG_F, REG_BC, REG_DE, REG_HL); \
     } while (0)
+#else
+#define PEEK(...)
+#endif
 
 // printf("CALL#%d: %X, PC@%X:%X\n", gb.nestedCalls, dest, gb.selected_rom_bank, REG_PC);
 #define DBG_CALL(dest)                                  \

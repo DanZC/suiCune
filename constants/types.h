@@ -410,6 +410,7 @@ BoxMon
     };
     uint8_t level;
 };
+static_assert(sizeof(struct BoxMon) == BOXMON_STRUCT_LENGTH, "");
 
 #if defined(__cplusplus) || defined(_MSC_VER)
 struct 
@@ -1776,4 +1777,445 @@ struct OfferMon {
     struct PartyMon mon;
     uint8_t OT[PLAYER_NAME_LENGTH - 1];
     uint8_t Nick[MON_NAME_LENGTH - 1];
+};
+
+// Serialization structures
+
+struct OptionsData {
+    uint8_t options;
+    uint8_t saveFileExists;
+    // bits 0-2: textbox frame 0-7
+    uint8_t textboxFrame;
+    // bit 0: 1-frame text delay
+    // bit 4: no text delay
+    uint8_t textboxFlags;
+    // bit 0-6: brightness
+    //   lightest: $00
+    //   lighter:  $20
+    //   normal:   $40 (default)
+    //   darker:   $60
+    //   darkest:  $7F
+    uint8_t GBPrinterBrightness;
+    // bit 1: menu account off/on
+    uint8_t options2;
+    uint8_t unused[2];
+};
+
+struct CurMapData {
+    uint8_t visitedSpawns[((NUM_SPAWNS) + 7) / 8];
+    uint8_t digWarpNumber;
+    uint8_t digMapGroup;
+    uint8_t digMapNumber;
+    // used on maps like second floor pokécenter, which are reused, so we know which
+    // map to return to
+    uint8_t backupWarpNumber;
+    uint8_t backupMapGroup;
+    uint8_t backupMapNumber;
+    uint8_t unused[3];
+    uint8_t lastSpawnMapGroup;
+    uint8_t lastSpawnMapNumber;
+    uint8_t warpNumber;
+    uint8_t mapGroup;
+    uint8_t mapNumber;
+    uint8_t yCoord;
+    uint8_t xCoord;
+    uint8_t screenSave[SCREEN_META_WIDTH * SCREEN_META_HEIGHT];
+};
+
+struct PlayerData {
+    uint16_t playerID;
+    uint8_t playerName[NAME_LENGTH];
+    uint8_t momsName[NAME_LENGTH];
+    uint8_t rivalName[NAME_LENGTH];
+    uint8_t redsName[NAME_LENGTH];
+    uint8_t greensName[NAME_LENGTH];
+    uint8_t savedAtLeastOnce;
+    uint8_t spawnAfterChampion;
+    // init time set at newgame
+    uint8_t startDay;
+    uint8_t startHour;
+    uint8_t startMinute;
+    uint8_t startSecond;
+    uint8_t RTC[4];
+    uint8_t skip_104[4];
+    // bit 7: dst
+    uint8_t DST;
+    // used only for BANK(wGameTime)
+    //union wGameTime
+    uint8_t gameTimeCap;
+    uint16_t gameTimeHours;
+    uint8_t gameTimeMinutes;
+    uint8_t gameTimeSeconds;
+    uint8_t gameTimeFrames;
+    uint8_t skip_105[2];
+    uint8_t curDay;
+    uint8_t skip_106[1];
+    uint8_t objectFollow_Leader;
+    uint8_t objectFollow_Follower;
+    uint8_t centeredObject;
+    uint8_t followerMovementQueueLength;
+    uint8_t followMovementQueue[5];
+    //union wObjectStructs
+    struct Object playerStruct;
+    // player is object struct 0
+    // wObjectStruct1 - wObjectStruct12
+    // for n, 1, NUM_OBJECT_STRUCTS
+    struct Object objectStruct[(NUM_OBJECT_STRUCTS) - 1];
+    uint8_t cmdQueue[CMDQUEUE_CAPACITY * CMDQUEUE_ENTRY_SIZE];
+    uint8_t zipCode_Saved[ZIPCODE_MAX_LENGTH];
+    uint8_t skip_107[40 - ZIPCODE_MAX_LENGTH];
+    //union wMapObjects
+    struct MapObject playerObject;
+    // player is map object 0
+    // wMap1Object - wMap15Object
+    // for n, 1, NUM_OBJECTS
+    struct MapObject mapObject[(NUM_OBJECTS) - 1];
+    uint8_t objectMasks[NUM_OBJECTS];
+    uint8_t variableSprites[0x100 - SPRITE_VARS];
+    uint8_t enteredMapFromContinue;
+    uint8_t skip_108[2];
+    uint8_t timeOfDayPal;
+    uint8_t skip_109[4];
+    uint8_t timeOfDayPalFlags;
+    uint8_t timeOfDayPalset;
+    uint8_t curTimeOfDay;
+    uint8_t skip_110[1];
+    uint16_t secretID;
+    // bit 0: pokedex
+    // bit 1: unown dex
+    // bit 2: flash
+    // bit 3: caught pokerus
+    // bit 4: rocket signal
+    // bit 5: wild encounters on/off
+    // bit 6: hall of fame
+    // bit 7: bug contest on
+    uint8_t statusFlags;
+    // bit 0: rockets
+    // bit 1: safari game (unused)
+    // bit 2: bug contest timer
+    // bit 3: unused
+    // bit 4: bike shop call
+    // bit 5: can use sweet scent
+    // bit 6: reached goldenrod
+    // bit 7: rockets in mahogany
+    uint8_t statusFlags2;
+    uint8_t money[3];
+    uint8_t momsMoney[3];
+    // bit 0: saving some money
+    // bit 1: saving half money (unused)
+    // bit 2: saving all money (unused)
+    // bit 7: active
+    uint8_t momSavingMoney;
+    uint16_t coins;
+    //union wBadges
+    union {
+        uint8_t badges[(((NUM_JOHTO_BADGES) + 7) / 8) + ((NUM_KANTO_BADGES) + 7) / 8];
+        struct {
+            uint8_t johtoBadges[((NUM_JOHTO_BADGES) + 7) / 8];
+            uint8_t kantoBadges[((NUM_KANTO_BADGES) + 7) / 8];
+        };
+    };
+    uint8_t TMsHMs[NUM_TMS + NUM_HMS];
+    uint8_t numItems;
+    item_t items[MAX_ITEMS * 2 + 1];
+    uint8_t numKeyItems;
+    item_t keyItems[MAX_KEY_ITEMS + 1];
+    uint8_t numBalls;
+    item_t balls[MAX_BALLS * 2 + 1];
+    uint8_t numPCItems;
+    item_t PCItems[MAX_PC_ITEMS * 2 + 1];
+    // bit 0: map
+    // bit 1: radio
+    // bit 2: phone
+    // bit 3: expn
+    // bit 7: on/off
+    uint8_t pokegearFlags;
+    uint8_t radioTuningKnob;
+    uint8_t lastDexMode;
+    uint8_t skip_111[1];
+    uint8_t whichRegisteredItem;
+    uint8_t registeredItem;
+    uint8_t playerState;
+    uint8_t hallOfFameCount;
+    uint8_t skip_112[1];
+    uint8_t tradeFlags[((NUM_NPC_TRADES) + 7) / 8];
+    uint8_t skip_113[1];
+    uint8_t mooMooBerries;
+    uint8_t undergroundSwitchPositions;
+    uint8_t farfetchdPosition;
+    uint8_t skip_114[13];
+    // map scene ids
+    uint8_t Pokecenter2FSceneID;
+    uint8_t TradeCenterSceneID;
+    uint8_t ColosseumSceneID;
+    uint8_t TimeCapsuleSceneID;
+    uint8_t PowerPlantSceneID;
+    uint8_t CeruleanGymSceneID;
+    uint8_t Route25SceneID;
+    uint8_t TrainerHouseB1FSceneID;
+    uint8_t VictoryRoadGateSceneID;
+    uint8_t SaffronMagnetTrainStationSceneID;
+    uint8_t Route16GateSceneID;
+    uint8_t Route17Route18GateSceneID;
+    uint8_t IndigoPlateauPokecenter1FSceneID;
+    uint8_t WillsRoomSceneID;
+    uint8_t KogasRoomSceneID;
+    uint8_t BrunosRoomSceneID;
+    uint8_t KarensRoomSceneID;
+    uint8_t LancesRoomSceneID;
+    uint8_t HallOfFameSceneID;
+    uint8_t Route27SceneID;
+    uint8_t NewBarkTownSceneID;
+    uint8_t ElmsLabSceneID;
+    uint8_t PlayersHouse1FSceneID;
+    uint8_t Route29SceneID;
+    uint8_t CherrygroveCitySceneID;
+    uint8_t MrPokemonsHouseSceneID;
+    uint8_t Route32SceneID;
+    uint8_t Route35NationalParkGateSceneID;
+    uint8_t Route36SceneID;
+    uint8_t Route36NationalParkGateSceneID;
+    uint8_t AzaleaTownSceneID;
+    uint8_t GoldenrodGymSceneID;
+    uint8_t GoldenrodMagnetTrainStationSceneID;
+    uint8_t GoldenrodPokecenter1FSceneID;
+    uint8_t OlivineCitySceneID;
+    uint8_t Route34SceneID;
+    uint8_t Route34IlexForestGateSceneID;
+    uint8_t EcruteakTinTowerEntranceSceneID;
+    uint8_t WiseTriosRoomSceneID;
+    uint8_t EcruteakPokecenter1FSceneID;
+    uint8_t EcruteakGymSceneID;
+    uint8_t MahoganyTownSceneID;
+    uint8_t Route42SceneID;
+    uint8_t CianwoodCitySceneID;
+    uint8_t BattleTower1FSceneID;
+    uint8_t BattleTowerBattleRoomSceneID;
+    uint8_t BattleTowerElevatorSceneID;
+    uint8_t BattleTowerHallwaySceneID;
+    uint8_t BattleTowerOutsideSceneID;
+    uint8_t Route43GateSceneID;
+    uint8_t MountMoonSceneID;
+    uint8_t SproutTower3FSceneID;
+    uint8_t TinTower1FSceneID;
+    uint8_t BurnedTower1FSceneID;
+    uint8_t BurnedTowerB1FSceneID;
+    uint8_t RadioTower5FSceneID;
+    uint8_t RuinsOfAlphOutsideSceneID;
+    uint8_t RuinsOfAlphResearchCenterSceneID;
+    uint8_t RuinsOfAlphHoOhChamberSceneID;
+    uint8_t RuinsOfAlphKabutoChamberSceneID;
+    uint8_t RuinsOfAlphOmanyteChamberSceneID;
+    uint8_t RuinsOfAlphAerodactylChamberSceneID;
+    uint8_t RuinsOfAlphInnerChamberSceneID;
+    uint8_t MahoganyMart1FSceneID;
+    uint8_t TeamRocketBaseB1FSceneID;
+    uint8_t TeamRocketBaseB2FSceneID;
+    uint8_t TeamRocketBaseB3FSceneID;
+    uint8_t GoldenrodUndergroundSwitchRoomEntrancesSceneID;
+    uint8_t SilverCaveRoom3SceneID;
+    uint8_t VictoryRoadSceneID;
+    uint8_t DragonsDenB1FSceneID;
+    uint8_t DragonShrineSceneID;
+    uint8_t OlivinePortSceneID;
+    uint8_t VermilionPortSceneID;
+    uint8_t FastShip1FSceneID;
+    uint8_t FastShipB1FSceneID;
+    uint8_t MountMoonSquareSceneID;
+    uint8_t MobileTradeRoomSceneID;
+    uint8_t MobileBattleRoomSceneID;
+    uint8_t skip_115[49];
+    // fight counts
+    uint8_t JackFightCount;
+    uint8_t BeverlyFightCount;
+    // unreferenced
+    uint8_t HueyFightCount;
+    uint8_t GavenFightCount;
+    uint8_t BethFightCount;
+    uint8_t JoseFightCount;
+    uint8_t ReenaFightCount;
+    uint8_t JoeyFightCount;
+    uint8_t WadeFightCount;
+    uint8_t RalphFightCount;
+    uint8_t LizFightCount;
+    uint8_t AnthonyFightCount;
+    uint8_t ToddFightCount;
+    uint8_t GinaFightCount;
+    uint8_t IrwinFightCount;
+    // unreferenced
+    uint8_t ArnieFightCount;
+    uint8_t AlanFightCount;
+    uint8_t DanaFightCount;
+    uint8_t ChadFightCount;
+    uint8_t DerekFightCount;
+    // unreferenced
+    uint8_t TullyFightCount;
+    uint8_t BrentFightCount;
+    uint8_t TiffanyFightCount;
+    uint8_t VanceFightCount;
+    uint8_t WiltonFightCount;
+    uint8_t KenjiFightCount;
+    // unreferenced
+    uint8_t ParryFightCount;
+    uint8_t ErinFightCount;
+    uint8_t skip_116[100];
+    uint8_t eventFlags[((NUM_EVENTS) + 7) / 8];
+    uint8_t curBox;
+    uint8_t skip_117[2];
+    uint8_t boxNames[BOX_NAME_LENGTH * NUM_BOXES];
+    // bit 2: forest is restless
+    uint8_t celebiEvent;
+    uint8_t skip_118[1];
+    // bit 0: using strength
+    // bit 1: always on bike
+    // bit 2: downhill
+    uint8_t bikeFlags;
+    uint8_t skip_119[1];
+    // cleared along with wBikeFlags by ResetBikeFlags
+    uint16_t curMapSceneScriptPointer;
+    uint16_t curCaller;
+    uint8_t curMapWarpCount;
+    uint16_t curMapWarpsPointer;
+    uint8_t curMapCoordEventCount;
+    uint16_t curMapCoordEventsPointer;
+    uint8_t curMapBGEventCount;
+    uint16_t curMapBGEventsPointer;
+    uint8_t curMapObjectEventCount;
+    uint16_t curMapObjectEventsPointer;
+    uint8_t curMapSceneScriptCount;
+    uint16_t curMapSceneScriptsPointer;
+    uint8_t curMapCallbackCount;
+    uint16_t curMapCallbacksPointer;
+    uint8_t skip_120[2];
+    // Sprite id of each decoration
+    uint8_t decoBed;
+    uint8_t decoCarpet;
+    uint8_t decoPlant;
+    uint8_t decoPoster;
+    uint8_t decoConsole;
+    uint8_t decoLeftOrnament;
+    uint8_t decoRightOrnament;
+    uint8_t decoBigDoll;
+    // Items bought from Mom
+    uint8_t whichMomItem;
+    uint8_t whichMomItemSet;
+    uint8_t momItemTriggerBalance[3];
+    uint16_t dailyResetTimer;
+    uint8_t dailyFlags1;
+    uint8_t dailyFlags2;
+    uint8_t swarmFlags;
+    uint8_t skip_121[2];
+    uint8_t timerEventStartDay;
+    uint8_t skip_122[3];
+    uint8_t fruitTreeFlags[((NUM_FRUIT_TREES) + 7) / 8];
+    uint8_t skip_123[2];
+    uint16_t luckyNumberDayTimer;
+    uint8_t skip_124[2];
+    uint16_t specialPhoneCallID;
+    uint8_t skip_125[2];
+    uint8_t bugContestStartTime[4];
+    // day, hour, min, sec
+    uint8_t unusedTwoDayTimerOn;
+    uint8_t unusedTwoDayTimer;
+    uint8_t unusedTwoDayTimerStartDate;
+    uint8_t skip_126[4];
+    uint8_t mobileOrCable_LastSelection;
+    uint8_t wdc41;
+    uint8_t wdc42[8];
+    uint8_t buenasPassword;
+    uint8_t blueCardBalance;
+    uint8_t dailyRematchFlags[4];
+    uint8_t dailyPhoneItemFlags[4];
+    uint8_t dailyPhoneTimeOfDayFlags[4];
+    uint8_t wKenjiBreakTimer[2];
+    // Kenji
+    uint8_t yanmaMapGroup;
+    uint8_t yanmaMapNumber;
+    uint8_t playerMonSelection[3];
+    uint8_t wdc5f;
+    uint8_t wdc60;
+    uint8_t skip_127[18];
+    uint8_t stepCount;
+    uint8_t poisonStepCount;
+    uint8_t skip_128[2];
+    uint8_t happinessStepCount;
+    uint8_t skip_129[1];
+    union {
+        uint8_t parkBallsRemaining;
+        uint8_t safariBallsRemaining;
+    };
+    uint16_t safariTimeRemaining;
+    uint8_t phoneList[CONTACT_LIST_SIZE + 1];
+    uint8_t skip_130[22];
+    uint8_t luckyNumberShowFlag;
+    uint8_t skip_131[1];
+    uint16_t luckyIDNumber;
+    uint8_t repelEffect;
+    // If a Repel is in use, it contains the nr of steps it's still active
+    uint16_t bikeStep;
+    uint8_t kurtApricornQuantity;
+};
+
+struct PokemonData {
+    uint8_t partyCount;
+    species_t partySpecies[PARTY_LENGTH];
+    uint8_t partyEnd; // unused
+    // older code doesn't check wPartyCount
+    // wPartyMon1 - wPartyMon6
+    //union wPartyMons
+    // for n, 1, PARTY_LENGTH + 1
+    // wPartyMon1 - wPartyMon6
+    struct PartyMon partyMon[(PARTY_LENGTH + 1) - 1];
+    // wPartyMon1OT - wPartyMon6OT
+    //union wPartyMonOTs
+    // for n, 1, PARTY_LENGTH + 1
+    uint8_t partyMonOT[(PARTY_LENGTH + 1) - 1][NAME_LENGTH];
+    // wPartyMon1Nickname - wPartyMon6Nickname
+    //union wPartyMonNicknames
+    // for n, 1, PARTY_LENGTH + 1
+    uint8_t partyMonNickname[(PARTY_LENGTH + 1) - 1][MON_NAME_LENGTH];
+    uint8_t partyMonNicknamesEnd[22];
+    uint8_t pokedexCaught[((NUM_POKEMON) + 7) / 8];
+    //union wEndPokedexCaught
+    uint8_t pokedexSeen[((NUM_POKEMON) + 7) / 8];
+    //union wEndPokedexSeen
+    uint8_t unownDex[NUM_UNOWN];
+    uint8_t unlockedUnowns;
+    uint8_t firstUnownSeen;
+    // bit 7: active
+    // bit 6: egg ready
+    // bit 5: monsters are compatible
+    // bit 0: monster 1 in day-care
+    uint8_t dayCareMan;
+    uint8_t breedMon1Nickname[MON_NAME_LENGTH];
+    uint8_t breedMon1OT[NAME_LENGTH];
+    struct BoxMon breedMon1;
+    // bit 7: active
+    // bit 0: monster 2 in day-care
+    uint8_t dayCareLady;
+    uint8_t stepsToEgg;
+    //  z: yes
+    // nz: no
+    uint8_t breedMotherOrNonDitto;
+    uint8_t breedMon2Nickname[MON_NAME_LENGTH];
+    uint8_t breedMon2OT[NAME_LENGTH];
+    struct BoxMon breedMon2;
+    uint8_t eggMonNickname[MON_NAME_LENGTH];
+    uint8_t eggMonOT[NAME_LENGTH];
+    struct BoxMon eggMon;
+    uint8_t bugContestSecondPartySpecies;
+    struct PartyMon contestMon;
+    uint8_t dunsparceMapGroup;
+    uint8_t dunsparceMapNumber;
+    uint8_t fishingSwarmFlag;
+    struct Roamer roamMon1;
+    struct Roamer roamMon2;
+    struct Roamer roamMon3;
+    uint8_t roamMons_CurMapNumber;
+    uint8_t roamMons_CurMapGroup;
+    uint8_t roamMons_LastMapNumber;
+    uint8_t roamMons_LastMapGroup;
+    uint8_t bestMagikarpLengthFeet;
+    uint8_t bestMagikarpLengthInches;
+    uint8_t magikarpRecordHoldersName[NAME_LENGTH];
 };

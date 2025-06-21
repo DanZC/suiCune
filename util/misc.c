@@ -57,7 +57,7 @@ uint8_t RotateRightC8(uint8_t x) {
     return (x >> 1) + (carry << 7);
 }
 
-static _Bool IsLittleEndian(void){
+_Bool IsLittleEndian(void){
     int n = 1;
     return *(char*)&n == 1;
 }

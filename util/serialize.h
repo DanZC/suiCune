@@ -1,0 +1,45 @@
+#pragma once
+
+uint8_t* Serialize_U16_LE(uint8_t* dest, uint16_t value);
+uint8_t* Serialize_U16_BE(uint8_t* dest, uint16_t value);
+uint8_t* Serialize_U16_Native(uint8_t* dest, uint16_t value);
+uint8_t* Serialize_Species(uint8_t* dest, species_t src);
+uint8_t* Serialize_Item(uint8_t* dest, item_t itm);
+uint8_t* Serialize_Move(uint8_t* dest, move_t move);
+uint8_t* Serialize_ByteBuffer(uint8_t* dest, const uint8_t* src, size_t size);
+uint8_t* Serialize_BoxMon(uint8_t* dest, const struct BoxMon* mon);
+uint8_t* Serialize_PartyMon(uint8_t* dest, const struct PartyMon* mon);
+uint8_t* Serialize_NicknamedMon(uint8_t* dest, const struct NicknamedMon* mon);
+uint8_t* Serialize_BattleTowerPartyMon(uint8_t* dest, const struct BattleTowerPartyMon* mon);
+uint8_t* Serialize_BattleTowerData(uint8_t* dest, const struct BattleTowerData* data);
+uint8_t* Serialize_MapId(uint8_t* dest, struct MapId mapId);
+uint8_t* Serialize_Object(uint8_t* dest, const struct Object* bc);
+uint8_t* Serialize_MapObject(uint8_t* dest, const struct MapObject* bc);
+uint8_t* Serialize_Box(uint8_t* dest, const struct Box* box);
+uint8_t* Serialize_OptionsData(uint8_t* dest, const struct OptionsData* data);
+uint8_t* Serialize_CurMapData(uint8_t* dest, const struct CurMapData* data);
+uint8_t* Serialize_PlayerData(uint8_t* dest, const struct PlayerData* data);
+uint8_t* Serialize_PokemonData(uint8_t* dest, const struct PokemonData* data);
+
+const uint8_t* Deserialize_U16_LE(uint16_t* dest, const uint8_t* src);
+const uint8_t* Deserialize_U16_BE(uint16_t* dest, const uint8_t* src);
+const uint8_t* Deserialize_U16_Native(uint16_t* dest, const uint8_t* src);
+const uint8_t* Deserialize_Species(species_t* dest, const uint8_t* src);
+const uint8_t* Deserialize_Item(item_t* dest, const uint8_t* src);
+const uint8_t* Deserialize_Move(move_t* dest, const uint8_t* src);
+const uint8_t* Deserialize_ByteBuffer(uint8_t* dest, const uint8_t* src, size_t size);
+const uint8_t* Deserialize_BoxMon(struct BoxMon* dest, const uint8_t* src);
+const uint8_t* Deserialize_PartyMon(struct PartyMon* mon, const uint8_t* src);
+const uint8_t* Deserialize_NicknamedMon(struct NicknamedMon* mon, const uint8_t* src);
+const uint8_t* Deserialize_BattleTowerPartyMon(struct BattleTowerPartyMon* mon, const uint8_t* src);
+const uint8_t* Deserialize_BattleTowerData(struct BattleTowerData* data, const uint8_t* src);
+const uint8_t* Deserialize_MapId(struct MapId* mapId, const uint8_t* src);
+const uint8_t* Deserialize_Object(struct Object* bc, const uint8_t* src);
+const uint8_t* Deserialize_MapObject(struct MapObject* bc, const uint8_t* src);
+const uint8_t* Deserialize_Box(struct Box* box, const uint8_t* src);
+const uint8_t* Deserialize_OptionsData(struct OptionsData* data, const uint8_t* src);
+const uint8_t* Deserialize_CurMapData(struct CurMapData* data, const uint8_t* src);
+const uint8_t* Deserialize_PlayerData(struct PlayerData* data, const uint8_t* src);
+const uint8_t* Deserialize_PokemonData(struct PokemonData* data, const uint8_t* src);
+
+int Test_Serialization(void);
