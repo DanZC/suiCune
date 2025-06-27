@@ -213,9 +213,9 @@ void StartMenu_PrintBugContestStatus(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aStartMenu_DrawBugContestStatusBox);
     StartMenu_DrawBugContestStatusBox();
     // hlcoord(1, 5, wTilemap);
@@ -268,7 +268,7 @@ void StartMenu_PrintBugContestStatus(void){
 // skip_level:
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
 
 

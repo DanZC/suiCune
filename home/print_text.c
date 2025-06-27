@@ -16,14 +16,14 @@ void PrintLetterDelay(void) {
     // LD_A_addr(wOptions);
     // BIT_A(NO_TEXT_SCROLL);
     // RET_NZ;
-    if(bit_test(wram->wOptions, NO_TEXT_SCROLL))
+    if(bit_test(gOptions.options, NO_TEXT_SCROLL))
         return;
 
     //  non-scrolling text?
     // LD_A_addr(wTextboxFlags);
     // BIT_A(NO_TEXT_DELAY_F);
     // RET_Z;
-    if(!bit_test(wram->wTextboxFlags, NO_TEXT_DELAY_F))
+    if(!bit_test(gOptions.textboxFlags, NO_TEXT_DELAY_F))
         return;
 
     // PUSH_HL;
@@ -44,7 +44,7 @@ void PrintLetterDelay(void) {
     // LD_A_addr(wTextboxFlags);
     // BIT_A(FAST_TEXT_DELAY_F);
     // IF_Z goto fast;
-    if(!bit_test(wram->wTextboxFlags, FAST_TEXT_DELAY_F))
+    if(!bit_test(gOptions.textboxFlags, FAST_TEXT_DELAY_F))
     {
     // fast:
         // LD_A(TEXT_DELAY_FAST);
@@ -59,7 +59,7 @@ void PrintLetterDelay(void) {
         // AND_A(0b111);
     // updatedelay:
         // LD_addr_A(wTextDelayFrames);
-        wram->wTextDelayFrames = (wram->wOptions & 0b111);
+        wram->wTextDelayFrames = (gOptions.options & 0b111);
     }
 
     while(1) {

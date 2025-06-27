@@ -177,7 +177,7 @@ static bool StartMenu_IsMenuAccountOn(void) {
     // LD_A_addr(wOptions2);
     // AND_A(1 << MENU_ACCOUNT);
     // RET;
-    return (wram->wOptions2 & (1 << MENU_ACCOUNT)) != 0;
+    return (gOptions.options2 & (1 << MENU_ACCOUNT)) != 0;
 }
 
 static void StartMenu_DrawMenuAccount(void) {

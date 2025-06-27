@@ -121,7 +121,7 @@ void LoadFrame(void){
     // LD_HL(vTiles2 + LEN_2BPP_TILE * CHAR_FRAME_TOP_LEFT);  // $79
     // LD_BC((BANK(aFrames) << 8) | TEXTBOX_FRAME_TILES);  // "┌" to "┘"
     // CALL(aGet1bppViaHDMA);
-    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * CHAR_FRAME_TOP_LEFT, FramePaths[wram->wTextboxFrame & 0x7], 0, TEXTBOX_FRAME_TILES);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * CHAR_FRAME_TOP_LEFT, FramePaths[gOptions.textboxFrame & 0x7], 0, TEXTBOX_FRAME_TILES);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * CHAR_SPACE);  // $7f
     // LD_DE(mTextboxSpaceGFX);
     // LD_BC((BANK(aTextboxSpaceGFX) << 8) | 1);

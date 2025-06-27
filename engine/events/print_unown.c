@@ -34,10 +34,10 @@ void v_UnownPrinter(void){
     hram.hInMenu = 0x1;
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_A(NO_TEXT_SCROLL);
     // LD_addr_A(wOptions);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearTilemap);
@@ -147,7 +147,7 @@ void v_UnownPrinter(void){
 // pressed_b:
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram.hInMenu = inMenu;

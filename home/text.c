@@ -1025,8 +1025,8 @@ void PlaceFarString(uint8_t bank, struct TextPrintState* state, uint8_t* hl) {
 // }
 
 void PlaceHLTextAtBC_GB(uint8_t* hl, uint8_t* bc) {
-    uint8_t tflags = wram->wTextboxFlags;
-    wram->wTextboxFlags = tflags | (1 << NO_TEXT_DELAY_F);
+    uint8_t tflags = gOptions.textboxFlags;
+    gOptions.textboxFlags = tflags | (1 << NO_TEXT_DELAY_F);
 
     struct TextPrintState state = {.hl = hl, .bc = bc, .de = 0};
 
@@ -1040,12 +1040,12 @@ void PlaceHLTextAtBC_GB(uint8_t* hl, uint8_t* bc) {
         DoTextUntilTerminator_TextCommand_GB(&state, cmd);
     }
 
-    wram->wTextboxFlags = tflags;
+    gOptions.textboxFlags = tflags;
 }
 
 void PlaceHLTextAtBC(uint8_t* bc, const struct TextCmd* hl) {
-    uint8_t tflags = wram->wTextboxFlags;
-    wram->wTextboxFlags = tflags | (1 << NO_TEXT_DELAY_F);
+    uint8_t tflags = gOptions.textboxFlags;
+    gOptions.textboxFlags = tflags | (1 << NO_TEXT_DELAY_F);
 
     struct TextCmdState state = {.hl = hl, .bc = bc};
 
@@ -1059,7 +1059,7 @@ void PlaceHLTextAtBC(uint8_t* bc, const struct TextCmd* hl) {
         DoTextUntilTerminator_TextCommand(&state, cmd);
     }
 
-    wram->wTextboxFlags = tflags;
+    gOptions.textboxFlags = tflags;
 }
 
 void (*const TextCommands[])(struct TextPrintState*) = {

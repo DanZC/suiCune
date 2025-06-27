@@ -183,10 +183,10 @@ void RunMobileTradeAnim_Frontpics(const uint8_t* de){
     bit_reset(wram->wVramState, 0);
     // LD_HL(wOptions);
     // LD_A_hl;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // PUSH_AF;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aFunction1080b7);
     Function1080b7();
 
@@ -199,7 +199,7 @@ void RunMobileTradeAnim_Frontpics(const uint8_t* de){
     } while(!done);
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // POP_AF;
     // LD_addr_A(wVramState);
     wram->wVramState = vramState;
@@ -229,10 +229,10 @@ void RunMobileTradeAnim_NoFrontpics(const uint8_t* de){
     bit_reset(wram->wVramState, 0);
     // LD_HL(wOptions);
     // LD_A_hl;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // PUSH_AF;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aFunction108157);
     Function108157();
 
@@ -245,7 +245,7 @@ void RunMobileTradeAnim_NoFrontpics(const uint8_t* de){
     } while(!done);
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // POP_AF;
     // LD_addr_A(wVramState);
     wram->wVramState = vramState;

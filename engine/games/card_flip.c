@@ -38,7 +38,7 @@ static void v_CardFlip_CardFlip(void);
 void v_CardFlip(void){
     // LD_HL(wOptions);
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearTilemap);
@@ -132,7 +132,7 @@ void v_CardFlip(void){
     ClearBGPalettes();
     // LD_HL(wOptions);
     // RES_hl(4);
-    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+    bit_reset(gOptions.options, NO_TEXT_SCROLL);
     // RET;
 }
 

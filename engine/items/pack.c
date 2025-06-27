@@ -44,7 +44,7 @@ enum {
 void Pack(void){
     // LD_HL(wOptions);
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aInitPackBuffers);
     InitPackBuffers();
 
@@ -71,7 +71,7 @@ void Pack(void){
     wram->wLastPocket = wram->wCurPocket;
     // LD_HL(wOptions);
     // RES_hl(NO_TEXT_SCROLL);
-    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+    bit_reset(gOptions.options, NO_TEXT_SCROLL);
     // RET;
     return;
 }
@@ -364,15 +364,15 @@ void Pack_RunJumptable(void) {
                 if(!res.flag){
                     // LD_HL(wOptions);
                     // LD_A_hl;
-                    uint8_t options = wram->wOptions;
+                    uint8_t options = gOptions.options;
                     // PUSH_AF;
                     // RES_hl(NO_TEXT_SCROLL);
-                    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+                    bit_reset(gOptions.options, NO_TEXT_SCROLL);
                     // FARCALL(aTeachTMHM);
                     TeachTMHM();
                     // POP_AF;
                     // LD_addr_A(wOptions);
-                    wram->wOptions = options;
+                    gOptions.options = options;
                 }
 
             // declined:
@@ -854,10 +854,10 @@ void GiveItem(void){
     }
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // RES_A(NO_TEXT_SCROLL);
     // LD_addr_A(wOptions);
-    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+    bit_reset(gOptions.options, NO_TEXT_SCROLL);
     // LD_A(PARTYMENUACTION_GIVE_ITEM);
     // LD_addr_A(wPartyMenuActionText);
     wram->wPartyMenuActionText = PARTYMENUACTION_GIVE_ITEM;
@@ -923,7 +923,7 @@ void GiveItem(void){
 // finish:
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram.hBGMapMode = BGMAPMODE_NONE;
@@ -1152,7 +1152,7 @@ static void BattlePack_RunJumptable(void) {
 void BattlePack(void){
     // LD_HL(wOptions);
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aInitPackBuffers);
     InitPackBuffers();
 
@@ -1179,7 +1179,7 @@ void BattlePack(void){
     wram->wLastPocket = wram->wCurPocket;
     // LD_HL(wOptions);
     // RES_hl(NO_TEXT_SCROLL);
-    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+    bit_reset(gOptions.options, NO_TEXT_SCROLL);
     // RET;
     return;
 }
@@ -1811,15 +1811,15 @@ void Pack_QuitRunScript(void){
 void Pack_PrintTextNoScroll(const txt_cmd_s* hl){
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_A(NO_TEXT_SCROLL);
     // LD_addr_A(wOptions);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aPrintText);
     PrintText(hl);
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
 }
 

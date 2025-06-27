@@ -14,5 +14,5 @@ bool CheckBattleScene(void) {
         CloseSRAM();
         return bit_test(c, 0);
     }
-    return !bit_test(wram->wOptions, BATTLE_SCENE);
+    return !bit_test(gOptions.options, BATTLE_SCENE);
 }

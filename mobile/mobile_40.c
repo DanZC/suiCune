@@ -5768,11 +5768,11 @@ void StartMobileBattle(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // AND_A((1 << STEREO));
     // OR_A(1);  // 1 frame per character i.e. fast text
     // LD_hl_A;
-    wram->wOptions = (options & (1 << STEREO)) | 1;
+    gOptions.options = (options & (1 << STEREO)) | 1;
     // LD_A(1);
     // LD_addr_A(wDisableTextAcceleration);
     wram->wDisableTextAcceleration = 1;
@@ -5790,7 +5790,7 @@ void StartMobileBattle(void){
     hram.hSerialConnectionStatus = CONNECTION_NOT_ESTABLISHED;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
 }
 

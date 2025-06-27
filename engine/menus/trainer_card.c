@@ -56,9 +56,9 @@ void TrainerCard(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aTrainerCard_InitRAM);
     TrainerCard_InitRAM();
 
@@ -97,7 +97,7 @@ void TrainerCard(void){
 // quit:
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // POP_AF;
     // LD_addr_A(wVramState);
     wram->wVramState = vramState;

@@ -171,9 +171,9 @@ void PokeGear(void){
     bit_set(wram->wPokegearFlags, POKEGEAR_RADIO_CARD_F);
     bit_set(wram->wPokegearFlags, POKEGEAR_MAP_CARD_F);
 #endif
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
     uint8_t inMenu = hram.hInMenu;
@@ -228,7 +228,7 @@ void PokeGear(void){
     hram.hInMenu = inMenu;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // XOR_A_A;  // LOW(vBGMap0)
@@ -1418,7 +1418,7 @@ static void PokegearPhone_MakePhoneCall(void){
     if(!GetMapPhoneService()) {
         // LD_HL(wOptions);
         // RES_hl(NO_TEXT_SCROLL);
-        bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+        bit_reset(gOptions.options, NO_TEXT_SCROLL);
         // XOR_A_A;
         // LDH_addr_A(hInMenu);
         hram.hInMenu = FALSE;
@@ -1447,7 +1447,7 @@ static void PokegearPhone_MakePhoneCall(void){
         DelayFrames(10);
         // LD_HL(wOptions);
         // SET_hl(NO_TEXT_SCROLL);
-        bit_set(wram->wOptions, NO_TEXT_SCROLL);
+        bit_set(gOptions.options, NO_TEXT_SCROLL);
         // LD_A(0x1);
         // LDH_addr_A(hInMenu);
         hram.hInMenu = TRUE;
@@ -2859,9 +2859,9 @@ void v_TownMap(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
 
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
@@ -2964,7 +2964,7 @@ void v_TownMap(void){
     hram.hInMenu = inMenu;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // RET;
@@ -3031,9 +3031,9 @@ void PlayRadio(uint8_t e){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aPlayRadio_PlayStation);
     PlayRadio_PlayStation(e);
     // LD_C(100);
@@ -3070,7 +3070,7 @@ void PlayRadio(uint8_t e){
 // stop:
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // CALL(aExitPokegearRadio_HandleMusic);
     ExitPokegearRadio_HandleMusic();
     // RET;

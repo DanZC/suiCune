@@ -759,7 +759,7 @@ void Music_Transpose(void) {
 void Music_StereoPanning(void) {
     //  stereo panning
     //  params: 1
-    if ((wram->wOptions & (1 << STEREO)))  // stereo on?
+    if ((gOptions.options & (1 << STEREO)))  // stereo on?
         Music_ForceStereoPanning();
     else
         GetMusicByte();  // skip param
@@ -1013,7 +1013,7 @@ void v_PlayCry(uint16_t cryId) {
         // BIT_A(STEREO);        // bit STEREO, a
         // IF_Z goto next;       // jr z, .next
 
-        if(wram->wStereoPanningMask != 0 && bit_test(wram->wOptions, STEREO)) {
+        if(wram->wStereoPanningMask != 0 && bit_test(gOptions.options, STEREO)) {
             //  [CHANNEL_TRACKS] &= [wCryTracks]
             // LD_HL(CHANNEL_TRACKS);  // ld hl, CHANNEL_TRACKS
             // ADD_HL_BC;              // add hl, bc
@@ -1206,7 +1206,7 @@ void PlayStereoSFX(uint16_t sfxId) {
     // LD_A_addr(wOptions);      // ld a, [wOptions]
     // BIT_A(STEREO);            // bit STEREO, a
     // IF_Z return v_PlaySFX();  // jp z, _PlaySFX
-    if(!bit_test(wram->wOptions, STEREO))
+    if(!bit_test(gOptions.options, STEREO))
         return v_PlaySFX(sfxId);
 
     //  else, let's go ahead with this
@@ -1397,7 +1397,7 @@ const uint8_t* GetLRTracks(void) {
 // stereo:
     // LD_HL(mStereoTracks);  // ld hl, StereoTracks
     // return;
-    return (bit_test(wram->wOptions, STEREO))? StereoTracks: MonoTracks;
+    return (bit_test(gOptions.options, STEREO))? StereoTracks: MonoTracks;
 }
 
 void ClearChannels(void) {

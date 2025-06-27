@@ -311,7 +311,7 @@ static uint8_t MainMenu_GetWhichMenu(void){
     // LD_A_addr(wSaveFileExists);
     // AND_A_A;
     // IF_NZ goto next;
-    if(!wram->wSaveFileExists) {
+    if(!gOptions.saveFileExists) {
         // LD_A(MAINMENU_NEW_GAME);
         // RET;
         return MAINMENU_NEW_GAME;
@@ -487,7 +487,7 @@ static void MainMenu_PrintCurrentTimeAndDay_PlaceTime(void) {
     // LD_A_addr(wSaveFileExists);
     // AND_A_A;
     // RET_Z ;
-    if(!wram->wSaveFileExists)
+    if(!gOptions.saveFileExists)
         return;
     // CALL(aCheckRTCStatus);
     // AND_A(0x80);
@@ -542,7 +542,7 @@ static void MainMenu_PrintCurrentTimeAndDay(void){
     // LD_A_addr(wSaveFileExists);
     // AND_A_A;
     // RET_Z ;
-    if(!wram->wSaveFileExists)
+    if(!gOptions.saveFileExists)
         return;
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
@@ -552,14 +552,14 @@ static void MainMenu_PrintCurrentTimeAndDay(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t temp = wram->wOptions;
+    uint8_t temp = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aMainMenu_PrintCurrentTimeAndDay_PlaceTime);
     MainMenu_PrintCurrentTimeAndDay_PlaceTime();
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = temp;
+    gOptions.options = temp;
     // LD_A(0x1);
     // LDH_addr_A(hBGMapMode);
     hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;

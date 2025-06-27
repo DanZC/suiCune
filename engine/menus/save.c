@@ -17,6 +17,7 @@
 #include "../../mobile/mobile_41.h"
 #include "../../data/default_options.h"
 #include "../../data/text/common.h"
+#include "../../util/serialize.h"
 
 struct BoxAddress {
     uint32_t address;
@@ -202,7 +203,7 @@ void MoveMonWOMail_InsertMon_SaveGame(uint8_t e){
     wram->wCurBox = e;
     // LD_A(TRUE);
     // LD_addr_A(wSaveFileExists);
-    wram->wSaveFileExists = TRUE;
+    gOptions.saveFileExists = TRUE;
     // FARCALL(aStageRTCTimeForSave);
     StageRTCTimeForSave();
     // FARCALL(aBackupMysteryGift);
@@ -331,7 +332,7 @@ bool AskOverwriteSaveFile(void){
     // LD_A_addr(wSaveFileExists);
     // AND_A_A;
     // IF_Z goto erase;
-    if(wram->wSaveFileExists) {
+    if(gOptions.saveFileExists) {
         // CALL(aCompareLoadedAndSavedPlayerID);
         // IF_Z goto yoursavefile;
         if(CompareLoadedAndSavedPlayerID()) {
@@ -424,11 +425,11 @@ void SavedTheGame(void){
 // copy the original text speed setting to the stack
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
 // set text speed to medium
     // LD_A(TEXT_DELAY_MED);
     // LD_addr_A(wOptions);
-    wram->wOptions = TEXT_DELAY_FAST;
+    gOptions.options = TEXT_DELAY_FAST;
 // <PLAYER> saved the game!
     // LD_HL(mSavedTheGameText);
     // CALL(aPrintText);
@@ -436,7 +437,7 @@ void SavedTheGame(void){
 // restore the original text speed setting
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // LD_DE(SFX_SAVE);
     // CALL(aWaitPlaySFX);
     WaitPlaySFX(SFX_SAVE);
@@ -452,7 +453,7 @@ void SavedTheGame(void){
 void v_SaveGameData(void){
     // LD_A(TRUE);
     // LD_addr_A(wSaveFileExists);
-    wram->wSaveFileExists = TRUE;
+    gOptions.saveFileExists = TRUE;
     // FARCALL(aStageRTCTimeForSave);
     StageRTCTimeForSave();
     // FARCALL(aBackupMysteryGift);
@@ -571,11 +572,11 @@ void SavingDontTurnOffThePower(void){
 // Save the text speed setting to the stack
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
 // Set the text speed to medium
     // LD_A(TEXT_DELAY_MED);
     // LD_addr_A(wOptions);
-    // wram->wOptions = TEXT_DELAY_FAST;
+    // gOptions.options = TEXT_DELAY_FAST;
 // SAVING... DON'T TURN OFF THE POWER.
     // LD_HL(mSavingDontTurnOffThePowerText);
     // CALL(aPrintText);
@@ -583,7 +584,7 @@ void SavingDontTurnOffThePower(void){
 // Restore the text speed setting
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
 // Wait for 16 frames
     // LD_C(16);
     // CALL(aDelayFrames);
@@ -770,11 +771,11 @@ void SaveOptions(void){
     // LD_DE(sOptions);
     // LD_BC(wOptionsEnd - wOptions);
     // CALL(aCopyBytes);
-    CopyBytes_GB(sOptions, wOptions, wOptionsEnd - wOptions);
+    Serialize_OptionsData((uint8_t*)GBToRAMAddr(sOptions), &gOptions);
     // LD_A_addr(wOptions);
     // AND_A(~(1 << NO_TEXT_SCROLL));
     // LD_addr_A(sOptions);
-    gb_write(sOptions, wram->wOptions & ~(1 << NO_TEXT_SCROLL));
+    gb_write(sOptions, gOptions.options & ~(1 << NO_TEXT_SCROLL));
     // JP(mCloseSRAM);
     CloseSRAM();
 }
@@ -860,7 +861,7 @@ void SaveBackupOptions(void){
     // LD_DE(sBackupOptions);
     // LD_BC(wOptionsEnd - wOptions);
     // CALL(aCopyBytes);
-    CopyBytes_GB(sBackupOptions, wOptions, wOptionsEnd - wOptions);
+    Serialize_OptionsData((uint8_t*)GBToRAMAddr(sBackupOptions), &gOptions);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -984,16 +985,16 @@ bool TryLoadSaveFile(void){
 // corrupt:
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_A(NO_TEXT_SCROLL);
     // LD_addr_A(wOptions);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LD_HL(mSaveFileCorruptedText);
     // CALL(aPrintText);
     PrintText(SaveFileCorruptedText);
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // SCF;
     // RET;
     return false;
@@ -1003,13 +1004,13 @@ void TryLoadSaveData(void){
     PEEK("");
     // XOR_A_A;  // FALSE
     // LD_addr_A(wSaveFileExists);
-    wram->wSaveFileExists = FALSE;
+    gOptions.saveFileExists = FALSE;
     // CALL(aCheckPrimarySaveFile);
     CheckPrimarySaveFile();
     // LD_A_addr(wSaveFileExists);
     // AND_A_A;
     // IF_Z goto backup;
-    if(wram->wSaveFileExists) {
+    if(gOptions.saveFileExists) {
         // LD_A(BANK(sPlayerData));
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(asPlayerData));
@@ -1035,7 +1036,7 @@ void TryLoadSaveData(void){
     // LD_A_addr(wSaveFileExists);
     // AND_A_A;
     // IF_Z goto corrupt;
-    if(wram->wSaveFileExists) {
+    if(gOptions.saveFileExists) {
         // LD_A(BANK(sBackupPlayerData));
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(asBackupPlayerData));
@@ -1060,7 +1061,7 @@ void TryLoadSaveData(void){
     // LD_DE(wOptions);
     // LD_BC(wOptionsEnd - wOptions);
     // CALL(aCopyBytes);
-    CopyBytes(&wram->wOptions, DefaultOptions, DefaultOptions_Size);
+    CopyBytes(&gOptions.options, &DefaultOptions, sizeof(gOptions));
     // CALL(aClearClock);
     ClearClock();
     // RET;
@@ -1084,11 +1085,11 @@ void CheckPrimarySaveFile(void){
         // LD_DE(wOptions);
         // LD_BC(wOptionsEnd - wOptions);
         // CALL(aCopyBytes);
-        CopyBytes_GB(wOptions, sOptions, wOptionsEnd - wOptions);
+        Deserialize_OptionsData(&gOptions, (const uint8_t*)GBToRAMAddr(sOptions));
         // CALL(aCloseSRAM);
         // LD_A(TRUE);
         // LD_addr_A(wSaveFileExists);
-        wram->wSaveFileExists = TRUE;
+        gOptions.saveFileExists = TRUE;
     }
 
 
@@ -1114,10 +1115,10 @@ void CheckBackupSaveFile(void){
         // LD_DE(wOptions);
         // LD_BC(wOptionsEnd - wOptions);
         // CALL(aCopyBytes);
-        CopyBytes_GB(wOptions, sBackupOptions, wOptionsEnd - wOptions);
+        Deserialize_OptionsData(&gOptions, (const uint8_t*)GBToRAMAddr(sBackupOptions));
         // LD_A(0x2);
         // LD_addr_A(wSaveFileExists);
-        wram->wSaveFileExists = 0x2;
+        gOptions.saveFileExists = 0x2;
     }
 
 // nope:

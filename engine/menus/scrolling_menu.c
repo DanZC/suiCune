@@ -101,9 +101,9 @@ static void ScrollingMenu_InitDisplay(const struct MenuData* data){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aScrollingMenu_UpdateDisplay);
     ScrollingMenu_UpdateDisplay(data);
     // CALL(aScrollingMenu_PlaceCursor);
@@ -112,7 +112,7 @@ static void ScrollingMenu_InitDisplay(const struct MenuData* data){
     ScrollingMenu_CheckCallFunction3(data);
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
 }
 

@@ -394,10 +394,10 @@ void v_BattleTowerBattle(void){
 void RunBattleTowerTrainer(void){
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // LD_HL(wOptions);
     // SET_hl(BATTLE_SHIFT);  // SET MODE
-    bit_set(wram->wOptions, BATTLE_SHIFT);
+    bit_set(gOptions.options, BATTLE_SHIFT);
 
     // LD_A_addr(wInBattleTowerBattle);
     // PUSH_AF;
@@ -460,7 +460,7 @@ void RunBattleTowerTrainer(void){
     wram->wInBattleTowerBattle = inBattleTowerBattle;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // LD_A(TRUE);
     // LD_addr_A(wBattleTowerBattleEnded);
     wram->wBattleTowerBattleEnded = TRUE;
@@ -1806,7 +1806,7 @@ void BattleTower_CheckSaveFileExistsAndIsYours(void){
     // IF_Z goto nope;
     // FARCALL(aCompareLoadedAndSavedPlayerID);
     // IF_Z goto yes;
-    if(wram->wSaveFileExists && CompareLoadedAndSavedPlayerID()) {
+    if(gOptions.saveFileExists && CompareLoadedAndSavedPlayerID()) {
     // yes:
         // LD_A(TRUE);
         wram->wScriptVar = TRUE;

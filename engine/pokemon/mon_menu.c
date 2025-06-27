@@ -1237,9 +1237,9 @@ u8_flag_s ChooseMoveToDelete(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aLoadFontsBattleExtra);
     LoadFontsBattleExtra();
     // CALL(aChooseMoveToDelete_ChooseMoveToDelete);
@@ -1247,7 +1247,7 @@ u8_flag_s ChooseMoveToDelete(void){
     // POP_BC;
     // LD_A_B;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // PUSH_AF;
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
@@ -1272,14 +1272,14 @@ u8_pair_s ManagePokemonMoves(void){
         // LD_HL(wOptions);
         // LD_A_hl;
         // PUSH_AF;
-        uint8_t options = wram->wOptions;
+        uint8_t options = gOptions.options;
         // SET_hl(NO_TEXT_SCROLL);
-        bit_set(wram->wOptions, NO_TEXT_SCROLL);
+        bit_set(gOptions.options, NO_TEXT_SCROLL);
         // CALL(aMoveScreenLoop);
         MoveScreenLoop();
         // POP_AF;
         // LD_addr_A(wOptions);
-        wram->wOptions = options;
+        gOptions.options = options;
         // CALL(aClearBGPalettes);
         ClearBGPalettes();
     }

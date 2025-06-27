@@ -100,9 +100,9 @@ void WritePartyMenuTilemap(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram.hBGMapMode = BGMAPMODE_NONE;
@@ -142,7 +142,7 @@ void WritePartyMenuTilemap(void){
 // end:
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
     return;
 }
@@ -1065,16 +1065,16 @@ void PrintPartyMenuText(void){
 // gotstring:
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_A(NO_TEXT_SCROLL);
     // LD_addr_A(wOptions);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // hlcoord(1, 16, wTilemap);  // Coord
     // CALL(aPlaceString);
     PlaceStringSimple(U82CA(buf, de), coord(1, 16, wram->wTilemap));
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
 }
 
@@ -1088,15 +1088,15 @@ static void PrintPartyMenuActionText_PrintText(const txt_cmd_s* text) {
     // LD_L_A;
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_A(NO_TEXT_SCROLL);
     // LD_addr_A(wOptions);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aPrintText);
     PrintText(text);
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
 }
 

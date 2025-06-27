@@ -387,9 +387,9 @@ void RunTradeAnimScript(const uint8_t* de){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aRunTradeAnimScript_TradeAnimLayout);
     RunTradeAnimScript_TradeAnimLayout();
     // LD_A_addr(wUnusedTradeAnimPlayEvolutionMusic);
@@ -410,7 +410,7 @@ void RunTradeAnimScript(const uint8_t* de){
     } while(!done);
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // POP_AF;
     // LD_addr_A(wVramState);
     wram->wVramState = vramState;

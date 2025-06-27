@@ -87,11 +87,11 @@ void CatchTutorial(void){
             hram.hJoyPressed = 0;
             // LD_A_addr(wOptions);
             // PUSH_AF;
-            uint8_t options = wram->wOptions;
+            uint8_t options = gOptions.options;
             // AND_A(~TEXT_DELAY_MASK);
             // ADD_A(TEXT_DELAY_MED);
             // LD_addr_A(wOptions);
-            wram->wOptions = (options & ~TEXT_DELAY_MASK) | TEXT_DELAY_MED;
+            gOptions.options = (options & ~TEXT_DELAY_MASK) | TEXT_DELAY_MED;
             // LD_HL(mCatchTutorial_AutoInput);
             // LD_A(BANK(aCatchTutorial_AutoInput));
             // CALL(aStartAutoInput);
@@ -103,7 +103,7 @@ void CatchTutorial(void){
             // POP_AF;
 
             // LD_addr_A(wOptions);
-            wram->wOptions = options;
+            gOptions.options = options;
             // LD_HL(wMomsName);
             // LD_DE(wPlayerName);
             // LD_BC(NAME_LENGTH);

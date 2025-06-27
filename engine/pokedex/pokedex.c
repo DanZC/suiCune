@@ -79,9 +79,9 @@ void Pokedex(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LD_A_addr(wVramState);
     // PUSH_AF;
     uint8_t vramState = wram->wVramState;
@@ -140,7 +140,7 @@ void Pokedex(void){
     wram->wVramState = vramState;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // POP_AF;
     // LDH_addr_A(hSCX);
     hram.hSCX = scx;

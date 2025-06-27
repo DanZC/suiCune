@@ -310,7 +310,7 @@ static void v_SlotMachine_InitGFX(void){
 void v_SlotMachine(void){
     // LD_HL(wOptions);
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(av_SlotMachine_InitGFX);
     v_SlotMachine_InitGFX();
     // CALL(aDelayFrame);
@@ -336,7 +336,7 @@ void v_SlotMachine(void){
     StubbedTrainerRankings_EndSlotsWinStreak();
     // LD_HL(wOptions);
     // RES_hl(NO_TEXT_SCROLL);
-    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+    bit_reset(gOptions.options, NO_TEXT_SCROLL);
     // LD_HL(rLCDC);
     // RES_hl(rLCDC_SPRITE_SIZE);  // 8x8
     gb_write(rLCDC, gb_read(rLCDC) & (uint8_t)~(1 << rLCDC_SPRITE_SIZE));

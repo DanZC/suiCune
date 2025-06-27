@@ -667,11 +667,11 @@ void Gen2ToGen2LinkComms(void){
         // LD_HL(wOptions);
         // LD_A_hl;
         // PUSH_AF;
-        uint8_t options = wram->wOptions;
+        uint8_t options = gOptions.options;
         // AND_A(1 << STEREO);
         // OR_A(TEXT_DELAY_MED);
         // LD_hl_A;
-        wram->wOptions = (options & (1 << STEREO)) | TEXT_DELAY_MED;
+        gOptions.options = (options & (1 << STEREO)) | TEXT_DELAY_MED;
         // LD_HL(wOTPlayerName);
         // LD_DE(wOTClassName);
         // LD_BC(NAME_LENGTH);
@@ -725,7 +725,7 @@ void Gen2ToGen2LinkComms(void){
         wram->wDisableTextAcceleration = disableTextAcc;
         // POP_AF;
         // LD_addr_A(wOptions);
-        wram->wOptions = options;
+        gOptions.options = options;
 
         // FARCALL(aLoadPokemonData);
         LoadPokemonData();

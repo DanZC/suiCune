@@ -218,10 +218,10 @@ void Elevator_GetCurrentFloorText(void){
     static const char Elevator_CurrentFloorText[] = "Now on:@";
     // LD_HL(wOptions);
     // LD_A_hl;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // PUSH_AF;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // hlcoord(0, 0, wTilemap);
     // LD_B(4);
     // LD_C(8);
@@ -237,7 +237,7 @@ void Elevator_GetCurrentFloorText(void){
     Elevator_GetCurrentFloorString(coord(4, 4, wram->wTilemap));
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
 }
 

@@ -62,9 +62,9 @@ void NamingScreen(uint8_t* de, uint8_t b){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LDH_A_addr(hMapAnims);
     // PUSH_AF;
     uint8_t mapAnims = hram.hMapAnims;
@@ -95,7 +95,7 @@ void NamingScreen(uint8_t* de, uint8_t b){
     hram.hMapAnims = mapAnims;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // CALL(aClearJoypad);
     ClearJoypad();
     // RET;

@@ -2,6 +2,7 @@
 #include <stddef.h>
 
 struct wram_s* wram;
+struct OptionsData gOptions;
 
 #include <stddef.h>
 

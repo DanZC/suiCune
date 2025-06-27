@@ -49,15 +49,15 @@ static void v_BillsPC_LogIn(void) {
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LD_HL(mv_BillsPC_PCWhatText);
     // CALL(aPrintText);
     PrintText(PCWhatText);
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // CALL(aLoadFontsBattleExtra);
     LoadFontsBattleExtra();
     // RET;

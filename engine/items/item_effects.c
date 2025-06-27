@@ -513,7 +513,7 @@ void PokeBallEffect(void){
 
     // LD_HL(wOptions);
     // RES_hl(NO_TEXT_SCROLL);
-    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+    bit_reset(gOptions.options, NO_TEXT_SCROLL);
     // LD_HL(mItemUsedText);
     // CALL(aPrintText);
     PrintText(ItemUsedText);

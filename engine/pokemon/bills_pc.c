@@ -71,9 +71,9 @@ void v_DepositPKMN(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LD_A_addr(wVramState);
     // PUSH_AF;
     uint8_t vramState = wram->wVramState;
@@ -124,7 +124,7 @@ void v_DepositPKMN(void){
     wram->wVramState = vramState;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
     return;
 }
@@ -463,10 +463,10 @@ static void v_WithdrawPKMN_RunJumptable(void);
 void v_WithdrawPKMN(void){
     // LD_HL(wOptions);
     // LD_A_hl;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // PUSH_AF;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LD_A_addr(wVramState);
     // PUSH_AF;
     uint8_t vramState = wram->wVramState;
@@ -517,7 +517,7 @@ void v_WithdrawPKMN(void){
     wram->wVramState = vramState;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
     return;
 }
@@ -844,9 +844,9 @@ void v_MovePKMNWithoutMail(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LD_A_addr(wVramState);
     // PUSH_AF;
     uint8_t vramState = wram->wVramState;
@@ -899,7 +899,7 @@ void v_MovePKMNWithoutMail(void){
     wram->wVramState = vramState;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
     return;
 }

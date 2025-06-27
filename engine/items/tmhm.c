@@ -86,9 +86,9 @@ bool AskTeachTMHM(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // RES_hl(NO_TEXT_SCROLL);
-    bit_reset(wram->wOptions, NO_TEXT_SCROLL);
+    bit_reset(gOptions.options, NO_TEXT_SCROLL);
     // LD_A_addr(wCurItem);
     // CP_A(TM01);
     // IF_C goto NotTMHM;
@@ -121,7 +121,7 @@ bool AskTeachTMHM(void){
     // POP_BC;
     // LD_A_B;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
     return quit;
 }

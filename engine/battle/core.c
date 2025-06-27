@@ -5503,7 +5503,7 @@ static bool CheckWhetherToAskSwitch(void){
     // LD_A_addr(wOptions);
     // BIT_A(BATTLE_SHIFT);
     // IF_NZ goto return_nc;
-    if(bit_test(wram->wOptions, BATTLE_SHIFT))
+    if(bit_test(gOptions.options, BATTLE_SHIFT))
         return false;
     // LD_A_addr(wCurPartyMon);
     // PUSH_AF;

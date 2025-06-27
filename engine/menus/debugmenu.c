@@ -911,8 +911,8 @@ void DebugMenu_BattleAnim(void) {
     ClearScreen();
     uint16_t anim = NO_MOVE + 1;
 
-    uint8_t options = wram->wOptions;
-    wram->wOptions &= 0xfc;
+    uint8_t options = gOptions.options;
+    gOptions.options &= 0xfc;
 
 // Add Pokemon to party
     wram->wCurPartySpecies = PIKACHU;
@@ -1022,7 +1022,7 @@ void DebugMenu_BattleAnim(void) {
         }
         DelayFrame();
     }
-    wram->wOptions = options;
+    gOptions.options = options;
     ClearScreen();
     DelayFrames(4);
     DebugMenu_RestoreTilemap();

@@ -223,7 +223,7 @@ static bool Options_TextSpeed(void){
             res.c--;
         }
         // LD_A_D;
-        wram->wOptions = (wram->wOptions & 0xf0) | res.d;
+        gOptions.options = (gOptions.options & 0xf0) | res.d;
     }
     // BIT_A(D_RIGHT_F);
     // IF_Z goto NonePressed;
@@ -248,7 +248,7 @@ static bool Options_TextSpeed(void){
         // AND_A(0xf0);
         // OR_A_B;
         // LD_addr_A(wOptions);
-        wram->wOptions = (wram->wOptions & 0xf0) | res.e;
+        gOptions.options = (gOptions.options & 0xf0) | res.e;
     }
 
 // NonePressed:
@@ -274,7 +274,7 @@ static struct OptionRes GetTextSpeed(void){
     // AND_A(TEXT_DELAY_MASK);
     // CP_A(TEXT_DELAY_SLOW);
     // IF_Z goto slow;
-    if((wram->wOptions & TEXT_DELAY_MASK) == TEXT_DELAY_SLOW) {
+    if((gOptions.options & TEXT_DELAY_MASK) == TEXT_DELAY_SLOW) {
     // slow:
         // LD_C(OPT_TEXT_SPEED_SLOW);
         // LD_DE((TEXT_DELAY_MED << 8) | TEXT_DELAY_FAST);
@@ -283,7 +283,7 @@ static struct OptionRes GetTextSpeed(void){
     }
     // CP_A(TEXT_DELAY_FAST);
     // IF_Z goto fast;
-    if((wram->wOptions & TEXT_DELAY_MASK) == TEXT_DELAY_FAST) {
+    if((gOptions.options & TEXT_DELAY_MASK) == TEXT_DELAY_FAST) {
     // fast:
         // LD_C(OPT_TEXT_SPEED_FAST);
         // LD_DE((TEXT_DELAY_SLOW << 8) | TEXT_DELAY_MED);
@@ -291,7 +291,7 @@ static struct OptionRes GetTextSpeed(void){
         return (struct OptionRes){.c=OPT_TEXT_SPEED_FAST, .d=TEXT_DELAY_INSTANT, .e=TEXT_DELAY_MED};
     }
 
-    if((wram->wOptions & TEXT_DELAY_MASK) == TEXT_DELAY_INSTANT) {
+    if((gOptions.options & TEXT_DELAY_MASK) == TEXT_DELAY_INSTANT) {
         return (struct OptionRes){.c=OPT_TEXT_SPEED_INSTANT, .d=TEXT_DELAY_SLOW, .e=TEXT_DELAY_FAST};
     }
 // none of the above
@@ -309,7 +309,7 @@ bool Options_BattleScene(void){
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
     if(bit_test(hram.hJoyPressed, D_LEFT_F) || bit_test(hram.hJoyPressed, D_RIGHT_F)) {
-        bit_toggle(wram->wOptions, BATTLE_SCENE);
+        bit_toggle(gOptions.options, BATTLE_SCENE);
     }
     // BIT_A(D_RIGHT_F);
     // IF_Z goto NonePressed;
@@ -344,7 +344,7 @@ bool Options_BattleScene(void){
 // Display:
     // hlcoord(11, 5, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C((bit_test(wram->wOptions, BATTLE_SCENE))? Off: On), coord(11, 5, wram->wTilemap));
+    PlaceStringSimple(U82C((bit_test(gOptions.options, BATTLE_SCENE))? Off: On), coord(11, 5, wram->wTilemap));
     // AND_A_A;
     // RET;
     return false;
@@ -362,7 +362,7 @@ bool Options_BattleStyle(void){
         // BIT_hl(BATTLE_SHIFT);
         // IF_Z goto ToggleSet;
         // goto ToggleShift;
-        bit_toggle(wram->wOptions, BATTLE_SHIFT);
+        bit_toggle(gOptions.options, BATTLE_SHIFT);
     }
     // BIT_A(D_RIGHT_F);
     // IF_Z goto NonePressed;
@@ -390,7 +390,7 @@ bool Options_BattleStyle(void){
 // Display:
     // hlcoord(11, 7, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C((bit_test(wram->wOptions, BATTLE_SHIFT))? Set: Shift), coord(11, 7, wram->wTilemap));
+    PlaceStringSimple(U82C((bit_test(gOptions.options, BATTLE_SHIFT))? Set: Shift), coord(11, 7, wram->wTilemap));
     // AND_A_A;
     // RET;
     return false;
@@ -408,7 +408,7 @@ bool Options_Sound(void){
         // BIT_hl(STEREO);
         // IF_Z goto SetStereo;
         // goto SetMono;
-        bit_toggle(wram->wOptions, STEREO);
+        bit_toggle(gOptions.options, STEREO);
         RestartMapMusic();
     }
     // BIT_A(D_RIGHT_F);
@@ -445,7 +445,7 @@ bool Options_Sound(void){
 // Display:
     // hlcoord(11, 9, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C((bit_test(wram->wOptions, STEREO))? Stereo: Mono), coord(11, 9, wram->wTilemap));
+    PlaceStringSimple(U82C((bit_test(gOptions.options, STEREO))? Stereo: Mono), coord(11, 9, wram->wTilemap));
     // AND_A_A;
     // RET;
     return false;
@@ -493,7 +493,7 @@ bool Options_Print(void){
             res.c--;
         }
         // LD_A_D;
-        wram->wGBPrinterBrightness = res.d;
+        gOptions.GBPrinterBrightness = res.d;
     }
     // BIT_A(D_RIGHT_F);
     // IF_Z goto NonePressed;
@@ -513,7 +513,7 @@ bool Options_Print(void){
         }
         // LD_A_E;
         // goto Save;
-        wram->wGBPrinterBrightness = res.e;
+        gOptions.GBPrinterBrightness = res.e;
     }
 
 // Save:
@@ -541,7 +541,7 @@ bool Options_Print(void){
 //  with previous/next GBPRINTER_* values in d/e
 static struct OptionRes GetPrinterSetting(void){
     // LD_A_addr(wGBPrinterBrightness);
-    switch(wram->wGBPrinterBrightness) {
+    switch(gOptions.GBPrinterBrightness) {
     // AND_A_A;
     // IF_Z goto IsLightest;
     case GBPRINTER_LIGHTEST:
@@ -593,7 +593,7 @@ bool Options_MenuAccount(void){
     // BIT_A(D_LEFT_F);
     // IF_NZ goto LeftPressed;
     if(bit_test(hram.hJoyPressed, D_LEFT_F) || bit_test(hram.hJoyPressed, D_RIGHT_F)) {
-        bit_toggle(wram->wOptions2, MENU_ACCOUNT);
+        bit_toggle(gOptions.options2, MENU_ACCOUNT);
     }
     // BIT_A(D_RIGHT_F);
     // IF_Z goto NonePressed;
@@ -627,7 +627,7 @@ bool Options_MenuAccount(void){
 // Display:
     // hlcoord(11, 13, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(U82C((bit_test(wram->wOptions2, MENU_ACCOUNT))? On: Off), coord(11, 13, wram->wTilemap));
+    PlaceStringSimple(U82C((bit_test(gOptions.options2, MENU_ACCOUNT))? On: Off), coord(11, 13, wram->wTilemap));
     // AND_A_A;
     // RET;
     return false;
@@ -645,7 +645,7 @@ bool Options_Frame(void){
     // Save:
         // maskbits(NUM_FRAMES, 0);
         // LD_hl_A;
-        wram->wTextboxFrame = (wram->wTextboxFrame - 1) & 7;
+        gOptions.textboxFrame = (gOptions.textboxFrame - 1) & 7;
         return UpdateFrame();
     }
     // BIT_A(D_RIGHT_F);
@@ -659,7 +659,7 @@ bool Options_Frame(void){
     // Save:
         // maskbits(NUM_FRAMES, 0);
         // LD_hl_A;
-        wram->wTextboxFrame = (wram->wTextboxFrame + 1) & 7;
+        gOptions.textboxFrame = (gOptions.textboxFrame + 1) & 7;
         return UpdateFrame();
     }
     // AND_A_A;
@@ -673,7 +673,7 @@ bool UpdateFrame(void){
     // hlcoord(16, 15, wTilemap);  // where on the screen the number is drawn
     // ADD_A(0xf7);
     // LD_hl_A;
-    *coord(16, 15, wram->wTilemap) = 0xf7 + wram->wTextboxFrame;
+    *coord(16, 15, wram->wTilemap) = 0xf7 + gOptions.textboxFrame;
     // CALL(aLoadFontsExtra);
     LoadFontsExtra();
     // AND_A_A;

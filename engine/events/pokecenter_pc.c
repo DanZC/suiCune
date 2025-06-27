@@ -496,15 +496,15 @@ const struct MenuHeader PlayersPCMenuData = {
 static void PC_DisplayTextWaitMenu(const txt_cmd_s* hl){
     // LD_A_addr(wOptions);
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_A(NO_TEXT_SCROLL);
     // LD_addr_A(wOptions);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aMenuTextbox);
     MenuTextbox(hl);
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
 }
 

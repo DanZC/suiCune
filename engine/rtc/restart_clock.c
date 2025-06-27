@@ -318,9 +318,9 @@ uint8_t RestartClock(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
-    bit_set(wram->wOptions, NO_TEXT_SCROLL);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader();
     // CALL(aClearTilemap);
@@ -340,7 +340,7 @@ uint8_t RestartClock(void){
     // POP_BC;
     // LD_HL(wOptions);
     // LD_hl_B;
-    wram->wOptions = options;
+    gOptions.options = options;
     // LD_C_A;
     // REG_C = cancel? TRUE: FALSE;
     // RET;

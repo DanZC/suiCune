@@ -8582,7 +8582,7 @@ void Function11a971(void){
         // LD_A_addr(wOptions);
         // AND_A(0x7);
         // LD_hl_A;
-        wram->wOptions &= 0x7;
+        gOptions.options &= TEXT_DELAY_MASK;
         // LD_HL(wcd8d);
         uint8_t* hl = wram->wcd8d;
         // LD_A_addr(wc31b);
@@ -8841,9 +8841,9 @@ void Function11ac51(void){
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t options = wram->wOptions;
+    uint8_t options = gOptions.options;
     // SET_hl(4);
-    bit_set(wram->wOptions, 4);
+    bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LD_A_addr(wVramState);
     // PUSH_AF;
     uint8_t vramState = wram->wVramState;
@@ -8910,7 +8910,7 @@ void Function11ac51(void){
     wram->wVramState = vramState;
     // POP_AF;
     // LD_addr_A(wOptions);
-    wram->wOptions = options;
+    gOptions.options = options;
     // RET;
 }
 
