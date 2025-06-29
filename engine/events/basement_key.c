@@ -21,7 +21,7 @@ void v_BasementKey(void){
     // LD_A_addr(wMapNumber);
     // CP_A(MAP_GOLDENROD_UNDERGROUND);
     // IF_NZ goto nope;
-    if(wram->wMapGroup == GROUP_GOLDENROD_UNDERGROUND && wram->wMapNumber == MAP_GOLDENROD_UNDERGROUND) {
+    if(gCurMapData.mapGroup == GROUP_GOLDENROD_UNDERGROUND && gCurMapData.mapNumber == MAP_GOLDENROD_UNDERGROUND) {
     //  Are we on the tile in front of the door?
         // CALL(aGetFacingTileCoord);
         struct CoordsTileId cid = GetFacingTileCoord();

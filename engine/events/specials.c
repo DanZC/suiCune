@@ -505,10 +505,10 @@ void SnorlaxAwake(void){
     if(wram->wMapMusic == MUSIC_POKE_FLUTE_CHANNEL){
         // LD_A_addr(wXCoord);
         // LD_B_A;
-        uint8_t b = wram->wXCoord;
+        uint8_t b = gCurMapData.xCoord;
         // LD_A_addr(wYCoord);
         // LD_C_A;
-        uint8_t c = wram->wYCoord;
+        uint8_t c = gCurMapData.yCoord;
 
         // LD_HL(mSnorlaxAwake_ProximityCoords);
         const uint8_t* hl = ProximityCoords;

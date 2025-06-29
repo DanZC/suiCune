@@ -108,9 +108,9 @@ uint16_t GetCurrentMapSceneID(void){
     gCurMapSceneScriptPointer = NULL;
     // CALL(aGetMapSceneID);
     // RET_C ;  // The map is not in the scene script table
-    uint8_t* id = GetMapSceneID(wram->wMapGroup, wram->wMapNumber);
+    uint8_t* id = GetMapSceneID(gCurMapData.mapGroup, gCurMapData.mapNumber);
     if(id == NULL)
-        return (wram->wMapGroup << 8) | wram->wMapNumber;
+        return (gCurMapData.mapGroup << 8) | gCurMapData.mapNumber;
 //  Load the scene script pointer from de into wCurMapSceneScriptPointer
     // LD_A_E;
     // LD_addr_A(wCurMapSceneScriptPointer);
@@ -119,7 +119,7 @@ uint16_t GetCurrentMapSceneID(void){
     gCurMapSceneScriptPointer = id;
     // XOR_A_A;
     // RET;
-    return (wram->wMapGroup << 8) | wram->wMapNumber;
+    return (gCurMapData.mapGroup << 8) | gCurMapData.mapNumber;
 }
 
 //  Searches the scene_var table for the map group and number loaded in bc, and returns the wram pointer in de.
@@ -514,13 +514,13 @@ static void CopyWarpData_Function(uint8_t c) {
         // LD_A_hli;
         // POP_BC;
         // LD_addr_A(wNextWarp);
-        wram->wNextWarp = wram->wBackupWarpNumber;
+        wram->wNextWarp = gCurMapData.backupWarpNumber;
         // LD_A_hli;
         // LD_addr_A(wNextMapGroup);
-        wram->wNextMapGroup = wram->wBackupMapGroup;
+        wram->wNextMapGroup = gCurMapData.backupMapGroup;
         // LD_A_hli;
         // LD_addr_A(wNextMapNumber);
-        wram->wNextMapNumber = wram->wBackupMapNumber;
+        wram->wNextMapNumber = gCurMapData.backupMapNumber;
     }
     else {
     // skip:
@@ -540,10 +540,10 @@ static void CopyWarpData_Function(uint8_t c) {
     wram->wPrevWarp = c;
     // LD_A_addr(wMapGroup);
     // LD_addr_A(wPrevMapGroup);
-    wram->wPrevMapGroup = wram->wMapGroup;
+    wram->wPrevMapGroup = gCurMapData.mapGroup;
     // LD_A_addr(wMapNumber);
     // LD_addr_A(wPrevMapNumber);
-    wram->wPrevMapNumber = wram->wMapNumber;
+    wram->wPrevMapNumber = gCurMapData.mapNumber;
     // SCF;
     // RET;
 }
@@ -683,7 +683,7 @@ void CopyMapAttributes(const struct MapAttr* attr){
     // wMapWidth:: db
     // wMapBlocksBank:: db
     // wram->wMapBlocksBank = *(uint8_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 3);
-    uint32_t blocks_ptr = GetGBMapBlocksPointer(wram->wMapGroup, wram->wMapNumber);
+    uint32_t blocks_ptr = GetGBMapBlocksPointer(gCurMapData.mapGroup, gCurMapData.mapNumber);
     wram->wMapBlocksBank = BANK(blocks_ptr);
     // wMapBlocksPointer:: dw
     // wram->wMapBlocksPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 4);
@@ -694,7 +694,7 @@ void CopyMapAttributes(const struct MapAttr* attr){
     }
     gMapBlocks = LoadAsset(gMapBlocksPath);
     // wMapScriptsBank:: db
-    uint32_t scripts_ptr = GetGBMapScriptsPointer(wram->wMapGroup, wram->wMapNumber);
+    uint32_t scripts_ptr = GetGBMapScriptsPointer(gCurMapData.mapGroup, gCurMapData.mapNumber);
     // wram->wMapScriptsBank = *(uint8_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 6);
     wram->wMapScriptsBank = BANK(scripts_ptr);
     printf("scripts_ptr=%08x bank=%d\n", scripts_ptr, wram->wMapScriptsBank);
@@ -703,7 +703,7 @@ void CopyMapAttributes(const struct MapAttr* attr){
     // wram->wMapScriptsPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 7);
     wram->wMapScriptsPointer = (scripts_ptr < 0x4000)? scripts_ptr: (scripts_ptr & 0x3fff) | 0x4000;
     // wMapEventsPointer:: dw
-    uint32_t events_ptr = GetGBMapEventsPointer(wram->wMapGroup, wram->wMapNumber);
+    uint32_t events_ptr = GetGBMapEventsPointer(gCurMapData.mapGroup, gCurMapData.mapNumber);
     gMapEventsPointer = attr->events;
     // wram->wMapEventsPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 9);
     wram->wMapEventsPointer = (events_ptr < 0x4000)? events_ptr: (events_ptr & 0x3fff) | 0x4000;
@@ -1058,7 +1058,7 @@ uint8_t CopyMapObjectEvents(struct MapObject* hl, const struct ObjEvent* de, uin
         hl[i].objectTimeOfDay = de[i].h2;
         hl[i].objectColor = (de[i].color << 4) | (de[i].function & 0xf);
         hl[i].objectRange = de[i].sightRange;
-        hl[i].objectScript = 0x4000 | (GetGBScriptPointer(wram->wMapGroup, wram->wMapNumber, i) & 0x3fff);
+        hl[i].objectScript = 0x4000 | (GetGBScriptPointer(gCurMapData.mapGroup, gCurMapData.mapNumber, i) & 0x3fff);
         hl[i].objectEventFlag = (uint16_t)de[i].eventFlag;
         if(hl[i].objectEventFlag != 0xffff)
             printf("%02d: x=%d, y=%d, script=$%04x, eventFlag=%d (%c)\n", i, hl[i].objectXCoord, hl[i].objectYCoord, hl[i].objectScript, (uint16_t)de[i].eventFlag,
@@ -1123,13 +1123,13 @@ void GetWarpDestCoords(void){
     // LD_A(WARP_EVENT_SIZE);
     // CALL(aAddNTimes);
     
-    const struct WarpEventData* const warp = gMapEventsPointer->warp_events + (wram->wWarpNumber - 1);
+    const struct WarpEventData* const warp = gMapEventsPointer->warp_events + (gCurMapData.warpNumber - 1);
     // LD_A_hli;
     // LD_addr_A(wYCoord);
-    wram->wYCoord = warp->y;
+    gCurMapData.yCoord = warp->y;
     // LD_A_hli;
     // LD_addr_A(wXCoord);
-    wram->wXCoord = warp->x;
+    gCurMapData.xCoord = warp->x;
 // destination warp number
     // LD_A_hli;
     // CP_A(-1);
@@ -1139,13 +1139,13 @@ void GetWarpDestCoords(void){
     // backup:
         // LD_A_addr(wPrevWarp);
         // LD_addr_A(wBackupWarpNumber);
-        wram->wBackupWarpNumber = wram->wPrevWarp;
+        gCurMapData.backupWarpNumber = wram->wPrevWarp;
         // LD_A_addr(wPrevMapGroup);
         // LD_addr_A(wBackupMapGroup);
-        wram->wBackupMapGroup = wram->wPrevMapGroup;
+        gCurMapData.backupMapGroup = wram->wPrevMapGroup;
         // LD_A_addr(wPrevMapNumber);
         // LD_addr_A(wBackupMapNumber);
-        wram->wBackupMapNumber = wram->wPrevMapNumber;
+        gCurMapData.backupMapNumber = wram->wPrevMapNumber;
         // RET;
     }
 
@@ -2128,7 +2128,7 @@ void BufferScreen(void){
     // LD_L_A;
     const uint8_t* hl = wram->wOverworldMapBlocks + wram->wOverworldMapAnchor;
     // LD_DE(wScreenSave);
-    uint8_t* de = wram->wScreenSave;
+    uint8_t* de = gCurMapData.screenSave;
     // LD_C(SCREEN_META_HEIGHT);
     // LD_B(SCREEN_META_WIDTH);
 
@@ -2180,7 +2180,7 @@ void SaveScreen(void){
         case DOWN: {
         // down:
             // LD_DE(wScreenSave);
-            de = wram->wScreenSave;
+            de = gCurMapData.screenSave;
             goto vertical;
 
         vertical:
@@ -2194,7 +2194,7 @@ void SaveScreen(void){
         case UP: {
         // up:
             // LD_DE(wScreenSave + SCREEN_META_WIDTH);
-            de = wram->wScreenSave + SCREEN_META_WIDTH;
+            de = gCurMapData.screenSave + SCREEN_META_WIDTH;
             // LDH_A_addr(hMapObjectIndex);
             // LD_C_A;
             // LD_B(0);
@@ -2207,7 +2207,7 @@ void SaveScreen(void){
         case LEFT: {
         // left:
             // LD_DE(wScreenSave + 1);
-            de = wram->wScreenSave + 1;
+            de = gCurMapData.screenSave + 1;
             // INC_HL;
             hl++;
             goto horizontal;
@@ -2223,7 +2223,7 @@ void SaveScreen(void){
         case RIGHT: {
         // right:
             // LD_DE(wScreenSave);
-            de = wram->wScreenSave;
+            de = gCurMapData.screenSave;
             goto horizontal;
         }
     }
@@ -2244,7 +2244,7 @@ void LoadConnectionBlockData(void){
     // LD_B(SCREEN_META_WIDTH);
     // LD_C(SCREEN_META_HEIGHT);
 
-    return SaveScreen_LoadConnection(hl, wram->wScreenSave, SCREEN_META_WIDTH, SCREEN_META_HEIGHT);
+    return SaveScreen_LoadConnection(hl, gCurMapData.screenSave, SCREEN_META_WIDTH, SCREEN_META_HEIGHT);
 }
 
 void SaveScreen_LoadConnection(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
@@ -2956,7 +2956,7 @@ void ReloadTilesetAndPalettes(void){
 }
 
 const struct MapHeader* GetMapPointer(void){
-    return GetAnyMapPointer(wram->wMapGroup, wram->wMapNumber);
+    return GetAnyMapPointer(gCurMapData.mapGroup, gCurMapData.mapNumber);
 }
 
 //  inputs:
@@ -3097,7 +3097,7 @@ void CopyMapPartial(void){
     wram->wEnvironment = mp->environment;
     gMapAttrPointer = mp->attr;
 // This is for GB Save compatability.
-    uint32_t gb_attr_ptr = GetGBMapAttributePointer(wram->wMapGroup, wram->wMapNumber);
+    uint32_t gb_attr_ptr = GetGBMapAttributePointer(gCurMapData.mapGroup, gCurMapData.mapNumber);
     wram->wMapAttributesBank = BANK(gb_attr_ptr);
     wram->wMapAttributesPointer = (gb_attr_ptr < 0x4000)? gb_attr_ptr : (gb_attr_ptr & 0x3fff) | 0x4000;
 }
@@ -3208,9 +3208,9 @@ uint16_t GetMapMusic(void){
     if(music == MUSIC_POKEMON_CENTER)
     {
         // Only play the mobile center music in the first and second floor of the PCC and only when the adapter has been activated.
-        if(((wram->wMapNumber == MAP_GOLDENROD_POKECENTER_1F && wram->wMapGroup == GROUP_GOLDENROD_POKECENTER_1F)
-            || ((wram->wMapNumber == MAP_POKECENTER_2F && wram->wMapGroup == GROUP_POKECENTER_2F) 
-                && (wram->wBackupMapNumber == MAP_GOLDENROD_POKECENTER_1F && wram->wBackupMapGroup == GROUP_GOLDENROD_POKECENTER_1F)))
+        if(((gCurMapData.mapNumber == MAP_GOLDENROD_POKECENTER_1F && gCurMapData.mapGroup == GROUP_GOLDENROD_POKECENTER_1F)
+            || ((gCurMapData.mapNumber == MAP_POKECENTER_2F && gCurMapData.mapGroup == GROUP_POKECENTER_2F) 
+                && (gCurMapData.backupMapNumber == MAP_GOLDENROD_POKECENTER_1F && gCurMapData.backupMapGroup == GROUP_GOLDENROD_POKECENTER_1F)))
         && Mobile_AlwaysReturnNotCarry().flag) {
             return MUSIC_MOBILE_CENTER;
         }

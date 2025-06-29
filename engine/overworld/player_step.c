@@ -125,7 +125,7 @@ void UpdatePlayerCoords(void){
     if(wram->wPlayerStepDirection == DOWN) {
         // LD_HL(wYCoord);
         // INC_hl;
-        wram->wYCoord++;
+        gCurMapData.yCoord++;
         // RET;
         return;
     }
@@ -136,7 +136,7 @@ void UpdatePlayerCoords(void){
     else if(wram->wPlayerStepDirection == UP) {
         // LD_HL(wYCoord);
         // DEC_hl;
-        wram->wYCoord--;
+        gCurMapData.yCoord--;
         // RET;
         return;
     }
@@ -147,7 +147,7 @@ void UpdatePlayerCoords(void){
     else if(wram->wPlayerStepDirection == LEFT) {
         // LD_HL(wXCoord);
         // DEC_hl;
-        --wram->wXCoord;
+        --gCurMapData.xCoord;
         // RET;
         return;
     }
@@ -158,7 +158,7 @@ void UpdatePlayerCoords(void){
     else if(wram->wPlayerStepDirection == RIGHT) {
         // LD_HL(wXCoord);
         // INC_hl;
-        ++wram->wXCoord;
+        ++gCurMapData.xCoord;
         // RET;
         return;
     }

@@ -435,7 +435,7 @@ void Function17d0f3(void){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aGetMapSceneID);
-    uint8_t* var = GetMapSceneID(wram->wMapGroup, wram->wMapNumber);
+    uint8_t* var = GetMapSceneID(gCurMapData.mapGroup, gCurMapData.mapNumber);
     // LD_A_D;
     // OR_A_E;
     // IF_Z goto asm_17d180;

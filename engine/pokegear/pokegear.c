@@ -385,7 +385,7 @@ static void Pokegear_LoadGFX(void){
     // FarDecompress(BANK(aPokegearSpritesGFX), mPokegearSpritesGFX, vTiles0);
     LoadPNG2bppAssetToVRAM(vram->vTiles0, PokegearSpritesGFX);
 
-    uint8_t landmark = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
+    uint8_t landmark = GetWorldMapLocation(gCurMapData.mapGroup, gCurMapData.mapNumber);
     if(landmark == LANDMARK_FAST_SHIP) {
         LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x10, FastShipGFX, 0, 8);
         return;
@@ -426,9 +426,9 @@ void AnimatePokegearModeIndicatorArrow(struct SpriteAnim* bc){
 }
 
 static uint8_t TownMap_GetCurrentLandmark(void){
-    uint8_t landmark = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
+    uint8_t landmark = GetWorldMapLocation(gCurMapData.mapGroup, gCurMapData.mapNumber);
     if(landmark == LANDMARK_SPECIAL) {
-        landmark = GetWorldMapLocation(wram->wBackupMapGroup, wram->wBackupMapNumber);
+        landmark = GetWorldMapLocation(gCurMapData.backupMapGroup, gCurMapData.backupMapNumber);
     }
     return landmark;
 }
@@ -439,7 +439,7 @@ static void TownMap_InitCursorAndPlayerIconPositions(void){
     //LD_A_addr(wMapNumber);
     //LD_C_A;
     //CALL(aGetWorldMapLocation);
-    uint8_t landmark = GetWorldMapLocation(gb_read(wMapGroup), gb_read(wMapNumber));
+    uint8_t landmark = GetWorldMapLocation(gCurMapData.mapGroup, gCurMapData.mapNumber);
 
     //CP_A(LANDMARK_FAST_SHIP);
     //IF_Z goto FastShip;
@@ -457,7 +457,7 @@ static void TownMap_InitCursorAndPlayerIconPositions(void){
     //IF_NZ goto LoadLandmark;
     if(landmark == LANDMARK_SPECIAL)
     {
-        landmark = GetWorldMapLocation(wram->wBackupMapGroup, wram->wBackupMapNumber);
+        landmark = GetWorldMapLocation(gCurMapData.backupMapGroup, gCurMapData.backupMapNumber);
     }
 
     //LD_addr_A(wPokegearMapPlayerIconLandmark);
@@ -3425,7 +3425,7 @@ uint8_t HasVisitedSpawn(uint8_t c){
     // PREDEF(pSmallFarFlagAction);
     // LD_A_C;
     // RET;
-    return SmallFarFlagAction(wram->wVisitedSpawns, c, CHECK_FLAG);
+    return SmallFarFlagAction(gCurMapData.visitedSpawns, c, CHECK_FLAG);
 
 // INCLUDE "data/maps/flypoints.asm"
 }
@@ -3459,7 +3459,7 @@ void FlyMap(void){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aGetWorldMapLocation);
-    uint8_t loc = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
+    uint8_t loc = GetWorldMapLocation(gCurMapData.mapGroup, gCurMapData.mapNumber);
 //  If we're not in a valid location, i.e. Pokecenter floor 2F,
 //  the backup map information is used.
     // CP_A(LANDMARK_SPECIAL);
@@ -3470,7 +3470,7 @@ void FlyMap(void){
         // LD_A_addr(wBackupMapNumber);
         // LD_C_A;
         // CALL(aGetWorldMapLocation);
-        loc = GetWorldMapLocation(wram->wBackupMapGroup, wram->wBackupMapNumber);
+        loc = GetWorldMapLocation(gCurMapData.backupMapGroup, gCurMapData.backupMapNumber);
     }
 
 // CheckRegion:

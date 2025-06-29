@@ -20,16 +20,16 @@ void EnterMapSpawnPoint(void){
         struct Spawn spawn = SpawnPoints[wram->wDefaultSpawnpoint];
         // LD_A_hli;
         // LD_addr_A(wMapGroup);
-        wram->wMapGroup = spawn.mapGroup;
+        gCurMapData.mapGroup = spawn.mapGroup;
         // LD_A_hli;
         // LD_addr_A(wMapNumber);
-        wram->wMapNumber = spawn.mapId;
+        gCurMapData.mapNumber = spawn.mapId;
         // LD_A_hli;
         // LD_addr_A(wXCoord);
-        wram->wXCoord = (uint8_t)spawn.coord.x;
+        gCurMapData.xCoord = (uint8_t)spawn.coord.x;
         // LD_A_hli;
         // LD_addr_A(wYCoord);
-        wram->wYCoord = (uint8_t)spawn.coord.y;
+        gCurMapData.yCoord = (uint8_t)spawn.coord.y;
     }
 // spawn_n_a:
     // POP_DE;

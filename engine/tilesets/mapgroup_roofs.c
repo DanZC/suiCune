@@ -9,7 +9,7 @@ void LoadMapGroupRoof(void){
     // LD_HL(mMapGroupRoofs);
     // ADD_HL_DE;
     // LD_A_hl;
-    uint8_t a = MapGroupRoofs[wram->wMapGroup];
+    uint8_t a = MapGroupRoofs[gCurMapData.mapGroup];
     // CP_A(-1);
     // RET_Z ;
     if(a == 0xff)

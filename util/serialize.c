@@ -1353,7 +1353,7 @@ int Test_Serialize_PlayerData(void) {
         goto quit;
     }
 
-    printf("[%s - SUCCESS]", __func__);
+    printf("[%s - SUCCESS]\n", __func__);
 
 quit:
     CloseSRAM();
@@ -1410,7 +1410,7 @@ int Test_Serialize_PokemonData(void) {
         goto quit;
     }
 
-    printf("[%s - SUCCESS]", __func__);
+    printf("[%s - SUCCESS]\n", __func__);
 
 quit:
     CloseSRAM();
@@ -1466,7 +1466,7 @@ int Test_Serialize_CurMapData(void) {
         goto quit;
     }
 
-    printf("[%s - SUCCESS]", __func__);
+    printf("[%s - SUCCESS]\n", __func__);
 
 quit:
     CloseSRAM();
@@ -1522,7 +1522,7 @@ int Test_Serialize_OptionsData(void) {
         goto quit;
     }
 
-    printf("[%s - SUCCESS]", __func__);
+    printf("[%s - SUCCESS]\n", __func__);
 
 quit:
     CloseSRAM();

@@ -103,10 +103,10 @@ static u8_flag_s Elevator_FindCurrentFloor(void) {
     // INC_HL;
     // LD_A_addr(wBackupMapGroup);
     // LD_D_A;
-    uint8_t d = wram->wBackupMapGroup;
+    uint8_t d = gCurMapData.backupMapGroup;
     // LD_A_addr(wBackupMapNumber);
     // LD_E_A;
-    uint8_t e = wram->wBackupMapNumber;
+    uint8_t e = gCurMapData.backupMapNumber;
     // LD_B(0);
 
     for(uint32_t i = 0; i < c; ++i) {
@@ -166,9 +166,9 @@ static void Elevator_GoToFloor(uint8_t a){
     // LD_A_addr(wElevatorPointerBank);
     // LD_BC(wElevatorDataEnd - wElevatorData - 1);
     // CALL(aFarCopyBytes);
-    wram->wBackupWarpNumber = sElevatorPointer->floorData[a].warpNum;
-    wram->wBackupMapGroup = sElevatorPointer->floorData[a].mapGroup;
-    wram->wBackupMapNumber = sElevatorPointer->floorData[a].mapNum;
+    gCurMapData.backupWarpNumber = sElevatorPointer->floorData[a].warpNum;
+    gCurMapData.backupMapGroup = sElevatorPointer->floorData[a].mapGroup;
+    gCurMapData.backupMapNumber = sElevatorPointer->floorData[a].mapNum;
     // RET;
 }
 

@@ -1068,8 +1068,14 @@ struct wram_s
                         // MobileSDK_TransferStatusFlags
                         // bit 0: transfer active?
                         // bit 1: mobile transfer error?
+                        // bit 2: set when sending packet?
                         // bit 3: set when receiving packet?
+                        // bit 4: phone line active?
                         uint8_t wc821;
+                        // MobileSDK_MiscStatusFlags
+                        // bit 0: use alternate recv buffer?
+                        // bit 1: set when sending data byte
+                        // bit 4: something with the phone line
                         uint8_t wc822;
                         uint8_t wc823[4];
                         uint16_t wc827;

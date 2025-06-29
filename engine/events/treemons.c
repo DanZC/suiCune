@@ -131,8 +131,8 @@ static u8_flag_s GetTreeMonSet(const struct TreeMonMap table[], size_t table_siz
         // IF_NZ goto skip1;
 
         // goto in_table;
-        if(wram->wMapGroup == table[i].mapGroup
-        && wram->wMapNumber == table[i].mapNumber) {
+        if(gCurMapData.mapGroup == table[i].mapGroup
+        && gCurMapData.mapNumber == table[i].mapNumber) {
         // in_table:
             // LD_A_hl;
             // SCF;

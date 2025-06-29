@@ -66,6 +66,24 @@ uint8_t* gMobile_wcd3b; // ChunkedDataSource
 uint8_t* gMobile_wcd3e; // ChunkedDataDest
 const uint8_t* gMobile_wd1ec;
 
+enum {
+    MOBILESTATUS_00,
+    MOBILESTATUS_COMMUNICATE_WITH_FRIEND,
+    MOBILESTATUS_CALLER_WILL_BE_CHARGED,
+    MOBILESTATUS_IS_ADAPTER_READY,
+    MOBILESTATUS_WANT_TO_CALL_FRIEND,
+    MOBILESTATUS_USE_THE_CARD_FOLDER,
+    MOBILESTATUS_ENTER_PHONE_NUMBER,
+    MOBILESTATUS_WAITING_FOR_CALL,
+    MOBILESTATUS_CALL_THIS_NO,
+    MOBILESTATUS_CALLING,
+    MOBILESTATUS_CALL_CONNECTED,
+    MOBILESTATUS_ENDING_CALL,
+    MOBILESTATUS_COMMUNICATION_ENDED,
+    MOBILESTATUS_CALL_TIME,
+    MOBILESTATUS_CHOOSE_THE_SETTINGS,
+};
+
 // macro_100fc0: MACRO
 //     ; first byte:
 //     ;     Bit 7 set: Not SRAM
@@ -5855,7 +5873,7 @@ void Function101a97(void){
 void Function101ab4(void){
     // LD_E(0x01);
     // CALL(aFunction101ee4);
-    Function101ee4(0x01); // Communicate with a friend!
+    Function101ee4(MOBILESTATUS_COMMUNICATE_WITH_FRIEND); // Communicate with a friend!
     // LD_HL(wcd29);
     // SET_hl(5);
     bit_set(wram->wcd29, 5);
@@ -5919,7 +5937,7 @@ void Function101b0f(void){
     Function10142c(0);
     // LD_E(0x03);
     // CALL(aFunction101ee4);
-    Function101ee4(0x03); // Is the adapter ready?
+    Function101ee4(MOBILESTATUS_IS_ADAPTER_READY); // Is the adapter ready?
     // LD_HL(wcd29);
     // SET_hl(5);
     bit_set(wram->wcd29, 5);
@@ -5974,7 +5992,7 @@ void Function101b59(void){
     Function10142c(0x02);
     // LD_E(0x02);
     // CALL(aFunction101ee4);
-    Function101ee4(0x02); // Caller will be charged.
+    Function101ee4(MOBILESTATUS_CALLER_WILL_BE_CHARGED); // Caller will be charged.
     // LD_HL(wcd29);
     // SET_hl(5);
     bit_set(wram->wcd29, 5);
@@ -5991,7 +6009,7 @@ void Function101b70(void){
     Function10142c(0x02);
     // LD_E(0x04);
     // CALL(aFunction101ee4);
-    Function101ee4(0x04); // Want to call your friend?
+    Function101ee4(MOBILESTATUS_WANT_TO_CALL_FRIEND); // Want to call your friend?
     // LD_HL(wcd29);
     // SET_hl(5);
     bit_set(wram->wcd29, 5);
@@ -6057,7 +6075,7 @@ void Function101bc8(void){
     Function10142c(0x02);
     // LD_E(0x08);
     // CALL(aFunction101ee4);
-    Function101ee4(0x08); // Call this no.?
+    Function101ee4(MOBILESTATUS_CALL_THIS_NO); // Call this no.?
     // CALL(aFunction102048);
     Function102048();
     // CALL(aFunction1013dd);
@@ -6111,7 +6129,7 @@ void Function101c11(void){
     wram->wdc5f = 0x01;
     // LD_E(0x09);
     // CALL(aFunction101ee4);
-    Function101ee4(0x09); // Use the card folder?
+    Function101ee4(MOBILESTATUS_USE_THE_CARD_FOLDER); // Use the card folder?
     // CALL(aFunction102048);
     Function102048();
     // LD_HL(wcd29);
@@ -6130,7 +6148,7 @@ void Function101c2b(void){
     wram->wdc5f = 0x02;
     // LD_E(0x07);
     // CALL(aFunction101ee4);
-    Function101ee4(0x07); // Waiting for call
+    Function101ee4(MOBILESTATUS_WAITING_FOR_CALL); // Waiting for call
     // LD_HL(wcd29);
     // SET_hl(5);
     bit_set(wram->wcd29, 5);
@@ -6156,7 +6174,7 @@ void Function101c42(void){
 void Function101c50(void){
     // LD_E(0x0a);
     // CALL(aFunction101ee4);
-    Function101ee4(0x0a); // Call connected
+    Function101ee4(MOBILESTATUS_CALL_CONNECTED); // Call connected
     // LD_HL(wcd29);
     // SET_hl(2);
     bit_set(wram->wcd29, 2);
@@ -6184,7 +6202,7 @@ void Function101c62(void){
     bit_reset(wram->wcd29, 4);
     // LD_E(0x0b);
     // CALL(aFunction101ee4);
-    Function101ee4(0x0b); // "Choose the settings"
+    Function101ee4(MOBILESTATUS_ENDING_CALL); // "Ending call"
     // LD_HL(wcd29);
     // SET_hl(5);
     bit_set(wram->wcd29, 5);
@@ -6214,7 +6232,7 @@ void Function101ca0(void){
     Function10142c(0x02);
     // LD_E(0x0c);
     // CALL(aFunction101ee4);
-    Function101ee4(0x0c); // Communication Ended...
+    Function101ee4(MOBILESTATUS_COMMUNICATION_ENDED); // Communication Ended...
     // LD_HL(wcd29);
     // SET_hl(5);
     bit_set(wram->wcd29, 5);
@@ -6422,7 +6440,7 @@ void Function101d95(void){
     LoadStandardMenuHeader();
     // LD_E(0x0e);
     // CALL(aFunction101ee4);
-    Function101ee4(0x0e); // Choose the settings
+    Function101ee4(MOBILESTATUS_CHOOSE_THE_SETTINGS); // Choose the settings
     // LD_HL(wcd29);
     // SET_hl(5);
     bit_set(wram->wcd29, 5);
@@ -6581,7 +6599,7 @@ void Function101e39(void){
 void Function101e4f(void){
     // LD_E(0x06);
     // CALL(aFunction101ee4);
-    Function101ee4(0x06); // Please enter a phone number.
+    Function101ee4(MOBILESTATUS_ENTER_PHONE_NUMBER); // Please enter a phone number.
     // CALL(aFunction1013d6);
     Function1013d6();
     // LD_A_addr(wMobileCommsJumptableIndex);
@@ -6713,7 +6731,7 @@ void Function101ed3(void){
 void Function101ee2(void){
     // LD_E(0);
 
-    return Function101ee4(0);
+    return Function101ee4(MOBILESTATUS_00);
 }
 
 // Mobile_PrintStatusMessage?
@@ -6731,29 +6749,21 @@ void Function101ee4(uint8_t e){
 }
 
 const char* const Unknown_101ef5[] = {
-    String_101f13, // 00
-    String_101f14, // 01
-    String_101f32, // 02
-    String_101f4f, // 03
-    String_101f69, // 04
-    String_101f81, // 05
-    String_101f93, // 06
-    String_101faa, // 07
-    String_101fc5, // 08
-    String_101fd2, // 09
-    String_101fe1, // 0a
-    String_101fef, // 0b
-    String_102000, // 0c
-    String_10200c, // 0d
-    String_102014, // 0e
-};
-
-enum {
-    MOBILESTATUS_00,
-    MOBILESTATUS_COMMUNICATE_WITH_FRIEND,
-    MOBILESTATUS_CALLER_WILL_BE_CHARGED,
-    MOBILESTATUS_IS_ADAPTER_READY,
-    MOBILESTATUS_WANT_TO_CALL_FRIEND,
+    [MOBILESTATUS_00]                       = String_101f13, // 00
+    [MOBILESTATUS_COMMUNICATE_WITH_FRIEND]  = String_101f14, // 01
+    [MOBILESTATUS_CALLER_WILL_BE_CHARGED]   = String_101f32, // 02
+    [MOBILESTATUS_IS_ADAPTER_READY]         = String_101f4f, // 03
+    [MOBILESTATUS_WANT_TO_CALL_FRIEND]      = String_101f69, // 04
+    [MOBILESTATUS_USE_THE_CARD_FOLDER]      = String_101f81, // 05
+    [MOBILESTATUS_ENTER_PHONE_NUMBER]       = String_101f93, // 06
+    [MOBILESTATUS_WAITING_FOR_CALL]         = String_101faa, // 07
+    [MOBILESTATUS_CALL_THIS_NO]             = String_101fc5, // 08
+    [MOBILESTATUS_CALLING]                  = String_101fd2, // 09
+    [MOBILESTATUS_CALL_CONNECTED]           = String_101fe1, // 0a
+    [MOBILESTATUS_ENDING_CALL]              = String_101fef, // 0b
+    [MOBILESTATUS_COMMUNICATION_ENDED]      = String_102000, // 0c
+    [MOBILESTATUS_CALL_TIME]                = String_10200c, // 0d
+    [MOBILESTATUS_CHOOSE_THE_SETTINGS]      = String_102014, // 0e
 };
 
 const char String_101f13[] = "@";
@@ -6821,7 +6831,7 @@ void Function10202c(void){
     Function10142c(0x02);
     // LD_E(0x0d);
     // CALL(aFunction101ee4);
-    Function101ee4(0x0d); // CALL TIME
+    Function101ee4(MOBILESTATUS_CALL_TIME); // CALL TIME
     // hlcoord(4, 4, wTilemap);
     // CALL(aFunction100681);
     Function100681(coord(4, 4, wram->wTilemap));

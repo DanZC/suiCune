@@ -9839,8 +9839,8 @@ InitDVs:
             // CALL(aRandom);
             // CP_A(39 percent + 1);
             // IF_C goto Happiness;
-            if(wram->wMapGroup != GROUP_LAKE_OF_RAGE 
-            && wram->wMapGroup != MAP_LAKE_OF_RAGE
+            if(gCurMapData.mapGroup != GROUP_LAKE_OF_RAGE 
+            && gCurMapData.mapNumber != MAP_LAKE_OF_RAGE
             && Random() >= 39 percent + 1) {
             //  Try again if length < 1024 mm (i.e. if HIGH(length) < 3 feet)
                 // LD_A_addr(wMagikarpLength);

@@ -2241,7 +2241,7 @@ void Script_setscene(script_s* s, uint8_t scene){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // JR(mDoScene);
-    return DoScene(wram->wMapGroup, wram->wMapNumber, scene);
+    return DoScene(gCurMapData.mapGroup, gCurMapData.mapNumber, scene);
 }
 
 void Script_setmapscene(script_s* s, uint8_t group, uint8_t map, uint8_t scene){
@@ -2496,7 +2496,7 @@ void Script_getcurlandmarkname(script_s* s, uint8_t b){
     // LD_C_A;
     // CALL(aGetWorldMapLocation);
     (void)s;
-    uint8_t loc = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
+    uint8_t loc = GetWorldMapLocation(gCurMapData.mapGroup, gCurMapData.mapNumber);
 
     return ConvertLandmarkToText(loc, b);
 }
@@ -3193,16 +3193,16 @@ void Script_warp(script_s* s, uint8_t group, uint8_t num, uint8_t x, uint8_t y){
         return;
     }
     // LD_addr_A(wMapGroup);
-    wram->wMapGroup = group;
+    gCurMapData.mapGroup = group;
     // CALL(aGetScriptByte);
     // LD_addr_A(wMapNumber);
-    wram->wMapNumber = num;
+    gCurMapData.mapNumber = num;
     // CALL(aGetScriptByte);
     // LD_addr_A(wXCoord);
-    wram->wXCoord = x;
+    gCurMapData.xCoord = x;
     // CALL(aGetScriptByte);
     // LD_addr_A(wYCoord);
-    wram->wYCoord = y;
+    gCurMapData.yCoord = y;
     // LD_A(SPAWN_N_A);
     // LD_addr_A(wDefaultSpawnpoint);
     wram->wDefaultSpawnpoint = SPAWN_N_A;
@@ -3221,13 +3221,13 @@ void Script_warpmod(script_s* s, uint8_t warp, uint8_t group, uint8_t num){
     (void)s;
     // CALL(aGetScriptByte);
     // LD_addr_A(wBackupWarpNumber);
-    wram->wBackupWarpNumber = warp;
+    gCurMapData.backupWarpNumber = warp;
     // CALL(aGetScriptByte);
     // LD_addr_A(wBackupMapGroup);
-    wram->wBackupMapGroup = group;
+    gCurMapData.backupMapGroup = group;
     // CALL(aGetScriptByte);
     // LD_addr_A(wBackupMapNumber);
-    wram->wBackupMapNumber = num;
+    gCurMapData.backupMapNumber = num;
     // RET;
 }
 
@@ -3235,10 +3235,10 @@ void Script_blackoutmod(script_s* s, uint8_t group, uint8_t num){
     (void)s;
     // CALL(aGetScriptByte);
     // LD_addr_A(wLastSpawnMapGroup);
-    wram->wLastSpawnMapGroup = group;
+    gCurMapData.lastSpawnMapGroup = group;
     // CALL(aGetScriptByte);
     // LD_addr_A(wLastSpawnMapNumber);
-    wram->wLastSpawnMapNumber = num;
+    gCurMapData.lastSpawnMapNumber = num;
     // RET;
 }
 

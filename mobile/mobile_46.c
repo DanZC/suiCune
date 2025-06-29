@@ -924,7 +924,7 @@ void Function118473(void){
 // Mobile_UploadGTSMonJumptable
 void Function1184a5(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    printf("Upload GTS Mon Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    dlogf("Upload GTS Mon Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
     // Jumptable:
         case 0x00: return Function11886e(); //dw ['Function11886e'];
@@ -960,7 +960,7 @@ void Function1184a5(void){
 
 void Function1184ec(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    printf("Check GTS Mon Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    dlogf("Check GTS Mon Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
     // Jumptable:
         case 0x00: return Function11886e(); //dw ['Function11886e'];
@@ -1049,7 +1049,7 @@ void BattleTowerRoomMenu_Jumptable(void){
 
 void BattleTowerRoomMenu_Mobile_Jumptable(void) {
     // the jumptable in the japanese version
-    printf("Mobile Battle Tower Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    dlogf("Mobile Battle Tower Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
         case 0x00: return BattleTowerRoomMenu_PickLevelMessage(); // BattleTowerRoomMenu_PickLevelMessage ;6849
         case 0x01: return BattleTowerRoomMenu_PlacePickLevelMenu(); //7C49
@@ -1107,7 +1107,7 @@ void BattleTowerRoomMenu_Mobile_Jumptable(void) {
 
 void Function11857c(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    printf("Send Battle Tower Record Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    dlogf("Send Battle Tower Record Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
 
 // Jumptable:
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
@@ -1145,7 +1145,7 @@ void Function11857c(void){
 // Mobile_DownloadNewsJumptable?
 void Function1185c3(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    printf("Download News Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    dlogf("Download News Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
     // Jumptable:
         case 0x00: return Function11886e(); //dw ['Function11886e'];
@@ -1195,7 +1195,7 @@ void Function1185c3(void){
 // Mobile_UpdateNewsRankingsJumptable?
 void Function118624(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    printf("Update News Rankings Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    dlogf("Update News Rankings Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
     // Jumptable:
         case 0x00: return Function118866(); //dw ['Function118866'];
@@ -6781,7 +6781,7 @@ bool BattleTowerRoomMenu2(void){
 
     bool result = false;
     // CALL(aBattleTowerRoomMenu2_RunJumptable);
-    printf("Battle Tower Room Menu 2 (0x%02x)", wram->wBattleTowerRoomMenu2JumptableIndex);
+    // dlogf("Battle Tower Room Menu 2 (0x%02x)", wram->wBattleTowerRoomMenu2JumptableIndex);
     switch(wram->wBattleTowerRoomMenu2JumptableIndex){
     // RunJumptable:
         //jumptable ['.Jumptable', 'wBattleTowerRoomMenu2JumptableIndex']
@@ -11403,7 +11403,7 @@ void Function11b7e5(void){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aGetMapSceneID);
-    uint8_t* id = GetMapSceneID(wram->wMapGroup, wram->wMapNumber);
+    uint8_t* id = GetMapSceneID(gCurMapData.mapGroup, gCurMapData.mapNumber);
     // LD_A_D;
     // OR_A_E;
     // IF_Z goto asm_11b872;

@@ -367,6 +367,9 @@ bool Function1100b4(void){
     return true;
 }
 
+// Sets the timer.
+// Input:
+//      c - The index for the timer value.
 void MobileAPI_SetTimer(mobile_api_data_s *data){
     // XOR_A_A;
     // LDH_addr_A(rTAC);
@@ -377,7 +380,7 @@ void MobileAPI_SetTimer(mobile_api_data_s *data){
     // LD_HL(mUnknown_112089);
     const uint8_t* hl = Unknown_112089;
     // ADD_HL_BC;
-    hl += LOW(data->bc);
+    hl += e;
     // LD_C_hl;
     uint8_t c = *hl;
     // INC_HL;
@@ -428,6 +431,9 @@ void MobileAPI_SetTimer(mobile_api_data_s *data){
 }
 
 // MobileAPI00
+// Get Error Codes
+// Output:
+//      a, l, h - Error code values
 void Function110115(mobile_api_data_s* data){
     // LD_HL(wc821);
     // BIT_hl(1);
@@ -692,13 +698,15 @@ void Function110231(void){
     return Function110228(0x20);
 }
 
-// MobileAPI20
+// MobileAPI_20
+// Copy of MobileAPI_01
 void Function110235(mobile_api_data_s* data){
     // NOP;
     return Function110236(data);
 }
 
-// MobileAPI01
+// MobileAPI_01
+// StartCommunication?
 void Function110236(mobile_api_data_s* data){
     // LD_A_addr(wMobileAPIIndex);
     uint8_t a = wram->wMobileAPIIndex;
@@ -958,6 +966,9 @@ void Function110393(void){
     // RET;
 }
 
+// MobileSDK_CheckStringLength
+// Checks the length of the string pointed to by hl.
+// Returns true if the string is longer than c characters or shorter than 2 characters.
 bool Function11039a(char** hl, uint8_t c){
     // LD_B(0x0);
     uint8_t b = 0x0;
@@ -989,7 +1000,9 @@ bool Function11039a(char** hl, uint8_t c){
     return true;
 }
 
-// MobileAPI03
+// MobileAPI_03
+// ISP Login
+// Input: hl - Login password
 void Function1103ac(mobile_api_data_s* data){
     // LD_A_addr(wc821);
     // BIT_A(0);
@@ -1001,7 +1014,6 @@ void Function1103ac(mobile_api_data_s* data){
         return Function110226();
     // PUSH_HL;
     char* hl = data->hl;
-    printf("MOBILE API \"%s\"\n", hl);
     // LD_C(0x15);
     // CALL(aFunction11039a);
     // IF_C goto asm_1103d2;
@@ -1103,7 +1115,9 @@ void Function110432(void){
     bit_set(wram->wc821, 0);
 }
 
-// MobileAPI04
+// MobileAPI_04
+// DialPhoneNumber
+// Input: hl - Phone number
 void Function110438(mobile_api_data_s* data){
     (void)data;
     // LD_A_addr(wc821);
@@ -1224,6 +1238,7 @@ void Function1104b0(void){
 }
 
 // MobileAPI_05
+// EndCommunication
 void Function1104c6(mobile_api_data_s *data){
     (void)data;
     // LD_A_addr(wc821);
@@ -1352,6 +1367,7 @@ void Function1104c6(mobile_api_data_s *data){
 }
 
 // MobileAPI_06
+// Copies password?
 void Function110578(mobile_api_data_s* data){
     // LD_B(0x25);
     // CALL(aFunction110596);
@@ -1365,6 +1381,7 @@ void Function110578(mobile_api_data_s* data){
 }
 
 // MobileAPI_07
+// Copies user id
 void Function110582(mobile_api_data_s* data){
     // LD_B(0x26);
     // CALL(aFunction110596);
@@ -1378,6 +1395,7 @@ void Function110582(mobile_api_data_s* data){
 }
 
 // MobileAPI_08
+// Copy user email
 void Function11058c(mobile_api_data_s* data){
     // LD_B(0x27);
     // CALL(aFunction110596);
@@ -1902,15 +1920,20 @@ asm_110891:
 
 }
 
+// MobileAPI_0D
+// POP quit?
 void Function110899(void){
-    LD_A_addr(wc86a);
-    CP_A(0x3);
-    JP_NZ (mFunction110226);
-    JR(mFunction1108ab);
+    // LD_A_addr(wc86a);
+    // CP_A(0x3);
+    // JP_NZ (mFunction110226);
+    if(wram->wc86a != 0x3)
+        return Function110226();
+    // JR(mFunction1108ab);
 
+    return Function1108ab();
 }
 
-// MobileAPI0E
+// MobileAPI_0E
 // POP quit
 void Function1108a3(mobile_api_data_s *data){
     (void)data;
@@ -1983,6 +2006,7 @@ void Function1108ab(void){
 
 // MobileAPI0F
 // POP login
+// Input: hl - String containing login info
 void Function110905(mobile_api_data_s *data){
     // LD_A_addr(wc821);
     // BIT_A(0);
@@ -2107,6 +2131,7 @@ void Function110905(mobile_api_data_s *data){
 
 // MobileAPI10
 // POP STAT
+// Input: de - Pointer value to set gMobile_wc86e_wc86f to
 void Function1109a4(mobile_api_data_s *data){
     // LD_HL(wc821);
     // BIT_hl(0);
@@ -2163,6 +2188,8 @@ void Function1109a4(mobile_api_data_s *data){
 
 // MobileAPI11
 // POP list
+// Input:   de - Pointer value to set gMobile_wc86e_wc86f to
+//          hl - message number?
 void Function1109f9(mobile_api_data_s *data){
     // LD_A_addr(wc821);
     // BIT_A(0);
@@ -2229,6 +2256,10 @@ void Function1109f9(mobile_api_data_s *data){
 }
 
 // MobileAPI_12
+// POP retr
+// Input:   de - Pointer value to set gMobile_wc86e_wc86f to
+//          hl - message number?
+//          bc - buffer size?
 void Function110a5b(mobile_api_data_s* data){
     // LD_A_addr(wc821);
     // BIT_A(2);
@@ -2619,6 +2650,8 @@ void Function110af4(mobile_api_data_s* data){
 }
 
 // MobileAPI_13
+// POP DELE?
+// Input:   hl - message number?
 void Function110c3c(mobile_api_data_s* data){
     // LD_A_addr(wc821);
     // BIT_A(0);
@@ -2684,6 +2717,10 @@ void Function110c3c(mobile_api_data_s* data){
 }
 
 // MobileAPI_14
+// POP TOP
+// Input:   de - Pointer value to set gMobile_wc827 to
+//          hl - message number?
+//          bc - buffer size?
 void Function110c9e(mobile_api_data_s* data){
     // LD_A_addr(wc821);
     // BIT_A(2);
@@ -2738,10 +2775,10 @@ void Function110c9e(mobile_api_data_s* data){
     gMobile_wc98f = (uint8_t*)de;
     // LD_A_C;
     // LD_hli_A;
-    wram->wc990 = LOW(data->bc);
+    wram->wc991 = LOW(data->bc);
     // LD_A_B;
     // LD_hl_A;
-    wram->wc991 = HIGH(data->bc);
+    wram->wc992 = HIGH(data->bc);
     // LD_HL(wc829);
     // LD_A(0x80);
     // LD_hli_A;
@@ -2999,6 +3036,10 @@ char* Function110d37(char* de, uint16_t hl){
 }
 
 // MobileAPI_15
+// HTTP recv data?
+// Input:   de - Destination?
+//          hl - pointers to config data
+//          bc - buffer size
 void Function110ddd(mobile_api_data_s* data){
     char* hl4;
     // LD_A_addr(wc821);
@@ -3821,6 +3862,10 @@ uint16_t Function1111d7(const char* hl){
 }
 
 // MobileAPI_16
+// HTTP send data?
+// Input:   de - Source?
+//          hl - pointers to config data
+//          bc - buffer size
 void Function1111fe(mobile_api_data_s* data){
     // LD_A_addr(wc821);
     // BIT_A(2);
@@ -4338,7 +4383,10 @@ void Function1113f8(void){
     Function110231();
 }
 
-// MobileAPI17
+// MobileAPI_17
+// Copy to send packet
+// Input: hl - Source
+// Output: a = 0x0 on success, 0xff on failure
 void Function1113fe(mobile_api_data_s* data){
     uint8_t* hl = data->hl;
     // LD_A_addr(wc822);
@@ -4465,7 +4513,9 @@ void Function1113fe(mobile_api_data_s* data){
     // RET;
 }
 
-// MobileAPI1D
+// MobileAPI_1D
+// CopyReceivedPacket
+// Input: hl - Destination
 void Function11148c(mobile_api_data_s* data){
     // LD_A_addr(wc822);
     // BIT_A(4);
@@ -4645,6 +4695,7 @@ void Function11148c(mobile_api_data_s* data){
 }
 
 // MobileAPI_21
+// Copy of MobileAPI_19
 void Function111540(mobile_api_data_s *data){
     // NOP;
 
@@ -4652,6 +4703,7 @@ void Function111540(mobile_api_data_s *data){
 }
 
 // MobileAPI_19
+// Telephone status
 void Function111541(mobile_api_data_s *data){
     // LD_HL(wc821);
     // BIT_hl(0);
@@ -4800,6 +4852,7 @@ asm_11160d:
     return Function111610();
 }
 
+// MobileAPI_1E
 void Function111610(void){
     LD_HL(wc86a);
     LD_A_hl;
@@ -4823,8 +4876,9 @@ asm_111626:
 
 }
 
-// MobileAPI1B
+// MobileAPI_1B
 // ClearMobileSDKData
+// Clears MobileAPI data and resets packet buffer
 void Function11162d(mobile_api_data_s* data){
     (void)data;
     // LD_A_addr(wc86a);
@@ -7219,7 +7273,7 @@ void Function11214e(void){
     }
 
 // asm_112175:
-    printf("Jumptable_1121ac[%d](hl, %d)\n", c - 0xa, wram->wc86b + 1);
+    // printf("Jumptable_1121ac[%d](hl, %d)\n", c - 0xa, wram->wc86b + 1);
     // LD_B(0x0);
     // SLA_C;
     // LD_HL(mJumptable_1121ac - 2 * 0xa);
@@ -11810,7 +11864,6 @@ char* Function1135ba(char* de){
     // LD_B(0x65);
     // CALL(aFunction113592);
     Function113592(de, 0x65);
-    char* de2 = de;
     // LD_HL(wc8f6);
     // CALL(aFunction1135eb);
     de = Function1135eb(de, wram->wc8f6);
@@ -11833,7 +11886,6 @@ char* Function1135ba(char* de){
     // LD_HL(wc926);
     // CALL(aFunction1135eb);
     de = Function1135eb(de, wram->wc926);
-    printf("Copying \"%s\"\n", de2);
     // LD_A(0x11);
     // LD_HL(wc92e);
     // JP(mMobileSDK_CopyStringLen);

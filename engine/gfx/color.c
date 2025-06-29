@@ -1829,7 +1829,7 @@ void LoadMapPals(void){
         // for(int rept = 0; rept < 4; rept++){
         // INC_HL;
         // }
-        const uint16_t* roof = RoofPals[wram->wMapGroup] + (((wram->wTimeOfDayPal & 3) >= NITE_F)? 2: 0);
+        const uint16_t* roof = RoofPals[gCurMapData.mapGroup] + (((wram->wTimeOfDayPal & 3) >= NITE_F)? 2: 0);
 
     // morn_day:
         // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF + PAL_COLOR_SIZE * 1);

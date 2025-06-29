@@ -2,6 +2,7 @@
 #include "engine_flags.h"
 
 #define engine_flag(_x, _bit) {wram_ptr(_x) + (_bit / 8), _bit % 8}
+#define engine_flag_(_x, _bit) {_x + (_bit / 8), _bit % 8}
 
 const struct EngineFlag EngineFlags[] = {
     [ENGINE_RADIO_CARD] = engine_flag(wPokegearFlags, POKEGEAR_RADIO_CARD_F),
@@ -68,34 +69,34 @@ const struct EngineFlag EngineFlags[] = {
     [ENGINE_UNLOCKED_UNOWNS_UNUSED_7] = engine_flag(wUnlockedUnowns, 7), // unused
 // fly
     // kanto
-    [ENGINE_FLYPOINT_PLAYERS_HOUSE] = engine_flag(wVisitedSpawns, SPAWN_HOME),
-    [ENGINE_FLYPOINT_DEBUG] = engine_flag(wVisitedSpawns, SPAWN_DEBUG),
-    [ENGINE_FLYPOINT_PALLET] = engine_flag(wVisitedSpawns, SPAWN_PALLET),
-    [ENGINE_FLYPOINT_VIRIDIAN] = engine_flag(wVisitedSpawns, SPAWN_VIRIDIAN),
-    [ENGINE_FLYPOINT_PEWTER] = engine_flag(wVisitedSpawns, SPAWN_PEWTER),
-    [ENGINE_FLYPOINT_CERULEAN] = engine_flag(wVisitedSpawns, SPAWN_CERULEAN),
-    [ENGINE_FLYPOINT_ROCK_TUNNEL] = engine_flag(wVisitedSpawns, SPAWN_ROCK_TUNNEL),
-    [ENGINE_FLYPOINT_VERMILION] = engine_flag(wVisitedSpawns, SPAWN_VERMILION),
-    [ENGINE_FLYPOINT_LAVENDER] = engine_flag(wVisitedSpawns, SPAWN_LAVENDER),
-    [ENGINE_FLYPOINT_SAFFRON] = engine_flag(wVisitedSpawns, SPAWN_SAFFRON),
-    [ENGINE_FLYPOINT_CELADON] = engine_flag(wVisitedSpawns, SPAWN_CELADON),
-    [ENGINE_FLYPOINT_FUCHSIA] = engine_flag(wVisitedSpawns, SPAWN_FUCHSIA),
-    [ENGINE_FLYPOINT_CINNABAR] = engine_flag(wVisitedSpawns, SPAWN_CINNABAR),
-    [ENGINE_FLYPOINT_INDIGO_PLATEAU] = engine_flag(wVisitedSpawns, SPAWN_INDIGO),
+    [ENGINE_FLYPOINT_PLAYERS_HOUSE] = engine_flag_(gCurMapData.visitedSpawns, SPAWN_HOME),
+    [ENGINE_FLYPOINT_DEBUG]         = engine_flag_(gCurMapData.visitedSpawns, SPAWN_DEBUG),
+    [ENGINE_FLYPOINT_PALLET]        = engine_flag_(gCurMapData.visitedSpawns, SPAWN_PALLET),
+    [ENGINE_FLYPOINT_VIRIDIAN]      = engine_flag_(gCurMapData.visitedSpawns, SPAWN_VIRIDIAN),
+    [ENGINE_FLYPOINT_PEWTER]        = engine_flag_(gCurMapData.visitedSpawns, SPAWN_PEWTER),
+    [ENGINE_FLYPOINT_CERULEAN]      = engine_flag_(gCurMapData.visitedSpawns, SPAWN_CERULEAN),
+    [ENGINE_FLYPOINT_ROCK_TUNNEL]   = engine_flag_(gCurMapData.visitedSpawns, SPAWN_ROCK_TUNNEL),
+    [ENGINE_FLYPOINT_VERMILION]     = engine_flag_(gCurMapData.visitedSpawns, SPAWN_VERMILION),
+    [ENGINE_FLYPOINT_LAVENDER]      = engine_flag_(gCurMapData.visitedSpawns, SPAWN_LAVENDER),
+    [ENGINE_FLYPOINT_SAFFRON]       = engine_flag_(gCurMapData.visitedSpawns, SPAWN_SAFFRON),
+    [ENGINE_FLYPOINT_CELADON]       = engine_flag_(gCurMapData.visitedSpawns, SPAWN_CELADON),
+    [ENGINE_FLYPOINT_FUCHSIA]       = engine_flag_(gCurMapData.visitedSpawns, SPAWN_FUCHSIA),
+    [ENGINE_FLYPOINT_CINNABAR]      = engine_flag_(gCurMapData.visitedSpawns, SPAWN_CINNABAR),
+    [ENGINE_FLYPOINT_INDIGO_PLATEAU] = engine_flag_(gCurMapData.visitedSpawns, SPAWN_INDIGO),
     // johto
-    [ENGINE_FLYPOINT_NEW_BARK] = engine_flag(wVisitedSpawns, SPAWN_NEW_BARK),
-    [ENGINE_FLYPOINT_CHERRYGROVE] = engine_flag(wVisitedSpawns, SPAWN_CHERRYGROVE),
-    [ENGINE_FLYPOINT_VIOLET] = engine_flag(wVisitedSpawns, SPAWN_VIOLET),
-    [ENGINE_FLYPOINT_AZALEA] = engine_flag(wVisitedSpawns, SPAWN_AZALEA),
-    [ENGINE_FLYPOINT_CIANWOOD] = engine_flag(wVisitedSpawns, SPAWN_CIANWOOD),
-    [ENGINE_FLYPOINT_GOLDENROD] = engine_flag(wVisitedSpawns, SPAWN_GOLDENROD),
-    [ENGINE_FLYPOINT_OLIVINE] = engine_flag(wVisitedSpawns, SPAWN_OLIVINE),
-    [ENGINE_FLYPOINT_ECRUTEAK] = engine_flag(wVisitedSpawns, SPAWN_ECRUTEAK),
-    [ENGINE_FLYPOINT_MAHOGANY] = engine_flag(wVisitedSpawns, SPAWN_MAHOGANY),
-    [ENGINE_FLYPOINT_LAKE_OF_RAGE] = engine_flag(wVisitedSpawns, SPAWN_LAKE_OF_RAGE),
-    [ENGINE_FLYPOINT_BLACKTHORN] = engine_flag(wVisitedSpawns, SPAWN_BLACKTHORN),
-    [ENGINE_FLYPOINT_SILVER_CAVE] = engine_flag(wVisitedSpawns, SPAWN_MT_SILVER),
-    [ENGINE_FLYPOINT_UNUSED] = engine_flag(wVisitedSpawns, NUM_SPAWNS), // unused
+    [ENGINE_FLYPOINT_NEW_BARK]      = engine_flag_(gCurMapData.visitedSpawns, SPAWN_NEW_BARK),
+    [ENGINE_FLYPOINT_CHERRYGROVE]   = engine_flag_(gCurMapData.visitedSpawns, SPAWN_CHERRYGROVE),
+    [ENGINE_FLYPOINT_VIOLET]        = engine_flag_(gCurMapData.visitedSpawns, SPAWN_VIOLET),
+    [ENGINE_FLYPOINT_AZALEA]        = engine_flag_(gCurMapData.visitedSpawns, SPAWN_AZALEA),
+    [ENGINE_FLYPOINT_CIANWOOD]      = engine_flag_(gCurMapData.visitedSpawns, SPAWN_CIANWOOD),
+    [ENGINE_FLYPOINT_GOLDENROD]     = engine_flag_(gCurMapData.visitedSpawns, SPAWN_GOLDENROD),
+    [ENGINE_FLYPOINT_OLIVINE]       = engine_flag_(gCurMapData.visitedSpawns, SPAWN_OLIVINE),
+    [ENGINE_FLYPOINT_ECRUTEAK]      = engine_flag_(gCurMapData.visitedSpawns, SPAWN_ECRUTEAK),
+    [ENGINE_FLYPOINT_MAHOGANY]      = engine_flag_(gCurMapData.visitedSpawns, SPAWN_MAHOGANY),
+    [ENGINE_FLYPOINT_LAKE_OF_RAGE]  = engine_flag_(gCurMapData.visitedSpawns, SPAWN_LAKE_OF_RAGE),
+    [ENGINE_FLYPOINT_BLACKTHORN]    = engine_flag_(gCurMapData.visitedSpawns, SPAWN_BLACKTHORN),
+    [ENGINE_FLYPOINT_SILVER_CAVE]   = engine_flag_(gCurMapData.visitedSpawns, SPAWN_MT_SILVER),
+    [ENGINE_FLYPOINT_UNUSED]        = engine_flag_(gCurMapData.visitedSpawns, NUM_SPAWNS), // unused
 
 // engine_flag wLuckyNumberShowFlag, LUCKYNUMBERSHOW_GAME_OVER_F
     [ENGINE_LUCKY_NUMBER_SHOW] = engine_flag(wLuckyNumberShowFlag, LUCKYNUMBERSHOW_GAME_OVER_F),

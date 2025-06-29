@@ -323,7 +323,7 @@ void GetAvailableCallers(void){
         // LD_A_addr(wMapNumber);
         // CP_A_hl;
         // IF_Z goto not_good_for_call;
-        if(hl->mapGroup == wram->wMapGroup || hl->mapNumber == wram->wMapNumber)
+        if(hl->mapGroup == gCurMapData.mapGroup || hl->mapNumber == gCurMapData.mapNumber)
             continue;
 
     // different_map:
@@ -492,7 +492,7 @@ void MakePhoneCallFromPokegear(uint8_t caller){
     // CP_A_hl;
     // IF_NZ goto GetPhoneScript;
     Script_fn_t script;
-    if(contact_struct->mapGroup == wram->wMapGroup && contact_struct->mapNumber == wram->wMapNumber) {
+    if(contact_struct->mapGroup == gCurMapData.mapGroup && contact_struct->mapNumber == gCurMapData.mapNumber) {
         // LD_B(BANK(aPhoneScript_JustTalkToThem));
         // LD_HL(mPhoneScript_JustTalkToThem);
         script = PhoneScript_JustTalkToThem;

@@ -225,7 +225,7 @@ static void AddOutdoorSprites(void){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    const uint8_t* hl = OutdoorSprites[wram->wMapGroup - 1];
+    const uint8_t* hl = OutdoorSprites[gCurMapData.mapGroup - 1];
     // LD_C(MAX_OUTDOOR_SPRITES);
 
     for(uint8_t c = 0; c < MAX_OUTDOOR_SPRITES; c++) {

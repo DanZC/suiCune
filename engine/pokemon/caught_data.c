@@ -256,10 +256,10 @@ static void SetBoxmonOrEggmonCaughtData(struct BoxMon* boxmon, uint8_t level){
     boxmon->caughtTimeLevel = (time | level);
     // LD_A_addr(wMapGroup);
     // LD_B_A;
-    uint8_t b = wram->wMapGroup;
+    uint8_t b = gCurMapData.mapGroup;
     // LD_A_addr(wMapNumber);
     // LD_C_A;
-    uint8_t c = wram->wMapNumber;
+    uint8_t c = gCurMapData.mapNumber;
     // CP_A(MAP_POKECENTER_2F);
     // IF_NZ goto NotPokecenter2F;
     // LD_A_B;
@@ -269,10 +269,10 @@ static void SetBoxmonOrEggmonCaughtData(struct BoxMon* boxmon, uint8_t level){
     if(b == GROUP_POKECENTER_2F && c == MAP_POKECENTER_2F) {
         // LD_A_addr(wBackupMapGroup);
         // LD_B_A;
-        b = wram->wBackupMapGroup;
+        b = gCurMapData.backupMapGroup;
         // LD_A_addr(wBackupMapNumber);
         // LD_C_A;
-        c = wram->wBackupMapNumber;
+        c = gCurMapData.backupMapNumber;
     }
 
 // NotPokecenter2F:

@@ -550,7 +550,7 @@ static bool CheckObjectStillVisible(struct Object* bc) {
     bit_reset(bc->flags2, OBJ_FLAGS2_6);
     // LD_A_addr(wXCoord);
     // LD_E_A;
-    uint8_t e = wram->wXCoord;
+    uint8_t e = gCurMapData.xCoord;
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -563,7 +563,7 @@ static bool CheckObjectStillVisible(struct Object* bc) {
     if(x >= e && (x - e) < MAPOBJECT_SCREEN_WIDTH) {
         // LD_A_addr(wYCoord);
         // LD_E_A;
-        e = wram->wYCoord;
+        e = gCurMapData.yCoord;
         // LD_HL(OBJECT_NEXT_MAP_Y);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -585,7 +585,7 @@ static bool CheckObjectStillVisible(struct Object* bc) {
     bit_set(bc->flags2, OBJ_FLAGS2_6);
     // LD_A_addr(wXCoord);
     // LD_E_A;
-    e = wram->wXCoord;
+    e = gCurMapData.xCoord;
     // LD_HL(OBJECT_INIT_X);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -598,7 +598,7 @@ static bool CheckObjectStillVisible(struct Object* bc) {
     if(x >= e && (x - e) < MAPOBJECT_SCREEN_WIDTH) {
         // LD_A_addr(wYCoord);
         // LD_E_A;
-        e = wram->wYCoord;
+        e = gCurMapData.yCoord;
         // LD_HL(OBJECT_INIT_Y);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -3840,12 +3840,12 @@ static bool CheckObjectOnScreen(struct Object* bc) {
     // ADD_A(MAPOBJECT_SCREEN_WIDTH - 1);
     // CP_A_D;
     // IF_C goto nope;
-    uint8_t n = wram->wXCoord;
+    uint8_t n = gCurMapData.xCoord;
     if(n == x || (n < x && (n + (MAPOBJECT_SCREEN_WIDTH - 1) >= x))) {
     // equal_x:
 
         // LD_A_addr(wYCoord);
-        n = wram->wYCoord;
+        n = gCurMapData.yCoord;
         // CP_A_E;
         // IF_Z goto equal_y;
         // IF_NC goto nope;

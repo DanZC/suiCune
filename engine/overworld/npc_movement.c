@@ -624,15 +624,15 @@ static bool IsObjectMovingOffEdgeOfScreen(struct Object* bc){
     // LD_A_addr(wXCoord);
     // CP_A_hl;
     // IF_Z goto check_y;
-    if(wram->wXCoord == bc->nextMapX)
+    if(gCurMapData.xCoord == bc->nextMapX)
         goto check_y;
     // IF_NC goto yes;
-    if(wram->wXCoord > bc->nextMapX)
+    if(gCurMapData.xCoord > bc->nextMapX)
         goto yes;
     // ADD_A(0x9);
     // CP_A_hl;
     // IF_C goto yes;
-    if(wram->wXCoord + 0x9 < bc->nextMapX)
+    if(gCurMapData.xCoord + 0x9 < bc->nextMapX)
         goto yes;
 
 
@@ -642,15 +642,15 @@ check_y:
     // LD_A_addr(wYCoord);
     // CP_A_hl;
     // IF_Z goto nope;
-    if(wram->wYCoord == bc->nextMapY)
+    if(gCurMapData.yCoord == bc->nextMapY)
         goto nope;
     // IF_NC goto yes;
-    if(wram->wYCoord > bc->nextMapY)
+    if(gCurMapData.yCoord > bc->nextMapY)
         goto yes;
     // ADD_A(0x8);
     // CP_A_hl;
     // IF_C goto yes;
-    if(wram->wYCoord + 0x8 < bc->nextMapY)
+    if(gCurMapData.yCoord + 0x8 < bc->nextMapY)
         goto yes;
 
 nope:

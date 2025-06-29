@@ -22,7 +22,7 @@ void v_CardKey(void){
     // LD_A_addr(wMapNumber);
     // CP_A(MAP_RADIO_TOWER_3F);
     // IF_NZ goto nope;
-    if(wram->wMapGroup == GROUP_RADIO_TOWER_3F && wram->wMapNumber == MAP_RADIO_TOWER_3F) {
+    if(gCurMapData.mapGroup == GROUP_RADIO_TOWER_3F && gCurMapData.mapNumber == MAP_RADIO_TOWER_3F) {
     //  Are we facing the slot?
         // LD_A_addr(wPlayerDirection);
         // AND_A(0b1100);

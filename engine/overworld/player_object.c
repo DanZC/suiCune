@@ -119,7 +119,7 @@ static void PlayerSpawn_ConvertCoords(uint8_t b){
     // POP_BC;
     // CALL(aCopyDECoordsToMapObject);
     // RET;
-    return CopyDECoordsToMapObject(wram->wXCoord + 4, wram->wYCoord + 4, b);
+    return CopyDECoordsToMapObject(gCurMapData.xCoord + 4, gCurMapData.yCoord + 4, b);
 }
 
 void WriteObjectXY(uint8_t b){
@@ -148,7 +148,7 @@ void RefreshPlayerCoords(void){
     // LD_A_addr(wXCoord);
     // ADD_A(4);
     // LD_D_A;
-    uint8_t x = wram->wXCoord + 4;
+    uint8_t x = gCurMapData.xCoord + 4;
     // LD_HL(wPlayerStandingMapX);
     // SUB_A_hl;
     // LD_hl_D;
@@ -163,7 +163,7 @@ void RefreshPlayerCoords(void){
     // LD_A_addr(wYCoord);
     // ADD_A(4);
     // LD_E_A;
-    uint8_t y = wram->wYCoord + 4;
+    uint8_t y = gCurMapData.yCoord + 4;
     // LD_HL(wPlayerStandingMapY);
     // SUB_A_hl;
     // LD_hl_E;
@@ -339,10 +339,10 @@ void InitializeVisibleSprites(void){
 
         // LD_A_addr(wXCoord);
         // LD_D_A;
-        uint8_t d = wram->wXCoord;
+        uint8_t d = gCurMapData.xCoord;
         // LD_A_addr(wYCoord);
         // LD_E_A;
-        uint8_t e = wram->wYCoord;
+        uint8_t e = gCurMapData.yCoord;
 
         // LD_HL(MAPOBJECT_X_COORD);
         // ADD_HL_BC;
@@ -417,18 +417,18 @@ void CheckObjectEnteringVisibleRange(void){
     // Down:
         // LD_A_addr(wYCoord);
         // ADD_A(9);
-        d = wram->wYCoord + 9;
+        d = gCurMapData.yCoord + 9;
         goto Vertical;
     case UP:
     // Up:
         // LD_A_addr(wYCoord);
         // SUB_A(1);
-        d = wram->wYCoord - 1;
+        d = gCurMapData.yCoord - 1;
     Vertical:
         // LD_D_A;
         // LD_A_addr(wXCoord);
         // LD_E_A;
-        e = wram->wXCoord;
+        e = gCurMapData.xCoord;
         // LD_BC(wMap1Object);
         // LD_A(1);
 
@@ -492,19 +492,19 @@ void CheckObjectEnteringVisibleRange(void){
     // Left:
         // LD_A_addr(wXCoord);
         // SUB_A(1);
-        e = wram->wXCoord - 1;
+        e = gCurMapData.xCoord - 1;
         goto Horizontal;
     case RIGHT:
     // Right:
         // LD_A_addr(wXCoord);
         // ADD_A(10);
-        e = wram->wXCoord + 10;
+        e = gCurMapData.xCoord + 10;
 
     Horizontal:
         // LD_E_A;
         // LD_A_addr(wYCoord);
         // LD_D_A;
-        d = wram->wYCoord;
+        d = gCurMapData.yCoord;
         // LD_BC(wMap1Object);
         // LD_A(1);
 
@@ -594,7 +594,7 @@ static void CopyTempObjectToObjectStruct_InitYCoord(struct Object* de, uint8_t a
     // LD_HL(OBJECT_SPRITE_Y);
     // ADD_HL_DE;
     // LD_hl_A;
-    de->spriteY = (((a - wram->wYCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetY;
+    de->spriteY = (((a - gCurMapData.yCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetY;
     // RET;
 }
 
@@ -616,7 +616,7 @@ static void CopyTempObjectToObjectStruct_InitXCoord(struct Object* de, uint8_t a
     // LD_HL(OBJECT_SPRITE_X);
     // ADD_HL_DE;
     // LD_hl_A;
-    de->spriteX = (((a - wram->wXCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetX;
+    de->spriteX = (((a - gCurMapData.xCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetX;
     // RET;
 }
 
@@ -896,7 +896,7 @@ void FollowNotExact(uint8_t c, uint8_t b){
     // LD_HL(OBJECT_SPRITE_X);
     // ADD_HL_DE;
     // LD_hl_A;
-    de->spriteX = (((nextX - wram->wXCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetX;
+    de->spriteX = (((nextX - gCurMapData.xCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetX;
     // LD_HL(OBJECT_NEXT_MAP_Y);
     // ADD_HL_DE;
     // LD_hl_C;
@@ -911,7 +911,7 @@ void FollowNotExact(uint8_t c, uint8_t b){
     // LD_HL(OBJECT_SPRITE_Y);
     // ADD_HL_DE;
     // LD_hl_A;
-    de->spriteY = (((nextY - wram->wYCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetY;
+    de->spriteY = (((nextY - gCurMapData.yCoord) & 0xf) << 4) - wram->wPlayerBGMapOffsetY;
     // LDH_A_addr(hObjectStructIndex);
     // LD_HL(OBJECT_RANGE);
     // ADD_HL_DE;

@@ -1200,7 +1200,7 @@ static uint8_t EscapeRopeOrDig_CheckCanDig(void){
         // IF_Z goto fail;
         // LD_A(0x1);
         // RET;
-        if(wram->wDigWarpNumber != 0 && wram->wDigMapGroup != 0 && wram->wDigMapNumber != 0) {
+        if(gCurMapData.digWarpNumber != 0 && gCurMapData.digMapGroup != 0 && gCurMapData.digMapNumber != 0) {
             return 0x1;
         }
     }
@@ -1216,9 +1216,9 @@ static uint8_t EscapeRopeOrDig_DoDig(void){
     // LD_DE(wNextWarp);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    wram->wNextWarp = wram->wDigWarpNumber;
-    wram->wNextMapGroup = wram->wDigMapGroup;
-    wram->wNextMapNumber = wram->wDigMapNumber;
+    wram->wNextWarp = gCurMapData.digWarpNumber;
+    wram->wNextMapGroup = gCurMapData.digMapGroup;
+    wram->wNextMapNumber = gCurMapData.digMapNumber;
     // CALL(aGetPartyNickname);
     // LD_A_addr(wEscapeRopeOrDigType);
     // CP_A(0x2);
@@ -1310,7 +1310,7 @@ static uint8_t TeleportFunction_TryTeleport(void){
         // LD_A_addr(wLastSpawnMapNumber);
         // LD_E_A;
         // FARCALL(aIsSpawnPoint);
-        u8_flag_s res = IsSpawnPoint(wram->wLastSpawnMapGroup, wram->wLastSpawnMapNumber);
+        u8_flag_s res = IsSpawnPoint(gCurMapData.lastSpawnMapGroup, gCurMapData.lastSpawnMapNumber);
         // IF_NC goto nope;
         if(res.flag) {
             // LD_A_C;

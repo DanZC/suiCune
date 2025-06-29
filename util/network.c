@@ -1572,7 +1572,9 @@ static void gb_serial_tx_test(const uint8_t x) {
         // fclose(f);
         if(gMobileByte == 0xD2 && x == 0x4B)
             return;
-        printf("A %02X %02X\n", gMobileByte, x);
+    #if DEBUG
+        // printf("A %02X %02X\n", gMobileByte, x);
+    #endif
     }
 }
 
@@ -1595,9 +1597,9 @@ void MobileDebugLog(void* user, const char* line) {
         fclose(f);
     }
     else {
-    // #if DEBUG
+    #if DEBUG
         printf("mobile: %s\n", line);
-    // #endif
+    #endif
     }
 }
 

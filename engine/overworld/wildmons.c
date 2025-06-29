@@ -720,7 +720,7 @@ struct MapId CopyCurrMapDE(void){
     // LD_A_addr(wMapNumber);
     // LD_E_A;
     // RET;
-    return (struct MapId) {.mapNumber = wram->wMapNumber, .mapGroup = wram->wMapGroup};
+    return (struct MapId) {.mapNumber = gCurMapData.mapNumber, .mapGroup = gCurMapData.mapGroup};
 }
 
 struct WildMons LookUpWildmonsForMapDE(struct WildMons wm, struct MapId de){
@@ -1120,8 +1120,8 @@ struct MapId JumpRoamMon(void){
         // LD_A_addr(wMapNumber);
         // CP_A_hl;
         // IF_Z goto loop;
-    } while(RoamMaps[a].src.mapGroup == wram->wMapGroup
-         && RoamMaps[a].src.mapNumber == wram->wMapNumber);
+    } while(RoamMaps[a].src.mapGroup == gCurMapData.mapGroup
+         && RoamMaps[a].src.mapNumber == gCurMapData.mapNumber);
     // DEC_HL;
 //  Return the map group and number in bc.
 
@@ -1142,10 +1142,10 @@ void v_BackUpMapIndices(void){
     wram->wRoamMons_LastMapGroup = wram->wRoamMons_CurMapGroup;
     // LD_A_addr(wMapNumber);
     // LD_addr_A(wRoamMons_CurMapNumber);
-    wram->wRoamMons_CurMapNumber = wram->wMapNumber;
+    wram->wRoamMons_CurMapNumber = gCurMapData.mapNumber;
     // LD_A_addr(wMapGroup);
     // LD_addr_A(wRoamMons_CurMapGroup);
-    wram->wRoamMons_CurMapGroup = wram->wMapGroup;
+    wram->wRoamMons_CurMapGroup = gCurMapData.mapGroup;
     // RET;
 
 // INCLUDE "data/wild/roammon_maps.asm"

@@ -18,14 +18,14 @@ static bool InitMapNameSign_CheckNationalParkGate(void) {
     // LD_A_addr(wMapGroup);
     // CP_A(GROUP_ROUTE_35_NATIONAL_PARK_GATE);
     // RET_NZ ;
-    if(wram->wMapGroup != GROUP_ROUTE_35_NATIONAL_PARK_GATE)
+    if(gCurMapData.mapGroup != GROUP_ROUTE_35_NATIONAL_PARK_GATE)
         return false;
     // LD_A_addr(wMapNumber);
     // CP_A(MAP_ROUTE_35_NATIONAL_PARK_GATE);
     // RET_Z ;
     // CP_A(MAP_ROUTE_36_NATIONAL_PARK_GATE);
     // RET;
-    return wram->wMapNumber == MAP_ROUTE_35_NATIONAL_PARK_GATE || wram->wMapNumber == MAP_ROUTE_36_NATIONAL_PARK_GATE;
+    return gCurMapData.mapNumber == MAP_ROUTE_35_NATIONAL_PARK_GATE || gCurMapData.mapNumber == MAP_ROUTE_36_NATIONAL_PARK_GATE;
 }
 
 static bool InitMapNameSign_CheckMovingWithinLandmark(void) {
@@ -92,7 +92,7 @@ void InitMapNameSign(void){
     // LD_A_addr(wMapNumber);
     // LD_C_A;
     // CALL(aGetWorldMapLocation);
-    uint8_t loc = GetWorldMapLocation(wram->wMapGroup, wram->wMapNumber);
+    uint8_t loc = GetWorldMapLocation(gCurMapData.mapGroup, gCurMapData.mapNumber);
 
     // LD_addr_A(wCurLandmark);
     wram->wCurLandmark = loc;

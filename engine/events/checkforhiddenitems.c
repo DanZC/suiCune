@@ -11,11 +11,11 @@ bool CheckForHiddenItems(void){
     // LD_A_addr(wXCoord);
     // ADD_A(SCREEN_WIDTH / 4);
     // LD_addr_A(wBottomRightXCoord);
-    uint8_t bottom_x = wram->wXCoord + (SCREEN_WIDTH / 4);
+    uint8_t bottom_x = gCurMapData.xCoord + (SCREEN_WIDTH / 4);
     // LD_A_addr(wYCoord);
     // ADD_A(SCREEN_HEIGHT / 4);
     // LD_addr_A(wBottomRightYCoord);
-    uint8_t bottom_y = wram->wYCoord + (SCREEN_HEIGHT / 4);
+    uint8_t bottom_y = gCurMapData.yCoord + (SCREEN_HEIGHT / 4);
 //  Get the pointer for the first bg_event in the map...
     // LD_HL(wCurMapBGEventsPointer);
     // LD_A_hli;

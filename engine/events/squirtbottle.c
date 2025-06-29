@@ -14,7 +14,7 @@ static void CheckCanUseSquirtbottle(void) {
     // LD_A_addr(wMapNumber);
     // CP_A(MAP_ROUTE_36);
     // IF_NZ goto nope;
-    if(wram->wMapGroup == GROUP_ROUTE_36 && wram->wMapNumber == MAP_ROUTE_36) {
+    if(gCurMapData.mapGroup == GROUP_ROUTE_36 && gCurMapData.mapNumber == MAP_ROUTE_36) {
         // FARCALL(aGetFacingObject);
         u8_flag_s res = GetFacingObject();
         // IF_C goto nope;

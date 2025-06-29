@@ -793,7 +793,8 @@ void SavePlayerData(void){
     // LD_DE(sCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(sCurMapData, wCurMapData, wCurMapDataEnd - wCurMapData);
+    uint8_t* dest = GBToRAMAddr(sCurMapData);
+    Serialize_CurMapData(dest, &gCurMapData);
     // JP(mCloseSRAM);
     CloseSRAM();
 }
@@ -880,7 +881,8 @@ void SaveBackupPlayerData(void){
     // LD_DE(sBackupCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(sBackupCurMapData, wCurMapData, wCurMapDataEnd - wCurMapData);
+    uint8_t* dest = GBToRAMAddr(sBackupCurMapData);
+    Serialize_CurMapData(dest, &gCurMapData);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -1140,7 +1142,8 @@ void LoadPlayerData(void){
     // LD_DE(wCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(wCurMapData, sCurMapData, wCurMapDataEnd - wCurMapData);
+    const uint8_t* src = GBToRAMAddr(sCurMapData);
+    Deserialize_CurMapData(&gCurMapData, src);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // LD_A(BANK(sBattleTowerChallengeState));
@@ -1219,7 +1222,8 @@ void LoadBackupPlayerData(void){
     // LD_DE(wCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(wCurMapData, sBackupCurMapData, wCurMapDataEnd - wCurMapData);
+    const uint8_t* src = GBToRAMAddr(sBackupCurMapData);
+    Deserialize_CurMapData(&gCurMapData, src);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;

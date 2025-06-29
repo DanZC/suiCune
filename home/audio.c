@@ -486,8 +486,8 @@ static uint16_t SpecialMapMusic(void) {
         // IF_Z goto ranking;                        // jr z, .ranking
         // CP_A(MAP_ROUTE_36_NATIONAL_PARK_GATE);    // cp MAP_ROUTE_36_NATIONAL_PARK_GATE
         // IF_NZ goto no;                            // jr nz, .no
-        if(wram->wMapGroup == GROUP_ROUTE_35_NATIONAL_PARK_GATE 
-        && (wram->wMapNumber == MAP_ROUTE_35_NATIONAL_PARK_GATE || wram->wMapNumber == MAP_ROUTE_36_NATIONAL_PARK_GATE)) {
+        if(gCurMapData.mapGroup == GROUP_ROUTE_35_NATIONAL_PARK_GATE 
+        && (gCurMapData.mapNumber == MAP_ROUTE_35_NATIONAL_PARK_GATE || gCurMapData.mapNumber == MAP_ROUTE_36_NATIONAL_PARK_GATE)) {
             return MUSIC_BUG_CATCHING_CONTEST_RANKING;
         }
 
