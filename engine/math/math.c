@@ -157,118 +157,114 @@ done:
     return;
 }
 
+// DEPRECATED
 void v_Divide(void){
-    XOR_A_A;
-    LDH_addr_A(hMathBuffer + 0);
-    LDH_addr_A(hMathBuffer + 1);
-    LDH_addr_A(hMathBuffer + 2);
-    LDH_addr_A(hMathBuffer + 3);
-    LDH_addr_A(hMathBuffer + 4);
+    // XOR_A_A;
+    // LDH_addr_A(hMathBuffer + 0);
+    // LDH_addr_A(hMathBuffer + 1);
+    // LDH_addr_A(hMathBuffer + 2);
+    // LDH_addr_A(hMathBuffer + 3);
+    // LDH_addr_A(hMathBuffer + 4);
 
-    LD_A(9);
-    LD_E_A;
+    // LD_A(9);
+    // LD_E_A;
 
+// loop:
+    // LDH_A_addr(hMathBuffer + 0);
+    // LD_C_A;
+    // LDH_A_addr(hDividend + 1);
+    // SUB_A_C;
+    // LD_D_A;
 
-loop:
-    LDH_A_addr(hMathBuffer + 0);
-    LD_C_A;
-    LDH_A_addr(hDividend + 1);
-    SUB_A_C;
-    LD_D_A;
+    // LDH_A_addr(hDivisor);
+    // LD_C_A;
+    // LDH_A_addr(hDividend + 0);
+    // SBC_A_C;
+    // IF_C goto next;
 
-    LDH_A_addr(hDivisor);
-    LD_C_A;
-    LDH_A_addr(hDividend + 0);
-    SBC_A_C;
-    IF_C goto next;
+    // LDH_addr_A(hDividend + 0);
 
-    LDH_addr_A(hDividend + 0);
+    // LD_A_D;
+    // LDH_addr_A(hDividend + 1);
 
-    LD_A_D;
-    LDH_addr_A(hDividend + 1);
+    // LDH_A_addr(hMathBuffer + 4);
+    // INC_A;
+    // LDH_addr_A(hMathBuffer + 4);
 
-    LDH_A_addr(hMathBuffer + 4);
-    INC_A;
-    LDH_addr_A(hMathBuffer + 4);
-
-    goto loop;
-
-
-next:
-    LD_A_B;
-    CP_A(1);
-    IF_Z goto done;
-
-    LDH_A_addr(hMathBuffer + 4);
-    ADD_A_A;
-    LDH_addr_A(hMathBuffer + 4);
-
-    LDH_A_addr(hMathBuffer + 3);
-    RLA;
-    LDH_addr_A(hMathBuffer + 3);
-
-    LDH_A_addr(hMathBuffer + 2);
-    RLA;
-    LDH_addr_A(hMathBuffer + 2);
-
-    LDH_A_addr(hMathBuffer + 1);
-    RLA;
-    LDH_addr_A(hMathBuffer + 1);
-
-    DEC_E;
-    IF_NZ goto next2;
-
-    LD_E(8);
-    LDH_A_addr(hMathBuffer + 0);
-    LDH_addr_A(hDivisor);
-    XOR_A_A;
-    LDH_addr_A(hMathBuffer + 0);
-
-    LDH_A_addr(hDividend + 1);
-    LDH_addr_A(hDividend + 0);
-
-    LDH_A_addr(hDividend + 2);
-    LDH_addr_A(hDividend + 1);
-
-    LDH_A_addr(hDividend + 3);
-    LDH_addr_A(hDividend + 2);
+    // goto loop;
 
 
-next2:
-    LD_A_E;
-    CP_A(1);
-    IF_NZ goto okay;
-    DEC_B;
+// next:
+    // LD_A_B;
+    // CP_A(1);
+    // IF_Z goto done;
 
+    // LDH_A_addr(hMathBuffer + 4);
+    // ADD_A_A;
+    // LDH_addr_A(hMathBuffer + 4);
 
-okay:
-    LDH_A_addr(hDivisor);
-    SRL_A;
-    LDH_addr_A(hDivisor);
+    // LDH_A_addr(hMathBuffer + 3);
+    // RLA;
+    // LDH_addr_A(hMathBuffer + 3);
 
-    LDH_A_addr(hMathBuffer + 0);
-    RR_A;
-    LDH_addr_A(hMathBuffer + 0);
+    // LDH_A_addr(hMathBuffer + 2);
+    // RLA;
+    // LDH_addr_A(hMathBuffer + 2);
 
-    goto loop;
+    // LDH_A_addr(hMathBuffer + 1);
+    // RLA;
+    // LDH_addr_A(hMathBuffer + 1);
 
+    // DEC_E;
+    // IF_NZ goto next2;
 
-done:
-    LDH_A_addr(hDividend + 1);
-    LDH_addr_A(hRemainder);
+    // LD_E(8);
+    // LDH_A_addr(hMathBuffer + 0);
+    // LDH_addr_A(hDivisor);
+    // XOR_A_A;
+    // LDH_addr_A(hMathBuffer + 0);
 
-    LDH_A_addr(hMathBuffer + 4);
-    LDH_addr_A(hQuotient + 3);
+    // LDH_A_addr(hDividend + 1);
+    // LDH_addr_A(hDividend + 0);
 
-    LDH_A_addr(hMathBuffer + 3);
-    LDH_addr_A(hQuotient + 2);
+    // LDH_A_addr(hDividend + 2);
+    // LDH_addr_A(hDividend + 1);
 
-    LDH_A_addr(hMathBuffer + 2);
-    LDH_addr_A(hQuotient + 1);
+    // LDH_A_addr(hDividend + 3);
+    // LDH_addr_A(hDividend + 2);
 
-    LDH_A_addr(hMathBuffer + 1);
-    LDH_addr_A(hQuotient + 0);
+// next2:
+    // LD_A_E;
+    // CP_A(1);
+    // IF_NZ goto okay;
+    // DEC_B;
 
-    RET;
+// okay:
+    // LDH_A_addr(hDivisor);
+    // SRL_A;
+    // LDH_addr_A(hDivisor);
 
+    // LDH_A_addr(hMathBuffer + 0);
+    // RR_A;
+    // LDH_addr_A(hMathBuffer + 0);
+
+    // goto loop;
+
+// done:
+    // LDH_A_addr(hDividend + 1);
+    // LDH_addr_A(hRemainder);
+
+    // LDH_A_addr(hMathBuffer + 4);
+    // LDH_addr_A(hQuotient + 3);
+
+    // LDH_A_addr(hMathBuffer + 3);
+    // LDH_addr_A(hQuotient + 2);
+
+    // LDH_A_addr(hMathBuffer + 2);
+    // LDH_addr_A(hQuotient + 1);
+
+    // LDH_A_addr(hMathBuffer + 1);
+    // LDH_addr_A(hQuotient + 0);
+
+    // RET;
 }

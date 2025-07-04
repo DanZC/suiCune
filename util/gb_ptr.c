@@ -152,6 +152,10 @@ uint32_t BankAddrToAbsRAMAddr(uint8_t bank, uint16_t addr) {
     return (uint32_t)(addr | (bank << 16));
 }
 
+uint8_t* SRAMPtr(uint32_t addr) {
+    return ((struct priv_t*)gb.direct.priv)->cart_ram + (0x2000 * MBANK(addr)) + ((addr & 0xffff) - SRAM_Begin);
+}
+
 static void SafeCallGBInternal(uint32_t address) {
     uint8_t bank = hram.hROMBank;
     gb_write(MBC3RomBank, BANK(address));

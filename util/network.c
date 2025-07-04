@@ -1782,7 +1782,17 @@ struct server_config {
     char hostname[64];
     char loginPass[20];
     char relayServer[64];
+    char relayPort[10];
+    uint32_t flags;
 };
+
+enum {
+    SERVER_CFG_USE_RELAY_F,
+    SERVER_CFG_USE_SSL_F, // NOT USED YET
+};
+
+#define SERVER_CFG_USE_RELAY (1 << SERVER_CFG_USE_RELAY_F)
+#define SERVER_CFG_USE_SSL (1 << SERVER_CFG_USE_SSL_F)
 
 static struct server_config gServerConfig;
 
@@ -1856,7 +1866,37 @@ void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg
             memset(srv->hostname, 0, sizeof(srv->hostname));
             strncpy(srv->hostname, s->string, sizeof(srv->hostname) - 1);
         }
-        if(strcmp(it->name->string, "pop_host") == 0) {
+        else if(strcmp(it->name->string, "relay_host") == 0) {
+            json_string_t *s = json_value_as_string(it->value);
+            if(s == NULL)
+                continue;
+
+            if(s->string_size == 0)
+                continue;
+            
+            memset(srv->relayServer, 0, sizeof(srv->relayServer));
+            strncpy(srv->relayServer, s->string, sizeof(srv->relayServer) - 1);
+        }
+        else if(strcmp(it->name->string, "relay_port") == 0) {
+            json_number_t *n = json_value_as_number(it->value);
+            if(n == NULL)
+                continue;
+
+            if(n->number_size == 0)
+                continue;
+            
+            memset(srv->relayPort, 0, sizeof(srv->relayPort));
+            strncpy(srv->relayPort, n->number, sizeof(srv->relayPort) - 1);
+        }
+        else if(strcmp(it->name->string, "use_relay") == 0) {
+            bool use_relay = json_value_is_true(it->value);
+            srv->flags = (srv->flags & ~SERVER_CFG_USE_RELAY) | ((use_relay)? SERVER_CFG_USE_RELAY: 0);
+        }
+        else if(strcmp(it->name->string, "use_ssl") == 0) { // Does nothing currently.
+            bool use_relay = json_value_is_true(it->value);
+            srv->flags = (srv->flags & ~SERVER_CFG_USE_SSL) | ((use_relay)? SERVER_CFG_USE_SSL: 0);
+        }
+        else if(strcmp(it->name->string, "pop_host") == 0) {
             json_string_t *s = json_value_as_string(it->value);
             if(s == NULL)
                 continue;
@@ -1867,7 +1907,7 @@ void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg
             memset(cfg->popServer, 0, sizeof(cfg->popServer));
             memcpy(cfg->popServer, s->string, sizeof(cfg->popServer));
         }
-        if(strcmp(it->name->string, "mail_host") == 0) {
+        else if(strcmp(it->name->string, "mail_host") == 0) {
             json_string_t *s = json_value_as_string(it->value);
             if(s == NULL)
                 continue;
@@ -1953,6 +1993,9 @@ void MobileConfigCreateDefault(FILE* f) {
     memcpy(cfg->config_slot[0].id, "DION DDI-POCKET", sizeof(cfg->config_slot[0].id));
     strncpy(gServerConfig.hostname, "localhost", sizeof(gServerConfig.hostname) - 1);
     memset(gServerConfig.loginPass, 0, sizeof(gServerConfig.loginPass));
+    memset(gServerConfig.relayServer, 0, sizeof(gServerConfig.relayServer));
+    memset(gServerConfig.relayPort, 0, sizeof(gServerConfig.relayPort));
+    gServerConfig.flags = 0;
     uint16_t checksum = 0;
     for(int i = 0; i < 0xc0 - 2; ++i) {
         checksum += buffer[i];
@@ -1977,6 +2020,23 @@ bool MobileConfigRead(void* user, void* dest, uintptr_t offset, size_t size) {
         read += fread(udata->config, 1, MOBILE_CONFIG_SIZE, f);
     }
     LoadMobileServerConfig(&gServerConfig, (struct mobile_config*)udata->config); // Try and overwrite default values from mobile config.
+    if(gServerConfig.flags & SERVER_CFG_USE_RELAY) {
+        struct mobile_addr relay;
+        if(!Network_ResolveHost(gServerConfig.relayServer, gServerConfig.relayPort, &relay)) {
+            // Disable relay
+            printf("Could not resolve \"%s\". Disabling relay server...\n", gServerConfig.relayServer);
+            mobile_config_set_relay(gMobileAdapter, &(struct mobile_addr){.type = MOBILE_ADDRTYPE_NONE});
+        }
+        else {
+            // Enable relay
+            printf("Enabling relay server at \"%s\"...\n", gServerConfig.relayServer);
+            mobile_config_set_relay(gMobileAdapter, &relay);
+        }
+    }
+    else {
+        printf("Relay server disabled...\n");
+        mobile_config_set_relay(gMobileAdapter, &(struct mobile_addr){.type = MOBILE_ADDRTYPE_NONE});
+    }
 // Recalculate checksum.
     uint16_t checksum = 0;
     for(int i = 0; i < 0xc0 - 2; ++i) {
@@ -2081,7 +2141,7 @@ void MobileInit(void) {
     addr4->port = MOBILE_DNS_PORT;
     mobile_config_set_dns(gMobileAdapter, &dns, MOBILE_DNS1);
     mobile_config_set_p2p_port(gMobileAdapter, MOBILE_PORT);
-    mobile_config_set_relay(gMobileAdapter, &(struct mobile_addr){.type = MOBILE_ADDRTYPE_NONE});
+    // mobile_config_set_relay(gMobileAdapter, &(struct mobile_addr){.type = MOBILE_ADDRTYPE_NONE});
     // mobile_config_save(gMobileAdapter);
 
     // struct mobile_addr relay = {.type = MOBILE_ADDRTYPE_IPV4};
