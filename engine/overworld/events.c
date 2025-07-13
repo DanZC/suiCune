@@ -49,7 +49,9 @@
 // INCLUDE "constants.asm"
 
 Script_fn_t gMapReentryScriptAddress;
+#if DEBUG
 static bool DebugFieldMenuScript(script_s* s);
+#endif
 
 static void EnableWildEncounters(void);
 static bool CheckWarpConnxnScriptFlag(void);
@@ -1418,12 +1420,14 @@ static u8_flag_s CheckMenuOW(void){
     return u8_flag(0, false);
 }
 
+#if DEBUG
 static bool DebugFieldMenuScript(script_s* s){
     SCRIPT_BEGIN
     DebugFieldMenu();
     sjump(SelectMenuCallback)
     SCRIPT_END
 }
+#endif
 
 static bool StartMenuScript(script_s* s){
     SCRIPT_BEGIN

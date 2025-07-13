@@ -674,8 +674,8 @@ bool SendGetMonIntoFromBox(uint8_t param){
 // so check if there's enough space
     else {
         // LD_HL(sBoxCount);
-        count = GBToRAMAddr(sBoxCount);
-        species = GBToRAMAddr(sBoxSpecies);
+        count = &box.count;
+        species = box.species;
         // LD_A_hl;
         c = *count;
         // CP_A(MONS_PER_BOX);
