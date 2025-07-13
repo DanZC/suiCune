@@ -15,14 +15,21 @@
 #include "../../home/delay.h"
 #include "../../home/text.h"
 #include "../../data/text/common.h"
+#include "../../util/serialize.h"
 
 static bool InitMail(void);
+
+struct MailMsg LoadMailMsg(uint8_t* ptr) {
+    struct MailMsg msg;
+    Deserialize_MailMsg(&msg, ptr);
+    return msg;
+}
 
 bool SendMailToPC(uint8_t b){
     // LD_A(MON_ITEM);
     // CALL(aGetPartyParamLocation);
     // LD_D_hl;
-    item_t itm = wram->wPartyMon[b].mon.item;
+    item_t itm = gPokemon.partyMon[b].mon.item;
     // FARCALL(aItemIsMail);
     // IF_NC goto full;
     if(ItemIsMail(itm)) {
@@ -57,7 +64,7 @@ bool SendMailToPC(uint8_t b){
             // LD_A(MON_ITEM);
             // CALL(aGetPartyParamLocation);
             // LD_hl(0);
-            wram->wPartyMon[b].mon.item = NO_ITEM;
+            gPokemon.partyMon[b].mon.item = NO_ITEM;
             // LD_HL(sMailboxCount);
             // INC_hl;
             gb_write(sMailboxCount, gb_read(sMailboxCount) + 1);
@@ -86,9 +93,9 @@ void DeleteMailFromPC(uint8_t b){
     // LD_BC(MAIL_STRUCT_LENGTH);
     // CALL(aAddNTimes);
     // PUSH_HL;
-    struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sMailboxes)) + b;
+    uint8_t* de = (GBToRAMAddr(sMailboxes + (MAIL_STRUCT_LENGTH * b)));
     // ADD_HL_BC;
-    const struct MailMsg* hl = de + 1;
+    const uint8_t* hl = de + MAIL_STRUCT_LENGTH;
     // POP_DE;
     // POP_BC;
 
@@ -100,8 +107,9 @@ void DeleteMailFromPC(uint8_t b){
         // PUSH_BC;
         // LD_BC(MAIL_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(de, hl, sizeof(*de));
-        de++, hl++;
+        CopyBytes(de, hl, MAIL_STRUCT_LENGTH);
+        de += MAIL_STRUCT_LENGTH;
+        hl += MAIL_STRUCT_LENGTH;
         // POP_BC;
         // INC_B;
         b++;
@@ -114,7 +122,7 @@ void DeleteMailFromPC(uint8_t b){
     // XOR_A_A;
     // LD_BC(MAIL_STRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill(de, sizeof(*de), 0x0);
+    ByteFill(de, MAIL_STRUCT_LENGTH, 0x0);
     // LD_HL(sMailboxCount);
     // DEC_hl;
     gb_write(sMailboxCount, gb_read(sMailboxCount) - 1);
@@ -127,11 +135,12 @@ void ReadMailMessage(uint8_t b){
     // LD_A_B;
     // LD_HL(sMailboxes);
     // LD_BC(MAIL_STRUCT_LENGTH);
+    struct MailMsg msg = LoadMailMsg(GBToRAMAddr(sMailboxes + MAIL_STRUCT_LENGTH * b));
     // CALL(aAddNTimes);
     // LD_D_H;
     // LD_E_L;
     // FARCALL(aReadAnyMail);
-    ReadAnyMail(GBToRAMAddr(sMailboxes + MAIL_STRUCT_LENGTH * b));
+    ReadAnyMail(&msg);
     // RET;
     CloseSRAM();
 }
@@ -146,29 +155,30 @@ void MoveMailFromPCToParty(uint8_t b){
     // LD_HL(sMailboxes);
     // CALL(aAddNTimes);
     // PUSH_HL;
-    struct MailMsg* hl = ((struct MailMsg*)GBToRAMAddr(sMailboxes)) + b;
+    uint8_t* hl = (GBToRAMAddr(sMailboxes + (b * MAIL_STRUCT_LENGTH))) + b;
     // LD_A_addr(wCurPartyMon);
     // LD_BC(MAIL_STRUCT_LENGTH);
     // LD_HL(sPartyMail);
     // CALL(aAddNTimes);
     // LD_D_H;
     // LD_E_L;
-    struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sPartyMail)) + wram->wCurPartyMon;
+    uint8_t* de = (GBToRAMAddr(sPartyMail + (wram->wCurPartyMon * MAIL_STRUCT_LENGTH)));
     // POP_HL;
     // PUSH_HL;
     // LD_BC(MAIL_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(de, hl, sizeof(*de));
+    CopyBytes(de, hl, MAIL_STRUCT_LENGTH);
     // POP_HL;
     // LD_DE(PARTYMON_STRUCT_LENGTH - MON_MOVES);
     // ADD_HL_DE;
+    struct MailMsg mail = LoadMailMsg(hl);
     // LD_D_hl;
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMon1Item);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
     // LD_hl_D;
-    wram->wPartyMon[wram->wCurPartyMon].mon.item = hl->type;
+    gPokemon.partyMon[wram->wCurPartyMon].mon.item = mail.type;
     // CALL(aCloseSRAM);
     CloseSRAM();
     // POP_BC;
@@ -208,7 +218,7 @@ void CheckPokeMail(const char* message){
     // FARCALL(aItemIsMail);
     // LD_A(POKEMAIL_NO_MAIL);
     // IF_NC goto pop_return;
-    if(!ItemIsMail(wram->wPartyMon[wram->wCurPartyMon].mon.item)) {
+    if(!ItemIsMail(gPokemon.partyMon[wram->wCurPartyMon].mon.item)) {
         wram->wScriptVar = POKEMAIL_NO_MAIL;
         return;
     }
@@ -220,11 +230,11 @@ void CheckPokeMail(const char* message){
     // LD_HL(sPartyMail);
     // LD_BC(MAIL_STRUCT_LENGTH);
     // CALL(aAddNTimes);
-    struct MailMsg* de = (struct MailMsg*)GBToRAMAddr(sPartyMail + MAIL_STRUCT_LENGTH * wram->wCurPartyMon);
+    struct MailMsg de = LoadMailMsg(GBToRAMAddr(sPartyMail + MAIL_STRUCT_LENGTH * wram->wCurPartyMon));
     // LD_D_H;
     // LD_E_L;
     uint8_t* tmsg = U82C(message);
-    uint8_t* smsg = de->message;
+    uint8_t* smsg = de.message;
     // POP_HL;
     // POP_BC;
 
@@ -295,14 +305,14 @@ void GivePokeMail(const struct Pokemail* mail){
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // PUSH_AF;
-    uint8_t a = wram->wPartyCount - 1;
+    uint8_t a = gPokemon.partyCount - 1;
     // PUSH_BC;
     // LD_HL(wPartyMon1Item);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
     // POP_BC;
     // LD_hl_B;
-    wram->wPartyMon[a].mon.item = mail->item;
+    gPokemon.partyMon[a].mon.item = mail->item;
     // POP_AF;
     // PUSH_BC;
     // PUSH_AF;
@@ -318,8 +328,8 @@ void GivePokeMail(const struct Pokemail* mail){
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asPartyMail));
     // CALL(aCopyBytes);
-    struct MailMsg* de = (struct MailMsg*)GBToRAMAddr(partyMail);
-    CopyBytes(de->message, wram->wMonMailMessageBuffer, MAIL_MSG_LENGTH + 1);
+    struct MailMsg msg = LoadMailMsg(GBToRAMAddr(partyMail));
+    CopyBytes(msg.message, wram->wMonMailMessageBuffer, MAIL_MSG_LENGTH + 1);
     // POP_AF;
     // PUSH_AF;
     // LD_HL(wPartyMonOTs);
@@ -327,7 +337,7 @@ void GivePokeMail(const struct Pokemail* mail){
     // CALL(aAddNTimes);
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes(de->author, wram->wPartyMonOT[a], NAME_LENGTH - 1);
+    CopyBytes(msg.author, gPokemon.partyMonOT[a], NAME_LENGTH - 1);
     // POP_AF;
     // LD_HL(wPartyMon1ID);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -337,16 +347,17 @@ void GivePokeMail(const struct Pokemail* mail){
     // INC_DE;
     // LD_A_hl;
     // LD_de_A;
-    de->authorID = wram->wPartyMon[a].mon.id;
+    msg.authorID = gPokemon.partyMon[a].mon.id;
     // INC_DE;
     // LD_A_addr(wCurPartySpecies);
     // LD_de_A;
     // INC_DE;
-    de->species = wram->wCurPartySpecies;
+    msg.species = wram->wCurPartySpecies;
     // POP_BC;
     // LD_A_B;
     // LD_de_A;
-    de->type = mail->item;
+    msg.type = mail->item;
+    Serialize_MailMsg(GBToRAMAddr(partyMail), &msg);
     // JP(mCloseSRAM);
     CloseSRAM();
 }
@@ -409,12 +420,12 @@ bool IsAnyMonHoldingMail(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // IF_Z goto no_mons;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return false;
     // LD_E_A;
-    uint8_t e = wram->wPartyCount;
+    uint8_t e = gPokemon.partyCount;
     // LD_HL(wPartyMon1Item);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
 
     do {
     // loop:
@@ -514,12 +525,12 @@ uint8_t* MailboxPC_GetMailAuthor(uint8_t a){
     // LD_A(BANK(sMailboxCount));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asMailboxCount));
-    struct MailMsg* hl = ((struct MailMsg*)GBToRAMAddr(sMailbox1)) + (a - 1);
+    struct MailMsg hl = LoadMailMsg(GBToRAMAddr(sMailbox1 + (a - 1) * MAIL_STRUCT_LENGTH));
     // LD_DE(wStringBuffer2);
     // PUSH_DE;
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer1, hl->author, NAME_LENGTH - 1);
+    CopyBytes(wram->wStringBuffer1, hl.author, NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_de_A;
     wram->wStringBuffer1[NAME_LENGTH - 1] = 0x50;
@@ -736,7 +747,7 @@ static void MailboxPC_Submenu(void){
                     // LD_A_hl;
                     // AND_A_A;
                     // IF_Z goto attach_mail;
-                    if(wram->wPartyMon[wram->wCurPartyMon].mon.item == NO_ITEM)
+                    if(gPokemon.partyMon[wram->wCurPartyMon].mon.item == NO_ITEM)
                         break;
                     // LD_HL(mMailboxPC_MailAlreadyHoldingItemText);
                     // CALL(aPrintText);

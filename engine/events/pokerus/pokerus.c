@@ -9,10 +9,10 @@ void GivePokerusAndConvertBerries(void){
     // CALL(aConvertBerriesToBerryJuice);
     ConvertBerriesToBerryJuice();
     // LD_HL(wPartyMon1PokerusStatus);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_A_addr(wPartyCount);
     // LD_B_A;
-    uint8_t b = wram->wPartyCount;
+    uint8_t b = gPokemon.partyCount;
     // LD_DE(PARTYMON_STRUCT_LENGTH);
 //  Check to see if any of your Pokemon already has Pokerus.
 //  If so, sample its spread through your party.
@@ -35,7 +35,7 @@ void GivePokerusAndConvertBerries(void){
             // LD_A_addr(wPartyCount);
             // CP_A(1);
             // RET_Z ;  // only one mon, nothing to do
-            if(wram->wPartyCount <= 1)
+            if(gPokemon.partyCount <= 1)
                 return;
 
             // LD_C_hl;
@@ -53,7 +53,7 @@ void GivePokerusAndConvertBerries(void){
                     // LD_A_addr(wPartyCount);
                     // CP_A_B;
                     // RET_Z ;  // no more mons
-                    if(wram->wPartyCount == b)
+                    if(gPokemon.partyCount == b)
                         return;
                     // LD_A_L;
                     // SUB_A_E;
@@ -145,7 +145,7 @@ void GivePokerusAndConvertBerries(void){
         return;
     // LD_A_addr(wPartyCount);
     // LD_B_A;
-    b = wram->wPartyCount;
+    b = gPokemon.partyCount;
 
     uint8_t a;
     do {
@@ -158,7 +158,7 @@ void GivePokerusAndConvertBerries(void){
     } while(a >= b);
     // LD_HL(wPartyMon1PokerusStatus);
     // CALL(aGetPartyLocation);  // get pokerus byte of random mon
-    hl = wram->wPartyMon + a;
+    hl = gPokemon.partyMon + a;
     // LD_A_hl;
     // AND_A(0xf0);
     // RET_NZ ;  // if it already has pokerus, do nothing
@@ -208,9 +208,9 @@ void ConvertBerriesToBerryJuice(void){
     if(Random() >= 1 out_of 16)
         return;
     // LD_HL(wPartyMons);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_A_addr(wPartyCount);
-    uint8_t a = wram->wPartyCount;
+    uint8_t a = gPokemon.partyCount;
 
     do {
     // partyMonLoop:

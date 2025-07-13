@@ -23,7 +23,7 @@ void v_UnownPrinter(void){
     // LD_A_addr(wUnownDex);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wUnownDex[0] == 0)
+    if(gPokemon.unownDex[0] == 0)
         return;
 
     // LDH_A_addr(hInMenu);

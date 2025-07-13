@@ -55,7 +55,7 @@ static const txt_cmd_s MagikarpGuruMeasureText[] = {
     // LD_D_H;
     // LD_E_L;
     // POP_HL;
-    struct PartyMon* mon = wram->wPartyMon + res.a;
+    struct PartyMon* mon = gPokemon.partyMon + res.a;
     // LD_BC(MON_ID);
     // ADD_HL_BC;
     // LD_B_H;
@@ -73,7 +73,7 @@ static const txt_cmd_s MagikarpGuruMeasureText[] = {
 // Did we beat the record?
     // LD_HL(wMagikarpLength);
     // LD_DE(wBestMagikarpLengthFeet);
-    uint16_t bestLength = (wram->wBestMagikarpLengthFeet << 8) | (wram->wBestMagikarpLengthInches);
+    uint16_t bestLength = (gPokemon.bestMagikarpLengthFeet << 8) | (gPokemon.bestMagikarpLengthInches);
     // LD_C(2);
     // CALL(aCompareBytes);
     // IF_NC goto not_long_enough;
@@ -83,17 +83,17 @@ static const txt_cmd_s MagikarpGuruMeasureText[] = {
         // LD_DE(wBestMagikarpLengthFeet);
         // LD_A_hli;
         // LD_de_A;
-        wram->wBestMagikarpLengthFeet = LOW(wram->wMagikarpLength);
+        gPokemon.bestMagikarpLengthFeet = LOW(wram->wMagikarpLength);
         // INC_DE;
         // LD_A_hl;
         // LD_de_A;
         // INC_DE;
-        wram->wBestMagikarpLengthInches = HIGH(wram->wMagikarpLength);
+        gPokemon.bestMagikarpLengthInches = HIGH(wram->wMagikarpLength);
         // LD_A_addr(wCurPartyMon);
         // LD_HL(wPartyMonOTs);
         // CALL(aSkipNames);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wMagikarpRecordHoldersName, wram->wPartyMonOT[res.a], NAME_LENGTH);
+        CopyBytes(gPokemon.magikarpRecordHoldersName, gPokemon.partyMonOT[res.a], NAME_LENGTH);
         // LD_A(MAGIKARPLENGTH_BEAT_RECORD);
         // LD_addr_A(wScriptVar);
         wram->wScriptVar = MAGIKARPLENGTH_BEAT_RECORD;
@@ -390,7 +390,7 @@ void MagikarpHouseSign(void){
     // LD_addr_A(wMagikarpLength);
     // LD_A_addr(wBestMagikarpLengthInches);
     // LD_addr_A(wMagikarpLength + 1);
-    wram->wMagikarpLength = (wram->wBestMagikarpLengthFeet) | (wram->wBestMagikarpLengthInches << 8);
+    wram->wMagikarpLength = (gPokemon.bestMagikarpLengthFeet) | (gPokemon.bestMagikarpLengthInches << 8);
     // CALL(aPrintMagikarpLength);
     PrintMagikarpLength();
     // LD_HL(mMagikarpHouseSign_KarpGuruRecordText);

@@ -2880,8 +2880,8 @@ void Script_checkpoke(script_s* s, species_t a){
     // LD_HL(wPartySpecies);
     // LD_DE(1);
     // CALL(aIsInArray);
-    for(uint32_t i = 0; i < lengthof(wram->wPartySpecies); ++i) {
-        if(wram->wPartySpecies[i] == a) {
+    for(uint32_t i = 0; i < lengthof(gPokemon.partySpecies); ++i) {
+        if(gPokemon.partySpecies[i] == a) {
             wram->wScriptVar = TRUE;
             return;
         }

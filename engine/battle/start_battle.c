@@ -42,7 +42,7 @@ void FindFirstAliveMonAndStartBattle(void){
     // LD_HL(wPartyMon1HP);
     // LD_DE(PARTYMON_STRUCT_LENGTH - 1);
 
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     uint8_t lvl = 1;
     for(uint32_t i = 0; i < PARTY_LENGTH; ++i, ++hl) {
     // loop:

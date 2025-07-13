@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "search.h"
 #include "../../home/sram.h"
+#include "../../util/serialize.h"
 
 //  Check if the player owns all three legendary beasts.
 //  They must exist in either party or PC, and have the player's OT and ID.
@@ -66,16 +67,16 @@ bool CheckOwnMonAnywhere(species_t species){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return false;
 
     // LD_D_A;
-    uint8_t d = wram->wPartyCount;
+    uint8_t d = gPokemon.partyCount;
     // LD_E(0);
     // LD_HL(wPartyMon1Species);
-    const struct PartyMon* hl = wram->wPartyMon;
+    const struct PartyMon* hl = gPokemon.partyMon;
     // LD_BC(wPartyMonOTs);
-    const uint8_t (*ots)[NAME_LENGTH] = wram->wPartyMonOT;
+    const uint8_t (*ots)[NAME_LENGTH] = gPokemon.partyMonOT;
 
 // Run CheckOwnMon on each Pokémon in the party.
 
@@ -101,17 +102,19 @@ bool CheckOwnMonAnywhere(species_t species){
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBoxCount));
+    struct Box box;
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // LD_A_addr(sBoxCount);
     // AND_A_A;
     // IF_Z goto boxes;
 
-    d = gb_read(sBoxCount);
+    d = box.count;
     if(d != 0) {
         // LD_D_A;
         // LD_HL(sBoxMon1Species);
-        struct BoxMon* bmon = GBToRAMAddr(sBoxMon1);
+        struct BoxMon* bmon = box.mons;
         // LD_BC(sBoxMonOTs);
-        uint8_t (*ots)[NAME_LENGTH] = GBToRAMAddr(sBoxMonOTs);
+        uint8_t (*ots)[NAME_LENGTH] = box.monOT;
 
         do {
         // openboxmon:
@@ -172,12 +175,13 @@ bool CheckOwnMonAnywhere(species_t species){
         // LD_H_hl;
         // LD_L_A;
         uint8_t* boxPtr = GBToRAMAddr(boxAddr & 0xffff);
+        Deserialize_Box(&box, boxPtr);
 
     // Number of monsters in the box
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto loopbox;
-        if(*boxPtr == 0)
+        if(box.count == 0)
             continue;
 
         // PUSH_BC;
@@ -187,11 +191,11 @@ bool CheckOwnMonAnywhere(species_t species){
         // ADD_HL_DE;
         // LD_D_H;
         // LD_E_L;
-        const struct BoxMon* bmon = (const struct BoxMon*)(boxPtr + (sBoxMons - sBoxCount));
+        const struct BoxMon* bmon = box.mons;
         // POP_HL;
         // PUSH_DE;
         // LD_DE(sBoxMonOTs - sBoxCount);
-        const uint8_t* ots = boxPtr + (sBoxMonOTs - sBoxCount);
+        const uint8_t* ots = box.monOT[0];
         // ADD_HL_DE;
         // LD_B_H;
         // LD_C_L;

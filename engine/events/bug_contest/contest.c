@@ -8,7 +8,7 @@
 void GiveParkBalls(void){
     // XOR_A_A;
     // LD_addr_A(wContestMon);
-    wram->wContestMon.mon.species = 0;
+    gPokemon.contestMon.mon.species = 0;
     // LD_A(BUG_CONTEST_BALLS);
     // LD_addr_A(wParkBallsRemaining);
     wram->wParkBallsRemaining = BUG_CONTEST_BALLS;

@@ -380,7 +380,7 @@ void GetNickname(const uint8_t* hl, uint8_t a){
 }
 
 uint8_t* GetCurNickname(void){
-    CopyBytes(wram->wStringBuffer1, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wStringBuffer1, gPokemon.partyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
     CorrectNickErrors(wram->wStringBuffer1);
     return wram->wStringBuffer1;
 }

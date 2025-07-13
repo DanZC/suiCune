@@ -43,7 +43,7 @@ void ShowPlayerMonsRemaining(void){
     // LD_HL(wPartyMon1HP);
     // LD_DE(wPartyCount);
     // CALL(aStageBallTilesData);
-    StageBallTilesData(wram->wPartyCount, wram->wPartyMon);
+    StageBallTilesData(gPokemon.partyCount, gPokemon.partyMon);
 // ldpixel wPlaceBallsX, 12, 12
     // LD_A(12 * 8);
     uint8_t a = 12 * 8;
@@ -270,7 +270,7 @@ void LinkBattle_TrainerHuds(void){
     // LD_HL(wPartyMon1HP);
     // LD_DE(wPartyCount);
     // CALL(aStageBallTilesData);
-    StageBallTilesData(wram->wPartyCount, wram->wPartyMon);
+    StageBallTilesData(gPokemon.partyCount, gPokemon.partyMon);
     // LD_HL(wPlaceBallsX);
     // LD_A(10 * 8);
     // LD_hli_A;

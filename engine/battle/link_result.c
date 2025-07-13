@@ -34,7 +34,7 @@ static u8_flag_s DetermineLinkBattleResult_BothSides_CheckNumberMonsAtFullHealth
     // LD_HL(wPartyMon1HP);
     // CALL(aDetermineLinkBattleResult_CheckFaintedOrFullHealth);
     // IF_NZ goto finish;  // we have a pokemon that's neither fainted nor at full health
-    if(!DetermineLinkBattleResult_CheckFaintedOrFullHealth(wram->wPartyMon)) {
+    if(!DetermineLinkBattleResult_CheckFaintedOrFullHealth(gPokemon.partyMon)) {
     // finish:
         // LD_HL(wOTPartyMon1HP);
         // CALL(aDetermineLinkBattleResult_CheckFaintedOrFullHealth);
@@ -149,7 +149,7 @@ void DetermineLinkBattleResult(void){
     UpdateEnemyMonInParty();
     // LD_HL(wPartyMon1HP);
     // CALL(aDetermineLinkBattleResult_CountMonsRemaining);
-    uint8_t pmons = DetermineLinkBattleResult_CountMonsRemaining(wram->wPartyMon);
+    uint8_t pmons = DetermineLinkBattleResult_CountMonsRemaining(gPokemon.partyMon);
     // PUSH_BC;
     // LD_HL(wOTPartyMon1HP);
     // CALL(aDetermineLinkBattleResult_CountMonsRemaining);
@@ -177,7 +177,7 @@ void DetermineLinkBattleResult(void){
         // LD_HL(wPartyMon1HP);
         // CALL(aDetermineLinkBattleResult_CalcPercentHPRemaining);
         // PUSH_DE;
-        uint16_t pmonHP = DetermineLinkBattleResult_CalcPercentHPRemaining(wram->wPartyMon);
+        uint16_t pmonHP = DetermineLinkBattleResult_CalcPercentHPRemaining(gPokemon.partyMon);
         // LD_HL(wOTPartyMon1HP);
         // CALL(aDetermineLinkBattleResult_CalcPercentHPRemaining);
         uint16_t otmonHP = DetermineLinkBattleResult_CalcPercentHPRemaining(wram->wOTPartyMon);

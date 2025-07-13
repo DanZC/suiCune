@@ -5,6 +5,7 @@
 #include "../../home/sram.h"
 #include "../../home/names.h"
 #include "../../mobile/mobile_41.h"
+#include "../../util/serialize.h"
 #include "../../data/text/common.h"
 
 static bool CheckForLuckyNumberWinners_CompareLuckyNumberToMonID(struct BoxMon* mon){
@@ -137,6 +138,7 @@ void CheckForLuckyNumberWinners(void){
         text_far(v_LuckyNumberMatchPCText)
         text_end
     };
+    struct Box box;
     // XOR_A_A;
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = 0x0;
@@ -145,14 +147,14 @@ void CheckForLuckyNumberWinners(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_D_A;
-    uint8_t d = wram->wPartyCount;
+    uint8_t d = gPokemon.partyCount;
     // LD_HL(wPartyMon1ID);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_BC(wPartySpecies);
-    species_t* bc = wram->wPartySpecies;
+    species_t* bc = gPokemon.partySpecies;
 
     do {
     // PartyLoop:
@@ -175,16 +177,17 @@ void CheckForLuckyNumberWinners(void){
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBox));
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // LD_A_addr(sBoxCount);
     // AND_A_A;
     // IF_Z goto SkipOpenBox;
     if(gb_read(sBoxCount) != 0) {
         // LD_D_A;
-        uint8_t d = gb_read(sBoxCount);
+        uint8_t d = box.count;
         // LD_HL(sBoxMon1ID);
-        struct BoxMon* mon = (struct BoxMon*)GBToRAMAddr(sBoxMon1);
+        struct BoxMon* mon = box.mons;
         // LD_BC(sBoxSpecies);
-        species_t* species = (species_t*)GBToRAMAddr(sBoxSpecies);
+        species_t* species = box.species;
 
         do {
         // OpenBoxLoop:
@@ -234,10 +237,11 @@ void CheckForLuckyNumberWinners(void){
         // LD_A_hli;
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(BoxBankAddresses[c]));
+        Deserialize_Box(&box, GBToRAMAddr((uint16_t)BoxBankAddresses[c]));
         // LD_A_hli;
         // LD_H_hl;
         // LD_L_A;  // hl now contains the address of the loaded box in SRAM
-        uint8_t count = gb_read(BoxBankAddresses[c] & 0xffff);
+        uint8_t count = box.count;
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto SkipBox;  // no mons in this box
@@ -247,10 +251,10 @@ void CheckForLuckyNumberWinners(void){
         // LD_B_H;
         // LD_C_L;
         // INC_BC;
-        species_t* bc = (species_t*)GBToRAMAddr((BoxBankAddresses[c] & 0xffff) + (sBox1Species - sBox1));
+        species_t* bc = box.species;
         // LD_DE(sBoxMon1ID - sBox);
         // ADD_HL_DE;
-        struct BoxMon* hl = (struct BoxMon*)GBToRAMAddr((BoxBankAddresses[c] & 0xffff) + (sBoxMon1 - sBox));
+        struct BoxMon* hl = box.mons;
         // LD_D_A;
         uint8_t d = count;
 

@@ -32,7 +32,7 @@ bool v_FindPartyMonThatSpeciesYourTrainerID(species_t b){
     // LD_HL(wPartyMon1ID);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
-    const struct PartyMon* hl = wram->wPartyMon + res.a;
+    const struct PartyMon* hl = gPokemon.partyMon + res.a;
     // LD_A_addr(wPlayerID);
     // CP_A_hl;
     // IF_NZ goto nope;
@@ -133,7 +133,7 @@ u8_flag_s FindThatSpecies(species_t b){
     // LD_C(-1);
     uint8_t c = (uint8_t)-1;
     // LD_HL(wPartySpecies);
-    species_t* hl = wram->wPartySpecies;
+    species_t* hl = gPokemon.partySpecies;
     species_t a;
     do {
     // loop:

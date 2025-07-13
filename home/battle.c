@@ -9,7 +9,7 @@
 #include "../engine/battle/core.h"
 
 //  Get the location of parameter a from wCurPartyMon in hl
-//  DEPRECATED: Do wram->wPartyMon + wram->wCurPartyMon and get field instead.
+//  DEPRECATED: Do gPokemon.partyMon + wram->wCurPartyMon and get field instead.
 uint16_t GetPartyParamLocation(uint8_t a){
     // PUSH_BC;
     // LD_HL(wPartyMons);
@@ -86,7 +86,7 @@ struct PartyMon* UserPartyMon(void){
     }
 
     // JR(mBattlePartyAttr);
-    return wram->wPartyMon + wram->wCurPartyMon;
+    return gPokemon.partyMon + wram->wCurPartyMon;
 }
 
 // DEPRECATED: Use OpponentPartyMon and get its field instead.
@@ -115,7 +115,7 @@ struct PartyMon* OpponentPartyMon(void){
     }
 
     // JR(mBattlePartyAttr);
-    return wram->wPartyMon + wram->wCurPartyMon;
+    return gPokemon.partyMon + wram->wCurPartyMon;
 }
 
 //  Get attribute a from the party struct of the active battle mon.
@@ -205,7 +205,7 @@ void UpdateBattleMon(uint8_t a){
     // LD_D_H;
     // LD_E_L;
     // uint16_t de = GetPartyLocation(wPartyMon1Level, a);
-    struct PartyMon* de = wram->wPartyMon + a;
+    struct PartyMon* de = gPokemon.partyMon + a;
 
     // LD_HL(wBattleMonLevel);
     // LD_BC(wBattleMonMaxHP - wBattleMonLevel);

@@ -413,7 +413,7 @@ static const char HatchSoonString[] = "▶HATCH SOON!";
                 // LD_HL(wPartyMon1Happiness);
                 // CALL(aAddNTimes);
                 // LD_hl(1);
-                wram->wPartyMon[wram->wCurPartyMon].mon.happiness = 1;
+                gPokemon.partyMon[wram->wCurPartyMon].mon.happiness = 1;
                 // LD_A(1);
                 // LD_addr_A(wTempMonHappiness);
                 wram->wTempMon.mon.happiness = 1;
@@ -678,7 +678,7 @@ static void StatsScreen_JoypadAction(uint8_t a){
 
     // next_mon:
         // LD_B_A;
-        uint8_t b = (wram->wMonType == PARTYMON)? wram->wPartyCount: wram->wOTPartyCount;
+        uint8_t b = (wram->wMonType == PARTYMON)? gPokemon.partyCount: wram->wOTPartyCount;
         // LD_A_addr(wCurPartyMon);
         // INC_A;
         // CP_A_B;
@@ -1464,7 +1464,7 @@ static u8_flag_s StatsScreen_GetAnimationParam(void){
             // CALL(aAddNTimes);
             // LD_B_H;
             // LD_C_L;
-            bc = wram->wPartyMon + wram->wCurPartyMon;
+            bc = gPokemon.partyMon + wram->wCurPartyMon;
             // goto CheckEggFaintedFrzSlp;
         // CheckEggFaintedFrzSlp:
             // LD_A_addr(wCurPartySpecies);
@@ -1840,7 +1840,7 @@ static uint8_t* GetNicknamenamePointer(void){
     // LD_L_A;
     switch(wram->wMonType) {
         case PARTYMON:
-            return wram->wPartyMonOT[wram->wCurPartyMon];
+            return gPokemon.partyMonOT[wram->wCurPartyMon];
         case OTPARTYMON:
             return wram->wOTPartyMonOT[wram->wCurPartyMon];
         case BOXMON: {
@@ -1872,7 +1872,7 @@ static uint8_t* GetNicknamenamePointer2(void){
     // LD_L_A;
     switch(wram->wMonType) {
         case PARTYMON:
-            return wram->wPartyMonNickname[wram->wCurPartyMon];
+            return gPokemon.partyMonNickname[wram->wCurPartyMon];
         case OTPARTYMON:
             return wram->wOTPartyMonNickname[wram->wCurPartyMon];
         case BOXMON: {

@@ -345,7 +345,7 @@ bool Function4a9d7(void){
     // LD_DE(wMobileParticipant1Nickname);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes(gMobileParticipant1Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[0]], MON_NAME_LENGTH);
+    CopyBytes(gMobileParticipant1Nickname, gPokemon.partyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[0]], MON_NAME_LENGTH);
     // LD_A_addr(wd003);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
@@ -354,7 +354,7 @@ bool Function4a9d7(void){
     // LD_DE(wMobileParticipant2Nickname);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes(gMobileParticipant2Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[1]], MON_NAME_LENGTH);
+    CopyBytes(gMobileParticipant2Nickname, gPokemon.partyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[1]], MON_NAME_LENGTH);
     // LD_A_addr(wd004);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
@@ -363,7 +363,7 @@ bool Function4a9d7(void){
     // LD_DE(wMobileParticipant3Nickname);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes(gMobileParticipant3Nickname, wram->wPartyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[2]], MON_NAME_LENGTH);
+    CopyBytes(gMobileParticipant3Nickname, gPokemon.partyMonNickname[wram->wMobileAdapterPlayerSelectionBuffer[2]], MON_NAME_LENGTH);
     // LD_HL(mMobileUseTheseThreeMonText);
     // CALL(aPrintText);
     PrintText(MobileUseTheseThreeMonText);
@@ -557,11 +557,11 @@ void Function4aad3(void){
     // LD_A_hli;
     // AND_A_A;
     // RET_Z ;  // Nothing in your party
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
 
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // XOR_A_A;
     // LDH_addr_A(hObjectStructIndex);
     hram.hObjectStructIndex = 0x0;
@@ -619,7 +619,7 @@ bool Function4ab06(void){
 
 // NotFainted:
     // RET;
-    return wram->wPartyMon[wram->wCurPartyMon].HP == 0;
+    return gPokemon.partyMon[wram->wCurPartyMon].HP == 0;
 }
 
 u8_flag_s Function4ab1a(void){
@@ -659,7 +659,7 @@ u8_flag_s Function4ab1a(void){
         wram->wPartyMenuCursor = wram->wMenuCursorY;
         // CP_A_B;
         // IF_Z goto asm_4ab7e;
-        if(wram->wMenuCursorY == wram->wPartyCount + 1) {
+        if(wram->wMenuCursorY == gPokemon.partyCount + 1) {
         // asm_4ab7e:
             // LD_A(0x1);
             // LD_addr_A(wd018);
@@ -691,7 +691,7 @@ u8_flag_s Function4ab1a(void){
         // ADD_HL_BC;
         // LD_A_hl;
         // LD_addr_A(wCurPartySpecies);
-        wram->wCurPartySpecies = wram->wPartySpecies[wram->wCurPartyMon];
+        wram->wCurPartySpecies = gPokemon.partySpecies[wram->wCurPartyMon];
         // LD_DE(SFX_READ_TEXT_2);
         // CALL(aPlaySFX);
         PlaySFX(SFX_READ_TEXT_2);
@@ -777,7 +777,7 @@ bool Function4abc3(uint8_t a){
         // LD_A_addr(wPartyCount);
         // INC_A;
         // LD_addr_A(wMenuCursorY);
-        wram->wMenuCursorY = wram->wPartyCount + 1;
+        wram->wMenuCursorY = gPokemon.partyCount + 1;
         // LD_A(0x1);
         // LD_addr_A(wMenuCursorX);
         wram->wMenuCursorX = 0x1;
@@ -795,7 +795,7 @@ bool Function4abc3(uint8_t a){
             // LD_A_addr(wPartyCount);
             // INC_A;
             // LD_addr_A(wMenuCursorY);
-            wram->wMenuCursorY = wram->wPartyCount + 1;
+            wram->wMenuCursorY = gPokemon.partyCount + 1;
         }
         // goto asm_4ac29;
     }
@@ -812,7 +812,7 @@ bool Function4abc3(uint8_t a){
         // LD_A_addr(wMenuCursorY);
         // CP_A_B;
         // IF_NZ goto asm_4ac29;
-        if(wram->wMenuCursorY == wram->wPartyCount + 2) {
+        if(wram->wMenuCursorY == gPokemon.partyCount + 2) {
             // LD_A(0x1);
             // LD_addr_A(wMenuCursorY);
             wram->wMenuCursorY = 0x1;
@@ -832,7 +832,7 @@ bool Function4abc3(uint8_t a){
         // INC_A;
         // CP_A_B;
         // IF_NZ goto asm_4ac29;
-        if(wram->wMenuCursorY == wram->wPartyCount + 1) {
+        if(wram->wMenuCursorY == gPokemon.partyCount + 1) {
             // LD_A_addr(wMenuCursorX);
             // CP_A(0x1);
             // IF_Z goto asm_4ac26;
@@ -865,14 +865,14 @@ bool Function4abc3(uint8_t a){
     // DEC_A;
     // IF_NZ goto asm_4ac3b;
     // LD_hl(0x7f);
-    *(coord(6, 1, wram->wTilemap) + (0x28 * wram->wPartyCount)) = 0x7f;
+    *(coord(6, 1, wram->wTilemap) + (0x28 * gPokemon.partyCount)) = 0x7f;
     // LD_A_addr(wMenuCursorY);
     // LD_B_A;
     // LD_A_addr(wPartyCount);
     // INC_A;
     // CP_A_B;
     // IF_Z goto asm_4ac54;
-    if(wram->wMenuCursorY != wram->wPartyCount + 1) {
+    if(wram->wMenuCursorY != gPokemon.partyCount + 1) {
         // LD_A(0x1);
         // LD_addr_A(wMenuCursorX);
         wram->wMenuCursorX = 0x1;
@@ -1231,7 +1231,7 @@ void Function4adf7(void){
     // LD_A_addr(wPartyCount);
     // INC_A;
     // LD_addr_A(wMenuCursorY);
-    wram->wMenuCursorY = wram->wPartyCount + 1;
+    wram->wMenuCursorY = gPokemon.partyCount + 1;
     // LD_A(0x1);
     // LD_addr_A(wMenuCursorX);
     wram->wMenuCursorX = 0x1;

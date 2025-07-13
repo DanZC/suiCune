@@ -40,12 +40,14 @@ enum {
     STRUC_BOXMON,
     STRUC_PARTYMON,
     STRUC_NICKNAMEDMON,
+    STRUC_TRADEMON,
     STRUC_ROAMER,
     STRUC_BATTLETOWERPARTYMON,
     STRUC_BATTLETOWERDATA,
     STRUC_OBJECT,
     STRUC_MAPOBJECT,
     STRUC_BOX,
+    STRUC_MAILMSG,
     STRUC_OPTIONSDATA,
     STRUC_CURMAPDATA,
     STRUC_PLAYERDATA,
@@ -99,6 +101,19 @@ const struct SerialField Struc_PartyMon[] = {
 const struct SerialField Struc_NicknamedMon[] = {
     FLD_STR(STRUC_PARTYMON, pmon),
     FLD_ARR_(TY_U8, nickname),
+};
+#undef FLD_TYPE
+
+#define FLD_TYPE struct TradeMon
+const struct SerialField Struc_TradeMon[] = {
+    FLD(TY_SPECIES, species),
+    FLD_ARR_(TY_U8, speciesName),
+    FLD_ARR_(TY_U8, nickname),
+    FLD_ARR_(TY_U8, senderName),
+    FLD_ARR_(TY_U8, otName),
+    FLD(TY_U16LE, dvs),
+    FLD(TY_U16LE, id),
+    FLD(TY_U8, caughtData),
 };
 #undef FLD_TYPE
 
@@ -193,6 +208,17 @@ const struct SerialField Struc_Box[] = {
     FLD_STR_ARR_(STRUC_BOXMON, mons),
     FLD_ARR(TY_U8, monOT, MONS_PER_BOX * NAME_LENGTH),
     FLD_ARR(TY_U8, monNicknames, MONS_PER_BOX * MON_NAME_LENGTH),
+};
+#undef FLD_TYPE
+
+#define FLD_TYPE struct MailMsg
+const struct SerialField Struc_MailMsg[] = {
+    FLD_ARR_(TY_U8, message),
+    FLD_ARR_(TY_U8, author),
+    FLD(TY_U16LE, nationality),
+    FLD(TY_U16LE, authorID),
+    FLD(TY_SPECIES, species),
+    FLD(TY_U8, type),
 };
 #undef FLD_TYPE
 
@@ -640,12 +666,14 @@ const struct SerialStruct Structs[] = {
     serial_struct(STRUC_BOXMON, BoxMon),
     serial_struct(STRUC_PARTYMON, PartyMon),
     serial_struct(STRUC_NICKNAMEDMON, NicknamedMon),
+    serial_struct(STRUC_TRADEMON, TradeMon),
     serial_struct(STRUC_ROAMER, Roamer),
     serial_struct(STRUC_BATTLETOWERPARTYMON, BattleTowerPartyMon),
     serial_struct(STRUC_BATTLETOWERDATA, BattleTowerData),
     serial_struct(STRUC_OBJECT, Object),
     serial_struct(STRUC_MAPOBJECT, MapObject),
     serial_struct(STRUC_BOX, Box),
+    serial_struct(STRUC_MAILMSG, MailMsg),
     serial_struct(STRUC_OPTIONSDATA, OptionsData),
     serial_struct(STRUC_CURMAPDATA, CurMapData),
     serial_struct(STRUC_PLAYERDATA, PlayerData),
@@ -772,6 +800,10 @@ uint8_t* Serialize_NicknamedMon(uint8_t* dest, const struct NicknamedMon* mon) {
     return Serialize_Struct(dest, Structs + (STRUC_NICKNAMEDMON), mon);
 }
 
+uint8_t* Serialize_TradeMon(uint8_t* dest, const struct TradeMon* mon) {
+    return Serialize_Struct(dest, Structs + (STRUC_TRADEMON), mon);
+}
+
 uint8_t* Serialize_Roamer(uint8_t* dest, const struct Roamer* roamer) {
     return Serialize_Struct(dest, Structs + (STRUC_ROAMER), roamer);
 }
@@ -800,6 +832,10 @@ uint8_t* Serialize_MapObject(uint8_t* dest, const struct MapObject* bc) {
 
 uint8_t* Serialize_Box(uint8_t* dest, const struct Box* box) {
     return Serialize_Struct(dest, Structs + (STRUC_BOX), box);
+}
+
+uint8_t* Serialize_MailMsg(uint8_t* dest, const struct MailMsg* mail) {
+    return Serialize_Struct(dest, Structs + (STRUC_MAILMSG), mail);
 }
 
 uint8_t* Serialize_OptionsData(uint8_t* dest, const struct OptionsData* data) {
@@ -935,6 +971,10 @@ const uint8_t* Deserialize_NicknamedMon(struct NicknamedMon* mon, const uint8_t*
     return Deserialize_Struct(mon, Structs + STRUC_NICKNAMEDMON, src);
 }
 
+const uint8_t* Deserialize_TradeMon(struct TradeMon* mon, const uint8_t* src) {
+    return Deserialize_Struct(mon, Structs + STRUC_TRADEMON, src);
+}
+
 const uint8_t* Deserialize_Roamer(struct Roamer* roamer, const uint8_t* src) {
     return Deserialize_Struct(roamer, Structs + STRUC_ROAMER, src);
 }
@@ -963,6 +1003,10 @@ const uint8_t* Deserialize_MapObject(struct MapObject* bc, const uint8_t* src) {
 
 const uint8_t* Deserialize_Box(struct Box* box, const uint8_t* src) {
     return Deserialize_Struct(box, Structs + STRUC_BOX, src);
+}
+
+const uint8_t* Deserialize_MailMsg(struct MailMsg* mail, const uint8_t* src) {
+    return Deserialize_Struct(mail, Structs + STRUC_MAILMSG, src);
 }
 
 const uint8_t* Deserialize_OptionsData(struct OptionsData* data, const uint8_t* src) {
@@ -1278,12 +1322,64 @@ quit:
     return result;
 }
 
+int Test_Serialize_Box(void) {
+    int result = 0;
+    struct Box data = {0};
+    uint8_t buffer[sBoxEnd - sBox] = {0};
+    OpenSRAM(MBANK(asBox));
+
+    const uint32_t size = sBoxEnd - sBox;
+    const uint8_t* sram = GBToRAMAddr(sBox);
+    const uint8_t* start = sram;
+    const uint8_t* end = Deserialize_Box(&data, start);
+    if(end - start != size) {
+        fprintf(stderr, "[%s - FAILED] Failed to deserialize box data. Expected size %d, got %d\n",
+            __func__,
+            size,
+            (int)(end - start));
+        result = -1;
+        goto quit;
+    }
+    
+    start = buffer;
+    end = Serialize_Box(buffer, &data);
+    if(end - start != size) {
+        fprintf(stderr, "[%s - FAILED] Failed to serialize box data. Expected size %d, got %d\n",
+            __func__,
+            size,
+            (int)(end - start));
+        result = -1;
+        goto quit;
+    }
+
+    if(memcmp(buffer, sram, size) != 0) {
+        fprintf(stderr, "[%s - FAILED] Failed to produce matching serialized box data\n",
+            __func__);
+        FILE* f;
+        f = fopen("box_data_gen.bin", "wb");
+        fwrite(buffer, 1, size, f);
+        fclose(f);
+        f = fopen("box_data_base.bin", "wb");
+        fwrite(sram, 1, size, f);
+        fclose(f);
+        result = -1;
+        goto quit;
+    }
+
+    printf("[%s - SUCCESS]\n", __func__);
+
+quit:
+    CloseSRAM();
+    return result;
+}
+
 int Test_Serialization(void) {
     int res = 0;
     res |= Test_Serialize_PlayerData();
     res |= Test_Serialize_PokemonData();
     res |= Test_Serialize_CurMapData();
     res |= Test_Serialize_OptionsData();
+    res |= Test_Serialize_Box();
     if(res < 0)
         return FALSE;
     return TRUE;

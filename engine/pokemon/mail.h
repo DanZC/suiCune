@@ -1,3 +1,4 @@
+struct MailMsg LoadMailMsg(uint8_t* ptr);
 bool SendMailToPC(uint8_t b);
 void DeleteMailFromPC(uint8_t b);
 void ReadMailMessage(uint8_t b);

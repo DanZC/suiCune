@@ -698,7 +698,7 @@ void UseItem(void){
             // LD_A_addr(wPartyCount);
             // AND_A_A;
             // IF_Z goto NoPokemon;
-            if(wram->wPartyCount == 0){
+            if(gPokemon.partyCount == 0){
             // NoPokemon:
                 // LD_HL(mYouDontHaveAMonText);
                 // CALL(aPack_PrintTextNoScroll);
@@ -844,7 +844,7 @@ void GiveItem(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // JP_Z (mGiveItem_NoPokemon);
-    if(wram->wPartyCount == 0){
+    if(gPokemon.partyCount == 0){
     // NoPokemon:
         // LD_HL(mYouDontHaveAMonText);
         // CALL(aPack_PrintTextNoScroll);

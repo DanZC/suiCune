@@ -7,10 +7,10 @@
 
 void GetFirstPokemonHappiness(void){
     // LD_HL(wPartyMon1Happiness);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // LD_DE(wPartySpecies);
-    species_t* de = wram->wPartySpecies;
+    species_t* de = gPokemon.partySpecies;
 
     while(*de == EGG) {
     // loop:
@@ -43,12 +43,12 @@ void CheckFirstMonIsEgg(void){
     // LD_A(TRUE);
     // IF_Z goto egg;
     // XOR_A_A;
-    wram->wScriptVar = (wram->wPartySpecies[0] == EGG)? TRUE: FALSE;
+    wram->wScriptVar = (gPokemon.partySpecies[0] == EGG)? TRUE: FALSE;
 
 // egg:
     // LD_addr_A(wScriptVar);
     // CALL(aGetPokemonName);
-    GetPokemonName(wram->wPartySpecies[0]);
+    GetPokemonName(gPokemon.partySpecies[0]);
     // JP(mCopyPokemonName_Buffer1_Buffer3);
     return CopyPokemonName_Buffer1_Buffer3();
 }
@@ -65,7 +65,7 @@ void ChangeHappiness(uint8_t c){
     // LD_A_hl;
     // CP_A(EGG);
     // RET_Z ;
-    if(wram->wPartySpecies[wram->wCurPartyMon] == EGG)
+    if(gPokemon.partySpecies[wram->wCurPartyMon] == EGG)
         return;
 
     // PUSH_BC;
@@ -77,7 +77,7 @@ void ChangeHappiness(uint8_t c){
 
     // LD_D_H;
     // LD_E_L;
-    struct PartyMon* const de = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* const de = gPokemon.partyMon + wram->wCurPartyMon;
 
     uint8_t e;
     // PUSH_DE;
@@ -175,14 +175,14 @@ void StepHappiness(void){
     // LD_A_de;
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount != 0)
+    if(gPokemon.partyCount != 0)
         return;
 
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_HL(wPartyMon1Happiness);
-    struct PartyMon* hl = wram->wPartyMon;
-    species_t* de = wram->wPartySpecies;
+    struct PartyMon* hl = gPokemon.partyMon;
+    species_t* de = gPokemon.partySpecies;
 
     do {
     // loop:
@@ -224,11 +224,11 @@ void DayCareStep(void){
     // LD_A_addr(wDayCareMan);
     // BIT_A(DAYCAREMAN_HAS_MON_F);
     // IF_Z goto day_care_lady;
-    if(bit_test(wram->wDayCareMan, DAYCAREMAN_HAS_MON_F)){
+    if(bit_test(gPokemon.dayCareMan, DAYCAREMAN_HAS_MON_F)){
         // LD_A_addr(wBreedMon1Level);  // level
         // CP_A(MAX_LEVEL);
         // IF_NC goto day_care_lady;
-        if(wram->wBreedMon1.level < MAX_LEVEL){
+        if(gPokemon.breedMon1.level < MAX_LEVEL){
             // LD_HL(wBreedMon1Exp + 2);  // exp
             // INC_hl;
             // IF_NZ goto day_care_lady;
@@ -242,7 +242,7 @@ void DayCareStep(void){
             // IF_C goto day_care_lady;
             // LD_A(HIGH(MAX_DAY_CARE_EXP >> 8));
             // LD_hl_A;
-            IncBreedMonExp(wram->wBreedMon1.exp);
+            IncBreedMonExp(gPokemon.breedMon1.exp);
         }
     }
 
@@ -250,11 +250,11 @@ void DayCareStep(void){
     // LD_A_addr(wDayCareLady);
     // BIT_A(DAYCARELADY_HAS_MON_F);
     // IF_Z goto check_egg;
-    if(bit_test(wram->wDayCareLady, DAYCARELADY_HAS_MON_F)){
+    if(bit_test(gPokemon.dayCareLady, DAYCARELADY_HAS_MON_F)){
         // LD_A_addr(wBreedMon2Level);  // level
         // CP_A(MAX_LEVEL);
         // IF_NC goto check_egg;
-        if(wram->wBreedMon2.level < MAX_LEVEL){
+        if(gPokemon.breedMon2.level < MAX_LEVEL){
             // LD_HL(wBreedMon2Exp + 2);  // exp
             // INC_hl;
             // IF_NZ goto check_egg;
@@ -268,7 +268,7 @@ void DayCareStep(void){
             // IF_C goto check_egg;
             // LD_A(HIGH(MAX_DAY_CARE_EXP >> 8));
             // LD_hl_A;
-            IncBreedMonExp(wram->wBreedMon2.exp);
+            IncBreedMonExp(gPokemon.breedMon2.exp);
         }
     }
 
@@ -276,17 +276,17 @@ void DayCareStep(void){
     // LD_HL(wDayCareMan);
     // BIT_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
     // RET_Z ;
-    if(!bit_test(wram->wDayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F))
+    if(!bit_test(gPokemon.dayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F))
         return;
     // LD_HL(wStepsToEgg);
     // DEC_hl;
     // RET_NZ ;
-    if(--wram->wStepsToEgg != 0)
+    if(--gPokemon.stepsToEgg != 0)
         return;
 
     // CALL(aRandom);
     // LD_hl_A;
-    wram->wStepsToEgg = Random();
+    gPokemon.stepsToEgg = Random();
     // CALLFAR(aCheckBreedmonCompatibility);
     // LD_A_addr(wBreedingCompatibility);
     uint8_t b;
@@ -319,9 +319,9 @@ void DayCareStep(void){
     if(Random() < b){
         // LD_HL(wDayCareMan);
         // RES_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
-        bit_reset(wram->wDayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F);
+        bit_reset(gPokemon.dayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F);
         // SET_hl(DAYCAREMAN_HAS_EGG_F);
-        bit_set(wram->wDayCareMan, DAYCAREMAN_HAS_EGG_F);
+        bit_set(gPokemon.dayCareMan, DAYCAREMAN_HAS_EGG_F);
         // RET;
     }
 }

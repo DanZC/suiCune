@@ -574,8 +574,8 @@ Box
     uint8_t count;
     species_t species[MONS_PER_BOX + 1];
     struct BoxMon mons[MONS_PER_BOX];
-    uint8_t monOT[NAME_LENGTH][MONS_PER_BOX];
-    uint8_t monNicknames[MON_NAME_LENGTH][MONS_PER_BOX];
+    uint8_t monOT[MONS_PER_BOX][NAME_LENGTH];
+    uint8_t monNicknames[MONS_PER_BOX][MON_NAME_LENGTH];
 };
 
 struct MapConnection

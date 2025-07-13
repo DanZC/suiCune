@@ -23,7 +23,7 @@ void ConsumeHeldItem(void){
     }
     else {
         // LD_HL(wPartyMon1Item);
-        pmon = wram->wPartyMon;
+        pmon = gPokemon.partyMon;
         // LD_DE(wBattleMonItem);
         bmon = &wram->wBattleMon;
         // LD_A_addr(wCurBattleMon);

@@ -29,6 +29,7 @@
 #include "../../home/print_text.h"
 #include "../../home/string.h"
 #include "../../home/copy_name.h"
+#include "../../util/serialize.h"
 
 static void v_DepositPKMN_RunJumptable(void);
 
@@ -1783,6 +1784,7 @@ void PCMonInfo(void){
 }
 
 static void BillsPC_LoadMonStats(void){
+    struct Box box;
     // LD_A_addr(wBillsPC_CursorPosition);
     // LD_HL(wBillsPC_ScrollPosition);
     // ADD_A_hl;
@@ -1803,7 +1805,7 @@ static void BillsPC_LoadMonStats(void){
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // LD_A_E;
         // CALL(aAddNTimes);
-        struct PartyMon* bc = wram->wPartyMon + e;
+        struct PartyMon* bc = gPokemon.partyMon + e;
         // LD_A_hl;
         // LD_addr_A(wTempMonLevel);
         wram->wTempMon.mon.level = bc->mon.level;
@@ -1838,6 +1840,7 @@ static void BillsPC_LoadMonStats(void){
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(boxptr));
         uint16_t ptr = (uint16_t)(boxptr & 0xffff);
+        Deserialize_Box(&box, GBToRAMAddr(ptr));
         // PUSH_HL;
         // LD_BC(sBoxMon1Level - sBox);
         // ADD_HL_BC;
@@ -1846,7 +1849,7 @@ static void BillsPC_LoadMonStats(void){
         // CALL(aAddNTimes);
         // LD_A_hl;
         // LD_addr_A(wTempMonLevel);
-        wram->wTempMon.mon.level = ((struct BoxMon*)GBToRAMAddr(ptr + (sBoxMon1 - sBox) + e * BOXMON_STRUCT_LENGTH))->level;
+        wram->wTempMon.mon.level = box.mons[e].level;
         // POP_HL;
         // PUSH_HL;
         // LD_BC(sBoxMon1Item - sBox);
@@ -1856,7 +1859,7 @@ static void BillsPC_LoadMonStats(void){
         // CALL(aAddNTimes);
         // LD_A_hl;
         // LD_addr_A(wTempMonItem);
-        wram->wTempMon.mon.item = ((struct BoxMon*)GBToRAMAddr(ptr + (sBoxMon1 - sBox) + e * BOXMON_STRUCT_LENGTH))->item;
+        wram->wTempMon.mon.item = box.mons[e].item;
         // POP_HL;
         // LD_BC(sBoxMon1DVs - sBox);
         // ADD_HL_BC;
@@ -1869,7 +1872,7 @@ static void BillsPC_LoadMonStats(void){
         // INC_DE;
         // LD_A_hl;
         // LD_de_A;
-        wram->wTempMon.mon.DVs = ((struct BoxMon*)GBToRAMAddr(ptr + (sBoxMon1 - sBox) + e * BOXMON_STRUCT_LENGTH))->DVs;
+        wram->wTempMon.mon.DVs = box.mons[e].DVs;
         // CALL(aCloseSRAM);
         CloseSRAM();
         // RET;
@@ -1881,12 +1884,13 @@ static void BillsPC_LoadMonStats(void){
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBox));
     // LD_HL(sBoxMon1Level);
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // LD_A_E;
     // CALL(aAddNTimes);
     // LD_A_hl;
     // LD_addr_A(wTempMonLevel);
-    wram->wTempMon.mon.level = gb_read(sBoxMon1Level + e * BOXMON_STRUCT_LENGTH);
+    wram->wTempMon.mon.level = box.mons[e].level;
 
     // LD_HL(sBoxMon1Item);
     // LD_BC(BOXMON_STRUCT_LENGTH);
@@ -1894,7 +1898,7 @@ static void BillsPC_LoadMonStats(void){
     // CALL(aAddNTimes);
     // LD_A_hl;
     // LD_addr_A(wTempMonItem);
-    wram->wTempMon.mon.item = gb_read(sBoxMon1Item + e * BOXMON_STRUCT_LENGTH);
+    wram->wTempMon.mon.item = box.mons[e].item;
 
     // LD_HL(sBoxMon1DVs);
     // LD_BC(BOXMON_STRUCT_LENGTH);
@@ -1906,7 +1910,7 @@ static void BillsPC_LoadMonStats(void){
     // INC_DE;
     // LD_A_hl;
     // LD_de_A;
-    wram->wTempMon.mon.DVs = gb_read16(sBoxMon1DVs + e * BOXMON_STRUCT_LENGTH);
+    wram->wTempMon.mon.DVs = box.mons[e].DVs;
 
     // CALL(aCloseSRAM);
     CloseSRAM();
@@ -1917,6 +1921,7 @@ static void BillsPC_LoadMonStats(void){
 static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry* de, tile_t* hl) {
     static const char CancelString[] = "CANCEL@";
     static const char Placeholder[] = "-----@";
+    struct Box box;
     // LD_A_de;
     // AND_A_A;
     // RET_Z ;
@@ -1953,16 +1958,17 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
             // LD_A(BANK(sBox));
             // CALL(aOpenSRAM);
             OpenSRAM(MBANK(asBox));
+            Deserialize_Box(&box, GBToRAMAddr(sBox));
             // LD_HL(sBoxSpecies);
             // LD_D(0x0);
             // ADD_HL_DE;
-            species_t* species = GBToRAMAddr(sBoxSpecies);
+            species_t* species = box.species;
             // LD_A_hl;
             // AND_A_A;
             // IF_Z goto sBoxFail;
             if(species[e] != 0x0) {
                 // LD_HL(sBoxMonNicknames);
-                uint8_t (*nick)[MON_NAME_LENGTH] = GBToRAMAddr(sBoxMonNicknames);
+                uint8_t (*nick)[MON_NAME_LENGTH] = box.monNicknames;
                 // LD_BC(MON_NAME_LENGTH);
                 // LD_A_E;
                 // CALL(aAddNTimes);
@@ -1989,15 +1995,16 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
         else {
             // PUSH_HL;
             // CALL(aGetBoxPointer);
-            uint32_t box = GetBoxPointer(b);
+            uint32_t box_ptr = GetBoxPointer(b);
             // LD_A_B;
             // CALL(aOpenSRAM);
-            OpenSRAM(MBANK(box));
-            uint16_t ptr = (uint16_t)(box & 0xffff);
+            OpenSRAM(MBANK(box_ptr));
+            uint16_t ptr = (uint16_t)(box_ptr & 0xffff);
+            Deserialize_Box(&box, GBToRAMAddr(ptr));
             // PUSH_HL;
             // LD_BC(sBoxMons - sBox);
             // ADD_HL_BC;
-            struct BoxMon* mon = GBToRAMAddr(ptr + (sBoxMons - sBox));
+            struct BoxMon* mon = box.mons;
             // LD_BC(BOXMON_STRUCT_LENGTH);
             // LD_A_E;
             // CALL(aAddNTimes);
@@ -2015,7 +2022,7 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
                 // LD_DE(wStringBuffer1);
                 // LD_BC(MON_NAME_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes(wram->wStringBuffer1, GBToRAMAddr(ptr + (sBoxMonNicknames - sBox) + (e * MON_NAME_LENGTH)), MON_NAME_LENGTH);
+                CopyBytes(wram->wStringBuffer1, box.monNicknames[e], MON_NAME_LENGTH);
                 // CALL(aCloseSRAM);
                 CloseSRAM();
                 // POP_HL;
@@ -2044,7 +2051,7 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto partyfail;
-        if(wram->wPartySpecies[e] != 0x0) {
+        if(gPokemon.partySpecies[e] != 0x0) {
             // LD_HL(wPartyMonNicknames);
             // LD_BC(MON_NAME_LENGTH);
             // LD_A_E;
@@ -2052,7 +2059,7 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
             // LD_DE(wStringBuffer1);
             // LD_BC(MON_NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wStringBuffer1, wram->wPartyMonNickname[e], MON_NAME_LENGTH);
+            CopyBytes(wram->wStringBuffer1, gPokemon.partyMonNickname[e], MON_NAME_LENGTH);
             // POP_HL;
             // LD_DE(wStringBuffer1);
             // CALL(aPlaceString);
@@ -2187,6 +2194,7 @@ void CopyBoxmonSpecies(void){
 //     inc a
 //     ld [wBillsPC_NumMonsInBox], a
 // ENDM
+    struct Box box;
     // XOR_A_A;
     // LD_HL(wBillsPCPokemonList);
     // LD_BC(3 * 30);
@@ -2205,7 +2213,7 @@ void CopyBoxmonSpecies(void){
     if(wram->wBillsPC_LoadedBox == 0) {
     // party:
         // LD_HL(wPartySpecies);
-        species_t* hl = wram->wPartySpecies;
+        species_t* hl = gPokemon.partySpecies;
         //copy_box_data ['0']
         copy_box_data0;
         // RET;
@@ -2218,8 +2226,9 @@ void CopyBoxmonSpecies(void){
         // LD_A(BANK(sBox));
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(asBox));
+        Deserialize_Box(&box, GBToRAMAddr(sBox));
         // LD_HL(sBoxSpecies);
-        species_t* hl = GBToRAMAddr(sBoxSpecies);
+        species_t* hl = box.species;
         //copy_box_data ['1']
         copy_box_data1;
         // RET;
@@ -2231,8 +2240,9 @@ void CopyBoxmonSpecies(void){
     // LD_A_B;
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(boxptr));
+    Deserialize_Box(&box, GBToRAMAddr(boxptr & 0xffff));
     // INC_HL;
-    uint8_t* hl = GBToRAMAddr((boxptr & 0xffff) + 1);
+    uint8_t* hl = box.species;
     //copy_box_data ['1']
     copy_box_data1;
     // RET;
@@ -2595,6 +2605,7 @@ void StatsScreenDPad(void){
 }
 
 static void BillsPC_CopyMon(void){
+    struct Box box;
     // LD_A_addr(wBillsPC_CursorPosition);
     // LD_HL(wBillsPC_ScrollPosition);
     // ADD_A_hl;
@@ -2607,13 +2618,13 @@ static void BillsPC_CopyMon(void){
     // party:
         // LD_HL(wPartySpecies);
         // CALL(aCopySpeciesToTemp);
-        CopySpeciesToTemp(wram->wPartySpecies);
+        CopySpeciesToTemp(gPokemon.partySpecies);
         // LD_HL(wPartyMonNicknames);
         // CALL(aCopyNicknameToTemp);
-        CopyNicknameToTemp(wram->wPartyMonNickname);
+        CopyNicknameToTemp(gPokemon.partyMonNickname);
         // LD_HL(wPartyMonOTs);
         // CALL(aCopyOTNameToTemp);
-        CopyOTNameToTemp(wram->wPartyMonOT);
+        CopyOTNameToTemp(gPokemon.partyMonOT);
         // LD_HL(wPartyMon1);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // LD_A_addr(wCurPartyMon);
@@ -2622,7 +2633,7 @@ static void BillsPC_CopyMon(void){
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aCopyBytes);
         // RET;
-        return CopyBytes(&wram->wBufferMon, &wram->wPartyMon[wram->wCurPartyMon], sizeof(struct PartyMon));
+        return CopyBytes(&wram->wBufferMon, &gPokemon.partyMon[wram->wCurPartyMon], sizeof(struct PartyMon));
     }
     // CP_A(NUM_BOXES + 1);
     // IF_NZ goto box;
@@ -2630,17 +2641,18 @@ static void BillsPC_CopyMon(void){
         // LD_A(BANK(sBox));
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(asBox));
+        Deserialize_Box(&box, GBToRAMAddr(sBox));
         // LD_HL(sBoxSpecies);
         // CALL(aCopySpeciesToTemp);
-        CopySpeciesToTemp((species_t*)GBToRAMAddr(sBoxSpecies));
+        CopySpeciesToTemp(box.species);
         // LD_HL(sBoxMonNicknames);
         // CALL(aCopyNicknameToTemp);
-        CopyNicknameToTemp((const uint8_t (*)[11])GBToRAMAddr(sBoxMonNicknames));
+        CopyNicknameToTemp(box.monNicknames);
         // LD_HL(sBoxMonOTs);
         // CALL(aCopyOTNameToTemp);
-        CopyOTNameToTemp((const uint8_t (*)[11])GBToRAMAddr(sBoxMonOTs));
+        CopyOTNameToTemp(box.monOT);
         // LD_HL(sBoxMons);
-        struct BoxMon* hl = (struct BoxMon*)GBToRAMAddr(sBoxMons);
+        struct BoxMon* hl = box.mons;
         // LD_BC(BOXMON_STRUCT_LENGTH);
         // LD_A_addr(wCurPartyMon);
         // CALL(aAddNTimes);
@@ -2663,28 +2675,29 @@ static void BillsPC_CopyMon(void){
         // LD_A_B;
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(ptr));
+        Deserialize_Box(&box, GBToRAMAddr((uint16_t)ptr));
         // PUSH_HL;
         // INC_HL;
         // CALL(aCopySpeciesToTemp);
-        CopySpeciesToTemp((const uint8_t*)GBToRAMAddr((uint16_t)ptr + 1));
+        CopySpeciesToTemp(box.species);
         // POP_HL;
         // PUSH_HL;
         // LD_BC(sBoxMonNicknames - sBox);
         // ADD_HL_BC;
         // CALL(aCopyNicknameToTemp);
-        CopyNicknameToTemp((const uint8_t (*)[MON_NAME_LENGTH])GBToRAMAddr((uint16_t)ptr + (sBoxMonNicknames - sBox)));
+        CopyNicknameToTemp(box.monNicknames);
         // POP_HL;
         // PUSH_HL;
         // LD_BC(sBoxMonOTs - sBox);
         // ADD_HL_BC;
         // CALL(aCopyOTNameToTemp);
-        CopyOTNameToTemp((const uint8_t (*)[NAME_LENGTH])GBToRAMAddr((uint16_t)ptr + (sBoxMonOTs - sBox)));
+        CopyOTNameToTemp(box.monOT);
         // POP_HL;
         // LD_BC(sBoxMons - sBox);
         // ADD_HL_BC;
         // LD_BC(BOXMON_STRUCT_LENGTH);
         // CALL(aCopyMonToTemp);
-        CopyBoxMonToTemp((struct BoxMon*)GBToRAMAddr((uint16_t)ptr + (sBoxMons - sBox)));
+        CopyBoxMonToTemp(box.mons);
         // CALL(aCloseSRAM);
         CloseSRAM();
         // FARCALL(aCalcBufferMonStats);
@@ -2703,7 +2716,7 @@ static bool DepositPokemon(void){
     // LD_HL(wPartyMonNicknames);
     // LD_A_addr(wCurPartyMon);
     // CALL(aGetNickname);
-    GetNickname(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+    GetNickname(gPokemon.partyMonNickname[0], wram->wCurPartyMon);
     // LD_A(PC_DEPOSIT);
     // LD_addr_A(wPokemonWithdrawDepositParameter);
     // PREDEF(pSendGetMonIntoFromBox);
@@ -3100,19 +3113,21 @@ static void MovePKMNWitoutMail_InsertMon_CopyFromBox(void){
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBox));
+    struct Box box;
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // LD_HL(sBoxSpecies);
     // CALL(aCopySpeciesToTemp);
-    CopySpeciesToTemp(GBToRAMAddr(sBoxSpecies));
+    CopySpeciesToTemp(box.species);
     // LD_HL(sBoxMonNicknames);
     // CALL(aCopyNicknameToTemp);
-    CopyNicknameToTemp((const uint8_t (*)[11])GBToRAMAddr(sBoxMonNicknames));
+    CopyNicknameToTemp(box.monNicknames);
     // LD_HL(sBoxMonOTs);
     // CALL(aCopyOTNameToTemp);
-    CopyOTNameToTemp((const uint8_t (*)[11])GBToRAMAddr(sBoxMonOTs));
+    CopyOTNameToTemp(box.monOT);
     // LD_HL(sBoxMons);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aCopyMonToTemp);
-    CopyMonToTemp((struct PartyMon*)GBToRAMAddr(sBoxMons));
+    CopyBoxMonToTemp(box.mons);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // FARCALL(aCalcBufferMonStats);
@@ -3148,17 +3163,17 @@ static void MovePKMNWitoutMail_InsertMon_CopyFromParty(void){
     wram->wCurPartyMon = wram->wBillsPC_BackupScrollPosition + wram->wBillsPC_BackupCursorPosition;
     // LD_HL(wPartySpecies);
     // CALL(aCopySpeciesToTemp);
-    CopySpeciesToTemp(wram->wPartySpecies);
+    CopySpeciesToTemp(gPokemon.partySpecies);
     // LD_HL(wPartyMonNicknames);
     // CALL(aCopyNicknameToTemp);
-    CopyNicknameToTemp(wram->wPartyMonNickname);
+    CopyNicknameToTemp(gPokemon.partyMonNickname);
     // LD_HL(wPartyMonOTs);
     // CALL(aCopyOTNameToTemp);
-    CopyOTNameToTemp(wram->wPartyMonOT);
+    CopyOTNameToTemp(gPokemon.partyMonOT);
     // LD_HL(wPartyMon1Species);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aCopyMonToTemp);
-    CopyMonToTemp(wram->wPartyMon);
+    CopyMonToTemp(gPokemon.partyMon);
     // XOR_A_A;  // REMOVE_PARTY
     // LD_addr_A(wPokemonWithdrawDepositParameter);
     // FARCALL(aRemoveMonFromPartyOrBox);

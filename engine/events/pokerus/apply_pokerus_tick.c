@@ -7,11 +7,11 @@ void ApplyPokerusTick(uint8_t b){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;  // make sure it's not wasting time on an empty party
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
-    struct PartyMon* hl = wram->wPartyMon;
+    uint8_t c = gPokemon.partyCount;
+    struct PartyMon* hl = gPokemon.partyMon;
 
     do {
     // loop:

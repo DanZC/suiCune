@@ -38,7 +38,7 @@ void CopyMonToTempMon(void){
         // goto done;
     }
     else {
-        struct PartyMon* hl = (wram->wMonType == PARTYMON)? wram->wPartyMon: wram->wOTPartyMon;
+        struct PartyMon* hl = (wram->wMonType == PARTYMON)? gPokemon.partyMon: wram->wOTPartyMon;
     // copywholestruct:
         // LD_A_addr(wCurPartyMon);
         // CALL(aAddNTimes);
@@ -138,7 +138,7 @@ static species_t GetMonSpecies(uint8_t e) {
         case PARTYMON:
         // partymon:
             // LD_HL(wPartySpecies);
-            hl = wram->wPartySpecies;
+            hl = gPokemon.partySpecies;
             break;
         case OTPARTYMON:
         // otpartymon:
@@ -162,7 +162,7 @@ static species_t GetMonSpecies(uint8_t e) {
         // breedmon:
             // LD_A_addr(wBreedMon1Species);
             // goto done2;
-            a = wram->wBreedMon1.species;
+            a = gPokemon.breedMon1.species;
             wram->wCurPartySpecies = a;
             return a;
     }

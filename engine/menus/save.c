@@ -807,7 +807,7 @@ void SavePokemonData(void){
     // LD_DE(sPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(sPokemonData, wPokemonData, wPokemonDataEnd - wPokemonData);
+    Serialize_PokemonData((uint8_t*)GBToRAMAddr(sPokemonData), &gPokemon);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -1171,7 +1171,7 @@ void LoadPokemonData(void){
     // LD_DE(wPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(wPokemonData, sPokemonData, wPokemonDataEnd - wPokemonData);
+    Deserialize_PokemonData(&gPokemon, (const uint8_t*)GBToRAMAddr(sPokemonData));
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;

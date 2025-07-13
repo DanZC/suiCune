@@ -3,8 +3,8 @@ bool GeneratePartyMonStats(struct PartyMon* hl, species_t species, uint8_t level
 void FillPP(uint8_t* de, const move_t* hl);
 bool AddTempmonToParty(void);
 bool SendGetMonIntoFromBox(uint8_t param);
-bool CloseSRAM_And_SetCarryFlag(void);
-void RestorePPOfDepositedPokemon(uint8_t b);
+bool CloseSRAM_And_SetCarryFlag(const struct Box* box);
+void RestorePPOfDepositedPokemon(struct Box* box, uint8_t b);
 bool RetrieveMonFromDayCareMan(void);
 bool RetrieveMonFromDayCareLady(void);
 bool RetrieveBreedmon(void);

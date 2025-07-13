@@ -461,7 +461,7 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     // Add Pokemon to party
     wram->wCurPartySpecies = DRAGONITE;
     wram->wCurPartyLevel = 100;
-    wram->wPartyCount = 0;
+    gPokemon.partyCount = 0;
     wram->wMonType = PARTYMON;
     // {
     //     wbank_push(MBANK(awPartyMon1));
@@ -662,7 +662,7 @@ void DebugMenu_Stats(void) {
 
     wram->wCurPartySpecies = CHARIZARD;
     wram->wCurPartyLevel = 100;
-    wram->wPartyCount = 0;
+    gPokemon.partyCount = 0;
     wram->wMonType = PARTYMON;
     TryAddMonToParty(CHARIZARD, 100);
 
@@ -917,7 +917,7 @@ void DebugMenu_BattleAnim(void) {
 // Add Pokemon to party
     wram->wCurPartySpecies = PIKACHU;
     wram->wCurPartyLevel = 50;
-    wram->wPartyCount = 0;
+    gPokemon.partyCount = 0;
     wram->wMonType = PARTYMON;
     // {
     //     wbank_push(MBANK(awPartyMon1));
@@ -929,7 +929,7 @@ void DebugMenu_BattleAnim(void) {
 
     wram->wCurPartySpecies = CHARIZARD;
     wram->wCurPartyLevel = 50;
-    wram->wPartyCount = 0;
+    gPokemon.partyCount = 0;
     wram->wMonType = OTPARTYMON;
     // {
     //     wbank_push(MBANK(awOTPartyMon1));
@@ -948,7 +948,7 @@ void DebugMenu_BattleAnim(void) {
     UpdatePlayerHUD();
     v_LoadBattleFontsHPBar();
     GetBattleMonBackpic();
-    wram->wTempBattleMonSpecies = wram->wPartyMon[0].mon.species;
+    wram->wTempBattleMonSpecies = gPokemon.partyMon[0].mon.species;
     wram->wTempEnemyMonSpecies = wram->wOTPartySpecies[0];
     GetSGBLayout(SCGB_BATTLE_COLORS);
     hram.hGraphicStartTile = 0x31;
@@ -1044,11 +1044,11 @@ void DebugMenu_TradeTest(void) {
     ClearScreen();
     U82CA(wram->wPlayerName, "PLAYER@");
     U82CA(wram->wOTPlayerName, "OTHER@");
-    wram->wPartyCount = 1;
-    wram->wPartySpecies[0] = TEDDIURSA;
-    wram->wPartySpecies[1] = (species_t)-1;
-    wram->wPartyMon[0].mon.species = TEDDIURSA;
-    U82CA(wram->wPartyMonNickname[0], "KODA@");
+    gPokemon.partyCount = 1;
+    gPokemon.partySpecies[0] = TEDDIURSA;
+    gPokemon.partySpecies[1] = (species_t)-1;
+    gPokemon.partyMon[0].mon.species = TEDDIURSA;
+    U82CA(gPokemon.partyMonNickname[0], "KODA@");
     wram->wOTPartyCount = 1;
     wram->wOTPartySpecies[0] = MEOWTH;
     wram->wOTPartySpecies[1] = (species_t)-1;

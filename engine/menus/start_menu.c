@@ -108,7 +108,7 @@ static void StartMenu_SetUpMenuItems(void) {
     // IF_Z goto no_pokemon;
     // LD_A(STARTMENUITEM_POKEMON);
     // CALL(aStartMenu_AppendMenuList);
-    if(wram->wPartyCount != 0) {
+    if(gPokemon.partyCount != 0) {
         de = StartMenu_AppendMenuList(de, STARTMENUITEM_POKEMON);
     }
 
@@ -695,7 +695,7 @@ static uint8_t StartMenu_Status(void) {
 
 //  Pokedex
 static uint8_t StartMenu_Pokedex(void) {
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return STARTMENURET_REOPEN;
     FadeToMenu();
     Pokedex();
@@ -746,7 +746,7 @@ static uint8_t StartMenu_Pokemon(void) {
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // IF_Z goto l_return;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         goto l_return;
 
     // CALL(aFadeToMenu);

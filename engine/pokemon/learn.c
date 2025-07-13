@@ -22,7 +22,7 @@ uint8_t LearnMove(move_t toLearn){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wMonOrItemNameBuffer, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, gPokemon.partyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
 
     do {
     // loop:
@@ -30,8 +30,8 @@ uint8_t LearnMove(move_t toLearn){
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // LD_A_addr(wCurPartyMon);
         // CALL(aAddNTimes);
-        move_t* moves = wram->wPartyMon[wram->wCurPartyMon].mon.moves;
-        uint8_t* pp = wram->wPartyMon[wram->wCurPartyMon].mon.PP;
+        move_t* moves = gPokemon.partyMon[wram->wCurPartyMon].mon.moves;
+        uint8_t* pp = gPokemon.partyMon[wram->wCurPartyMon].mon.PP;
         // LD_D_H;
         // LD_E_L;
         // LD_B(NUM_MOVES);
@@ -56,7 +56,7 @@ uint8_t LearnMove(move_t toLearn){
     //  to make room for the new move we're trying to learn.
         // PUSH_DE;
         // CALL(aForgetMove);
-        u8_flag_s res = ForgetMove(&wram->wPartyMon[wram->wCurPartyMon]);
+        u8_flag_s res = ForgetMove(&gPokemon.partyMon[wram->wCurPartyMon]);
         // POP_DE;
         // JP_C (mLearnMove_cancel);
         if(res.flag)

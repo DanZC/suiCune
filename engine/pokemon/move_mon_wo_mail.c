@@ -1,6 +1,7 @@
 #include "../../constants.h"
 #include "../../home/sram.h"
 #include "../../home/copy.h"
+#include "../../util/serialize.h"
 #include "move_mon_wo_mail.h"
 #include "move_mon.h"
 
@@ -11,36 +12,38 @@ void InsertPokemonIntoBox(void){
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBoxCount));
+    struct Box box;
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // LD_HL(sBoxCount);
     // CALL(aInsertSpeciesIntoBoxOrParty);
-    InsertSpeciesIntoBoxOrParty(GBToRAMAddr(sBoxCount), GBToRAMAddr(sBoxSpecies));
+    InsertSpeciesIntoBoxOrParty(&box.count, box.species);
     // LD_A_addr(sBoxCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
-    wram->wNextBoxOrPartyIndex = gb_read(sBoxCount) - 1;
+    wram->wNextBoxOrPartyIndex = box.count - 1;
     // LD_HL(sBoxMonNicknames);
     // LD_BC(MON_NAME_LENGTH);
     // LD_DE(wBufferMonNickname);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty(GBToRAMAddr(sBoxMonNicknames), wram->wBufferMonNickname, MON_NAME_LENGTH);
+    InsertDataIntoBoxOrParty(box.monNicknames[0], wram->wBufferMonNickname, MON_NAME_LENGTH);
     // LD_A_addr(sBoxCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
-    wram->wNextBoxOrPartyIndex = gb_read(sBoxCount) - 1;
+    wram->wNextBoxOrPartyIndex = box.count - 1;
     // LD_HL(sBoxMonOTs);
     // LD_BC(NAME_LENGTH);
     // LD_DE(wBufferMonOT);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty(GBToRAMAddr(sBoxMonOTs), wram->wBufferMonOT, NAME_LENGTH);
+    InsertDataIntoBoxOrParty(box.monOT[0], wram->wBufferMonOT, NAME_LENGTH);
     // LD_A_addr(sBoxCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
-    wram->wNextBoxOrPartyIndex = gb_read(sBoxCount) - 1;
+    wram->wNextBoxOrPartyIndex = box.count - 1;
     // LD_HL(sBoxMons);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // LD_DE(wBufferMon);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty(GBToRAMAddr(sBoxMons), (const uint8_t*)&wram->wBufferMon.mon, BOXMON_STRUCT_LENGTH);
+    InsertDataIntoBoxOrParty((uint8_t*)box.mons, (const uint8_t*)&wram->wBufferMon.mon, sizeof(struct BoxMon));
     // LD_HL(wBufferMonMoves);
     // LD_DE(wTempMonMoves);
     // LD_BC(NUM_MOVES);
@@ -54,7 +57,8 @@ void InsertPokemonIntoBox(void){
     // LD_A_addr(wCurPartyMon);
     // LD_B_A;
     // FARCALL(aRestorePPOfDepositedPokemon);
-    RestorePPOfDepositedPokemon(wram->wCurPartyMon);
+    RestorePPOfDepositedPokemon(&box, wram->wCurPartyMon);
+    Serialize_Box(GBToRAMAddr(sBox), &box);
     // JP(mCloseSRAM);
     return CloseSRAM();
 }
@@ -62,25 +66,25 @@ void InsertPokemonIntoBox(void){
 void InsertPokemonIntoParty(void){
     // LD_HL(wPartyCount);
     // CALL(aInsertSpeciesIntoBoxOrParty);
-    InsertSpeciesIntoBoxOrParty(&wram->wPartyCount, wram->wPartySpecies);
+    InsertSpeciesIntoBoxOrParty(&gPokemon.partyCount, gPokemon.partySpecies);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
-    wram->wNextBoxOrPartyIndex = wram->wPartyCount - 1;
+    wram->wNextBoxOrPartyIndex = gPokemon.partyCount - 1;
     // LD_HL(wPartyMonNicknames);
     // LD_BC(MON_NAME_LENGTH);
     // LD_DE(wBufferMonNickname);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty(wram->wPartyMonNickname[0], wram->wBufferMonNickname, MON_NAME_LENGTH);
+    InsertDataIntoBoxOrParty(gPokemon.partyMonNickname[0], wram->wBufferMonNickname, MON_NAME_LENGTH);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
-    wram->wNextBoxOrPartyIndex = wram->wPartyCount - 1;
+    wram->wNextBoxOrPartyIndex = gPokemon.partyCount - 1;
     // LD_HL(wPartyMonOTs);
     // LD_BC(NAME_LENGTH);
     // LD_DE(wBufferMonOT);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty(wram->wPartyMonOT[0], wram->wBufferMonOT, NAME_LENGTH);
+    InsertDataIntoBoxOrParty(gPokemon.partyMonOT[0], wram->wBufferMonOT, NAME_LENGTH);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_addr_A(wNextBoxOrPartyIndex);
@@ -88,7 +92,7 @@ void InsertPokemonIntoParty(void){
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // LD_DE(wBufferMon);
     // CALL(aInsertDataIntoBoxOrParty);
-    InsertDataIntoBoxOrParty((uint8_t*)wram->wPartyMon, (uint8_t*)&wram->wBufferMon, PARTYMON_STRUCT_LENGTH);
+    InsertDataIntoBoxOrParty((uint8_t*)gPokemon.partyMon, (uint8_t*)&wram->wBufferMon, PARTYMON_STRUCT_LENGTH);
     // RET;
 }
 

@@ -25,16 +25,16 @@ void v_SacredAsh(void){
 bool CheckAnyFaintedMon(void){
     // LD_DE(PARTYMON_STRUCT_LENGTH);
     // LD_BC(wPartySpecies);
-    species_t* bc = wram->wPartySpecies;
+    species_t* bc = gPokemon.partySpecies;
     // LD_HL(wPartyMon1HP);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return false;
 
-    uint8_t a = wram->wPartyCount;
+    uint8_t a = gPokemon.partyCount;
 
     do {
     // loop:

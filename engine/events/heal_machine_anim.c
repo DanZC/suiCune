@@ -29,7 +29,7 @@ void HealMachineAnim(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
 // The location of the healing machine relative to the player is stored in wScriptVar.
 // 0: Up and left (Pokemon Center)
@@ -271,7 +271,7 @@ static void HealMachineAnim_PlaceHealingMachineTile(struct SpriteOAM* hl, const 
 static void HealMachineAnim_LoadBallsOntoMachine(struct SpriteOAM* hl, const struct SpriteOAM* de) {
     // LD_A_addr(wPartyCount);
     // LD_B_A;
-    uint8_t b = wram->wPartyCount;
+    uint8_t b = gPokemon.partyCount;
 
     do {
     // party_loop:

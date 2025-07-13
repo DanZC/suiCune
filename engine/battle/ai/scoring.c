@@ -2778,11 +2778,11 @@ static void AI_Smart_MeanLook(uint8_t* hl){
 static bool AICheckLastPlayerMon(void){
     // LD_A_addr(wPartyCount);
     // LD_B_A;
-    uint8_t b = wram->wPartyCount;
+    uint8_t b = gPokemon.partyCount;
     // LD_C(0);
     uint8_t c = 0;
     // LD_HL(wPartyMon1HP);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_DE(PARTYMON_STRUCT_LENGTH);
 
     do {

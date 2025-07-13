@@ -190,7 +190,7 @@ bool PC_CheckPartyForPokemon(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wPartyCount != 0)
+    if(gPokemon.partyCount != 0)
         return true;
     // LD_DE(SFX_CHOOSE_PC_OPTION);
     // CALL(aPlaySFX);

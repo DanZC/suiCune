@@ -32,7 +32,7 @@ void BattleCommand_BeatUp(void){
             // LD_A_addr(wPartyCount);
             // SUB_A_B;
             // LD_addr_A(wCurBeatUpPartyMon);
-            wram->wCurBeatUpPartyMon = (wram->wPartyCount - wram->wPlayerRolloutCount);
+            wram->wCurBeatUpPartyMon = (gPokemon.partyCount - wram->wPlayerRolloutCount);
         }
         else {
             // LD_C(20);
@@ -52,7 +52,7 @@ void BattleCommand_BeatUp(void){
         // LD_A_addr(wCurBeatUpPartyMon);
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
-        GetNickname(wram->wPartyMonNickname[0], wram->wCurBeatUpPartyMon);
+        GetNickname(gPokemon.partyMonNickname[0], wram->wCurBeatUpPartyMon);
         // LD_A(MON_HP);
         // CALL(aGetBeatupMonLocation);
         struct PartyMon* mon = GetBeatupMonLocation();
@@ -325,7 +325,7 @@ static struct PartyMon* GetBeatupMonLocation(void) {
     // LD_HL(wPartyMon1Species);
     // IF_Z goto got_species;
     // LD_HL(wOTPartyMon1Species);
-    struct PartyMon* mon = (hram.hBattleTurn == TURN_PLAYER)? wram->wPartyMon: wram->wOTPartyMon;
+    struct PartyMon* mon = (hram.hBattleTurn == TURN_PLAYER)? gPokemon.partyMon: wram->wOTPartyMon;
 
 // got_species:
     // LD_A_addr(wCurBeatUpPartyMon);

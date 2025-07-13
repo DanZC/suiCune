@@ -337,14 +337,14 @@ static struct SpriteLoadData GetMonSprite(uint8_t a){
     // BreedMon1:
         // LD_A_addr(wBreedMon1Species);
         // goto Mon;
-        e = wram->wBreedMon1.species;
+        e = gPokemon.breedMon1.species;
     }
     // CP_A(SPRITE_DAY_CARE_MON_2);
     // IF_Z goto BreedMon2;
     else if(a == SPRITE_DAY_CARE_MON_2) {
     // BreedMon2:
         // LD_A_addr(wBreedMon2Species);
-        e = wram->wBreedMon2.species;
+        e = gPokemon.breedMon2.species;
     }
     // CP_A(SPRITE_VARS);
     // IF_NC goto Variable;

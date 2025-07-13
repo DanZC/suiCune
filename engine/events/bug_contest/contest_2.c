@@ -104,20 +104,20 @@ void ContestDropOffMons(void){
     // LD_A_hli;
     // OR_A_hl;
     // IF_Z goto fainted;
-    if(wram->wPartyMon[0].HP != 0) {
+    if(gPokemon.partyMon[0].HP != 0) {
     //  Mask the rest of your party by setting the count to 1...
         // LD_HL(wPartyCount);
         // LD_A(1);
         // LD_hli_A;
-        wram->wPartyCount = 1;
+        gPokemon.partyCount = 1;
         // INC_HL;
     //  ... backing up the second mon index somewhere...
         // LD_A_hl;
         // LD_addr_A(wBugContestSecondPartySpecies);
-        wram->wBugContestSecondPartySpecies = wram->wPartySpecies[1];
+        gPokemon.bugContestSecondPartySpecies = gPokemon.partySpecies[1];
     //  ... and replacing it with the terminator byte
         // LD_hl(-1);
-        wram->wPartySpecies[1] = (species_t)-1;
+        gPokemon.partySpecies[1] = (species_t)-1;
         // XOR_A_A;
         // LD_addr_A(wScriptVar);
         wram->wScriptVar = 0x0;
@@ -135,10 +135,10 @@ void ContestDropOffMons(void){
 void ContestReturnMons(void){
 //  Restore the species of the second mon.
     // LD_HL(wPartySpecies + 1);
-    species_t* hl = wram->wPartySpecies + 1;
+    species_t* hl = gPokemon.partySpecies + 1;
     // LD_A_addr(wBugContestSecondPartySpecies);
     // LD_hl_A;
-    *hl = wram->wBugContestSecondPartySpecies;
+    *hl = gPokemon.bugContestSecondPartySpecies;
 //  Restore the party count, which must be recomputed.
     // LD_B(1);
     uint8_t b = 1;
@@ -157,6 +157,6 @@ void ContestReturnMons(void){
 // done:
     // LD_A_B;
     // LD_addr_A(wPartyCount);
-    wram->wPartyCount = b;
+    gPokemon.partyCount = b;
     // RET;
 }

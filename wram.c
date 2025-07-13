@@ -4,6 +4,7 @@
 struct wram_s* wram;
 struct OptionsData gOptions;
 struct CurMapData gCurMapData;
+struct PokemonData gPokemon;
 
 #include <stddef.h>
 

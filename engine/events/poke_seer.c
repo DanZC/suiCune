@@ -147,7 +147,7 @@ void SeerAction4(void){
 void ReadCaughtData(void){
     // LD_A(MON_CAUGHTDATA);
     // CALL(aGetPartyParamLocation);
-    struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
     // LD_A_hli;
     // LD_addr_A(wSeerCaughtData);
     wram->wSeerCaughtData = mon->mon.caughtTimeLevel;
@@ -209,7 +209,7 @@ void GetCaughtName(void){
     // LD_DE(wSeerNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wSeerNickname, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wSeerNickname, gPokemon.partyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
     // RET;
 }
 
@@ -352,7 +352,7 @@ void GetCaughtOT(void){
     // LD_DE(wSeerOT);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wSeerOT, wram->wPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
+    CopyBytes(wram->wSeerOT, gPokemon.partyMonOT[wram->wCurPartyMon], NAME_LENGTH);
 
 //  this routine is useless in Western localizations
     // LD_HL(mGetCaughtOT_male);
@@ -464,7 +464,7 @@ void SeerAdvice(void){
     // LD_A_hl;
     // SUB_A_C;
     // LD_C_A;
-    uint8_t c = wram->wPartyMon[wram->wCurPartyMon].mon.level - wram->wSeerCaughtLevel;
+    uint8_t c = gPokemon.partyMon[wram->wCurPartyMon].mon.level - wram->wSeerCaughtLevel;
 
     // LD_HL(mSeerAdviceTexts);
     const struct LevelText* hl = SeerAdviceTexts;

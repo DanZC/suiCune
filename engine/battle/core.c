@@ -305,9 +305,9 @@ void DoBattle(void){
     // ADD_HL_BC;
     // LD_A_hl;
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wPartySpecies[wram->wCurPartyMon];
+    wram->wCurPartySpecies = gPokemon.partySpecies[wram->wCurPartyMon];
     // LD_addr_A(wTempBattleMonSpecies);
-    wram->wTempBattleMonSpecies = wram->wPartySpecies[wram->wCurPartyMon];
+    wram->wTempBattleMonSpecies = gPokemon.partySpecies[wram->wCurPartyMon];
     // hlcoord(1, 5, wTilemap);
     // LD_A(9);
     // CALL(aSlideBattlePicOut);
@@ -825,7 +825,7 @@ static void HandleBerserkGene_player(void) {
     // LD_A_addr(wCurBattleMon);
     // LD_B_A;
     // goto go;
-    return HandleBerserkGene_go(wram->wPartyMon + wram->wCurBattleMon);
+    return HandleBerserkGene_go(gPokemon.partyMon + wram->wCurBattleMon);
 }
 
 static void HandleBerserkGene_enemy(void) {
@@ -2040,7 +2040,7 @@ static void HandlePerishSong_do_it(void){
         // XOR_A_A;
         // LD_hli_A;
         // LD_hl_A;
-        wram->wPartyMon[wram->wCurBattleMon].HP = 0;
+        gPokemon.partyMon[wram->wCurBattleMon].HP = 0;
         // RET;
         return;
     } 
@@ -2291,8 +2291,8 @@ static void HandleMysteryberry_do_it(void){
     move_t* moves;
     if(hram.hBattleTurn == TURN_PLAYER) {
         // LD_HL(wPartyMon1Moves);
-        pp = wram->wPartyMon[wram->wCurBattleMon].mon.PP;
-        moves = wram->wPartyMon[wram->wCurBattleMon].mon.moves;
+        pp = gPokemon.partyMon[wram->wCurBattleMon].mon.PP;
+        moves = gPokemon.partyMon[wram->wCurBattleMon].mon.moves;
         // LD_A_addr(wCurBattleMon);
         // CALL(aGetPartyLocation);
         // LDH_A_addr(hBattleTurn);
@@ -2416,7 +2416,7 @@ static void HandleMysteryberry_do_it(void){
             // LD_hl_A;
             *userItem = NO_ITEM;
             // CALL(aGetPartymonItem);
-            item_t* partyItem = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPartyMon[wram->wCurBattleMon].mon.item: &wram->wOTPartyMon[wram->wCurOTMon].mon.item;
+            item_t* partyItem = (hram.hBattleTurn == TURN_PLAYER)? &gPokemon.partyMon[wram->wCurBattleMon].mon.item: &wram->wOTPartyMon[wram->wCurOTMon].mon.item;
             // LDH_A_addr(hBattleTurn);
             // AND_A_A;
             // IF_Z goto consume_item;
@@ -2597,7 +2597,7 @@ static void HandleDefrost_do_player_turn(void){
     // LD_HL(wPartyMon1Status);
     // CALL(aGetPartyLocation);
     // LD_hl(0);
-    wram->wPartyMon[wram->wCurBattleMon].status = 0;
+    gPokemon.partyMon[wram->wCurBattleMon].status = 0;
     // CALL(aUpdateBattleHuds);
     UpdateBattleHuds();
     // CALL(aSetEnemyTurn);
@@ -3543,7 +3543,7 @@ void UpdateBattleStateAndExperienceAfterEnemyFaint(void){
 static uint8_t IsAnyMonHoldingExpShare(void){
     // LD_A_addr(wPartyCount);
     // LD_B_A;
-    const uint8_t b = wram->wPartyCount;
+    const uint8_t b = gPokemon.partyCount;
     // LD_HL(wPartyMon1);
     // LD_C(1);
     uint8_t c = 1;
@@ -3561,7 +3561,7 @@ static uint8_t IsAnyMonHoldingExpShare(void){
         // POP_BC;
         // POP_HL;
         // IF_Z goto next;
-        if(wram->wPartyMon[i].HP == 0)
+        if(gPokemon.partyMon[i].HP == 0)
             continue;
 
         // PUSH_HL;
@@ -3571,7 +3571,7 @@ static uint8_t IsAnyMonHoldingExpShare(void){
         // POP_BC;
         // LD_A_hl;
         // POP_HL;
-        item_t a = wram->wPartyMon[i].mon.item;
+        item_t a = gPokemon.partyMon[i].mon.item;
 
         // CP_A(EXP_SHARE);
         // IF_NZ goto next;
@@ -5466,12 +5466,12 @@ void LoadEnemyMonToSwitchTo(uint8_t b){
     // LD_A_addr(wFirstUnownSeen);
     // AND_A_A;
     // IF_NZ goto skip_unown;
-    if(wram->wCurPartySpecies == UNOWN && wram->wFirstUnownSeen == 0) {
+    if(wram->wCurPartySpecies == UNOWN && gPokemon.firstUnownSeen == 0) {
         // LD_HL(wEnemyMonDVs);
         // PREDEF(pGetUnownLetter);
         // LD_A_addr(wUnownLetter);
         // LD_addr_A(wFirstUnownSeen);
-        wram->wFirstUnownSeen = GetUnownLetter(wram->wEnemyMon.dvs);
+        gPokemon.firstUnownSeen = GetUnownLetter(wram->wEnemyMon.dvs);
     }
 
 // skip_unown:
@@ -5493,7 +5493,7 @@ static bool CheckWhetherToAskSwitch(void){
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // JP_Z (mCheckWhetherToAskSwitch_return_nc);
-    if(wram->wPartyCount <= 1)
+    if(gPokemon.partyCount <= 1)
         return false;
     // LD_A_addr(wLinkMode);
     // AND_A_A;
@@ -5762,10 +5762,10 @@ void ResetEnemyStatLevels(void){
 bool CheckPlayerPartyForFitMon(void){
     // LD_A_addr(wPartyCount);
     // LD_E_A;
-    uint8_t e = wram->wPartyCount;
+    uint8_t e = gPokemon.partyCount;
     // XOR_A_A;
     // LD_HL(wPartyMon1HP);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_BC(PARTYMON_STRUCT_LENGTH - 1);
     uint16_t a = 0;
 
@@ -5792,7 +5792,7 @@ static bool CheckIfCurPartyMonIsFitToFight(void){
     // LD_A_hli;
     // OR_A_hl;
     // RET_NZ ;
-    if(wram->wPartyMon[wram->wCurPartyMon].HP != 0 && wram->wPartySpecies[wram->wCurPartyMon] != EGG)
+    if(gPokemon.partyMon[wram->wCurPartyMon].HP != 0 && gPokemon.partySpecies[wram->wCurPartyMon] != EGG)
         return true;
 
     // LD_A_addr(wBattleHasJustStarted);
@@ -5810,7 +5810,7 @@ static bool CheckIfCurPartyMonIsFitToFight(void){
     // CP_A(EGG);
     // LD_HL(mBattleText_AnEGGCantBattle);
     // IF_Z goto print_textbox;
-    if(wram->wPartySpecies[wram->wCurPartyMon] == EGG) {
+    if(gPokemon.partySpecies[wram->wCurPartyMon] == EGG) {
         StdBattleTextbox(BattleText_AnEGGCantBattle);
     }
     else {
@@ -6107,7 +6107,7 @@ static bool TryToRunAwayFromBattle(const struct BattleMon* hl, const struct Batt
 void InitBattleMon(void){
     // LD_A(MON_SPECIES);
     // CALL(aGetPartyParamLocation);
-    struct PartyMon* const hl = &wram->wPartyMon[wram->wCurPartyMon];
+    struct PartyMon* const hl = &gPokemon.partyMon[wram->wCurPartyMon];
     // LD_DE(wBattleMonSpecies);
     // LD_BC(MON_ID);
     // CALL(aCopyBytes);
@@ -6119,9 +6119,9 @@ void InitBattleMon(void){
     // LD_DE(wBattleMonDVs);
     // LD_BC(MON_POKERUS - MON_DVS);
     // CALL(aCopyBytes);
-    wram->wBattleMon.dvs = wram->wPartyMon[wram->wCurPartyMon].mon.DVs;
-    CopyBytes(&wram->wBattleMon.pp, &wram->wPartyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES);
-    wram->wBattleMon.happiness = wram->wPartyMon[wram->wCurPartyMon].mon.happiness;
+    wram->wBattleMon.dvs = gPokemon.partyMon[wram->wCurPartyMon].mon.DVs;
+    CopyBytes(&wram->wBattleMon.pp, &gPokemon.partyMon[wram->wCurPartyMon].mon.PP, NUM_MOVES);
+    wram->wBattleMon.happiness = gPokemon.partyMon[wram->wCurPartyMon].mon.happiness;
     // INC_HL;
     // INC_HL;
     // INC_HL;
@@ -6155,7 +6155,7 @@ void InitBattleMon(void){
     // LD_DE(wBattleMonNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBattleMonNickname, wram->wPartyMonNickname[wram->wCurBattleMon], MON_NAME_LENGTH);
+    CopyBytes(wram->wBattleMonNickname, gPokemon.partyMonNickname[wram->wCurBattleMon], MON_NAME_LENGTH);
     // LD_HL(wBattleMonAttack);
     // LD_DE(wPlayerStats);
     // LD_BC(PARTYMON_STRUCT_LENGTH - MON_ATK);
@@ -6198,7 +6198,7 @@ uint16_t GetPartyMonDVs(void){
     // LD_HL(wPartyMon1DVs);
     // LD_A_addr(wCurBattleMon);
     // JP(mGetPartyLocation);
-    return wram->wPartyMon[wram->wCurBattleMon].mon.DVs;
+    return gPokemon.partyMon[wram->wCurBattleMon].mon.DVs;
 }
 
 uint16_t GetEnemyMonDVs(void){
@@ -6407,7 +6407,7 @@ void SendOutPlayerMon(void){
 // not_shiny:
     // LD_A(MON_SPECIES);
     // CALL(aGetPartyParamLocation);
-    struct PartyMon* bc = &wram->wPartyMon[wram->wCurPartyMon];
+    struct PartyMon* bc = &gPokemon.partyMon[wram->wCurPartyMon];
     // LD_B_H;
     // LD_C_L;
     // FARCALL(aCheckFaintedFrzSlp);
@@ -7147,7 +7147,7 @@ static void GetPartymonItem(item_t** hl, item_t** bc){
     // LD_HL(wPartyMon1Item);
     // LD_A_addr(wCurBattleMon);
     // CALL(aGetPartyLocation);
-    *hl = &wram->wPartyMon[wram->wCurBattleMon].mon.item;
+    *hl = &gPokemon.partyMon[wram->wCurBattleMon].mon.item;
     // LD_BC(wBattleMonItem);
     *bc = &wram->wBattleMon.item;
     // RET;
@@ -7238,7 +7238,7 @@ uint8_t DrawPlayerHUD(void){
     // CALL(aGetPartyLocation);
     // LD_D_H;
     // LD_E_L;
-    struct PartyMon* de = wram->wPartyMon + wram->wCurBattleMon;
+    struct PartyMon* de = gPokemon.partyMon + wram->wCurBattleMon;
 
     // hlcoord(10, 11, wTilemap);
     // LD_A_addr(wTempMonLevel);
@@ -7308,7 +7308,7 @@ void PrintPlayerHUD(void){
     // LD_A_addr(wCurBattleMon);
     // LD_HL(wPartyMon1DVs);
     // CALL(aGetPartyLocation);
-    struct PartyMon* hl = wram->wPartyMon + wram->wCurBattleMon;
+    struct PartyMon* hl = gPokemon.partyMon + wram->wCurBattleMon;
     // LD_DE(wTempMonDVs);
     // LD_A_hli;
     // LD_de_A;
@@ -8632,7 +8632,7 @@ MoveSelectionScreen:
     // ether_elixer_menu:
         // LD_A(MON_MOVES);
         // CALL(aGetPartyParamLocation);
-        moves = wram->wPartyMon[wram->wCurPartyMon].mon.moves;
+        moves = gPokemon.partyMon[wram->wCurPartyMon].mon.moves;
     }
     // CALL(aCheckPlayerHasUsableMoves);
     // RET_Z ;  // use Struggle
@@ -8914,12 +8914,12 @@ MoveSelectionScreen:
                 // CALL(aGetPartyLocation);
                 // PUSH_HL;
                 // CALL(aMoveSelectionScreen_swap_bytes);
-                MoveSelectionScreen_swap(wram->wPartyMon[wram->wCurBattleMon].mon.moves, sizeof(wram->wPartyMon[wram->wCurBattleMon].mon.moves[0]));
+                MoveSelectionScreen_swap(gPokemon.partyMon[wram->wCurBattleMon].mon.moves, sizeof(gPokemon.partyMon[wram->wCurBattleMon].mon.moves[0]));
                 // POP_HL;
                 // LD_BC(MON_PP - MON_MOVES);
                 // ADD_HL_BC;
                 // CALL(aMoveSelectionScreen_swap_bytes);
-                MoveSelectionScreen_swap(wram->wPartyMon[wram->wCurBattleMon].mon.PP, sizeof(wram->wPartyMon[wram->wCurBattleMon].mon.PP[0]));
+                MoveSelectionScreen_swap(gPokemon.partyMon[wram->wCurBattleMon].mon.PP, sizeof(gPokemon.partyMon[wram->wCurBattleMon].mon.PP[0]));
             }
 
         // transformed:
@@ -9117,7 +9117,7 @@ void MoveInfoBox(void){
     // LD_A(WILDMON);
     // LD_addr_A(wMonType);
     // CALLFAR(aGetMaxPPOfMove);
-    uint8_t maxpp = GetMaxPPOfMove(wram->wPartyMon + wram->wCurPartyMon, WILDMON, wram->wMenuCursorY);
+    uint8_t maxpp = GetMaxPPOfMove(gPokemon.partyMon + wram->wCurPartyMon, WILDMON, wram->wMenuCursorY);
 
     // LD_HL(wMenuCursorY);
     // LD_C_hl;
@@ -10096,7 +10096,7 @@ Happiness:
     // LD_B(SET_FLAG);
     // LD_HL(wPokedexSeen);
     // PREDEF(pSmallFarFlagAction);
-    SmallFarFlagAction(wram->wPokedexSeen, wram->wTempEnemyMonSpecies - 1, SET_FLAG);
+    SmallFarFlagAction(gPokemon.pokedexSeen, wram->wTempEnemyMonSpecies - 1, SET_FLAG);
 
     // LD_HL(wEnemyMonStats);
     // LD_DE(wEnemyStats);
@@ -10163,7 +10163,7 @@ static bool CheckUnownLetter(unown_letter_t a){
     // LD_A_addr(wUnlockedUnowns);
     // LD_C_A;
     // LD_DE(0);
-    uint8_t c = wram->wUnlockedUnowns;
+    uint8_t c = gPokemon.unlockedUnowns;
 
     for(uint8_t i = 0; i < UnlockedUnownLetterSetsCount; ++i) {
     // loop:
@@ -10953,7 +10953,7 @@ void GiveExperiencePoints(void){
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = 0x0;
     // LD_BC(wPartyMon1Species);
-    struct PartyMon* bc = wram->wPartyMon;
+    struct PartyMon* bc = gPokemon.partyMon;
 
     while(1){
     // loop:
@@ -11117,7 +11117,7 @@ void GiveExperiencePoints(void){
         // LD_A_addr(wCurPartyMon);
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
-        GetNickname(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+        GetNickname(gPokemon.partyMonNickname[0], wram->wCurPartyMon);
         // LD_HL(mText_MonGainedExpPoint);
         // CALL(aBattleTextbox);
         BattleTextbox(Text_MonGainedExpPoint);
@@ -11170,7 +11170,7 @@ void GiveExperiencePoints(void){
         // ADD_HL_DE;
         // LD_A_hl;
         // LD_addr_A(wCurSpecies);
-        wram->wCurSpecies = wram->wPartySpecies[wram->wCurPartyMon];
+        wram->wCurSpecies = gPokemon.partySpecies[wram->wCurPartyMon];
         // CALL(aGetBaseData);
         GetBaseData(wram->wCurSpecies);
         // PUSH_BC;
@@ -11433,7 +11433,7 @@ void GiveExperiencePoints(void){
         // INC_A;
         // CP_A_B;
         // IF_Z goto done;
-        if(wram->wCurPartyMon + 1 == wram->wPartyCount)
+        if(wram->wCurPartyMon + 1 == gPokemon.partyCount)
             break;
         // LD_addr_A(wCurPartyMon);
         wram->wCurPartyMon++;
@@ -11441,7 +11441,7 @@ void GiveExperiencePoints(void){
         // CALL(aGetPartyParamLocation);
         // LD_B_H;
         // LD_C_L;
-        bc = wram->wPartyMon + wram->wCurPartyMon;
+        bc = gPokemon.partyMon + wram->wCurPartyMon;
         // JP(mGiveExperiencePoints_loop);
     }
 
@@ -12328,7 +12328,7 @@ bool StartBattle(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return false;
 
     // LD_A_addr(wTimeOfDayPal);
@@ -12537,7 +12537,7 @@ static void InitEnemyTrainer(uint8_t tclass){
         wram->wCurPartyMon = 0;
         // LD_A_addr(wPartyCount);
         // LD_B_A;
-        uint8_t b = wram->wPartyCount;
+        uint8_t b = gPokemon.partyCount;
 
         while(1) {
         // partyloop:
@@ -12547,7 +12547,7 @@ static void InitEnemyTrainer(uint8_t tclass){
             // LD_A_hli;
             // OR_A_hl;
             // IF_Z goto skipfaintedmon;
-            if(wram->wPartyMon[wram->wCurPartyMon].HP != 0) {
+            if(gPokemon.partyMon[wram->wCurPartyMon].HP != 0) {
                 // LD_C(HAPPINESS_GYMBATTLE);
                 // CALLFAR(aChangeHappiness);
                 ChangeHappiness(HAPPINESS_GYMBATTLE);
@@ -12597,10 +12597,10 @@ static void InitEnemyWildmon(void){
     // LD_A_addr(wFirstUnownSeen);
     // AND_A_A;
     // IF_NZ goto skip_unown;
-    if(wram->wCurPartySpecies == UNOWN && wram->wFirstUnownSeen == 0) {
+    if(wram->wCurPartySpecies == UNOWN && gPokemon.firstUnownSeen == 0) {
         // LD_A_addr(wUnownLetter);
         // LD_addr_A(wFirstUnownSeen);
-        wram->wFirstUnownSeen = letter;
+        gPokemon.firstUnownSeen = letter;
     }
 
 // skip_unown:
@@ -13219,19 +13219,19 @@ static uint8_t* GetRoamMonMapGroup(species_t a){
     // CP_A_B;
     // LD_HL(wRoamMon1MapGroup);
     // RET_Z ;
-    if(a == wram->wRoamMon1.species) {
-        return &wram->wRoamMon1.mapId.mapGroup;
+    if(a == gPokemon.roamMon1.species) {
+        return &gPokemon.roamMon1.mapId.mapGroup;
     }
     // LD_A_addr(wRoamMon2Species);
     // CP_A_B;
     // LD_HL(wRoamMon2MapGroup);
     // RET_Z ;
-    else if(a == wram->wRoamMon2.species) {
-        return &wram->wRoamMon2.mapId.mapGroup;
+    else if(a == gPokemon.roamMon2.species) {
+        return &gPokemon.roamMon2.mapId.mapGroup;
     }
     // LD_HL(wRoamMon3MapGroup);
     // RET;
-    return &wram->wRoamMon3.mapId.mapGroup;
+    return &gPokemon.roamMon3.mapId.mapGroup;
 }
 
 static uint8_t* GetRoamMonMapNumber(species_t a){
@@ -13241,19 +13241,19 @@ static uint8_t* GetRoamMonMapNumber(species_t a){
     // CP_A_B;
     // LD_HL(wRoamMon1MapNumber);
     // RET_Z ;
-    if(a == wram->wRoamMon1.species) {
-        return &wram->wRoamMon1.mapId.mapNumber;
+    if(a == gPokemon.roamMon1.species) {
+        return &gPokemon.roamMon1.mapId.mapNumber;
     }
     // LD_A_addr(wRoamMon2Species);
     // CP_A_B;
     // LD_HL(wRoamMon2MapNumber);
     // RET_Z ;
-    if(a == wram->wRoamMon2.species) {
-        return &wram->wRoamMon2.mapId.mapNumber;
+    if(a == gPokemon.roamMon2.species) {
+        return &gPokemon.roamMon2.mapId.mapNumber;
     }
     // LD_HL(wRoamMon3MapNumber);
     // RET;
-    return &wram->wRoamMon3.mapId.mapNumber;
+    return &gPokemon.roamMon3.mapId.mapNumber;
 }
 
 static uint8_t* GetRoamMonHP(species_t a){
@@ -13264,17 +13264,17 @@ static uint8_t* GetRoamMonHP(species_t a){
     // CP_A_B;
     // LD_HL(wRoamMon1HP);
     // RET_Z ;
-    if(a == wram->wRoamMon1.species)
-        return &wram->wRoamMon1.HP;
+    if(a == gPokemon.roamMon1.species)
+        return &gPokemon.roamMon1.HP;
     // LD_A_addr(wRoamMon2Species);
     // CP_A_B;
     // LD_HL(wRoamMon2HP);
     // RET_Z ;
-    else if(a == wram->wRoamMon2.species)
-        return &wram->wRoamMon2.HP;
+    else if(a == gPokemon.roamMon2.species)
+        return &gPokemon.roamMon2.HP;
     // LD_HL(wRoamMon3HP);
     // RET;
-    return &wram->wRoamMon3.HP;
+    return &gPokemon.roamMon3.HP;
 }
 
 //  output: hl = wRoamMonDVs
@@ -13285,20 +13285,20 @@ static uint16_t* GetRoamMonDVs(species_t a){
     // CP_A_B;
     // LD_HL(wRoamMon1DVs);
     // RET_Z ;
-    if(a == wram->wRoamMon1.species)
-        // return &wram->wRoamMon1.DVs;
-        return (uint16_t*)(((uint8_t*)&wram->wRoamMon1) + offsetof(struct Roamer, DVs));
+    if(a == gPokemon.roamMon1.species)
+        // return &gPokemon.roamMon1.DVs;
+        return (uint16_t*)(((uint8_t*)&gPokemon.roamMon1) + offsetof(struct Roamer, DVs));
     // LD_A_addr(wRoamMon2Species);
     // CP_A_B;
     // LD_HL(wRoamMon2DVs);
     // RET_Z ;
-    else if(a == wram->wRoamMon2.species)
-        // return &wram->wRoamMon2.DVs;
-        return (uint16_t*)(((uint8_t*)&wram->wRoamMon2) + offsetof(struct Roamer, DVs));
+    else if(a == gPokemon.roamMon2.species)
+        // return &gPokemon.roamMon2.DVs;
+        return (uint16_t*)(((uint8_t*)&gPokemon.roamMon2) + offsetof(struct Roamer, DVs));
     // LD_HL(wRoamMon3DVs);
     // RET;
-    // return &wram->wRoamMon3.DVs;
-    return (uint16_t*)(((uint8_t*)&wram->wRoamMon3) + offsetof(struct Roamer, DVs));
+    // return &gPokemon.roamMon3.DVs;
+    return (uint16_t*)(((uint8_t*)&gPokemon.roamMon3) + offsetof(struct Roamer, DVs));
 }
 
 static species_t* GetRoamMonSpecies(species_t a){
@@ -13306,16 +13306,16 @@ static species_t* GetRoamMonSpecies(species_t a){
     // LD_HL(wRoamMon1Species);
     // CP_A_hl;
     // RET_Z ;
-    if(a == wram->wRoamMon1.species)
-        return &wram->wRoamMon1.species;
+    if(a == gPokemon.roamMon1.species)
+        return &gPokemon.roamMon1.species;
     // LD_HL(wRoamMon2Species);
     // CP_A_hl;
     // RET_Z ;
-    else if(a == wram->wRoamMon2.species)
-        return &wram->wRoamMon2.species;
+    else if(a == gPokemon.roamMon2.species)
+        return &gPokemon.roamMon2.species;
     // LD_HL(wRoamMon3Species);
     // RET;
-    return &wram->wRoamMon3.species;
+    return &gPokemon.roamMon3.species;
 }
 
 static bool AddLastLinkBattleToLinkRecord_CheckOverflow(uint8_t* hl){

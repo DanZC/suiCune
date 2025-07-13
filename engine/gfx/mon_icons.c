@@ -198,7 +198,7 @@ static void PartyMenu_InitAnimatedMonIcon_SpawnItemIcon(struct SpriteAnim* bc) {
     // LD_A_hl;
     // AND_A_A;
     // RET_Z ;
-    if(!wram->wPartyMon[hram.hObjectStructIndex].mon.item)
+    if(!gPokemon.partyMon[hram.hObjectStructIndex].mon.item)
         return;
     // PUSH_HL;
     // PUSH_BC;
@@ -207,7 +207,7 @@ static void PartyMenu_InitAnimatedMonIcon_SpawnItemIcon(struct SpriteAnim* bc) {
     // POP_BC;
     // POP_HL;
     // IF_C goto mail;
-    if(ItemIsMail(wram->wPartyMon[hram.hObjectStructIndex].mon.item)) {
+    if(ItemIsMail(gPokemon.partyMon[hram.hObjectStructIndex].mon.item)) {
         bc->framesetID = SPRITE_ANIM_FRAMESET_PARTY_MON_WITH_MAIL;
     }
     else {
@@ -246,7 +246,7 @@ static struct SpriteAnim* InitPartyMenuIcon(void){
     // LD_D(0);
     // ADD_HL_DE;
     // LD_A_hl;
-    species_t a = wram->wPartySpecies[hram.hObjectStructIndex];
+    species_t a = gPokemon.partySpecies[hram.hObjectStructIndex];
     // CALL(aReadMonMenuIcon);
     // LD_addr_A(wCurIcon);
     wram->wCurIcon = ReadMonMenuIcon(a);

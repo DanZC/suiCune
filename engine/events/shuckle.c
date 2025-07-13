@@ -45,7 +45,7 @@ void GiveShuckle(void){
     // LD_HL(wPartyMon1Item);
     // CALL(aAddNTimes);
     // LD_hl(BERRY);
-    wram->wPartyMon[wram->wPartyCount - 1].mon.item = BERRY;
+    gPokemon.partyMon[gPokemon.partyCount - 1].mon.item = BERRY;
     // POP_BC;
     // POP_AF;
 
@@ -55,7 +55,7 @@ void GiveShuckle(void){
     // LD_A(HIGH(MANIA_OT_ID));
     // LD_hli_A;
     // LD_hl(LOW(MANIA_OT_ID));
-    wram->wPartyMon[wram->wPartyCount - 1].mon.id = NativeToBigEndian16(MANIA_OT_ID); // Is this correct?
+    gPokemon.partyMon[gPokemon.partyCount - 1].mon.id = NativeToBigEndian16(MANIA_OT_ID); // Is this correct?
 
 //  Nickname.
     // LD_A_addr(wPartyCount);
@@ -64,7 +64,7 @@ void GiveShuckle(void){
     // CALL(aSkipNames);
     // LD_DE(mSpecialShuckleNickname);
     // CALL(aCopyName2);
-    CopyName2(wram->wPartyMonNickname[wram->wPartyCount - 1], U82C(SpecialShuckleNickname));
+    CopyName2(gPokemon.partyMonNickname[gPokemon.partyCount - 1], U82C(SpecialShuckleNickname));
 
 //  OT.
     // LD_A_addr(wPartyCount);
@@ -73,7 +73,7 @@ void GiveShuckle(void){
     // CALL(aSkipNames);
     // LD_DE(mSpecialShuckleOT);
     // CALL(aCopyName2);
-    CopyName2(wram->wPartyMonOT[wram->wPartyCount - 1], U82C(SpecialShuckleOT));
+    CopyName2(gPokemon.partyMonOT[gPokemon.partyCount - 1], U82C(SpecialShuckleOT));
 
 //  Engine flag for this event.
     // LD_HL(wDailyFlags1);
@@ -117,14 +117,14 @@ void ReturnShuckie(void){
     // LD_A_hl;
     // CP_A(LOW(MANIA_OT_ID));
     // IF_NZ goto DontReturn;
-    if(wram->wCurPartySpecies == SHUCKLE && wram->wPartyMon[wram->wCurPartyMon].mon.id == NativeToBigEndian16(MANIA_OT_ID)) {
+    if(wram->wCurPartySpecies == SHUCKLE && gPokemon.partyMon[wram->wCurPartyMon].mon.id == NativeToBigEndian16(MANIA_OT_ID)) {
     //  OT
         // LD_A_addr(wCurPartyMon);
         // LD_HL(wPartyMonOTs);
         // CALL(aSkipNames);
         // LD_DE(mSpecialShuckleOT);
         const uint8_t* de = U82C(SpecialShuckleOT);
-        const uint8_t* hl = wram->wPartyMonOT[wram->wCurPartyMon];
+        const uint8_t* hl = gPokemon.partyMonOT[wram->wCurPartyMon];
 
         while(*hl == *de) {
         // CheckOT:
@@ -154,7 +154,7 @@ void ReturnShuckie(void){
                 // LD_A(SHUCKIE_HAPPY);
                 // IF_NC goto HappyToStayWithYou;
                 uint8_t a;
-                if(wram->wPartyMon[wram->wCurPartyMon].mon.happiness >= 150) {
+                if(gPokemon.partyMon[wram->wCurPartyMon].mon.happiness >= 150) {
                     a = SHUCKIE_HAPPY;
                 }
                 else {

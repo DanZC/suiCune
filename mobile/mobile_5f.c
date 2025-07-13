@@ -547,16 +547,16 @@ void Function17d1f1(void){
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aAddNTimes);
         // PREDEF(pGetUnownLetter);
-        unown_letter_t letter = GetUnownLetter(wram->wPartyMon[wram->wPartyCount - 1].mon.DVs);
+        unown_letter_t letter = GetUnownLetter(gPokemon.partyMon[gPokemon.partyCount - 1].mon.DVs);
         // CALLFAR(aUpdateUnownDex);
         UpdateUnownDex(letter);
         // LD_A_addr(wFirstUnownSeen);
         // AND_A_A;
         // IF_NZ goto asm_17d223;
-        if(wram->wFirstUnownSeen == 0) {
+        if(gPokemon.firstUnownSeen == 0) {
             // LD_A_addr(wUnownLetter);
             // LD_addr_A(wFirstUnownSeen);
-            wram->wFirstUnownSeen = letter;
+            gPokemon.firstUnownSeen = letter;
         }
     }
 

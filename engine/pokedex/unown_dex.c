@@ -7,7 +7,7 @@ void UpdateUnownDex(unown_letter_t letter){
     // LD_C_A;
     // LD_B(NUM_UNOWN);
     // LD_HL(wUnownDex);
-    unown_letter_t* hl = wram->wUnownDex;
+    unown_letter_t* hl = gPokemon.unownDex;
 
     for(uint32_t i = 0; i < NUM_UNOWN; ++i) {
     // loop:
@@ -128,7 +128,7 @@ void PrintUnownWord(void){
     // LD_A_hli;
     // LD_E_A;
     // LD_D_hl;
-    const uint8_t* de = StringToUnownWord(buf, UnownWords[wram->wUnownDex[wram->wDexCurUnownIndex]]);
+    const uint8_t* de = StringToUnownWord(buf, UnownWords[gPokemon.unownDex[wram->wDexCurUnownIndex]]);
     // hlcoord(4, 15, wTilemap);
     tile_t* hl = coord(4, 15, wram->wTilemap);
 

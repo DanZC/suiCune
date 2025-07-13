@@ -20,7 +20,7 @@ static void MoveDeletion_DeleteMove(uint8_t index) {
     // LD_A_addr(wCurPartyMon);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
-    move_t* hl = wram->wPartyMon[wram->wCurPartyMon].mon.moves + index;
+    move_t* hl = gPokemon.partyMon[wram->wCurPartyMon].mon.moves + index;
     // POP_BC;
     // PUSH_BC;
     // INC_B;
@@ -59,7 +59,7 @@ static void MoveDeletion_DeleteMove(uint8_t index) {
     // LD_A_addr(wCurPartyMon);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
-    uint8_t* pp = wram->wPartyMon[wram->wCurPartyMon].mon.PP + index;
+    uint8_t* pp = gPokemon.partyMon[wram->wCurPartyMon].mon.PP + index;
     // POP_BC;
     // INC_B;
     b = index + 1;
@@ -152,7 +152,7 @@ void MoveDeletion(void){
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto onlyonemove;
-        if(wram->wPartyMon[wram->wCurPartyMon].mon.moves[1] == NO_MOVE) {
+        if(gPokemon.partyMon[wram->wCurPartyMon].mon.moves[1] == NO_MOVE) {
         // onlyonemove:
             // LD_HL(mMoveDeletion_MoveKnowsOneText);
             // CALL(aPrintText);
@@ -176,7 +176,7 @@ void MoveDeletion(void){
         // LD_A_addr(wMenuCursorY);
         // PUSH_AF;
         // LD_A_addr(wCurSpecies);
-        move_t move = wram->wPartyMon[wram->wCurPartyMon].mon.moves[res2.a - 1];
+        move_t move = gPokemon.partyMon[wram->wCurPartyMon].mon.moves[res2.a - 1];
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetMoveName);
         GetMoveName(move);

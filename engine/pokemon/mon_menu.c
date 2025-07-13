@@ -37,6 +37,7 @@
 #include "../../data/text/common.h"
 #include "../../data/moves/moves.h"
 #include "../../mobile/mobile_41.h"
+#include "../../util/serialize.h"
 
 bool HasNoItems(void){
     // LD_A_addr(wNumItems);
@@ -261,7 +262,7 @@ u8_pair_s SwitchPartyMons(void){
     // LD_A_addr(wPartyCount);
     // CP_A(2);
     // IF_C goto DontSwitch;
-    if(wram->wPartyCount >= 2) {
+    if(gPokemon.partyCount >= 2) {
         // LD_A_addr(wCurPartyMon);
         // INC_A;
         // LD_addr_A(wSwitchMon);
@@ -640,7 +641,7 @@ item_t* GetPartyItemLocation(void){
     // CALL(aGetPartyParamLocation);
     // POP_AF;
     // RET;
-    return &wram->wPartyMon[wram->wCurPartyMon].mon.item;
+    return &gPokemon.partyMon[wram->wCurPartyMon].mon.item;
 }
 
 bool ReceiveItemFromPokemon(item_t item){
@@ -697,13 +698,13 @@ void ComposeMailMessage(void){
     // LD_D_H;
     // LD_E_L;
     OpenSRAM(MBANK(asPartyMail));
-    struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sPartyMail)) + wram->wCurPartyMon;
+    uint8_t* de = (GBToRAMAddr(sPartyMail + wram->wCurPartyMon * MAIL_STRUCT_LENGTH));
     // LD_HL(wTempMail);
     // LD_BC(MAIL_STRUCT_LENGTH);
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
     // CALL(aCopyBytes);
-    CopyBytes(de, &wram->wTempMail, sizeof(*de));
+    Serialize_MailMsg(de, &wram->wTempMail);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -1085,7 +1086,7 @@ static bool MonMenu_Softboiled_MilkDrink_CheckMonHasEnoughHP(void){
     // LDH_addr_A(hDivisor);
     // LD_B(2);
     // CALL(aDivide);
-    uint16_t amt = BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].maxHP) / 5;
+    uint16_t amt = BigEndianToNative16(gPokemon.partyMon[wram->wCurPartyMon].maxHP) / 5;
     // LD_A(MON_HP + 1);
     // CALL(aGetPartyParamLocation);
     // LDH_A_addr(hQuotient + 3);
@@ -1094,7 +1095,7 @@ static bool MonMenu_Softboiled_MilkDrink_CheckMonHasEnoughHP(void){
     // LDH_A_addr(hQuotient + 2);
     // SBC_A_hl;
     // RET;
-    return BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].HP) >= amt;
+    return BigEndianToNative16(gPokemon.partyMon[wram->wCurPartyMon].HP) >= amt;
 }
 
 u8_pair_s MonMenu_Softboiled_MilkDrink(void){
@@ -1364,11 +1365,11 @@ static void MoveScreenLoop_cycle(int dir) {
         // LD_A_hl;
         // CP_A(-1);
         // IF_Z goto cycle_left;
-        if(wram->wPartySpecies[c] == (species_t)-1)
+        if(gPokemon.partySpecies[c] == (species_t)-1)
             goto cycle_left;
         // CP_A(EGG);
         // RET_NZ ;
-        if(wram->wPartySpecies[c] != EGG)
+        if(gPokemon.partySpecies[c] != EGG)
             return;
         goto cycle_right;
 
@@ -1392,7 +1393,7 @@ static void MoveScreenLoop_cycle(int dir) {
         // LD_A_hl;
         // CP_A(EGG);
         // RET_NZ ;
-        if(wram->wPartySpecies[c] != EGG)
+        if(gPokemon.partySpecies[c] != EGG)
             return;
         // LD_A_addr(wCurPartyMon);
         // AND_A_A;
@@ -1483,7 +1484,7 @@ joy_loop:
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // LD_A_addr(wCurPartyMon);
         // CALL(aAddNTimes);
-        struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+        struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
         // PUSH_HL;
         // CALL(aMoveScreenLoop_copy_move);
         MoveScreenLoop_copy_move(mon->mon.moves);
@@ -1655,7 +1656,7 @@ void SetUpMoveScreenBG(void){
     // ADD_HL_DE;
     // LD_A_hl;
     // LD_addr_A(wTempIconSpecies);
-    wram->wTempIconSpecies = wram->wPartySpecies[wram->wCurPartyMon];
+    wram->wTempIconSpecies = gPokemon.partySpecies[wram->wCurPartyMon];
     // LD_E(MONICON_MOVES);
     // FARCALL(aLoadMenuMonIcon);
     LoadMenuMonIcon(MONICON_MOVES);
@@ -1681,7 +1682,7 @@ void SetUpMoveScreenBG(void){
     // CALL(aGetNickname);
     // hlcoord(5, 1, wTilemap);
     // CALL(aPlaceString);
-    struct TextPrintState st = {.de = wram->wPartyMonNickname[wram->wCurPartyMon], .hl = coord(5, 1, wram->wTilemap)};
+    struct TextPrintState st = {.de = gPokemon.partyMonNickname[wram->wCurPartyMon], .hl = coord(5, 1, wram->wTilemap)};
     PlaceString(&st, st.hl);
     // PUSH_BC;
     // FARCALL(aCopyMonToTempMon);
@@ -1691,8 +1692,8 @@ void SetUpMoveScreenBG(void){
     PrintLevel(st.bc, wram->wTempMon.mon.level);
     // LD_HL(wPlayerHPPal);
     // CALL(aSetHPPal);
-    uint16_t bc = BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].HP);
-    uint16_t de = BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].maxHP);
+    uint16_t bc = BigEndianToNative16(gPokemon.partyMon[wram->wCurPartyMon].HP);
+    uint16_t de = BigEndianToNative16(gPokemon.partyMon[wram->wCurPartyMon].maxHP);
     uint8_t e = bc * (6 * 8) / de;
     SetHPPal(&wram->wPlayerHPPal, e);
     // LD_B(SCGB_MOVE_LIST);
@@ -1755,7 +1756,7 @@ void PrepareToPlaceMoveData(void){
     // ADD_HL_BC;
     // LD_A_hl;
     // LD_addr_A(wCurSpecies);
-    wram->wCurSpecies = wram->wPartyMon[wram->wCurPartyMon].mon.moves[wram->wMenuCursorY - 1]; // weird. is this correct?
+    wram->wCurSpecies = gPokemon.partyMon[wram->wCurPartyMon].mon.moves[wram->wMenuCursorY - 1]; // weird. is this correct?
     // hlcoord(1, 12, wTilemap);
     // LD_BC((5 << 8) | 18);
     // JP(mClearBox);
@@ -1844,7 +1845,7 @@ void PlaceMoveScreenLeftArrow(void){
     // LD_D(0);
     // LD_HL(wPartyCount);
     // ADD_HL_DE;
-    species_t* species = wram->wPartySpecies + c - 1;
+    species_t* species = gPokemon.partySpecies + c - 1;
 
     do {
     // loop:
@@ -1881,13 +1882,13 @@ void PlaceMoveScreenRightArrow(void){
     // LD_A_addr(wPartyCount);
     // CP_A_C;
     // RET_Z ;
-    if(c == wram->wPartyCount)
+    if(c == gPokemon.partyCount)
         return;
     // LD_E_C;
     // LD_D(0);
     // LD_HL(wPartySpecies);
     // ADD_HL_DE;
-    species_t* hl = wram->wPartySpecies + c;
+    species_t* hl = gPokemon.partySpecies + c;
 
     while(*hl != (species_t)-1) {
     // loop:

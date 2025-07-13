@@ -118,7 +118,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetNickname(wram->wPartyMonNickname[0], curMon);
+    GetNickname(gPokemon.partyMonNickname[0], curMon);
     // POP_BC;
 
     // LD_A_C;
@@ -132,7 +132,7 @@ bool CheckCanLearnMoveTutorMove(uint8_t curMon, move_t move){
         // LD_A_B;
         // AND_A_A;
         // IF_Z goto didnt_learn;
-        if(!KnowsMove(&wram->wPartyMon[curMon].mon, move) && LearnMove(move)) {
+        if(!KnowsMove(&gPokemon.partyMon[curMon].mon, move) && LearnMove(move)) {
             // LD_C(HAPPINESS_LEARNMOVE);
             // CALLFAR(aChangeHappiness);
             // goto learned;

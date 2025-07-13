@@ -84,5 +84,6 @@ extern struct vram_s *vram;
 extern struct wram_s *wram;
 extern struct OptionsData gOptions;
 extern struct CurMapData gCurMapData;
+extern struct PokemonData gPokemon;
 extern script_s gCurScript;
 #endif

@@ -487,7 +487,7 @@ void PokeBallEffect(void){
     // LD_A_addr(wPartyCount);
     // CP_A(PARTY_LENGTH);
     // IF_NZ goto room_in_party;
-    if(wram->wPartyCount == PARTY_LENGTH) {
+    if(gPokemon.partyCount == PARTY_LENGTH) {
         // LD_A(BANK(sBoxCount));
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(asBoxCount));
@@ -988,7 +988,7 @@ void PokeBallEffect(void){
             // LD_A_addr(wPartyCount);
             // CP_A(PARTY_LENGTH);
             // IF_Z goto SendToPC;
-            if(wram->wPartyCount != PARTY_LENGTH) {
+            if(gPokemon.partyCount != PARTY_LENGTH) {
                 // XOR_A_A;  // PARTYMON
                 // LD_addr_A(wMonType);
                 wram->wMonType = PARTYMON;
@@ -1013,7 +1013,7 @@ void PokeBallEffect(void){
 
                     // LD_A(FRIEND_BALL_HAPPINESS);
                     // LD_hl_A;
-                    wram->wPartyMon[wram->wPartyCount - 1].mon.happiness = FRIEND_BALL_HAPPINESS;
+                    gPokemon.partyMon[gPokemon.partyCount - 1].mon.happiness = FRIEND_BALL_HAPPINESS;
                 }
 
             // SkipPartyMonFriendBall:
@@ -1032,11 +1032,11 @@ void PokeBallEffect(void){
                     // LD_A_addr(wPartyCount);
                     // DEC_A;
                     // LD_addr_A(wCurPartyMon);
-                    wram->wCurPartyMon = wram->wPartyCount - 1;
+                    wram->wCurPartyMon = gPokemon.partyCount - 1;
                     // LD_HL(wPartyMonNicknames);
                     // LD_BC(MON_NAME_LENGTH);
                     // CALL(aAddNTimes);
-                    uint8_t* nick = wram->wPartyMonNickname[wram->wCurPartyMon];
+                    uint8_t* nick = gPokemon.partyMonNickname[wram->wCurPartyMon];
 
                     // LD_D_H;
                     // LD_E_L;
@@ -1831,7 +1831,7 @@ void EvoStoneEffect(void){
 
     // LD_A(MON_ITEM);
     // CALL(aGetPartyParamLocation);
-    struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
 
     // LD_A_hl;
     // CP_A(EVERSTONE);
@@ -1880,7 +1880,7 @@ void VitaminEffect(void){
 
     // LD_A(MON_STAT_EXP);
     // CALL(aGetPartyParamLocation);
-    struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
 
     // ADD_HL_BC;
     // LD_A_hl;
@@ -2015,7 +2015,7 @@ void RareCandy_StatBooster_GetParameters(void){
     wram->wCurSpecies = wram->wCurPartySpecies;
     // LD_A(MON_LEVEL);
     // CALL(aGetPartyParamLocation);
-    struct PartyMon* hl = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon + wram->wCurPartyMon;
     // LD_A_hl;
     // LD_addr_A(wCurPartyLevel);
     wram->wCurPartyLevel = hl->mon.level;
@@ -2042,7 +2042,7 @@ void RareCandyEffect(void){
 
     // LD_A(MON_LEVEL);
     // CALL(aGetPartyParamLocation);
-    struct PartyMon* hl = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon + wram->wCurPartyMon;
 
     // LD_A_hl;
     // CP_A(MAX_LEVEL);
@@ -2194,7 +2194,7 @@ void FullyHealStatus(void){
 }
 
 uint8_t UseStatusHealer(void){
-    struct PartyMon* curMon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* curMon = gPokemon.partyMon + wram->wCurPartyMon;
     // CALL(aIsMonFainted);
     // LD_A(TRUE);
     // RET_Z ;
@@ -2393,7 +2393,7 @@ void ReviveEffect(void){
 }
 
 uint8_t RevivePokemon(void){
-    struct PartyMon* curMon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* curMon = gPokemon.partyMon + wram->wCurPartyMon;
     // CALL(aIsMonFainted);
     // LD_A(TRUE);
     // RET_NZ ;
@@ -2458,7 +2458,7 @@ uint8_t RevivePokemon(void){
 }
 
 static uint8_t FullRestoreEffect_FullRestore(void){
-    struct PartyMon* curMon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* curMon = gPokemon.partyMon + wram->wCurPartyMon;
     // XOR_A_A;
     // LD_addr_A(wLowHealthAlarm);
     wram->wLowHealthAlarm = 0x0;
@@ -2497,7 +2497,7 @@ void FullRestoreEffect(void){
     if(cancel)
         return StatusHealer_ExitMenu();
 
-    struct PartyMon* curMon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* curMon = gPokemon.partyMon + wram->wCurPartyMon;
     // CALL(aIsMonFainted);
     // JP_Z (mStatusHealer_NoEffect);
     if(IsMonFainted(curMon))
@@ -2587,7 +2587,7 @@ uint8_t ItemRestoreHP(void){
     if(cancel)
         return 2;
 
-    struct PartyMon* curMon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* curMon = gPokemon.partyMon + wram->wCurPartyMon;
     // CALL(aIsMonFainted);
     // LD_A(1);
     // RET_Z ;
@@ -3086,7 +3086,7 @@ static u8_flag_s Softboiled_MilkDrinkFunction_SelectMilkDrinkRecipient(uint8_t b
         // IF_Z goto cant_use;
         // CALL(aIsMonAtFullHealth);
         // IF_NC goto cant_use;
-        if(c != b && !IsMonFainted(wram->wPartyMon + c) && !IsMonAtFullHealth(wram->wPartyMon + c)) {
+        if(c != b && !IsMonFainted(gPokemon.partyMon + c) && !IsMonAtFullHealth(gPokemon.partyMon + c)) {
             // XOR_A_A;
             // RET;
             return u8_flag(c, false);
@@ -3118,7 +3118,7 @@ void Softboiled_MilkDrinkFunction(void){
     if(!res.flag){
         // LD_A_B;
         // LD_addr_A(wCurPartyMon);
-        struct PartyMon* user = wram->wPartyMon + b;
+        struct PartyMon* user = gPokemon.partyMon + b;
         // CALL(aIsMonFainted);
         IsMonFainted(user);
         // CALL(aGetOneFifthMaxHP);
@@ -3133,7 +3133,7 @@ void Softboiled_MilkDrinkFunction(void){
         amt = GetOneFifthMaxHP(user);
         // LD_A_C;
         // LD_addr_A(wCurPartyMon);
-        struct PartyMon* recipient = wram->wPartyMon + res.a;
+        struct PartyMon* recipient = gPokemon.partyMon + res.a;
         // CALL(aIsMonFainted);
         IsMonFainted(recipient);
         // CALL(aRestoreHealth);
@@ -3523,7 +3523,7 @@ loop2:
     // IF_NZ goto loop;
     if(cancel)
         goto loop;
-    struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
     // LD_HL(wPartyMon1Moves);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aGetMthMoveOfNthPartymon);
@@ -3591,7 +3591,7 @@ static void BattleRestorePP_UpdateBattleMonPP(void) {
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMon1Moves);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
-    struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
     // CALL(aAddNTimes);
     // LD_DE(wBattleMonMoves);
     // LD_B(NUM_MOVES);
@@ -3684,7 +3684,7 @@ void Elixer_RestorePPofAllMoves(void){
     do {
     // moveLoop:
         // PUSH_BC;
-        struct PartyMon* curMon = wram->wPartyMon + wram->wCurPartyMon;
+        struct PartyMon* curMon = gPokemon.partyMon + wram->wCurPartyMon;
         // LD_HL(wPartyMon1Moves);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aGetMthMoveOfNthPartymon);
@@ -4087,7 +4087,7 @@ void ItemGotOffText(void){
 void ApplyPPUp(void){
     // LD_A(MON_MOVES);
     // CALL(aGetPartyParamLocation);
-    struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
     // PUSH_HL;
     // LD_DE(wPPUpPPBuffer);
     // PREDEF(pFillPP);

@@ -53,12 +53,12 @@ const char SpanishItalianFont[] = "gfx/font/spanish_italian.png";
 
 //  Called if mail is French or German
 //  Converts 's 't 'v from French/German character set to English
-void ConvertFrenchGermanMailToEnglish(struct MailMsg* de){
+void ConvertFrenchGermanMailToEnglish(uint8_t* de){
     // LD_B(sPartyMon1MailAuthor - sPartyMon1Mail);
-    uint8_t b = sizeof(de->author);
+    uint8_t b = sizeof(((struct MailMsg*)0)->message);
     // LD_H_D;
     // LD_L_E;
-    uint8_t* hl = de->author;
+    uint8_t* hl = de;
 
     do {
     // loop:
@@ -96,12 +96,12 @@ void ConvertFrenchGermanMailToEnglish(struct MailMsg* de){
 
 //  Called if mail is English and game is French or German
 //  Converts 's 't 'v from English character set to French/German
-void ConvertEnglishMailToFrenchGerman(struct MailMsg* de){
+void ConvertEnglishMailToFrenchGerman(uint8_t* de){
     // LD_B(sPartyMon1MailAuthor - sPartyMon1Mail);
-    uint8_t b = sizeof(de->author);
+    uint8_t b = sizeof(((struct MailMsg*)0)->message);
     // LD_H_D;
     // LD_L_E;
-    uint8_t* hl = de->author;
+    uint8_t* hl = de;
 
     do {
     // loop:
@@ -139,18 +139,18 @@ void ConvertEnglishMailToFrenchGerman(struct MailMsg* de){
 
 //  Called if mail is Spanish or Italian
 //  Converts 'd 'l 'm 'r 's 't 'v from Spanish/Italian character set to English
-void ConvertSpanishItalianMailToEnglish(struct MailMsg* de){
+void ConvertSpanishItalianMailToEnglish(uint8_t* de){
     return ConvertEnglishMailToSpanishItalian(de);
 }
 
 //  Called if mail is English and game is Spanish or Italian
 //  Converts 'd 'l 'm 'r 's 't 'v from English character set to Spanish/Italian
-void ConvertEnglishMailToSpanishItalian(struct MailMsg* de){
+void ConvertEnglishMailToSpanishItalian(uint8_t* de){
     // LD_B(sPartyMon1MailAuthor - sPartyMon1Mail);
-    uint8_t b = sizeof(de->author);
+    uint8_t b = sizeof(((struct MailMsg*)0)->message);
     // LD_H_D;
     // LD_L_E;
-    uint8_t* hl = de->author;
+    uint8_t* hl = de;
 
     do {
     // loop:
@@ -173,6 +173,5 @@ void ConvertEnglishMailToSpanishItalian(struct MailMsg* de){
         // DEC_B;
         // IF_NZ goto loop;
     } while(--b != 0);
-    RET;
-
+    // RET;
 }

@@ -148,7 +148,7 @@ void StageDataForMysteryGift(void){
     // LD_HL(sPokemonData + wPokedexCaught - wPokemonData);
     // LD_B(wEndPokedexCaught - wPokedexCaught);
     // CALL(aCountSetBits);
-    *(de++) = CountSetBits(GBToRAMAddr(sPokemonData + wPokedexCaught - wPokemonData), sizeof(wram->wPokedexCaught));
+    *(de++) = CountSetBits(GBToRAMAddr(sPokemonData + wPokedexCaught - wPokemonData), sizeof(gPokemon.pokedexCaught));
     // POP_DE;
     // POP_BC;
     // LD_A_addr(wNumSetBits);

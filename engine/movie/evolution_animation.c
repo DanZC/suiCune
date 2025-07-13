@@ -55,7 +55,7 @@ static bool EvolutionAnimation_check_statused(void){
     // LD_C_L;
     // FARCALL(aCheckFaintedFrzSlp);
     // RET;
-    return CheckFaintedFrzSlp(wram->wPartyMon + wram->wCurPartyMon);
+    return CheckFaintedFrzSlp(gPokemon.partyMon + wram->wCurPartyMon);
 }
 
 static void EvolutionAnimation_ReplaceFrontpic(void){

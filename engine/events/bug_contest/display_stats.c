@@ -67,7 +67,7 @@ void DisplayCaughtContestMonStats(void){
     // LD_DE(wStringBuffer1);
     // hlcoord(1, 2, wTilemap);
     // CALL(aPlaceString);
-    struct TextPrintState st = {.hl = coord(1, 2, wram->wTilemap), .de = GetPokemonName(wram->wContestMon.mon.species)};
+    struct TextPrintState st = {.hl = coord(1, 2, wram->wTilemap), .de = GetPokemonName(gPokemon.contestMon.mon.species)};
     PlaceString(&st, st.hl);
 
     // LD_H_B;
@@ -75,7 +75,7 @@ void DisplayCaughtContestMonStats(void){
     // LD_A_addr(wContestMonLevel);
     // LD_addr_A(wTempMonLevel);
     // CALL(aPrintLevel);
-    PrintLevel(st.bc, wram->wContestMon.mon.level);
+    PrintLevel(st.bc, gPokemon.contestMon.mon.level);
 
     // LD_DE(wEnemyMonNickname);
     st.de = wram->wEnemyMonNickname;
@@ -95,7 +95,7 @@ void DisplayCaughtContestMonStats(void){
     // LD_DE(wContestMonMaxHP);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum(coord(11, 4, wram->wTilemap), &wram->wContestMon.maxHP, 2, 3);
+    PrintNum(coord(11, 4, wram->wTilemap), &gPokemon.contestMon.maxHP, 2, 3);
 
     // hlcoord(11, 10, wTilemap);
     // LD_DE(wEnemyMonMaxHP);

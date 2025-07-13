@@ -19,12 +19,12 @@ static void BugContest_SetCaughtContestMon_generatestats(void) {
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // LD_HL(wContestMon);
     // CALL(aByteFill);
-    ByteFill(&wram->wContestMon, sizeof(wram->wContestMon), 0);
+    ByteFill(&gPokemon.contestMon, sizeof(gPokemon.contestMon), 0);
     // XOR_A_A;
     // LD_addr_A(wMonType);
     // LD_HL(wContestMon);
     // JP(mGeneratePartyMonStats);
-    GeneratePartyMonStats(&wram->wContestMon, wram->wTempEnemyMonSpecies, wram->wCurPartyLevel, PARTYMON, wram->wBattleMode);
+    GeneratePartyMonStats(&gPokemon.contestMon, wram->wTempEnemyMonSpecies, wram->wCurPartyLevel, PARTYMON, wram->wBattleMode);
 }
 
 void BugContest_SetCaughtContestMon(void){
@@ -36,10 +36,10 @@ void BugContest_SetCaughtContestMon(void){
     // LD_A_addr(wContestMon);
     // AND_A_A;
     // IF_Z goto firstcatch;
-    if(wram->wContestMon.mon.species != 0) {
+    if(gPokemon.contestMon.mon.species != 0) {
         // LD_addr_A(wNamedObjectIndex);
         // FARCALL(aDisplayAlreadyCaughtText);
-        DisplayAlreadyCaughtText(wram->wContestMon.mon.species);
+        DisplayAlreadyCaughtText(gPokemon.contestMon.mon.species);
         // FARCALL(aDisplayCaughtContestMonStats);
         DisplayCaughtContestMonStats();
         // LD_BC((14 << 8) | 7);

@@ -254,14 +254,14 @@ void Function170139(void){
         // LD_addr_A(wcd49);
         // LD_A_H;
         // LD_addr_A(wcd4a);
-        CopyBytes(&gBattleRecord.party[i].pmon, wram->wPartyMon + i, sizeof(gBattleRecord.party[i].pmon));
+        CopyBytes(&gBattleRecord.party[i].pmon, gPokemon.partyMon + i, sizeof(gBattleRecord.party[i].pmon));
         // LD_A_addr(wcd4b);
         // LD_L_A;
         // LD_A_addr(wcd4c);
         // LD_H_A;
         // LD_BC(6);
         // CALL(aCopyBytes);
-        CopyBytes(&gBattleRecord.party[i].nickname, wram->wPartyMonNickname[i], sizeof(gBattleRecord.party[i].nickname));
+        CopyBytes(&gBattleRecord.party[i].nickname, gPokemon.partyMonNickname[i], sizeof(gBattleRecord.party[i].nickname));
         // LD_A_L;
         // LD_addr_A(wcd4b);
         // LD_A_H;
@@ -318,8 +318,8 @@ void BattleTower_GenerateFakeRecord(void){
     gBattleRecord.tclass = GetMobileOTTrainerClass(&wram->wPlayerGender, (const uint8_t *)&wram->wPlayerID);
 
     for(uint8_t i = 0; i < BATTLETOWER_PARTY_LENGTH; ++i) {
-        CopyBytes(&gBattleRecord.party[i].pmon, wram->wPartyMon + i, sizeof(gBattleRecord.party[i].pmon));
-        CopyBytes(&gBattleRecord.party[i].nickname, wram->wPartyMonNickname[i], sizeof(gBattleRecord.party[i].nickname));
+        CopyBytes(&gBattleRecord.party[i].pmon, gPokemon.partyMon + i, sizeof(gBattleRecord.party[i].pmon));
+        CopyBytes(&gBattleRecord.party[i].nickname, gPokemon.partyMonNickname[i], sizeof(gBattleRecord.party[i].nickname));
     }
 
     OpenSRAM(MBANK(as4_a013));
@@ -1943,9 +1943,9 @@ void BattleTowerAction_EggTicket(void){
     // LD_B(0);
     uint8_t b = 0;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_HL(wPartySpecies);
-    species_t* hl = wram->wPartySpecies;
+    species_t* hl = gPokemon.partySpecies;
     U82CA(buffer, String_MysteryJP);
 
     do {
@@ -1964,7 +1964,7 @@ void BattleTowerAction_EggTicket(void){
             // ADD_HL_DE;
             // DEC_A;
             // IF_NZ goto loop2;
-            uint8_t* ot = wram->wPartyMonOT[b];
+            uint8_t* ot = gPokemon.partyMonOT[b];
         // skip:
             // LD_DE(mString_MysteryJP);
             uint8_t* mystery = buffer;

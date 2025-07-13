@@ -78,7 +78,7 @@ static void Script_MonFaintedToPoison_CheckWhitedOut(void) {
         // LD_A_addr(wPartyCount);
         // CP_A_hl;
         // IF_NZ goto party_loop;
-    } while(++wram->wCurPartyMon != wram->wPartyCount);
+    } while(++wram->wCurPartyMon != gPokemon.partyCount);
     // PREDEF(pCheckPlayerPartyForFitMon);
     // LD_A_D;
     // LD_addr_A(wScriptVar);
@@ -93,7 +93,7 @@ static u8_flag_s DoPoisonStep_DamageMonIfPoisoned(void) {
     // LD_A_hl;
     // AND_A(1 << PSN);
     // RET_Z ;
-    if((wram->wPartyMon[wram->wCurPartyMon].status & (1 << PSN)) == 0)
+    if((gPokemon.partyMon[wram->wCurPartyMon].status & (1 << PSN)) == 0)
         return u8_flag(0, false);
 
 //  check if mon is already fainted, return if so
@@ -104,7 +104,7 @@ static u8_flag_s DoPoisonStep_DamageMonIfPoisoned(void) {
     // LD_C_hl;
     // OR_A_C;
     // RET_Z ;
-    if(wram->wPartyMon[wram->wCurPartyMon].HP == 0)
+    if(gPokemon.partyMon[wram->wCurPartyMon].HP == 0)
         return u8_flag(0, false);
 
 //  do 1 HP damage
@@ -112,19 +112,19 @@ static u8_flag_s DoPoisonStep_DamageMonIfPoisoned(void) {
     // LD_hl_C;
     // DEC_HL;
     // LD_hl_B;
-    wram->wPartyMon[wram->wCurPartyMon].HP = NativeToBigEndian16(BigEndianToNative16(wram->wPartyMon[wram->wCurPartyMon].HP) - 1);
+    gPokemon.partyMon[wram->wCurPartyMon].HP = NativeToBigEndian16(BigEndianToNative16(gPokemon.partyMon[wram->wCurPartyMon].HP) - 1);
 
 //  check if mon has fainted as a result of poison damage
     // LD_A_B;
     // OR_A_C;
     // IF_NZ goto not_fainted;
 
-    if(wram->wPartyMon[wram->wCurPartyMon].HP == 0) {
+    if(gPokemon.partyMon[wram->wCurPartyMon].HP == 0) {
     //  the mon has fainted, reset its status, set carry, and return %10
         // LD_A(MON_STATUS);
         // CALL(aGetPartyParamLocation);
         // LD_hl(0);
-        wram->wPartyMon[wram->wCurPartyMon].status = 0;
+        gPokemon.partyMon[wram->wCurPartyMon].status = 0;
         // LD_C(0b10);
         // SCF;
         // RET;
@@ -143,7 +143,7 @@ bool DoPoisonStep(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // IF_Z goto no_faint;
-    if(wram->wPartyCount == 0) {
+    if(gPokemon.partyCount == 0) {
         return false;
     }
 
@@ -189,7 +189,7 @@ bool DoPoisonStep(void){
         // INC_hl;
         // CP_A_hl;
         // IF_NZ goto loop_check_poison;
-    } while(++wram->wCurPartyMon < wram->wPartyCount);
+    } while(++wram->wCurPartyMon < gPokemon.partyCount);
 
     // LD_A_addr(wPoisonStepFlagSum);
     // AND_A(0b10);

@@ -102,7 +102,7 @@ bool CheckAnyOtherAliveMonsForTrade(uint8_t mon){
     // LD_B_A;
     // LD_C(0);
 
-    for(uint32_t c = 0; c < wram->wPartyCount; ++c) {
+    for(uint32_t c = 0; c < gPokemon.partyCount; ++c) {
     // loop:
         // LD_A_C;
         // CP_A_D;
@@ -113,7 +113,7 @@ bool CheckAnyOtherAliveMonsForTrade(uint8_t mon){
         // LD_A_C;
         // LD_HL(wPartyMon1HP);
         // CALL(aGetPartyLocation);
-        struct PartyMon* hl = wram->wPartyMon + c;
+        struct PartyMon* hl = gPokemon.partyMon + c;
         // POP_BC;
         // LD_A_hli;
         // OR_A_hl;
@@ -198,7 +198,7 @@ void PlaceTradePartnerNamesAndParty(void){
     // hlcoord(7, 1, wTilemap);
     // LD_DE(wPartySpecies);
     // CALL(aPlaceTradePartnerNamesAndParty_PlaceSpeciesNames);
-    PlaceTradePartnerNamesAndParty_PlaceSpeciesNames(coord(7, 1, wram->wTilemap), wram->wPartySpecies);
+    PlaceTradePartnerNamesAndParty_PlaceSpeciesNames(coord(7, 1, wram->wTilemap), gPokemon.partySpecies);
     // hlcoord(7, 9, wTilemap);
     // LD_DE(wOTPartySpecies);
     PlaceTradePartnerNamesAndParty_PlaceSpeciesNames(coord(7, 9, wram->wTilemap), wram->wOTPartySpecies);

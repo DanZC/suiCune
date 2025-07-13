@@ -434,7 +434,7 @@ void TrainerCard_Page1_PrintDexCaught_GameTime(void){
     // LD_B(wEndPokedexCaught - wPokedexCaught);
     // CALL(aCountSetBits);
     // LD_DE(wNumSetBits);
-    uint8_t setbits = CountSetBits(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
+    uint8_t setbits = CountSetBits(gPokemon.pokedexCaught, sizeof(gPokemon.pokedexCaught));
     // hlcoord(15, 10, wTilemap);
     // LD_BC((1 << 8) | 3);
     // CALL(aPrintNum);

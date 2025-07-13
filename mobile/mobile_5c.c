@@ -201,10 +201,10 @@ void Function170c06(void){
         // LD_A_hli;
         // LD_B_A;
         // LD_C_hl;
-        uint16_t hp = NativeToBigEndian16(wram->wPartyMon[i].HP);
+        uint16_t hp = NativeToBigEndian16(gPokemon.partyMon[i].HP);
         // INC_HL;
         // INC_HL;
-        uint16_t maxhp = NativeToBigEndian16(wram->wPartyMon[i].maxHP);
+        uint16_t maxhp = NativeToBigEndian16(gPokemon.partyMon[i].maxHP);
         // LD_A_hld;
         // SUB_A_C;
         // LD_C_A;
@@ -273,7 +273,7 @@ void Function170c06(void){
         // POP_BC;
         // LD_A_hli;
         // OR_A_hl;
-        uint16_t hp = NativeToBigEndian16(wram->wPartyMon[b].HP);
+        uint16_t hp = NativeToBigEndian16(gPokemon.partyMon[b].HP);
         // IF_NZ goto asm_170c7d;
         // INC_C;
         if(hp == 0)

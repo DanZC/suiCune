@@ -219,7 +219,7 @@ void DoNPCTrade(void){
     // CALL(aTrade_GetAttributeOfCurrentPartymon);
     // LD_DE(wPlayerTrademonOTName);
     // CALL(aCopyTradeName);
-    CopyTradeName(wram->wPlayerTrademon.otName, wram->wPartyMonOT[wram->wCurPartyMon]);
+    CopyTradeName(wram->wPlayerTrademon.otName, gPokemon.partyMonOT[wram->wCurPartyMon]);
 
     // LD_HL(wPlayerName);
     // LD_DE(wPlayerTrademonSenderName);
@@ -231,14 +231,14 @@ void DoNPCTrade(void){
     // CALL(aTrade_GetAttributeOfCurrentPartymon);
     // LD_DE(wPlayerTrademonID);
     // CALL(aTrade_CopyTwoBytes);
-    wram->wPlayerTrademon.id = wram->wPartyMon[wram->wCurPartyMon].mon.id;
+    wram->wPlayerTrademon.id = gPokemon.partyMon[wram->wCurPartyMon].mon.id;
 
     // LD_HL(wPartyMon1DVs);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aTrade_GetAttributeOfCurrentPartymon);
     // LD_DE(wPlayerTrademonDVs);
     // CALL(aTrade_CopyTwoBytes);
-    wram->wPlayerTrademon.dvs = wram->wPartyMon[wram->wCurPartyMon].mon.DVs;
+    wram->wPlayerTrademon.dvs = gPokemon.partyMon[wram->wCurPartyMon].mon.DVs;
 
     // LD_HL(wPartyMon1Species);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -248,7 +248,7 @@ void DoNPCTrade(void){
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wPlayerTrademonCaughtData);
-    wram->wPlayerTrademon.caughtData = GetCaughtGender(&wram->wPartyMon[wram->wCurPartyMon].mon);
+    wram->wPlayerTrademon.caughtData = GetCaughtGender(&gPokemon.partyMon[wram->wCurPartyMon].mon);
 
     // LD_E(NPCTRADE_DIALOG);
     // CALL(aGetTradeAttr);
@@ -270,7 +270,7 @@ void DoNPCTrade(void){
     // CALL(aTrade_GetAttributeOfCurrentPartymon);
     // LD_A_hl;
     // LD_addr_A(wCurPartyLevel);
-    wram->wCurPartyLevel = wram->wPartyMon[wram->wCurPartyMon].mon.level;
+    wram->wCurPartyLevel = gPokemon.partyMon[wram->wCurPartyMon].mon.level;
     // LD_A_addr(wOTTrademonSpecies);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wOTTrademon.species;
@@ -308,7 +308,7 @@ void DoNPCTrade(void){
     // CALL(aTrade_GetAttributeOfLastPartymon);
     // LD_HL(wOTTrademonNickname);
     // CALL(aCopyTradeName);
-    CopyTradeName(wram->wPartyMonNickname[wram->wPartyCount - 1], wram->wOTTrademon.nickname);
+    CopyTradeName(gPokemon.partyMonNickname[gPokemon.partyCount - 1], wram->wOTTrademon.nickname);
 
     uint8_t* tempName = U82C(GetTradeAttr()->OTName);
     // LD_E(NPCTRADE_OT_NAME);
@@ -327,7 +327,7 @@ void DoNPCTrade(void){
     // CALL(aTrade_GetAttributeOfLastPartymon);
     // LD_HL(wOTTrademonOTName);
     // CALL(aCopyTradeName);
-    CopyTradeName(wram->wPartyMonOT[wram->wPartyCount - 1], wram->wOTTrademon.otName);
+    CopyTradeName(gPokemon.partyMonOT[gPokemon.partyCount - 1], wram->wOTTrademon.otName);
 
     // LD_E(NPCTRADE_DVS);
     // CALL(aGetTradeAttr);
@@ -340,7 +340,7 @@ void DoNPCTrade(void){
     // CALL(aTrade_GetAttributeOfLastPartymon);
     // LD_HL(wOTTrademonDVs);
     // CALL(aTrade_CopyTwoBytes);
-    CopyBytes(&wram->wPartyMon[wram->wPartyCount - 1].mon.DVs, &wram->wOTTrademon.dvs, 2);
+    CopyBytes(&gPokemon.partyMon[gPokemon.partyCount - 1].mon.DVs, &wram->wOTTrademon.dvs, 2);
 
     // LD_E(NPCTRADE_OT_ID);
     // CALL(aGetTradeAttr);
@@ -353,7 +353,7 @@ void DoNPCTrade(void){
     // CALL(aTrade_GetAttributeOfLastPartymon);
     // LD_HL(wOTTrademonID);
     // CALL(aTrade_CopyTwoBytes);
-    wram->wPartyMon[wram->wPartyCount - 1].mon.id = wram->wOTTrademon.id;
+    gPokemon.partyMon[gPokemon.partyCount - 1].mon.id = wram->wOTTrademon.id;
 
     // LD_E(NPCTRADE_ITEM);
     // CALL(aGetTradeAttr);
@@ -364,7 +364,7 @@ void DoNPCTrade(void){
     // POP_HL;
     // LD_A_hl;
     // LD_de_A;
-    wram->wPartyMon[wram->wPartyCount - 1].mon.item = GetTradeAttr()->item;
+    gPokemon.partyMon[gPokemon.partyCount - 1].mon.item = GetTradeAttr()->item;
 
     // PUSH_AF;
     // PUSH_BC;
@@ -377,7 +377,7 @@ void DoNPCTrade(void){
     // DEC_A;
     // LD_addr_A(wCurPartyMon);
     // FARCALL(aComputeNPCTrademonStats);
-    ComputeNPCTrademonStats(wram->wPartyCount - 1);
+    ComputeNPCTrademonStats(gPokemon.partyCount - 1);
     // POP_AF;
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = curPartyMon;

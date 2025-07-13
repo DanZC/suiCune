@@ -205,7 +205,7 @@ void GetMonSubmenuItems(void){
         // CALL(aGetPartyParamLocation);
         // LD_D_H;
         // LD_E_L;
-        move_t* moves = wram->wPartyMon[wram->wCurPartyMon].mon.moves;
+        move_t* moves = gPokemon.partyMon[wram->wCurPartyMon].mon.moves;
         // LD_C(NUM_MOVES);
 
         for(uint32_t i = 0; i < NUM_MOVES; ++i) {
@@ -259,7 +259,7 @@ void GetMonSubmenuItems(void){
         // LD_A(MONMENUITEM_MAIL);
         // IF_C goto ok;
         // LD_A(MONMENUITEM_ITEM);
-        uint8_t item = (ItemIsMail(wram->wPartyMon[wram->wCurPartyMon].mon.item))
+        uint8_t item = (ItemIsMail(gPokemon.partyMon[wram->wCurPartyMon].mon.item))
             ? MONMENUITEM_MAIL
             : MONMENUITEM_ITEM;
 

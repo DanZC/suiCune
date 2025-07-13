@@ -8,12 +8,12 @@ bool v_CheckPokerus(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // IF_Z goto NoPokerus;
-    if(wram->wPartyCount != 0) {
+    if(gPokemon.partyCount != 0) {
         // LD_B_A;
-        uint8_t b = wram->wPartyCount;
+        uint8_t b = gPokemon.partyCount;
     //  Check each monster in the party for Pokerus
         // LD_HL(wPartyMon1PokerusStatus);
-        struct PartyMon* hl = wram->wPartyMon;
+        struct PartyMon* hl = gPokemon.partyMon;
         // LD_DE(PARTYMON_STRUCT_LENGTH);
 
         do {

@@ -11,6 +11,7 @@
 #include "../../home/menu.h"
 #include "../../home/gfx.h"
 #include "../../home/map.h"
+#include "../../util/serialize.h"
 #include "../menus/save.h"
 #include "../../data/text/common.h"
 
@@ -24,7 +25,7 @@ static bool v_BillsPC_CheckCanUsePC(void) {
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wPartyCount != 0)
+    if(gPokemon.partyCount != 0)
         return true;
     // LD_HL(mv_BillsPC_PCGottaHavePokemonText);
     // CALL(aMenuTextboxBackup);
@@ -276,10 +277,10 @@ only_one_mon:
 }
 
 bool CheckCurPartyMonFainted(void){
-    if(wram->wCurPartyMon >= wram->wPartyCount)
+    if(wram->wCurPartyMon >= gPokemon.partyCount)
         return true;
     // LD_HL(wPartyMon1HP);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_DE(PARTYMON_STRUCT_LENGTH);
     // LD_B(0x0);
     uint8_t b = 0x0;
@@ -309,7 +310,7 @@ bool CheckCurPartyMonFainted(void){
         // IF_Z goto done;
         // ADD_HL_DE;
         // goto loop;
-    } while(++b != wram->wPartyCount);
+    } while(++b != gPokemon.partyCount);
 
 // done:
     // SCF;
@@ -394,18 +395,19 @@ void ClearPCItemScreen(void){
 }
 
 void CopyBoxmonToTempMon(void){
+    struct Box box;
     // LD_A_addr(wCurPartyMon);
     // LD_HL(sBoxMon1Species);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
-    struct BoxMon* hl = (struct BoxMon*)GBToRAMAddr(sBoxMon1Species + wram->wCurPartyMon * BOXMON_STRUCT_LENGTH);
     // LD_DE(wTempMonSpecies);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // LD_A(BANK(sBoxMon1Species));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBoxMon1Species));
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // CALL(aCopyBytes);
-    CopyBytes(&wram->wTempMon.mon, hl, sizeof(*hl));
+    CopyBytes(&wram->wTempMon.mon, box.mons + wram->wCurPartyMon, sizeof(box.mons[0]));
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;

@@ -204,7 +204,7 @@ void TeachTMHM(void){
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonNicknames);
     // CALL(aGetNickname);
-    GetNickname(wram->wPartyMonNickname[0], wram->wCurPartyMon);
+    GetNickname(gPokemon.partyMonNickname[0], wram->wCurPartyMon);
     // POP_BC;
 
     // LD_A_C;
@@ -226,7 +226,7 @@ void TeachTMHM(void){
 // compatible:
     // CALLFAR(aKnowsMove);
     // IF_C goto nope;
-    if(KnowsMove(&wram->wPartyMon[wram->wCurPartyMon].mon, wram->wPutativeTMHMMove))
+    if(KnowsMove(&gPokemon.partyMon[wram->wCurPartyMon].mon, wram->wPutativeTMHMMove))
         return;
 
     // PREDEF(pLearnMove);

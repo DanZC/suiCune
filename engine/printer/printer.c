@@ -17,6 +17,7 @@
 #include "../events/print_unown.h"
 #include "../../gfx/misc.h"
 #include "../../util/printer.h"
+#include "../../util/serialize.h"
 
 bool SendScreenToPrinter(void){
     uint8_t frames = 30;
@@ -928,11 +929,10 @@ void PrintPCBox_Page1(void){
     PlaceStringSimple(wram->wBoxNames + wram->wWhichBoxToPrint * BOX_NAME_LENGTH, coord(6, 5, wram->wTilemap));
     // LD_A(1);
     // CALL(aPrinter_GetBoxMonSpecies);
-    uint16_t de = Printer_GetBoxMonSpecies(1);
     // hlcoord(2, 9, wTilemap);
     // LD_C(3);
     // CALL(aPrinter_PrintBoxListSegment);
-    Printer_PrintBoxListSegment(coord(2, 9, wram->wTilemap), de, 3);
+    Printer_PrintBoxListSegment(coord(2, 9, wram->wTilemap), 3);
     // RET;
 }
 
@@ -953,11 +953,10 @@ void PrintPCBox_Page2(void){
         return;
     // LD_A(4);
     // CALL(aPrinter_GetBoxMonSpecies);
-    uint16_t de = Printer_GetBoxMonSpecies(4);
     // hlcoord(2, 0, wTilemap);
     // LD_C(6);
     // CALL(aPrinter_PrintBoxListSegment);
-    Printer_PrintBoxListSegment(coord(2, 0, wram->wTilemap), de, 6);
+    Printer_PrintBoxListSegment(coord(2, 0, wram->wTilemap), 6);
     // RET;
 
 }
@@ -979,11 +978,10 @@ void PrintPCBox_Page3(void){
         return;
     // LD_A(10);
     // CALL(aPrinter_GetBoxMonSpecies);
-    uint16_t de = Printer_GetBoxMonSpecies(10);
     // hlcoord(2, 0, wTilemap);
     // LD_C(6);
     // CALL(aPrinter_PrintBoxListSegment);
-    Printer_PrintBoxListSegment(coord(2, 0, wram->wTilemap), de, 6);
+    Printer_PrintBoxListSegment(coord(2, 0, wram->wTilemap), 6);
     // RET;
 }
 
@@ -1010,19 +1008,20 @@ void PrintPCBox_Page4(void){
         return;
     // LD_A(16);
     // CALL(aPrinter_GetBoxMonSpecies);
-    uint16_t de = Printer_GetBoxMonSpecies(16);
     // hlcoord(2, 0, wTilemap);
     // LD_C(5);
     // CALL(aPrinter_PrintBoxListSegment);
-    Printer_PrintBoxListSegment(coord(2, 0, wram->wTilemap), de, 5);
+    Printer_PrintBoxListSegment(coord(2, 0, wram->wTilemap), 5);
     // RET;
 }
 
-void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
+void Printer_PrintBoxListSegment(tile_t* hl, uint8_t c){
     // LD_A_addr(wBankOfBoxToPrint);
     // CALL(aOpenSRAM);
     OpenSRAM(wram->wBankOfBoxToPrint);
-    species_t* boxSpecies = (species_t*)GBToRAMAddr(de);
+    struct Box box;
+    Deserialize_Box(&box, GBToRAMAddr(wram->wAddrOfBoxToPrint));
+    species_t* boxSpecies = box.species;
 
     while(1) {
     // loop:
@@ -1070,7 +1069,7 @@ void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
             // ADD_HL_BC;
             tile_t* hl2 = hl + MON_NAME_LENGTH;
             // CALL(aPrinter_GetMonGender);
-            hl2 = Printer_GetMonGender(hl2);
+            hl2 = Printer_GetMonGender(&box, hl2);
             // LD_BC(SCREEN_WIDTH - MON_NAME_LENGTH);
             // ADD_HL_BC;
             hl2 += SCREEN_WIDTH - MON_NAME_LENGTH;
@@ -1092,13 +1091,12 @@ void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
             // LD_H_A;
             // LD_BC(sBoxMonNicknames - sBox);
             // ADD_HL_BC;
-            uint8_t* nicknames = (uint8_t*)GBToRAMAddr(wram->wAddrOfBoxToPrint + (sBoxMonNicknames - sBox));
             // LD_BC(MON_NAME_LENGTH);
             // LD_A_addr(wWhichBoxMonToPrint);
             // CALL(aAddNTimes);
             // LD_E_L;
             // LD_D_H;
-            uint8_t* nick = nicknames + (wram->wWhichBoxMonToPrint * MON_NAME_LENGTH);
+            uint8_t* nick = box.monNicknames[wram->wWhichBoxMonToPrint];
             // POP_HL;
 
             // PUSH_HL;
@@ -1120,7 +1118,7 @@ void Printer_PrintBoxListSegment(tile_t* hl, uint16_t de, uint8_t c){
             // LD_A_addr(wWhichBoxMonToPrint);
             // CALL(aAddNTimes);
             // LD_A_hl;
-            uint8_t level = ((struct BoxMon*)GBToRAMAddr(wram->wAddrOfBoxToPrint + 2 + MONS_PER_BOX))[wram->wWhichBoxMonToPrint].level;
+            uint8_t level = box.mons[wram->wWhichBoxMonToPrint].level;
             // POP_HL;
             // CALL(aPrintLevel_Force3Digits);
             PrintLevel_Force3Digits(hl2, level);
@@ -1151,7 +1149,7 @@ max_length:
     // RET;
 }
 
-tile_t* Printer_GetMonGender(tile_t* hl){
+tile_t* Printer_GetMonGender(const struct Box* box, tile_t* hl){
     // PUSH_HL;
     // LD_A_addr(wAddrOfBoxToPrint);
     // LD_L_A;
@@ -1159,7 +1157,7 @@ tile_t* Printer_GetMonGender(tile_t* hl){
     // LD_H_A;
     // LD_BC(2 + MONS_PER_BOX + MON_DVS);
     // ADD_HL_BC;
-    struct BoxMon* boxMon = (struct BoxMon*)GBToRAMAddr(wram->wAddrOfBoxToPrint + 2 + MONS_PER_BOX);
+    const struct BoxMon* boxMon = box->mons;
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // LD_A_addr(wWhichBoxMonToPrint);
     // CALL(aAddNTimes);

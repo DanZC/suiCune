@@ -6,6 +6,7 @@
 #include "../gfx/crystal_layouts.h"
 #include "../events/poke_seer.h"
 #include "../pokemon/move_mon.h"
+#include "../pokemon/mail.h"
 #include "../pokemon/evolve.h"
 #include "../pokemon/european_mail.h"
 #include "../menus/save.h"
@@ -32,6 +33,7 @@
 #include "../../data/text/common.h"
 #include "../../data/items/catch_rate_items.h"
 #include "../../util/network.h"
+#include "../../util/serialize.h"
 
 static void ClearLinkData(void);
 static void FixDataForLinkTransfer(void);
@@ -569,10 +571,10 @@ void Gen2ToGen2LinkComms(void){
         // fix_mail_loop:
             // PUSH_BC;
             // PUSH_DE;
-            struct MailMsg* de2 = (struct MailMsg*)de;
+            struct MailMsg de2 = LoadMailMsg(de);
             // FARCALL(aIsMailEuropean);
             // LD_A_C;
-            uint8_t c = IsMailEuropean(de2);
+            uint8_t c = IsMailEuropean(&de2);
             // OR_A_A;
             // IF_Z goto next;
             if(c != 0) {
@@ -580,7 +582,7 @@ void Gen2ToGen2LinkComms(void){
                 // IF_NC goto skip;
                 if(c < 0x3) {
                     // FARCALL(aConvertEnglishMailToFrenchGerman);
-                    ConvertEnglishMailToFrenchGerman(de2);
+                    ConvertEnglishMailToFrenchGerman(de);
                     // goto next;
                 }
                 else if(c - 0x3 < 0x2) {
@@ -588,7 +590,7 @@ void Gen2ToGen2LinkComms(void){
                     // CP_A(0x2);
                     // IF_NC goto next;
                     // FARCALL(aConvertEnglishMailToSpanishItalian);
-                    ConvertEnglishMailToSpanishItalian(de2);
+                    ConvertEnglishMailToSpanishItalian(de);
                 }
             }
 
@@ -1196,15 +1198,15 @@ static void Link_PrepPartyData_Gen2(void){
     CopyBytes(de, wram->wPlayerName, NAME_LENGTH);
     de += NAME_LENGTH;
 
-    CopyBytes(de, &wram->wPartyCount, sizeof(wram->wPartyCount));
-    de += sizeof(wram->wPartyCount);
+    CopyBytes(de, &gPokemon.partyCount, sizeof(gPokemon.partyCount));
+    de += sizeof(gPokemon.partyCount);
     // LD_HL(wPartyCount);
     // LD_BC(1 + PARTY_LENGTH + 1);
     // CALL(aCopyBytes);
-    CopyBytes(de, &wram->wPartySpecies, sizeof(wram->wPartySpecies));
-    de += sizeof(wram->wPartySpecies);
-    CopyBytes(de, &wram->wPartyEnd, sizeof(wram->wPartyEnd));
-    de += sizeof(wram->wPartyEnd);
+    CopyBytes(de, &gPokemon.partySpecies, sizeof(gPokemon.partySpecies));
+    de += sizeof(gPokemon.partySpecies);
+    CopyBytes(de, &gPokemon.partyEnd, sizeof(gPokemon.partyEnd));
+    de += sizeof(gPokemon.partyEnd);
 
     // LD_HL(wPlayerID);
     // LD_BC(2);
@@ -1215,20 +1217,21 @@ static void Link_PrepPartyData_Gen2(void){
     // LD_HL(wPartyMon1Species);
     // LD_BC(PARTY_LENGTH * PARTYMON_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(de, wram->wPartyMon, sizeof(wram->wPartyMon));
-    de += sizeof(wram->wPartyMon);
+    for(uint32_t i = 0; i < PARTY_LENGTH; ++i) {
+        de = Serialize_PartyMon(de, gPokemon.partyMon + i);
+    }
 
     // LD_HL(wPartyMonOTs);
     // LD_BC(PARTY_LENGTH * NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(de, wram->wPartyMonOT, sizeof(wram->wPartyMonOT));
-    de += sizeof(wram->wPartyMonOT);
+    CopyBytes(de, gPokemon.partyMonOT, sizeof(gPokemon.partyMonOT));
+    de += sizeof(gPokemon.partyMonOT);
 
     // LD_HL(wPartyMonNicknames);
     // LD_BC(PARTY_LENGTH * MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(de, wram->wPartyMonNickname, sizeof(wram->wPartyMonNickname));
-    de += sizeof(wram->wPartyMonNickname);
+    CopyBytes(de, gPokemon.partyMonNickname, sizeof(gPokemon.partyMonNickname));
+    de += sizeof(gPokemon.partyMonNickname);
 
 //  Okay, we did all that.  Now, are we in the trade center?
     // LD_A_addr(wLinkMode);
@@ -1248,7 +1251,7 @@ static void Link_PrepPartyData_Gen2(void){
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asPartyMail));
     // LD_HL(sPartyMail);
-    const struct MailMsg* hl = (const struct MailMsg*)GBToRAMAddr(sPartyMail);
+    uint8_t* mailData = GBToRAMAddr(sPartyMail);
     // LD_B(PARTY_LENGTH);
     b = PARTY_LENGTH;
 
@@ -1257,9 +1260,9 @@ static void Link_PrepPartyData_Gen2(void){
         // PUSH_BC;
         // LD_BC(MAIL_MSG_LENGTH + 1);
         // CALL(aCopyBytes);
-        CopyBytes(de, hl->message, sizeof(hl->message));
-        de += sizeof(hl->message);
-        hl++;
+        CopyBytes(de, mailData, MAIL_MSG_LENGTH + 1);
+        de += MAIL_MSG_LENGTH + 1;
+        mailData += MAIL_STRUCT_LENGTH;
         // LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
         // ADD_HL_BC;
         // POP_BC;
@@ -1268,7 +1271,7 @@ static void Link_PrepPartyData_Gen2(void){
     } while(--b != 0);
 //  Copy the mail data to wLinkPlayerMailMetadata
     // LD_HL(sPartyMail);
-    hl = (const struct MailMsg*)GBToRAMAddr(sPartyMail);
+    mailData = GBToRAMAddr(sPartyMail + MAIL_MSG_LENGTH + 1);
     // LD_B(PARTY_LENGTH);
     b = PARTY_LENGTH;
 
@@ -1279,9 +1282,9 @@ static void Link_PrepPartyData_Gen2(void){
         // ADD_HL_BC;
         // LD_BC(MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
         // CALL(aCopyBytes);
-        CopyBytes(de, hl->author, sizeof(*hl) - sizeof(hl->message));
-        de += sizeof(*hl) - sizeof(hl->message);
-        hl++;
+        CopyBytes(de, mailData, MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1));
+        de += MAIL_STRUCT_LENGTH - (MAIL_MSG_LENGTH + 1);
+        mailData += MAIL_STRUCT_LENGTH;
         // POP_BC;
         // DEC_B;
         // IF_NZ goto loop3;
@@ -1310,14 +1313,14 @@ static void Link_PrepPartyData_Gen2(void){
             // IF_NC goto italian_spanish;
             // FARCALL(aConvertFrenchGermanMailToEnglish);
             if(c < 0x3)
-                ConvertFrenchGermanMailToEnglish(de2);
+                ConvertFrenchGermanMailToEnglish(hl2);
             // goto next;
 
         // italian_spanish:
             // CP_A(0x2);
             // IF_NC goto next;
             else if(c - 0x3 < 0x2)
-                ConvertSpanishItalianMailToEnglish(de2);
+                ConvertSpanishItalianMailToEnglish(hl2);
             // FARCALL(aConvertSpanishItalianMailToEnglish);
         }
 
@@ -1779,7 +1782,7 @@ LinkTrade_PlayerPartyMenu:
     wram->wMenuJoypadFilter = A_BUTTON | D_UP | D_DOWN;
     // LD_A_addr(wPartyCount);
     // LD_addr_A(w2DMenuNumRows);
-    wram->w2DMenuNumRows = wram->wPartyCount;
+    wram->w2DMenuNumRows = gPokemon.partyCount;
     // LD_A(1);
     // LD_addr_A(w2DMenuNumCols);
     wram->w2DMenuNumCols = 1;
@@ -2105,7 +2108,7 @@ LinkTradeOTPartymonMenuLoop:
     // POP_HL;
     // LD_A_addr(wPartyCount);
     // LD_addr_A(wMenuCursorY);
-    wram->wMenuCursorY = wram->wPartyCount;
+    wram->wMenuCursorY = gPokemon.partyCount;
     // JR(mLinkTrade_PlayerPartyMenu);
     goto LinkTrade_PlayerPartyMenu;
 
@@ -2166,7 +2169,7 @@ LinkTradePartymonMenuLoop:
     // LD_A_addr(wPartyCount);
     // CP_A_B;
     // JR_NZ (mLinkTradePartiesMenuMasterLoop);
-    if(wram->wMenuCursorY != wram->wPartyCount)
+    if(wram->wMenuCursorY != gPokemon.partyCount)
         goto LinkTradePartiesMenuMasterLoop;
     // CALL(aHideCursor);
     hl = HideCursor();
@@ -2352,7 +2355,7 @@ void LinkTradeOTPartymonMenuLoop(void){
     // POP_HL;
     // LD_A_addr(wPartyCount);
     // LD_addr_A(wMenuCursorY);
-    wram->wMenuCursorY = wram->wPartyCount;
+    wram->wMenuCursorY = gPokemon.partyCount;
     // JR(mLinkTrade_PlayerPartyMenu);
     return LinkTrade_PlayerPartyMenu();
 }
@@ -2368,7 +2371,7 @@ void LinkTrade_PlayerPartyMenu(void){
     wram->wMenuJoypadFilter = A_BUTTON | D_UP | D_DOWN;
     // LD_A_addr(wPartyCount);
     // LD_addr_A(w2DMenuNumRows);
-    wram->w2DMenuNumRows = wram->wPartyCount;
+    wram->w2DMenuNumRows = gPokemon.partyCount;
     // LD_A(1);
     // LD_addr_A(w2DMenuNumCols);
     wram->w2DMenuNumCols = 1;
@@ -2453,7 +2456,7 @@ void LinkTradePartymonMenuLoop(void){
     // LD_A_addr(wPartyCount);
     // CP_A_B;
     // JR_NZ (mLinkTradePartiesMenuMasterLoop);
-    if(wram->wMenuCursorY != wram->wPartyCount)
+    if(wram->wMenuCursorY != gPokemon.partyCount)
         return LinkTradePartiesMenuMasterLoop();
     // CALL(aHideCursor);
     tile_t* hl = HideCursor();
@@ -2917,7 +2920,7 @@ void LinkTrade(void){
     // LD_B(0);
     // ADD_HL_BC;
     // LD_A_hl;
-    species_t s = wram->wPartySpecies[wram->wCurTradePartyMon];
+    species_t s = gPokemon.partySpecies[wram->wCurTradePartyMon];
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
     // LD_HL(wStringBuffer1);
@@ -3077,7 +3080,7 @@ void LinkTrade(void){
         // DEC_A;
         // LD_BC(MAIL_STRUCT_LENGTH);
         // CALL(aAddNTimes);
-        uint16_t de2 = sPartyMail + ((wram->wPartyCount - 1) * MAIL_STRUCT_LENGTH);
+        uint16_t de2 = sPartyMail + ((gPokemon.partyCount - 1) * MAIL_STRUCT_LENGTH);
         // PUSH_HL;
         // LD_HL(wLinkPlayerMail);
         // LD_A_addr(wCurOTTradePartyMon);
@@ -3108,7 +3111,7 @@ void LinkTrade(void){
         // ADD_HL_BC;
         // LD_A_hl;
         // LD_addr_A(wPlayerTrademonSpecies);
-        wram->wPlayerTrademon.species = wram->wPartySpecies[wram->wCurTradePartyMon];
+        wram->wPlayerTrademon.species = gPokemon.partySpecies[wram->wCurTradePartyMon];
         // PUSH_AF;
     //  OT name
         // LD_A_addr(wCurTradePartyMon);
@@ -3117,7 +3120,7 @@ void LinkTrade(void){
         // LD_DE(wPlayerTrademonOTName);
         // LD_BC(NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wPlayerTrademon.otName, wram->wPartyMonOT[wram->wCurTradePartyMon],
+        CopyBytes(wram->wPlayerTrademon.otName, gPokemon.partyMonOT[wram->wCurTradePartyMon],
             NAME_LENGTH);
     //  ID
         // LD_HL(wPartyMon1ID);
@@ -3127,7 +3130,7 @@ void LinkTrade(void){
         // LD_addr_A(wPlayerTrademonID);
         // LD_A_hl;
         // LD_addr_A(wPlayerTrademonID + 1);
-        wram->wPlayerTrademon.id = wram->wPartyMon[wram->wCurTradePartyMon].mon.id;
+        wram->wPlayerTrademon.id = gPokemon.partyMon[wram->wCurTradePartyMon].mon.id;
     //  DVs
         // LD_HL(wPartyMon1DVs);
         // LD_A_addr(wCurTradePartyMon);
@@ -3136,7 +3139,7 @@ void LinkTrade(void){
         // LD_addr_A(wPlayerTrademonDVs);
         // LD_A_hl;
         // LD_addr_A(wPlayerTrademonDVs + 1);
-        wram->wPlayerTrademon.dvs = wram->wPartyMon[wram->wCurTradePartyMon].mon.DVs;
+        wram->wPlayerTrademon.dvs = gPokemon.partyMon[wram->wCurTradePartyMon].mon.DVs;
     //  caught data
         // LD_A_addr(wCurTradePartyMon);
         // LD_HL(wPartyMon1Species);
@@ -3146,7 +3149,7 @@ void LinkTrade(void){
         // FARCALL(aGetCaughtGender);
         // LD_A_C;
         // LD_addr_A(wPlayerTrademonCaughtData);
-        wram->wPlayerTrademon.caughtData = GetCaughtGender(&wram->wPartyMon[wram->wCurTradePartyMon].mon);
+        wram->wPlayerTrademon.caughtData = GetCaughtGender(&gPokemon.partyMon[wram->wCurTradePartyMon].mon);
 
     //  Buffer other player data
     //  nickname
@@ -3211,7 +3214,7 @@ void LinkTrade(void){
         // ADD_HL_BC;
         // LD_A_hl;
         // LD_addr_A(wCurTradePartyMon);
-        wram->wCurTradePartyMon = wram->wPartySpecies[wram->wCurTradePartyMon];
+        wram->wCurTradePartyMon = gPokemon.partySpecies[wram->wCurTradePartyMon];
 
         // XOR_A_A;  // REMOVE_PARTY
         // LD_addr_A(wPokemonWithdrawDepositParameter);
@@ -3220,7 +3223,7 @@ void LinkTrade(void){
         // LD_A_addr(wPartyCount);
         // DEC_A;
         // LD_addr_A(wCurPartyMon);
-        wram->wCurPartyMon = wram->wPartyCount - 1;
+        wram->wCurPartyMon = gPokemon.partyCount - 1;
         // LD_A(TRUE);
         // LD_addr_A(wForceEvolution);
         wram->wForceEvolution = TRUE;
@@ -3285,7 +3288,7 @@ void LinkTrade(void){
         // LD_A_addr(wPartyCount);
         // DEC_A;
         // LD_addr_A(wCurPartyMon);
-        wram->wCurPartyMon = wram->wPartyCount - 1;
+        wram->wCurPartyMon = gPokemon.partyCount - 1;
         // CALLFAR(aEvolvePokemon);
         EvolvePokemon();
         // CALL(aClearScreen);

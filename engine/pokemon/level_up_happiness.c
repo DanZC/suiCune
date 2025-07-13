@@ -10,7 +10,7 @@ void LevelUpHappinessMod(void){
     // LD_A_hl;
     // AND_A(CAUGHT_LOCATION_MASK);
     // LD_D_A;
-    uint8_t d = wram->wPartyMon[wram->wCurPartyMon].mon.caughtGenderLocation & CAUGHT_LOCATION_MASK;
+    uint8_t d = gPokemon.partyMon[wram->wCurPartyMon].mon.caughtGenderLocation & CAUGHT_LOCATION_MASK;
     // LD_A_addr(wMapGroup);
     // LD_B_A;
     // LD_A_addr(wMapNumber);

@@ -224,14 +224,14 @@ static tile_t* FindNest_RoamMon1(tile_t* de, species_t species) {
     // LD_A_addr(wNamedObjectIndex);
     // CP_A_B;
     // RET_NZ ;
-    if(wram->wRoamMon1.species != species)
+    if(gPokemon.roamMon1.species != species)
         return de;
     // LD_A_addr(wRoamMon1MapGroup);
     // LD_B_A;
     // LD_A_addr(wRoamMon1MapNumber);
     // LD_C_A;
     // CALL(aFindNest_AppendNest);
-    u8_flag_s res = FindNest_AppendNest(wram->wRoamMon1.mapId.mapGroup, wram->wRoamMon1.mapId.mapNumber);
+    u8_flag_s res = FindNest_AppendNest(gPokemon.roamMon1.mapId.mapGroup, gPokemon.roamMon1.mapId.mapNumber);
     // RET_NC ;
     if(res.flag) {
         // LD_de_A;
@@ -248,14 +248,14 @@ static tile_t* FindNest_RoamMon2(tile_t* de, species_t species) {
     // LD_A_addr(wNamedObjectIndex);
     // CP_A_B;
     // RET_NZ ;
-    if(wram->wRoamMon2.species != species)
+    if(gPokemon.roamMon2.species != species)
         return de;
     // LD_A_addr(wRoamMon2MapGroup);
     // LD_B_A;
     // LD_A_addr(wRoamMon2MapNumber);
     // LD_C_A;
     // CALL(aFindNest_AppendNest);
-    u8_flag_s res = FindNest_AppendNest(wram->wRoamMon2.mapId.mapGroup, wram->wRoamMon2.mapId.mapNumber);
+    u8_flag_s res = FindNest_AppendNest(gPokemon.roamMon2.mapId.mapGroup, gPokemon.roamMon2.mapId.mapNumber);
     // RET_NC ;
     if(res.flag) {
         // LD_de_A;
@@ -394,12 +394,12 @@ uint8_t ApplyMusicEffectOnEncounterRate(uint8_t b){
 //  Cleanse Tag halves encounter rate.
 uint8_t ApplyCleanseTagEffectOnEncounterRate(uint8_t b){
     // LD_HL(wPartyMon1Item);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_DE(PARTYMON_STRUCT_LENGTH);
     // LD_A_addr(wPartyCount);
     // LD_C_A;
 
-    for(uint8_t c = 0; c < wram->wPartyCount; ++c) {
+    for(uint8_t c = 0; c < gPokemon.partyCount; ++c) {
     // loop:
         // LD_A_hl;
         // CP_A(CLEANSE_TAG);
@@ -532,7 +532,7 @@ bool ChooseWildEncounter(void){
     // LD_A_addr(wUnlockedUnowns);
     // AND_A_A;
     // IF_Z goto nowildbattle;
-    if(s == UNOWN && wram->wUnlockedUnowns == FALSE)
+    if(s == UNOWN && gPokemon.unlockedUnowns == FALSE)
         return false;
 
 // done:
@@ -575,7 +575,7 @@ bool CheckRepelEffect(void){
         // LD_A_hli;
         // OR_A_hl;
         // IF_NZ goto ok;
-        if(wram->wPartyMon[i].HP != 0)
+        if(gPokemon.partyMon[i].HP != 0)
             break;
         // ADD_HL_BC;
         // goto loop;
@@ -591,7 +591,7 @@ bool CheckRepelEffect(void){
     // LD_A_addr(wCurPartyLevel);
     // CP_A_hl;
     // IF_NC goto encounter;
-    if(wram->wCurPartyLevel >= wram->wPartyMon[i].mon.level)
+    if(wram->wCurPartyLevel >= gPokemon.partyMon[i].mon.level)
         return false;
     // AND_A_A;
     // RET;
@@ -667,8 +667,8 @@ struct WildMons v_SwarmWildmonCheck(struct WildMons mons){
     // CP_A_E;
     // IF_NZ goto CheckYanma;
     if(bit_test(wram->wSwarmFlags, SWARMFLAGS_DUNSPARCE_SWARM_F) 
-    && wram->wDunsparceMapGroup == map.mapGroup
-    && wram->wDunsparceMapNumber == map.mapNumber) {
+    && gPokemon.dunsparceMapGroup == map.mapGroup
+    && gPokemon.dunsparceMapNumber == map.mapNumber) {
         // CALL(aLookUpWildmonsForMapDE);
         mons = LookUpWildmonsForMapDE(mons, map);
         // JR_NC (mv_NoSwarmWildmon);
@@ -796,38 +796,38 @@ void InitRoamMons(void){
 //  species
     // LD_A(RAIKOU);
     // LD_addr_A(wRoamMon1Species);
-    wram->wRoamMon1.species = RAIKOU;
+    gPokemon.roamMon1.species = RAIKOU;
     // LD_A(ENTEI);
     // LD_addr_A(wRoamMon2Species);
-    wram->wRoamMon2.species = ENTEI;
+    gPokemon.roamMon2.species = ENTEI;
 
 //  level
     // LD_A(40);
     // LD_addr_A(wRoamMon1Level);
-    wram->wRoamMon1.level = 40;
+    gPokemon.roamMon1.level = 40;
     // LD_addr_A(wRoamMon2Level);
-    wram->wRoamMon2.level = 40;
+    gPokemon.roamMon2.level = 40;
 
 //  raikou starting map
     // LD_A(GROUP_ROUTE_42);
     // LD_addr_A(wRoamMon1MapGroup);
     // LD_A(MAP_ROUTE_42);
     // LD_addr_A(wRoamMon1MapNumber);
-    wram->wRoamMon1.mapId = MAP_ID_(ROUTE_42);
+    gPokemon.roamMon1.mapId = MAP_ID_(ROUTE_42);
 
 //  entei starting map
     // LD_A(GROUP_ROUTE_37);
     // LD_addr_A(wRoamMon2MapGroup);
     // LD_A(MAP_ROUTE_37);
     // LD_addr_A(wRoamMon2MapNumber);
-    wram->wRoamMon2.mapId = MAP_ID_(ROUTE_37);
+    gPokemon.roamMon2.mapId = MAP_ID_(ROUTE_37);
 
 //  hp
     // XOR_A_A;  // generate new stats
     // LD_addr_A(wRoamMon1HP);
     // LD_addr_A(wRoamMon2HP);
-    wram->wRoamMon1.HP = 0;
-    wram->wRoamMon2.HP = 0;
+    gPokemon.roamMon1.HP = 0;
+    gPokemon.roamMon2.HP = 0;
 
     // RET;
 }
@@ -861,7 +861,7 @@ bool CheckEncounterRoamMon(void){
     // LD_B(0);
     // LD_A(7);  // length of the roam_struct
     // CALL(aAddNTimes);
-    struct Roamer* roamer = &wram->wRoamMon1 + a;
+    struct Roamer* roamer = &gPokemon.roamMon1 + a;
     // LD_A_D;
     // CP_A_hl;
     // IF_NZ goto DontEncounterRoamMon;
@@ -952,8 +952,8 @@ static struct MapId UpdateRoamMons_Update(uint8_t mapGroup, uint8_t mapNumber) {
                 // LD_A_addr(wRoamMons_LastMapNumber);
                 // CP_A_hl;
                 // IF_Z goto update_loop;
-            } while(de[a - 1].mapGroup == wram->wRoamMons_LastMapGroup
-                 && de[a - 1].mapNumber == wram->wRoamMons_LastMapNumber);
+            } while(de[a - 1].mapGroup == gPokemon.roamMons_LastMapGroup
+                 && de[a - 1].mapNumber == gPokemon.roamMons_LastMapNumber);
             // DEC_HL;
 
 
@@ -979,15 +979,15 @@ void UpdateRoamMons(void){
     // LD_A_addr(wRoamMon1MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto SkipRaikou;
-    if(wram->wRoamMon1.mapId.mapGroup != (uint8_t)GROUP_N_A) {
+    if(gPokemon.roamMon1.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // LD_B_A;
         // LD_A_addr(wRoamMon1MapNumber);
         // LD_C_A;
         // CALL(aUpdateRoamMons_Update);
-        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon1.mapId.mapGroup, wram->wRoamMon1.mapId.mapNumber);
+        struct MapId new_map = UpdateRoamMons_Update(gPokemon.roamMon1.mapId.mapGroup, gPokemon.roamMon1.mapId.mapNumber);
         // LD_A_B;
         // LD_addr_A(wRoamMon1MapGroup);
-        wram->wRoamMon1.mapId = new_map;
+        gPokemon.roamMon1.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon1MapNumber);
     }
@@ -996,15 +996,15 @@ void UpdateRoamMons(void){
     // LD_A_addr(wRoamMon2MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto SkipEntei;
-    if(wram->wRoamMon2.mapId.mapGroup != (uint8_t)GROUP_N_A) {
+    if(gPokemon.roamMon2.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // LD_B_A;
         // LD_A_addr(wRoamMon2MapNumber);
         // LD_C_A;
         // CALL(aUpdateRoamMons_Update);
-        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon2.mapId.mapGroup, wram->wRoamMon2.mapId.mapNumber);
+        struct MapId new_map = UpdateRoamMons_Update(gPokemon.roamMon2.mapId.mapGroup, gPokemon.roamMon2.mapId.mapNumber);
         // LD_A_B;
         // LD_addr_A(wRoamMon2MapGroup);
-        wram->wRoamMon2.mapId = new_map;
+        gPokemon.roamMon2.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon2MapNumber);
     }
@@ -1013,15 +1013,15 @@ void UpdateRoamMons(void){
     // LD_A_addr(wRoamMon3MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto Finished;
-    if(wram->wRoamMon3.mapId.mapGroup != (uint8_t)GROUP_N_A) {
+    if(gPokemon.roamMon3.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // LD_B_A;
         // LD_A_addr(wRoamMon3MapNumber);
         // LD_C_A;
         // CALL(aUpdateRoamMons_Update);
-        struct MapId new_map = UpdateRoamMons_Update(wram->wRoamMon3.mapId.mapGroup, wram->wRoamMon3.mapId.mapNumber);
+        struct MapId new_map = UpdateRoamMons_Update(gPokemon.roamMon3.mapId.mapGroup, gPokemon.roamMon3.mapId.mapNumber);
         // LD_A_B;
         // LD_addr_A(wRoamMon3MapGroup);
-        wram->wRoamMon3.mapId = new_map;
+        gPokemon.roamMon3.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon3MapNumber);
     }
@@ -1035,12 +1035,12 @@ void JumpRoamMons(void){
     // LD_A_addr(wRoamMon1MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto SkipRaikou;
-    if(wram->wRoamMon1.mapId.mapGroup != (uint8_t)GROUP_N_A) {
+    if(gPokemon.roamMon1.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // CALL(aJumpRoamMon);
         struct MapId new_map = JumpRoamMon();
         // LD_A_B;
         // LD_addr_A(wRoamMon1MapGroup);
-        wram->wRoamMon1.mapId = new_map;
+        gPokemon.roamMon1.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon1MapNumber);
     }
@@ -1050,12 +1050,12 @@ void JumpRoamMons(void){
     // LD_A_addr(wRoamMon2MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto SkipEntei;
-    if(wram->wRoamMon2.mapId.mapGroup != (uint8_t)GROUP_N_A) {
+    if(gPokemon.roamMon2.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // CALL(aJumpRoamMon);
         struct MapId new_map = JumpRoamMon();
         // LD_A_B;
         // LD_addr_A(wRoamMon2MapGroup);
-        wram->wRoamMon2.mapId = new_map;
+        gPokemon.roamMon2.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon2MapNumber);
     }
@@ -1065,12 +1065,12 @@ void JumpRoamMons(void){
     // LD_A_addr(wRoamMon3MapGroup);
     // CP_A(GROUP_N_A);
     // IF_Z goto Finished;
-    if(wram->wRoamMon3.mapId.mapGroup != (uint8_t)GROUP_N_A) {
+    if(gPokemon.roamMon3.mapId.mapGroup != (uint8_t)GROUP_N_A) {
         // CALL(aJumpRoamMon);
         struct MapId new_map = JumpRoamMon();
         // LD_A_B;
         // LD_addr_A(wRoamMon3MapGroup);
-        wram->wRoamMon3.mapId = new_map;
+        gPokemon.roamMon3.mapId = new_map;
         // LD_A_C;
         // LD_addr_A(wRoamMon3MapNumber);
     }
@@ -1136,16 +1136,16 @@ struct MapId JumpRoamMon(void){
 void v_BackUpMapIndices(void){
     // LD_A_addr(wRoamMons_CurMapNumber);
     // LD_addr_A(wRoamMons_LastMapNumber);
-    wram->wRoamMons_LastMapNumber = wram->wRoamMons_CurMapNumber;
+    gPokemon.roamMons_LastMapNumber = gPokemon.roamMons_CurMapNumber;
     // LD_A_addr(wRoamMons_CurMapGroup);
     // LD_addr_A(wRoamMons_LastMapGroup);
-    wram->wRoamMons_LastMapGroup = wram->wRoamMons_CurMapGroup;
+    gPokemon.roamMons_LastMapGroup = gPokemon.roamMons_CurMapGroup;
     // LD_A_addr(wMapNumber);
     // LD_addr_A(wRoamMons_CurMapNumber);
-    wram->wRoamMons_CurMapNumber = gCurMapData.mapNumber;
+    gPokemon.roamMons_CurMapNumber = gCurMapData.mapNumber;
     // LD_A_addr(wMapGroup);
     // LD_addr_A(wRoamMons_CurMapGroup);
-    wram->wRoamMons_CurMapGroup = gCurMapData.mapGroup;
+    gPokemon.roamMons_CurMapGroup = gCurMapData.mapGroup;
     // RET;
 
 // INCLUDE "data/wild/roammon_maps.asm"

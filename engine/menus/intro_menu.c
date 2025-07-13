@@ -322,7 +322,7 @@ static void v_ResetWRAM(void) {
 
     // LD_HL(wPartyCount);
     // CALL(av_ResetWRAM_InitList);
-    v_ResetWRAM_InitMonList(&wram->wPartyCount, wram->wPartySpecies);
+    v_ResetWRAM_InitMonList(&gPokemon.partyCount, gPokemon.partySpecies);
 
     // XOR_A_A;
     // LD_addr_A(wCurBox);
@@ -360,11 +360,11 @@ static void v_ResetWRAM(void) {
 
     // XOR_A_A;
     // LD_addr_A(wRoamMon1Species);
-    wram->wRoamMon1.species = 0;
+    gPokemon.roamMon1.species = 0;
     // LD_addr_A(wRoamMon2Species);
-    wram->wRoamMon2.species = 0;
+    gPokemon.roamMon2.species = 0;
     // LD_addr_A(wRoamMon3Species);
-    wram->wRoamMon3.species = 0;
+    gPokemon.roamMon3.species = 0;
     // LD_A(-1);
     // LD_addr_A(wRoamMon1MapGroup);
     // LD_addr_A(wRoamMon2MapGroup);
@@ -372,9 +372,9 @@ static void v_ResetWRAM(void) {
     // LD_addr_A(wRoamMon1MapNumber);
     // LD_addr_A(wRoamMon2MapNumber);
     // LD_addr_A(wRoamMon3MapNumber);
-    wram->wRoamMon1.mapId = (struct MapId){0xff, 0xff};
-    wram->wRoamMon2.mapId = (struct MapId){0xff, 0xff};
-    wram->wRoamMon3.mapId = (struct MapId){0xff, 0xff};
+    gPokemon.roamMon1.mapId = (struct MapId){0xff, 0xff};
+    gPokemon.roamMon2.mapId = (struct MapId){0xff, 0xff};
+    gPokemon.roamMon3.mapId = (struct MapId){0xff, 0xff};
 
     // LD_A(MBANK(asMysteryGiftItem));  // aka BANK(sMysteryGiftUnlocked)
     // CALL(aOpenSRAM);
@@ -504,13 +504,13 @@ static void InitializeMagikarpHouse(void) {
     // LD_HL(wBestMagikarpLengthFeet);
     // LD_A(0x3);
     // LD_hli_A;
-    wram->wBestMagikarpLengthFeet = 0x3;
+    gPokemon.bestMagikarpLengthFeet = 0x3;
     // LD_A(0x6);
     // LD_hli_A;
-    wram->wBestMagikarpLengthInches = 0x6;
+    gPokemon.bestMagikarpLengthInches = 0x6;
     // LD_DE(mInitializeMagikarpHouse_Ralph);
     // CALL(aCopyName2);
-    CopyName2(wram->wMagikarpRecordHoldersName, U82C("RALPH@"));
+    CopyName2(gPokemon.magikarpRecordHoldersName, U82C("RALPH@"));
     // RET;
 
 // Ralph:
@@ -1040,7 +1040,7 @@ static tile_t* Continue_DisplayPokedexNumCaught(tile_t* hl) {
     // else
     //     LD_B(NUM_POKEMON / 8);
     // CALL(aCountSetBits);
-    uint8_t count = CountSetBits(wram->wPokedexCaught, (NUM_POKEMON % 8)? NUM_POKEMON / 8 + 1: NUM_POKEMON / 8);
+    uint8_t count = CountSetBits(gPokemon.pokedexCaught, (NUM_POKEMON % 8)? NUM_POKEMON / 8 + 1: NUM_POKEMON / 8);
     // POP_HL;
     // LD_DE(wNumSetBits);
     // LD_BC((1 << 8) | 3);

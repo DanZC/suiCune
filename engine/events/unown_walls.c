@@ -16,7 +16,7 @@ void HoOhChamber(void){
     // LD_A_hl;
     // CP_A(HO_OH);  // is Ho-oh the first Pokémon in the party?
     // IF_NZ goto done;  // if not, we're done
-    if(wram->wPartySpecies[0] == HO_OH) {
+    if(gPokemon.partySpecies[0] == HO_OH) {
         // CALL(aGetMapAttributesPointer);  // pointless?
         // LD_DE(EVENT_WALL_OPENED_IN_HO_OH_CHAMBER);
         // LD_B(SET_FLAG);
@@ -48,7 +48,7 @@ void OmanyteChamber(void){
         // LD_A_addr(wPartyCount);
         // LD_B_A;
         // INC_B;
-        uint8_t b = wram->wPartyCount + 1;
+        uint8_t b = gPokemon.partyCount + 1;
 
         item_t item;
         do {
@@ -66,7 +66,7 @@ void OmanyteChamber(void){
             // CALL(aGetPartyParamLocation);
             // POP_BC;
             // LD_A_hl;
-            item = wram->wPartyMon[b - 1].mon.item;
+            item = gPokemon.partyMon[b - 1].mon.item;
             // CP_A(WATER_STONE);
             // IF_NZ goto loop;
         } while(item != WATER_STONE);

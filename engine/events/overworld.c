@@ -161,7 +161,7 @@ bool CheckPartyMove(move_t d){
     // LD_addr_A(wCurPartyMon);
     wram->wCurPartyMon = 0;
 
-    for(e = 0; e < wram->wPartyCount; e++) {
+    for(e = 0; e < gPokemon.partyCount; e++) {
     // loop:
         // LD_C_E;
         // LD_B(0);
@@ -172,11 +172,11 @@ bool CheckPartyMove(move_t d){
         // IF_Z goto no;
         // CP_A(-1);
         // IF_Z goto no;
-        if(wram->wPartySpecies[e] == 0 || wram->wPartySpecies[e] == 0xff)
+        if(gPokemon.partySpecies[e] == 0 || gPokemon.partySpecies[e] == 0xff)
             return false;
         // CP_A(EGG);
         // IF_Z goto next;
-        if(wram->wPartySpecies[e] == EGG)
+        if(gPokemon.partySpecies[e] == EGG)
             continue;
 
         // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -185,12 +185,12 @@ bool CheckPartyMove(move_t d){
         // CALL(aAddNTimes);
         // LD_B(NUM_MOVES);
 
-        for(uint8_t b = 0; b < NUM_MOVES && wram->wPartyMon[e].mon.moves[b] != NO_MOVE; ++b) {
+        for(uint8_t b = 0; b < NUM_MOVES && gPokemon.partyMon[e].mon.moves[b] != NO_MOVE; ++b) {
         // check:
             // LD_A_hli;
             // CP_A_D;
             // IF_Z goto yes;
-            if(wram->wPartyMon[e].mon.moves[b] == d) {
+            if(gPokemon.partyMon[e].mon.moves[b] == d) {
             // yes:
                 // LD_A_E;
                 // LD_addr_A(wCurPartyMon);  // which mon has the move
@@ -691,7 +691,7 @@ static uint8_t GetSurfType(void){
     // LD_HL(wPartySpecies);
     // ADD_HL_DE;
 
-    species_t sp = wram->wPartySpecies[wram->wCurPartyMon];
+    species_t sp = gPokemon.partySpecies[wram->wCurPartyMon];
     // LD_A_hl;
     // CP_A(PIKACHU);
     // LD_A(PLAYER_SURF_PIKA);
@@ -1460,7 +1460,7 @@ void SetStrengthFlag(void){
     // ADD_HL_DE;
     // LD_A_hl;
     // LD_addr_A(wStrengthSpecies);
-    wram->wStrengthSpecies = wram->wPartySpecies[wram->wCurPartyMon];
+    wram->wStrengthSpecies = gPokemon.partySpecies[wram->wCurPartyMon];
     // CALL(aGetPartyNickname);
     GetPartyNickname();
     // RET;

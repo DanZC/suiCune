@@ -236,10 +236,10 @@ void StartMenu_PrintBugContestStatus(void){
     // LD_DE(mStartMenu_PrintBugContestStatus_NoneString);
     U82CA(wram->wStringBuffer1, NoneString);
     // IF_Z goto no_contest_mon;
-    if(wram->wContestMon.mon.species != 0) {
+    if(gPokemon.contestMon.mon.species != 0) {
         // LD_addr_A(wNamedObjectIndex);
         // CALL(aGetPokemonName);
-        GetPokemonName(wram->wContestMon.mon.species);
+        GetPokemonName(gPokemon.contestMon.mon.species);
     }
 
 // no_contest_mon:
@@ -249,7 +249,7 @@ void StartMenu_PrintBugContestStatus(void){
     // LD_A_addr(wContestMon);
     // AND_A_A;
     // IF_Z goto skip_level;
-    if(wram->wContestMon.mon.species != 0) {
+    if(gPokemon.contestMon.mon.species != 0) {
         // hlcoord(1, 3, wTilemap);
         // LD_DE(mStartMenu_PrintBugContestStatus_LevelString);
         // CALL(aPlaceString);
@@ -262,7 +262,7 @@ void StartMenu_PrintBugContestStatus(void){
         // INC_HL;
         // LD_C(3);
         // CALL(aPrint8BitNumLeftAlign);
-        Print8BitNumLeftAlign(st.hl + 1, wram->wContestMon.mon.level, 3);
+        Print8BitNumLeftAlign(st.hl + 1, gPokemon.contestMon.mon.level, 3);
     }
 
 // skip_level:

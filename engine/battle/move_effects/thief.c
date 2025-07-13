@@ -11,7 +11,7 @@ static void BattleCommand_Thief_playeritem(item_t** de, item_t** hl) {
     // LD_D_H;
     // LD_E_L;
     if(de)
-        *de = &wram->wPartyMon[wram->wCurPartyMon].mon.item;
+        *de = &gPokemon.partyMon[wram->wCurPartyMon].mon.item;
     // LD_HL(wBattleMonItem);
     if(hl)
         *hl = &wram->wEnemyMon.item;

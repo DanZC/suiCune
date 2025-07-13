@@ -971,7 +971,7 @@ void BattleCommand_CheckObedience(void){
 // some conditions need to be met.
     // LD_A(MON_ID);
     // CALL(aBattlePartyAttr);
-    struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
 
     // LD_A_addr(wPlayerID);
     // CP_A_hl;
@@ -1532,7 +1532,7 @@ void BattleCommand_DoTurn(void){
 
     if(hram.hBattleTurn == TURN_PLAYER) {
         // LD_HL(wPartyMon1PP);
-        hl = wram->wPartyMon[wram->wCurBattleMon].mon.PP;
+        hl = gPokemon.partyMon[wram->wCurBattleMon].mon.PP;
         // LD_A_addr(wCurBattleMon);
         // IF_Z goto player;
     }
@@ -3695,7 +3695,7 @@ void DittoMetalPowder(uint8_t* b, uint8_t* c){
     // LD_A_hl;
     // IF_NZ goto got_species;
     // LD_A_addr(wTempEnemyMonSpecies);
-    species_t species = (hram.hBattleTurn == TURN_PLAYER)? wram->wPartyMon[wram->wCurPartyMon].mon.species: wram->wTempEnemyMonSpecies;
+    species_t species = (hram.hBattleTurn == TURN_PLAYER)? gPokemon.partyMon[wram->wCurPartyMon].mon.species: wram->wTempEnemyMonSpecies;
 
 
 // got_species:
@@ -4053,7 +4053,7 @@ uint16_t SpeciesItemBoost(uint16_t hl, species_t b, species_t c, item_t d){
     // PUSH_HL;
     // LD_A(MON_SPECIES);
     // CALL(aBattlePartyAttr);
-    struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+    struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
 
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -5858,7 +5858,7 @@ void Defrost(uint8_t* status){
     // LD_A_addr(wCurBattleMon);
     struct PartyMon* mon = (hram.hBattleTurn == TURN_PLAYER)
         ? wram->wOTPartyMon + wram->wCurOTMon
-        : wram->wPartyMon   + wram->wCurBattleMon;
+        : gPokemon.partyMon   + wram->wCurBattleMon;
 
 // ok:
 
@@ -7526,7 +7526,7 @@ void BattleCommand_ForceSwitch(void){
             DelayFrames(20);
             // LD_A_addr(wPartyCount);
             // LD_B_A;
-            uint8_t b = wram->wPartyCount;
+            uint8_t b = gPokemon.partyCount;
             // LD_A_addr(wCurBattleMon);
             // LD_C_A;
             uint8_t c = wram->wCurBattleMon;
@@ -7542,7 +7542,7 @@ void BattleCommand_ForceSwitch(void){
 
                 // CP_A_C;
                 // IF_Z goto random_loop_trainer_playeristarget;
-            } while(a >= b || a == c || BigEndianToNative16(wram->wPartyMon[a].HP) == 0);
+            } while(a >= b || a == c || BigEndianToNative16(gPokemon.partyMon[a].HP) == 0);
 
             // PUSH_AF;
             // PUSH_BC;
@@ -7734,7 +7734,7 @@ void BattleCommand_ForceSwitch(void){
 bool CheckPlayerHasMonToSwitchTo(void){
     // LD_A_addr(wPartyCount);
     // LD_D_A;
-    uint8_t d = wram->wPartyCount;
+    uint8_t d = gPokemon.partyCount;
     // LD_E(0);
     uint8_t e = 0;
     // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -7753,7 +7753,7 @@ bool CheckPlayerHasMonToSwitchTo(void){
         // LD_A_hli;
         // OR_A_hl;
         // IF_NZ goto not_fainted;
-        if(BigEndianToNative16(wram->wPartyMon[e].HP) != 0)
+        if(BigEndianToNative16(gPokemon.partyMon[e].HP) != 0)
             return true;
 
     // next:
@@ -7860,8 +7860,8 @@ void BattleCommand_EndLoop(void){
                 // CP_A(1);
                 // JP_Z (mBattleCommand_EndLoop_only_one_beatup);
                 // DEC_A;
-                if(wram->wPartyCount != 1) {
-                    a = wram->wPartyCount - 1;
+                if(gPokemon.partyCount != 1) {
+                    a = gPokemon.partyCount - 1;
                     goto double_hit;
                 }
             }

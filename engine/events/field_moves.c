@@ -574,7 +574,7 @@ void FlyFunction_InitGFX(void){
     // ADD_HL_DE;
     // LD_A_hl;
     // LD_addr_A(wTempIconSpecies);
-    wram->wTempIconSpecies = wram->wPartySpecies[wram->wCurPartyMon];
+    wram->wTempIconSpecies = gPokemon.partySpecies[wram->wCurPartyMon];
     // LD_E(FIELDMOVE_FLY);
     // FARCALL(aFlyFunction_GetMonIcon);
     FlyFunction_GetMonIcon(FIELDMOVE_FLY);

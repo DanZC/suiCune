@@ -49,7 +49,7 @@ bool CheckOppositeGender(uint8_t battleMon){
     // CALL(aBattlePartyAttr);
     // LD_A_hl;
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wPartyMon[battleMon].mon.species;
+    wram->wCurPartySpecies = gPokemon.partyMon[battleMon].mon.species;
 
     // LD_A_addr(wCurBattleMon);
     // LD_addr_A(wCurPartyMon);

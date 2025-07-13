@@ -15,6 +15,7 @@
 #include "../../home/joypad.h"
 #include "../../data/items/mail_items.h"
 #include "../../gfx/mail.h"
+#include "../../util/serialize.h"
 #include "../printer/printer.h"
 #include <stdlib.h>
 
@@ -37,13 +38,14 @@ enum {
 void ReadPartyMonMail(void){
     OpenSRAM(MBANK(asPartyMail));
     // LD_A_addr(wCurPartyMon);
+    struct MailMsg msg;
     // LD_HL(sPartyMail);
     // LD_BC(MAIL_STRUCT_LENGTH);
     // CALL(aAddNTimes);
+    Deserialize_MailMsg(&msg, GBToRAMAddr(sPartyMail + (MAIL_STRUCT_LENGTH * wram->wCurPartyMon)));
     // LD_D_H;
     // LD_E_L;
-    const struct MailMsg* de = ((struct MailMsg*)GBToRAMAddr(sPartyMail)) + wram->wCurPartyMon;
-    ReadAnyMail(de);
+    ReadAnyMail(&msg);
     CloseSRAM();
 }
 

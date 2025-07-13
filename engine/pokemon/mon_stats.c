@@ -7,6 +7,8 @@
 #include "../items/item_effects.h"
 #include "../../home/print_text.h"
 #include "../../home/pokemon.h"
+#include "../../home/sram.h"
+#include "../../util/serialize.h"
 #include "../../data/pokemon/base_stats.h"
 #include "health.h"
 
@@ -197,7 +199,7 @@ u8_flag_s GetGender(uint8_t monType){
     // AND_A_A;
     // IF_Z goto PartyMon;
     case PARTYMON:
-        DVs = wram->wPartyMon[wram->wCurPartyMon].mon.DVs;
+        DVs = gPokemon.partyMon[wram->wCurPartyMon].mon.DVs;
         break;
 
 //  1: OTPartyMon
@@ -213,8 +215,13 @@ u8_flag_s GetGender(uint8_t monType){
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // DEC_A;
     // IF_Z goto sBoxMon;
-    case BOXMON:
-        break;
+    case BOXMON: {
+        OpenSRAM(MBANK(asBox));
+        struct Box box;
+        Deserialize_Box(&box, GBToRAMAddr(sBox));
+        DVs = box.mons[wram->wCurPartyMon].DVs;
+        CloseSRAM();
+    } break;
 
 //  3: Unknown
     // LD_HL(wTempMonDVs);

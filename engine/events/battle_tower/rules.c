@@ -262,7 +262,7 @@ bool BattleTower_CheckPartyLengthIs3(void){
     // LD_A_addr(wPartyCount);
     // CP_A(BATTLETOWER_PARTY_LENGTH);
     // RET;
-    return wram->wPartyCount < BATTLETOWER_PARTY_LENGTH;
+    return gPokemon.partyCount < BATTLETOWER_PARTY_LENGTH;
 }
 
 bool BattleTower_CheckPartyHasThreeMonsThatAreNotEggs(void){
@@ -271,8 +271,8 @@ bool BattleTower_CheckPartyHasThreeMonsThatAreNotEggs(void){
     // LD_B(0);
     uint8_t b = 0;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
-    const species_t* hl = wram->wPartySpecies;
+    uint8_t c = gPokemon.partyCount;
+    const species_t* hl = gPokemon.partySpecies;
 
     do {
     // loop:
@@ -291,7 +291,7 @@ bool BattleTower_CheckPartyHasThreeMonsThatAreNotEggs(void){
     // LD_A_addr(wPartyCount);
     // CP_A_B;
     // RET_Z ;
-    if(wram->wPartyCount == b)
+    if(gPokemon.partyCount == b)
         return false;
     // LD_A_B;
     // CP_A(BATTLETOWER_PARTY_LENGTH);
@@ -305,14 +305,14 @@ bool CheckBTRule_PartyCountEq3(void){
     // RET_Z ;
     // SCF;
     // RET;
-    return wram->wPartyCount != BATTLETOWER_PARTY_LENGTH;
+    return gPokemon.partyCount != BATTLETOWER_PARTY_LENGTH;
 }
 
 bool CheckBTRule_PartySpeciesAreUnique(void){
     // LD_HL(wPartyMon1Species);
     // CALL(aCheckPartyValueIsUnique);
     // RET;
-    return CheckPartyValueIsUnique(wram->wPartyMon, wram->wPartySpecies, wram->wPartyCount);
+    return CheckPartyValueIsUnique(gPokemon.partyMon, gPokemon.partySpecies, gPokemon.partyCount);
 }
 
 static bool CheckPartyValueIsUnique_isegg(const species_t a) {
@@ -410,7 +410,7 @@ bool CheckBTRule_PartyItemsAreUnique(void){
     // LD_HL(wPartyMon1Item);
     // CALL(aCheckPartyValueIsUnique);
     // RET;
-    return CheckPartyItemIsUnique(wram->wPartyMon, wram->wPartySpecies, wram->wPartyCount);
+    return CheckPartyItemIsUnique(gPokemon.partyMon, gPokemon.partySpecies, gPokemon.partyCount);
 }
 
 bool CheckPartyItemIsUnique(const struct PartyMon* hl, const species_t* de, uint8_t count){
@@ -497,8 +497,8 @@ bool CheckBTRule_HasPartyAnEgg(void){
     // LD_HL(wPartyCount);
     // LD_A_hli;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
-    const species_t* hl = wram->wPartySpecies;
+    uint8_t c = gPokemon.partyCount;
+    const species_t* hl = gPokemon.partySpecies;
 
     do {
     // loop:

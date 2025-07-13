@@ -9,6 +9,7 @@
 #include "../../home/pokemon.h"
 #include "../../home/copy.h"
 #include "../../home/names.h"
+#include "../../util/serialize.h"
 #include "../../data/text/common.h"
 
 static void SetBoxmonOrEggmonCaughtData(struct BoxMon* boxmon, uint8_t level);
@@ -18,7 +19,7 @@ void CheckPartyFullAfterContest(void){
     // LD_A_addr(wContestMonSpecies);
     // AND_A_A;
     // JP_Z (mCheckPartyFullAfterContest_DidntCatchAnything);
-    if(wram->wContestMon.mon.species == 0) {
+    if(gPokemon.contestMon.mon.species == 0) {
     // DidntCatchAnything:
         // LD_A(BUGCONTEST_NO_CATCH);
         // LD_addr_A(wScriptVar);
@@ -30,12 +31,12 @@ void CheckPartyFullAfterContest(void){
     // LD_addr_A(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     // CALL(aGetBaseData);
-    GetBaseData(wram->wContestMon.mon.species);
+    GetBaseData(gPokemon.contestMon.mon.species);
     // LD_HL(wPartyCount);
     // LD_A_hl;
     // CP_A(PARTY_LENGTH);
     // JP_NC (mCheckPartyFullAfterContest_TryAddToBox);
-    if(wram->wPartyCount >= PARTY_LENGTH) {
+    if(gPokemon.partyCount >= PARTY_LENGTH) {
     // TryAddToBox:
         // LD_A(BANK(sBoxCount));
         // CALL(aOpenSRAM);
@@ -55,7 +56,7 @@ void CheckPartyFullAfterContest(void){
             // LD_DE(wBufferMon);
             // LD_BC(BOXMON_STRUCT_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes(&wram->wBufferMon, &wram->wContestMon, sizeof(wram->wBufferMon));
+            CopyBytes(&wram->wBufferMon, &gPokemon.contestMon, sizeof(wram->wBufferMon));
             // LD_HL(wPlayerName);
             // LD_DE(wBufferMonOT);
             // LD_BC(NAME_LENGTH);
@@ -66,7 +67,7 @@ void CheckPartyFullAfterContest(void){
             // LD_A_addr(wCurPartySpecies);
             // LD_addr_A(wNamedObjectIndex);
             // CALL(aGetPokemonName);
-            GetPokemonName(wram->wContestMon.mon.species);
+            GetPokemonName(gPokemon.contestMon.mon.species);
             // CALL(aGiveANickname_YesNo);
             // LD_HL(wStringBuffer1);
             uint8_t* hl = wram->wStringBuffer1;
@@ -118,7 +119,7 @@ void CheckPartyFullAfterContest(void){
         CloseSRAM();
         // XOR_A_A;
         // LD_addr_A(wContestMon);
-        wram->wContestMon.mon.species = 0;
+        gPokemon.contestMon.mon.species = 0;
         // LD_A(BUGCONTEST_BOXED_MON);
         // LD_addr_A(wScriptVar);
         wram->wScriptVar = BUGCONTEST_BOXED_MON;
@@ -127,18 +128,18 @@ void CheckPartyFullAfterContest(void){
     }
     // INC_A;
     // LD_hl_A;
-    uint8_t i = wram->wPartyCount++;
+    uint8_t i = gPokemon.partyCount++;
     // LD_C_A;
     // LD_B(0);
     // ADD_HL_BC;
     // LD_A_addr(wContestMonSpecies);
     // LD_hli_A;
-    wram->wPartySpecies[i] = wram->wContestMon.mon.species;
+    gPokemon.partySpecies[i] = gPokemon.contestMon.mon.species;
     // LD_addr_A(wCurSpecies);
-    wram->wCurSpecies = wram->wContestMon.mon.species;
+    wram->wCurSpecies = gPokemon.contestMon.mon.species;
     // LD_A(-1);
     // LD_hl_A;
-    wram->wPartySpecies[i+1] = (species_t)-1;
+    gPokemon.partySpecies[i+1] = (species_t)-1;
     // LD_HL(wPartyMon1Species);
     // LD_A_addr(wPartyCount);
     // DEC_A;
@@ -149,7 +150,7 @@ void CheckPartyFullAfterContest(void){
     // LD_HL(wContestMon);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMon + i, &wram->wContestMon, sizeof(wram->wContestMon));
+    CopyBytes(gPokemon.partyMon + i, &gPokemon.contestMon, sizeof(gPokemon.contestMon));
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMonOTs);
@@ -158,7 +159,7 @@ void CheckPartyFullAfterContest(void){
     // LD_E_L;
     // LD_HL(wPlayerName);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMonOT[i], wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonOT[i], wram->wPlayerName, NAME_LENGTH);
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
@@ -166,7 +167,7 @@ void CheckPartyFullAfterContest(void){
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wMonOrItemNameBuffer, GetPokemonName(wram->wContestMon.mon.species), MON_NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, GetPokemonName(gPokemon.contestMon.mon.species), MON_NAME_LENGTH);
     // CALL(aGiveANickname_YesNo);
     // IF_C goto Party_SkipNickname;
     if(GiveANickname_YesNo()) {
@@ -191,7 +192,7 @@ void CheckPartyFullAfterContest(void){
     // LD_E_L;
     // LD_HL(wMonOrItemNameBuffer);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMonNickname[i], wram->wMonOrItemNameBuffer, MON_NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonNickname[i], wram->wMonOrItemNameBuffer, MON_NAME_LENGTH);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1Level);
@@ -199,7 +200,7 @@ void CheckPartyFullAfterContest(void){
     // LD_A_hl;
     // LD_addr_A(wCurPartyLevel);
     // CALL(aSetCaughtData);
-    SetCaughtData(wram->wContestMon.mon.level);
+    SetCaughtData(gPokemon.contestMon.mon.level);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1CaughtLocation);
@@ -209,10 +210,10 @@ void CheckPartyFullAfterContest(void){
     // LD_B(LANDMARK_NATIONAL_PARK);
     // OR_A_B;
     // LD_hl_A;
-    wram->wPartyMon[i].mon.caughtGenderLocation = (wram->wPartyMon[i].mon.caughtGenderLocation & CAUGHT_GENDER_MASK) | LANDMARK_NATIONAL_PARK;
+    gPokemon.partyMon[i].mon.caughtGenderLocation = (gPokemon.partyMon[i].mon.caughtGenderLocation & CAUGHT_GENDER_MASK) | LANDMARK_NATIONAL_PARK;
     // XOR_A_A;
     // LD_addr_A(wContestMonSpecies);
-    wram->wContestMon.mon.species = 0;
+    gPokemon.contestMon.mon.species = 0;
     // AND_A_A;  // BUGCONTEST_CAUGHT_MON
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = BUGCONTEST_CAUGHT_MON;
@@ -240,7 +241,7 @@ void SetCaughtData(uint8_t level){
     // LD_HL(wPartyMon1CaughtLevel);
     // CALL(aGetPartyLocation);
     // return SetBoxmonOrEggmonCaughtData();
-    return SetBoxmonOrEggmonCaughtData(&wram->wPartyMon[wram->wPartyCount - 1].mon, level);
+    return SetBoxmonOrEggmonCaughtData(&gPokemon.partyMon[gPokemon.partyCount - 1].mon, level);
 }
 
 static void SetBoxmonOrEggmonCaughtData(struct BoxMon* boxmon, uint8_t level){
@@ -292,9 +293,12 @@ void SetBoxMonCaughtData(uint8_t level){
     // LD_A(BANK(sBoxMon1CaughtLevel));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBoxMon1CaughtLevel));
+    struct Box box;
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // LD_HL(sBoxMon1CaughtLevel);
     // CALL(aSetBoxmonOrEggmonCaughtData);
-    SetBoxmonOrEggmonCaughtData((struct BoxMon*)GBToRAMAddr(sBoxMon1), level);
+    SetBoxmonOrEggmonCaughtData(box.mons, level);
+    Serialize_Box(GBToRAMAddr(sBox), &box);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -305,11 +309,14 @@ void SetGiftBoxMonCaughtData(uint8_t b){
     // LD_A(BANK(sBoxMon1CaughtLevel));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBoxMon1));
+    struct Box box;
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // LD_HL(sBoxMon1CaughtLevel);
-    struct BoxMon* hl = (struct BoxMon*)GBToRAMAddr(sBoxMon1);
+    struct BoxMon* hl = box.mons;
     // POP_BC;
     // CALL(aSetGiftMonCaughtData);
     SetGiftMonCaughtData(hl, b);
+    Serialize_Box(GBToRAMAddr(sBox), &box);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -321,7 +328,7 @@ void SetGiftPartyMonCaughtData(uint8_t b){
     // LD_HL(wPartyMon1CaughtLevel);
     // PUSH_BC;
     // CALL(aGetPartyLocation);
-    struct PartyMon* hl = wram->wPartyMon + (wram->wPartyCount - 1);
+    struct PartyMon* hl = gPokemon.partyMon + (gPokemon.partyCount - 1);
     // POP_BC;
     return SetGiftMonCaughtData(&hl->mon, b);
 }
@@ -347,7 +354,7 @@ void SetEggMonCaughtData(uint8_t a){
     // LD_A(CAUGHT_EGG_LEVEL);
     // LD_addr_A(wCurPartyLevel);
     // CALL(aSetBoxmonOrEggmonCaughtData);
-    SetBoxmonOrEggmonCaughtData(&wram->wPartyMon[a].mon, CAUGHT_EGG_LEVEL);
+    SetBoxmonOrEggmonCaughtData(&gPokemon.partyMon[a].mon, CAUGHT_EGG_LEVEL);
     // POP_AF;
     // LD_addr_A(wCurPartyLevel);
     // RET;

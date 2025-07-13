@@ -28,7 +28,7 @@ static const struct VarAction VarActionTable[] = {
 // RETVAR_ADDR_DE: return address in de
 // RETVAR_EXECUTE: call function
     [VAR_STRINGBUFFER2]     = {.var=wram_ptr(wStringBuffer2), RETVAR_STRBUF2},
-    [VAR_PARTYCOUNT]        = {.var=wram_ptr(wPartyCount), RETVAR_STRBUF2},
+    [VAR_PARTYCOUNT]        = {.var=&gPokemon.partyCount, RETVAR_STRBUF2},
     [VAR_BATTLERESULT]      = {.fun=VarAction_BattleResult, RETVAR_EXECUTE},
     [VAR_BATTLETYPE]        = {.var=wram_ptr(wBattleType), RETVAR_ADDR_DE},
     [VAR_TIMEOFDAY]         = {.var=wram_ptr(wTimeOfDay), RETVAR_STRBUF2},
@@ -118,7 +118,7 @@ static uint8_t* VarAction_CountCaughtMons(void) {
     // LD_HL(wPokedexCaught);
     // LD_B(wEndPokedexCaught - wPokedexCaught);
     // CALL(aCountSetBits);
-    uint8_t a = CountSetBits(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
+    uint8_t a = CountSetBits(gPokemon.pokedexCaught, sizeof(gPokemon.pokedexCaught));
     // LD_A_addr(wNumSetBits);
     wram->wNumSetBits = a;
     // JP(mv_GetVarAction_loadstringbuffer2);
@@ -143,7 +143,7 @@ static uint8_t* VarAction_CountSeenMons(void) {
     // LD_HL(wPokedexSeen);
     // LD_B(wEndPokedexSeen - wPokedexSeen);
     // CALL(aCountSetBits);
-    uint8_t a = CountSetBits(wram->wPokedexSeen, sizeof(wram->wPokedexSeen));
+    uint8_t a = CountSetBits(gPokemon.pokedexSeen, sizeof(gPokemon.pokedexSeen));
     // LD_A_addr(wNumSetBits);
     wram->wNumSetBits = a;
     // JP(mv_GetVarAction_loadstringbuffer2);
@@ -172,7 +172,7 @@ static uint8_t* VarAction_UnownCaught(void) {
     // CALL(av_GetVarAction_count_unown);
 // count_unown:
     // LD_HL(wUnownDex);
-    uint8_t* hl = wram->wUnownDex;
+    uint8_t* hl = gPokemon.unownDex;
     // LD_B(0);
     uint8_t a = 0;
 

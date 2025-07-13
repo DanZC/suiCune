@@ -17,7 +17,7 @@ void BattleCommand_HealBell(void){
     // AND_A_A;
     // IF_Z goto got_status;
     // LD_DE(wOTPartyMon1Status);
-    struct PartyMon* mon = (hram.hBattleTurn == TURN_PLAYER)? wram->wPartyMon: wram->wOTPartyMon;
+    struct PartyMon* mon = (hram.hBattleTurn == TURN_PLAYER)? gPokemon.partyMon: wram->wOTPartyMon;
 
 // got_status:
     // LD_A(BATTLE_VARS_STATUS);

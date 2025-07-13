@@ -140,7 +140,7 @@ void v_NameRater(void){
         // LD_HL(wStringBuffer2);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wPartyMonNickname[wram->wCurPartyMon], wram->wStringBuffer2, MON_NAME_LENGTH);
+        CopyBytes(gPokemon.partyMonNickname[wram->wCurPartyMon], wram->wStringBuffer2, MON_NAME_LENGTH);
         // LD_HL(mNameRaterFinishedText);
         txt = NameRaterFinishedText;
     }
@@ -185,7 +185,7 @@ static bool CheckIfMonIsYourOT(uint8_t partyMon){
     // LD_C(NAME_LENGTH);
     // CALL(aCheckIfMonIsYourOT_loop);
     for(uint32_t i = 0; i < NAME_LENGTH; ++i) {
-        if(wram->wPartyMonOT[partyMon][i] != wram->wPlayerName[i])
+        if(gPokemon.partyMonOT[partyMon][i] != wram->wPlayerName[i])
             return false;
     }
     // IF_C goto nope;
@@ -196,7 +196,7 @@ static bool CheckIfMonIsYourOT(uint8_t partyMon){
     // CALL(aAddNTimes);
     // LD_DE(wPlayerID);
     // LD_C(2);  // number of bytes in which your ID is stored
-    if(wram->wPartyMon[partyMon].mon.id != wram->wPlayerID)
+    if(gPokemon.partyMon[partyMon].mon.id != wram->wPlayerID)
         return false;
 
 // loop:
@@ -257,7 +257,7 @@ static bool CompareNewToOld(uint8_t curPartyMon){
     // LD_BC(MON_NAME_LENGTH);
     // LD_A_addr(wCurPartyMon);
     // CALL(aAddNTimes);
-    uint8_t* hl = wram->wPartyMonNickname[curPartyMon];
+    uint8_t* hl = gPokemon.partyMonNickname[curPartyMon];
     // PUSH_HL;
     // CALL(aGetNicknamenameLength);
     uint8_t b = GetNicknamenameLength(hl);

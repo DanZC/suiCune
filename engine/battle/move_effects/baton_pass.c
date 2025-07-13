@@ -265,7 +265,7 @@ static bool CheckAnyOtherAlivePartyMons(void){
     // LD_A_addr(wCurBattleMon);
     // LD_E_A;
     // JR(mCheckAnyOtherAliveMons);
-    return CheckAnyOtherAliveMons(wram->wPartyMon, wram->wPartyCount, wram->wCurBattleMon);
+    return CheckAnyOtherAliveMons(gPokemon.partyMon, gPokemon.partyCount, wram->wCurBattleMon);
 }
 
 static bool CheckAnyOtherAliveEnemyMons(void){

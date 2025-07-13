@@ -6418,9 +6418,9 @@ bool BattleTower_LevelCheck(void){
     wram->wcd50 = wram->wcd4f * 10;
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // LD_DE(wPartyMon1Level);
-    struct PartyMon* de = wram->wPartyMon;
+    struct PartyMon* de = gPokemon.partyMon;
     // LD_A_addr(wPartyCount);
-    uint8_t a = wram->wPartyCount;
+    uint8_t a = gPokemon.partyCount;
 
     do {
     // party_loop:
@@ -6476,12 +6476,12 @@ bool BattleTower_UbersCheck(void){
     // LD_A(BANK(wPartyMons));
     // LDH_addr_A(rSVBK);
     // LD_HL(wPartyMon1Level);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // LD_DE(wPartySpecies);
-    species_t* de = wram->wPartySpecies;
+    species_t* de = gPokemon.partySpecies;
     // LD_A_addr(wPartyCount);
-    uint8_t a = wram->wPartyCount;
+    uint8_t a = gPokemon.partyCount;
 
     do {
     // loop:
@@ -10808,7 +10808,7 @@ void Function11b483(void){
     // DEC_A;
     // AND_A_A;
     // IF_NZ goto loop3;
-    CopyBytes(&wram->wOfferMon, wram->wPartyMon + (wram->wcd82[0] - 1), sizeof(wram->wOfferMon));
+    CopyBytes(&wram->wOfferMon, gPokemon.partyMon + (wram->wcd82[0] - 1), sizeof(wram->wOfferMon));
 
     // POP_DE;
     // PUSH_BC;
@@ -10867,7 +10867,7 @@ void Function11b483(void){
     // DEC_A;
     // AND_A_A;
     // IF_NZ goto loop5;
-    CopyBytes(wram->wOfferMonOT, wram->wPartyMonOT[wram->wcd82[0] - 1], PLAYER_NAME_LENGTH - 1);
+    CopyBytes(wram->wOfferMonOT, gPokemon.partyMonOT[wram->wcd82[0] - 1], PLAYER_NAME_LENGTH - 1);
     // LD_DE(NAME_LENGTH);
     // LD_HL(wPartyMonNicknames);
     // POP_AF;
@@ -10892,7 +10892,7 @@ void Function11b483(void){
     // DEC_A;
     // AND_A_A;
     // IF_NZ goto loop7;
-    CopyBytes(wram->wOfferMonNick, wram->wPartyMonNickname[wram->wcd82[0] - 1], NAME_LENGTH - 1);
+    CopyBytes(wram->wOfferMonNick, gPokemon.partyMonNickname[wram->wcd82[0] - 1], NAME_LENGTH - 1);
     // LD_DE(MAIL_STRUCT_LENGTH);
     // LD_HL(sPartyMail);
     // POP_AF;
@@ -10908,7 +10908,7 @@ void Function11b483(void){
     // LD_A(BANK(sPartyMail));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asPartyMail));
-    struct MailMsg* mail = (struct MailMsg*)GBToRAMAddr(sPartyMail);
+    uint8_t* mail = GBToRAMAddr(sPartyMail);
     // LD_A(MAIL_STRUCT_LENGTH);
 
 // loop9:
@@ -10920,7 +10920,7 @@ void Function11b483(void){
     // DEC_A;
     // AND_A_A;
     // IF_NZ goto loop9;
-    CopyBytes(&wram->wOfferMonMail, mail + (wram->wcd82[0] - 1), sizeof(wram->wOfferMonMail));
+    CopyBytes(&wram->wOfferMonMail, mail + (wram->wcd82[0] - 1) * MAIL_STRUCT_LENGTH, sizeof(wram->wOfferMonMail));
     // CALL(aCloseSRAM);
     CloseSRAM();
     // JP(mFunction11ad8a);
@@ -11617,7 +11617,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
     // LD_A_hl;
     // LD_E_A;
     // INC_hl;
-    uint8_t e = wram->wPartyCount++;
+    uint8_t e = gPokemon.partyCount++;
 
     // LD_A_addr(wMobileMonSpeciesPointer);
     // LD_L_A;
@@ -11625,7 +11625,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
     // LD_H_A;
     // INC_HL;
     // LD_BC(wPartySpecies);
-    species_t* bc = wram->wPartySpecies + e;
+    species_t* bc = gPokemon.partySpecies + e;
     // LD_D_E;
 
 // loop1:
@@ -11645,7 +11645,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
 
     // LD_HL(wPartyMon1Species);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
-    struct PartyMon* mon = wram->wPartyMon + e;
+    struct PartyMon* mon = gPokemon.partyMon + e;
     // LD_A_E;
     // LD_addr_A(wMobileMonSpecies);
     wram->wMobileMonSpecies = e;
@@ -11668,7 +11668,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
     // LD_HL(wPartyMonOTs);
     // LD_BC(NAME_LENGTH);
     // LD_A_addr(wMobileMonSpecies);
-    uint8_t* ot2 = wram->wPartyMonOT[e];
+    uint8_t* ot2 = gPokemon.partyMonOT[e];
 
 // loop3:
     // ADD_HL_BC;
@@ -11691,7 +11691,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
     // LD_HL(wPartyMonNicknames);
     // LD_BC(MON_NAME_LENGTH);
     // LD_A_addr(wMobileMonSpecies);
-    uint8_t* nickname2 = wram->wPartyMonNickname[e];
+    uint8_t* nickname2 = gPokemon.partyMonNickname[e];
 
 // loop4:
     // ADD_HL_BC;

@@ -28,7 +28,7 @@ static struct PartyMon* GiveDratini_GetNthPartyMon(uint8_t count){
     // DEC_A;
     // IF_NZ goto loop;
     // RET;
-    return wram->wPartyMon + (count - 1);
+    return gPokemon.partyMon + (count - 1);
 
 }
 
@@ -63,7 +63,7 @@ void GiveDratini(void){
         return;
     // LD_BC(wPartyCount);
     // LD_A_bc;
-    uint8_t count = wram->wPartyCount;
+    uint8_t count = gPokemon.partyCount;
     // LD_HL(MON_SPECIES);
     // CALL(aGiveDratini_GetNthPartyMon);
     struct PartyMon* mon = GiveDratini_GetNthPartyMon(count);

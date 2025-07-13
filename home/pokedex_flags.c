@@ -62,7 +62,7 @@ void SetSeenAndCaughtMon(dex_t c){
     // LD_HL(wPokedexCaught);
     // LD_B(SET_FLAG);
     // CALL(aPokedexFlagAction);
-    PokedexFlagAction(wram->wPokedexCaught, c, SET_FLAG);
+    PokedexFlagAction(gPokemon.pokedexCaught, c, SET_FLAG);
     // POP_AF;
 // fallthrough
 
@@ -74,7 +74,7 @@ void SetSeenMon(dex_t c){
     // LD_HL(wPokedexSeen);
     // LD_B(SET_FLAG);
     // JR(mPokedexFlagAction);
-    PokedexFlagAction(wram->wPokedexSeen, c, SET_FLAG);
+    PokedexFlagAction(gPokemon.pokedexSeen, c, SET_FLAG);
 }
 
 bool CheckCaughtMon(dex_t c){
@@ -82,7 +82,7 @@ bool CheckCaughtMon(dex_t c){
     // LD_HL(wPokedexCaught);
     // LD_B(CHECK_FLAG);
     // JR(mPokedexFlagAction);
-    return PokedexFlagAction(wram->wPokedexCaught, c, CHECK_FLAG);
+    return PokedexFlagAction(gPokemon.pokedexCaught, c, CHECK_FLAG);
 }
 
 bool CheckSeenMon(dex_t c){
@@ -90,7 +90,7 @@ bool CheckSeenMon(dex_t c){
     // LD_HL(wPokedexSeen);
     // LD_B(CHECK_FLAG);
 // fallthrough
-    return PokedexFlagAction(wram->wPokedexSeen, c, CHECK_FLAG);
+    return PokedexFlagAction(gPokemon.pokedexSeen, c, CHECK_FLAG);
 }
 
 bool PokedexFlagAction(uint8_t* hl, dex_t c, uint8_t b){

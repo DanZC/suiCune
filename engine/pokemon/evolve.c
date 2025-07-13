@@ -49,7 +49,7 @@ void EvolveAfterBattle(void){
 
     // PUSH_HL;
 
-    return EvolveAfterBattle_MasterLoop(wram->wPartySpecies - 1);
+    return EvolveAfterBattle_MasterLoop(gPokemon.partySpecies - 1);
 }
 
 void EvolveAfterBattle_MasterLoop(species_t* species){
@@ -418,7 +418,7 @@ MasterLoop:
         // LD_HL(wPartyMons);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aAddNTimes);
-        struct PartyMon* mon = wram->wPartyMon + wram->wCurPartyMon;
+        struct PartyMon* mon = gPokemon.partyMon + wram->wCurPartyMon;
         // LD_E_L;
         // LD_D_H;
         // LD_BC(MON_MAXHP);
@@ -544,7 +544,7 @@ void UpdateSpeciesNameIfNotNicknamed(void){
     // POP_DE;
     // LD_BC(MON_NAME_LENGTH);
     // JP(mCopyBytes);
-    CopyBytes(wram->wPartyMonNickname[wram->wCurPartyMon], GetPokemonName(wram->wCurSpecies), MON_NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonNickname[wram->wCurPartyMon], GetPokemonName(wram->wCurSpecies), MON_NAME_LENGTH);
 }
 
 // Inlined CancelEvolution to reduce stack smashing. 
@@ -568,7 +568,7 @@ bool IsMonHoldingEverstone(void){
     // CP_A(EVERSTONE);
     // POP_HL;
     // RET;
-    return wram->wPartyMon[wram->wCurPartyMon].mon.item == EVERSTONE;
+    return gPokemon.partyMon[wram->wCurPartyMon].mon.item == EVERSTONE;
 }
 
 const txt_cmd_s CongratulationsYourPokemonText[] = {

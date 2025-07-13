@@ -48,12 +48,12 @@ void DayCareMan(void){
     // LD_HL(wDayCareMan);
     // BIT_hl(DAYCAREMAN_HAS_MON_F);
     // IF_NZ goto AskWithdrawMon;
-    if(!bit_test(wram->wDayCareMan, DAYCAREMAN_HAS_MON_F)) {
+    if(!bit_test(gPokemon.dayCareMan, DAYCAREMAN_HAS_MON_F)) {
         // LD_HL(wDayCareMan);
         // LD_A(DAYCARETEXT_MAN_INTRO);
         // CALL(aDayCareManIntroText);
         // IF_C goto cancel;
-        if(DayCareManIntroText(&wram->wDayCareMan, DAYCARETEXT_MAN_INTRO)) {
+        if(DayCareManIntroText(&gPokemon.dayCareMan, DAYCARETEXT_MAN_INTRO)) {
             // CALL(aDayCareAskDepositPokemon);
             u8_flag_s res = DayCareAskDepositPokemon();
             // IF_C goto print_text;
@@ -67,7 +67,7 @@ void DayCareMan(void){
                 DepositMonWithDayCareMan(res.a);
                 // LD_HL(wDayCareMan);
                 // SET_hl(DAYCAREMAN_HAS_MON_F);
-                bit_set(wram->wDayCareMan, DAYCAREMAN_HAS_MON_F);
+                bit_set(gPokemon.dayCareMan, DAYCAREMAN_HAS_MON_F);
                 // CALL(aDayCare_DepositPokemonText);
                 DayCare_DepositPokemonText();
                 // CALL(aDayCare_InitBreeding);
@@ -83,7 +83,7 @@ void DayCareMan(void){
         u8_pair_s levelGrowth = GetBreedMon1LevelGrowth();
         // LD_HL(wBreedMon1Nickname);
         // CALL(aGetPriceToRetrieveBreedmon);
-        GetPriceToRetrieveBreedmon(wram->wBreedMon1Nickname, levelGrowth);
+        GetPriceToRetrieveBreedmon(gPokemon.breedMon1Nickname, levelGrowth);
         // CALL(aDayCare_AskWithdrawBreedMon);
         u8_flag_s res = DayCare_AskWithdrawBreedMon();
         // IF_C goto print_text;
@@ -97,9 +97,9 @@ void DayCareMan(void){
             DayCare_GetBackMonForMoney();
             // LD_HL(wDayCareMan);
             // RES_hl(DAYCAREMAN_HAS_MON_F);
-            bit_reset(wram->wDayCareMan, DAYCAREMAN_HAS_MON_F);
+            bit_reset(gPokemon.dayCareMan, DAYCAREMAN_HAS_MON_F);
             // RES_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
-            bit_reset(wram->wDayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F);
+            bit_reset(gPokemon.dayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F);
             // goto cancel;
         }
     }
@@ -115,12 +115,12 @@ void DayCareLady(void){
     // LD_HL(wDayCareLady);
     // BIT_hl(DAYCARELADY_HAS_MON_F);
     // IF_NZ goto AskWithdrawMon;
-    if(!bit_test(wram->wDayCareLady, DAYCARELADY_HAS_MON_F)) {
+    if(!bit_test(gPokemon.dayCareLady, DAYCARELADY_HAS_MON_F)) {
         // LD_HL(wDayCareLady);
         // LD_A(DAYCARETEXT_LADY_INTRO);
         // CALL(aDayCareLadyIntroText);
         // IF_C goto cancel;
-        if(DayCareLadyIntroText(&wram->wDayCareLady, DAYCARETEXT_LADY_INTRO)) {
+        if(DayCareLadyIntroText(&gPokemon.dayCareLady, DAYCARETEXT_LADY_INTRO)) {
             // CALL(aDayCareAskDepositPokemon);
             u8_flag_s res = DayCareAskDepositPokemon();
             // IF_C goto print_text;
@@ -132,7 +132,7 @@ void DayCareLady(void){
                 DepositMonWithDayCareLady(res.a);
                 // LD_HL(wDayCareLady);
                 // SET_hl(DAYCARELADY_HAS_MON_F);
-                bit_set(wram->wDayCareLady, DAYCARELADY_HAS_MON_F);
+                bit_set(gPokemon.dayCareLady, DAYCARELADY_HAS_MON_F);
                 // CALL(aDayCare_DepositPokemonText);
                 DayCare_DepositPokemonText();
                 // CALL(aDayCare_InitBreeding);
@@ -148,7 +148,7 @@ void DayCareLady(void){
         u8_pair_s lvlGrowth = GetBreedMon2LevelGrowth();
         // LD_HL(wBreedMon2Nickname);
         // CALL(aGetPriceToRetrieveBreedmon);
-        GetPriceToRetrieveBreedmon(wram->wBreedMon2Nickname, lvlGrowth);
+        GetPriceToRetrieveBreedmon(gPokemon.breedMon2Nickname, lvlGrowth);
         // CALL(aDayCare_AskWithdrawBreedMon);
         u8_flag_s res = DayCare_AskWithdrawBreedMon();
         // IF_C goto print_text;
@@ -162,10 +162,10 @@ void DayCareLady(void){
             DayCare_GetBackMonForMoney();
             // LD_HL(wDayCareLady);
             // RES_hl(DAYCARELADY_HAS_MON_F);
-            bit_reset(wram->wDayCareLady, DAYCARELADY_HAS_MON_F);
+            bit_reset(gPokemon.dayCareLady, DAYCARELADY_HAS_MON_F);
             // LD_HL(wDayCareMan);
             // RES_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
-            bit_reset(wram->wDayCareMan, DAYCARELADY_HAS_MON_F);
+            bit_reset(gPokemon.dayCareMan, DAYCARELADY_HAS_MON_F);
             // goto cancel;
         }
     // print_text:
@@ -211,7 +211,7 @@ u8_flag_s DayCareAskDepositPokemon(void){
     // LD_A_addr(wPartyCount);
     // CP_A(2);
     // IF_C goto OnlyOneMon;
-    if(wram->wPartyCount < 2) {
+    if(gPokemon.partyCount < 2) {
     // OnlyOneMon:
         // LD_A(DAYCARETEXT_LAST_MON);
         // SCF;
@@ -258,7 +258,7 @@ u8_flag_s DayCareAskDepositPokemon(void){
     // LD_D_hl;
     // FARCALL(aItemIsMail);
     // IF_C goto HoldingMail;
-    if(ItemIsMail(wram->wPartyMon[res.a].mon.item)) {
+    if(ItemIsMail(gPokemon.partyMon[res.a].mon.item)) {
     // HoldingMail:
         // LD_A(DAYCARETEXT_REMOVE_MAIL);
         // SCF;
@@ -268,7 +268,7 @@ u8_flag_s DayCareAskDepositPokemon(void){
     // LD_HL(wPartyMonNicknames);
     // LD_A_addr(wCurPartyMon);
     // CALL(aGetNickname);
-    GetNickname(wram->wPartyMonNickname[0], res.a);
+    GetNickname(gPokemon.partyMonNickname[0], res.a);
     // AND_A_A;
     // RET;
     return u8_flag(res.a, false);
@@ -356,7 +356,7 @@ u8_flag_s DayCare_AskWithdrawBreedMon(void){
     // LD_A_addr(wPartyCount);
     // CP_A(PARTY_LENGTH);
     // IF_NC goto party_full;
-    if(wram->wPartyCount >= PARTY_LENGTH) {
+    if(gPokemon.partyCount >= PARTY_LENGTH) {
     // party_full:
         // LD_A(DAYCARETEXT_PARTY_FULL);
         // SCF;
@@ -585,7 +585,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
     // LD_HL(wDayCareMan);
     // BIT_hl(DAYCAREMAN_HAS_EGG_F);
     // IF_NZ goto AskGiveEgg;
-    if(!bit_test(wram->wDayCareMan, DAYCAREMAN_HAS_EGG_F)) {
+    if(!bit_test(gPokemon.dayCareMan, DAYCAREMAN_HAS_EGG_F)) {
         // LD_HL(mDayCareManOutside_NotYetText);
         // CALL(aPrintText);
         PrintText(NotYetText);
@@ -607,7 +607,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
     // LD_A_addr(wPartyCount);
     // CP_A(PARTY_LENGTH);
     // IF_NC goto PartyFull;
-    if(wram->wPartyCount >= PARTY_LENGTH) {
+    if(gPokemon.partyCount >= PARTY_LENGTH) {
     // PartyFull:
         // LD_HL(mDayCareManOutside_NoRoomForEggText);
         // CALL(aPrintText);
@@ -622,7 +622,7 @@ static const txt_cmd_s NoRoomForEggText[] = {
     DayCare_GiveEgg();
     // LD_HL(wDayCareMan);
     // RES_hl(DAYCAREMAN_HAS_EGG_F);
-    bit_reset(wram->wDayCareMan, DAYCAREMAN_HAS_EGG_F);
+    bit_reset(gPokemon.dayCareMan, DAYCAREMAN_HAS_EGG_F);
     // CALL(aDayCare_InitBreeding);
     DayCare_InitBreeding();
     // LD_HL(mDayCareManOutside_ReceivedEggText);
@@ -652,12 +652,12 @@ static const txt_cmd_s NoRoomForEggText[] = {
 bool DayCare_GiveEgg(void){
     // LD_A_addr(wEggMonLevel);
     // LD_addr_A(wCurPartyLevel);
-    wram->wCurPartyLevel = wram->wEggMon.level;
+    wram->wCurPartyLevel = gPokemon.eggMon.level;
     // LD_HL(wPartyCount);
     // LD_A_hl;
     // CP_A(PARTY_LENGTH);
     // IF_NC goto PartyFull;
-    if(wram->wPartyCount >= PARTY_LENGTH) {
+    if(gPokemon.partyCount >= PARTY_LENGTH) {
     // PartyFull:
         // SCF;
         // RET;
@@ -665,36 +665,36 @@ bool DayCare_GiveEgg(void){
     }
     // INC_A;
     // LD_hl_A;
-    uint8_t c = wram->wPartyCount++;
+    uint8_t c = gPokemon.partyCount++;
 
     // LD_C_A;
     // LD_B(0);
     // ADD_HL_BC;
     // LD_A(EGG);
     // LD_hli_A;
-    wram->wPartySpecies[c] = EGG;
+    gPokemon.partySpecies[c] = EGG;
     // LD_A_addr(wEggMonSpecies);
     // LD_addr_A(wCurSpecies);
-    wram->wCurSpecies = wram->wEggMon.species;
+    wram->wCurSpecies = gPokemon.eggMon.species;
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wEggMon.species;
+    wram->wCurPartySpecies = gPokemon.eggMon.species;
     // LD_A(-1);
     // LD_hl_A;
-    wram->wPartySpecies[c + 1] = (species_t)-1;
+    gPokemon.partySpecies[c + 1] = (species_t)-1;
 
     // LD_HL(wPartyMonNicknames);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aDayCare_GetCurrentPartyMember);
     // LD_HL(wEggMonNickname);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMonNickname[c], wram->wEggMonNickname, MON_NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonNickname[c], gPokemon.eggMonNickname, MON_NAME_LENGTH);
 
     // LD_HL(wPartyMonOTs);
     // LD_BC(NAME_LENGTH);
     // CALL(aDayCare_GetCurrentPartyMember);
     // LD_HL(wEggMonOT);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMonOT[c], wram->wEggMonOT, MON_NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonOT[c], gPokemon.eggMonOT, MON_NAME_LENGTH);
 
     // LD_HL(wPartyMon1);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -702,10 +702,10 @@ bool DayCare_GiveEgg(void){
     // LD_HL(wEggMon);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(&wram->wPartyMon[c].mon, &wram->wEggMon, BOXMON_STRUCT_LENGTH);
+    CopyBytes(&gPokemon.partyMon[c].mon, &gPokemon.eggMon, BOXMON_STRUCT_LENGTH);
 
     // CALL(aGetBaseData);
-    GetBaseData(wram->wEggMon.species);
+    GetBaseData(gPokemon.eggMon.species);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1);
@@ -713,7 +713,7 @@ bool DayCare_GiveEgg(void){
     // CALL(aAddNTimes);
     // LD_B_H;
     // LD_C_L;
-    struct PartyMon* bc = wram->wPartyMon + c;
+    struct PartyMon* bc = gPokemon.partyMon + c;
     // LD_HL(MON_ID + 1);
     // ADD_HL_BC;
     // PUSH_HL;
@@ -755,7 +755,7 @@ void DayCare_InitBreeding(void){
     // LD_A_addr(wDayCareMan);
     // BIT_A(DAYCAREMAN_HAS_MON_F);
     // RET_Z ;
-    if(!bit_test(wram->wDayCareLady, DAYCARELADY_HAS_MON_F) || !bit_test(wram->wDayCareMan, DAYCARELADY_HAS_MON_F))
+    if(!bit_test(gPokemon.dayCareLady, DAYCARELADY_HAS_MON_F) || !bit_test(gPokemon.dayCareMan, DAYCARELADY_HAS_MON_F))
         return;
     // CALLFAR(aCheckBreedmonCompatibility);
     CheckBreedmonCompatibility();
@@ -768,7 +768,7 @@ void DayCare_InitBreeding(void){
         return;
     // LD_HL(wDayCareMan);
     // SET_hl(DAYCAREMAN_MONS_COMPATIBLE_F);
-    bit_set(wram->wDayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F);
+    bit_set(gPokemon.dayCareMan, DAYCAREMAN_MONS_COMPATIBLE_F);
 
     uint8_t a;
     do {
@@ -779,7 +779,7 @@ void DayCare_InitBreeding(void){
         // IF_C goto loop;
     } while(a < 150);
     // LD_addr_A(wStepsToEgg);
-    wram->wStepsToEgg = a;
+    gPokemon.stepsToEgg = a;
     // JP(mDayCare_InitBreeding_UselessJump);
 
 // UselessJump:
@@ -787,23 +787,23 @@ void DayCare_InitBreeding(void){
     // LD_HL(wEggMon);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill(&wram->wEggMon, BOXMON_STRUCT_LENGTH, 0);
+    ByteFill(&gPokemon.eggMon, BOXMON_STRUCT_LENGTH, 0);
     // LD_HL(wEggMonNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aByteFill);
-    ByteFill(wram->wEggMonNickname, MON_NAME_LENGTH, 0);
+    ByteFill(gPokemon.eggMonNickname, MON_NAME_LENGTH, 0);
     // LD_HL(wEggMonOT);
     // LD_BC(NAME_LENGTH);
     // CALL(aByteFill);
-    ByteFill(wram->wEggMonOT, NAME_LENGTH, 0);
+    ByteFill(gPokemon.eggMonOT, NAME_LENGTH, 0);
     // LD_A_addr(wBreedMon1DVs);
     // LD_addr_A(wTempMonDVs);
-    wram->wTempMon.mon.DVs = wram->wBreedMon1.DVs;
+    wram->wTempMon.mon.DVs = gPokemon.breedMon1.DVs;
     // LD_A_addr(wBreedMon1DVs + 1);
     // LD_addr_A(wTempMonDVs + 1);
     // LD_A_addr(wBreedMon1Species);
     // LD_addr_A(wCurPartySpecies);
-    wram->wTempMon.mon.species = wram->wBreedMon1.species;
+    wram->wTempMon.mon.species = gPokemon.breedMon1.species;
     // LD_A(0x3);
     // LD_addr_A(wMonType);
     wram->wMonType = 0x3;
@@ -822,7 +822,7 @@ void DayCare_InitBreeding(void){
 
 // LoadWhichBreedmonIsTheMother:
     // LD_addr_A(wBreedMotherOrNonDitto);
-    wram->wBreedMotherOrNonDitto = (wram->wBreedMon1.species == DITTO || (wram->wBreedMon2.species != DITTO && GetGender(TEMPMON).a != 0))? 0x1: 0x0;
+    gPokemon.breedMotherOrNonDitto = (gPokemon.breedMon1.species == DITTO || (gPokemon.breedMon2.species != DITTO && GetGender(TEMPMON).a != 0))? 0x1: 0x0;
     // AND_A_A;
     // LD_A_addr(wBreedMon1Species);
     // IF_Z goto GotMother;
@@ -830,7 +830,7 @@ void DayCare_InitBreeding(void){
 
 // GotMother:
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = (wram->wBreedMotherOrNonDitto)? wram->wBreedMon2.species: wram->wBreedMon1.species;
+    wram->wCurPartySpecies = (gPokemon.breedMotherOrNonDitto)? gPokemon.breedMon2.species: gPokemon.breedMon1.species;
     // CALLFAR(aGetPreEvolution);
     // CALLFAR(aGetPreEvolution);
     wram->wCurPartySpecies = GetPreEvolution(GetPreEvolution(wram->wCurPartySpecies));
@@ -856,28 +856,28 @@ void DayCare_InitBreeding(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
     // LD_addr_A(wEggMonSpecies);
-    wram->wEggMon.species = wram->wCurPartySpecies;
+    gPokemon.eggMon.species = wram->wCurPartySpecies;
 
     // CALL(aGetBaseData);
-    GetBaseData(wram->wEggMon.species);
+    GetBaseData(gPokemon.eggMon.species);
     // LD_HL(wEggMonNickname);
     // LD_DE(mDayCare_InitBreeding_String_EGG);
     // CALL(aCopyName2);
-    CopyName2(wram->wEggMonNickname, U82C("EGG@"));
+    CopyName2(gPokemon.eggMonNickname, U82C("EGG@"));
     // LD_HL(wPlayerName);
     // LD_DE(wEggMonOT);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wEggMonOT, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(gPokemon.eggMonOT, wram->wPlayerName, NAME_LENGTH);
     // XOR_A_A;
     // LD_addr_A(wEggMonItem);
-    wram->wEggMon.item = NO_ITEM;
+    gPokemon.eggMon.item = NO_ITEM;
     // LD_DE(wEggMonMoves);
     // XOR_A_A;  // FALSE
     // LD_addr_A(wSkipMovesBeforeLevelUp);
     wram->wSkipMovesBeforeLevelUp = FALSE;
     // PREDEF(pFillMoves);
-    FillMoves(wram->wEggMon.moves, wram->wEggMon.PP, wram->wEggMon.species, wram->wEggMon.level);
+    FillMoves(gPokemon.eggMon.moves, gPokemon.eggMon.PP, gPokemon.eggMon.species, gPokemon.eggMon.level);
     // FARCALL(aInitEggMoves);
     InitEggMoves();
     // LD_HL(wEggMonID);
@@ -885,7 +885,7 @@ void DayCare_InitBreeding(void){
     // LD_hli_A;
     // LD_A_addr(wPlayerID + 1);
     // LD_hl_A;
-    wram->wEggMon.id = wram->wPlayerID;
+    gPokemon.eggMon.id = wram->wPlayerID;
     // LD_A_addr(wCurPartyLevel);
     // LD_D_A;
     // CALLFAR(aCalcExpAtLevel);
@@ -893,13 +893,13 @@ void DayCare_InitBreeding(void){
     // LD_HL(wEggMonExp);
     // LDH_A_addr(hMultiplicand);
     // LD_hli_A;
-    wram->wEggMon.exp[0] = exp & 0xff;
+    gPokemon.eggMon.exp[0] = exp & 0xff;
     // LDH_A_addr(hMultiplicand + 1);
     // LD_hli_A;
-    wram->wEggMon.exp[1] = (exp >> 8) & 0xff;
+    gPokemon.eggMon.exp[1] = (exp >> 8) & 0xff;
     // LDH_A_addr(hMultiplicand + 2);
     // LD_hl_A;
-    wram->wEggMon.exp[2] = (exp >> 16) & 0xff;
+    gPokemon.eggMon.exp[2] = (exp >> 16) & 0xff;
     // XOR_A_A;
     // LD_B(wEggMonDVs - wEggMonStatExp);
     // LD_HL(wEggMonStatExp);
@@ -908,12 +908,12 @@ void DayCare_InitBreeding(void){
     // LD_hli_A;
     // DEC_B;
     // IF_NZ goto loop2;
-    ByteFill(wram->wEggMon.statExp, sizeof(wram->wEggMon.statExp), 0);
+    ByteFill(gPokemon.eggMon.statExp, sizeof(gPokemon.eggMon.statExp), 0);
     // LD_HL(wEggMonDVs);
     // CALL(aRandom);
     uint16_t dv = (Random() | (Random() << 8));
     // LD_hli_A;
-    wram->wEggMon.DVs = dv;
+    gPokemon.eggMon.DVs = dv;
     // LD_addr_A(wTempMonDVs);
     wram->wTempMon.mon.DVs = dv;
     // CALL(aRandom);
@@ -928,11 +928,11 @@ void DayCare_InitBreeding(void){
     // LD_A_addr(wBreedMon2Species);
     // CP_A(DITTO);
     // IF_Z goto GotDVs;
-    if(wram->wBreedMon1.species == DITTO) {
-        dvs = wram->wBreedMon1.species;
+    if(gPokemon.breedMon1.species == DITTO) {
+        dvs = gPokemon.breedMon1.species;
     }
-    else if(wram->wBreedMon2.species == DITTO) {
-        dvs = wram->wBreedMon2.species;
+    else if(gPokemon.breedMon2.species == DITTO) {
+        dvs = gPokemon.breedMon2.species;
     }
     else {
         // LD_A(TEMPMON);
@@ -954,7 +954,7 @@ void DayCare_InitBreeding(void){
             // IF_Z goto GotDVs;
             // LD_D_B;
             // LD_E_C;
-            dvs = (wram->wBreedMotherOrNonDitto)? wram->wBreedMon2.DVs: wram->wBreedMon1.DVs;
+            dvs = (gPokemon.breedMotherOrNonDitto)? gPokemon.breedMon2.DVs: gPokemon.breedMon1.DVs;
             // goto GotDVs;
         }
         else {
@@ -964,7 +964,7 @@ void DayCare_InitBreeding(void){
             // IF_NZ goto GotDVs;
             // LD_D_B;
             // LD_E_C;
-            dvs = (wram->wBreedMotherOrNonDitto)? wram->wBreedMon1.DVs: wram->wBreedMon2.DVs;
+            dvs = (gPokemon.breedMotherOrNonDitto)? gPokemon.breedMon1.DVs: gPokemon.breedMon2.DVs;
         }
     }
 
@@ -986,7 +986,7 @@ void DayCare_InitBreeding(void){
     // ADD_A_B;
     uint8_t dv2 = ((dv >> 8) & 0xf8) + ((dvs >> 8) & 0x7);
     // LD_hl_A;
-    wram->wEggMon.DVs = (dv2 << 8) + dv1;
+    gPokemon.eggMon.DVs = (dv2 << 8) + dv1;
 
 SkipDVs:
     // LD_HL(wStringBuffer1);
@@ -997,7 +997,7 @@ SkipDVs:
     // LD_HL(wEggMonMoves);
     // LD_DE(wEggMonPP);
     // PREDEF(pFillPP);
-    FillPP(wram->wEggMon.PP, wram->wEggMon.moves);
+    FillPP(gPokemon.eggMon.PP, gPokemon.eggMon.moves);
     // LD_HL(wMonOrItemNameBuffer);
     // LD_DE(wStringBuffer1);
     // LD_BC(NAME_LENGTH);
@@ -1006,17 +1006,17 @@ SkipDVs:
     // LD_A_addr(wBaseEggSteps);
     // LD_HL(wEggMonHappiness);
     // LD_hli_A;
-    wram->wEggMon.happiness = wram->wBaseEggSteps;
+    gPokemon.eggMon.happiness = wram->wBaseEggSteps;
     // XOR_A_A;
     // LD_hli_A;
-    wram->wEggMon.pokerusStatus = 0;
+    gPokemon.eggMon.pokerusStatus = 0;
     // LD_hli_A;
-    wram->wEggMon.caughtData[0] = 0;
+    gPokemon.eggMon.caughtData[0] = 0;
     // LD_hl_A;
-    wram->wEggMon.caughtData[1] = 0;
+    gPokemon.eggMon.caughtData[1] = 0;
     // LD_A_addr(wCurPartyLevel);
     // LD_addr_A(wEggMonLevel);
-    wram->wEggMon.level = wram->wCurPartyLevel;
+    gPokemon.eggMon.level = wram->wCurPartyLevel;
     // RET;
 
 // String_EGG:

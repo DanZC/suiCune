@@ -148,7 +148,7 @@ uint16_t GetFishGroupIndex(uint8_t d){
             // LD_A_addr(wFishingSwarmFlag);
             // CP_A(FISHSWARM_QWILFISH);
             // IF_NZ goto done;
-            if(wram->wFishingSwarmFlag == FISHSWARM_QWILFISH) {
+            if(gPokemon.fishingSwarmFlag == FISHSWARM_QWILFISH) {
                 // LD_D(FISHGROUP_QWILFISH_SWARM);
                 d = FISHGROUP_QWILFISH_SWARM;
             }
@@ -161,7 +161,7 @@ uint16_t GetFishGroupIndex(uint8_t d){
             // LD_A_addr(wFishingSwarmFlag);
             // CP_A(FISHSWARM_REMORAID);
             // IF_NZ goto done;
-            if(wram->wFishingSwarmFlag == FISHSWARM_REMORAID) {
+            if(gPokemon.fishingSwarmFlag == FISHSWARM_REMORAID) {
                 // LD_D(FISHGROUP_REMORAID_SWARM);
                 d = FISHGROUP_REMORAID_SWARM;
             }

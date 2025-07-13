@@ -241,7 +241,7 @@ void GetHallOfFameParty(void){
     // INC_DE;
     struct HOFMon* de = wram->wHallOfFamePokemonList.mon;
     // LD_HL(wPartySpecies);
-    species_t* hl = wram->wPartySpecies;
+    species_t* hl = gPokemon.partySpecies;
     // LD_C(0);
     uint8_t c = 0;
 
@@ -273,7 +273,7 @@ void GetHallOfFameParty(void){
             // CALL(aAddNTimes);
             // LD_C_L;
             // LD_B_H;
-            struct BoxMon* bc = &wram->wPartyMon[c].mon;
+            struct BoxMon* bc = &gPokemon.partyMon[c].mon;
 
             // LD_HL(MON_SPECIES);
             // ADD_HL_BC;
@@ -317,7 +317,7 @@ void GetHallOfFameParty(void){
             // CALL(aAddNTimes);
             // LD_BC(MON_NAME_LENGTH - 1);
             // CALL(aCopyBytes);
-            CopyBytes(de->nickname, wram->wPartyMonNickname[c], MON_NAME_LENGTH - 1);
+            CopyBytes(de->nickname, gPokemon.partyMonNickname[c], MON_NAME_LENGTH - 1);
 
             // POP_BC;
             // INC_C;

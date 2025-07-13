@@ -1697,7 +1697,7 @@ void Pokedex_DrawMainScreenBG(void){
     // LD_HL(wPokedexSeen);
     // LD_B(wEndPokedexSeen - wPokedexSeen);
     // CALL(aCountSetBits);
-    uint8_t seen = CountSetBits(wram->wPokedexSeen, sizeof(wram->wPokedexSeen));
+    uint8_t seen = CountSetBits(gPokemon.pokedexSeen, sizeof(gPokemon.pokedexSeen));
     // LD_DE(wNumSetBits);
     // hlcoord(5, 12, wTilemap);
     // LD_BC((1 << 8) | 3);
@@ -1710,7 +1710,7 @@ void Pokedex_DrawMainScreenBG(void){
     // LD_HL(wPokedexCaught);
     // LD_B(wEndPokedexCaught - wPokedexCaught);
     // CALL(aCountSetBits);
-    uint8_t caught = CountSetBits(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
+    uint8_t caught = CountSetBits(gPokemon.pokedexCaught, sizeof(gPokemon.pokedexCaught));
     // LD_DE(wNumSetBits);
     // hlcoord(5, 15, wTilemap);
     // LD_BC((1 << 8) | 3);
@@ -1988,7 +1988,7 @@ void Pokedex_DrawUnownModeBG(void){
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto done;
-        if(wram->wUnownDex[de] == 0)
+        if(gPokemon.unownDex[de] == 0)
             break;
         // PUSH_AF;
         // LD_HL(mUnownModeLetterAndCursorCoords);
@@ -2001,7 +2001,7 @@ void Pokedex_DrawUnownModeBG(void){
         // POP_AF;
         // ADD_A(FIRST_UNOWN_CHAR - 1);  // Unown A
         // LD_hl_A;
-        wram->wTilemap[UnownModeLetterAndCursorCoords[de * 2]] = (FIRST_UNOWN_CHAR - 1) + wram->wUnownDex[de];
+        wram->wTilemap[UnownModeLetterAndCursorCoords[de * 2]] = (FIRST_UNOWN_CHAR - 1) + gPokemon.unownDex[de];
         // INC_DE;
         ++de;
         // INC_B;
@@ -3433,7 +3433,7 @@ void Pokedex_LoadSelectedMonTiles(void){
     }
     // LD_A_addr(wFirstUnownSeen);
     // LD_addr_A(wUnownLetter);
-    wram->wUnownLetter = wram->wFirstUnownSeen;
+    wram->wUnownLetter = gPokemon.firstUnownSeen;
     // LD_A_addr(wTempSpecies);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = selected;
@@ -3615,7 +3615,7 @@ void Pokedex_LoadUnownFrontpicTiles(void){
     // ADD_HL_DE;
     // LD_A_hl;
     // LD_addr_A(wUnownLetter);
-    wram->wUnownLetter = wram->wUnownDex[wram->wDexCurUnownIndex];
+    wram->wUnownLetter = gPokemon.unownDex[wram->wDexCurUnownIndex];
     // LD_A(UNOWN);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = UNOWN;

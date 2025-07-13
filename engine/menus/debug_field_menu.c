@@ -154,13 +154,13 @@ static void DebugAddPokemonMenu(void) {
 }
 
 static void DebugUnownPrinter(void){
-    uint8_t temp[sizeof(wram->wUnownDex)];
-    CopyBytes(temp, wram->wUnownDex, sizeof(wram->wUnownDex));
+    uint8_t temp[sizeof(gPokemon.unownDex)];
+    CopyBytes(temp, gPokemon.unownDex, sizeof(gPokemon.unownDex));
     for(uint8_t i = 0; i < NUM_UNOWN; ++i){
-        wram->wUnownDex[i] = UNOWN_A + i;
+        gPokemon.unownDex[i] = UNOWN_A + i;
     }
     UnownPrinter();
-    CopyBytes(wram->wUnownDex, temp, sizeof(wram->wUnownDex));
+    CopyBytes(gPokemon.unownDex, temp, sizeof(gPokemon.unownDex));
 }
 
 static bool DebugWildBattleScript(script_s* s){

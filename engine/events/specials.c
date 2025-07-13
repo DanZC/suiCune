@@ -428,7 +428,7 @@ void UnusedCheckUnusedTwoDayTimer(void){
 void ActivateFishingSwarm(void){
     // LD_A_addr(wScriptVar);
     // LD_addr_A(wFishingSwarmFlag);
-    wram->wFishingSwarmFlag = wram->wScriptVar;
+    gPokemon.fishingSwarmFlag = wram->wScriptVar;
     // RET;
 }
 
@@ -440,10 +440,10 @@ void StoreSwarmMapIndices(uint8_t flag, uint8_t group, uint8_t number){
     //  swarm dark cave violet entrance
         // LD_A_D;
         // LD_addr_A(wDunsparceMapGroup);
-        wram->wDunsparceMapGroup = group;
+        gPokemon.dunsparceMapGroup = group;
         // LD_A_E;
         // LD_addr_A(wDunsparceMapNumber);
-        wram->wDunsparceMapNumber = number;
+        gPokemon.dunsparceMapNumber = number;
         // RET;
     }
     else {

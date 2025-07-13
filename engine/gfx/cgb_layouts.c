@@ -807,7 +807,7 @@ void v_CGB_Evolution(void){
         // LD_A_addr(wPlayerHPPal);
         // CALL(aGetPlayerOrMonPalettePointer);
         // CALL(aLoadPalette_White_Col1_Col2_Black);
-        LoadPalette_White_Col1_Col2_Black(de, GetPlayerOrMonPalettePointer(dest, wram->wPlayerHPPal, wram->wPartyMon[wram->wCurPartyMon].mon.DVs));
+        LoadPalette_White_Col1_Col2_Black(de, GetPlayerOrMonPalettePointer(dest, wram->wPlayerHPPal, gPokemon.partyMon[wram->wCurPartyMon].mon.DVs));
         // LD_HL(mBattleObjectPals);
         // LD_DE(wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY);
         // LD_BC(6 * PALETTE_SIZE);

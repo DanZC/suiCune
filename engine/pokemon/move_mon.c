@@ -27,6 +27,7 @@
 #include "../menus/naming_screen.h"
 #include "../smallflag.h"
 #include "../battle/core.h"
+#include "../../util/serialize.h"
 #include "../../data/moves/moves.h"
 #include <stddef.h>
 #include "../../data/text/common.h"
@@ -34,8 +35,7 @@
 #define RANDY_OT_ID (1001)
 
 static void DepositBreedmon(uint8_t* nickname, uint8_t* ot, struct BoxMon* de, uint8_t a);
-
-static void ShiftBoxMon(void);
+static void ShiftBoxMon(struct Box* box);
 
 bool TryAddMonToParty(species_t species, uint8_t level){
 //  Check if to copy wild mon or generate a new one
@@ -45,9 +45,9 @@ bool TryAddMonToParty(species_t species, uint8_t level){
     // AND_A(0xf);
     // IF_Z goto getpartylocation;  // PARTYMON
     // LD_DE(wOTPartyCount);
-    struct PartyMon* de = (wram->wMonType & 0xf)? wram->wOTPartyMon: wram->wPartyMon;
-    uint8_t* partyCount = (wram->wMonType & 0xf)? &wram->wOTPartyCount: &wram->wPartyCount;
-    species_t* partySpecies = (wram->wMonType & 0xf)? wram->wOTPartySpecies: wram->wPartySpecies;
+    struct PartyMon* de = (wram->wMonType & 0xf)? wram->wOTPartyMon: gPokemon.partyMon;
+    uint8_t* partyCount = (wram->wMonType & 0xf)? &wram->wOTPartyCount: &gPokemon.partyCount;
+    species_t* partySpecies = (wram->wMonType & 0xf)? wram->wOTPartySpecies: gPokemon.partySpecies;
 
 // getpartylocation:
 // Do we have room for it?
@@ -85,7 +85,7 @@ bool TryAddMonToParty(species_t species, uint8_t level){
     // AND_A(0xf);
     // IF_Z goto loadOTname;
     // LD_HL(wOTPartyMonOTs);
-    uint8_t* ot = (wram->wMonType & 0xf)? wram->wOTPartyMonOT[hram.hMoveMon - 1]: wram->wPartyMonOT[hram.hMoveMon - 1];
+    uint8_t* ot = (wram->wMonType & 0xf)? wram->wOTPartyMonOT[hram.hMoveMon - 1]: gPokemon.partyMonOT[hram.hMoveMon - 1];
 
 // loadOTname:
     // LDH_A_addr(hMoveMon);  // Restore index from backup
@@ -114,7 +114,7 @@ bool TryAddMonToParty(species_t species, uint8_t level){
         // LD_HL(wStringBuffer1);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wPartyMonNickname[hram.hMoveMon - 1], GetPokemonName(species), MON_NAME_LENGTH);
+        CopyBytes(gPokemon.partyMonNickname[hram.hMoveMon - 1], GetPokemonName(species), MON_NAME_LENGTH);
     }
 
 // skipnickname:
@@ -528,20 +528,20 @@ bool AddTempmonToParty(void){
     // CP_A(PARTY_LENGTH);
     // SCF;
     // RET_Z ;
-    if(wram->wPartyCount == PARTY_LENGTH)
+    if(gPokemon.partyCount == PARTY_LENGTH)
         return true;
 
     // INC_A;
     // LD_hl_A;
     // LD_C_A;
-    uint8_t c = ++wram->wPartyCount;
+    uint8_t c = ++gPokemon.partyCount;
     // LD_B(0);
     // ADD_HL_BC;
     // LD_A_addr(wCurPartySpecies);
     // LD_hli_A;
-    wram->wPartySpecies[c-1] = wram->wCurPartySpecies;
+    gPokemon.partySpecies[c-1] = wram->wCurPartySpecies;
     // LD_hl(0xff);
-    wram->wPartySpecies[c] = (species_t)-1;
+    gPokemon.partySpecies[c] = (species_t)-1;
 
     // LD_HL(wPartyMon1Species);
     // LD_A_addr(wPartyCount);
@@ -552,7 +552,7 @@ bool AddTempmonToParty(void){
     // LD_D_H;
     // LD_HL(wTempMonSpecies);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMon + (c - 1), &wram->wTempMon, PARTYMON_STRUCT_LENGTH);
+    CopyBytes(gPokemon.partyMon + (c - 1), &wram->wTempMon, PARTYMON_STRUCT_LENGTH);
 
     // LD_HL(wPartyMonOTs);
     // LD_A_addr(wPartyCount);
@@ -565,7 +565,7 @@ bool AddTempmonToParty(void){
     // CALL(aSkipNames);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMonOT[c - 1], wram->wOTPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonOT[c - 1], wram->wOTPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
 
     // LD_HL(wPartyMonNicknames);
     // LD_A_addr(wPartyCount);
@@ -578,7 +578,7 @@ bool AddTempmonToParty(void){
     // CALL(aSkipNames);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMonNickname[c - 1], wram->wOTPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonNickname[c - 1], wram->wOTPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
 
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
@@ -594,7 +594,7 @@ bool AddTempmonToParty(void){
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aAddNTimes);
         // LD_hl(BASE_HAPPINESS);
-        wram->wPartyMon[c - 1].mon.happiness = BASE_HAPPINESS;
+        gPokemon.partyMon[c - 1].mon.happiness = BASE_HAPPINESS;
     }
 
 // egg:
@@ -608,16 +608,16 @@ bool AddTempmonToParty(void){
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // CALL(aAddNTimes);
         // PREDEF(pGetUnownLetter);
-        unown_letter_t letter = GetUnownLetter(wram->wPartyMon[c - 1].mon.DVs);
+        unown_letter_t letter = GetUnownLetter(gPokemon.partyMon[c - 1].mon.DVs);
         // CALLFAR(aUpdateUnownDex);
         UpdateUnownDex(letter);
         // LD_A_addr(wFirstUnownSeen);
         // AND_A_A;
         // IF_NZ goto done;
-        if(wram->wFirstUnownSeen == 0) {
+        if(gPokemon.firstUnownSeen == 0) {
             // LD_A_addr(wUnownLetter);
             // LD_addr_A(wFirstUnownSeen);
-            wram->wFirstUnownSeen = letter;
+            gPokemon.firstUnownSeen = letter;
         }
     }
 
@@ -636,6 +636,8 @@ bool SendGetMonIntoFromBox(uint8_t param){
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBoxCount));
+    struct Box box;
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // LD_A_addr(wPokemonWithdrawDepositParameter);
     // AND_A_A;
     // IF_Z goto check_IfPartyIsFull;
@@ -650,21 +652,21 @@ bool SendGetMonIntoFromBox(uint8_t param){
     if(param == PC_WITHDRAW || param == DAY_CARE_WITHDRAW) {
     // check_IfPartyIsFull:
         // LD_HL(wPartyCount);
-        count = &wram->wPartyCount;
-        species = wram->wPartySpecies;
+        count = &gPokemon.partyCount;
+        species = gPokemon.partySpecies;
         // LD_A_hl;
         // CP_A(PARTY_LENGTH);
         // JP_Z (mCloseSRAM_And_SetCarryFlag);
-        if(wram->wPartyCount == PARTY_LENGTH)
-            return CloseSRAM_And_SetCarryFlag();
-        c = wram->wPartyCount;
+        if(gPokemon.partyCount == PARTY_LENGTH)
+            return CloseSRAM_And_SetCarryFlag(&box);
+        c = gPokemon.partyCount;
         // goto there_is_room;
     }
     // CP_A(DAY_CARE_DEPOSIT);
     // LD_HL(wBreedMon1Species);
     // IF_Z goto breedmon;
     else if(param == DAY_CARE_DEPOSIT) {
-        bmon = &wram->wBreedMon1;
+        bmon = &gPokemon.breedMon1;
         goto breedmon;
     }
 
@@ -680,7 +682,7 @@ bool SendGetMonIntoFromBox(uint8_t param){
         // IF_NZ goto there_is_room;
         // JP(mCloseSRAM_And_SetCarryFlag);
         if(c == MONS_PER_BOX)
-            return CloseSRAM_And_SetCarryFlag();
+            return CloseSRAM_And_SetCarryFlag(&box);
     }
 
 // there_is_room:
@@ -698,7 +700,7 @@ bool SendGetMonIntoFromBox(uint8_t param){
 
 // okay1:
     // LD_hli_A;
-    species[c-1] = (param == DAY_CARE_WITHDRAW)? wram->wBreedMon1.species: wram->wCurPartySpecies;
+    species[c-1] = (param == DAY_CARE_WITHDRAW)? gPokemon.breedMon1.species: wram->wCurPartySpecies;
     // LD_hl(0xff);
     species[c] = (species_t)-1;
 
@@ -706,7 +708,7 @@ bool SendGetMonIntoFromBox(uint8_t param){
     // DEC_A;
     if(param != PC_DEPOSIT) {
         // LD_HL(wPartyMon1Species);
-        pmon = wram->wPartyMon + (wram->wPartyCount - 1);
+        pmon = gPokemon.partyMon + (gPokemon.partyCount - 1);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // LD_A_addr(wPartyCount);
     }
@@ -715,7 +717,7 @@ bool SendGetMonIntoFromBox(uint8_t param){
         // LD_HL(sBoxMon1Species);
         // LD_BC(BOXMON_STRUCT_LENGTH);
         // LD_A_addr(sBoxCount);
-        bmon = (struct BoxMon*)GBToRAMAddr(sBoxMon1 + BOXMON_STRUCT_LENGTH * (gb_read(sBoxCount) - 1));
+        bmon = box.mons + (box.count - 1);
 
     // okay2:
         // DEC_A;  // wPartyCount - 1
@@ -733,19 +735,19 @@ breedmon:
         // LD_HL(sBoxMon1Species);
         // LD_BC(BOXMON_STRUCT_LENGTH);
         // IF_Z goto okay3;
-        CopyBytes(&pmon->mon, (struct BoxMon*)GBToRAMAddr(sBoxMon1 + BOXMON_STRUCT_LENGTH * wram->wCurPartyMon), sizeof(pmon->mon));
+        CopyBytes(&pmon->mon, &box.mons[wram->wCurPartyMon], sizeof(pmon->mon));
         break;
     case DAY_CARE_WITHDRAW:
         // CP_A(DAY_CARE_WITHDRAW);
         // LD_HL(wBreedMon1Species);
         // IF_Z goto okay4;
-        CopyBytes(bmon, &wram->wBreedMon1, sizeof(*bmon));
+        CopyBytes(bmon, &gPokemon.breedMon1, sizeof(*bmon));
         break;
     case DAY_CARE_DEPOSIT:
     case PC_DEPOSIT:
         // LD_HL(wPartyMon1Species);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
-        CopyBytes(bmon, &wram->wPartyMon[wram->wCurPartyMon].mon, sizeof(*bmon));
+        CopyBytes(bmon, &gPokemon.partyMon[wram->wCurPartyMon].mon, sizeof(*bmon));
         break;
 
     // okay3:
@@ -763,7 +765,7 @@ breedmon:
         // CP_A(DAY_CARE_DEPOSIT);
         // LD_DE(wBreedMon1OT);
         // IF_Z goto okay5;
-        de_ot = wram->wBreedMon1OT;
+        de_ot = gPokemon.breedMon1OT;
         break;
     case PC_WITHDRAW:
     case DAY_CARE_WITHDRAW:
@@ -771,12 +773,12 @@ breedmon:
         // LD_HL(wPartyMonOTs);
         // LD_A_addr(wPartyCount);
         // IF_NZ goto okay6;
-        de_ot = wram->wPartyMonOT[wram->wPartyCount - 1];
+        de_ot = gPokemon.partyMonOT[gPokemon.partyCount - 1];
         break;
     case PC_DEPOSIT:
         // LD_HL(sBoxMonOTs);
         // LD_A_addr(sBoxCount);
-        de_ot = GBToRAMAddr(sBoxMonOTs + (gb_read(sBoxCount) - 1) * NAME_LENGTH);
+        de_ot = box.monOT[box.count - 1];
         break;
     }
 
@@ -802,14 +804,14 @@ breedmon:
     // CALL(aSkipNames);
     switch(param) {
     case PC_WITHDRAW:
-        CopyBytes(de_ot, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
+        CopyBytes(de_ot, box.monOT[wram->wCurPartyMon], NAME_LENGTH);
         break;
     case DAY_CARE_WITHDRAW:
-        CopyBytes(de_ot, wram->wBreedMon1OT, NAME_LENGTH);
+        CopyBytes(de_ot, gPokemon.breedMon1OT, NAME_LENGTH);
         break;
     case PC_DEPOSIT:
     case DAY_CARE_DEPOSIT:
-        CopyBytes(de_ot, wram->wPartyMonOT[wram->wCurPartyMon], NAME_LENGTH);
+        CopyBytes(de_ot, gPokemon.partyMonOT[wram->wCurPartyMon], NAME_LENGTH);
         break;
     }
 
@@ -822,7 +824,7 @@ breedmon:
         // CP_A(DAY_CARE_DEPOSIT);
         // LD_DE(wBreedMon1Nickname);
         // IF_Z goto okay9;
-        de_ot = wram->wBreedMon1Nickname;
+        de_ot = gPokemon.breedMon1Nickname;
         break;
     case PC_WITHDRAW:
     case DAY_CARE_WITHDRAW:
@@ -830,12 +832,12 @@ breedmon:
         // LD_HL(wPartyMonNicknames);
         // LD_A_addr(wPartyCount);
         // IF_NZ goto okay10;
-        de_ot = wram->wPartyMonNickname[wram->wPartyCount - 1];
+        de_ot = gPokemon.partyMonNickname[gPokemon.partyCount - 1];
         break;
     case PC_DEPOSIT:
         // LD_HL(sBoxMonNicknames);
         // LD_A_addr(sBoxCount);
-        de_ot = GBToRAMAddr(sBoxMonNicknames + (gb_read(sBoxCount) - 1) * MON_NAME_LENGTH);
+        de_ot = box.monNicknames[box.count - 1];
         break;
     }
 
@@ -852,18 +854,18 @@ breedmon:
     case PC_WITHDRAW:
         // AND_A_A;
         // IF_Z goto okay11;
-        CopyBytes(de_ot, GBToRAMAddr(sBoxMonNicknames + wram->wCurPartyMon * MON_NAME_LENGTH), MON_NAME_LENGTH);
+        CopyBytes(de_ot, box.monNicknames[wram->wCurPartyMon], MON_NAME_LENGTH);
         break;
     case DAY_CARE_WITHDRAW:
         // LD_HL(wBreedMon1Nickname);
         // CP_A(DAY_CARE_WITHDRAW);
         // IF_Z goto okay12;
-        CopyBytes(de_ot, wram->wBreedMon1Nickname, MON_NAME_LENGTH);
+        CopyBytes(de_ot, gPokemon.breedMon1Nickname, MON_NAME_LENGTH);
         break;
     case PC_DEPOSIT:
     case DAY_CARE_DEPOSIT:
         // LD_HL(wPartyMonNicknames);
-        CopyBytes(de_ot, wram->wPartyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+        CopyBytes(de_ot, gPokemon.partyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
         break;
     }
 
@@ -886,7 +888,7 @@ breedmon:
         // DEC_A;
         // LD_B_A;
         // CALL(aRestorePPOfDepositedPokemon);
-        RestorePPOfDepositedPokemon(gb_read(sBoxCount) - 1);
+        RestorePPOfDepositedPokemon(&box, box.count);
         break;
     // CP_A(DAY_CARE_DEPOSIT);
     // JP_Z (mSendGetMonIntoFromBox_CloseSRAM_And_ClearCarryFlag);
@@ -964,6 +966,7 @@ breedmon:
     }
 
 // CloseSRAM_And_ClearCarryFlag:
+    Serialize_Box(GBToRAMAddr(sBox), &box);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // AND_A_A;
@@ -971,7 +974,8 @@ breedmon:
     return false;
 }
 
-bool CloseSRAM_And_SetCarryFlag(void){
+bool CloseSRAM_And_SetCarryFlag(const struct Box* box){
+    Serialize_Box(GBToRAMAddr(sBox), box);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // SCF;
@@ -979,14 +983,14 @@ bool CloseSRAM_And_SetCarryFlag(void){
     return true;
 }
 
-void RestorePPOfDepositedPokemon(uint8_t b){
+void RestorePPOfDepositedPokemon(struct Box* box, uint8_t b){
     // LD_A_B;
     // LD_HL(sBoxMons);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
     // LD_B_H;
     // LD_C_L;
-    struct BoxMon* bc = (struct BoxMon*)GBToRAMAddr(sBoxMons + b * BOXMON_STRUCT_LENGTH);
+    struct BoxMon* bc = box->mons + b;
     // LD_HL(MON_PP);
     // ADD_HL_BC;
     // PUSH_HL;
@@ -1066,7 +1070,7 @@ void RestorePPOfDepositedPokemon(uint8_t b){
 bool RetrieveMonFromDayCareMan(void){
     // LD_A_addr(wBreedMon1Species);
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wBreedMon1.species;
+    wram->wCurPartySpecies = gPokemon.breedMon1.species;
     // LD_DE(SFX_TRANSACTION);
     // CALL(aPlaySFX);
     PlaySFX(SFX_TRANSACTION);
@@ -1090,7 +1094,7 @@ bool RetrieveMonFromDayCareMan(void){
 bool RetrieveMonFromDayCareLady(void){
     // LD_A_addr(wBreedMon2Species);
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wBreedMon2.species;
+    wram->wCurPartySpecies = gPokemon.breedMon2.species;
     // LD_DE(SFX_TRANSACTION);
     // CALL(aPlaySFX);
     PlaySFX(SFX_TRANSACTION);
@@ -1116,7 +1120,7 @@ bool RetrieveBreedmon(void){
     // LD_A_hl;
     // CP_A(PARTY_LENGTH);
     // IF_NZ goto room_in_party;
-    if(wram->wPartyCount >= PARTY_LENGTH) {
+    if(gPokemon.partyCount >= PARTY_LENGTH) {
         // SCF;
         // RET;
         return true;
@@ -1125,11 +1129,11 @@ bool RetrieveBreedmon(void){
 // room_in_party:
     // INC_A;
     // LD_hl_A;
-    uint8_t c = wram->wPartyCount++;
+    uint8_t c = gPokemon.partyCount++;
     // LD_C_A;
     // LD_B(0);
     // ADD_HL_BC;
-    species_t* sp = wram->wPartySpecies + c;
+    species_t* sp = gPokemon.partySpecies + c;
     // LD_A_addr(wPokemonWithdrawDepositParameter);
     // AND_A_A;
     struct BoxMon* breedmon;
@@ -1137,18 +1141,18 @@ bool RetrieveBreedmon(void){
     uint8_t* ot;
     if(wram->wPokemonWithdrawDepositParameter == 0) {
         // LD_A_addr(wBreedMon1Species);
-        breedmon = &wram->wBreedMon1;
+        breedmon = &gPokemon.breedMon1;
         // LD_DE(wBreedMon1Nickname);
-        nickname = wram->wBreedMon1Nickname;
-        ot = wram->wBreedMon1OT;
+        nickname = gPokemon.breedMon1Nickname;
+        ot = gPokemon.breedMon1OT;
         // IF_Z goto okay;
     }
     else {
         // LD_A_addr(wBreedMon2Species);
-        breedmon = &wram->wBreedMon2;
+        breedmon = &gPokemon.breedMon2;
         // LD_DE(wBreedMon2Nickname);
-        nickname = wram->wBreedMon2Nickname;
-        ot = wram->wBreedMon2OT;
+        nickname = gPokemon.breedMon2Nickname;
+        ot = gPokemon.breedMon2OT;
     }
 
 // okay:
@@ -1168,7 +1172,7 @@ bool RetrieveBreedmon(void){
     // LD_L_E;
     // POP_DE;
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMonNickname[c], nickname, NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonNickname[c], nickname, NAME_LENGTH);
     // PUSH_HL;
     // LD_HL(wPartyMonOTs);
     // LD_A_addr(wPartyCount);
@@ -1178,19 +1182,19 @@ bool RetrieveBreedmon(void){
     // LD_E_L;
     // POP_HL;
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPartyMonOT[c], ot, NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonOT[c], ot, NAME_LENGTH);
     // PUSH_HL;
     // CALL(aGetLastPartyMon);
     // POP_HL;
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(&wram->wPartyMon[c].mon, breedmon, BOXMON_STRUCT_LENGTH);
+    CopyBytes(&gPokemon.partyMon[c].mon, breedmon, BOXMON_STRUCT_LENGTH);
     // CALL(aGetBaseData);
     GetBaseData(wram->wCurSpecies);
     // CALL(aGetLastPartyMon);
     // LD_B_D;
     // LD_C_E;
-    struct PartyMon* partymon = wram->wPartyMon + c;
+    struct PartyMon* partymon = gPokemon.partyMon + c;
     // LD_HL(MON_LEVEL);
     // ADD_HL_BC;
     // LD_A_addr(wCurPartyLevel);
@@ -1259,7 +1263,7 @@ void GetLastPartyMon(void){
 void DepositMonWithDayCareMan(uint8_t a){
     // LD_DE(wBreedMon1Nickname);
     // CALL(aDepositBreedmon);
-    DepositBreedmon(wram->wBreedMon1Nickname, wram->wBreedMon1OT, &wram->wBreedMon1, a);
+    DepositBreedmon(gPokemon.breedMon1Nickname, gPokemon.breedMon1OT, &gPokemon.breedMon1, a);
     // XOR_A_A;  // REMOVE_PARTY
     // LD_addr_A(wPokemonWithdrawDepositParameter);
     // JP(mRemoveMonFromPartyOrBox);
@@ -1269,7 +1273,7 @@ void DepositMonWithDayCareMan(uint8_t a){
 void DepositMonWithDayCareLady(uint8_t a){
     // LD_DE(wBreedMon2Nickname);
     // CALL(aDepositBreedmon);
-    DepositBreedmon(wram->wBreedMon2Nickname, wram->wBreedMon2OT, &wram->wBreedMon2, a);
+    DepositBreedmon(gPokemon.breedMon2Nickname, gPokemon.breedMon2OT, &gPokemon.breedMon2, a);
     // XOR_A_A;  // REMOVE_PARTY
     // LD_addr_A(wPokemonWithdrawDepositParameter);
     // JP(mRemoveMonFromPartyOrBox);
@@ -1281,19 +1285,19 @@ static void DepositBreedmon(uint8_t* nickname, uint8_t* ot, struct BoxMon* de, u
     // LD_HL(wPartyMonNicknames);
     // CALL(aSkipNames);
     // CALL(aCopyBytes);
-    CopyBytes(nickname, wram->wPartyMonNickname[a], NAME_LENGTH);
+    CopyBytes(nickname, gPokemon.partyMonNickname[a], NAME_LENGTH);
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMonOTs);
     // CALL(aSkipNames);
     // CALL(aCopyBytes);
-    CopyBytes(ot, wram->wPartyMonOT[a], NAME_LENGTH);
+    CopyBytes(ot, gPokemon.partyMonOT[a], NAME_LENGTH);
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wPartyMon1Species);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
     // CALL(aAddNTimes);
     // LD_BC(BOXMON_STRUCT_LENGTH);
     // JP(mCopyBytes);
-    CopyBytes(de, wram->wPartyMon + a, BOXMON_STRUCT_LENGTH);
+    CopyBytes(de, gPokemon.partyMon + a, BOXMON_STRUCT_LENGTH);
 }
 
 //  Sends the mon into one of Bills Boxes
@@ -1302,9 +1306,11 @@ bool SendMonIntoBox(void){
     // LD_A(BANK(sBoxCount));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBoxCount));
+    struct Box box;
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
     // LD_DE(sBoxCount);
     // LD_A_de;
-    uint8_t boxCount = gb_read(sBoxCount);
+    uint8_t boxCount = box.count;
     // CP_A(MONS_PER_BOX);
     // JP_NC (mSendMonIntoBox_full);
     if(boxCount >= MONS_PER_BOX) {
@@ -1317,12 +1323,12 @@ bool SendMonIntoBox(void){
     }
     // INC_A;
     // LD_de_A;
-    gb_write(sBoxCount, ++boxCount);
+    box.count++;
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = wram->wCurPartySpecies;
     // LD_C_A;
-    species_t* de = (species_t*)GBToRAMAddr(sBoxSpecies);
+    species_t* de = box.species;
     species_t c = wram->wCurPartySpecies;
     species_t a;
     do {
@@ -1346,13 +1352,13 @@ bool SendMonIntoBox(void){
     // CALL(aGetBaseData);
     GetBaseData(wram->wCurPartySpecies);
     // CALL(aShiftBoxMon);
-    ShiftBoxMon();
+    ShiftBoxMon(&box);
 
     // LD_HL(wPlayerName);
     // LD_DE(sBoxMonOTs);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(GBToRAMAddr(sBoxMonOTs), wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(box.monOT[0], wram->wPlayerName, NAME_LENGTH);
 
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
@@ -1363,11 +1369,11 @@ bool SendMonIntoBox(void){
     // LD_HL(wStringBuffer1);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(GBToRAMAddr(sBoxMonNicknames), wram->wStringBuffer1, MON_NAME_LENGTH);
+    CopyBytes(box.monNicknames[0], wram->wStringBuffer1, MON_NAME_LENGTH);
 
     // LD_HL(wEnemyMon);
     // LD_DE(sBoxMon1);
-    struct BoxMon* boxmon = (struct BoxMon*)GBToRAMAddr(sBoxMon1);
+    struct BoxMon* boxmon = box.mons;
     // LD_BC(1 + 1 + NUM_MOVES);  // species + item + moves
     // CALL(aCopyBytes);
     CopyBytes(boxmon, &wram->wEnemyMon, sizeof(species_t) + sizeof(item_t) + sizeof(move_t) * NUM_MOVES);
@@ -1470,8 +1476,9 @@ bool SendMonIntoBox(void){
 
     // LD_B(0);
     // CALL(aRestorePPOfDepositedPokemon);
-    RestorePPOfDepositedPokemon(0);
+    RestorePPOfDepositedPokemon(&box, 0);
 
+    Serialize_Box(GBToRAMAddr(sBox), &box);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // SCF;
@@ -1479,9 +1486,9 @@ bool SendMonIntoBox(void){
     return true;
 }
 
-static void ShiftBoxMon_shift(void* hl_, uint16_t bc) {
+static void ShiftBoxMon_shift(void* hl_, uint8_t count, uint16_t bc) {
     // LD_A_addr(sBoxCount);
-    uint8_t boxCount = gb_read(sBoxCount);
+    uint8_t boxCount = count;
     // CP_A(2);
     // RET_C ;
     if(boxCount < 2)
@@ -1525,20 +1532,20 @@ static void ShiftBoxMon_shift(void* hl_, uint16_t bc) {
     // RET;
 }
 
-static void ShiftBoxMon(void){
+static void ShiftBoxMon(struct Box* box){
     // LD_HL(sBoxMonOTs);
     // LD_BC(NAME_LENGTH);
     // CALL(aShiftBoxMon_shift);
-    ShiftBoxMon_shift(GBToRAMAddr(sBoxMonOTs), NAME_LENGTH);
+    ShiftBoxMon_shift(box->monOT[0], box->count, NAME_LENGTH);
 
     // LD_HL(sBoxMonNicknames);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aShiftBoxMon_shift);
-    ShiftBoxMon_shift(GBToRAMAddr(sBoxMonNicknames), NAME_LENGTH);
+    ShiftBoxMon_shift(box->monNicknames[0], box->count, MON_NAME_LENGTH);
 
     // LD_HL(sBoxMons);
     // LD_BC(BOXMON_STRUCT_LENGTH);
-    ShiftBoxMon_shift(GBToRAMAddr(sBoxMons), sizeof(struct BoxMon));
+    ShiftBoxMon_shift(box->mons, box->count, sizeof(struct BoxMon));
 }
 
 bool GiveEgg(void){
@@ -1582,7 +1589,7 @@ bool GiveEgg(void){
         // LD_HL(wPokedexCaught);
         // LD_B(RESET_FLAG);
         // PREDEF(pSmallFarFlagAction);
-        SmallFarFlagAction(wram->wPokedexCaught, pspecies, RESET_FLAG);
+        SmallFarFlagAction(gPokemon.pokedexCaught, pspecies, RESET_FLAG);
     }
 
 // skip_caught_flag:
@@ -1601,7 +1608,7 @@ bool GiveEgg(void){
         // LD_HL(wPokedexSeen);
         // LD_B(RESET_FLAG);
         // PREDEF(pSmallFarFlagAction);
-        SmallFarFlagAction(wram->wPokedexSeen, pspecies, RESET_FLAG);
+        SmallFarFlagAction(gPokemon.pokedexSeen, pspecies, RESET_FLAG);
     }
 
 // skip_seen_flag:
@@ -1615,7 +1622,7 @@ bool GiveEgg(void){
     // CALL(aAddNTimes);
     // LD_A_addr(wCurPartySpecies);
     // LD_hl_A;
-    wram->wPartyMon[wram->wPartyCount - 1].mon.species = wram->wCurPartySpecies;
+    gPokemon.partyMon[gPokemon.partyCount - 1].mon.species = wram->wCurPartySpecies;
     // LD_HL(wPartyCount);
     // LD_A_hl;
     // LD_B(0);
@@ -1623,14 +1630,14 @@ bool GiveEgg(void){
     // ADD_HL_BC;
     // LD_A(EGG);
     // LD_hl_A;
-    wram->wPartySpecies[wram->wPartyCount - 1] = EGG;
+    gPokemon.partySpecies[gPokemon.partyCount - 1] = EGG;
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMonNicknames);
     // CALL(aSkipNames);
     // LD_DE(mString_Egg);
     // CALL(aCopyName2);
-    U82CA(wram->wPartyMonNickname[wram->wPartyCount - 1], String_Egg);
+    U82CA(gPokemon.partyMonNickname[gPokemon.partyCount - 1], String_Egg);
     // LD_A_addr(wPartyCount);
     // DEC_A;
     // LD_HL(wPartyMon1Happiness);
@@ -1639,10 +1646,10 @@ bool GiveEgg(void){
     // LD_A_addr(wDebugFlags);
     // BIT_A(DEBUG_FIELD_F);
     if(bit_test(wram->wDebugFlags, DEBUG_FIELD_F)) {
-        wram->wPartyMon[wram->wPartyCount - 1].mon.happiness = 1;
+        gPokemon.partyMon[gPokemon.partyCount - 1].mon.happiness = 1;
     }
     else {
-        wram->wPartyMon[wram->wPartyCount - 1].mon.happiness = wram->wBaseEggSteps;
+        gPokemon.partyMon[gPokemon.partyCount - 1].mon.happiness = wram->wBaseEggSteps;
     }
     // LD_A(1);
     // IF_NZ goto got_init_happiness;
@@ -1659,7 +1666,7 @@ bool GiveEgg(void){
     // XOR_A_A;
     // LD_hli_A;
     // LD_hl_A;
-    wram->wPartyMon[wram->wPartyCount - 1].HP = 0;
+    gPokemon.partyMon[gPokemon.partyCount - 1].HP = 0;
     // AND_A_A;
     // RET;
     return true;
@@ -1674,15 +1681,14 @@ void RemoveMonFromPartyOrBox(uint8_t param){
     // AND_A_A;
     // IF_Z goto okay;
 
-    uint16_t sptr;
     species_t* wptr;
     if(param == REMOVE_PARTY) {
     // okay:
         // LD_A_hl;
         // DEC_A;
         // LD_hli_A;
-        wram->wPartyCount--;
-        wptr = wram->wPartySpecies + wram->wCurPartyMon;
+        gPokemon.partyCount--;
+        wptr = gPokemon.partySpecies + wram->wCurPartyMon;
         species_t a;
         do {
         // loop:
@@ -1714,7 +1720,7 @@ void RemoveMonFromPartyOrBox(uint8_t param){
         // IF_NZ goto delete_inside;
         if(wram->wCurPartyMon == d) {
             // LD_hl(-1);
-            wram->wPartyMonOT[wram->wCurPartyMon][0] = -1;
+            gPokemon.partyMonOT[wram->wCurPartyMon][0] = -1;
             // JP(mRemoveMonFromPartyOrBox_finish);
             // goto finish;
         }
@@ -1733,9 +1739,9 @@ void RemoveMonFromPartyOrBox(uint8_t param){
 
         // party2:
             // CALL(aCopyDataUntil);
-            CopyDataUntil(wram->wPartyMonOT[wram->wCurPartyMon], 
-                wram->wPartyMonOT[wram->wCurPartyMon] + MON_NAME_LENGTH,
-                wram->wPartyMonNickname);
+            CopyDataUntil(gPokemon.partyMonOT[wram->wCurPartyMon], 
+                gPokemon.partyMonOT[wram->wCurPartyMon] + MON_NAME_LENGTH,
+                gPokemon.partyMonNickname);
         // Shift the struct
             // LD_HL(wPartyMons);
             // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -1766,9 +1772,9 @@ void RemoveMonFromPartyOrBox(uint8_t param){
 
         // copy:
             // CALL(aCopyDataUntil);
-            CopyDataUntil(wram->wPartyMon + wram->wCurPartyMon, 
-                wram->wPartyMon + wram->wCurPartyMon + 1,
-                wram->wPartyMonOT);
+            CopyDataUntil(gPokemon.partyMon + wram->wCurPartyMon, 
+                gPokemon.partyMon + wram->wCurPartyMon + 1,
+                gPokemon.partyMonOT);
         // Shift the nicknames
             // LD_HL(wPartyMonNicknames);
             // LD_A_addr(wPokemonWithdrawDepositParameter);
@@ -1792,9 +1798,9 @@ void RemoveMonFromPartyOrBox(uint8_t param){
 
         // party7:
             // CALL(aCopyDataUntil);
-            CopyDataUntil(wram->wPartyMonNickname[wram->wCurPartyMon], 
-                wram->wPartyMonNickname[wram->wCurPartyMon + 1],
-                wram->wPartyMonNicknamesEnd);
+            CopyDataUntil(gPokemon.partyMonNickname[wram->wCurPartyMon], 
+                gPokemon.partyMonNickname[wram->wCurPartyMon + 1],
+                gPokemon.partyMonNicknamesEnd);
         // Mail time!
         }
     // finish:
@@ -1817,7 +1823,7 @@ void RemoveMonFromPartyOrBox(uint8_t param){
         // LD_A_addr(wCurPartyMon);
         // CP_A_hl;
         // IF_Z goto close_sram;
-        if(wram->wPartyCount == wram->wCurPartyMon)
+        if(gPokemon.partyCount == wram->wCurPartyMon)
             return CloseSRAM();
     // Shift our mail messages up.
         // LD_HL(sPartyMail);
@@ -1851,7 +1857,7 @@ void RemoveMonFromPartyOrBox(uint8_t param){
             // LD_A_addr(wPartyCount);
             // CP_A_B;
             // IF_NZ goto loop2;
-        } while(++b != wram->wPartyCount);
+        } while(++b != gPokemon.partyCount);
 
     // close_sram:
         // JP(mCloseSRAM);
@@ -1860,18 +1866,20 @@ void RemoveMonFromPartyOrBox(uint8_t param){
     else {
         // LD_A(BANK(sBoxCount));
         // CALL(aOpenSRAM);
+        struct Box box;
         OpenSRAM(MBANK(asBoxCount));
+        Deserialize_Box(&box, GBToRAMAddr(sBox));
         // LD_HL(sBoxCount);
-        gb_write(sBoxCount, gb_read(sBoxCount) - 1);
-        sptr = sBoxCount + wram->wCurPartyMon + 1;
+        box.count--;
+        species_t* spec = box.species + wram->wCurPartyMon;
         species_t a;
         do {
         // loop:
             // LD_A_de;
+            a = spec[1];
             // INC_DE;
-            a = gb_read(sptr + 1);
             // LD_hli_A;
-            gb_write(sptr++, a);
+            *(spec++) = a;
             // INC_A;
             // IF_NZ goto loop;
         } while(a != 0xff);
@@ -1890,7 +1898,7 @@ void RemoveMonFromPartyOrBox(uint8_t param){
         // AND_A_A;
         // IF_Z goto party;
         // LD_HL(sBoxMonOTs);
-        uint8_t (*ots)[NAME_LENGTH] = GBToRAMAddr(sBoxMonOTs);
+        uint8_t (*ots)[NAME_LENGTH] = box.monOT;
         // LD_D(MONS_PER_BOX - 1);
         uint8_t d = MONS_PER_BOX - 1;
 
@@ -1924,7 +1932,7 @@ void RemoveMonFromPartyOrBox(uint8_t param){
             // CALL(aCopyDataUntil);
             CopyDataUntil(ots[wram->wCurPartyMon], 
                 ots[wram->wCurPartyMon] + MON_NAME_LENGTH,
-                GBToRAMAddr(sBoxMonNicknames));
+                box.monNicknames[0]);
         // Shift the struct
             // LD_HL(wPartyMons);
             // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -1954,11 +1962,11 @@ void RemoveMonFromPartyOrBox(uint8_t param){
             // LD_BC(wPartyMonOTs);
 
         // copy:
-            struct BoxMon* boxMons = (struct BoxMon*)GBToRAMAddr(sBoxMons);
+            struct BoxMon* boxMons = box.mons;
             // CALL(aCopyDataUntil);
             CopyDataUntil(boxMons + wram->wCurPartyMon, 
                 boxMons + wram->wCurPartyMon + 1,
-                GBToRAMAddr(sBoxMonOTs));
+                boxMons + MONS_PER_BOX);
         // Shift the nicknames
             // LD_HL(wPartyMonNicknames);
             // LD_A_addr(wPokemonWithdrawDepositParameter);
@@ -1981,14 +1989,14 @@ void RemoveMonFromPartyOrBox(uint8_t param){
             // LD_BC(sBoxMonNicknamesEnd);
 
         // party7:
-            uint8_t (*nicknames)[MON_NAME_LENGTH] = GBToRAMAddr(sBoxMonNicknames);
+            uint8_t (*nicknames)[MON_NAME_LENGTH] = box.monNicknames;
             // CALL(aCopyDataUntil);
             CopyDataUntil(nicknames[wram->wCurPartyMon], 
                 nicknames[wram->wCurPartyMon + 1],
-                GBToRAMAddr(sBoxMonNicknamesEnd));
+                nicknames[MONS_PER_BOX]);
         }
     // Mail time!
-
+        Serialize_Box(GBToRAMAddr(sBox), &box);
         return CloseSRAM();
     // finish:
         // LD_A_addr(wPokemonWithdrawDepositParameter);
@@ -2039,7 +2047,7 @@ void RemoveMonFromPartyOrBox(uint8_t param){
 void ComputeNPCTrademonStats(uint8_t curPartyMon){
     // LD_A(MON_LEVEL);
     // CALL(aGetPartyParamLocation);
-    struct PartyMon* bc = &wram->wPartyMon[curPartyMon];
+    struct PartyMon* bc = &gPokemon.partyMon[curPartyMon];
     // LD_A_hl;
     // LD_addr_A(MON_LEVEL);  // should be "ld [wCurPartyLevel], a"
     wram->wCurPartyLevel = bc->mon.level;
@@ -2428,7 +2436,7 @@ uint8_t GivePoke(uint8_t b, const char* nickname, const char* otName){
         // CALL(aSkipNames);
         // LD_D_H;
         // LD_E_L;
-        de = wram->wPartyMonNickname[wram->wPartyCount - 1];
+        de = gPokemon.partyMonNickname[gPokemon.partyCount - 1];
         // POP_BC;
         // LD_A_B;
         a = b;
@@ -2447,7 +2455,7 @@ uint8_t GivePoke(uint8_t b, const char* nickname, const char* otName){
             // CALL(aAddNTimes);
             // LD_A_addr(wCurItem);
             // LD_hl_A;
-            wram->wPartyMon[wram->wCurPartyMon].mon.item = wram->wCurItem;
+            gPokemon.partyMon[wram->wCurPartyMon].mon.item = wram->wCurItem;
             // goto done;
         }
     }
@@ -2563,7 +2571,7 @@ uint8_t GivePoke(uint8_t b, const char* nickname, const char* otName){
             // CALL(aSkipNames);
             // LD_D_H;
             // LD_E_L;
-            uint8_t* de2 = wram->wPartyMonOT[wram->wCurPartyMon];
+            uint8_t* de2 = gPokemon.partyMonOT[wram->wCurPartyMon];
             // POP_HL;
 
             uint8_t n;
@@ -2591,7 +2599,7 @@ uint8_t GivePoke(uint8_t b, const char* nickname, const char* otName){
             // LD_A(HIGH(RANDY_OT_ID));
             // LD_hli_A;
             // LD_hl(LOW(RANDY_OT_ID));
-            wram->wPartyMon[wram->wCurPartyMon].mon.id = NativeToBigEndian16(RANDY_OT_ID);
+            gPokemon.partyMon[wram->wCurPartyMon].mon.id = NativeToBigEndian16(RANDY_OT_ID);
             // POP_BC;
             // FARCALL(aSetGiftPartyMonCaughtData);
             SetGiftBoxMonCaughtData(b);

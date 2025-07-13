@@ -263,7 +263,7 @@ void PrintPartyMonPage1(void){
     // CALL(aGetCurPartyMonName);
     // hlcoord(8, 4, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wPartyMonNickname[wram->wCurPartyMon], coord(8, 4, wram->wTilemap));
+    PlaceStringSimple(gPokemon.partyMonNickname[wram->wCurPartyMon], coord(8, 4, wram->wTilemap));
     // hlcoord(9, 6, wTilemap);
     // LD_hl(0xf3);
     *coord(9, 6, wram->wTilemap) = CHAR_FWD_SLASH;
@@ -290,7 +290,7 @@ void PrintPartyMonPage1(void){
     // CALL(aGetCurPartyMonName);
     // hlcoord(4, 9, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wPartyMonOT[wram->wCurPartyMon], coord(4, 9, wram->wTilemap));
+    PlaceStringSimple(gPokemon.partyMonOT[wram->wCurPartyMon], coord(4, 9, wram->wTilemap));
     // hlcoord(1, 11, wTilemap);
     // LD_DE(mPrintParty_IDNoString);
     // CALL(aPlaceString);

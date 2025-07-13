@@ -134,12 +134,12 @@ static uint16_t Rate(void){
     // LD_B(wEndPokedexSeen - wPokedexSeen);
     // CALL(aCountSetBits);
     // LD_addr_A(wTempPokedexSeenCount);
-    uint8_t seen = CountSetBits(wram->wPokedexSeen, sizeof(wram->wPokedexSeen));
+    uint8_t seen = CountSetBits(gPokemon.pokedexSeen, sizeof(gPokemon.pokedexSeen));
     // LD_HL(wPokedexCaught);
     // LD_B(wEndPokedexCaught - wPokedexCaught);
     // CALL(aCountSetBits);
     // LD_addr_A(wTempPokedexCaughtCount);
-    uint8_t caught = CountSetBits(wram->wPokedexCaught, sizeof(wram->wPokedexCaught));
+    uint8_t caught = CountSetBits(gPokemon.pokedexCaught, sizeof(gPokemon.pokedexCaught));
 
 //  print appropriate rating
     // CALL(aRate_UpdateRatingBuffers);

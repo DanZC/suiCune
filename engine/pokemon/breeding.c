@@ -44,7 +44,7 @@ static bool CheckBreedmonCompatibility_CheckBreedingGroupCompatibility(void){
 //  they are not compatible.
     // LD_A_addr(wBreedMon2Species);
     // LD_addr_A(wCurSpecies);
-    wram->wCurSpecies = wram->wBreedMon2.species;
+    wram->wCurSpecies = gPokemon.breedMon2.species;
     // CALL(aGetBaseData);
     GetBaseData(wram->wCurSpecies);
     // LD_A_addr(wBaseEggGroups);
@@ -55,7 +55,7 @@ static bool CheckBreedmonCompatibility_CheckBreedingGroupCompatibility(void){
 
     // LD_A_addr(wBreedMon1Species);
     // LD_addr_A(wCurSpecies);
-    wram->wCurSpecies = wram->wBreedMon1.species;
+    wram->wCurSpecies = gPokemon.breedMon1.species;
     // CALL(aGetBaseData);
     GetBaseData(wram->wCurSpecies);
     // LD_A_addr(wBaseEggGroups);
@@ -69,10 +69,10 @@ static bool CheckBreedmonCompatibility_CheckBreedingGroupCompatibility(void){
     // LD_A_addr(wBreedMon2Species);
     // CP_A(DITTO);
     // IF_Z goto Compatible;
-    if(wram->wBreedMon2.species == DITTO)
+    if(gPokemon.breedMon2.species == DITTO)
         return true;
     // LD_addr_A(wCurSpecies);
-    wram->wCurSpecies = wram->wBreedMon2.species;
+    wram->wCurSpecies = gPokemon.breedMon2.species;
     // CALL(aGetBaseData);
     GetBaseData(wram->wCurSpecies);
     // LD_A_addr(wBaseEggGroups);
@@ -89,10 +89,10 @@ static bool CheckBreedmonCompatibility_CheckBreedingGroupCompatibility(void){
     // LD_A_addr(wBreedMon1Species);
     // CP_A(DITTO);
     // IF_Z goto Compatible;
-    if(wram->wBreedMon1.species == DITTO)
+    if(gPokemon.breedMon1.species == DITTO)
         return true;
     // LD_addr_A(wCurSpecies);
-    wram->wCurSpecies = wram->wBreedMon1.species;
+    wram->wCurSpecies = gPokemon.breedMon1.species;
     // PUSH_BC;
     // CALL(aGetBaseData);
     GetBaseData(wram->wCurSpecies);
@@ -144,7 +144,7 @@ static bool CheckBreedmonCompatibility_CheckDVs(void){
     // AND_A(0b1111);
     // CP_A_B;
     // RET_NZ ;
-    if((wram->wBreedMon1.DVs & 0b1111) != (wram->wBreedMon2.DVs & 0b1111))
+    if((gPokemon.breedMon1.DVs & 0b1111) != (gPokemon.breedMon2.DVs & 0b1111))
         return true;
     // LD_A_addr(wBreedMon1DVs + 1);
     // AND_A(0b111);
@@ -153,7 +153,7 @@ static bool CheckBreedmonCompatibility_CheckDVs(void){
     // AND_A(0b111);
     // CP_A_B;
     // RET;
-    return ((wram->wBreedMon1.DVs >> 8) & 0b111) != ((wram->wBreedMon2.DVs >> 8) & 0b111);
+    return ((gPokemon.breedMon1.DVs >> 8) & 0b111) != ((gPokemon.breedMon2.DVs >> 8) & 0b111);
 }
 
 uint8_t CheckBreedmonCompatibility(void){
@@ -167,10 +167,10 @@ uint8_t CheckBreedmonCompatibility(void){
     }
     // LD_A_addr(wBreedMon1Species);
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wBreedMon1.species;
+    wram->wCurPartySpecies = gPokemon.breedMon1.species;
     // LD_A_addr(wBreedMon1DVs);
     // LD_addr_A(wTempMonDVs);
-    wram->wTempMon.mon.DVs = wram->wBreedMon1.DVs;
+    wram->wTempMon.mon.DVs = gPokemon.breedMon1.DVs;
     // LD_A_addr(wBreedMon1DVs + 1);
     // LD_addr_A(wTempMonDVs + 1);
     // LD_A(TEMPMON);
@@ -189,10 +189,10 @@ uint8_t CheckBreedmonCompatibility(void){
     // PUSH_BC;
     // LD_A_addr(wBreedMon2Species);
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wBreedMon2.species;
+    wram->wCurPartySpecies = gPokemon.breedMon2.species;
     // LD_A_addr(wBreedMon2DVs);
     // LD_addr_A(wTempMonDVs);
-    wram->wTempMon.mon.DVs = wram->wBreedMon2.DVs;
+    wram->wTempMon.mon.DVs = gPokemon.breedMon2.DVs;
     // LD_A_addr(wBreedMon2DVs + 1);
     // LD_addr_A(wTempMonDVs + 1);
     // LD_A(TEMPMON);
@@ -217,12 +217,12 @@ uint8_t CheckBreedmonCompatibility(void){
         // LD_A_addr(wBreedMon1Species);
         // CP_A(DITTO);
         // IF_Z goto ditto1;
-        if(wram->wBreedMon1.species == DITTO) {
+        if(gPokemon.breedMon1.species == DITTO) {
         // ditto1:
             // LD_A_addr(wBreedMon2Species);
             // CP_A(DITTO);
             // IF_Z goto done;
-            if(wram->wBreedMon2.species == DITTO) {
+            if(gPokemon.breedMon2.species == DITTO) {
                 wram->wBreedingCompatibility = 0x0;
                 return wram->wBreedingCompatibility;
             }
@@ -231,7 +231,7 @@ uint8_t CheckBreedmonCompatibility(void){
             // LD_A_addr(wBreedMon2Species);
             // CP_A(DITTO);
             // IF_NZ goto done;
-            if(wram->wBreedMon2.species != DITTO) {
+            if(gPokemon.breedMon2.species != DITTO) {
                 wram->wBreedingCompatibility = 0x0;
                 return wram->wBreedingCompatibility;
             }
@@ -254,7 +254,7 @@ uint8_t CheckBreedmonCompatibility(void){
     // LD_C(254);
     // IF_Z goto compare_ids;
     // LD_C(128);
-    uint8_t c = (wram->wBreedMon2.species == wram->wBreedMon1.species)? 254: 128;
+    uint8_t c = (gPokemon.breedMon2.species == gPokemon.breedMon1.species)? 254: 128;
 
 // compare_ids:
 // Speed up
@@ -268,7 +268,7 @@ uint8_t CheckBreedmonCompatibility(void){
     // LD_A_addr(wBreedMon2ID + 1);
     // CP_A_B;
     // IF_NZ goto done;
-    if(wram->wBreedMon1.id == wram->wBreedMon2.id) {
+    if(gPokemon.breedMon1.id == gPokemon.breedMon2.id) {
         // LD_A_C;
         // SUB_A(77);
         // LD_C_A;
@@ -285,9 +285,9 @@ uint8_t CheckBreedmonCompatibility(void){
 
 bool DoEggStep(void){
     // LD_DE(wPartySpecies);
-    species_t* de = wram->wPartySpecies;
+    species_t* de = gPokemon.partySpecies;
     // LD_HL(wPartyMon1Happiness);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // LD_C(0);
 
     while(1) {
@@ -383,9 +383,9 @@ void HatchEggs(void){
     };
 
     // LD_DE(wPartySpecies);
-    species_t* de = wram->wPartySpecies;
+    species_t* de = gPokemon.partySpecies;
     // LD_HL(wPartyMon1Happiness);
-    struct PartyMon* hl = wram->wPartyMon;
+    struct PartyMon* hl = gPokemon.partyMon;
     // XOR_A_A;
     // LD_addr_A(wCurPartyMon);
     uint8_t mon = 0;
@@ -516,7 +516,7 @@ void HatchEggs(void){
             // LD_E_L;
             // LD_HL(wPlayerName);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wPartyMonOT[mon], wram->wPlayerName, NAME_LENGTH);
+            CopyBytes(gPokemon.partyMonOT[mon], wram->wPlayerName, NAME_LENGTH);
             // LD_HL(mHatchEggs_Text_HatchEgg);
             // CALL(aPrintText);
             PrintText(Text_HatchEgg);
@@ -543,11 +543,11 @@ void HatchEggs(void){
                 // PUSH_DE;
                 // LD_B(NAME_MON);
                 // FARCALL(aNamingScreen);
-                NamingScreen(wram->wPartyMonNickname[mon], NAME_MON);
+                NamingScreen(gPokemon.partyMonNickname[mon], NAME_MON);
                 // POP_HL;
                 // LD_DE(wStringBuffer1);
                 // CALL(aInitName);
-                InitName(wram->wPartyMonNickname[mon], wram->wStringBuffer1);
+                InitName(gPokemon.partyMonNickname[mon], wram->wStringBuffer1);
                 // goto next;
             }
             else {
@@ -555,7 +555,7 @@ void HatchEggs(void){
                 // LD_HL(wStringBuffer1);
                 // LD_BC(MON_NAME_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes(wram->wPartyMonNickname[mon], wram->wStringBuffer1, MON_NAME_LENGTH);
+                CopyBytes(gPokemon.partyMonNickname[mon], wram->wStringBuffer1, MON_NAME_LENGTH);
             }
         }
 
@@ -591,7 +591,7 @@ void InitEggMoves(void){
         if(*de == NO_MOVE)
             break;
         // LD_HL(wEggMonMoves);
-        move_t* hl = wram->wEggMon.moves;
+        move_t* hl = gPokemon.eggMon.moves;
         // LD_C(NUM_MOVES);
         uint8_t c = NUM_MOVES;
 
@@ -635,7 +635,7 @@ static bool GetEggMove(const move_t* de){
     // ADD_HL_BC;
     // LD_A(BANK(aEggMovePointers));
     // CALL(aGetFarWord);
-    const move_t* hl2 = EggMovePointers[wram->wEggMon.species - 1];
+    const move_t* hl2 = EggMovePointers[gPokemon.eggMon.species - 1];
 
     while(*hl2 != (move_t)-1) {
     // loop:
@@ -685,7 +685,7 @@ static bool GetEggMove(const move_t* de){
     // ADD_HL_BC;
     // LD_A(BANK(aEvosAttacksPointers));
     // CALL(aGetFarWord);
-    const struct EvoMoves* evoAttacks = EvosAttacksPointers[wram->wEggMon.species - 1];
+    const struct EvoMoves* evoAttacks = EvosAttacksPointers[gPokemon.eggMon.species - 1];
     const struct LevelMove* mvs = evoAttacks->learnset;
 
 // loop3:
@@ -766,7 +766,7 @@ static void LoadEggMove(const move_t* de2){
     // LD_B_A;
     move_t b = *de2;
     // LD_HL(wEggMonMoves);
-    move_t* hl = wram->wEggMon.moves;
+    move_t* hl = gPokemon.eggMon.moves;
     // LD_C(NUM_MOVES);
     uint8_t c = NUM_MOVES;
 
@@ -781,9 +781,9 @@ static void LoadEggMove(const move_t* de2){
         // IF_NZ goto loop;
     } while(--c != 0);
     // LD_DE(wEggMonMoves);
-    move_t* de = wram->wEggMon.moves;
+    move_t* de = gPokemon.eggMon.moves;
     // LD_HL(wEggMonMoves + 1);
-    hl = wram->wEggMon.moves + 1;
+    hl = gPokemon.eggMon.moves + 1;
     // LD_A_hli;
     // LD_de_A;
     // INC_DE;
@@ -804,7 +804,7 @@ done:
     // LD_HL(wEggMonMoves);
     // LD_DE(wEggMonPP);
     // PREDEF(pFillPP);
-    FillPP(wram->wEggMon.PP, wram->wEggMon.moves);
+    FillPP(gPokemon.eggMon.PP, gPokemon.eggMon.moves);
     // POP_BC;
     // POP_DE;
     // RET;
@@ -812,23 +812,23 @@ done:
 
 static const move_t* GetHeritableMoves(void){
     // LD_HL(wBreedMon2Moves);
-    move_t* hl = wram->wBreedMon2.moves;
+    move_t* hl = gPokemon.breedMon2.moves;
     // LD_A_addr(wBreedMon1Species);
     species_t sp = wram->wCurPartySpecies;
     // CP_A(DITTO);
     // IF_Z goto ditto1;
-    if(wram->wBreedMon1.species == DITTO) {
+    if(gPokemon.breedMon1.species == DITTO) {
     // ditto1:
         // LD_A_addr(wCurPartySpecies);
         // PUSH_AF;
         // LD_A_addr(wBreedMon2Species);
         // LD_addr_A(wCurPartySpecies);
-        wram->wCurPartySpecies = wram->wBreedMon2.species;
+        wram->wCurPartySpecies = gPokemon.breedMon2.species;
         // LD_A_addr(wBreedMon2DVs);
         // LD_addr_A(wTempMonDVs);
         // LD_A_addr(wBreedMon2DVs + 1);
         // LD_addr_A(wTempMonDVs + 1);
-        wram->wTempMon.mon.DVs = wram->wBreedMon2.DVs;
+        wram->wTempMon.mon.DVs = gPokemon.breedMon2.DVs;
         // LD_A(TEMPMON);
         // LD_addr_A(wMonType);
         // PREDEF(pGetGender);
@@ -842,7 +842,7 @@ static const move_t* GetHeritableMoves(void){
             // LD_addr_A(wCurPartySpecies);
             wram->wCurPartySpecies = sp;
             // RET;
-            return wram->wBreedMon2.moves;
+            return gPokemon.breedMon2.moves;
         }
     // inherit_mon1_moves:
         // LD_HL(wBreedMon1Moves);
@@ -850,23 +850,23 @@ static const move_t* GetHeritableMoves(void){
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = sp;
         // RET;
-        return wram->wBreedMon1.moves;
+        return gPokemon.breedMon1.moves;
     }
     // LD_A_addr(wBreedMon2Species);
     // CP_A(DITTO);
     // IF_Z goto ditto2;
-    else if(wram->wBreedMon1.species == DITTO) {
+    else if(gPokemon.breedMon1.species == DITTO) {
     // ditto2:
         // LD_A_addr(wCurPartySpecies);
         // PUSH_AF;
         // LD_A_addr(wBreedMon1Species);
         // LD_addr_A(wCurPartySpecies);
-        wram->wCurPartySpecies = wram->wBreedMon1.species;
+        wram->wCurPartySpecies = gPokemon.breedMon1.species;
         // LD_A_addr(wBreedMon1DVs);
         // LD_addr_A(wTempMonDVs);
         // LD_A_addr(wBreedMon1DVs + 1);
         // LD_addr_A(wTempMonDVs + 1);
-        wram->wTempMon.mon.DVs = wram->wBreedMon1.DVs;
+        wram->wTempMon.mon.DVs = gPokemon.breedMon1.DVs;
         // LD_A(TEMPMON);
         // LD_addr_A(wMonType);
         // PREDEF(pGetGender);
@@ -880,7 +880,7 @@ static const move_t* GetHeritableMoves(void){
             // LD_addr_A(wCurPartySpecies);
             wram->wCurPartySpecies = sp;
             // RET;
-            return wram->wBreedMon1.moves;
+            return gPokemon.breedMon1.moves;
         }
     // inherit_mon2_moves:
         // LD_HL(wBreedMon2Moves);
@@ -888,16 +888,16 @@ static const move_t* GetHeritableMoves(void){
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = sp;
         // RET;
-        return wram->wBreedMon2.moves;
+        return gPokemon.breedMon2.moves;
     }
     // LD_A_addr(wBreedMotherOrNonDitto);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wBreedMotherOrNonDitto == 0)
+    if(gPokemon.breedMotherOrNonDitto == 0)
         return hl;
     // LD_HL(wBreedMon1Moves);
     // RET;
-    return wram->wBreedMon1.moves;
+    return gPokemon.breedMon1.moves;
 }
 
 static move_t* GetBreedmonMovePointer(void){
@@ -905,21 +905,21 @@ static move_t* GetBreedmonMovePointer(void){
     // LD_A_addr(wBreedMon1Species);
     // CP_A(DITTO);
     // RET_Z ;
-    if(wram->wBreedMon1.species == DITTO)
-        return wram->wBreedMon1.moves;
+    if(gPokemon.breedMon1.species == DITTO)
+        return gPokemon.breedMon1.moves;
     // LD_A_addr(wBreedMon2Species);
     // CP_A(DITTO);
     // IF_Z goto ditto;
     // LD_A_addr(wBreedMotherOrNonDitto);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wBreedMon2.species != DITTO && wram->wBreedMotherOrNonDitto == 0)
-        return wram->wBreedMon1.moves;
+    if(gPokemon.breedMon2.species != DITTO && gPokemon.breedMotherOrNonDitto == 0)
+        return gPokemon.breedMon1.moves;
 
 // ditto:
     // LD_HL(wBreedMon2Moves);
     // RET;
-    return wram->wBreedMon2.moves;
+    return gPokemon.breedMon2.moves;
 }
 
 void GetEggFrontpic(tile_t* de, species_t a){
@@ -1280,18 +1280,18 @@ void DayCareMon1(void){
     PrintText(LeftWithDayCareManText);
     // LD_A_addr(wBreedMon1Species);
     // CALL(aPlayMonCry);
-    PlayMonCry(wram->wBreedMon1.species);
+    PlayMonCry(gPokemon.breedMon1.species);
     // LD_A_addr(wDayCareLady);
     // BIT_A(DAYCARELADY_HAS_MON_F);
     // JR_Z (mDayCareMonCursor);
-    if(!bit_test(wram->wDayCareLady, DAYCARELADY_HAS_MON_F))
+    if(!bit_test(gPokemon.dayCareLady, DAYCARELADY_HAS_MON_F))
         return DayCareMonCursor();
     // CALL(aPromptButton);
     PromptButton();
     // LD_HL(wBreedMon2Nickname);
     // CALL(aDayCareMonCompatibilityText);
     // JP(mPrintText);
-    PrintText(DayCareMonCompatibilityText(wram->wBreedMon2Nickname));
+    PrintText(DayCareMonCompatibilityText(gPokemon.breedMon2Nickname));
 }
 
 void DayCareMon2(void){
@@ -1300,18 +1300,18 @@ void DayCareMon2(void){
     PrintText(LeftWithDayCareLadyText);
     // LD_A_addr(wBreedMon2Species);
     // CALL(aPlayMonCry);
-    PlayMonCry(wram->wBreedMon1.species);
+    PlayMonCry(gPokemon.breedMon1.species);
     // LD_A_addr(wDayCareMan);
     // BIT_A(DAYCAREMAN_HAS_MON_F);
     // JR_Z (mDayCareMonCursor);
-    if(!bit_test(wram->wDayCareMan, DAYCARELADY_HAS_MON_F))
+    if(!bit_test(gPokemon.dayCareMan, DAYCARELADY_HAS_MON_F))
         return DayCareMonCursor();
     // CALL(aPromptButton);
     PromptButton();
     // LD_HL(wBreedMon1Nickname);
     // CALL(aDayCareMonCompatibilityText);
     // JP(mPrintText);
-    PrintText(DayCareMonCompatibilityText(wram->wBreedMon1Nickname));
+    PrintText(DayCareMonCompatibilityText(gPokemon.breedMon1Nickname));
 }
 
 void DayCareMonCursor(void){

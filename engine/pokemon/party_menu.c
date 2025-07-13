@@ -153,9 +153,9 @@ void PlacePartyNicknames(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // IF_Z goto end;
-    if(wram->wPartyCount != 0) {
+    if(gPokemon.partyCount != 0) {
         // LD_C_A;
-        uint8_t c = wram->wPartyCount;
+        uint8_t c = gPokemon.partyCount;
         // LD_B(0);
         uint8_t b = 0;
 
@@ -167,7 +167,7 @@ void PlacePartyNicknames(void){
             // LD_HL(wPartyMonNicknames);
             // LD_A_B;
             // CALL(aGetNickname);
-            uint8_t* de = wram->wPartyMonNickname[b];
+            uint8_t* de = gPokemon.partyMonNickname[b];
             // POP_HL;
             // CALL(aPlaceString);
             PlaceStringSimple(de, hl);
@@ -199,10 +199,10 @@ void PlacePartyHPBar(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_B(0);
     uint8_t b = 0;
     // hlcoord(11, 2, wTilemap);
@@ -222,7 +222,7 @@ void PlacePartyHPBar(void){
             // LD_D(0x6);
             // LD_B(0x0);
             // CALL(aDrawBattleHPBar);
-            DrawBattleHPBar(hl, 0x6, e, 0x0, HIGH(wram->wPartyMon[b].HP));
+            DrawBattleHPBar(hl, 0x6, e, 0x0, HIGH(gPokemon.partyMon[b].HP));
             // LD_HL(wHPPals);
             // LD_A_addr(wSGBPals);
             // LD_C_A;
@@ -262,7 +262,7 @@ uint8_t PlacePartymonHPBar(uint8_t b){
     // LD_A_hli;
     // OR_A_hl;
     // IF_NZ goto not_fainted;
-    if(wram->wPartyMon[b].HP == 0) {
+    if(gPokemon.partyMon[b].HP == 0) {
         // XOR_A_A;
         // LD_E_A;
         // LD_C_A;
@@ -277,12 +277,12 @@ uint8_t PlacePartymonHPBar(uint8_t b){
     // LD_B_A;
     // LD_A_hli;
     // LD_C_A;
-    uint16_t bc = BigEndianToNative16(wram->wPartyMon[b].HP);
+    uint16_t bc = BigEndianToNative16(gPokemon.partyMon[b].HP);
     // LD_A_hli;
     // LD_D_A;
     // LD_A_hli;
     // LD_E_A;
-    uint16_t de = BigEndianToNative16(wram->wPartyMon[b].maxHP);
+    uint16_t de = BigEndianToNative16(gPokemon.partyMon[b].maxHP);
     // PREDEF(pComputeHPBarPixels);
     return ComputeHPBarPixels(bc, de);
     // RET;
@@ -292,10 +292,10 @@ void PlacePartyMenuHPDigits(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_B(0);
     uint8_t b = 0;
     // hlcoord(13, 1, wTilemap);
@@ -315,7 +315,7 @@ void PlacePartyMenuHPDigits(void){
             // CALL(aAddNTimes);
             // LD_E_L;
             // LD_D_H;
-            uint16_t hp = wram->wPartyMon[b].HP;
+            uint16_t hp = gPokemon.partyMon[b].HP;
             // POP_HL;
             // PUSH_DE;
             // LD_BC((2 << 8) | 3);
@@ -327,7 +327,7 @@ void PlacePartyMenuHPDigits(void){
             *(hl2++) = 0xf3;
             // INC_DE;
             // INC_DE;
-            uint16_t maxHP = wram->wPartyMon[b].maxHP;
+            uint16_t maxHP = gPokemon.partyMon[b].maxHP;
             // LD_BC((2 << 8) | 3);
             // CALL(aPrintNum);
             PrintNum(hl2, &maxHP, 2, 3);
@@ -351,10 +351,10 @@ void PlacePartyMonLevel(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_B(0);
     uint8_t b = 0;
     // hlcoord(8, 2, wTilemap);
@@ -379,7 +379,7 @@ void PlacePartyMonLevel(void){
             // LD_A_de;
             // CP_A(100);  // This is distinct from MAX_LEVEL.
             // IF_NC goto ThreeDigits;
-            if(wram->wPartyMon[b].mon.level < 100) {
+            if(gPokemon.partyMon[b].mon.level < 100) {
                 // LD_A(0x6e);
                 // LD_hli_A;
                 *(hl2++) = 0x6e;
@@ -391,7 +391,7 @@ void PlacePartyMonLevel(void){
             // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
         //  .okay
             // CALL(aPrintNum);
-            PrintNum(hl2, &wram->wPartyMon[b].mon.level, PRINTNUM_LEFTALIGN | 1, 3);
+            PrintNum(hl2, &gPokemon.partyMon[b].mon.level, PRINTNUM_LEFTALIGN | 1, 3);
         }
 
     // next:
@@ -412,10 +412,10 @@ void PlacePartyMonStatus(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_B(0);
     uint8_t b = 0;
     // hlcoord(5, 2, wTilemap);
@@ -437,7 +437,7 @@ void PlacePartyMonStatus(void){
             // LD_D_H;
             // POP_HL;
             // CALL(aPlaceStatusString);
-            PlaceStatusString(hl, wram->wPartyMon + b);
+            PlaceStatusString(hl, gPokemon.partyMon + b);
         }
 
     // next:
@@ -477,10 +477,10 @@ void PlacePartyMonTMHMCompatibility(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_B(0);
     uint8_t b = 0;
     // hlcoord(12, 2, wTilemap);
@@ -501,7 +501,7 @@ void PlacePartyMonTMHMCompatibility(void){
             // LD_A_hl;
             // LD_addr_A(wCurPartySpecies);
             // PREDEF(pCanLearnTMHMMove);
-            uint8_t c = CanLearnTMHMMove(wram->wPartySpecies[b], wram->wCurItem);
+            uint8_t c = CanLearnTMHMMove(gPokemon.partySpecies[b], wram->wCurItem);
             // POP_HL;
             // CALL(aPlacePartyMonTMHMCompatibility_PlaceAbleNotAble);
             // CALL(aPlaceString);
@@ -571,10 +571,10 @@ void PlacePartyMonEvoStoneCompatibility(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_B(0);
     uint8_t b = 0;
     // hlcoord(12, 2, wTilemap);
@@ -624,7 +624,7 @@ void PlacePartyMonGender(void){
     // AND_A_A;
     // RET_Z ;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_B(0);
     uint8_t b = 0;
     // hlcoord(12, 2, wTilemap);
@@ -638,7 +638,7 @@ void PlacePartyMonGender(void){
         // IF_Z goto next;
         if(!PartyMenuCheckEgg(b)) {
             // LD_addr_A(wCurPartySpecies);
-            wram->wCurPartySpecies = wram->wPartySpecies[b];
+            wram->wCurPartySpecies = gPokemon.partySpecies[b];
             // PUSH_HL;
             // LD_A_B;
             // LD_addr_A(wCurPartyMon);
@@ -692,10 +692,10 @@ void PlacePartyMonMobileBattleSelection(void){
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // LD_B(0);
     uint8_t b = 0;
     // hlcoord(12, 1, wTilemap);
@@ -811,7 +811,7 @@ bool PartyMenuCheckEgg(uint8_t b){
     // LD_A_de;
     // CP_A(EGG);
     // RET;
-    return wram->wPartySpecies[b] == EGG;
+    return gPokemon.partySpecies[b] == EGG;
 }
 
 const uint8_t* GetPartyMenuQualityIndexes(void){
@@ -845,10 +845,10 @@ void InitPartyMenuGFX(void){
     // LD_A_hli;
     // AND_A_A;
     // RET_Z ;
-    if(wram->wPartyCount == 0)
+    if(gPokemon.partyCount == 0)
         return;
     // LD_C_A;
-    uint8_t c = wram->wPartyCount;
+    uint8_t c = gPokemon.partyCount;
     // XOR_A_A;
     // LDH_addr_A(hObjectStructIndex);
     hram.hObjectStructIndex = 0;
@@ -887,7 +887,7 @@ void InitPartyMenuWithCancel(void){
     // LD_A_addr(wPartyCount);
     // INC_A;
     // LD_addr_A(w2DMenuNumRows);  // list length
-    wram->w2DMenuNumRows = wram->wPartyCount + 1;
+    wram->w2DMenuNumRows = gPokemon.partyCount + 1;
     // DEC_A;
     // LD_B_A;
     // LD_A_addr(wPartyMenuCursor);
@@ -896,7 +896,7 @@ void InitPartyMenuWithCancel(void){
     // INC_B;
     // CP_A_B;
     // IF_C goto done;
-    if(wram->wPartyMenuCursor == 0 || wram->wPartyMenuCursor >= wram->wPartyCount + 1) {
+    if(wram->wPartyMenuCursor == 0 || wram->wPartyMenuCursor >= gPokemon.partyCount + 1) {
     // skip:
         // LD_A(1);
         wram->wMenuCursorY = 1;
@@ -920,9 +920,9 @@ void InitPartyMenuNoCancel(void){
     Load2DMenuData(PartyMenu2DMenuData);
     // LD_A_addr(wPartyCount);
     // LD_addr_A(w2DMenuNumRows);  // list length
-    wram->w2DMenuNumRows = wram->wPartyCount;
+    wram->w2DMenuNumRows = gPokemon.partyCount;
     // LD_B_A;
-    uint8_t b = wram->wPartyCount;
+    uint8_t b = gPokemon.partyCount;
     // LD_A_addr(wPartyMenuCursor);
     uint8_t a = wram->wPartyMenuCursor;
     // AND_A_A;
@@ -964,7 +964,7 @@ u8_flag_s PartyMenuSelect(void){
     // LD_A_addr(wPartyCount);
     // INC_A;
     // LD_B_A;
-    uint8_t b = wram->wPartyCount + 1;
+    uint8_t b = gPokemon.partyCount + 1;
     // LD_A_addr(wMenuCursorY);  // menu selection?
     // CP_A_B;
     // IF_Z goto exitmenu;  // CANCEL
@@ -986,7 +986,7 @@ u8_flag_s PartyMenuSelect(void){
             // ADD_HL_BC;
             // LD_A_hl;
             // LD_addr_A(wCurPartySpecies);
-            wram->wCurPartySpecies = wram->wPartySpecies[wram->wCurPartyMon];
+            wram->wCurPartySpecies = gPokemon.partySpecies[wram->wCurPartyMon];
 
             // LD_DE(SFX_READ_TEXT_2);
             // CALL(aPlaySFX);
@@ -1042,7 +1042,7 @@ void PrintPartyMenuText(void){
     // AND_A_A;
     // IF_NZ goto haspokemon;
     const char* de;
-    if(wram->wPartyCount == 0) {
+    if(gPokemon.partyCount == 0) {
         // LD_DE(mYouHaveNoPKMNString);
         de = YouHaveNoPKMNString;
         // goto gotstring;
