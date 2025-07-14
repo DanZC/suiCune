@@ -255,6 +255,8 @@ const struct SerialField Struc_CurMapData[] = {
 };
 #undef FLD_TYPE
 
+enum { x = offsetof(struct PlayerData, skip_110)};
+
 #define FLD_TYPE struct PlayerData
 const struct SerialField Struc_PlayerData[] = {
     FLD(TY_U16LE, playerID),
@@ -347,7 +349,7 @@ const struct SerialField Struc_PlayerData[] = {
     // }
     FLD_ARR(TY_ITEMQUANTITY, PCItems, MAX_PC_ITEMS),
     // dest = Serialize_Item(dest, data->PCItems[MAX_PC_ITEMS * 2]);
-    FLD_OFFSET(TY_ITEM, balls, MAX_PC_ITEMS * 2),
+    FLD_OFFSET(TY_ITEM, PCItems, MAX_PC_ITEMS * 2),
     FLD(TY_U8, pokegearFlags),
     FLD(TY_U8, radioTuningKnob),
     FLD(TY_U8, lastDexMode),
