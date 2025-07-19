@@ -62,16 +62,16 @@ static void MomTriesToBuySomething_ASMFunction(void) {
     // LD_A_addr(wWhichMomItemSet);
     // AND_A_A;
     // IF_NZ goto ok;
-    if(wram->wWhichMomItemSet == 0) {
+    if(gPlayer.whichMomItemSet == 0) {
         // LD_HL(wWhichMomItem);
         // INC_hl;
-        wram->wWhichMomItem++;
+        gPlayer.whichMomItem++;
     }
 
 // ok:
     // LD_A(PHONE_MOM);
     // LD_addr_A(wCurCaller);
-    wram->wCurCaller = PHONE_MOM;
+    gPlayer.curCaller = PHONE_MOM;
     // LD_BC(wCallerContact);
     // LD_HL(PHONE_CONTACT_TRAINER_CLASS);
     // ADD_HL_BC;
@@ -114,7 +114,7 @@ void MomTriesToBuySomething(void){
         return;
     // XOR_A_A;
     // LD_addr_A(wWhichMomItemSet);
-    wram->wWhichMomItemSet = 0;
+    gPlayer.whichMomItemSet = 0;
     // CALL(aCheckBalance_MomItem2);
     // RET_NC ;
     if(!CheckBalance_MomItem2())
@@ -137,14 +137,14 @@ static void CheckBalance_MomItem2_AddMoney(void) {
     // LD_BC(hMoneyTemp);
     // FARCALL(aAddMoney);
     // RET;
-    return AddMoney(wram->wMomItemTriggerBalance, hram.hMoneyTemp);
+    return AddMoney(gPlayer.momItemTriggerBalance, hram.hMoneyTemp);
 }
 
 static bool CheckBalance_MomItem2(void){
     // LD_A_addr(wWhichMomItem);
     // CP_A(NUM_MOM_ITEMS_2);
     // IF_NC goto nope;
-    if(wram->wWhichMomItem < NUM_MOM_ITEMS_2) {
+    if(gPlayer.whichMomItem < NUM_MOM_ITEMS_2) {
         // CALL(aGetItemFromMom);
         const struct MomPhoneItem* item = GetItemFromMom();
         // LD_A_hli;
@@ -159,7 +159,7 @@ static bool CheckBalance_MomItem2(void){
         // LD_DE(wMomsMoney);
         // LD_BC(hMoneyTemp);
         // FARCALL(aCompareMoney);
-        u8_flag_s res = CompareMoney(hram.hMoneyTemp, wram->wMomsMoney);
+        u8_flag_s res = CompareMoney(hram.hMoneyTemp, gPlayer.momsMoney);
         // IF_NC goto have_enough_money;
         if(!res.flag) {
         // have_enough_money:
@@ -188,7 +188,7 @@ static bool CheckBalance_MomItem2(void){
         // LD_DE(wMomItemTriggerBalance);
         // LD_BC(wMomsMoney);
         // FARCALL(aCompareMoney);
-        u8_flag_s res = CompareMoney(wram->wMomsMoney, wram->wMomItemTriggerBalance);
+        u8_flag_s res = CompareMoney(gPlayer.momsMoney, gPlayer.momItemTriggerBalance);
         // IF_Z goto exact;
         if(res.a == 0) {
         // exact:
@@ -198,7 +198,7 @@ static bool CheckBalance_MomItem2(void){
             // CALL(aRandomRange);
             // INC_A;
             // LD_addr_A(wWhichMomItemSet);
-            wram->wWhichMomItemSet = RandomRange(NUM_MOM_ITEMS_1) + 1;
+            gPlayer.whichMomItemSet = RandomRange(NUM_MOM_ITEMS_1) + 1;
             // SCF;
             // RET;
             return true;
@@ -233,7 +233,7 @@ static void MomBuysItem_DeductFunds(void){
     // LD_DE(wMomsMoney);
     // LD_BC(hMoneyTemp);
     // FARCALL(aTakeMoney);
-    TakeMoney(wram->wMomsMoney, hram.hMoneyTemp);
+    TakeMoney(gPlayer.momsMoney, hram.hMoneyTemp);
     // RET;
 }
 
@@ -340,9 +340,9 @@ static const struct MomPhoneItem* GetItemFromMom(void){
     // LD_A_addr(wWhichMomItemSet);
     // AND_A_A;
     // IF_Z goto zero;
-    if(wram->wWhichMomItemSet != 0) {
+    if(gPlayer.whichMomItemSet != 0) {
         // DEC_A;
-        a = wram->wWhichMomItemSet - 1;
+        a = gPlayer.whichMomItemSet - 1;
         // LD_DE(mMomItems_1);
         de = MomItems_1;
         // goto GetFromList1;
@@ -352,12 +352,12 @@ static const struct MomPhoneItem* GetItemFromMom(void){
         // LD_A_addr(wWhichMomItem);
         // CP_A(NUM_MOM_ITEMS_2);
         // IF_C goto ok;
-        if(wram->wWhichMomItem >= NUM_MOM_ITEMS_2) {
+        if(gPlayer.whichMomItem >= NUM_MOM_ITEMS_2) {
             // XOR_A_A;
             a = 0;
         }
         else {
-            a = wram->wWhichMomItem;
+            a = gPlayer.whichMomItem;
         }
 
     // ok:

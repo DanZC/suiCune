@@ -275,7 +275,7 @@ void ClearBattleRAM(void){
     // LD_addr_A(wForcedSwitch);
     wram->wForcedSwitch = 0;
     // LD_addr_A(wTimeOfDayPal);
-    wram->wTimeOfDayPal = 0;
+    gPlayer.timeOfDayPal = 0;
     // LD_addr_A(wPlayerTurnsTaken);
     wram->wPlayerTurnsTaken = 0;
     // LD_addr_A(wEnemyTurnsTaken);

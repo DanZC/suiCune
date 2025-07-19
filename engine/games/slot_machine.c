@@ -364,7 +364,7 @@ static void SlotsLoop_PrintCoinsAndPayout(void){
     // LD_DE(wCoins);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum(coord(5, 1, wram->wTilemap), &wram->wCoins, PRINTNUM_LEADINGZEROS | 2, 4);
+    PrintNum(coord(5, 1, wram->wTilemap), &gPlayer.coins, PRINTNUM_LEADINGZEROS | 2, 4);
     // hlcoord(11, 1, wTilemap);
     // LD_DE(wPayout);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 4);
@@ -809,7 +809,7 @@ void SlotsAction_PayoutAnim(void){
     // LD_D_hl;
     // INC_HL;
     // LD_E_hl;
-    uint16_t coins = BigEndianToNative16(wram->wCoins);
+    uint16_t coins = BigEndianToNative16(gPlayer.coins);
     // CALL(aSlots_CheckCoinCaseFull);
     // IF_C goto okay;
     if(!Slots_CheckCoinCaseFull(coins)) {
@@ -821,7 +821,7 @@ void SlotsAction_PayoutAnim(void){
     // LD_hl_E;
     // DEC_HL;
     // LD_hl_D;
-    wram->wCoins = NativeToBigEndian16(coins);
+    gPlayer.coins = NativeToBigEndian16(coins);
     // LD_A_addr(wSlotsDelay);
     // AND_A(0x7);
     // RET_Z ;  // ret nz would be more appropriate
@@ -2609,7 +2609,7 @@ bool Slots_AskBet(void){
         // LD_A_hl;
         // CP_A_C;
         // IF_NC goto Start;
-        if(BigEndianToNative16(wram->wCoins) >= gSlotData.slotBet)
+        if(BigEndianToNative16(gPlayer.coins) >= gSlotData.slotBet)
             break;
         // LD_HL(mSlots_AskBet_SlotsNotEnoughCoinsText);
         // CALL(aPrintText);
@@ -2626,7 +2626,7 @@ bool Slots_AskBet(void){
     // DEC_hl;
 
 // ok:
-    wram->wCoins = NativeToBigEndian16(BigEndianToNative16(wram->wCoins) - gSlotData.slotBet);
+    gPlayer.coins = NativeToBigEndian16(BigEndianToNative16(gPlayer.coins) - gSlotData.slotBet);
     // CALL(aWaitSFX);
     WaitSFX();
     // LD_DE(SFX_PAY_DAY);
@@ -2653,7 +2653,7 @@ bool Slots_AskPlayAgain(void){
     // LD_A_hli;
     // OR_A_hl;
     // IF_NZ goto you_have_coins;
-    if(wram->wCoins == 0) {
+    if(gPlayer.coins == 0) {
         // LD_HL(mSlots_AskPlayAgain_SlotsRanOutOfCoinsText);
         // CALL(aPrintText);
         PrintText(SlotsRanOutOfCoinsText);

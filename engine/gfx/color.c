@@ -1748,7 +1748,7 @@ void LoadMapPals(void){
         // ADD_HL_DE;
         // LD_E_L;
         // LD_D_H;
-        const uint8_t* de = envColors + ((wram->wTimeOfDayPal & 3) << 3);
+        const uint8_t* de = envColors + ((gPlayer.timeOfDayPal & 3) << 3);
         // LDH_A_addr(rSVBK);
         // PUSH_AF;
         // LD_A(BANK(wBGPals1));
@@ -1800,7 +1800,7 @@ void LoadMapPals(void){
     // LD_BC(8 * PALETTE_SIZE);
     // LD_HL(mMapObjectPals);
     // CALL(aAddNTimes);
-    const uint16_t* mapObjectPals = MapObjectPals + (wram->wTimeOfDayPal * (8 * NUM_PAL_COLORS));
+    const uint16_t* mapObjectPals = MapObjectPals + (gPlayer.timeOfDayPal * (8 * NUM_PAL_COLORS));
     // LD_DE(wOBPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // LD_A(BANK(wOBPals1));
@@ -1829,7 +1829,7 @@ void LoadMapPals(void){
         // for(int rept = 0; rept < 4; rept++){
         // INC_HL;
         // }
-        const uint16_t* roof = RoofPals[gCurMapData.mapGroup] + (((wram->wTimeOfDayPal & 3) >= NITE_F)? 2: 0);
+        const uint16_t* roof = RoofPals[gCurMapData.mapGroup] + (((gPlayer.timeOfDayPal & 3) >= NITE_F)? 2: 0);
 
     // morn_day:
         // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF + PAL_COLOR_SIZE * 1);

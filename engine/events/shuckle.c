@@ -78,7 +78,7 @@ void GiveShuckle(void){
 //  Engine flag for this event.
     // LD_HL(wDailyFlags1);
     // SET_hl(DAILYFLAGS1_GOT_SHUCKIE_TODAY_F);
-    bit_set(wram->wDailyFlags1, DAILYFLAGS1_GOT_SHUCKIE_TODAY_F);
+    bit_set(gPlayer.dailyFlags1, DAILYFLAGS1_GOT_SHUCKIE_TODAY_F);
     // LD_A(1);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = TRUE;

@@ -248,7 +248,7 @@ void FadeMusic(void) {
             } else {       // fading out
                 if (!(wram->wVolume & VOLUME_SO1_LEVEL)) {
                     wram->wVolume = 0;                           // make sure volume is off
-                    if (wram->wPlayerState == PLAYER_BIKE) {  // did we just get on a bike?
+                    if (gPlayer.playerState == PLAYER_BIKE) {  // did we just get on a bike?
                         MusicFadeRestart();                      // restart sound
                         wram->wVolume = 0;
                         v_PlayMusic(wram->wMusicFadeID);                                // load new song

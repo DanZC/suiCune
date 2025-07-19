@@ -391,17 +391,17 @@ void TrainerCard_PrintTopHalfOfCard(void){
     // hlcoord(7, 2, wTilemap);
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wPlayerName, coord(7, 2, wram->wTilemap));
+    PlaceStringSimple(gPlayer.playerName, coord(7, 2, wram->wTilemap));
     // hlcoord(5, 4, wTilemap);
     // LD_DE(wPlayerID);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum(coord(5, 4, wram->wTilemap), &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(coord(5, 4, wram->wTilemap), &gPlayer.playerID, PRINTNUM_LEADINGZEROS | 2, 5);
     // hlcoord(7, 6, wTilemap);
     // LD_DE(wMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum(coord(7, 6, wram->wTilemap), &wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(coord(7, 6, wram->wTilemap), &gPlayer.money, PRINTNUM_MONEY | 3, 6);
     // hlcoord(1, 3, wTilemap);
     // LD_DE(mTrainerCard_PrintTopHalfOfCard_HorizontalDivider);
     // CALL(aTrainerCardSetup_PlaceTilemapString);
@@ -448,7 +448,7 @@ void TrainerCard_Page1_PrintDexCaught_GameTime(void){
     // LD_A_addr(wStatusFlags);
     // BIT_A(STATUSFLAGS_POKEDEX_F);
     // RET_NZ ;
-    if(bit_test(wram->wStatusFlags, STATUSFLAGS_POKEDEX_F))
+    if(bit_test(gPlayer.statusFlags, STATUSFLAGS_POKEDEX_F))
         return;
     // hlcoord(1, 9, wTilemap);
     // LD_BC((2 << 8) | 17);
@@ -678,12 +678,12 @@ void TrainerCard_Page1_PrintGameTime(void){
     // LD_DE(wGameTimeHours);
     // LD_BC((2 << 8) | 4);
     // CALL(aPrintNum);
-    hl = PrintNum(hl, &wram->wGameTimeHours, 2, 4);
+    hl = PrintNum(hl, &gPlayer.gameTimeHours, 2, 4);
     // INC_HL;
     // LD_DE(wGameTimeMinutes);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum(hl + 1, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl + 1, &gPlayer.gameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // LDH_A_addr(hVBlankCounter);
     // AND_A(0x1f);
     // RET_NZ ;
@@ -848,7 +848,7 @@ static void TrainerCard_Page2_3_OAMUpdate(const struct JohtoBadgesOAM* hl){
 // cycle 2: face tile, in1 tile, in2 tile, in3 tile
 static const struct JohtoBadgesOAM TrainerCard_JohtoBadgesOAM = {
     //dw ['wJohtoBadges'];
-    .badges = wram_ptr(wJohtoBadges),
+    .badges = gPlayer.johtoBadges,
 
     .tilemaps = {
     // Zephyrbadge

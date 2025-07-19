@@ -61,7 +61,7 @@ void CheckPartyFullAfterContest(void){
             // LD_DE(wBufferMonOT);
             // LD_BC(NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wBufferMonOT, wram->wPlayerName, NAME_LENGTH);
+            CopyBytes(wram->wBufferMonOT, gPlayer.playerName, NAME_LENGTH);
             // CALLFAR(aInsertPokemonIntoBox);
             InsertPokemonIntoBox();
             // LD_A_addr(wCurPartySpecies);
@@ -159,7 +159,7 @@ void CheckPartyFullAfterContest(void){
     // LD_E_L;
     // LD_HL(wPlayerName);
     // CALL(aCopyBytes);
-    CopyBytes(gPokemon.partyMonOT[i], wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(gPokemon.partyMonOT[i], gPlayer.playerName, NAME_LENGTH);
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);

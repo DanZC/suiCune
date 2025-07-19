@@ -587,7 +587,7 @@ void MagnetTrain_Jumptable_FirstRunThrough(void){
     // LDH_addr_A(rSVBK);
     // LD_A_addr(wTimeOfDayPal);
     // PUSH_AF;
-    uint8_t timeOfDayPal = wram->wTimeOfDayPal;
+    uint8_t timeOfDayPal = gPlayer.timeOfDayPal;
     // LD_A_addr(wEnvironment);
     // PUSH_AF;
     uint8_t environment = wram->wEnvironment;
@@ -595,7 +595,7 @@ void MagnetTrain_Jumptable_FirstRunThrough(void){
     // LD_A_addr(wTimeOfDay);
     // maskbits(NUM_DAYTIMES, 0);
     // LD_addr_A(wTimeOfDayPal);
-    wram->wTimeOfDayPal = wram->wTimeOfDay & (NUM_DAYTIMES - 1);
+    gPlayer.timeOfDayPal = wram->wTimeOfDay & (NUM_DAYTIMES - 1);
     // LD_A(TOWN);
     // LD_addr_A(wEnvironment);
     wram->wEnvironment = TOWN;
@@ -620,7 +620,7 @@ void MagnetTrain_Jumptable_FirstRunThrough(void){
     wram->wEnvironment = environment;
     // POP_AF;
     // LD_addr_A(wTimeOfDayPal);
-    wram->wTimeOfDayPal = timeOfDayPal;
+    gPlayer.timeOfDayPal = timeOfDayPal;
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;

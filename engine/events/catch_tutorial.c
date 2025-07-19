@@ -39,13 +39,13 @@ void CatchTutorial(void){
             // LD_DE(wMomsName);
             // LD_BC(NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wMomsName, wram->wPlayerName, NAME_LENGTH);
+            CopyBytes(gPlayer.momsName, gPlayer.playerName, NAME_LENGTH);
         //  Copy Dude's name to your name
             // LD_HL(mCatchTutorial_Dude);
             // LD_DE(wPlayerName);
             // LD_BC(NAME_LENGTH);
             // CALL(aCopyBytes);
-            U82CA(wram->wPlayerName, "DUDE@");
+            U82CA(gPlayer.playerName, "DUDE@");
 
             // CALL(aCatchTutorial_LoadDudeData);
             // LoadDudeData:
@@ -108,7 +108,7 @@ void CatchTutorial(void){
             // LD_DE(wPlayerName);
             // LD_BC(NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wPlayerName, wram->wMomsName, NAME_LENGTH);
+            CopyBytes(gPlayer.playerName, gPlayer.momsName, NAME_LENGTH);
             // RET;
             return;
 

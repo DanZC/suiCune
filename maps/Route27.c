@@ -162,7 +162,7 @@ AskForNumber:
 WantsBattle:
     scall_local(Rematch);
     winlosstext(BirdKeeperJose2BeatenText, 0)
-    readmem(wram_ptr(wJoseFightCount))
+    readmem(&gPlayer.JoseFightCount)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
@@ -176,14 +176,14 @@ LoadFight0:
     loadtrainer(BIRD_KEEPER, JOSE2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJoseFightCount), 1)
+    loadmem(&gPlayer.JoseFightCount, 1)
     clearevent(ENGINE_JOSE_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(BIRD_KEEPER, JOSE1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJoseFightCount), 2)
+    loadmem(&gPlayer.JoseFightCount, 2)
     clearflag(ENGINE_JOSE_READY_FOR_REMATCH)
     s_end
 LoadFight2:
@@ -280,7 +280,7 @@ AskForNumber:
 WantsBattle:
     scall_local(Rematch);
     winlosstext(CooltrainerfReenaBeatenText, 0)
-    readmem(wram_ptr(wReenaFightCount))
+    readmem(&gPlayer.ReenaFightCount)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
@@ -294,14 +294,14 @@ LoadFight0:
     loadtrainer(COOLTRAINERF, REENA1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wReenaFightCount), 1)
+    loadmem(&gPlayer.ReenaFightCount, 1)
     clearflag(ENGINE_REENA_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(COOLTRAINERF, REENA2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wReenaFightCount), 2)
+    loadmem(&gPlayer.ReenaFightCount, 2)
     clearflag(ENGINE_REENA_READY_FOR_REMATCH)
     s_end
 LoadFight2:

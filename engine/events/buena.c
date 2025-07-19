@@ -24,7 +24,7 @@ static void BuenasPassword_PlacePasswordChoices(const char** items, uint8_t* de,
     // LD_A_addr(wMenuSelection);
     // ADD_A_C;
     // LD_C_A;
-    uint8_t c = selection + (wram->wBuenasPassword & 0xf0);
+    uint8_t c = selection + (gPlayer.buenasPassword & 0xf0);
     // FARCALL(aGetBuenasPassword);
     uint8_t* str = GetBuenasPassword(&c);
     // POP_HL;
@@ -73,7 +73,7 @@ void BuenasPassword(void){
     CopyMenuHeader(&BuenasPassword_MenuHeader);
     // LD_A_addr(wBuenasPassword);
     // LD_C_A;
-    uint8_t c = wram->wBuenasPassword;
+    uint8_t c = gPlayer.buenasPassword;
     // FARCALL(aGetBuenasPassword);
     GetBuenasPassword(&c);
     // LD_A_addr(wMenuBorderLeftCoord);
@@ -95,7 +95,7 @@ void BuenasPassword(void){
     // CP_A_C;
     // IF_NZ goto wrong;
     // LD_B(0x1);
-    wram->wScriptVar = ((wram->wBuenasPassword & 0x3) == wram->wMenuSelection)? 0x1: 0x0;
+    wram->wScriptVar = ((gPlayer.buenasPassword & 0x3) == wram->wMenuSelection)? 0x1: 0x0;
 
 // wrong:
     // LD_A_B;
@@ -193,7 +193,7 @@ void BuenaPrize(void){
         // LD_A_addr(wBlueCardBalance);
         // CP_A_C;
         // IF_C goto InsufficientBalance;
-        if(wram->wBlueCardBalance < prize->price) {
+        if(gPlayer.blueCardBalance < prize->price) {
         // InsufficientBalance:
             // LD_HL(mBuenaPrize_BuenaNotEnoughPointsText);
             // goto print;
@@ -222,7 +222,7 @@ void BuenaPrize(void){
         // LD_A_addr(wBlueCardBalance);
         // SUB_A_C;
         // LD_addr_A(wBlueCardBalance);
-        wram->wBlueCardBalance -= (uint8_t)prize->price;
+        gPlayer.blueCardBalance -= (uint8_t)prize->price;
         // CALL(aPrintBlueCardBalance);
         PrintBlueCardBalance();
         // goto Purchase;
@@ -300,7 +300,7 @@ static void PrintBlueCardBalance_DrawBox(const uint8_t* de) {
 void PrintBlueCardBalance(void){
     // LD_DE(wBlueCardBalance);
     // CALL(aPrintBlueCardBalance_DrawBox);
-    PrintBlueCardBalance_DrawBox(&wram->wBlueCardBalance);
+    PrintBlueCardBalance_DrawBox(&gPlayer.blueCardBalance);
     // RET;
 }
 

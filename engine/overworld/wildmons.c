@@ -564,7 +564,7 @@ bool CheckRepelEffect(void){
     // LD_A_addr(wRepelEffect);
     // AND_A_A;
     // IF_Z goto encounter;
-    if(wram->wRepelEffect == 0)
+    if(gPlayer.repelEffect == 0)
         return false;
 //  Get the first Pokemon in your party that isn't fainted.
     // LD_HL(wPartyMon1HP);
@@ -666,7 +666,7 @@ struct WildMons v_SwarmWildmonCheck(struct WildMons mons){
     // LD_A_addr(wDunsparceMapNumber);
     // CP_A_E;
     // IF_NZ goto CheckYanma;
-    if(bit_test(wram->wSwarmFlags, SWARMFLAGS_DUNSPARCE_SWARM_F) 
+    if(bit_test(gPlayer.swarmFlags, SWARMFLAGS_DUNSPARCE_SWARM_F) 
     && gPokemon.dunsparceMapGroup == map.mapGroup
     && gPokemon.dunsparceMapNumber == map.mapNumber) {
         // CALL(aLookUpWildmonsForMapDE);
@@ -689,9 +689,9 @@ struct WildMons v_SwarmWildmonCheck(struct WildMons mons){
     // LD_A_addr(wYanmaMapNumber);
     // CP_A_E;
     // JR_NZ (mv_NoSwarmWildmon);
-    if(bit_test(wram->wSwarmFlags, SWARMFLAGS_YANMA_SWARM_F) 
-    && wram->wYanmaMapGroup == map.mapGroup
-    && wram->wYanmaMapNumber == map.mapNumber) {
+    if(bit_test(gPlayer.swarmFlags, SWARMFLAGS_YANMA_SWARM_F) 
+    && gPlayer.yanmaMapGroup == map.mapGroup
+    && gPlayer.yanmaMapNumber == map.mapNumber) {
         // CALL(aLookUpWildmonsForMapDE);
         // JR_NC (mv_NoSwarmWildmon);
         // SCF;

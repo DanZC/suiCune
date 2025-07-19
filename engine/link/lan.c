@@ -121,7 +121,7 @@ void LANConnection_Host(void) {
     LoadStandardMenuHeader();
     PlaceStringSimple(U82C("Hosting…<LINE>Please wait…"), coord(TEXTBOX_INNERX, TEXTBOX_INNERY, wram->wTilemap));
 
-    if(!NetworkBroadcastLAN(wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender)) {
+    if(!NetworkBroadcastLAN(gPlayer.playerName, gPlayer.playerID, wram->wPlayerGender)) {
         CloseWindow();
         PrintText(Text_Cancelled);
         CloseWindow();
@@ -175,7 +175,7 @@ void LANConnection_Host(void) {
 
         // Rebroadcast about every 2 seconds.
         if((frameCount & 0x7f) == 0x7f) {
-            if(!NetworkBroadcastLAN(wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender)) {
+            if(!NetworkBroadcastLAN(gPlayer.playerName, gPlayer.playerID, wram->wPlayerGender)) {
                 CloseWindow();
                 PrintText(Text_Cancelled);
                 CloseWindow();
@@ -193,13 +193,13 @@ void LANConnection_Host(void) {
 }
 
 static bool LANConnection_TryJoin(uint8_t which) {
-    if(!NetworkTryJoinLAN(which, wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender))
+    if(!NetworkTryJoinLAN(which, gPlayer.playerName, gPlayer.playerID, wram->wPlayerGender))
         return false;
     for(int i = 0; i < 60 * 16; ++i) {
         DelayFrame();
         // Try again every two seconds.
         if((i % 120) == 0 && i != 0) {
-            if(!NetworkTryJoinLAN(which, wram->wPlayerName, wram->wPlayerID, wram->wPlayerGender))
+            if(!NetworkTryJoinLAN(which, gPlayer.playerName, gPlayer.playerID, wram->wPlayerGender))
                 return false;
         }
         if(NetworkCheckLAN()) {

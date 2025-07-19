@@ -153,7 +153,7 @@ void PlayRadioShow(void){
 //  If we're already in the radio program proper, we don't need to be here.
     if((wram->wCurRadioLine < POKE_FLUTE_RADIO)
 //  If Team Rocket is not occupying the radio tower, we don't need to be here.
-    && (bit_test(wram->wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F))
+    && (bit_test(gPlayer.statusFlags2, STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F))
 //  If we're in Kanto, we don't need to be here.
     && (IsInJohto() == JOHTO_REGION))
     {
@@ -1532,7 +1532,7 @@ static void LuckyNumberShow8(void){
     // LD_DE(wLuckyIDNumber);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum(wram->wStringBuffer1, &wram->wLuckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(wram->wStringBuffer1, &gPlayer.luckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_A(0x50);
     // LD_addr_A(wStringBuffer1 + 5);
     wram->wStringBuffer1[5] = CHAR_TERM;
@@ -1749,14 +1749,14 @@ static void PeoplePlaces4(void){
         // LD_A_addr(wStatusFlags);
         // BIT_A(STATUSFLAGS_HALL_OF_FAME_F);
         // IF_Z goto ok;
-        if(bit_test(wram->wStatusFlags, STATUSFLAGS_HALL_OF_FAME_F)) {
+        if(bit_test(gPlayer.statusFlags, STATUSFLAGS_HALL_OF_FAME_F)) {
             hl = PnP_HiddenPeople;
         }
         // LD_HL(mPnP_HiddenPeople_BeatE4);
         // LD_A_addr(wKantoBadges);
         // CP_A(0b11111111);  // all badges
         // IF_NZ goto ok;
-        else if(wram->wKantoBadges[0] != 0b11111111) {
+        else if(gPlayer.kantoBadges[0] != 0b11111111) {
             hl = PnP_HiddenPeople_BeatE4;
         }
         else {
@@ -2235,7 +2235,7 @@ static void BuenasPassword4(void){
     // LD_HL(wDailyFlags2);
     // BIT_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
     // IF_NZ goto AlreadyGotIt;
-    if(!bit_test(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F)) {
+    if(!bit_test(gPlayer.dailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F)) {
     //  There are only 11 groups to choose from.
     // greater_than_11:
         uint8_t group;
@@ -2263,16 +2263,16 @@ static void BuenasPassword4(void){
     //  The high nybble of wBuenasPassword will now contain the password group index, and the low nybble contains the actual password.
         // ADD_A_E;
         // LD_addr_A(wBuenasPassword);
-        wram->wBuenasPassword = ((group << 4) & 0xf0) | (subgroup & 0xf);
+        gPlayer.buenasPassword = ((group << 4) & 0xf0) | (subgroup & 0xf);
     //  Set the flag so that we don't generate a new password this week.
         // LD_HL(wDailyFlags2);
         // SET_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
-        bit_set(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
+        bit_set(gPlayer.dailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
     }
 
 // AlreadyGotIt:
     // LD_C_A;
-    uint8_t c = wram->wBuenasPassword;
+    uint8_t c = gPlayer.buenasPassword;
     // CALL(aGetBuenasPassword);
     GetBuenasPassword(&c);
     // LD_HL(mBuenaRadioText4);
@@ -2420,7 +2420,7 @@ static void BuenasPasswordAfterMidnight(const txt_cmd_s* hl){
     // PUSH_HL;
     // LD_HL(wDailyFlags2);
     // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
-    bit_reset(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
+    bit_reset(gPlayer.dailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
     // POP_HL;
     // LD_A(BUENAS_PASSWORD_8);
     // JP(mNextRadioLine);
@@ -2430,7 +2430,7 @@ static void BuenasPasswordAfterMidnight(const txt_cmd_s* hl){
 static void BuenasPassword8(void){
     // LD_HL(wDailyFlags2);
     // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
-    bit_reset(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
+    bit_reset(gPlayer.dailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
     // LD_HL(mBuenaRadioMidnightText10);
     // LD_A(BUENAS_PASSWORD_9);
     // JP(mNextRadioLine);
@@ -2527,7 +2527,7 @@ static void BuenasPassword20(void){
     hram.hBGMapMode = bgMapMode;
     // LD_HL(wDailyFlags2);
     // RES_hl(DAILYFLAGS2_BUENAS_PASSWORD_F);
-    bit_reset(wram->wDailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
+    bit_reset(gPlayer.dailyFlags2, DAILYFLAGS2_BUENAS_PASSWORD_F);
     // LD_A(BUENAS_PASSWORD);
     // LD_addr_A(wCurRadioLine);
     wram->wCurRadioLine = BUENAS_PASSWORD;

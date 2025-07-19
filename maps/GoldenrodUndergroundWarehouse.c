@@ -86,7 +86,7 @@ bool GoldenrodUndergroundWarehouse_MapScripts_ResetSwitches(script_s* s) {
     clearevent(EVENT_SWITCH_13)
     clearevent(EVENT_SWITCH_14)
     setval(0)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     s_endcallback
     SCRIPT_END
 }

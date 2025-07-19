@@ -1190,7 +1190,7 @@ return_from_capture:
     // used_park_ball:
         // LD_HL(wParkBallsRemaining);
         // DEC_hl;
-        wram->wParkBallsRemaining--;
+        gPlayer.parkBallsRemaining--;
         // RET;
     }
 
@@ -3192,12 +3192,12 @@ void UseRepel(uint8_t b){
     // AND_A_A;
     // LD_HL(mRepelUsedEarlierIsStillInEffectText);
     // JP_NZ (mPrintText);
-    if(wram->wRepelEffect)
+    if(gPlayer.repelEffect)
         return PrintText(RepelUsedEarlierIsStillInEffectText);
 
     // LD_A_B;
     // LD_addr_A(wRepelEffect);
-    wram->wRepelEffect = b;
+    gPlayer.repelEffect = b;
     // JP(mUseItemText);
     return UseItemText();
 }

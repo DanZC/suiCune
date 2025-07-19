@@ -185,7 +185,7 @@ static bool CheckIfMonIsYourOT(uint8_t partyMon){
     // LD_C(NAME_LENGTH);
     // CALL(aCheckIfMonIsYourOT_loop);
     for(uint32_t i = 0; i < NAME_LENGTH; ++i) {
-        if(gPokemon.partyMonOT[partyMon][i] != wram->wPlayerName[i])
+        if(gPokemon.partyMonOT[partyMon][i] != gPlayer.playerName[i])
             return false;
     }
     // IF_C goto nope;
@@ -196,7 +196,7 @@ static bool CheckIfMonIsYourOT(uint8_t partyMon){
     // CALL(aAddNTimes);
     // LD_DE(wPlayerID);
     // LD_C(2);  // number of bytes in which your ID is stored
-    if(gPokemon.partyMon[partyMon].mon.id != wram->wPlayerID)
+    if(gPokemon.partyMon[partyMon].mon.id != gPlayer.playerID)
         return false;
 
 // loop:

@@ -361,18 +361,18 @@ bool Switch1Script(script_s* s) {
     writetext(SwitchRoomText_OffTurnOn)
     yesorno
     iffalse_jump(GoldenrodUndergroundSwitchRoomEntrances_DontToggle)
-    readmem(wram_ptr(wUndergroundSwitchPositions))
+    readmem(&gPlayer.undergroundSwitchPositions)
     addval(1)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     setevent(EVENT_SWITCH_1)
     sjump(GoldenrodUndergroundSwitchRoomEntrances_UpdateDoors)
 On:
     writetext(SwitchRoomText_OnTurnOff)
     yesorno
     iffalse_jump(GoldenrodUndergroundSwitchRoomEntrances_DontToggle)
-    readmem(wram_ptr(wUndergroundSwitchPositions))
+    readmem(&gPlayer.undergroundSwitchPositions)
     addval(-1)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     clearevent(EVENT_SWITCH_1)
     sjump(GoldenrodUndergroundSwitchRoomEntrances_UpdateDoors)
     SCRIPT_END
@@ -387,18 +387,18 @@ bool Switch2Script(script_s* s) {
     writetext(SwitchRoomText_OffTurnOn)
     yesorno
     iffalse_jump(GoldenrodUndergroundSwitchRoomEntrances_DontToggle)
-    readmem(wram_ptr(wUndergroundSwitchPositions))
+    readmem(&gPlayer.undergroundSwitchPositions)
     addval(2)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     setevent(EVENT_SWITCH_2)
     sjump(GoldenrodUndergroundSwitchRoomEntrances_UpdateDoors)
 On:
     writetext(SwitchRoomText_OnTurnOff)
     yesorno
     iffalse_jump(GoldenrodUndergroundSwitchRoomEntrances_DontToggle)
-    readmem(wram_ptr(wUndergroundSwitchPositions))
+    readmem(&gPlayer.undergroundSwitchPositions)
     addval(-2)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     clearevent(EVENT_SWITCH_2)
     sjump(GoldenrodUndergroundSwitchRoomEntrances_UpdateDoors)
     SCRIPT_END
@@ -413,18 +413,18 @@ bool Switch3Script(script_s* s) {
     writetext(SwitchRoomText_OffTurnOn)
     yesorno
     iffalse_jump(GoldenrodUndergroundSwitchRoomEntrances_DontToggle)
-    readmem(wram_ptr(wUndergroundSwitchPositions))
+    readmem(&gPlayer.undergroundSwitchPositions)
     addval(3)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     setevent(EVENT_SWITCH_3)
     sjump(GoldenrodUndergroundSwitchRoomEntrances_UpdateDoors)
 On:
     writetext(SwitchRoomText_OnTurnOff)
     yesorno
     iffalse_jump(GoldenrodUndergroundSwitchRoomEntrances_DontToggle)
-    readmem(wram_ptr(wUndergroundSwitchPositions))
+    readmem(&gPlayer.undergroundSwitchPositions)
     addval(-3)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     clearevent(EVENT_SWITCH_3)
     sjump(GoldenrodUndergroundSwitchRoomEntrances_UpdateDoors)
     SCRIPT_END
@@ -440,7 +440,7 @@ bool EmergencySwitchScript(script_s* s) {
     yesorno
     iffalse_jump(GoldenrodUndergroundSwitchRoomEntrances_DontToggle)
     setval(7)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     setevent(EVENT_EMERGENCY_SWITCH)
     setevent(EVENT_SWITCH_1)
     setevent(EVENT_SWITCH_2)
@@ -451,7 +451,7 @@ On:
     yesorno
     iffalse_jump(GoldenrodUndergroundSwitchRoomEntrances_DontToggle)
     setval(0)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     clearevent(EVENT_EMERGENCY_SWITCH)
     clearevent(EVENT_SWITCH_1)
     clearevent(EVENT_SWITCH_2)
@@ -467,7 +467,7 @@ bool GoldenrodUndergroundSwitchRoomEntrances_DontToggle(script_s* s) {
 }
 bool GoldenrodUndergroundSwitchRoomEntrances_UpdateDoors(script_s* s) {
     SCRIPT_BEGIN
-    readmem(wram_ptr(wUndergroundSwitchPositions))
+    readmem(&gPlayer.undergroundSwitchPositions)
     ifequal(0, Position0)
     ifequal(1, Position1)
     ifequal(2, Position2)
@@ -580,7 +580,7 @@ EmergencyPosition:
     reloadmappart
     closetext
     setval(6)
-    writemem(wram_ptr(wUndergroundSwitchPositions))
+    writemem(&gPlayer.undergroundSwitchPositions)
     s_end
 Set4:
     doorstate(1, OPEN1)

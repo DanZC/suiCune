@@ -130,7 +130,7 @@ void Pokedex(void){
     ClearSprites();
     // LD_A_addr(wCurDexMode);
     // LD_addr_A(wLastDexMode);
-    wram->wLastDexMode = wram->wCurDexMode;
+    gPlayer.lastDexMode = wram->wCurDexMode;
 
     // POP_AF;
     // LDH_addr_A(hInMenu);
@@ -185,7 +185,7 @@ void InitPokedex(void){
 
     // LD_A_addr(wLastDexMode);
     // LD_addr_A(wCurDexMode);
-    wram->wCurDexMode = wram->wLastDexMode;
+    wram->wCurDexMode = gPlayer.lastDexMode;
 
     // CALL(aPokedex_OrderMonsByMode);
     Pokedex_OrderMonsByMode();
@@ -204,7 +204,7 @@ void Pokedex_CheckUnlockedUnownMode(void){
     // LD_A_addr(wStatusFlags);
     // BIT_A(STATUSFLAGS_UNOWN_DEX_F);
     // IF_NZ goto unlocked;
-    if(bit_test(wram->wStatusFlags, STATUSFLAGS_UNOWN_DEX_F)) {
+    if(bit_test(gPlayer.statusFlags, STATUSFLAGS_UNOWN_DEX_F)) {
     // unlocked:
         // LD_A(TRUE);
         // LD_addr_A(wUnlockedUnownMode);

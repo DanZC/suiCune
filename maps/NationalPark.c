@@ -184,7 +184,7 @@ RequestNumber:
 Rematch:
     scall_local(RematchStd);
     winlosstext(SchoolboyJack1BeatenText, 0)
-    readmem(wram_ptr(wJackFightCount))
+    readmem(&gPlayer.JackFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -206,28 +206,28 @@ LoadFight0:
     loadtrainer(SCHOOLBOY, JACK1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJackFightCount), 1)
+    loadmem(&gPlayer.JackFightCount, 1)
     clearflag(ENGINE_JACK_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(SCHOOLBOY, JACK2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJackFightCount), 2)
+    loadmem(&gPlayer.JackFightCount, 2)
     clearflag(ENGINE_JACK_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(SCHOOLBOY, JACK3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJackFightCount), 3)
+    loadmem(&gPlayer.JackFightCount, 3)
     clearflag(ENGINE_JACK_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(SCHOOLBOY, JACK4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJackFightCount), 4)
+    loadmem(&gPlayer.JackFightCount, 4)
     clearflag(ENGINE_JACK_READY_FOR_REMATCH)
     s_end
 LoadFight4:

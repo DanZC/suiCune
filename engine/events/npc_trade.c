@@ -173,7 +173,7 @@ uint8_t TradeFlagAction(uint8_t b){
     // LD_A_addr(wJumptableIndex);
     // LD_C_A;
     // PREDEF(pSmallFarFlagAction);
-    uint8_t c = SmallFarFlagAction(wram->wTradeFlags, wram->wJumptableIndex, b);
+    uint8_t c = SmallFarFlagAction(gPlayer.tradeFlags, wram->wJumptableIndex, b);
     // LD_A_C;
     // AND_A_A;
     // RET;
@@ -224,7 +224,7 @@ void DoNPCTrade(void){
     // LD_HL(wPlayerName);
     // LD_DE(wPlayerTrademonSenderName);
     // CALL(aCopyTradeName);
-    CopyTradeName(wram->wPlayerTrademon.senderName, wram->wPlayerName);
+    CopyTradeName(wram->wPlayerTrademon.senderName, gPlayer.playerName);
 
     // LD_HL(wPartyMon1ID);
     // LD_BC(PARTYMON_STRUCT_LENGTH);

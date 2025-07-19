@@ -1195,7 +1195,7 @@ static void Link_PrepPartyData_Gen2(void){
     // LD_HL(wPlayerName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(de, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(de, gPlayer.playerName, NAME_LENGTH);
     de += NAME_LENGTH;
 
     CopyBytes(de, &gPokemon.partyCount, sizeof(gPokemon.partyCount));
@@ -1211,8 +1211,8 @@ static void Link_PrepPartyData_Gen2(void){
     // LD_HL(wPlayerID);
     // LD_BC(2);
     // CALL(aCopyBytes);
-    CopyBytes(de, &wram->wPlayerID, sizeof(wram->wPlayerID));
-    de += sizeof(wram->wPlayerID);
+    CopyBytes(de, &gPlayer.playerID, sizeof(gPlayer.playerID));
+    de += sizeof(gPlayer.playerID);
 
     // LD_HL(wPartyMon1Species);
     // LD_BC(PARTY_LENGTH * PARTYMON_STRUCT_LENGTH);
@@ -3102,7 +3102,7 @@ void LinkTrade(void){
         // LD_DE(wPlayerTrademonSenderName);
         // LD_BC(NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wPlayerTrademon.senderName, wram->wPlayerName, NAME_LENGTH);
+        CopyBytes(wram->wPlayerTrademon.senderName, gPlayer.playerName, NAME_LENGTH);
     //  species
         // LD_A_addr(wCurTradePartyMon);
         // LD_HL(wPartySpecies);

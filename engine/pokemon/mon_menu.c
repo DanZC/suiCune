@@ -43,20 +43,20 @@ bool HasNoItems(void){
     // LD_A_addr(wNumItems);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wNumItems != 0)
+    if(gPlayer.numItems != 0)
         return false;
     // LD_A_addr(wNumKeyItems);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wNumKeyItems != 0)
+    if(gPlayer.numKeyItems != 0)
         return false;
     // LD_A_addr(wNumBalls);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wNumBalls != 0)
+    if(gPlayer.numBalls != 0)
         return false;
     // LD_HL(wTMsHMs);
-    uint8_t* hl = wram->wTMsHMs;
+    uint8_t* hl = gPlayer.TMsHMs;
     // LD_B(NUM_TMS + NUM_HMS);
     uint8_t b = NUM_TMS + NUM_HMS;
 
@@ -679,11 +679,11 @@ void ComposeMailMessage(void){
     // LD_DE(wTempMailAuthor);
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wTempMail.author, wram->wPlayerName, NAME_LENGTH - 1);
+    CopyBytes(wram->wTempMail.author, gPlayer.playerName, NAME_LENGTH - 1);
     // LD_HL(wPlayerID);
     // LD_BC(2);
     // CALL(aCopyBytes);
-    wram->wTempMail.authorID = wram->wPlayerID;
+    wram->wTempMail.authorID = gPlayer.playerID;
     // LD_A_addr(wCurPartySpecies);
     // LD_de_A;
     wram->wTempMail.species = wram->wCurPartySpecies;

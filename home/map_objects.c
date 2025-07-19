@@ -113,14 +113,14 @@ uint8_t GetPlayerStandingTile(void){
     // CALL(aGetTileCollision);
     // LD_B_A;
     // RET;
-    return GetTileCollision(wram->wPlayerStruct.nextTile);
+    return GetTileCollision(gPlayer.playerStruct.nextTile);
 }
 
 // Returns true (z) if the player is standing on a water tile.
 bool CheckOnWater(void){
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aGetTileCollision);
-    uint8_t col = GetTileCollision(wram->wPlayerStruct.nextTile);
+    uint8_t col = GetTileCollision(gPlayer.playerStruct.nextTile);
     // SUB_A(WATER_TILE);
     // RET_Z ;
     if(col == WATER_TILE)
@@ -255,7 +255,7 @@ bool CheckWaterfallTile(uint8_t a){
 
 bool CheckStandingOnEntrance(void){
     // LD_A_addr(wPlayerStandingTile);
-    uint8_t a = wram->wPlayerStruct.nextTile;
+    uint8_t a = gPlayer.playerStruct.nextTile;
     // CP_A(COLL_DOOR);
     // RET_Z ;
     // CP_A(COLL_DOOR_79);
@@ -275,7 +275,7 @@ struct MapObject* GetMapObject(uint8_t a){
     // LD_B_H;
     // LD_C_L;
     // RET;
-    return &wram->wPlayerObject + a;
+    return &gPlayer.playerObject + a;
 }
 
 //  Returns null if the object is not visible on the screen.
@@ -436,7 +436,7 @@ static void ApplyDeletionToMapObject_CheckStopFollow(uint8_t a) {
     // LD_HL(wObjectFollow_Follower);
     // CP_A_hl;
     // RET_NZ ;
-    if(a != wram->wObjectFollow_Leader && a != wram->wObjectFollow_Follower)
+    if(a != gPlayer.objectFollow_Leader && a != gPlayer.objectFollow_Follower)
         return;
 
 // ok:
@@ -444,9 +444,9 @@ static void ApplyDeletionToMapObject_CheckStopFollow(uint8_t a) {
     StopFollow();
     // LD_A(-1);
     // LD_addr_A(wObjectFollow_Leader);
-    wram->wObjectFollow_Leader = 0xff;
+    gPlayer.objectFollow_Leader = 0xff;
     // LD_addr_A(wObjectFollow_Follower);
-    wram->wObjectFollow_Follower = 0xff;
+    gPlayer.objectFollow_Follower = 0xff;
     // RET;
 }
 
@@ -529,10 +529,10 @@ void DeleteFollowerMapObject(uint8_t a){
     // LD_A_addr(wObjectFollow_Leader);
     // CP_A_B;
     // IF_NZ goto ok;
-    if(wram->wObjectFollow_Leader == id) {
+    if(gPlayer.objectFollow_Leader == id) {
         // LD_A(-1);
         // LD_addr_A(wObjectFollow_Leader);
-        wram->wObjectFollow_Leader = 0xff;
+        gPlayer.objectFollow_Leader = 0xff;
     }
 
 // ok:
@@ -592,12 +592,12 @@ struct Object* FindFirstEmptyObjectStruct(void) {
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto l_break;
-        if((&wram->wPlayerStruct + i)->sprite == 0) {
+        if((&gPlayer.playerStruct + i)->sprite == 0) {
         // l_break:
             // LD_A(NUM_OBJECT_STRUCTS);
             // SUB_A_C;
             // SCF;
-            return &wram->wPlayerStruct + i;
+            return &gPlayer.playerStruct + i;
         }
         // ADD_HL_DE;
         // DEC_C;
@@ -799,7 +799,7 @@ struct Object* GetObjectStruct(uint8_t a){
     // LD_C_L;
     // RET;
     // return AddNTimes(OBJECT_LENGTH, wObjectStructs, a);
-    return &wram->wPlayerStruct + a;
+    return &gPlayer.playerStruct + a;
 }
 
 bool DoesObjectHaveASprite(struct Object* bc){

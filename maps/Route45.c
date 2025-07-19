@@ -254,7 +254,7 @@ AskForNumber:
 WantsBattle:
     scall(Route45RematchM)
     winlosstext(HikerParry3BeatenText, 0)
-    readmem(wram_ptr(wParryFightCount))
+    readmem(&gPlayer.ParryFightCount)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
@@ -268,14 +268,14 @@ LoadFight0:
     loadtrainer(HIKER, PARRY3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wParryFightCount), 1)
+    loadmem(&gPlayer.ParryFightCount, 1)
     clearflag(ENGINE_PARRY_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(HIKER, PARRY1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wParryFightCount), 2)
+    loadmem(&gPlayer.ParryFightCount, 2)
     clearflag(ENGINE_PARRY_READY_FOR_REMATCH)
     s_end
 LoadFight2:

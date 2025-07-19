@@ -387,7 +387,7 @@ void PlayMapMusicBike(void) {
     // IF_Z goto play;                        // jr z, .play
     // CALL(aGetMapMusic_MaybeSpecial);       // call GetMapMusic_MaybeSpecial
     uint16_t music;
-    if(wram->wPlayerState == PLAYER_BIKE)
+    if(gPlayer.playerState == PLAYER_BIKE)
         music = MUSIC_BICYCLE;
     else
         music = GetMapMusic_MaybeSpecial();
@@ -465,7 +465,7 @@ static uint16_t SpecialMapMusic(void) {
     // IF_Z goto surf;           // jr z, .surf
     // CP_A(PLAYER_SURF_PIKA);   // cp PLAYER_SURF_PIKA
     // IF_Z goto surf;           // jr z, .surf
-    if(wram->wPlayerState == PLAYER_SURF || wram->wPlayerState == PLAYER_SURF_PIKA) {
+    if(gPlayer.playerState == PLAYER_SURF || gPlayer.playerState == PLAYER_SURF_PIKA) {
     // surf:
         // LD_DE(MUSIC_SURF);  // ld de, MUSIC_SURF
         // SCF;                // scf
@@ -476,7 +476,7 @@ static uint16_t SpecialMapMusic(void) {
     // LD_A_addr(wStatusFlags2);                 // ld a, [wStatusFlags2]
     // BIT_A(STATUSFLAGS2_BUG_CONTEST_TIMER_F);  // bit STATUSFLAGS2_BUG_CONTEST_TIMER_F, a
     // IF_NZ goto contest;                       // jr nz, .contest
-    if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    if(bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
     // contest:
         // LD_A_addr(wMapGroup);                     // ld a, [wMapGroup]
         // CP_A(GROUP_ROUTE_35_NATIONAL_PARK_GATE);  // cp GROUP_ROUTE_35_NATIONAL_PARK_GATE

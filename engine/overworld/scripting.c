@@ -1581,7 +1581,7 @@ void Script_variablesprite(script_s* s, uint8_t slot, uint8_t val){
     // ADD_HL_DE;
     // CALL(aGetScriptByte);
     // LD_hl_A;
-    wram->wVariableSprites[slot] = val;
+    gPlayer.variableSprites[slot] = val;
     // RET;
 }
 
@@ -2575,7 +2575,7 @@ void Script_getcoins(script_s* s, uint8_t a){
     // LD_DE(wCoins);
     // LD_BC((PRINTNUM_LEFTALIGN | 2 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum(wram->wStringBuffer1, (uint8_t*)&wram->wCoins, (PRINTNUM_LEFTALIGN | 2), 6);
+    PrintNum(wram->wStringBuffer1, (uint8_t*)&gPlayer.coins, (PRINTNUM_LEFTALIGN | 2), 6);
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
     return GetStringBuffer(a, wram->wStringBuffer1);
@@ -2793,7 +2793,7 @@ static uint8_t* GetMoneyAccount(uint8_t a){
     // RET_Z ;
     // LD_DE(wMomsMoney);  // MOMS_MONEY
     // RET;
-    return (a == YOUR_MONEY)? wram->wMoney: wram->wMomsMoney;
+    return (a == YOUR_MONEY)? gPlayer.money: gPlayer.momsMoney;
 }
 
 static uint8_t* LoadMoneyAmountToMem(uint32_t amount){
@@ -2951,7 +2951,7 @@ void Script_specialphonecall(script_s* s, uint16_t id){
     // LD_addr_A(wSpecialPhoneCallID);
     // CALL(aGetScriptByte);
     // LD_addr_A(wSpecialPhoneCallID + 1);
-    wram->wSpecialPhoneCallID = id;
+    gPlayer.specialPhoneCallID = id;
     // RET;
 }
 
@@ -2966,7 +2966,7 @@ void Script_checkphonecall(script_s* s){
 // ok:
     // LD_addr_A(wScriptVar);
     // RET;
-    wram->wScriptVar = (wram->wSpecialPhoneCallID != 0)? TRUE: FALSE;
+    wram->wScriptVar = (gPlayer.specialPhoneCallID != 0)? TRUE: FALSE;
 }
 
 void Script_givepoke(script_s* s, species_t species, uint8_t lvl, item_t item, bool ext, const char* nickname, const char* otName){
@@ -3132,14 +3132,14 @@ void Script_wildoff(void){
     // LD_HL(wStatusFlags);
     // SET_hl(STATUSFLAGS_NO_WILD_ENCOUNTERS_F);
     // RET;
-    wram->wStatusFlags |= (1 << STATUSFLAGS_NO_WILD_ENCOUNTERS_F);
+    gPlayer.statusFlags |= (1 << STATUSFLAGS_NO_WILD_ENCOUNTERS_F);
 }
 
 void Script_wildon(void){
     // LD_HL(wStatusFlags);
     // RES_hl(STATUSFLAGS_NO_WILD_ENCOUNTERS_F);
     // RET;
-    wram->wStatusFlags &= (1 << STATUSFLAGS_NO_WILD_ENCOUNTERS_F) ^ 0xff;
+    gPlayer.statusFlags &= (1 << STATUSFLAGS_NO_WILD_ENCOUNTERS_F) ^ 0xff;
 }
 
 // UNUSED

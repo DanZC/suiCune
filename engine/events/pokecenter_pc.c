@@ -61,7 +61,7 @@ static uint8_t PokemonCenterPC_ChooseWhichPCListToUse(void) {
     // AND_A_A;
     // LD_A(PCPC_BEFORE_HOF);
     // RET_Z ;
-    else if(wram->wHallOfFameCount == 0)
+    else if(gPlayer.hallOfFameCount == 0)
         return PCPC_BEFORE_HOF;
     // LD_A(PCPC_POSTGAME);
     // RET;
@@ -887,7 +887,7 @@ const struct MenuHeader PCItemsMenuData = {
             .rows=4, .cols=8,  // rows, columns
             .format=SCROLLINGMENU_ITEMS_QUANTITY,  // item format
             //dbw ['0', 'wNumPCItems']
-            .list = wram_ptr(wNumPCItems),
+            .list = &gPlayer.numPCItems,
             //dba ['PlaceMenuItemName']
             .func1 = PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']

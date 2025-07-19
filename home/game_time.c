@@ -2,11 +2,11 @@
 #include "game_time.h"
 
 void ResetGameTime(void){
-    wram->wGameTimeCap = 0;
-    wram->wGameTimeHours = 0;
-    wram->wGameTimeMinutes = 0;
-    wram->wGameTimeSeconds = 0;
-    wram->wGameTimeFrames = 0;
+    gPlayer.gameTimeCap = 0;
+    gPlayer.gameTimeHours = 0;
+    gPlayer.gameTimeMinutes = 0;
+    gPlayer.gameTimeSeconds = 0;
+    gPlayer.gameTimeFrames = 0;
 }
 
 static void GameTimer_Function(void);
@@ -49,21 +49,21 @@ static void GameTimer_Function(void) {
     // LD_HL(wGameTimeCap);
     // BIT_hl(0);
     // RET_NZ ;
-    if(bit_test(wram->wGameTimeCap, 0))
+    if(bit_test(gPlayer.gameTimeCap, 0))
         return;
 
 //  +1 frame
     // LD_HL(wGameTimeFrames);
     // LD_A_hl;
     // INC_A;
-    uint8_t frame = wram->wGameTimeFrames + 1;
+    uint8_t frame = gPlayer.gameTimeFrames + 1;
 
     // CP_A(60);  // frames/second
     // IF_NC goto second;
     if(frame < 60)
     {
         // LD_hl_A;
-        wram->wGameTimeFrames = frame;
+        gPlayer.gameTimeFrames = frame;
 
         // RET;
         return;
@@ -71,13 +71,13 @@ static void GameTimer_Function(void) {
 
     // XOR_A_A;
     // LD_hl_A;
-    wram->wGameTimeFrames = 0;
+    gPlayer.gameTimeFrames = 0;
 
 //  +1 second    
     // LD_HL(wGameTimeSeconds);
     // LD_A_hl;
     // INC_A;
-    uint8_t seconds = wram->wGameTimeSeconds + 1;
+    uint8_t seconds = gPlayer.gameTimeSeconds + 1;
 
     // CP_A(60);  // seconds/minute
     // IF_NC goto minute;
@@ -85,19 +85,19 @@ static void GameTimer_Function(void) {
     {
         // LD_hl_A;
         // RET;
-        wram->wGameTimeSeconds = seconds;
+        gPlayer.gameTimeSeconds = seconds;
         return;
     }
 
     // XOR_A_A;
     // LD_hl_A;
-    wram->wGameTimeSeconds = 0;
+    gPlayer.gameTimeSeconds = 0;
 
 //  +1 minute
     // LD_HL(wGameTimeMinutes);
     // LD_A_hl;
     // INC_A;
-    uint8_t minutes = wram->wGameTimeMinutes + 1;
+    uint8_t minutes = gPlayer.gameTimeMinutes + 1;
 
     // CP_A(60);  // minutes/hour
     // IF_NC goto hour;
@@ -105,13 +105,13 @@ static void GameTimer_Function(void) {
     {
         // LD_hl_A;
         // RET;
-        wram->wGameTimeMinutes = minutes;
+        gPlayer.gameTimeMinutes = minutes;
         return;
     }
 
     // XOR_A_A;
     // LD_hl_A;
-    wram->wGameTimeMinutes = 0;
+    gPlayer.gameTimeMinutes = 0;
 
 //  +1 hour
     // LD_A_addr(wGameTimeHours);
@@ -119,7 +119,7 @@ static void GameTimer_Function(void) {
     // LD_A_addr(wGameTimeHours + 1);
     // LD_L_A;
     // INC_HL;
-    uint16_t hours = wram->wGameTimeHours + 1;
+    uint16_t hours = gPlayer.gameTimeHours + 1;
 
 //  Cap the timer after 1000 hours.
     // LD_A_H;
@@ -134,15 +134,15 @@ static void GameTimer_Function(void) {
     {
         // LD_HL(wGameTimeCap);
         // SET_hl(0);
-        wram->wGameTimeCap |= 1;
+        gPlayer.gameTimeCap |= 1;
 
         // LD_A(59);  // 999:59:59.00
         // LD_addr_A(wGameTimeMinutes);
         // LD_addr_A(wGameTimeSeconds);
         // RET;
         // 999:59:59.00
-        wram->wGameTimeMinutes = 59;
-        wram->wGameTimeSeconds = 59;
+        gPlayer.gameTimeMinutes = 59;
+        gPlayer.gameTimeSeconds = 59;
         return;
     }
 
@@ -150,5 +150,5 @@ static void GameTimer_Function(void) {
     // LD_addr_A(wGameTimeHours);
     // LD_A_L;
     // LD_addr_A(wGameTimeHours + 1);
-    wram->wGameTimeHours = hours;
+    gPlayer.gameTimeHours = hours;
 }

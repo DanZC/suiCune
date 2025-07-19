@@ -133,7 +133,7 @@ RequestNumber:
 Rematch:
     scall_local(RematchStd);
     winlosstext(YoungsterJoey1BeatenText, 0)
-    readmem(wram_ptr(wJoeyFightCount))
+    readmem(&gPlayer.JoeyFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -155,28 +155,28 @@ LoadFight0:
     loadtrainer(YOUNGSTER, JOEY1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJoeyFightCount), 1)
+    loadmem(&gPlayer.JoeyFightCount, 1)
     clearflag(ENGINE_JOEY_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(YOUNGSTER, JOEY2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJoeyFightCount), 2)
+    loadmem(&gPlayer.JoeyFightCount, 2)
     clearflag(ENGINE_JOEY_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(YOUNGSTER, JOEY3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJoeyFightCount), 3)
+    loadmem(&gPlayer.JoeyFightCount, 3)
     clearflag(ENGINE_JOEY_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(YOUNGSTER, JOEY4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wJoeyFightCount), 4)
+    loadmem(&gPlayer.JoeyFightCount, 4)
     clearflag(ENGINE_JOEY_READY_FOR_REMATCH)
     s_end
 LoadFight4:

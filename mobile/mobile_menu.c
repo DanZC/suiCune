@@ -17,6 +17,7 @@
 #include "../home/gfx.h"
 #include "../home/sram.h"
 #include "../home/joypad.h"
+#include "../util/serialize.h"
 #include "../data/text/common.h"
 
 bool MainMenu_Mobile(void){
@@ -283,11 +284,13 @@ void Function4a0c2(void){
     // LD_A(BANK(sPlayerData));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asPlayerData));
+    struct PlayerData pd;
+    Deserialize_PlayerData(&pd, (const uint8_t *)GBToRAMAddr(sPlayerData));
     // LD_HL(sPlayerData + wPlayerName - wPlayerData);
     // LD_DE(wPlayerName);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + wPlayerName - wPlayerData), NAME_LENGTH);
+    CopyBytes(gPlayer.playerName, pd.playerName, NAME_LENGTH);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // FARCALL(av_LoadData);
@@ -973,16 +976,16 @@ void Function4a492(void){
 bool MainMenu_MobileStudium(void){
     // LD_A_addr(wStartDay);
     // LD_B_A;
-    uint8_t day = wram->wStartDay;
+    uint8_t day = gPlayer.startDay;
     // LD_A_addr(wStartHour);
     // LD_C_A;
-    uint8_t hour = wram->wStartHour;
+    uint8_t hour = gPlayer.startHour;
     // LD_A_addr(wStartMinute);
     // LD_D_A;
-    uint8_t min = wram->wStartMinute;
+    uint8_t min = gPlayer.startMinute;
     // LD_A_addr(wStartSecond);
     // LD_E_A;
-    uint8_t sec = wram->wStartSecond;
+    uint8_t sec = gPlayer.startSecond;
     // PUSH_BC;
     // PUSH_DE;
     // FARCALL(aMobileStudium);
@@ -993,16 +996,16 @@ bool MainMenu_MobileStudium(void){
     // POP_BC;
     // LD_A_B;
     // LD_addr_A(wStartDay);
-    wram->wStartDay = day;
+    gPlayer.startDay = day;
     // LD_A_C;
     // LD_addr_A(wStartHour);
-    wram->wStartHour = hour;
+    gPlayer.startHour = hour;
     // LD_A_D;
     // LD_addr_A(wStartMinute);
-    wram->wStartMinute = min;
+    gPlayer.startMinute = min;
     // LD_A_E;
     // LD_addr_A(wStartSecond);
-    wram->wStartSecond = sec;
+    gPlayer.startSecond = sec;
     // RET;
     return false;
 }

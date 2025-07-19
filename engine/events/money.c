@@ -237,7 +237,7 @@ bool GiveCoins(const uint8_t* bc){
     static const uint8_t maxcoins[] = { HIGH(MAX_COINS), LOW(MAX_COINS) };
     // LD_A(2);
     // LD_DE(wCoins);
-    uint8_t* de = (uint8_t*)&wram->wCoins;
+    uint8_t* de = (uint8_t*)&gPlayer.coins;
     // CALL(aAddFunds);
     AddFunds(de, bc, 2);
     // LD_A(2);
@@ -268,7 +268,7 @@ bool TakeCoins(const uint8_t* bc){
     // LD_A(2);
     // LD_DE(wCoins);
     // CALL(aSubtractFunds);
-    bool carry = SubtractFunds((uint8_t*)&wram->wCoins, bc, 2);
+    bool carry = SubtractFunds((uint8_t*)&gPlayer.coins, bc, 2);
     // IF_NC goto okay;
     if(carry) {
     // leave with 0 coins
@@ -276,7 +276,7 @@ bool TakeCoins(const uint8_t* bc){
         // LD_de_A;
         // INC_DE;
         // LD_de_A;
-        wram->wCoins = 0;
+        gPlayer.coins = 0;
         // SCF;
         // RET;
         return true;
@@ -291,7 +291,7 @@ bool TakeCoins(const uint8_t* bc){
 u8_flag_s CheckCoins(const uint8_t* bc){
     // LD_A(2);
     // LD_DE(wCoins);
-    uint8_t* de = (uint8_t*)&wram->wCoins;
+    uint8_t* de = (uint8_t*)&gPlayer.coins;
     // JP(mCompareFunds);
     return CompareFunds(de, bc, 2);
 }

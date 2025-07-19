@@ -96,7 +96,7 @@ bool TryAddMonToParty(species_t species, uint8_t level){
     // LD_HL(wPlayerName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(ot, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(ot, gPlayer.playerName, NAME_LENGTH);
 // Only initialize the nickname for party mon
     // LD_A_addr(wMonType);
     // AND_A_A;
@@ -215,7 +215,7 @@ bool GeneratePartyMonStats(struct PartyMon* hl, species_t species, uint8_t level
     // LD_A_addr(wPlayerID + 1);
     // LD_de_A;
     // INC_DE;
-    hl->mon.id = wram->wPlayerID;
+    hl->mon.id = gPlayer.playerID;
 
 // Initialize Exp.
     // PUSH_DE;
@@ -1358,7 +1358,7 @@ bool SendMonIntoBox(void){
     // LD_DE(sBoxMonOTs);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(box.monOT[0], wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(box.monOT[0], gPlayer.playerName, NAME_LENGTH);
 
     // LD_A_addr(wCurPartySpecies);
     // LD_addr_A(wNamedObjectIndex);
@@ -1384,7 +1384,7 @@ bool SendMonIntoBox(void){
     // INC_DE;
     // LD_A_hl;
     // LD_de_A;
-    boxmon->id = wram->wPlayerID;
+    boxmon->id = gPlayer.playerID;
     // INC_DE;
     // PUSH_DE;
     // LD_A_addr(wCurPartyLevel);

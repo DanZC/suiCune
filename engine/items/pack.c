@@ -820,10 +820,10 @@ void RegisterItem(void){
     // AND_A(REGISTERED_NUMBER);
     // OR_A_B;
     // LD_addr_A(wWhichRegisteredItem);
-    wram->wWhichRegisteredItem = ((wram->wCurItemQuantity + 1) & REGISTERED_NUMBER) | ((wram->wCurPocket << 6) & REGISTERED_POCKET);
+    gPlayer.whichRegisteredItem = ((wram->wCurItemQuantity + 1) & REGISTERED_NUMBER) | ((wram->wCurPocket << 6) & REGISTERED_POCKET);
     // LD_A_addr(wCurItem);
     // LD_addr_A(wRegisteredItem);
-    wram->wRegisteredItem = wram->wCurItem;
+    gPlayer.registeredItem = wram->wCurItem;
     // CALL(aPack_GetItemName);
     Pack_GetItemName(wram->wCurItem);
     // LD_DE(SFX_FULL_HEAL);
@@ -2179,7 +2179,7 @@ const struct MenuHeader ItemsPocketMenuHeader = {
             //db ['SCROLLINGMENU_ITEMS_QUANTITY'];  // item format
             .format = SCROLLINGMENU_ITEMS_QUANTITY,
         //dbw ['0', 'wNumItems']
-            .list = wram_ptr(wNumItems),
+            .list = &gPlayer.numItems,
         //dba ['PlaceMenuItemName']
             .func1 = PlaceMenuItemName,
         //dba ['PlaceMenuItemQuantity']
@@ -2203,7 +2203,7 @@ const struct MenuHeader PC_Mart_ItemsPocketMenuHeader = {
             .rows=5, .cols=8,  // rows, columns
             .format=SCROLLINGMENU_ITEMS_QUANTITY,  // item format
             //dbw ['0', 'wNumItems']
-            .list=wram_ptr(wNumItems),
+            .list=&gPlayer.numItems,
             //dba ['PlaceMenuItemName']
             .func1=PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
@@ -2227,7 +2227,7 @@ const struct MenuHeader KeyItemsPocketMenuHeader = {
             .rows = 5, .cols = 8,
             .format = SCROLLINGMENU_ITEMS_NORMAL,  // item format
             //dbw ['0', 'wNumKeyItems']
-            .list = wram_ptr(wNumKeyItems),
+            .list = &gPlayer.numKeyItems,
             //dba ['PlaceMenuItemName']
             .func1 = PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
@@ -2251,7 +2251,7 @@ const struct MenuHeader PC_Mart_KeyItemsPocketMenuHeader = {
             .rows=5, .cols=8,  // rows, columns
             .format=SCROLLINGMENU_ITEMS_NORMAL,  // item format
             //dbw ['0', 'wNumKeyItems']
-            .list = wram_ptr(wNumKeyItems),
+            .list = &gPlayer.numKeyItems,
             //dba ['PlaceMenuItemName']
             .func1=PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
@@ -2274,7 +2274,7 @@ const struct MenuHeader BallsPocketMenuHeader = {
             .rows=5, .cols=8,  // rows, columns
             .format=SCROLLINGMENU_ITEMS_QUANTITY,  // item format
             //dbw ['0', 'wNumBalls']
-            .list = wram_ptr(wNumBalls),
+            .list = &gPlayer.numBalls,
             //dba ['PlaceMenuItemName']
             .func1 = PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']
@@ -2296,7 +2296,7 @@ const struct MenuHeader PC_Mart_BallsPocketMenuHeader = {
             .rows=5, .cols=8,  // rows, columns
             .format=SCROLLINGMENU_ITEMS_QUANTITY,  // item format
             //dbw ['0', 'wNumBalls']
-            .list = wram_ptr(wNumBalls),
+            .list = &gPlayer.numBalls,
             //dba ['PlaceMenuItemName']
             .func1=PlaceMenuItemName,
             //dba ['PlaceMenuItemQuantity']

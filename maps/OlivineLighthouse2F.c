@@ -102,7 +102,7 @@ AskForNumber:
 WantsBattle:
     scall_local(Rematch);
     winlosstext(SailorHueyBeatenText, 0)
-    readmem(wram_ptr(wHueyFightCount))
+    readmem(&gPlayer.HueyFightCount)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
@@ -120,21 +120,21 @@ LoadFight0:
     loadtrainer(SAILOR, HUEY1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wHueyFightCount), 1)
+    loadmem(&gPlayer.HueyFightCount, 1)
     clearflag(ENGINE_HUEY_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(SAILOR, HUEY2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wHueyFightCount), 2)
+    loadmem(&gPlayer.HueyFightCount, 2)
     clearflag(ENGINE_HUEY_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(SAILOR, HUEY3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wHueyFightCount), 3)
+    loadmem(&gPlayer.HueyFightCount, 3)
     clearflag(ENGINE_HUEY_READY_FOR_REMATCH)
     s_end
 LoadFight3:

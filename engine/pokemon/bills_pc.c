@@ -869,7 +869,7 @@ void v_MovePKMNWithoutMail(void){
     // AND_A(0xf);
     // INC_A;
     // LD_addr_A(wBillsPC_LoadedBox);
-    wram->wBillsPC_LoadedBox = (wram->wCurBox & 0xf) + 1;
+    wram->wBillsPC_LoadedBox = (gPlayer.curBox & 0xf) + 1;
     // CALL(aDelayFrame);
     DelayFrame();
 
@@ -1612,7 +1612,7 @@ void BillsPC_BoxName(void){
         if(box == NUM_BOXES + 1) {
             // LD_A_addr(wCurBox);
             // INC_A;
-            box = wram->wCurBox + 1;
+            box = gPlayer.curBox + 1;
         }
     // gotbox:
         // DEC_A;
@@ -1621,7 +1621,7 @@ void BillsPC_BoxName(void){
         // CALL(aAddNTimes);
         // LD_E_L;
         // LD_D_H;
-        de = wram->wBoxNames + (BOX_NAME_LENGTH * (box - 1));
+        de = gPlayer.boxNames + (BOX_NAME_LENGTH * (box - 1));
         // goto print;
     }
     else {
@@ -2959,7 +2959,7 @@ void MovePKMNWitoutMail_InsertMon(void){
     // POP_HL;
     // LD_A_addr(wCurBox);
     // PUSH_AF;
-    uint8_t box = wram->wCurBox;
+    uint8_t box = gPlayer.curBox;
     // LD_BC(0);
     // LD_A_addr(wBillsPC_BackupLoadedBox);
     // AND_A_A;
@@ -3459,7 +3459,7 @@ uint8_t* GetBoxName(uint8_t a){
     // LD_D_H;
     // LD_E_L;
     // RET;
-    return wram->wBoxNames + (BOX_NAME_LENGTH * a);
+    return gPlayer.boxNames + (BOX_NAME_LENGTH * a);
 }
 
 void BillsPC_PrintBoxCountAndCapacity(void){
@@ -3518,7 +3518,7 @@ uint8_t GetBoxCount(void){
     // CP_A_C;
     uint8_t sel = wram->wMenuSelection - 1;
     // IF_Z goto activebox;
-    if(sel == wram->wCurBox) {
+    if(sel == gPlayer.curBox) {
     // activebox:
         // LD_A(BANK(sBoxCount));
         // LD_B_A;
@@ -3554,7 +3554,7 @@ uint8_t GetBoxCount(void){
     // LD_A_addr(wSavedAtLeastOnce);
     // AND_A_A;
     // IF_Z goto newfile;
-    if(wram->wSavedAtLeastOnce == 0) {
+    if(gPlayer.savedAtLeastOnce == 0) {
     // newfile:
         // XOR_A_A;
         // RET;
@@ -3581,7 +3581,7 @@ void BillsPC_PrintBoxName(void){
     // CALL(aGetBoxName);
     // hlcoord(11, 2, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(GetBoxName(wram->wCurBox & 0xf), coord(11, 2, wram->wTilemap));
+    PlaceStringSimple(GetBoxName(gPlayer.curBox & 0xf), coord(11, 2, wram->wTilemap));
     // RET;
 }
 
@@ -3628,7 +3628,7 @@ void BillsPC_ChangeBoxSubmenu(void){
         // LD_A_addr(wCurBox);
         // CP_A_E;
         // RET_Z ;
-        if(wram->wMenuSelection - 1 == wram->wCurBox)
+        if(wram->wMenuSelection - 1 == gPlayer.curBox)
             return;
         // FARCALL(aChangeBoxSaveGame);
         ChangeBoxSaveGame(wram->wMenuSelection - 1);

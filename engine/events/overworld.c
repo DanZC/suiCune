@@ -464,7 +464,7 @@ static uint8_t FlashFunction_CheckUseFlash(void) {
     // FARCALL(aSpecialAerodactylChamber);
     // POP_HL;
     // IF_C goto useflash;
-    if(!SpecialAerodactylChamber() && wram->wTimeOfDayPalset != DARKNESS_PALSET) {
+    if(!SpecialAerodactylChamber() && gPlayer.timeOfDayPalset != DARKNESS_PALSET) {
         // LD_A_addr(wTimeOfDayPalset);
         // CP_A(DARKNESS_PALSET);
         // IF_NZ goto notadarkcave;
@@ -544,7 +544,7 @@ static uint8_t SurfFunction_TrySurf(void) {
     // LD_HL(wBikeFlags);
     // BIT_hl(BIKEFLAGS_ALWAYS_ON_BIKE_F);
     // IF_NZ goto cannotsurf;
-    if(bit_test(wram->wBikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F)) {
+    if(bit_test(gPlayer.bikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F)) {
     // cannotsurf:
         // LD_A(0x2);
         // RET;
@@ -555,7 +555,7 @@ static uint8_t SurfFunction_TrySurf(void) {
     // IF_Z goto alreadyfail;
     // CP_A(PLAYER_SURF_PIKA);
     // IF_Z goto alreadyfail;
-    if(wram->wPlayerState == PLAYER_SURF || wram->wPlayerState == PLAYER_SURF_PIKA) {
+    if(gPlayer.playerState == PLAYER_SURF || gPlayer.playerState == PLAYER_SURF_PIKA) {
     // alreadyfail:
         // LD_A(0x3);
         // RET;
@@ -720,7 +720,7 @@ static bool CheckDirection(void){
     // LD_D(0);
     // LD_HL(mCheckDirection_Directions);
     // ADD_HL_DE;
-    uint8_t dir = Directions[(wram->wPlayerStruct.facing & 0b00001100) >> 2];
+    uint8_t dir = Directions[(gPlayer.playerStruct.facing & 0b00001100) >> 2];
 
 //  Can you walk in this direction?
     // LD_A_addr(wTilePermissions);
@@ -747,7 +747,7 @@ bool TrySurfOW(void){
     // IF_Z goto quit;
     // CP_A(PLAYER_SURF);
     // IF_Z goto quit;
-    if(wram->wPlayerState == PLAYER_SURF_PIKA || wram->wPlayerState == PLAYER_SURF)
+    if(gPlayer.playerState == PLAYER_SURF_PIKA || gPlayer.playerState == PLAYER_SURF)
         return false;
 
 //  Must be facing water.
@@ -779,7 +779,7 @@ bool TrySurfOW(void){
     // LD_HL(wBikeFlags);
     // BIT_hl(BIKEFLAGS_ALWAYS_ON_BIKE_F);
     // IF_NZ goto quit;
-    if(bit_test(wram->wBikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F))
+    if(bit_test(gPlayer.bikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F))
         return false;
 
     // CALL(aGetSurfType);
@@ -995,7 +995,7 @@ static bool CheckMapCanWaterfall(void){
 // failed:
     // SCF;
     // RET;
-    return ((wram->wPlayerStruct.facing & 0xc) == FACE_UP && CheckWaterfallTile(wram->wTileUp))? true: false;
+    return ((gPlayer.playerStruct.facing & 0xc) == FACE_UP && CheckWaterfallTile(wram->wTileUp))? true: false;
 }
 
 bool Script_WaterfallFromMenu(script_s* s){
@@ -1013,7 +1013,7 @@ static void CheckContinueWaterfall(void) {
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckWaterfallTile);
     // RET_Z ;
-    if(CheckWaterfallTile(wram->wPlayerStruct.nextTile))
+    if(CheckWaterfallTile(gPlayer.playerStruct.nextTile))
         return;
     // FARCALL(aStubbedTrainerRankings_Waterfall);
     // LD_A(0x1);
@@ -1452,7 +1452,7 @@ void StrengthFunction(void){
 void SetStrengthFlag(void){
     // LD_HL(wBikeFlags);
     // SET_hl(BIKEFLAGS_STRENGTH_ACTIVE_F);
-    bit_set(wram->wBikeFlags, BIKEFLAGS_STRENGTH_ACTIVE_F);
+    bit_set(gPlayer.bikeFlags, BIKEFLAGS_STRENGTH_ACTIVE_F);
     // LD_A_addr(wCurPartyMon);
     // LD_E_A;
     // LD_D(0);
@@ -1555,7 +1555,7 @@ void TryStrengthOW(void){
     // LD_HL(wBikeFlags);
     // BIT_hl(BIKEFLAGS_STRENGTH_ACTIVE_F);
     // IF_Z goto already_using;
-    if(bit_test(wram->wBikeFlags, BIKEFLAGS_STRENGTH_ACTIVE_F)) {
+    if(bit_test(gPlayer.bikeFlags, BIKEFLAGS_STRENGTH_ACTIVE_F)) {
         // LD_A(2);
         // goto done;
         wram->wScriptVar = 2;
@@ -2056,7 +2056,7 @@ static uint8_t FishFunction_TryFish(void) {
     // CALL(aGetTileCollision);
     // CP_A(WATER_TILE);
     // IF_Z goto facingwater;
-    if(wram->wPlayerState == PLAYER_SURF || wram->wPlayerState == PLAYER_SURF_PIKA
+    if(gPlayer.playerState == PLAYER_SURF || gPlayer.playerState == PLAYER_SURF_PIKA
     || GetTileCollision(GetFacingTileCoord().tileId) != WATER_TILE) {
     // fail:
         // LD_A(0x3);
@@ -2272,7 +2272,7 @@ void Fishing_CheckFacingUp(void){
 // up:
     // LD_addr_A(wScriptVar);
     // RET;
-    wram->wScriptVar = ((wram->wPlayerStruct.facing & 0xc) == OW_UP)? TRUE: FALSE;
+    wram->wScriptVar = ((gPlayer.playerStruct.facing & 0xc) == OW_UP)? TRUE: FALSE;
 }
 
 bool Script_FishCastRod(script_s* s){
@@ -2300,7 +2300,7 @@ void PutTheRodAway(void){
     hram.hBGMapMode = BGMAPMODE_NONE;
     // LD_A(0x1);
     // LD_addr_A(wPlayerAction);
-    wram->wPlayerStruct.action = 0x1;
+    gPlayer.playerStruct.action = 0x1;
     // CALL(aUpdateSprites);
     UpdateSprites();
     // CALL(aUpdatePlayerSprite);
@@ -2374,7 +2374,7 @@ static uint8_t BikeFunction_TryBike(void) {
     // LD_A_addr(wPlayerState);
     // CP_A(PLAYER_NORMAL);
     // IF_Z goto GetOnBike;
-    if(wram->wPlayerState == PLAYER_NORMAL) {
+    if(gPlayer.playerState == PLAYER_NORMAL) {
     // GetOnBike:
         // LD_HL(mScript_GetOnBike);
         // LD_DE(mScript_GetOnBike_Register);
@@ -2403,13 +2403,13 @@ static uint8_t BikeFunction_TryBike(void) {
     }
     // CP_A(PLAYER_BIKE);
     // IF_Z goto GetOffBike;
-    else if(wram->wPlayerState == PLAYER_BIKE) {
+    else if(gPlayer.playerState == PLAYER_BIKE) {
     // GetOffBike:
         // LD_HL(wBikeFlags);
         // BIT_hl(BIKEFLAGS_ALWAYS_ON_BIKE_F);
         // IF_NZ goto CantGetOffBike;
         Script_fn_t script;
-        if(!bit_test(wram->wBikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F)) {
+        if(!bit_test(gPlayer.bikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F)) {
             // LD_HL(mScript_GetOffBike);
             // LD_DE(mScript_GetOffBike_Register);
             // CALL(aBikeFunction_CheckIfRegistered);

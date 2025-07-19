@@ -81,20 +81,20 @@ void HalveMoney(void){
 
 //  Halve the player's money.
     // LD_HL(wMoney);
-    uint32_t money = (wram->wMoney[0] << 16) | (wram->wMoney[1] << 8) | (wram->wMoney[2]);
+    uint32_t money = (gPlayer.money[0] << 16) | (gPlayer.money[1] << 8) | (gPlayer.money[2]);
     // LD_A_hl;
     // SRL_A;
     // LD_hli_A;
     money /= 2;
-    wram->wMoney[0] = (money >> 16) & 0xff;
+    gPlayer.money[0] = (money >> 16) & 0xff;
     // LD_A_hl;
     // RRA;
     // LD_hli_A;
-    wram->wMoney[1] = (money >> 8) & 0xff;
+    gPlayer.money[1] = (money >> 8) & 0xff;
     // LD_A_hl;
     // RRA;
     // LD_hl_A;
-    wram->wMoney[2] = money & 0xff;
+    gPlayer.money[2] = money & 0xff;
     // RET;
 }
 

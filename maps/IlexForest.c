@@ -87,7 +87,7 @@ bool IlexForest_MapScripts_FarfetchdCallback(script_s* s) {
     SCRIPT_BEGIN
     checkevent(EVENT_GOT_HM01_CUT)
     iftrue_jump(IlexForest_MapScripts_Static)
-    readmem(wram_ptr(wFarfetchdPosition))
+    readmem(&gPlayer.farfetchdPosition)
     ifequal_jump(1, IlexForest_MapScripts_PositionOne)
     ifequal_jump(2, IlexForest_MapScripts_PositionTwo)
     ifequal_jump(3, IlexForest_MapScripts_PositionThree)
@@ -194,7 +194,7 @@ DoneFarfetchd:
 }
 bool IlexForestFarfetchdScript(script_s* s) {
     SCRIPT_BEGIN
-    readmem(wram_ptr(wFarfetchdPosition))
+    readmem(&gPlayer.farfetchdPosition)
     ifequal(1, Position1)
     ifequal(2, Position2)
     ifequal(3, Position3)
@@ -218,7 +218,7 @@ Position1:
     moveobject(ILEXFOREST_FARFETCHD, 15, 25)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 2)
+    loadmem(&gPlayer.farfetchdPosition, 2)
     s_end
 Position2:
     scall_local(CryAndCheckFacing);
@@ -227,14 +227,14 @@ Position2:
     moveobject(ILEXFOREST_FARFETCHD, 20, 24)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 3)
+    loadmem(&gPlayer.farfetchdPosition, 3)
     s_end
 Position2_Down:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetchd_Pos2_Pos8)
     moveobject(ILEXFOREST_FARFETCHD, 15, 29)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 8)
+    loadmem(&gPlayer.farfetchdPosition, 8)
     s_end
 Position3:
     scall_local(CryAndCheckFacing);
@@ -243,14 +243,14 @@ Position3:
     moveobject(ILEXFOREST_FARFETCHD, 29, 22)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 4)
+    loadmem(&gPlayer.farfetchdPosition, 4)
     s_end
 Position3_Left:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetchd_Pos3_Pos2)
     moveobject(ILEXFOREST_FARFETCHD, 15, 25)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 2)
+    loadmem(&gPlayer.farfetchdPosition, 2)
     s_end
 Position4:
     scall_local(CryAndCheckFacing);
@@ -259,14 +259,14 @@ Position4:
     moveobject(ILEXFOREST_FARFETCHD, 28, 31)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 5)
+    loadmem(&gPlayer.farfetchdPosition, 5)
     s_end
 Position4_Up:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetchd_Pos4_Pos3)
     moveobject(ILEXFOREST_FARFETCHD, 20, 24)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 3)
+    loadmem(&gPlayer.farfetchdPosition, 3)
     s_end
 Position5:
     scall_local(CryAndCheckFacing);
@@ -277,28 +277,28 @@ Position5:
     moveobject(ILEXFOREST_FARFETCHD, 24, 35)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 6)
+    loadmem(&gPlayer.farfetchdPosition, 6)
     s_end
 Position5_Left:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetchd_Pos5_Pos7)
     moveobject(ILEXFOREST_FARFETCHD, 22, 31)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 7)
+    loadmem(&gPlayer.farfetchdPosition, 7)
     s_end
 Position5_Up:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetched_Pos5_Pos4_Up)
     moveobject(ILEXFOREST_FARFETCHD, 29, 22)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 4)
+    loadmem(&gPlayer.farfetchdPosition, 4)
     s_end
 Position5_Right:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetched_Pos5_Pos4_Right)
     moveobject(ILEXFOREST_FARFETCHD, 29, 22)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 4)
+    loadmem(&gPlayer.farfetchdPosition, 4)
     s_end
 Position6:
     scall_local(CryAndCheckFacing);
@@ -307,14 +307,14 @@ Position6:
     moveobject(ILEXFOREST_FARFETCHD, 22, 31)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 7)
+    loadmem(&gPlayer.farfetchdPosition, 7)
     s_end
 Position6_Right:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetched_Pos6_Pos5)
     moveobject(ILEXFOREST_FARFETCHD, 28, 31)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 5)
+    loadmem(&gPlayer.farfetchdPosition, 5)
     s_end
 Position7:
     scall_local(CryAndCheckFacing);
@@ -324,21 +324,21 @@ Position7:
     moveobject(ILEXFOREST_FARFETCHD, 15, 29)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 8)
+    loadmem(&gPlayer.farfetchdPosition, 8)
     s_end
 Position7_Left:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetched_Pos7_Pos6)
     moveobject(ILEXFOREST_FARFETCHD, 24, 35)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 6)
+    loadmem(&gPlayer.farfetchdPosition, 6)
     s_end
 Position7_Down:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetched_Pos7_Pos5)
     moveobject(ILEXFOREST_FARFETCHD, 28, 31)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 5)
+    loadmem(&gPlayer.farfetchdPosition, 5)
     s_end
 Position8:
     scall_local(CryAndCheckFacing);
@@ -349,14 +349,14 @@ Position8:
     moveobject(ILEXFOREST_FARFETCHD, 10, 35)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 9)
+    loadmem(&gPlayer.farfetchdPosition, 9)
     s_end
 Position8_Right:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetched_Pos8_Pos7)
     moveobject(ILEXFOREST_FARFETCHD, 22, 31)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 7)
+    loadmem(&gPlayer.farfetchdPosition, 7)
     s_end
 Position8_Up:
 Position8_Left:
@@ -364,7 +364,7 @@ Position8_Left:
     moveobject(ILEXFOREST_FARFETCHD, 15, 25)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 2)
+    loadmem(&gPlayer.farfetchdPosition, 2)
     s_end
 Position9:
     scall_local(CryAndCheckFacing);
@@ -374,7 +374,7 @@ Position9:
     moveobject(ILEXFOREST_FARFETCHD, 6, 28)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 10)
+    loadmem(&gPlayer.farfetchdPosition, 10)
     appear(ILEXFOREST_BLACK_BELT)
     setevent(EVENT_CHARCOAL_KILN_BOSS)
     setevent(EVENT_HERDED_FARFETCHD)
@@ -384,14 +384,14 @@ Position9_Right:
     moveobject(ILEXFOREST_FARFETCHD, 15, 29)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 8)
+    loadmem(&gPlayer.farfetchdPosition, 8)
     s_end
 Position9_Down:
     applymovement(ILEXFOREST_FARFETCHD, MovementData_Farfetched_Pos9_Pos8_Down)
     moveobject(ILEXFOREST_FARFETCHD, 15, 29)
     disappear(ILEXFOREST_FARFETCHD)
     appear(ILEXFOREST_FARFETCHD)
-    loadmem(wram_ptr(wFarfetchdPosition), 8)
+    loadmem(&gPlayer.farfetchdPosition, 8)
     s_end
 Position10:
     faceplayer

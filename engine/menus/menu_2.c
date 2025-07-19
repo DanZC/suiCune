@@ -84,7 +84,7 @@ void PlaceMoneyTextbox(void){
     // LD_DE(wMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum(MenuBoxCoord2Tile() + SCREEN_WIDTH + 1, &wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(MenuBoxCoord2Tile() + SCREEN_WIDTH + 1, &gPlayer.money, PRINTNUM_MONEY | 3, 6);
     // RET;
 }
 
@@ -125,7 +125,7 @@ void DisplayCoinCaseBalance(void){
     // LD_BC((2 << 8) | 4);
     // hlcoord(13, 1, wTilemap);
     // CALL(aPrintNum);
-    PrintNum(coord(13, 1, wram->wTilemap), &wram->wCoins, 2, 4);
+    PrintNum(coord(13, 1, wram->wTilemap), &gPlayer.coins, 2, 4);
     // RET;
 }
 
@@ -143,7 +143,7 @@ void DisplayMoneyAndCoinBalance(void){
     // LD_DE(wMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum(coord(12, 1, wram->wTilemap), wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(coord(12, 1, wram->wTilemap), gPlayer.money, PRINTNUM_MONEY | 3, 6);
     // hlcoord(6, 3, wTilemap);
     // LD_DE(mCoinString);
     // CALL(aPlaceString);
@@ -152,7 +152,7 @@ void DisplayMoneyAndCoinBalance(void){
     // LD_DE(wCoins);
     // LD_BC((2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum(coord(15, 3, wram->wTilemap), &wram->wCoins, 2, 4);
+    PrintNum(coord(15, 3, wram->wTilemap), &gPlayer.coins, 2, 4);
     // RET;
 }
 
@@ -226,7 +226,7 @@ void StartMenu_PrintBugContestStatus(void){
     // LD_DE(wParkBallsRemaining);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum(coord(8, 5, wram->wTilemap), &wram->wParkBallsRemaining, PRINTNUM_LEFTALIGN | 1, 2);
+    PrintNum(coord(8, 5, wram->wTilemap), &gPlayer.parkBallsRemaining, PRINTNUM_LEFTALIGN | 1, 2);
     // hlcoord(1, 1, wTilemap);
     // LD_DE(mStartMenu_PrintBugContestStatus_CaughtString);
     // CALL(aPlaceString);

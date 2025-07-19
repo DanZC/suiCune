@@ -136,7 +136,7 @@ void ChangeBoxSaveGame(uint8_t box){
         // POP_DE;
         // LD_A_E;
         // LD_addr_A(wCurBox);
-        wram->wCurBox = box;
+        gPlayer.curBox = box;
         // CALL(aLoadBox);
         LoadBox();
         // CALL(aSavedTheGame);
@@ -183,7 +183,7 @@ void MoveMonWOMail_SaveGame(uint8_t e){
     // POP_DE;
     // LD_A_E;
     // LD_addr_A(wCurBox);
-    wram->wCurBox = e;
+    gPlayer.curBox = e;
     // CALL(aLoadBox);
     LoadBox();
     // CALL(aResumeGameLogic);
@@ -200,7 +200,7 @@ void MoveMonWOMail_InsertMon_SaveGame(uint8_t e){
     // POP_DE;
     // LD_A_E;
     // LD_addr_A(wCurBox);
-    wram->wCurBox = e;
+    gPlayer.curBox = e;
     // LD_A(TRUE);
     // LD_addr_A(wSaveFileExists);
     gOptions.saveFileExists = TRUE;
@@ -396,8 +396,10 @@ bool CompareLoadedAndSavedPlayerID(void){
     // LD_A_hli;
     // LD_C_hl;
     // LD_B_A;
-    uint16_t bc = (gb_read(sPlayerData + (wPlayerID - wPlayerData)))
-        | (gb_read(sPlayerData + (wPlayerID - wPlayerData) + 1) << 8);
+    // uint16_t bc = (gb_read(sPlayerData + (wPlayerID - wPlayerData)))
+    //     | (gb_read(sPlayerData + (wPlayerID - wPlayerData) + 1) << 8);
+    struct PlayerData pd;
+    Deserialize_PlayerData(&pd, (const uint8_t *)GBToRAMAddr(sPlayerData));
     // CALL(aCloseSRAM);
     CloseSRAM();
     // LD_A_addr(wPlayerID);
@@ -406,7 +408,7 @@ bool CompareLoadedAndSavedPlayerID(void){
     // LD_A_addr(wPlayerID + 1);
     // CP_A_C;
     // RET;
-    return wram->wPlayerID == bc;
+    return gPlayer.playerID == pd.playerID;
 }
 
 void v_SavingDontTurnOffThePower(void){
@@ -616,7 +618,7 @@ void ErasePreviousSave(void){
     CloseSRAM();
     // LD_A(0x1);
     // LD_addr_A(wSavedAtLeastOnce);
-    wram->wSavedAtLeastOnce = 0x1;
+    gPlayer.savedAtLeastOnce = 0x1;
     // RET;
 }
 
@@ -742,7 +744,7 @@ void HallOfFame_InitSaveIfNeeded(void){
     // LD_A_addr(wSavedAtLeastOnce);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wSavedAtLeastOnce)
+    if(gPlayer.savedAtLeastOnce)
         return;
     // CALL(aErasePreviousSave);
     ErasePreviousSave();
@@ -788,12 +790,13 @@ void SavePlayerData(void){
     // LD_DE(sPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(sPlayerData, wPlayerData, wPlayerDataEnd - wPlayerData);
+    uint8_t* dest = GBToRAMAddr(sPlayerData);
+    Serialize_PlayerData(dest, &gPlayer);
     // LD_HL(wCurMapData);
     // LD_DE(sCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    uint8_t* dest = GBToRAMAddr(sCurMapData);
+    dest = GBToRAMAddr(sCurMapData);
     Serialize_CurMapData(dest, &gCurMapData);
     // JP(mCloseSRAM);
     CloseSRAM();
@@ -876,12 +879,13 @@ void SaveBackupPlayerData(void){
     // LD_DE(sBackupPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(sBackupPlayerData, wPlayerData, wPlayerDataEnd - wPlayerData);
+    uint8_t* dest = GBToRAMAddr(sBackupPlayerData);
+    Serialize_PlayerData(dest, &gPlayer);
     // LD_HL(wCurMapData);
     // LD_DE(sBackupCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    uint8_t* dest = GBToRAMAddr(sBackupCurMapData);
+    dest = GBToRAMAddr(sBackupCurMapData);
     Serialize_CurMapData(dest, &gCurMapData);
     // CALL(aCloseSRAM);
     CloseSRAM();
@@ -1004,6 +1008,7 @@ bool TryLoadSaveFile(void){
 
 void TryLoadSaveData(void){
     PEEK("");
+    struct PlayerData pd;
     // XOR_A_A;  // FALSE
     // LD_addr_A(wSaveFileExists);
     gOptions.saveFileExists = FALSE;
@@ -1016,16 +1021,18 @@ void TryLoadSaveData(void){
         // LD_A(BANK(sPlayerData));
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(asPlayerData));
+        Deserialize_PlayerData(&pd, (const uint8_t *)GBToRAMAddr(sPlayerData));
         // LD_HL(sPlayerData + wStartDay - wPlayerData);
         // LD_DE(wStartDay);
         // LD_BC(8);
         // CALL(aCopyBytes);
-        CopyBytes_GB(wStartDay, sPlayerData + wStartDay - wPlayerData, 8);
+        // CopyBytes_GB(wStartDay, sPlayerData + wStartDay - wPlayerData, 8);
+        CopyBytes(&gPlayer.startDay, &pd.startDay, 8);
         // LD_HL(sPlayerData + wStatusFlags - wPlayerData);
         // LD_DE(wStatusFlags);
         // LD_A_hl;
         // LD_de_A;
-        gb_write(wStatusFlags, gb_read(sPlayerData + wStatusFlags - wPlayerData));
+        gPlayer.statusFlags = pd.statusFlags;
         // CALL(aCloseSRAM);
         CloseSRAM();
         // RET;
@@ -1042,16 +1049,18 @@ void TryLoadSaveData(void){
         // LD_A(BANK(sBackupPlayerData));
         // CALL(aOpenSRAM);
         OpenSRAM(MBANK(asBackupPlayerData));
+        Deserialize_PlayerData(&pd, (const uint8_t *)GBToRAMAddr(sBackupPlayerData));
         // LD_HL(sBackupPlayerData + wStartDay - wPlayerData);
         // LD_DE(wStartDay);
         // LD_BC(8);
         // CALL(aCopyBytes);
-        CopyBytes_GB(wStartDay, sBackupPlayerData + wStartDay - wPlayerData, 8);
+        // CopyBytes_GB(wStartDay, sBackupPlayerData + wStartDay - wPlayerData, 8);
+        CopyBytes(&gPlayer.startDay, &pd.startDay, 8);
         // LD_HL(sBackupPlayerData + wStatusFlags - wPlayerData);
         // LD_DE(wStatusFlags);
         // LD_A_hl;
         // LD_de_A;
-        gb_write(wStatusFlags, gb_read(sBackupPlayerData + wStatusFlags - wPlayerData));
+        gPlayer.statusFlags = pd.statusFlags;
         // CALL(aCloseSRAM);
         CloseSRAM();
         // RET;
@@ -1137,12 +1146,13 @@ void LoadPlayerData(void){
     // LD_DE(wPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(wPlayerData, sPlayerData, wPlayerDataEnd - wPlayerData);
+    const uint8_t* src = GBToRAMAddr(sPlayerData);
+    Deserialize_PlayerData(&gPlayer, src);
     // LD_HL(sCurMapData);
     // LD_DE(wCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    const uint8_t* src = GBToRAMAddr(sCurMapData);
+    src = GBToRAMAddr(sCurMapData);
     Deserialize_CurMapData(&gCurMapData, src);
     // CALL(aCloseSRAM);
     CloseSRAM();
@@ -1217,12 +1227,13 @@ void LoadBackupPlayerData(void){
     // LD_DE(wPlayerData);
     // LD_BC(wPlayerDataEnd - wPlayerData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(wPlayerData, sBackupPlayerData, wPlayerDataEnd - wPlayerData);
+    const uint8_t* src = GBToRAMAddr(sBackupPlayerData);
+    Deserialize_PlayerData(&gPlayer, src);
     // LD_HL(sBackupCurMapData);
     // LD_DE(wCurMapData);
     // LD_BC(wCurMapDataEnd - wCurMapData);
     // CALL(aCopyBytes);
-    const uint8_t* src = GBToRAMAddr(sBackupCurMapData);
+    src = GBToRAMAddr(sBackupCurMapData);
     Deserialize_CurMapData(&gCurMapData, src);
     // CALL(aCloseSRAM);
     CloseSRAM();
@@ -1238,7 +1249,7 @@ void LoadBackupPokemonData(void){
     // LD_DE(wPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(wPokemonData, sBackupPokemonData, wPokemonDataEnd - wPokemonData);
+    Deserialize_PokemonData(&gPokemon, (const uint8_t*)GBToRAMAddr(sBackupPokemonData));
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -1347,10 +1358,10 @@ uint32_t GetBoxAddress(void){
     // LD_A_addr(wCurBox);
     // CP_A(NUM_BOXES);
     // IF_C goto ok;
-    if(wram->wCurBox >= NUM_BOXES) {
+    if(gPlayer.curBox >= NUM_BOXES) {
         // XOR_A_A;
         // LD_addr_A(wCurBox);
-        wram->wCurBox = 0;
+        gPlayer.curBox = 0;
     }
 
 // ok:
@@ -1360,7 +1371,7 @@ uint32_t GetBoxAddress(void){
     // for(int rept = 0; rept < 5; rept++){
     // ADD_HL_DE;
     // }
-    struct BoxAddress ba = BoxAddresses[wram->wCurBox];
+    struct BoxAddress ba = BoxAddresses[gPlayer.curBox];
     // LD_A_hli;
     // PUSH_AF;
     // LD_A_hli;

@@ -83,16 +83,16 @@ void StageRTCTimeForSave(void){
     // LD_HL(wRTC);
     // LD_A_addr(wCurDay);
     // LD_hli_A;
-    wram->wRTC[0] = wram->wCurDay;
+    gPlayer.RTC[0] = gPlayer.curDay;
     // LDH_A_addr(hHours);
     // LD_hli_A;
-    wram->wRTC[1] = hram.hHours;
+    gPlayer.RTC[1] = hram.hHours;
     // LDH_A_addr(hMinutes);
     // LD_hli_A;
-    wram->wRTC[2] = hram.hMinutes;
+    gPlayer.RTC[2] = hram.hMinutes;
     // LDH_A_addr(hSeconds);
     // LD_hli_A;
-    wram->wRTC[3] = hram.hSeconds;
+    gPlayer.RTC[3] = hram.hSeconds;
 }
 
 void SaveRTC(void){
@@ -194,7 +194,7 @@ void ClockContinue(void){
         // LD_A_addr(wCurDay);
         // CP_A_B;
         // IF_C goto dont_update;
-        if(wram->wCurDay < wram->wRTC[0])
+        if(gPlayer.curDay < gPlayer.RTC[0])
         {
             // XOR_A_A;
             // RET;
@@ -242,13 +242,13 @@ void v_InitTime(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
     // LD_A_addr(wStringBuffer2 + 3);
     // SUB_A_hl;
     // DEC_HL;
-    wram->wStartSecond = SubCarry8(secs, hram.hRTCSeconds, carry, &carry);
+    gPlayer.startSecond = SubCarry8(secs, hram.hRTCSeconds, carry, &carry);
 
     // IF_NC goto okay_secs;
     if(carry)
     {
         // ADD_A(60);
-        wram->wStartSecond += 60;
+        gPlayer.startSecond += 60;
     }
 
     // LD_de_A;
@@ -257,13 +257,13 @@ void v_InitTime(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
     // LD_A_addr(wStringBuffer2 + 2);
     // SBC_A_hl;
     // DEC_HL;
-    wram->wStartMinute = SubCarry8(mins, hram.hRTCMinutes, carry, &carry);
+    gPlayer.startMinute = SubCarry8(mins, hram.hRTCMinutes, carry, &carry);
 
     // IF_NC goto okay_mins;
     if(carry)
     {
         // ADD_A(60);
-        wram->wStartMinute += 60;
+        gPlayer.startMinute += 60;
     }
 
     // LD_de_A;
@@ -273,13 +273,13 @@ void v_InitTime(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
 
     // SBC_A_hl;
     // DEC_HL;
-    wram->wStartHour = SubCarry8(hours, hram.hRTCHours, carry, &carry);
+    gPlayer.startHour = SubCarry8(hours, hram.hRTCHours, carry, &carry);
 
     // IF_NC goto okay_hrs;
     if(carry)
     {
         // ADD_A(24);
-        wram->wStartHour += 24;
+        gPlayer.startHour += 24;
     }
 
     // LD_de_A;
@@ -289,17 +289,17 @@ void v_InitTime(uint8_t days, uint8_t hours, uint8_t mins, uint8_t secs){
 
     // SBC_A_hl;
     // DEC_HL;
-    wram->wStartDay = SubCarry8(days, hram.hRTCDayLo, carry, &carry);
+    gPlayer.startDay = SubCarry8(days, hram.hRTCDayLo, carry, &carry);
 
     // IF_NC goto okay_days;
     if(carry)
     {
         // ADD_A(140);
-        wram->wStartDay += 140;
+        gPlayer.startDay += 140;
 
         // LD_C(7);
         // CALL(aSimpleDivide);
-        wram->wStartDay /= 7; // Only quotient is used. 
+        gPlayer.startDay /= 7; // Only quotient is used. 
     }
 
     // LD_de_A;

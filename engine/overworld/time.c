@@ -16,11 +16,11 @@ void v_InitializeStartDay(void){
 void ClearDailyTimers(void){
     // XOR_A_A;
     // LD_addr_A(wLuckyNumberDayTimer);
-    wram->wLuckyNumberDayTimer = 0;
+    gPlayer.luckyNumberDayTimer = 0;
     // LD_addr_A(wUnusedTwoDayTimer);
     wram->wUnusedTwoDayTimer = 0;
     // LD_addr_A(wDailyResetTimer);
-    wram->wDailyResetTimer = 0;
+    gPlayer.dailyResetTimer = 0;
     // RET;
 }
 
@@ -112,7 +112,7 @@ void InitNDaysCountdown(uint8_t* hl, uint8_t n){
     // POP_HL;
     // INC_HL;
     // CALL(aCopyDayToHL);
-    hl[1] = wram->wCurDay;
+    hl[1] = gPlayer.curDay;
     // RET;
 }
 
@@ -157,54 +157,54 @@ bool CheckReceiveCallDelay(void){
 void RestartDailyResetTimer(void){
     // LD_HL(wDailyResetTimer);
     // JP(mInitOneDayCountdown);
-    return InitOneDayCountdown((uint8_t*)&wram->wDailyResetTimer);
+    return InitOneDayCountdown((uint8_t*)&gPlayer.dailyResetTimer);
 }
 
 void CheckDailyResetTimer(void){
     // LD_HL(wDailyResetTimer);
     // CALL(aCheckDayDependentEventHL);
     // RET_NC ;
-    if(!CheckDayDependentEventHL((uint8_t*)&wram->wDailyResetTimer))
+    if(!CheckDayDependentEventHL((uint8_t*)&gPlayer.dailyResetTimer))
         return;
     
     // XOR_A_A;
     // LD_HL(wDailyFlags1);
     // LD_hli_A;  // wDailyFlags1
-    wram->wDailyFlags1 = 0;
+    gPlayer.dailyFlags1 = 0;
     // LD_hli_A;  // wDailyFlags2
-    wram->wDailyFlags2 = 0;
+    gPlayer.dailyFlags2 = 0;
     // LD_hli_A;  // wSwarmFlags
-    wram->wSwarmFlags = 0;
+    gPlayer.swarmFlags = 0;
     // LD_hl_A;  // wSwarmFlags + 1
     wram->skip_121[0] = 0;
     // LD_HL(wDailyRematchFlags);
     // for(int rept = 0; rept < 4; rept++){
     // LD_hli_A;
     // }
-    for(uint32_t i = 0; i < lengthof(wram->wDailyRematchFlags); ++i)
-        wram->wDailyRematchFlags[i] = 0;
+    for(uint32_t i = 0; i < lengthof(gPlayer.dailyRematchFlags); ++i)
+        gPlayer.dailyRematchFlags[i] = 0;
     // LD_HL(wDailyPhoneItemFlags);
     // for(int rept = 0; rept < 4; rept++){
     // LD_hli_A;
     // }
-    for(uint32_t i = 0; i < lengthof(wram->wDailyPhoneItemFlags); ++i)
-        wram->wDailyPhoneItemFlags[i] = 0;
+    for(uint32_t i = 0; i < lengthof(gPlayer.dailyPhoneItemFlags); ++i)
+        gPlayer.dailyPhoneItemFlags[i] = 0;
     // LD_HL(wDailyPhoneTimeOfDayFlags);
     // for(int rept = 0; rept < 4; rept++){
     // LD_hli_A;
     // }
-    for(uint32_t i = 0; i < lengthof(wram->wDailyPhoneTimeOfDayFlags); ++i)
-        wram->wDailyPhoneTimeOfDayFlags[i] = 0;
+    for(uint32_t i = 0; i < lengthof(gPlayer.dailyPhoneTimeOfDayFlags); ++i)
+        gPlayer.dailyPhoneTimeOfDayFlags[i] = 0;
     // LD_HL(wKenjiBreakTimer);
     // LD_A_hl;
     // AND_A_A;
     // IF_Z goto RestartKenjiBreakCountdown;
-    if(wram->wKenjiBreakTimer[0] == 0) {
+    if(gPlayer.wKenjiBreakTimer[0] == 0) {
         SampleKenjiBreakCountdown();
     }
     // DEC_hl;
     // IF_NZ goto DontRestartKenjiBreakCountdown;
-    else if(--wram->wKenjiBreakTimer[0] == 0) {
+    else if(--gPlayer.wKenjiBreakTimer[0] == 0) {
         SampleKenjiBreakCountdown();
     }
 // RestartKenjiBreakCountdown:
@@ -222,7 +222,7 @@ void SampleKenjiBreakCountdown(void){
     // ADD_A(3);
     // LD_addr_A(wKenjiBreakTimer);
     // RET;
-    wram->wKenjiBreakTimer[0] = (Random() & 0b11) + 3;
+    gPlayer.wKenjiBreakTimer[0] = (Random() & 0b11) + 3;
 }
 
 void StartBugContestTimer(void){
@@ -236,14 +236,14 @@ void StartBugContestTimer(void){
     UpdateTime();
     // LD_HL(wBugContestStartTime);
     // CALL(aCopyDayHourMinSecToHL);
-    CopyDayHourMinSecToHL(wram->wBugContestStartTime);
+    CopyDayHourMinSecToHL(gPlayer.bugContestStartTime);
     // RET;
 }
 
 bool CheckBugContestTimer(void){
     // LD_HL(wBugContestStartTime);
     // CALL(aCalcSecsMinsHoursDaysSince);
-    CalcSecsMinsHoursDaysSince(wram->wBugContestStartTime);
+    CalcSecsMinsHoursDaysSince(gPlayer.bugContestStartTime);
     // LD_A_addr(wDaysSince);
     // AND_A_A;
     // IF_NZ goto timed_out;
@@ -298,14 +298,14 @@ void InitializeStartDay(void){
     UpdateTime();
     // LD_HL(wTimerEventStartDay);
     // CALL(aCopyDayToHL);
-    CopyDayToHL(&wram->wTimerEventStartDay);
+    CopyDayToHL(&gPlayer.timerEventStartDay);
     // RET;
 }
 
 void CheckPokerusTick(void){
     // LD_HL(wTimerEventStartDay);
     // CALL(aCalcDaysSince);
-    CalcDaysSince(&wram->wTimerEventStartDay);
+    CalcDaysSince(&gPlayer.timerEventStartDay);
     // CALL(aGetDaysSince);
     uint8_t days = GetDaysSince();
     // AND_A_A;
@@ -386,13 +386,13 @@ void RestartLuckyNumberCountdown(void){
     uint8_t n = RestartLuckyNumberCountdown_GetDaysUntilNextFriday();
     // LD_HL(wLuckyNumberDayTimer);
     // JP(mInitNDaysCountdown);
-    return InitNDaysCountdown((uint8_t*)&wram->wLuckyNumberDayTimer, n);
+    return InitNDaysCountdown((uint8_t*)&gPlayer.luckyNumberDayTimer, n);
 }
 
 bool v_CheckLuckyNumberShowFlag(void){
     // LD_HL(wLuckyNumberDayTimer);
     // JP(mCheckDayDependentEventHL);
-    return CheckDayDependentEventHL((uint8_t*)&wram->wLuckyNumberDayTimer);
+    return CheckDayDependentEventHL((uint8_t*)&gPlayer.luckyNumberDayTimer);
 }
 
 void DoMysteryGiftIfDayHasPassed(void){
@@ -630,7 +630,7 @@ void v_CalcDaysSince(uint8_t* hl, uint8_t carry){
     // LD_A_addr(wCurDay);
     // LD_C_A;
     // SBC_A_hl;
-    uint16_t temp = wram->wCurDay - *hl - carry;
+    uint16_t temp = gPlayer.curDay - *hl - carry;
     uint8_t a = (temp & 0xff);
     carry = (temp & 0xff00)? 1: 0;
     // IF_NC goto skip;
@@ -641,7 +641,7 @@ void v_CalcDaysSince(uint8_t* hl, uint8_t carry){
 
 // skip:
     // LD_hl_C;  // current days
-    *hl = wram->wCurDay;
+    *hl = gPlayer.curDay;
     // LD_addr_A(wDaysSince);  // days since
     wram->wDaysSince = a;
     // RET;
@@ -650,7 +650,7 @@ void v_CalcDaysSince(uint8_t* hl, uint8_t carry){
 void CopyDayHourMinSecToHL(uint8_t* hl){
     // LD_A_addr(wCurDay);
     // LD_hli_A;
-    hl[0] = wram->wCurDay;
+    hl[0] = gPlayer.curDay;
     // LDH_A_addr(hHours);
     // LD_hli_A;
     hl[1] = hram.hHours;
@@ -666,7 +666,7 @@ void CopyDayHourMinSecToHL(uint8_t* hl){
 void CopyDayToHL(uint8_t* hl){
     // LD_A_addr(wCurDay);
     // LD_hl_A;
-    hl[0] = wram->wCurDay;
+    hl[0] = gPlayer.curDay;
     // RET;
 }
 
@@ -674,7 +674,7 @@ void CopyDayHourToHL(uint8_t* hl){
 //  //  unreferenced
     // LD_A_addr(wCurDay);
     // LD_hli_A;
-    hl[0] = wram->wCurDay;
+    hl[0] = gPlayer.curDay;
     // LDH_A_addr(hHours);
     // LD_hli_A;
     hl[1] = hram.hHours;
@@ -684,7 +684,7 @@ void CopyDayHourToHL(uint8_t* hl){
 void CopyDayHourMinToHL(uint8_t* hl){
     // LD_A_addr(wCurDay);
     // LD_hli_A;
-    hl[0] = wram->wCurDay;
+    hl[0] = gPlayer.curDay;
     // LDH_A_addr(hHours);
     // LD_hli_A;
     hl[1] = hram.hHours;

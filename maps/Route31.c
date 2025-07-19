@@ -116,7 +116,7 @@ Continue:
 WadeRematch:
     scall_local(RematchSTD);
     winlosstext(BugCatcherWade1BeatenText, 0)
-    readmem(wram_ptr(wWadeFightCount))
+    readmem(&gPlayer.WadeFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -138,28 +138,28 @@ LoadFight0:
     loadtrainer(BUG_CATCHER, WADE1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wWadeFightCount), 1)
+    loadmem(&gPlayer.WadeFightCount, 1)
     clearflag(ENGINE_WADE_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(BUG_CATCHER, WADE2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wWadeFightCount), 2)
+    loadmem(&gPlayer.WadeFightCount, 2)
     clearflag(ENGINE_WADE_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(BUG_CATCHER, WADE3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wWadeFightCount), 3)
+    loadmem(&gPlayer.WadeFightCount, 3)
     clearflag(ENGINE_WADE_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(BUG_CATCHER, WADE4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wWadeFightCount), 4)
+    loadmem(&gPlayer.WadeFightCount, 4)
     clearflag(ENGINE_WADE_READY_FOR_REMATCH)
     s_end
 LoadFight4:

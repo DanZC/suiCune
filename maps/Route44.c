@@ -108,7 +108,7 @@ AskForNumber:
 WantsBattle:
     scall(Route44RematchM)
     winlosstext(BirdKeeperVance1BeatenText, 0)
-    readmem(wram_ptr(wVanceFightCount))
+    readmem(&gPlayer.VanceFightCount)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
@@ -122,14 +122,14 @@ LoadFight0:
     loadtrainer(BIRD_KEEPER, VANCE1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wVanceFightCount), 1)
+    loadmem(&gPlayer.VanceFightCount, 1)
     clearflag(ENGINE_VANCE_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(BIRD_KEEPER, VANCE2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wVanceFightCount), 2)
+    loadmem(&gPlayer.VanceFightCount, 2)
     clearflag(ENGINE_VANCE_READY_FOR_REMATCH)
     s_end
 LoadFight2:
@@ -268,7 +268,7 @@ AskForNumber:
 WantsBattle:
     scall(Route44RematchM)
     winlosstext(FisherWilton1BeatenText, 0)
-    readmem(wram_ptr(wWiltonFightCount))
+    readmem(&gPlayer.WiltonFightCount)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
@@ -282,14 +282,14 @@ LoadFight0:
     loadtrainer(FISHER, WILTON1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wWiltonFightCount), 1)
+    loadmem(&gPlayer.WiltonFightCount, 1)
     clearflag(ENGINE_WILTON_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(FISHER, WILTON2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wWiltonFightCount), 2)
+    loadmem(&gPlayer.WiltonFightCount, 2)
     clearflag(ENGINE_WILTON_READY_FOR_REMATCH)
     s_end
 LoadFight2:

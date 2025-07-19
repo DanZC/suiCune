@@ -286,7 +286,7 @@ AskForNumber:
 Rematch:
     scall_local(RematchStd);
     winlosstext(FisherRalph1BeatenText, 0)
-    readmem(wram_ptr(wRalphFightCount))
+    readmem(&gPlayer.RalphFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -308,28 +308,28 @@ LoadFight0:
     loadtrainer(FISHER, RALPH1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wRalphFightCount), 1)
+    loadmem(&gPlayer.RalphFightCount, 1)
     clearflag(ENGINE_RALPH_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(FISHER, RALPH2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wRalphFightCount), 2)
+    loadmem(&gPlayer.RalphFightCount, 2)
     clearflag(ENGINE_RALPH_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(FISHER, RALPH3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wRalphFightCount), 3)
+    loadmem(&gPlayer.RalphFightCount, 3)
     clearflag(ENGINE_RALPH_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(FISHER, RALPH4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wRalphFightCount), 4)
+    loadmem(&gPlayer.RalphFightCount, 4)
     clearflag(ENGINE_RALPH_READY_FOR_REMATCH)
     s_end
 LoadFight4:
@@ -406,7 +406,7 @@ AskForNumber:
 Rematch:
     scall_local(RematchStd);
     winlosstext(PicnickerLiz1BeatenText, 0)
-    readmem(wram_ptr(wLizFightCount))
+    readmem(&gPlayer.LizFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -428,28 +428,28 @@ LoadFight0:
     loadtrainer(PICNICKER, LIZ1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wLizFightCount), 1)
+    loadmem(&gPlayer.LizFightCount, 1)
     clearflag(ENGINE_LIZ_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(PICNICKER, LIZ2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wLizFightCount), 2)
+    loadmem(&gPlayer.LizFightCount, 2)
     clearflag(ENGINE_LIZ_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(PICNICKER, LIZ3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wLizFightCount), 3)
+    loadmem(&gPlayer.LizFightCount, 3)
     clearflag(ENGINE_LIZ_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(PICNICKER, LIZ4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wLizFightCount), 4)
+    loadmem(&gPlayer.LizFightCount, 4)
     clearflag(ENGINE_LIZ_READY_FOR_REMATCH)
     s_end
 LoadFight4:

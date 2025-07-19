@@ -98,7 +98,7 @@ static void StartMenu_SetUpMenuItems(void) {
     // IF_Z goto no_pokedex;
     // LD_A(STARTMENUITEM_POKEDEX);
     // CALL(aStartMenu_AppendMenuList);
-    if(bit_test(wram->wStatusFlags, STATUSFLAGS_POKEDEX_F)) {
+    if(bit_test(gPlayer.statusFlags, STATUSFLAGS_POKEDEX_F)) {
         de = StartMenu_AppendMenuList(de, STARTMENUITEM_POKEDEX);
     }
 
@@ -121,7 +121,7 @@ static void StartMenu_SetUpMenuItems(void) {
     // IF_NZ goto no_pack;
     // LD_A(STARTMENUITEM_PACK);
     // CALL(aStartMenu_AppendMenuList);
-    if(wram->wLinkMode == LINK_NULL && !bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    if(wram->wLinkMode == LINK_NULL && !bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
         de = StartMenu_AppendMenuList(de, STARTMENUITEM_PACK);
     }
 
@@ -131,7 +131,7 @@ static void StartMenu_SetUpMenuItems(void) {
     // IF_Z goto no_pokegear;
     // LD_A(STARTMENUITEM_POKEGEAR);
     // CALL(aStartMenu_AppendMenuList);
-    if(bit_test(wram->wPokegearFlags, POKEGEAR_OBTAINED_F)) {
+    if(bit_test(gPlayer.pokegearFlags, POKEGEAR_OBTAINED_F)) {
         de = StartMenu_AppendMenuList(de, STARTMENUITEM_POKEGEAR);
     }
 
@@ -152,7 +152,7 @@ static void StartMenu_SetUpMenuItems(void) {
 
     // write:
         // CALL(aStartMenu_AppendMenuList);
-        if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+        if(bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
             de = StartMenu_AppendMenuList(de, STARTMENUITEM_QUIT);
         }
         else {
@@ -200,7 +200,7 @@ static void StartMenu__DrawBugContestStatusBox(void) {
     // LD_HL(wStatusFlags2);
     // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
     // RET_Z ;
-    if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F))
+    if(!bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F))
         return;
     // FARCALL(aStartMenu_DrawBugContestStatusBox);
     StartMenu_DrawBugContestStatusBox();
@@ -212,7 +212,7 @@ static void StartMenu_DrawBugContestStatus(void) {
     // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
     // IF_NZ goto contest;
     // RET;
-    if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    if(bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
     // contest:
         // FARCALL(aStartMenu_PrintBugContestStatus);
         StartMenu_PrintBugContestStatus();
@@ -463,7 +463,7 @@ static const struct MenuHeader menuHeader = {
     // LD_HL(mStartMenu_MenuHeader);
     // IF_Z goto GotMenuData;
     // LD_HL(mStartMenu_ContestMenuHeader);
-    if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    if(bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
         LoadMenuHeader(&contestMenuHeader);
     }
     else {

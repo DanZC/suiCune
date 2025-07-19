@@ -139,7 +139,7 @@ uint16_t GetFishGroupIndex(uint8_t d){
     // BIT_hl(DAILYFLAGS1_FISH_SWARM_F);
     // POP_HL;
     // IF_Z goto done;
-    if(bit_test(wram->wDailyFlags1, DAILYFLAGS1_FISH_SWARM_F)) {
+    if(bit_test(gPlayer.dailyFlags1, DAILYFLAGS1_FISH_SWARM_F)) {
         // LD_A_D;
         // CP_A(FISHGROUP_QWILFISH);
         // IF_Z goto qwilfish;

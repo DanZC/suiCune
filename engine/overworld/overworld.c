@@ -134,7 +134,7 @@ static void GetPlayerSprite(void){
 // go:
     // LD_A_addr(wPlayerState);
     // LD_C_A;
-    uint8_t c = wram->wPlayerState;
+    uint8_t c = gPlayer.playerState;
 
     do {
     // loop:
@@ -143,8 +143,8 @@ static void GetPlayerSprite(void){
         // IF_Z goto good;
         if((*hl)[0] == c) {
             wram->wUsedSprites[0] = (*hl)[1];
-            wram->wPlayerStruct.sprite = (*hl)[1];
-            wram->wPlayerObject.sprite = (*hl)[1];
+            gPlayer.playerStruct.sprite = (*hl)[1];
+            gPlayer.playerObject.sprite = (*hl)[1];
             return;
         }
         // INC_HL;
@@ -157,10 +157,10 @@ static void GetPlayerSprite(void){
     // XOR_A_A;  // ld a, PLAYER_NORMAL
     // LD_addr_A(wPlayerState);
     // LD_A(SPRITE_CHRIS);
-    wram->wPlayerState = PLAYER_NORMAL;
+    gPlayer.playerState = PLAYER_NORMAL;
     wram->wUsedSprites[0] = SPRITE_CHRIS;
-    wram->wPlayerStruct.sprite = SPRITE_CHRIS;
-    wram->wPlayerObject.sprite = SPRITE_CHRIS;
+    gPlayer.playerStruct.sprite = SPRITE_CHRIS;
+    gPlayer.playerObject.sprite = SPRITE_CHRIS;
     // goto finish;
     return;
 
@@ -203,7 +203,7 @@ static void AddIndoorSprites(void){
         // PUSH_AF;
         // LD_A_hl;
         // CALL(aAddSpriteGFX);
-        AddSpriteGFX(wram->wMapObject[a].sprite);
+        AddSpriteGFX(gPlayer.mapObject[a].sprite);
         // LD_DE(MAPOBJECT_LENGTH);
         // ADD_HL_DE;
         // POP_AF;
@@ -357,7 +357,7 @@ static struct SpriteLoadData GetMonSprite(uint8_t a){
         // LD_HL(wVariableSprites);
         // ADD_HL_DE;
         // LD_A_hl;
-        a = wram->wVariableSprites[e];
+        a = gPlayer.variableSprites[e];
         // AND_A_A;
         // JP_NZ (mGetMonSprite);
         if(a != 0)

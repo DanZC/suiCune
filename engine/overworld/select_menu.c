@@ -40,14 +40,14 @@ static bool CheckRegisteredItem_CheckRegisteredNo(uint8_t count) {
     // DEC_A;
     // CP_A_hl;
     // IF_NC goto NotEnoughItems;
-    if((wram->wWhichRegisteredItem & REGISTERED_NUMBER) - 1 >= count) {
+    if((gPlayer.whichRegisteredItem & REGISTERED_NUMBER) - 1 >= count) {
     // NotEnoughItems:
         // SCF;
         // RET;
         return true;
     }
     // LD_addr_A(wCurItemQuantity);
-    wram->wCurItemQuantity = (wram->wWhichRegisteredItem & REGISTERED_NUMBER) - 1;
+    wram->wCurItemQuantity = (gPlayer.whichRegisteredItem & REGISTERED_NUMBER) - 1;
     // AND_A_A;
     // RET;
     return false;
@@ -57,7 +57,7 @@ static bool CheckRegisteredItem_IsSameItem(item_t hl) {
     // LD_A_addr(wRegisteredItem);
     // CP_A_hl;
     // IF_NZ goto NotSameItem;
-    if(wram->wRegisteredItem != hl) {
+    if(gPlayer.registeredItem != hl) {
     // NotSameItem:
         // SCF;
         // RET;
@@ -74,7 +74,7 @@ bool CheckRegisteredItem(void){
     // LD_A_addr(wWhichRegisteredItem);
     // AND_A_A;
     // IF_Z goto NoRegisteredItem;
-    if(wram->wWhichRegisteredItem != NO_ITEM) {
+    if(gPlayer.whichRegisteredItem != NO_ITEM) {
         // AND_A(REGISTERED_POCKET);
         // RLCA;
         // RLCA;
@@ -85,7 +85,7 @@ bool CheckRegisteredItem(void){
 
     // Pockets:
     //  entries correspond to *_POCKET constants
-        switch((wram->wWhichRegisteredItem & REGISTERED_POCKET) >> 6) {
+        switch((gPlayer.whichRegisteredItem & REGISTERED_POCKET) >> 6) {
             //dw ['.CheckItem'];
             default:
             case ITEM_POCKET:
@@ -93,7 +93,7 @@ bool CheckRegisteredItem(void){
                 // LD_HL(wNumItems);
                 // CALL(aCheckRegisteredItem_CheckRegisteredNo);
                 // IF_C goto NoRegisteredItem;
-                if(CheckRegisteredItem_CheckRegisteredNo(wram->wNumItems))
+                if(CheckRegisteredItem_CheckRegisteredNo(gPlayer.numItems))
                     break;
                 // INC_HL;
                 // LD_E_A;
@@ -102,7 +102,7 @@ bool CheckRegisteredItem(void){
                 // ADD_HL_DE;
                 // CALL(aCheckRegisteredItem_IsSameItem);
                 // IF_C goto NoRegisteredItem;
-                if(!CheckRegisteredItem_IsSameItem(wram->wItems[wram->wCurItemQuantity * 2]))
+                if(!CheckRegisteredItem_IsSameItem(gPlayer.items[wram->wCurItemQuantity * 2]))
                     break;
                 // AND_A_A;
                 // RET;
@@ -113,7 +113,7 @@ bool CheckRegisteredItem(void){
                 // LD_HL(wNumBalls);
                 // CALL(aCheckRegisteredItem_CheckRegisteredNo);
                 // IF_NC goto NoRegisteredItem;
-                if(CheckRegisteredItem_CheckRegisteredNo(wram->wNumBalls))
+                if(CheckRegisteredItem_CheckRegisteredNo(gPlayer.numBalls))
                     break;
                 // INC_HL;
                 // LD_E_A;
@@ -122,7 +122,7 @@ bool CheckRegisteredItem(void){
                 // ADD_HL_DE;
                 // CALL(aCheckRegisteredItem_IsSameItem);
                 // IF_C goto NoRegisteredItem;
-                if(!CheckRegisteredItem_IsSameItem(wram->wBalls[wram->wCurItemQuantity * 2]))
+                if(!CheckRegisteredItem_IsSameItem(gPlayer.balls[wram->wCurItemQuantity * 2]))
                     break;
                 // RET;
                 return true;
@@ -134,11 +134,11 @@ bool CheckRegisteredItem(void){
                 // LD_DE(1);
                 // CALL(aIsInArray);
                 // IF_NC goto NoRegisteredItem;
-                for(uint32_t i = 0; wram->wKeyItems[i] != (item_t)-1; ++i) {
-                    if(wram->wKeyItems[i] == wram->wRegisteredItem) {
+                for(uint32_t i = 0; gPlayer.keyItems[i] != (item_t)-1; ++i) {
+                    if(gPlayer.keyItems[i] == gPlayer.registeredItem) {
                         // LD_A_addr(wRegisteredItem);
                         // LD_addr_A(wCurItem);
-                        wram->wCurItem = wram->wRegisteredItem;
+                        wram->wCurItem = gPlayer.registeredItem;
                         // AND_A_A;
                         // RET;
                         return true;
@@ -156,9 +156,9 @@ bool CheckRegisteredItem(void){
 // NoRegisteredItem:
     // XOR_A_A;
     // LD_addr_A(wWhichRegisteredItem);
-    wram->wWhichRegisteredItem = NO_ITEM;
+    gPlayer.whichRegisteredItem = NO_ITEM;
     // LD_addr_A(wRegisteredItem);
-    wram->wRegisteredItem = NO_ITEM;
+    gPlayer.registeredItem = NO_ITEM;
     // SCF;
     // RET;
     return false;

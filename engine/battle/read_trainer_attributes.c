@@ -17,7 +17,7 @@ uint8_t* GetTrainerClassName(uint8_t c){
         // CALL(aCopyBytes);
         // POP_DE;
         // RET;
-        CopyBytes(wram->wStringBuffer1, wram->wRivalName, NAME_LENGTH);
+        CopyBytes(wram->wStringBuffer1, gPlayer.rivalName, NAME_LENGTH);
         return wram->wStringBuffer1;
     }
 
@@ -41,7 +41,7 @@ void GetOTName(uint8_t c){
     }
     else if(c == RIVAL1) {
         // LD_HL(wRivalName);
-        hl = wram->wRivalName;
+        hl = gPlayer.rivalName;
         // LD_A_C;
         // CP_A(RIVAL1);
         // IF_Z goto ok;

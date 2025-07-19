@@ -419,7 +419,7 @@ static const char HatchSoonString[] = "▶HATCH SOON!";
                 wram->wTempMon.mon.happiness = 1;
                 // LD_A(127);
                 // LD_addr_A(wStepCount);
-                wram->wStepCount = 127;
+                gPlayer.stepCount = 127;
                 // LD_DE(HatchSoonString);
                 // hlcoord(8, 17, wTilemap);
                 // CALL(aPlaceString);

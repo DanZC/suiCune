@@ -306,7 +306,7 @@ static void EnterMap(void){
     if(hram.hMapEntryMethod == MAPSETUP_RELOADMAP) {
         // XOR_A_A;
         // LD_addr_A(wPoisonStepCount);
-        wram->wPoisonStepCount = 0;
+        gPlayer.poisonStepCount = 0;
     }
 
 // dontresetpoison:
@@ -607,7 +607,7 @@ static u8_flag_s CheckTileEvent(void){
             // LD_A_addr(wPlayerStandingTile);
             // CALL(aCheckPitTile);
             // IF_NZ goto not_pit;
-            if(CheckPitTile(wram->wPlayerStruct.nextTile)) {
+            if(CheckPitTile(gPlayer.playerStruct.nextTile)) {
                 // LD_A(PLAYEREVENT_FALL);
                 // SCF;
                 // RET;
@@ -788,7 +788,7 @@ static u8_flag_s CheckTimeEvents(void){
     // LD_HL(wStatusFlags2);
     // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
     // IF_Z goto do_daily;
-    if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    if(!bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
     // do_daily:
         // FARCALL(aCheckDailyResetTimer);
         CheckDailyResetTimer();
@@ -1128,7 +1128,7 @@ u8_flag_s BGEventJumptable(uint8_t a){
             // AND_A(0b1100);
             // CP_A_B;
             // JP_NZ (mBGEventJumptable_dontread);
-            if((wram->wPlayerStruct.facing & 0b1100) != b)
+            if((gPlayer.playerStruct.facing & 0b1100) != b)
                 return u8_flag(0, false);
             fallthrough;
         case BGEVENT_READ:
@@ -1489,10 +1489,10 @@ static u8_flag_s CountStep(void){
 // Count the step for poison and total steps
     // LD_HL(wPoisonStepCount);
     // INC_hl;
-    wram->wPoisonStepCount++;
+    gPlayer.poisonStepCount++;
     // LD_HL(wStepCount);
     // INC_hl;
-    uint8_t step = ++wram->wStepCount;
+    uint8_t step = ++gPlayer.stepCount;
 // Every 256 steps, increase the happiness of all your Pokemon.
     // IF_NZ goto skip_happiness;
 
@@ -1509,7 +1509,7 @@ static u8_flag_s CountStep(void){
     // LD_A_addr(wStepCount);
     // CP_A(0x80);
     // IF_NZ goto skip_egg;
-    if(wram->wStepCount == 0x80) {
+    if(gPlayer.stepCount == 0x80) {
         // FARCALL(aDoEggStep);
         // IF_NZ goto hatch;
         if(DoEggStep()) {
@@ -1531,9 +1531,9 @@ static u8_flag_s CountStep(void){
     // LD_A_hl;
     // CP_A(4);
     // IF_C goto skip_poison;
-    if(wram->wPoisonStepCount >= 4) {
+    if(gPlayer.poisonStepCount >= 4) {
         // LD_hl(0);
-        wram->wPoisonStepCount = 0;
+        gPlayer.poisonStepCount = 0;
 
         // FARCALL(aDoPoisonStep);
         // IF_C goto doscript;
@@ -1571,13 +1571,13 @@ static bool DoRepelStep(void){
     // LD_A_addr(wRepelEffect);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wRepelEffect == 0)
+    if(gPlayer.repelEffect == 0)
         return false;
 
     // DEC_A;
     // LD_addr_A(wRepelEffect);
     // RET_NZ ;
-    if(--wram->wRepelEffect != 0)
+    if(--gPlayer.repelEffect != 0)
         return false;
 
     // LD_A(BANK(aRepelWoreOffScript));
@@ -1709,8 +1709,8 @@ void WarpToSpawnPoint(void){
     // RES_hl(STATUSFLAGS2_SAFARI_GAME_F);
     // RES_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
     // RET;
-    bit_reset(wram->wStatusFlags2, STATUSFLAGS2_SAFARI_GAME_F);
-    bit_reset(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F);
+    bit_reset(gPlayer.statusFlags2, STATUSFLAGS2_SAFARI_GAME_F);
+    bit_reset(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F);
 }
 
 static u8_flag_s RunMemScript(void){
@@ -1854,7 +1854,7 @@ static u8_flag_s RandomEncounter(void){
     // LD_HL(wStatusFlags2);
     // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
     // IF_NZ goto bug_contest;
-    if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+    if(bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
     // bug_contest:
         // CALL(av_TryWildEncounter_BugContest);
         // IF_NC goto nope;
@@ -1905,7 +1905,7 @@ bool CanUseSweetScent(void){
     // LD_HL(wStatusFlags);
     // BIT_hl(STATUSFLAGS_NO_WILD_ENCOUNTERS_F);
     // IF_NZ goto no;
-    if(bit_test(wram->wStatusFlags, STATUSFLAGS_NO_WILD_ENCOUNTERS_F))
+    if(bit_test(gPlayer.statusFlags, STATUSFLAGS_NO_WILD_ENCOUNTERS_F))
         return false;
     // LD_A_addr(wEnvironment);
     uint8_t a = wram->wEnvironment;
@@ -1922,7 +1922,7 @@ bool CanUseSweetScent(void){
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckIceTile);
     // IF_Z goto no;
-    if(CheckIceTile(wram->wPlayerStruct.nextTile))
+    if(CheckIceTile(gPlayer.playerStruct.nextTile))
         return false;
     // SCF;
     // RET;
@@ -2026,7 +2026,7 @@ bool TryWildEncounter_BugContest(void){
     // LD_B(40 percent);
     // IF_Z goto ok;
     // LD_B(20 percent);
-    uint8_t b = (CheckSuperTallGrassTile(wram->wPlayerStruct.nextTile))
+    uint8_t b = (CheckSuperTallGrassTile(gPlayer.playerStruct.nextTile))
         ? 40 percent
         : 20 percent;
 
@@ -2058,14 +2058,14 @@ static bool DoBikeStep(void){
     // LD_HL(wStatusFlags2);
     // BIT_hl(STATUSFLAGS2_BIKE_SHOP_CALL_F);
     // IF_Z goto NoCall;
-    if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_BIKE_SHOP_CALL_F))
+    if(!bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BIKE_SHOP_CALL_F))
         return false;
 
 // If we're not on the bike, we don't have to be here.
     // LD_A_addr(wPlayerState);
     // CP_A(PLAYER_BIKE);
     // IF_NZ goto NoCall;
-    if(wram->wPlayerState != PLAYER_BIKE)
+    if(gPlayer.playerState != PLAYER_BIKE)
         return false;
 
 // If we're not in an area of phone service, we don't
@@ -2088,13 +2088,13 @@ static bool DoBikeStep(void){
     // CP_A(255);
     // IF_Z goto dont_increment;
 
-    if(wram->wBikeStep != 0xffff) {
+    if(gPlayer.bikeStep != 0xffff) {
     // increment:
         // INC_DE;
         // LD_hl_E;
         // DEC_HL;
         // LD_hl_D;
-        wram->wBikeStep++;
+        gPlayer.bikeStep++;
     }
 
 // dont_increment:
@@ -2103,23 +2103,23 @@ static bool DoBikeStep(void){
     // LD_A_D;
     // CP_A(HIGH(1024));
     // IF_C goto NoCall;
-    if(wram->wBikeStep >= 1024) {
+    if(gPlayer.bikeStep >= 1024) {
     // If a call has already been queued, don't overwrite
     // that call.
         // LD_A_addr(wSpecialPhoneCallID);
         // AND_A_A;
         // IF_NZ goto NoCall;
-        if(wram->wSpecialPhoneCallID == 0) {
+        if(gPlayer.specialPhoneCallID == 0) {
 
         // Queue the call.
             // LD_A(SPECIALCALL_BIKESHOP);
             // LD_addr_A(wSpecialPhoneCallID);
             // XOR_A_A;
             // LD_addr_A(wSpecialPhoneCallID + 1);
-            wram->wSpecialPhoneCallID = SPECIALCALL_BIKESHOP;
+            gPlayer.specialPhoneCallID = SPECIALCALL_BIKESHOP;
             // LD_HL(wStatusFlags2);
             // RES_hl(STATUSFLAGS2_BIKE_SHOP_CALL_F);
-            bit_reset(wram->wStatusFlags2, STATUSFLAGS2_BIKE_SHOP_CALL_F);
+            bit_reset(gPlayer.statusFlags2, STATUSFLAGS2_BIKE_SHOP_CALL_F);
             // SCF;
             // RET;
             return true;

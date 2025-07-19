@@ -139,7 +139,7 @@ AskForNumber:
 WantsBattle:
     scall_local(Rematch);
     winlosstext(PokemaniacBrentBeatenText, 0)
-    readmem(wram_ptr(wBrentFightCount))
+    readmem(&gPlayer.BrentFightCount)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
@@ -157,21 +157,21 @@ LoadFight0:
     loadtrainer(POKEMANIAC, BRENT1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wBrentFightCount), 1)
+    loadmem(&gPlayer.BrentFightCount, 1)
     clearflag(ENGINE_BRENT_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(POKEMANIAC, BRENT2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wBrentFightCount), 2)
+    loadmem(&gPlayer.BrentFightCount, 2)
     clearflag(ENGINE_BRENT_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(POKEMANIAC, BRENT3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wBrentFightCount), 3)
+    loadmem(&gPlayer.BrentFightCount, 3)
     clearflag(ENGINE_BRENT_READY_FOR_REMATCH)
     s_end
 LoadFight3:
@@ -258,7 +258,7 @@ AskForNumber:
 WantsBattle:
     scall_local(Rematch);
     winlosstext(PicnickerTiffanyBeatenText, 0)
-    readmem(wram_ptr(wTiffanyFightCount))
+    readmem(&gPlayer.TiffanyFightCount)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
@@ -276,21 +276,21 @@ LoadFight0:
     loadtrainer(PICNICKER, TIFFANY3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wTiffanyFightCount), 1)
+    loadmem(&gPlayer.TiffanyFightCount, 1)
     clearflag(ENGINE_TIFFANY_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(PICNICKER, TIFFANY1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wTiffanyFightCount), 2)
+    loadmem(&gPlayer.TiffanyFightCount, 2)
     clearflag(ENGINE_TIFFANY_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(PICNICKER, TIFFANY2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wTiffanyFightCount), 3)
+    loadmem(&gPlayer.TiffanyFightCount, 3)
     clearflag(ENGINE_TIFFANY_READY_FOR_REMATCH)
     s_end
 LoadFight3:

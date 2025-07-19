@@ -507,7 +507,7 @@ void HatchEggs(void){
             // LD_hli_A;
             // LD_A_addr(wPlayerID + 1);
             // LD_hl_A;
-            hl->mon.id = wram->wPlayerID;
+            hl->mon.id = gPlayer.playerID;
             // LD_A_addr(wCurPartyMon);
             // LD_HL(wPartyMonOTs);
             // LD_BC(NAME_LENGTH);
@@ -516,7 +516,7 @@ void HatchEggs(void){
             // LD_E_L;
             // LD_HL(wPlayerName);
             // CALL(aCopyBytes);
-            CopyBytes(gPokemon.partyMonOT[mon], wram->wPlayerName, NAME_LENGTH);
+            CopyBytes(gPokemon.partyMonOT[mon], gPlayer.playerName, NAME_LENGTH);
             // LD_HL(mHatchEggs_Text_HatchEgg);
             // CALL(aPrintText);
             PrintText(Text_HatchEgg);

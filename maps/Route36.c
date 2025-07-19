@@ -278,7 +278,7 @@ ContinueAskForPhoneNumber:
 ChooseRematch:
     scall_local(Rematch);
     winlosstext(SchoolboyAlan1BeatenText, 0)
-    readmem(wram_ptr(wAlanFightCount))
+    readmem(&gPlayer.AlanFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -300,28 +300,28 @@ LoadFight0:
     loadtrainer(SCHOOLBOY, ALAN1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wAlanFightCount), 1)
+    loadmem(&gPlayer.AlanFightCount, 1)
     clearflag(ENGINE_ALAN_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(SCHOOLBOY, ALAN2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wAlanFightCount), 2)
+    loadmem(&gPlayer.AlanFightCount, 2)
     clearflag(ENGINE_ALAN_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(SCHOOLBOY, ALAN3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wAlanFightCount), 3)
+    loadmem(&gPlayer.AlanFightCount, 3)
     clearflag(ENGINE_ALAN_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(SCHOOLBOY, ALAN4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wAlanFightCount), 4)
+    loadmem(&gPlayer.AlanFightCount, 4)
     clearflag(ENGINE_ALAN_READY_FOR_REMATCH)
     s_end
 LoadFight4:

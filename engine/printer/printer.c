@@ -926,7 +926,7 @@ void PrintPCBox_Page1(void){
     // LD_E_L;
     // hlcoord(6, 5, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wBoxNames + wram->wWhichBoxToPrint * BOX_NAME_LENGTH, coord(6, 5, wram->wTilemap));
+    PlaceStringSimple(gPlayer.boxNames + wram->wWhichBoxToPrint * BOX_NAME_LENGTH, coord(6, 5, wram->wTilemap));
     // LD_A(1);
     // CALL(aPrinter_GetBoxMonSpecies);
     // hlcoord(2, 9, wTilemap);

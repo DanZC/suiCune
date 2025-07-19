@@ -113,7 +113,7 @@ AskForNumber:
 WantsBattle:
     scall_local(Rematch);
     winlosstext(CooltrainermGaven3BeatenText, 0)
-    readmem(wram_ptr(wGavenFightCount))
+    readmem(&gPlayer.GavenFightCount)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
@@ -127,14 +127,14 @@ LoadFight0:
     loadtrainer(COOLTRAINERM, GAVEN3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wGavenFightCount), 1)
+    loadmem(&gPlayer.GavenFightCount, 1)
     clearflag(ENGINE_GAVEN_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(COOLTRAINERM, GAVEN1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wGavenFightCount), 2)
+    loadmem(&gPlayer.GavenFightCount, 2)
     clearflag(ENGINE_GAVEN_READY_FOR_REMATCH)
     s_end
 LoadFight2:
@@ -206,7 +206,7 @@ AskForNumber:
 WantsBattle:
     scall_local(Rematch);
     winlosstext(CooltrainerfBeth1BeatenText, 0)
-    readmem(wram_ptr(wBethFightCount))
+    readmem(&gPlayer.BethFightCount)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
@@ -220,14 +220,14 @@ LoadFight0:
     loadtrainer(COOLTRAINERF, BETH1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wBethFightCount), 1)
+    loadmem(&gPlayer.BethFightCount, 1)
     clearflag(ENGINE_BETH_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(COOLTRAINERF, BETH2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wBethFightCount), 2)
+    loadmem(&gPlayer.BethFightCount, 2)
     clearflag(ENGINE_BETH_READY_FOR_REMATCH)
     s_end
 LoadFight2:

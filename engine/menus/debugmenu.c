@@ -440,8 +440,8 @@ static void DebugMenu_BattleTest_StartBattle(uint8_t tclass, uint8_t tid) {
     LoadMapTileset();
 
     // Rival name and Player name are null by default. 
-    U82CB(wram->wRivalName, NAME_LENGTH, "???@");
-    U82CB(wram->wPlayerName, NAME_LENGTH, "PLAYER@");
+    U82CB(gPlayer.rivalName, NAME_LENGTH, "???@");
+    U82CB(gPlayer.playerName, NAME_LENGTH, "PLAYER@");
 
     wram->wBattleType = BATTLETYPE_NORMAL;
     wram->wInBattleTowerBattle = 0;
@@ -658,7 +658,7 @@ void DebugMenu_GFXTest(void) {
 
 void DebugMenu_Stats(void) {
     DebugMenu_SaveAttrmap();
-    Utf8ToCrystalBuffer(wram->wPlayerName, NAME_LENGTH, "PLAYER@");
+    Utf8ToCrystalBuffer(gPlayer.playerName, NAME_LENGTH, "PLAYER@");
 
     wram->wCurPartySpecies = CHARIZARD;
     wram->wCurPartyLevel = 100;
@@ -848,9 +848,9 @@ void DebugMenu_Link(void) {
     CopyBytes_GB(wPlayerName, sPlayerData + (wPlayerName - wPlayerData), NAME_LENGTH);
     CloseSRAM();
 
-    printf("NAME: "); PrintCrystalStringFromRAM(wram->wPlayerName); printf("\n");
+    printf("NAME: "); PrintCrystalStringFromRAM(gPlayer.playerName); printf("\n");
     printf("GENDER: %s\n", (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? "FEMALE": "MALE");
-    printf("ID: %d\n", wram->wPlayerID);
+    printf("ID: %d\n", gPlayer.playerID);
 
     LANConnection();
     
@@ -1042,7 +1042,7 @@ void DebugMenu_TradeTest(void) {
     DebugMenu_SaveTilemap();
     DebugMenu_SaveAttrmap();
     ClearScreen();
-    U82CA(wram->wPlayerName, "PLAYER@");
+    U82CA(gPlayer.playerName, "PLAYER@");
     U82CA(wram->wOTPlayerName, "OTHER@");
     gPokemon.partyCount = 1;
     gPokemon.partySpecies[0] = TEDDIURSA;
@@ -1073,8 +1073,8 @@ void DebugMenu_MysteryGift(void) {
 
     OpenSRAM(MBANK(asPlayerData));
     wram->wPlayerGender = gb_read(sCrystalData);
-    CopyBytes(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
-    CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
+    CopyBytes(&gPlayer.playerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
+    CopyBytes(gPlayer.playerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
     CloseSRAM();
 
     if(LANTryConnection()) {

@@ -26,10 +26,10 @@ void UpdateTimeOfDayPal(void){
     UpdateTime();
     // LD_A_addr(wTimeOfDay);
     // LD_addr_A(wCurTimeOfDay);
-    wram->wCurTimeOfDay = wram->wTimeOfDay;
+    gPlayer.curTimeOfDay = wram->wTimeOfDay;
     // CALL(aGetTimePalette);
     // LD_addr_A(wTimeOfDayPal);
-    wram->wTimeOfDayPal = GetTimePalette();
+    gPlayer.timeOfDayPal = GetTimePalette();
     // RET;
 }
 
@@ -39,7 +39,7 @@ bool v_TimeOfDayPals(void){
     // LD_HL(wTimeOfDayPalFlags);
     // BIT_hl(7);
     // IF_NZ goto dontchange;
-    if(bit_test(wram->wTimeOfDayPalFlags, 7))
+    if(bit_test(gPlayer.timeOfDayPalFlags, 7))
         return false;
 
 //  do we need to bother updating?
@@ -47,13 +47,13 @@ bool v_TimeOfDayPals(void){
     // LD_HL(wCurTimeOfDay);
     // CP_A_hl;
     // IF_Z goto dontchange;
-    if(wram->wTimeOfDay == wram->wCurTimeOfDay)
+    if(wram->wTimeOfDay == gPlayer.curTimeOfDay)
         return false;
 
 //  if so, the time of day has changed
     // LD_A_addr(wTimeOfDay);
     // LD_addr_A(wCurTimeOfDay);
-    wram->wCurTimeOfDay = wram->wTimeOfDay;
+    gPlayer.curTimeOfDay = wram->wTimeOfDay;
 
 //  get palette id
     // CALL(aGetTimePalette);
@@ -63,12 +63,12 @@ bool v_TimeOfDayPals(void){
     // LD_HL(wTimeOfDayPal);
     // CP_A_hl;
     // IF_Z goto dontchange;
-    if(a == wram->wTimeOfDayPal)
+    if(a == gPlayer.timeOfDayPal)
         return false;
 
 //  update palette id
     // LD_addr_A(wTimeOfDayPal);
-    wram->wTimeOfDayPal = a;
+    gPlayer.timeOfDayPal = a;
 
 //  save bg palette 7
     // LD_HL(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
@@ -292,18 +292,18 @@ void ReplaceTimeOfDayPals(void){
         // LD_A_addr(wStatusFlags);
         // BIT_A(STATUSFLAGS_FLASH_F);
         // IF_NZ goto UsedFlash;
-        if(bit_test(wram->wStatusFlags, STATUSFLAGS_FLASH_F)) {
+        if(bit_test(gPlayer.statusFlags, STATUSFLAGS_FLASH_F)) {
         // UsedFlash:
             // LD_A((NITE_F << 6) | (NITE_F << 4) | (NITE_F << 2) | NITE_F);
             // LD_addr_A(wTimeOfDayPalset);
-            wram->wTimeOfDayPalset = (NITE_F << 6) | (NITE_F << 4) | (NITE_F << 2) | NITE_F;
+            gPlayer.timeOfDayPalset = (NITE_F << 6) | (NITE_F << 4) | (NITE_F << 2) | NITE_F;
             // RET;
             return;
         }
         else {
             // LD_A(DARKNESS_PALSET);
             // LD_addr_A(wTimeOfDayPalset);
-            wram->wTimeOfDayPalset = DARKNESS_PALSET;
+            gPlayer.timeOfDayPalset = DARKNESS_PALSET;
             // RET;
             return;
         }
@@ -316,7 +316,7 @@ void ReplaceTimeOfDayPals(void){
     // LD_H_A;
     // LD_A_hl;
     // LD_addr_A(wTimeOfDayPalset);
-    wram->wTimeOfDayPalset = BrightnessLevels[wram->wMapTimeOfDay & 7];
+    gPlayer.timeOfDayPalset = BrightnessLevels[wram->wMapTimeOfDay & 7];
     // RET;
     return;
 }
@@ -332,7 +332,7 @@ static uint8_t GetTimePalette(void){
             // LD_A_addr(wTimeOfDayPalset);
             // AND_A(0b00000011);
             // RET;
-            return wram->wTimeOfDayPalset & 0b00000011;
+            return gPlayer.timeOfDayPalset & 0b00000011;
         //dw ['.DayPalette'];  // DAY_F
         case DAY_F:
         // DayPalette:
@@ -341,7 +341,7 @@ static uint8_t GetTimePalette(void){
             // SRL_A;
             // SRL_A;
             // RET;
-            return (wram->wTimeOfDayPalset & 0b00001100) >> 2;
+            return (gPlayer.timeOfDayPalset & 0b00001100) >> 2;
         //dw ['.NitePalette'];  // NITE_F
         case NITE_F:
         // NitePalette:
@@ -349,7 +349,7 @@ static uint8_t GetTimePalette(void){
             // AND_A(0b00110000);
             // SWAP_A;
             // RET;
-            return (wram->wTimeOfDayPalset & 0b00110000) >> 4;
+            return (gPlayer.timeOfDayPalset & 0b00110000) >> 4;
         //dw ['.DarknessPalette'];  // DARKNESS_F
         case DARKNESS_F:
         // DarknessPalette:
@@ -358,7 +358,7 @@ static uint8_t GetTimePalette(void){
             // RLCA;
             // RLCA;
             // RET;
-            return (wram->wTimeOfDayPalset & 0b11000000) >> 6;
+            return (gPlayer.timeOfDayPalset & 0b11000000) >> 6;
         default:
             return 0xff;
     }
@@ -493,7 +493,7 @@ static const uint8_t* GetTimePalFade(uint8_t c){
 //  index
     // LD_A_addr(wTimeOfDayPal);
     // AND_A(0b11);
-    uint8_t a = wram->wTimeOfDayPal & 0b11;
+    uint8_t a = gPlayer.timeOfDayPal & 0b11;
 
 //  get fade table
     // PUSH_BC;

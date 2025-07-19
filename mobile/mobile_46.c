@@ -1805,7 +1805,7 @@ void BattleTowerRoomMenu_PlacePickLevelMenu(void){
     // IF_NZ goto asm_11896b;
     const char** hl;
     uint8_t a;
-    if(bit_test(wram->wStatusFlags, STATUSFLAGS_HALL_OF_FAME_F)) {
+    if(bit_test(gPlayer.statusFlags, STATUSFLAGS_HALL_OF_FAME_F)) {
     // asm_11896b:
         // LD_HL(mStrings_L10ToL100);  // Address to list of strings with the choosable levels
         // LD_A(11);  // 10 levels to choose from, including 'Cancel'-option
@@ -3762,7 +3762,7 @@ void Function119054(void){
     // LD_DE(s5_b2f4);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    CopyBytes(GBToRAMAddr(s5_b2f4), wram->wZipCode_Saved, ZIPCODE_LENGTH);
+    CopyBytes(GBToRAMAddr(s5_b2f4), gPlayer.zipCode_Saved, ZIPCODE_LENGTH);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aCloseSRAM);
@@ -10728,7 +10728,7 @@ static void Function11b483_InitRAM(void){
     // LD_addr_A(wcd2b);
     // LD_bc_A;
     // INC_BC;
-    wram->wOfferTrainerID = wram->wPlayerID;
+    wram->wOfferTrainerID = gPlayer.playerID;
 
     // LD_A_addr(wSecretID);
     // LD_addr_A(wcd2c);
@@ -10739,7 +10739,7 @@ static void Function11b483_InitRAM(void){
     // LD_addr_A(wcd2d);
     // LD_bc_A;
     // INC_BC;
-    wram->wOfferSecretID = wram->wSecretID;
+    wram->wOfferSecretID = gPlayer.secretID;
 
     // LD_A_addr(wcd2e);
     // LD_bc_A;
@@ -10779,7 +10779,7 @@ void Function11b483(void){
     // DEC_A;
     // AND_A_A;
     // IF_NZ goto loop1;
-    CopyBytes(wram->wOfferMonSender, wram->wPlayerName, PLAYER_NAME_LENGTH - 1);
+    CopyBytes(wram->wOfferMonSender, gPlayer.playerName, PLAYER_NAME_LENGTH - 1);
 
     // LD_DE(PARTYMON_STRUCT_LENGTH);
     // LD_HL(wPartyMon1Species);
@@ -11037,7 +11037,7 @@ void Function11b5e8(void){
     // LD_DE(0xc608);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wc608, wram->wRTC, 4);
+    CopyBytes(wram->wc608, gPlayer.RTC, 4);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // LD_A(0x5);
@@ -11047,7 +11047,7 @@ void Function11b5e8(void){
     // LD_DE(0xb08c);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    CopyBytes(GBToRAMAddr(s5_b08c), wram->wRTC, 4);
+    CopyBytes(GBToRAMAddr(s5_b08c), gPlayer.RTC, 4);
     // LD_A(0x2);
     // LD_addr_A(0xa800);
     gb_write(s5_a800, 0x2);

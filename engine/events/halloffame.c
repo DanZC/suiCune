@@ -32,7 +32,7 @@ void HallOfFame(void){
     HallOfFame_FadeOutMusic();
     // LD_A_addr(wStatusFlags);
     // PUSH_AF;
-    uint8_t statusFlags = wram->wStatusFlags;
+    uint8_t statusFlags = gPlayer.statusFlags;
     // LD_A(1);
     // LD_addr_A(wGameLogicPaused);
     wram->wGameLogicPaused = 1;
@@ -45,7 +45,7 @@ void HallOfFame(void){
 // Enable the Pokégear map to cycle through all of Kanto
     // LD_HL(wStatusFlags);
     // SET_hl(STATUSFLAGS_HALL_OF_FAME_F);
-    bit_set(wram->wStatusFlags, STATUSFLAGS_HALL_OF_FAME_F);
+    bit_set(gPlayer.statusFlags, STATUSFLAGS_HALL_OF_FAME_F);
 
     // FARCALL(aHallOfFame_InitSaveIfNeeded);
     HallOfFame_InitSaveIfNeeded();
@@ -54,9 +54,9 @@ void HallOfFame(void){
     // LD_A_hl;
     // CP_A(HOF_MASTER_COUNT);
     // IF_NC goto ok;
-    if(wram->wHallOfFameCount < HOF_MASTER_COUNT) {
+    if(gPlayer.hallOfFameCount < HOF_MASTER_COUNT) {
         // INC_hl;
-        wram->wHallOfFameCount++;
+        gPlayer.hallOfFameCount++;
     }
 
 // ok:
@@ -107,7 +107,7 @@ void RedCredits(void){
     // LD_A_addr(wStatusFlags);
     // LD_B_A;
     // FARCALL(aCredits);
-    Credits(wram->wStatusFlags);
+    Credits(gPlayer.statusFlags);
     // RET;
 }
 
@@ -237,7 +237,7 @@ void GetHallOfFameParty(void){
     // LD_A_addr(wHallOfFameCount);
     // LD_DE(wHallOfFamePokemonList);
     // LD_de_A;
-    wram->wHallOfFamePokemonList.winCount = wram->wHallOfFameCount;
+    wram->wHallOfFamePokemonList.winCount = gPlayer.hallOfFameCount;
     // INC_DE;
     struct HOFMon* de = wram->wHallOfFamePokemonList.mon;
     // LD_HL(wPartySpecies);
@@ -859,7 +859,7 @@ void HOF_AnimatePlayerPic(void){
     // hlcoord(2, 4, wTilemap);
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wPlayerName, coord(2, 4, wram->wTilemap));
+    PlaceStringSimple(gPlayer.playerName, coord(2, 4, wram->wTilemap));
     // hlcoord(1, 6, wTilemap);
     // LD_A(0x73);
     // LD_hli_A;
@@ -873,7 +873,7 @@ void HOF_AnimatePlayerPic(void){
     // LD_DE(wPlayerID);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum(coord(4, 6, wram->wTilemap), &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(coord(4, 6, wram->wTilemap), &gPlayer.playerID, PRINTNUM_LEADINGZEROS | 2, 5);
     // hlcoord(1, 8, wTilemap);
     // LD_DE(mHOF_AnimatePlayerPic_PlayTime);
     // CALL(aPlaceString);
@@ -882,14 +882,14 @@ void HOF_AnimatePlayerPic(void){
     // LD_DE(wGameTimeHours);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    uint8_t* hl = PrintNum(coord(3, 9, wram->wTilemap), &wram->wGameTimeHours, 2, 3);
+    uint8_t* hl = PrintNum(coord(3, 9, wram->wTilemap), &gPlayer.gameTimeHours, 2, 3);
     // LD_hl(HALLOFFAME_COLON);
     // INC_HL;
     *(hl++) = HALLOFFAME_COLON;
     // LD_DE(wGameTimeMinutes);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl, &gPlayer.gameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // FARCALL(aProfOaksPCRating);

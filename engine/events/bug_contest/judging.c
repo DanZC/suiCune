@@ -133,7 +133,7 @@ void LoadContestantName(uint8_t a){
         // LD_DE(wBugContestWinnerName);
         // LD_BC(NAME_LENGTH);
         // JP(mCopyBytes);
-        return CopyBytes(wram->wBugContestWinnerName, wram->wPlayerName, NAME_LENGTH);
+        return CopyBytes(wram->wBugContestWinnerName, gPlayer.playerName, NAME_LENGTH);
     }
 //  Find the pointer for the trainer class of the Bug Catching Contestant whose ID is in a.
     // LD_C_A;

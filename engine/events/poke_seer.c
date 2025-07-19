@@ -172,7 +172,7 @@ void ReadCaughtData(void){
         // LD_A_addr(wPlayerID + 1);
     // cp [hl]
         // IF_NZ goto traded;
-        if(mon->mon.id == wram->wPlayerID) {
+        if(mon->mon.id == gPlayer.playerID) {
             // LD_A(SEERACTION_MET);
             // LD_addr_A(wSeerAction);
             wram->wSeerAction = SEERACTION_MET;

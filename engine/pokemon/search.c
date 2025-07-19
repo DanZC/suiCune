@@ -157,7 +157,7 @@ bool CheckOwnMonAnywhere(species_t species){
         // AND_A(0xf);
         // CP_A_C;
         // IF_Z goto loopbox;
-        if((wram->wCurBox & 0xf) == c)
+        if((gPlayer.curBox & 0xf) == c)
             continue;
 
     // Load the box.
@@ -280,7 +280,7 @@ bool CheckOwnMon(const struct BoxMon* hl, const uint8_t* ot, species_t species){
     // LD_A_addr(wPlayerID + 1);
     // CP_A_hl;
     // IF_NZ goto notfound;  // ID doesn't match
-    if(hl->id != wram->wPlayerID)
+    if(hl->id != gPlayer.playerID)
         return false;
 
 //  check OT
@@ -288,7 +288,7 @@ bool CheckOwnMon(const struct BoxMon* hl, const uint8_t* ot, species_t species){
 //  but in the English version the player name is 7 characters, so this is wrong.
 
     // LD_HL(wPlayerName);
-    const uint8_t* plyr = wram->wPlayerName;
+    const uint8_t* plyr = gPlayer.playerName;
 
 #if BUGFIX_OWN_MON_OT_CHECK_NAME_LENGTH
     for(int rept = 0; rept < PLAYER_NAME_LENGTH - 1; rept++)

@@ -144,11 +144,11 @@ static bool CheckUpdatePlayerSprite_CheckBiking(void) {
     // LD_HL(wBikeFlags);
     // BIT_hl(BIKEFLAGS_ALWAYS_ON_BIKE_F);
     // RET_Z ;
-    if(!bit_test(wram->wBikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F))
+    if(!bit_test(gPlayer.bikeFlags, BIKEFLAGS_ALWAYS_ON_BIKE_F))
         return false;
     // LD_A(PLAYER_BIKE);
     // LD_addr_A(wPlayerState);
-    wram->wPlayerState = PLAYER_BIKE;
+    gPlayer.playerState = PLAYER_BIKE;
     // SCF;
     // RET;
     return true;
@@ -163,11 +163,11 @@ static bool CheckUpdatePlayerSprite_CheckSurfing(void) {
         // IF_Z goto is_surfing;
         // CP_A(PLAYER_SURF_PIKA);
         // IF_Z goto is_surfing;
-        if(wram->wPlayerState != PLAYER_SURF
-        && wram->wPlayerState != PLAYER_SURF_PIKA) {
+        if(gPlayer.playerState != PLAYER_SURF
+        && gPlayer.playerState != PLAYER_SURF_PIKA) {
             // LD_A(PLAYER_SURF);
             // LD_addr_A(wPlayerState);
-            wram->wPlayerState = PLAYER_SURF;
+            gPlayer.playerState = PLAYER_SURF;
         }
     // is_surfing:
         // SCF;
@@ -183,7 +183,7 @@ static bool CheckUpdatePlayerSprite_CheckSurfing(void) {
 
 static bool CheckUpdatePlayerSprite_CheckSurfing2(void) {
     // LD_A_addr(wPlayerState);
-    switch(wram->wPlayerState) {
+    switch(gPlayer.playerState) {
         // CP_A(PLAYER_NORMAL);
         // IF_Z goto nope;
         case PLAYER_NORMAL:
@@ -212,7 +212,7 @@ static bool CheckUpdatePlayerSprite_CheckSurfing2(void) {
                     // LD_A_addr(wPlayerState);
                     // CP_A(PLAYER_BIKE);
                     // IF_NZ goto nope;
-                    if(wram->wPlayerState != PLAYER_BIKE)
+                    if(gPlayer.playerState != PLAYER_BIKE)
                         return false;
             }
             fallthrough;
@@ -226,7 +226,7 @@ static bool CheckUpdatePlayerSprite_CheckSurfing2(void) {
         // surfing:
             // LD_A(PLAYER_NORMAL);
             // LD_addr_A(wPlayerState);
-            wram->wPlayerState = PLAYER_NORMAL;
+            gPlayer.playerState = PLAYER_NORMAL;
             // SCF;
             // RET;
             return true;
@@ -293,7 +293,7 @@ void ForceMapMusic(void){
     // LD_A_addr(wPlayerState);
     // CP_A(PLAYER_BIKE);
     // IF_NZ goto notbiking;
-    if(wram->wPlayerState == PLAYER_BIKE) {
+    if(gPlayer.playerState == PLAYER_BIKE) {
         // CALL(aMinVolume);
         MinVolume();
         // LD_A(0x88);

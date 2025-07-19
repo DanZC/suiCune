@@ -97,7 +97,7 @@ AskForPhoneNumber:
 Rematch:
     scall_local(RematchStd);
     winlosstext(HikerAnthony2BeatenText, 0)
-    readmem(wram_ptr(wAnthonyFightCount))
+    readmem(&gPlayer.AnthonyFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -119,28 +119,28 @@ LoadFight0:
     loadtrainer(HIKER, ANTHONY2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wAnthonyFightCount), 1)
+    loadmem(&gPlayer.AnthonyFightCount, 1)
     clearflag(ENGINE_ANTHONY_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(HIKER, ANTHONY1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wAnthonyFightCount), 2)
+    loadmem(&gPlayer.AnthonyFightCount, 2)
     clearflag(ENGINE_ANTHONY_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(HIKER, ANTHONY3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wAnthonyFightCount), 3)
+    loadmem(&gPlayer.AnthonyFightCount, 3)
     clearflag(ENGINE_ANTHONY_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(HIKER, ANTHONY4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wAnthonyFightCount), 4)
+    loadmem(&gPlayer.AnthonyFightCount, 4)
     clearflag(ENGINE_ANTHONY_READY_FOR_REMATCH)
     s_end
 LoadFight4:

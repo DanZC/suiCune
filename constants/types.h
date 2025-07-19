@@ -1865,11 +1865,16 @@ struct PlayerData {
     uint8_t zipCode_Saved[ZIPCODE_MAX_LENGTH];
     uint8_t skip_107[40 - ZIPCODE_MAX_LENGTH];
     //union wMapObjects
-    struct MapObject playerObject;
-    // player is map object 0
-    // wMap1Object - wMap15Object
-    // for n, 1, NUM_OBJECTS
-    struct MapObject mapObject[(NUM_OBJECTS) - 1];
+    union {
+        struct {
+            struct MapObject playerObject;
+            // player is map object 0
+            // wMap1Object - wMap15Object
+            // for n, 1, NUM_OBJECTS
+            struct MapObject mapObject[(NUM_OBJECTS) - 1];
+        };
+        struct MapObject mapObjects[NUM_OBJECTS];
+    };
     uint8_t objectMasks[NUM_OBJECTS];
     uint8_t variableSprites[0x100 - SPRITE_VARS];
     uint8_t enteredMapFromContinue;

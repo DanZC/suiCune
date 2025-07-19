@@ -109,7 +109,7 @@ AskForNumber:
 WantsBattle:
     scall(Route46RematchF)
     winlosstext(PicnickerErin1BeatenText, 0)
-    readmem(wram_ptr(wErinFightCount))
+    readmem(&gPlayer.ErinFightCount)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
     ifequal(0, LoadFight0)
@@ -123,14 +123,14 @@ LoadFight0:
     loadtrainer(PICNICKER, ERIN1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wErinFightCount), 1)
+    loadmem(&gPlayer.ErinFightCount, 1)
     clearflag(ENGINE_ERIN_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(PICNICKER, ERIN2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wErinFightCount), 2)
+    loadmem(&gPlayer.ErinFightCount, 2)
     clearflag(ENGINE_ERIN_READY_FOR_REMATCH)
     s_end
 LoadFight2:

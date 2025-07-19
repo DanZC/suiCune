@@ -35,7 +35,7 @@ static const struct VarAction VarActionTable[] = {
     [VAR_DEXCAUGHT]         = {.fun=VarAction_CountCaughtMons, RETVAR_EXECUTE},
     [VAR_DEXSEEN]           = {.fun=VarAction_CountSeenMons, RETVAR_EXECUTE},
     [VAR_BADGES]            = {.fun=VarAction_CountBadges, RETVAR_EXECUTE},
-    [VAR_MOVEMENT]          = {.var=wram_ptr(wPlayerState), RETVAR_ADDR_DE},
+    [VAR_MOVEMENT]          = {.var=&gPlayer.playerState, RETVAR_ADDR_DE},
     [VAR_FACING]            = {.fun=VarAction_PlayerFacing, RETVAR_EXECUTE},
     [VAR_HOUR]              = {.var=&hram.hHours, RETVAR_STRBUF2},
     [VAR_WEEKDAY]           = {.fun=VarAction_DayOfWeek, RETVAR_EXECUTE},
@@ -47,13 +47,13 @@ static const struct VarAction VarActionTable[] = {
     [VAR_CONTESTMINUTES]    = {.var=wram_ptr(wBugContestMinsRemaining), RETVAR_STRBUF2},
     [VAR_XCOORD]            = {.var=&gCurMapData.xCoord, RETVAR_STRBUF2},
     [VAR_YCOORD]            = {.var=&gCurMapData.yCoord, RETVAR_STRBUF2},
-    [VAR_SPECIALPHONECALL]  = {.var=wram_ptr(wSpecialPhoneCallID), RETVAR_STRBUF2},
+    [VAR_SPECIALPHONECALL]  = {.var=(uint8_t*)&gPlayer.specialPhoneCallID, RETVAR_STRBUF2},
     [VAR_BT_WIN_STREAK]     = {.var=wram_ptr(wNrOfBeatenBattleTowerTrainers), RETVAR_STRBUF2},
-    [VAR_KURT_APRICORNS]    = {.var=wram_ptr(wKurtApricornQuantity), RETVAR_STRBUF2},
-    [VAR_CALLERID]          = {.var=wram_ptr(wCurCaller), RETVAR_ADDR_DE},
-    [VAR_BLUECARDBALANCE]   = {.var=wram_ptr(wBlueCardBalance), RETVAR_ADDR_DE},
-    [VAR_BUENASPASSWORD]    = {.var=wram_ptr(wBuenasPassword), RETVAR_ADDR_DE},
-    [VAR_KENJI_BREAK]       = {.var=wram_ptr(wKenjiBreakTimer), RETVAR_STRBUF2},
+    [VAR_KURT_APRICORNS]    = {.var=&gPlayer.kurtApricornQuantity, RETVAR_STRBUF2},
+    [VAR_CALLERID]          = {.var=(uint8_t*)&gPlayer.curCaller, RETVAR_ADDR_DE},
+    [VAR_BLUECARDBALANCE]   = {.var=&gPlayer.blueCardBalance, RETVAR_ADDR_DE},
+    [VAR_BUENASPASSWORD]    = {.var=&gPlayer.buenasPassword, RETVAR_ADDR_DE},
+    [VAR_KENJI_BREAK]       = {.var=gPlayer.wKenjiBreakTimer, RETVAR_STRBUF2},
 };
 
 static_assert(lengthof(VarActionTable) == NUM_VARS, "");
@@ -130,7 +130,7 @@ static uint8_t* VarAction_CountBadges(void) {
     // LD_HL(wBadges);
     // LD_B(2);
     // CALL(aCountSetBits);
-    uint8_t a = CountSetBits(wram->wJohtoBadges, 1) + CountSetBits(wram->wKantoBadges, 1);
+    uint8_t a = CountSetBits(gPlayer.johtoBadges, 1) + CountSetBits(gPlayer.kantoBadges, 1);
     // LD_A_addr(wNumSetBits);
     wram->wNumSetBits = a;
     // JP(mv_GetVarAction_loadstringbuffer2);
@@ -157,7 +157,7 @@ static uint8_t* VarAction_PlayerFacing(void) {
     // RRCA;
     // RRCA;
     // JP(mv_GetVarAction_loadstringbuffer2);
-    return VarAction_loadstringbuffer2((wram->wPlayerStruct.facing & 0xc) >> 2);
+    return VarAction_loadstringbuffer2((gPlayer.playerStruct.facing & 0xc) >> 2);
 }
 
 static uint8_t* VarAction_DayOfWeek(void) {

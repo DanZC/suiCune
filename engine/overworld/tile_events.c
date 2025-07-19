@@ -11,7 +11,7 @@ bool CheckWarpCollision(void){
     // AND_A(0xf0);
     // CP_A(HI_NYBBLE_WARPS);
     // IF_Z goto warp;
-    const uint8_t tile = wram->wPlayerStruct.nextTile;
+    const uint8_t tile = gPlayer.playerStruct.nextTile;
     if(tile == COLL_PIT || tile == COLL_PIT_68 || ((tile & 0xf0) == HI_NYBBLE_WARPS))
         return true;
     // AND_A_A;
@@ -27,7 +27,7 @@ bool CheckWarpCollision(void){
 //  Else, set carry (false) (immediate warp).
 bool CheckDirectionalWarp(void){
     // LD_A_addr(wPlayerStandingTile);
-    const uint8_t tile = wram->wPlayerStruct.nextTile;
+    const uint8_t tile = gPlayer.playerStruct.nextTile;
     // CP_A(COLL_WARP_CARPET_DOWN);
     // IF_Z goto directional;
     // CP_A(COLL_WARP_CARPET_LEFT);
@@ -66,7 +66,7 @@ bool CheckWarpFacingDown(void){
     // CALL(aIsInArray);
     // RET;
 
-    const uint8_t tile = wram->wPlayerStruct.nextTile;
+    const uint8_t tile = gPlayer.playerStruct.nextTile;
     for(size_t i = 0; i < sizeof(blocks); ++i) {
         if(tile == blocks[i])
             return true;
@@ -92,7 +92,7 @@ bool CheckGrassCollision(void){
     // LD_DE(1);
     // CALL(aIsInArray);
     // RET;
-    const uint8_t tile = wram->wPlayerStruct.nextTile;
+    const uint8_t tile = gPlayer.playerStruct.nextTile;
     for(size_t i = 0; i < sizeof(blocks); ++i) {
         if(tile == blocks[i])
             return true;
@@ -123,7 +123,7 @@ bool CheckCutCollision(uint8_t tile){
 
 uint16_t GetWarpSFX(void) {
     // LD_A_addr(wPlayerStandingTile);
-    const uint8_t tile = wram->wPlayerStruct.nextTile;
+    const uint8_t tile = gPlayer.playerStruct.nextTile;
     // LD_DE(SFX_ENTER_DOOR);
     // CP_A(COLL_DOOR);
     // RET_Z ;

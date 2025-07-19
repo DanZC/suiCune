@@ -41,7 +41,7 @@ static void DoPlayerMovement_GetDPad(void) {
     // LD_HL(wBikeFlags);
     // BIT_hl(BIKEFLAGS_DOWNHILL_F);
     // RET_Z ;
-    if(!bit_test(wram->wBikeFlags, BIKEFLAGS_DOWNHILL_F))
+    if(!bit_test(gPlayer.bikeFlags, BIKEFLAGS_DOWNHILL_F))
         return;
 
     // LD_C_A;
@@ -62,7 +62,7 @@ static uint8_t DoPlayerMovement_TranslateIntoMovement(void) {
     // CP_A(PLAYER_NORMAL);
     // IF_Z goto Normal;
     u8_flag_s res;
-    switch(wram->wPlayerState) {
+    switch(gPlayer.playerState) {
     // CP_A(PLAYER_SURF);
     // IF_Z goto Surf;
     // CP_A(PLAYER_SURF_PIKA);
@@ -227,13 +227,13 @@ static u8_flag_s DoPlayerMovement_CheckTile(void) {
     // LD_C_A;
     // CALL(aCheckWhirlpoolTile);
     // IF_C goto not_whirlpool;
-    if(CheckWhirlpoolTile(wram->wPlayerStruct.nextTile))
+    if(CheckWhirlpoolTile(gPlayer.playerStruct.nextTile))
         return u8_flag(PLAYERMOVEMENT_FORCE_TURN, true);
     // LD_A(PLAYERMOVEMENT_FORCE_TURN);
     // SCF;
     // RET;
 
-    uint8_t c = wram->wPlayerStruct.nextTile;
+    uint8_t c = gPlayer.playerStruct.nextTile;
 // not_whirlpool:
     // AND_A(0xf0);
     switch(c & 0xf0) {
@@ -356,7 +356,7 @@ static u8_flag_s DoPlayerMovement_CheckTurning(void) {
     // maskbits(NUM_DIRECTIONS, 0);
     // CP_A_E;
     // IF_Z goto not_turning;
-    if(((wram->wPlayerStruct.facing >> 2) & 3) == e)
+    if(((gPlayer.playerStruct.facing >> 2) & 3) == e)
         return u8_flag(0, false);
 
     // LD_A(STEP_TURN);
@@ -384,7 +384,7 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
     // IF_Z goto TrySurf;
     // CP_A(PLAYER_SURF_PIKA);
     // IF_Z goto TrySurf;
-    if(wram->wPlayerState == PLAYER_SURF || wram->wPlayerState == PLAYER_SURF_PIKA)
+    if(gPlayer.playerState == PLAYER_SURF || gPlayer.playerState == PLAYER_SURF_PIKA)
         return DoPlayerMovement_TrySurf();
     
     // Athletic, wall phasing, blazing speed, running shoes.
@@ -418,7 +418,7 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckIceTile);
     // IF_NC goto ice;
-    if(CheckIceTile(wram->wPlayerStruct.nextTile))
+    if(CheckIceTile(gPlayer.playerStruct.nextTile))
         return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_ICE), .flag = true};
 
 //  Downhill riding is slower when not moving down.
@@ -430,7 +430,7 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
     // LD_HL(wBikeFlags);
     // BIT_hl(BIKEFLAGS_DOWNHILL_F);
     // IF_Z goto fast;
-    if(!bit_test(wram->wBikeFlags, BIKEFLAGS_DOWNHILL_F))
+    if(!bit_test(gPlayer.bikeFlags, BIKEFLAGS_DOWNHILL_F))
         return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
 
     // LD_A_addr(wWalkingDirection);
@@ -541,14 +541,14 @@ static uint8_t DoPlayerMovement_CheckNPC(void) {
     // LD_A_addr(wWalkingX);
     // ADD_A_D;
     // LD_D_A;
-    uint8_t d = wram->wPlayerStruct.nextMapX + wram->wWalkingX;
+    uint8_t d = gPlayer.playerStruct.nextMapX + wram->wWalkingX;
 //  Load the next Y coordinate into e
     // LD_A_addr(wPlayerStandingMapY);
     // LD_E_A;
     // LD_A_addr(wWalkingY);
     // ADD_A_E;
     // LD_E_A;
-    uint8_t e = wram->wPlayerStruct.nextMapY + wram->wWalkingY;
+    uint8_t e = gPlayer.playerStruct.nextMapY + wram->wWalkingY;
 //  Find an object struct with coordinates equal to d,e
     // LD_BC(wObjectStructs);  // redundant
     struct Object* bc = IsNPCAtCoord(d, e);
@@ -635,7 +635,7 @@ static bool DoPlayerMovement_BikeCheck(void) {
     // RET_Z ;
     // CP_A(PLAYER_SKATE);
     // RET;
-    return (wram->wPlayerState == PLAYER_BIKE || wram->wPlayerState == PLAYER_SKATE);
+    return (gPlayer.playerState == PLAYER_BIKE || gPlayer.playerState == PLAYER_SKATE);
 }
 
 static u8_flag_s DoPlayerMovement_TryJump(void) {
@@ -660,7 +660,7 @@ static u8_flag_s DoPlayerMovement_TryJump(void) {
 
     // LD_A_addr(wPlayerStandingTile);
     // LD_E_A;
-    uint8_t e = wram->wPlayerStruct.nextTile;
+    uint8_t e = gPlayer.playerStruct.nextTile;
     // AND_A(0xf0);
     // CP_A(HI_NYBBLE_LEDGES);
     // IF_NZ goto DontJump;
@@ -733,7 +733,7 @@ static u8_flag_s DoPlayerMovement_CheckWarp(void) {
     // LD_A_addr(wPlayerStandingTile);
     // CP_A_hl;
     // IF_NZ goto not_warp;
-    if(wram->wPlayerStruct.nextTile != EdgeWarps[a])
+    if(gPlayer.playerStruct.nextTile != EdgeWarps[a])
         return u8_flag(PLAYERMOVEMENT_NORMAL, false);
 
     // LD_A(TRUE);
@@ -751,7 +751,7 @@ static u8_flag_s DoPlayerMovement_CheckWarp(void) {
     // maskbits(NUM_DIRECTIONS, 0);
     // CP_A_E;
     // IF_NZ goto not_warp;
-    if(((wram->wPlayerStruct.facing >> 2) & 3) != wram->wWalkingDirection)
+    if(((gPlayer.playerStruct.facing >> 2) & 3) != wram->wWalkingDirection)
         return u8_flag(PLAYERMOVEMENT_NORMAL, false);
 
     // CALL(aWarpCheck);
@@ -1021,7 +1021,7 @@ static bool DoPlayerMovement_CheckStrengthBoulder(struct Object* bc) {
     // LD_HL(wBikeFlags);
     // BIT_hl(BIKEFLAGS_STRENGTH_ACTIVE_F);
     // IF_Z goto not_boulder;
-    if(!bit_test(wram->wBikeFlags, BIKEFLAGS_STRENGTH_ACTIVE_F))
+    if(!bit_test(gPlayer.bikeFlags, BIKEFLAGS_STRENGTH_ACTIVE_F))
         return false;
 
     // LD_HL(OBJECT_DIRECTION_WALKING);
@@ -1113,7 +1113,7 @@ static void DoPlayerMovement_GetOutOfWater(void) {
     // PUSH_BC;
     // LD_A(PLAYER_NORMAL);
     // LD_addr_A(wPlayerState);
-    wram->wPlayerState = PLAYER_NORMAL;
+    gPlayer.playerState = PLAYER_NORMAL;
     // CALL(aUpdatePlayerSprite);  // UpdateSprites
     UpdatePlayerSprite();
     // POP_BC;
@@ -1150,12 +1150,12 @@ bool CheckStandingOnIce(void){
     // LD_A_addr(wPlayerStandingTile);
     // CALL(aCheckIceTile);
     // IF_NC goto yep;
-    if(CheckIceTile(wram->wPlayerStruct.nextTile))
+    if(CheckIceTile(gPlayer.playerStruct.nextTile))
         return true;
     // LD_A_addr(wPlayerState);
     // CP_A(PLAYER_SKATE);
     // IF_NZ goto not_ice;
-    if(wram->wPlayerState != PLAYER_SKATE)
+    if(gPlayer.playerState != PLAYER_SKATE)
         return false;
 
 // yep:

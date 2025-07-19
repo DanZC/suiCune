@@ -2006,7 +2006,7 @@ void Function488d3(void){
     #else
     // Backup of the zip code, in case the player cancels.
     uint8_t saved[ZIPCODE_MAX_LENGTH];
-    CopyBytes(saved, wram->wZipCode_Saved, sizeof(saved));
+    CopyBytes(saved, gPlayer.zipCode_Saved, sizeof(saved));
     // We look for the starting char index. We skip all non-editable chars (those with a charpool length of 1 or 0).
     // ld b, $0
     uint8_t b = 0x0;
@@ -2335,7 +2335,7 @@ void ZipCodeEditMenu(const uint8_t* saved, uint8_t b, uint8_t d, uint8_t inMenu)
         // ld [wZipCode + 0], a
         // ld a, c
         // ld [wZipCode + 1], a
-        CopyBytes(wram->wZipCode_Saved, saved, sizeof(wram->wZipCode_Saved));
+        CopyBytes(gPlayer.zipCode_Saved, saved, sizeof(gPlayer.zipCode_Saved));
 
         // jr .quit_zip_code_edit_menu
     }
@@ -2699,7 +2699,7 @@ void DisplayZipCodeWithOffset(tile_t* hl, uint8_t b) {
 
         // ld d, e
         // call Mobile12_Index2CharDisplay
-        Mobile12_Index2CharDisplay(hl, e, wram->wZipCode_Saved[e]);
+        Mobile12_Index2CharDisplay(hl, e, gPlayer.zipCode_Saved[e]);
         // inc e
         e++;
 
@@ -2759,7 +2759,7 @@ bool GB_Zipcode_Exception_Prepass(void){
     // call Mobile12_Index2Char
     // cp " "
     // ret nz
-    if(Mobile12_Index2Char(2, wram->wZipCode_Saved[2]) != 0x7f)
+    if(Mobile12_Index2Char(2, gPlayer.zipCode_Saved[2]) != 0x7f)
         return false;
 
     // ld d, 4
@@ -2769,7 +2769,7 @@ bool GB_Zipcode_Exception_Prepass(void){
     // call Mobile12_Index2Char
     // cp " "
     // ret nz
-    if(Mobile12_Index2Char(2, wram->wZipCode_Saved[4]) != 0x7f)
+    if(Mobile12_Index2Char(2, gPlayer.zipCode_Saved[4]) != 0x7f)
         return false;
 
     // ld a, 1
@@ -2898,7 +2898,7 @@ u8_flag_s InputZipcodeCharacters(uint8_t* d){
     // add hl, de
     // pop de
     // ld a, [hl]
-    uint8_t a = wram->wZipCode_Saved[*d];
+    uint8_t a = gPlayer.zipCode_Saved[*d];
 
     // push hl
     // push af ; Stores the value of the zip code char from A.
@@ -3014,7 +3014,7 @@ u8_flag_s InputZipcodeCharacters(uint8_t* d){
     skip_left_decrease:
         // ld a, [hl]
         // and $f
-        a = wram->wZipCode_Saved[*d] & 0xf;
+        a = gPlayer.zipCode_Saved[*d] & 0xf;
         // jr .asm_48bc7
         goto asm_48bc7;
     // .asm_48bf8
@@ -3128,7 +3128,7 @@ no_underflow:
     // pop de
     // pop hl
     // ld [hl], a
-    wram->wZipCode_Saved[*d] = a;
+    gPlayer.zipCode_Saved[*d] = a;
     // ld a, $f0 ; Return value. It means the last input was up or down (zip code value changed).
     // jp DisplayZipCodeAfterChange
     return DisplayZipCodeAfterChange(0xf0);
@@ -4106,7 +4106,7 @@ uint8_t CountZipcodeRightBlanks(void) {
 // .loop
     // ld hl, wZipCode
     // add hl, de ; Current zipcode char.
-    // uint8_t* hl = wram->wZipCode_Saved + e;
+    // uint8_t* hl = gPlayer.zipCode_Saved + e;
 
     // ld a, [hl] ; We get the index of the current char.
     // add a ; We double the index to find its position within the array.
@@ -4163,7 +4163,7 @@ void SaveZipcodeWithUniversalFormat(void){
     // ld de, sZipcodeCharIndexes
     // ld bc, ZIPCODE_MAX_LENGTH
     // call CopyBytes
-    CopyBytes(GBToRAMAddr(s5_b2f4), wram->wZipCode_Saved, ZIPCODE_MAX_LENGTH);
+    CopyBytes(GBToRAMAddr(s5_b2f4), gPlayer.zipCode_Saved, ZIPCODE_MAX_LENGTH);
     // call CloseSRAM
     CloseSRAM();
     return; // For now
@@ -4172,10 +4172,10 @@ void SaveZipcodeWithUniversalFormat(void){
     // ld bc, ZIPCODE_MAX_LENGTH - ZIPCODE_LENGTH
     // ld a, "@"
     // call ByteFill
-    ByteFill(wram->wZipCode_Saved + ZIPCODE_LENGTH, ZIPCODE_MAX_LENGTH - ZIPCODE_LENGTH, 0x50);
+    ByteFill(gPlayer.zipCode_Saved + ZIPCODE_LENGTH, ZIPCODE_MAX_LENGTH - ZIPCODE_LENGTH, 0x50);
 
     // ld hl, wZipCode
-    uint8_t* hl = wram->wZipCode_Saved;
+    uint8_t* hl = gPlayer.zipCode_Saved;
     // ld c, 0
     // ld d, 0
     // xor a
@@ -4237,7 +4237,7 @@ void LoadZipcodeWithUniversalFormat(void){
     // ld de, wZipCode
     // ld bc, ZIPCODE_MAX_LENGTH
     // call CopyBytes
-    CopyBytes(wram->wZipCode_Saved, GBToRAMAddr(s5_b2f4), ZIPCODE_MAX_LENGTH);
+    CopyBytes(gPlayer.zipCode_Saved, GBToRAMAddr(s5_b2f4), ZIPCODE_MAX_LENGTH);
     // call CloseSRAM
     CloseSRAM();
     // ret

@@ -165,7 +165,7 @@ void FixTime(void){
 //  second
     uint8_t carry = 0;
     uint8_t curr_sec = hram.hRTCSeconds;
-    uint8_t start_sec = wram->wStartSecond;
+    uint8_t start_sec = gPlayer.startSecond;
     uint8_t sec = curr_sec + start_sec;
     if(sec >= 60)
     {
@@ -177,7 +177,7 @@ void FixTime(void){
 //  minute
     // REG_F_C = 0;  // carry is set, so turn it off
     uint8_t curr_min = hram.hRTCMinutes;
-    uint8_t start_min = wram->wStartMinute;
+    uint8_t start_min = gPlayer.startMinute;
     uint8_t min = curr_min + start_min + carry;
     carry = 0;
     if(min >= 60)
@@ -190,7 +190,7 @@ void FixTime(void){
 //  hour
     // REG_F_C = 0;  // carry is set, so turn it off
     uint8_t curr_hr = hram.hRTCHours;
-    uint8_t start_hr = wram->wStartHour;
+    uint8_t start_hr = gPlayer.startHour;
     uint8_t hr = curr_hr + start_hr + carry;
     carry = 0;
     if(hr >= 24)
@@ -203,9 +203,9 @@ void FixTime(void){
 //  day
     // REG_F_C = 0;  // carry is set, so turn it off
     uint8_t curr_day = hram.hRTCDayLo;
-    uint8_t start_day = wram->wStartDay;
+    uint8_t start_day = gPlayer.startDay;
     uint8_t day = curr_day + start_day + carry;
-    wram->wCurDay = day;
+    gPlayer.curDay = day;
 }
 
 void InitTimeOfDay(uint8_t hour, uint8_t min){

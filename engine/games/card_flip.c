@@ -189,7 +189,7 @@ static void v_CardFlip_CardFlip(void){
         // LD_A_addr(wCoins + 1);
         // LD_L_A;
         // LD_A_H;
-        uint16_t coins = BigEndianToNative16(wram->wCoins);
+        uint16_t coins = BigEndianToNative16(gPlayer.coins);
         // AND_A_A;
         // IF_NZ goto deduct;  // You have at least 256 coins.
         // LD_A_L;
@@ -213,7 +213,7 @@ static void v_CardFlip_CardFlip(void){
         // LD_addr_A(wCoins);
         // LD_A_L;
         // LD_addr_A(wCoins + 1);
-        wram->wCoins = NativeToBigEndian16(coins - 3);
+        gPlayer.coins = NativeToBigEndian16(coins - 3);
         // LD_DE(SFX_TRANSACTION);
         // CALL(aPlaySFX);
         PlaySFX(SFX_TRANSACTION);
@@ -744,7 +744,7 @@ void CardFlip_PrintCoinBalance(void){
     // LD_DE(wCoins);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 4);
     // CALL(aPrintNum);
-    PrintNum(coord(15, 16, wram->wTilemap), &wram->wCoins, PRINTNUM_LEADINGZEROS | 2, 4);
+    PrintNum(coord(15, 16, wram->wTilemap), &gPlayer.coins, PRINTNUM_LEADINGZEROS | 2, 4);
     // RET;
 }
 
@@ -1137,7 +1137,7 @@ static bool CardFlip_CheckWinCondition_IsCoinCaseFull(void){
     // LD_A_addr(wCoins + 1);
     // CP_A(LOW(MAX_COINS));
     // IF_C goto less;
-    if(BigEndianToNative16(wram->wCoins) >= MAX_COINS) {
+    if(BigEndianToNative16(gPlayer.coins) >= MAX_COINS) {
     // more:
         // SCF;
         // RET;
@@ -1160,7 +1160,7 @@ static void CardFlip_CheckWinCondition_AddCoinPlaySFX(void){
     // LD_addr_A(wCoins);
     // LD_A_L;
     // LD_addr_A(wCoins + 1);
-    wram->wCoins = NativeToBigEndian16(BigEndianToNative16(wram->wCoins) + 1);
+    gPlayer.coins = NativeToBigEndian16(BigEndianToNative16(gPlayer.coins) + 1);
     // LD_DE(SFX_PAY_DAY);
     // CALL(aPlaySFX);
     PlaySFX(SFX_PAY_DAY);

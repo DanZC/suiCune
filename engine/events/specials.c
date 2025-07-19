@@ -158,11 +158,11 @@ void NameRival(void){
     // LD_B(NAME_RIVAL);
     // LD_DE(wRivalName);
     // FARCALL(av_NamingScreen);
-    v_NamingScreen(wram->wRivalName, NAME_RIVAL);
+    v_NamingScreen(gPlayer.rivalName, NAME_RIVAL);
     // LD_HL(wRivalName);
     // LD_DE(mNameRival_DefaultName);
     // CALL(aInitName);
-    InitName(wram->wRivalName, U82C(DefaultName));
+    InitName(gPlayer.rivalName, U82C(DefaultName));
     // RET;
 }
 
@@ -366,7 +366,7 @@ bool CheckCoinsAndCoinCase(void){
     // LD_A_hli;
     // OR_A_hl;
     // IF_Z goto no_coins;
-    if(wram->wCoins == 0) {
+    if(gPlayer.coins == 0) {
     // no_coins:
         // LD_HL(mCheckCoinsAndCoinCase_NoCoinsText);
         // goto print;
@@ -450,10 +450,10 @@ void StoreSwarmMapIndices(uint8_t flag, uint8_t group, uint8_t number){
     // yanma:
         // LD_A_D;
         // LD_addr_A(wYanmaMapGroup);
-        wram->wYanmaMapGroup = group;
+        gPlayer.yanmaMapGroup = group;
         // LD_A_E;
         // LD_addr_A(wYanmaMapNumber);
-        wram->wYanmaMapNumber = number;
+        gPlayer.yanmaMapNumber = number;
         // RET;
     }
 }
@@ -470,7 +470,7 @@ void ResetLuckyNumberShowFlag(void){
     RestartLuckyNumberCountdown();
     // LD_HL(wLuckyNumberShowFlag);
     // RES_hl(LUCKYNUMBERSHOW_GAME_OVER_F);
-    bit_reset(wram->wLuckyNumberShowFlag, LUCKYNUMBERSHOW_GAME_OVER_F);
+    bit_reset(gPlayer.luckyNumberShowFlag, LUCKYNUMBERSHOW_GAME_OVER_F);
     // FARCALL(aLoadOrRegenerateLuckyIDNumber);
     LoadOrRegenerateLuckyIDNumber();
     // RET;

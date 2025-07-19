@@ -21,9 +21,9 @@ void StubbedTrainerRankings_HallOfFame2(void){
     uint8_t* time = GBToRAMAddr(sTrainerRankingGameTimeHOF);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    CopyBytes(time, &wram->wGameTimeHours, 2);
-    time[2] = wram->wGameTimeMinutes;
-    time[3] = wram->wGameTimeSeconds;
+    CopyBytes(time, &gPlayer.gameTimeHours, 2);
+    time[2] = gPlayer.gameTimeMinutes;
+    time[3] = gPlayer.gameTimeSeconds;
 
     // LD_HL(sTrainerRankingStepCount);
     // LD_DE(sTrainerRankingStepCountHOF);

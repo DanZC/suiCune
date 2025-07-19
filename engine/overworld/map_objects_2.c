@@ -12,12 +12,12 @@ void LoadObjectMasks(void){
     // XOR_A_A;
     // LD_BC(NUM_OBJECTS);
     // CALL(aByteFill);
-    ByteFill(wram->wObjectMasks, NUM_OBJECTS, 0);
+    ByteFill(gPlayer.objectMasks, NUM_OBJECTS, 0);
     // NOP;
     // LD_BC(wMapObjects);
-    struct MapObject* bc = (struct MapObject*)wram_ptr(wMapObjects);
+    struct MapObject* bc = &gPlayer.playerObject;
     // LD_DE(wObjectMasks);
-    uint8_t* de = wram->wObjectMasks;
+    uint8_t* de = gPlayer.objectMasks;
     // XOR_A_A;
 
     for(uint32_t a = 0; a < NUM_OBJECTS; ++a) {

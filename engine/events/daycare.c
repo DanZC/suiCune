@@ -344,7 +344,7 @@ u8_flag_s DayCare_AskWithdrawBreedMon(void){
     // LD_DE(wMoney);
     // LD_BC(wStringBuffer2 + 2);
     // FARCALL(aCompareMoney);
-    u8_flag_s res = CompareMoney(wram->wStringBuffer2 + 2, wram->wMoney);
+    u8_flag_s res = CompareMoney(wram->wStringBuffer2 + 2, gPlayer.money);
     // IF_C goto not_enough_money;
     if(res.flag) {
     // not_enough_money:
@@ -372,7 +372,7 @@ void DayCare_GetBackMonForMoney(void){
     // LD_BC(wStringBuffer2 + 2);
     // LD_DE(wMoney);
     // FARCALL(aTakeMoney);
-    TakeMoney(wram->wMoney, wram->wStringBuffer2 + 2);
+    TakeMoney(gPlayer.money, wram->wStringBuffer2 + 2);
     // LD_A(DAYCARETEXT_WITHDRAW);
     // CALL(aPrintDayCareText);
     PrintDayCareText(DAYCARETEXT_WITHDRAW);
@@ -868,7 +868,7 @@ void DayCare_InitBreeding(void){
     // LD_DE(wEggMonOT);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(gPokemon.eggMonOT, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(gPokemon.eggMonOT, gPlayer.playerName, NAME_LENGTH);
     // XOR_A_A;
     // LD_addr_A(wEggMonItem);
     gPokemon.eggMon.item = NO_ITEM;
@@ -885,7 +885,7 @@ void DayCare_InitBreeding(void){
     // LD_hli_A;
     // LD_A_addr(wPlayerID + 1);
     // LD_hl_A;
-    gPokemon.eggMon.id = wram->wPlayerID;
+    gPokemon.eggMon.id = gPlayer.playerID;
     // LD_A_addr(wCurPartyLevel);
     // LD_D_A;
     // CALLFAR(aCalcExpAtLevel);

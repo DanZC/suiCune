@@ -124,7 +124,7 @@ AskForPhoneNumber:
 DanaRematch:
     scall_local(Rematch);
     winlosstext(LassDana1BeatenText, 0)
-    readmem(wram_ptr(wDanaFightCount))
+    readmem(&gPlayer.DanaFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -146,28 +146,28 @@ LoadFight0:
     loadtrainer(LASS, DANA1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wDanaFightCount), 1)
+    loadmem(&gPlayer.DanaFightCount, 1)
     clearflag(ENGINE_DANA_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(LASS, DANA2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wDanaFightCount), 2)
+    loadmem(&gPlayer.DanaFightCount, 2)
     clearflag(ENGINE_DANA_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(LASS, DANA3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wDanaFightCount), 3)
+    loadmem(&gPlayer.DanaFightCount, 3)
     clearflag(ENGINE_DANA_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(LASS, DANA4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wDanaFightCount), 4)
+    loadmem(&gPlayer.DanaFightCount, 4)
     clearflag(ENGINE_DANA_READY_FOR_REMATCH)
     s_end
 LoadFight4:
@@ -243,7 +243,7 @@ AskToRegisterNumber:
 ChadRematch:
     scall_local(Rematch);
     winlosstext(SchoolboyChad1BeatenText, 0)
-    readmem(wram_ptr(wChadFightCount))
+    readmem(&gPlayer.ChadFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -265,28 +265,28 @@ LoadFight0:
     loadtrainer(SCHOOLBOY, CHAD1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wChadFightCount), 1)
+    loadmem(&gPlayer.ChadFightCount, 1)
     clearflag(ENGINE_CHAD_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(SCHOOLBOY, CHAD2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wChadFightCount), 2)
+    loadmem(&gPlayer.ChadFightCount, 2)
     clearflag(ENGINE_CHAD_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(SCHOOLBOY, CHAD3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wChadFightCount), 3)
+    loadmem(&gPlayer.ChadFightCount, 3)
     clearflag(ENGINE_CHAD_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(SCHOOLBOY, CHAD4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wChadFightCount), 4)
+    loadmem(&gPlayer.ChadFightCount, 4)
     clearflag(ENGINE_CHAD_READY_FOR_REMATCH)
     s_end
 LoadFight4:

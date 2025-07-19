@@ -40,7 +40,7 @@ void BlindingFlash(void){
     FadeOutPalettes();
     // LD_HL(wStatusFlags);
     // SET_hl(STATUSFLAGS_FLASH_F);
-    bit_set(wram->wStatusFlags, STATUSFLAGS_FLASH_F);
+    bit_set(gPlayer.statusFlags, STATUSFLAGS_FLASH_F);
     // FARCALL(aReplaceTimeOfDayPals);
     ReplaceTimeOfDayPals();
     // FARCALL(aUpdateTimeOfDayPal);
@@ -158,7 +158,7 @@ void HideHeadbuttTree(void){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    tile_t* loc = wram->wTilemap + TreeRelativeLocationTable[(wram->wPlayerStruct.facing & 0b00001100) >> 2];
+    tile_t* loc = wram->wTilemap + TreeRelativeLocationTable[(gPlayer.playerStruct.facing & 0b00001100) >> 2];
 
     enum { grass_block = 0x05 };
     // LD_A(0x05);  // grass block
@@ -388,7 +388,7 @@ static uint16_t Cut_GetLeafSpawnCoords(void){
     // AND_A(0b00001100);
     // ADD_A_E;
     // LD_E_A;
-    e += wram->wPlayerStruct.facing & 0b00001100;
+    e += gPlayer.playerStruct.facing & 0b00001100;
     // LD_HL(mCut_GetLeafSpawnCoords_Coords);
     // ADD_HL_DE;
     // ADD_HL_DE;
@@ -411,7 +411,7 @@ static uint16_t Cut_Headbutt_GetPixelFacing(void){
     // LD_A_addr(wPlayerDirection);
     // AND_A(0b00001100);
     // SRL_A;
-    uint8_t e = (wram->wPlayerStruct.facing & 0b00001100) >> 1;
+    uint8_t e = (gPlayer.playerStruct.facing & 0b00001100) >> 1;
     // LD_E_A;
     // LD_D(0);
     // LD_HL(mCut_Headbutt_GetPixelFacing_Coords);

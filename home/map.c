@@ -389,28 +389,24 @@ static u8_flag_s GetDestinationWarpNumber_Function(void) {
     // LD_A_addr(wPlayerStandingMapY);
     // SUB_A(4);
     // LD_E_A;
-    uint8_t e = wram->wPlayerStruct.nextMapY - 4;
+    uint8_t e = gPlayer.playerStruct.nextMapY - 4;
     // LD_A_addr(wPlayerStandingMapX);
     // SUB_A(4);
     // LD_D_A;
-    uint8_t d = wram->wPlayerStruct.nextMapX - 4;
+    uint8_t d = gPlayer.playerStruct.nextMapX - 4;
     // LD_A_addr(wCurMapWarpCount);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wCurMapWarpCount == 0)
+    if(gPlayer.curMapWarpCount == 0)
         return u8_flag(0xff, false);
 
     // LD_C_A;
-    uint8_t c = wram->wCurMapWarpCount;
+    uint8_t c = gPlayer.curMapWarpCount;
     // LD_HL(wCurMapWarpsPointer);
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-#if CONVERTED_OVERWORLD_LOOP
     const struct WarpEventData* hl = gCurMapWarpsPointer;
-#else
-    const struct WarpEventData* hl = GBToRAMAddr(wram->wCurMapWarpsPointer);
-#endif
 
     do {
     // loop:
@@ -432,7 +428,7 @@ static u8_flag_s GetDestinationWarpNumber_Function(void) {
             // INC_A;
             // SUB_A_C;
             // LD_C_A;
-            uint8_t a = (wram->wCurMapWarpCount + 1) - c;
+            uint8_t a = (gPlayer.curMapWarpCount + 1) - c;
             // SCF;
             // RET;
             return u8_flag(a, true);
@@ -493,11 +489,7 @@ static void CopyWarpData_Function(uint8_t c) {
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-#if CONVERTED_OVERWORLD_LOOP
     const struct WarpEventData* hl = gCurMapWarpsPointer;
-#else
-    const struct WarpEventData* hl = GBToRAMAddr(wram->wCurMapWarpsPointer);
-#endif
     // LD_A_C;
     // DEC_A;
     // LD_BC(WARP_EVENT_SIZE);
@@ -902,15 +894,15 @@ void ReadWarps(const struct MapEvents* hl){
     // LD_C_A;
     // LD_addr_A(wCurMapWarpCount);
     gCurMapWarpCount = hl->warp_event_count;
-    // wram->wCurMapWarpCount = _hl[2];
-    wram->wCurMapWarpCount = hl->warp_event_count;
+    // gPlayer.curMapWarpCount = _hl[2];
+    gPlayer.curMapWarpCount = hl->warp_event_count;
     // LD_A_L;
     // LD_addr_A(wCurMapWarpsPointer);
     // LD_A_H;
     // LD_addr_A(wCurMapWarpsPointer + 1);
     gCurMapWarpsPointer = hl->warp_events;
-    wram->wCurMapWarpsPointer = wram->wMapEventsPointer + 3;
-    printf("warps=%d, 0x%02X\n", wram->wCurMapWarpCount, wram->wCurMapWarpsPointer);
+    gPlayer.curMapWarpsPointer = wram->wMapEventsPointer + 3;
+    printf("warps=%d, 0x%02X\n", gPlayer.curMapWarpCount, gPlayer.curMapWarpsPointer);
     // LD_A_C;
     // AND_A_A;
     // RET_Z ;
@@ -925,15 +917,15 @@ void ReadCoordEvents(const struct MapEvents* hl){
     // LD_C_A;
     // LD_addr_A(wCurMapCoordEventCount);
     gCurMapCoordEventCount = hl->coord_event_count;
-    // wram->wCurMapCoordEventCount = _hl[2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE)];
-    wram->wCurMapCoordEventCount = hl->coord_event_count;
+    // gPlayer.curMapCoordEventCount = _hl[2 + 1 + (gPlayer.curMapWarpCount * WARP_EVENT_SIZE)];
+    gPlayer.curMapCoordEventCount = hl->coord_event_count;
     // LD_A_L;
     // LD_addr_A(wCurMapCoordEventsPointer);
     // LD_A_H;
     // LD_addr_A(wCurMapCoordEventsPointer + 1);
     gCurMapCoordEventsPointer = hl->coord_events;
-    wram->wCurMapCoordEventsPointer = wram->wMapEventsPointer + 2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE) + 1;
-    printf("coords=%d, 0x%02X\n", wram->wCurMapCoordEventCount, wram->wCurMapCoordEventsPointer);
+    gPlayer.curMapCoordEventsPointer = wram->wMapEventsPointer + 2 + 1 + (gPlayer.curMapWarpCount * WARP_EVENT_SIZE) + 1;
+    printf("coords=%d, 0x%02X\n", gPlayer.curMapCoordEventCount, gPlayer.curMapCoordEventsPointer);
 
     // LD_A_C;
     // AND_A_A;
@@ -951,14 +943,14 @@ void ReadBGEvents(const struct MapEvents* hl){
     // LD_C_A;
     // LD_addr_A(wCurMapBGEventCount);
     gCurMapBGEventCount = hl->bg_event_count;
-    // wram->wCurMapBGEventCount = _hl[2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE) + 1 + (wram->wCurMapCoordEventCount * COORD_EVENT_SIZE)];
-    wram->wCurMapBGEventCount = hl->bg_event_count;
+    // gPlayer.curMapBGEventCount = _hl[2 + 1 + (gPlayer.curMapWarpCount * WARP_EVENT_SIZE) + 1 + (gPlayer.curMapCoordEventCount * COORD_EVENT_SIZE)];
+    gPlayer.curMapBGEventCount = hl->bg_event_count;
     // LD_A_L;
     // LD_addr_A(wCurMapBGEventsPointer);
     // LD_A_H;
     // LD_addr_A(wCurMapBGEventsPointer + 1);
     gCurMapBGEventsPointer = hl->bg_events;
-    wram->wCurMapBGEventsPointer = wram->wMapEventsPointer + 2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE) + 1 + (wram->wCurMapCoordEventCount * COORD_EVENT_SIZE) + 1;
+    gPlayer.curMapBGEventsPointer = wram->wMapEventsPointer + 2 + 1 + (gPlayer.curMapWarpCount * WARP_EVENT_SIZE) + 1 + (gPlayer.curMapCoordEventCount * COORD_EVENT_SIZE) + 1;
 
     // LD_A_C;
     // AND_A_A;
@@ -980,18 +972,18 @@ void ReadObjectEvents(const struct MapEvents* hl){
     // INC_DE;
     // LD_addr_A(wCurMapObjectEventCount);
     gCurMapObjectEventCount = hl->obj_event_count;
-    // wram->wCurMapObjectEventCount = _hl[2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE) + 1 + (wram->wCurMapCoordEventCount * COORD_EVENT_SIZE) + 1 + (wram->wCurMapBGEventCount * BG_EVENT_SIZE)];
-    wram->wCurMapObjectEventCount = hl->obj_event_count;
+    // gPlayer.curMapObjectEventCount = _hl[2 + 1 + (gPlayer.curMapWarpCount * WARP_EVENT_SIZE) + 1 + (gPlayer.curMapCoordEventCount * COORD_EVENT_SIZE) + 1 + (gPlayer.curMapBGEventCount * BG_EVENT_SIZE)];
+    gPlayer.curMapObjectEventCount = hl->obj_event_count;
     // LD_A_E;
     // LD_addr_A(wCurMapObjectEventsPointer);
     // LD_A_D;
     // LD_addr_A(wCurMapObjectEventsPointer + 1);
     gCurMapObjectEventsPointer = hl->obj_events;
-    wram->wCurMapObjectEventsPointer = wram->wMapEventsPointer + 2 + 1 + (wram->wCurMapWarpCount * WARP_EVENT_SIZE) + 1 + (wram->wCurMapCoordEventCount * COORD_EVENT_SIZE) + 1 + (wram->wCurMapBGEventCount * BG_EVENT_SIZE) + 1;
+    gPlayer.curMapObjectEventsPointer = wram->wMapEventsPointer + 2 + 1 + (gPlayer.curMapWarpCount * WARP_EVENT_SIZE) + 1 + (gPlayer.curMapCoordEventCount * COORD_EVENT_SIZE) + 1 + (gPlayer.curMapBGEventCount * BG_EVENT_SIZE) + 1;
 
     // LD_A_addr(wCurMapObjectEventCount);
     // CALL(aCopyMapObjectEvents);
-    uint8_t rest = CopyMapObjectEvents(&wram->wPlayerObject + 1, gCurMapObjectEventsPointer, gCurMapObjectEventCount);
+    uint8_t rest = CopyMapObjectEvents(&gPlayer.playerObject + 1, gCurMapObjectEventsPointer, gCurMapObjectEventCount);
 
 //  get NUM_OBJECTS - [wCurMapObjectEventCount]
     // LD_A_addr(wCurMapObjectEventCount);
@@ -1012,10 +1004,10 @@ void ReadObjectEvents(const struct MapEvents* hl){
         // loop:
             // LD_hl(0);
             // INC_HL;
-            wram->wMapObject[i].sprite = 0;
+            gPlayer.mapObject[i].sprite = 0;
             // LD_hl(-1);
             // DEC_HL;
-            wram->wMapObject[i].objectYCoord = 0xff;
+            gPlayer.mapObject[i].objectYCoord = 0xff;
             // ADD_HL_BC;
             // DEC_A;
             // IF_NZ goto loop;
@@ -1089,7 +1081,7 @@ void ClearObjectStructs(void){
     // LD_BC(OBJECT_LENGTH * (NUM_OBJECT_STRUCTS - 1));
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wObjectStruct, sizeof(wram->wObjectStruct), 0);
+    ByteFill(gPlayer.objectStruct, sizeof(gPlayer.objectStruct), 0);
 
 //  Just to make sure (this is rather pointless)
     // LD_HL(wObject1Struct);
@@ -1759,7 +1751,7 @@ uint8_t CheckObjectMask(uint8_t a){
     // ADD_HL_DE;
     // LD_A_hl;
     // RET;
-    return wram->wObjectMasks[a];
+    return gPlayer.objectMasks[a];
 }
 
 void MaskObject(uint8_t a){
@@ -1770,7 +1762,7 @@ void MaskObject(uint8_t a){
     // ADD_HL_DE;
     // LD_hl(-1);  // masked
     // RET;
-    wram->wObjectMasks[a] = 0xff;  // masked
+    gPlayer.objectMasks[a] = 0xff;  // masked
 }
 
 void UnmaskObject(uint8_t a){
@@ -1781,7 +1773,7 @@ void UnmaskObject(uint8_t a){
     // ADD_HL_DE;
     // LD_hl(0);  // unmasked
     // RET;
-    wram->wObjectMasks[a] = 0;
+    gPlayer.objectMasks[a] = 0;
 }
 
 //  if DEF(_DEBUG)
@@ -2352,10 +2344,10 @@ static void GetMovementPermissions_Left(uint8_t a) {
 static void GetMovementPermissions_LeftRight(void) {
     // LD_A_addr(wPlayerStandingMapX);
     // LD_D_A;
-    uint8_t x = wram->wPlayerStruct.nextMapX;
+    uint8_t x = gPlayer.playerStruct.nextMapX;
     // LD_A_addr(wPlayerStandingMapY);
     // LD_E_A;
-    uint8_t y = wram->wPlayerStruct.nextMapY;
+    uint8_t y = gPlayer.playerStruct.nextMapY;
 
     // PUSH_DE;
     // DEC_D;
@@ -2430,10 +2422,10 @@ static void GetMovementPermissions_Up(uint8_t a) {
 static void GetMovementPermissions_UpDown(void) {
     // LD_A_addr(wPlayerStandingMapX);
     // LD_D_A;
-    uint8_t x = wram->wPlayerStruct.nextMapX;
+    uint8_t x = gPlayer.playerStruct.nextMapX;
     // LD_A_addr(wPlayerStandingMapY);
     // LD_E_A;
-    uint8_t y = wram->wPlayerStruct.nextMapY;
+    uint8_t y = gPlayer.playerStruct.nextMapY;
 
     // PUSH_DE;
     // INC_E;
@@ -2474,14 +2466,14 @@ void GetMovementPermissions(void){
 //  get coords of current tile
     // LD_A_addr(wPlayerStandingMapX);
     // LD_D_A;
-    uint8_t x = wram->wPlayerStruct.nextMapX;
+    uint8_t x = gPlayer.playerStruct.nextMapX;
     // LD_A_addr(wPlayerStandingMapY);
     // LD_E_A;
-    uint8_t y = wram->wPlayerStruct.nextMapY;
+    uint8_t y = gPlayer.playerStruct.nextMapY;
     // CALL(aGetCoordTile);
     uint8_t tile = GetCoordTile(x, y);
     // LD_addr_A(wPlayerStandingTile);
-    wram->wPlayerStruct.nextTile = tile;
+    gPlayer.playerStruct.nextTile = tile;
     // CALL(aGetMovementPermissions_CheckHiNybble);
     // RET_NZ ;
     if(!GetMovementPermissions_CheckHiNybble(tile))
@@ -2499,7 +2491,7 @@ void GetMovementPermissions(void){
     // LD_HL(wTilePermissions);
     // OR_A_hl;
     // LD_hl_A;
-    wram->wTilePermissions |= MovementPermissionsData[wram->wPlayerStruct.nextTile & 7];
+    wram->wTilePermissions |= MovementPermissionsData[gPlayer.playerStruct.nextTile & 7];
     // RET;
     return;
 }
@@ -2528,7 +2520,7 @@ struct CoordsTileId GetFacingTileCoord(void){
     // ADD_HL_HL;
     // LD_DE(mGetFacingTileCoord_Directions);
     // ADD_HL_DE;
-    uint8_t idx = ((wram->wPlayerStruct.facing >> 2) & 3);
+    uint8_t idx = ((gPlayer.playerStruct.facing >> 2) & 3);
 
     struct CoordsTileId res;
 
@@ -2536,8 +2528,8 @@ struct CoordsTileId GetFacingTileCoord(void){
     // INC_HL;
     // LD_E_hl;
     // INC_HL;
-    res.x = Directions[idx].x + wram->wPlayerStruct.mapX;
-    res.y = Directions[idx].y + wram->wPlayerStruct.mapY;
+    res.x = Directions[idx].x + gPlayer.playerStruct.mapX;
+    res.y = Directions[idx].y + gPlayer.playerStruct.mapY;
 
     // LD_A_hli;
     // LD_H_hl;
@@ -2745,11 +2737,11 @@ const struct CoordEvent* CheckCurrentMapCoordEvents_CoordEventCheck(void) {
     // LD_A_addr(wPlayerStandingMapX);
     // SUB_A(4);
     // LD_D_A;
-    uint8_t x = wram->wPlayerStruct.nextMapX - 4;
+    uint8_t x = gPlayer.playerStruct.nextMapX - 4;
     // LD_A_addr(wPlayerStandingMapY);
     // SUB_A(4);
     // LD_E_A;
-    uint8_t y = wram->wPlayerStruct.nextMapY - 4;
+    uint8_t y = gPlayer.playerStruct.nextMapY - 4;
 
     for(uint32_t i = 0; i < gCurMapCoordEventCount; ++i) {
     // loop:
@@ -3191,7 +3183,7 @@ uint16_t GetMapMusic(void){
     uint16_t music = GetMapPointer()->music;
     if(music == MUSIC_MAHOGANY_MART)
     {
-        if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_MAHOGANY_F))
+        if(!bit_test(gPlayer.statusFlags2, STATUSFLAGS2_ROCKETS_IN_MAHOGANY_F))
         {
             return MUSIC_CHERRYGROVE_CITY;
         }
@@ -3199,7 +3191,7 @@ uint16_t GetMapMusic(void){
     }
     if(bit_test(music, RADIO_TOWER_MUSIC_F))
     {
-        if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F))
+        if(!bit_test(gPlayer.statusFlags2, STATUSFLAGS2_ROCKETS_IN_RADIO_TOWER_F))
         {
             return music & (RADIO_TOWER_MUSIC - 1);
         }

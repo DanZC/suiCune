@@ -40,7 +40,7 @@ bool v_FindPartyMonThatSpeciesYourTrainerID(species_t b){
     // LD_A_addr(wPlayerID + 1);
     // CP_A_hl;
     // IF_NZ goto nope;
-    if(hl->mon.id == wram->wPlayerID) {
+    if(hl->mon.id == gPlayer.playerID) {
         // LD_A(0x1);
         // AND_A_A;
         // RET;

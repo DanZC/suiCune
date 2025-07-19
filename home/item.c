@@ -90,10 +90,10 @@ bool CheckItem(item_pocket_u *pocket, item_t item){
 item_pocket_u* GetItemPocket(uint8_t pocket) {
     switch(pocket) {
         default:
-        case ITEM_POCKET: return (item_pocket_u*)&wram->wNumItems;
-        case BALL_POCKET: return (item_pocket_u*)&wram->wNumBalls;
-        case KEY_ITEM_POCKET: return (item_pocket_u*)&wram->wNumKeyItems;
-        case TM_HM_POCKET: return (item_pocket_u*)&wram->wTMsHMs;
-        case PC_ITEM_POCKET: return (item_pocket_u*)&wram->wNumPCItems;
+        case ITEM_POCKET: return (item_pocket_u*)&gPlayer.numItems;
+        case BALL_POCKET: return (item_pocket_u*)&gPlayer.numBalls;
+        case KEY_ITEM_POCKET: return (item_pocket_u*)&gPlayer.numKeyItems;
+        case TM_HM_POCKET: return (item_pocket_u*)&gPlayer.TMsHMs;
+        case PC_ITEM_POCKET: return (item_pocket_u*)&gPlayer.numPCItems;
     }
 }

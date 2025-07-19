@@ -234,7 +234,7 @@ AskForNumber:
 WantsBattle:
     scall(Route35RematchM)
     winlosstext(BugCatcherArnieBeatenText, 0)
-    readmem(wram_ptr(wArnieFightCount))
+    readmem(&gPlayer.ArnieFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -256,28 +256,28 @@ LoadFight0:
     loadtrainer(BUG_CATCHER, ARNIE1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wArnieFightCount), 1)
+    loadmem(&gPlayer.ArnieFightCount, 1)
     clearflag(ENGINE_ARNIE_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(BUG_CATCHER, ARNIE2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wArnieFightCount), 2)
+    loadmem(&gPlayer.ArnieFightCount, 2)
     clearflag(ENGINE_ARNIE_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(BUG_CATCHER, ARNIE3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wArnieFightCount), 3)
+    loadmem(&gPlayer.ArnieFightCount, 3)
     clearflag(ENGINE_ARNIE_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(BUG_CATCHER, ARNIE4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wArnieFightCount), 4)
+    loadmem(&gPlayer.ArnieFightCount, 4)
     clearflag(ENGINE_ARNIE_READY_FOR_REMATCH)
     s_end
 LoadFight4:

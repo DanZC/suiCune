@@ -629,9 +629,7 @@ void init_function_pointers(void) {
     // REDIRECTED(TalkToTrainer);
     // REDIRECTED(LoadTrainer_continue);
     // REDIRECTED(FacingPlayerDistance);
-#if CONVERTED_OVERWORLD_LOOP
     CONVERTED(PrintWinLossText);
-#endif
     // REDIRECTED(v_CheckTrainerBattle);
     // REDIRECTED(CheckTrainerBattle);
 
@@ -1234,9 +1232,7 @@ void init_function_pointers(void) {
     // REDIRECTED(BGEvent);
     // REDIRECTED(Call_a_de);
     // REDIRECTED(GetBlockLocation);
-#if CONVERTED_OVERWORLD_LOOP
     CONVERTED(GetWarpDestCoords);
-#endif
     // REDIRECTED(GetMapPointer);
     // REDIRECTED(CopyMapPartialAndAttributes);
     // CONVERTED(GetWorldMapLocation);
@@ -2811,9 +2807,7 @@ void init_function_pointers(void) {
     // engine/overworld/events.c
     // REDIRECTED(PlayerEventScriptPointers);
     // REDIRECTED(FallIntoMapScript);
-#if CONVERTED_OVERWORLD_LOOP
     CONVERTED(OverworldLoop);
-#endif
     // REDIRECTED(OWPlayerInput);
     // REDIRECTED(DisableCoordEvents);
     // REDIRECTED(UnusedPlayerEventScript);

@@ -355,7 +355,7 @@ static uint8_t GetTreeScore_OTIDScore(void) {
     // CALL(aDivide);
     // LDH_A_addr(hRemainder);
     // RET;
-    return (uint8_t)(BigEndianToNative16(wram->wPlayerID) / 10);
+    return (uint8_t)(BigEndianToNative16(gPlayer.playerID) / 10);
 }
 
 static uint8_t GetTreeScore(void){

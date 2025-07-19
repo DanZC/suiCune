@@ -69,7 +69,7 @@ static void TryResetFruitTrees(void){
     // BIT_hl(DAILYFLAGS1_ALL_FRUIT_TREES_F);
     // RET_NZ ;
     // JP(mResetFruitTrees);
-    if(bit_test(wram->wDailyFlags1, DAILYFLAGS1_ALL_FRUIT_TREES_F))
+    if(bit_test(gPlayer.dailyFlags1, DAILYFLAGS1_ALL_FRUIT_TREES_F))
         return;
     return ResetFruitTrees();
 }
@@ -98,10 +98,10 @@ static void ResetFruitTrees(void){
     // LD_hli_A;
     // LD_hli_A;
     // LD_hl_A;
-    ByteFill(wram->wFruitTreeFlags, sizeof(wram->wFruitTreeFlags), 0);
+    ByteFill(gPlayer.fruitTreeFlags, sizeof(gPlayer.fruitTreeFlags), 0);
     // LD_HL(wDailyFlags1);
     // SET_hl(DAILYFLAGS1_ALL_FRUIT_TREES_F);
-    bit_set(wram->wDailyFlags1, DAILYFLAGS1_ALL_FRUIT_TREES_F);
+    bit_set(gPlayer.dailyFlags1, DAILYFLAGS1_ALL_FRUIT_TREES_F);
     // RET;
 }
 
@@ -117,7 +117,7 @@ static uint8_t GetFruitTreeFlag(uint8_t b, uint8_t tree){
     // POP_DE;
     // POP_HL;
     // RET;
-    return FlagAction(wram->wFruitTreeFlags, tree - 1, b);
+    return FlagAction(gPlayer.fruitTreeFlags, tree - 1, b);
 }
 
 static item_t GetFruitTreeItem(uint8_t a){

@@ -42,7 +42,7 @@ bool v_CheckTrainerBattle(void){
 
     // loop:
     do {
-        struct MapObject* de = wram->wMapObject + (a - 1);
+        struct MapObject* de = gPlayer.mapObject + (a - 1);
     //  Start a battle if the object:
         // PUSH_AF;
         // PUSH_DE;
@@ -245,21 +245,21 @@ struct FacingDist FacingPlayerDistance(struct Object* bc){
     // LD_A_addr(wPlayerStandingMapX);
     // CP_A_D;
     // IF_Z goto CheckY;
-    if(wram->wPlayerStruct.nextMapX == d) {
+    if(gPlayer.playerStruct.nextMapX == d) {
     // CheckY:
         // LD_A_addr(wPlayerStandingMapY);
         // SUB_A_E;
         // IF_Z goto NotFacing;
-        if(wram->wPlayerStruct.nextMapY == e)
+        if(gPlayer.playerStruct.nextMapY == e)
             return (struct FacingDist){.facing = false, .dist = d, .dir = e};
         // IF_NC goto Above;
-        else if(wram->wPlayerStruct.nextMapY < e) {
+        else if(gPlayer.playerStruct.nextMapY < e) {
         //  Below
             // CPL;
             // INC_A;
             // LD_D_A;
             // LD_E(OW_UP);
-            d = ((wram->wPlayerStruct.nextMapY - e) ^ 0xff) + 1;
+            d = ((gPlayer.playerStruct.nextMapY - e) ^ 0xff) + 1;
             e = OW_UP;
         }
         else {
@@ -267,7 +267,7 @@ struct FacingDist FacingPlayerDistance(struct Object* bc){
 
         // Above:
             // LD_D_A;
-            d = wram->wPlayerStruct.nextMapY - e;
+            d = gPlayer.playerStruct.nextMapY - e;
             // LD_E(OW_DOWN);
             e = OW_DOWN;
         }
@@ -276,21 +276,21 @@ struct FacingDist FacingPlayerDistance(struct Object* bc){
     // LD_A_addr(wPlayerStandingMapY);
     // CP_A_E;
     // IF_Z goto CheckX;
-    else if(wram->wPlayerStruct.nextMapY == e) {
+    else if(gPlayer.playerStruct.nextMapY == e) {
     // CheckX:
         // LD_A_addr(wPlayerStandingMapX);
         // SUB_A_D;
         // IF_Z goto NotFacing;
-        if(wram->wPlayerStruct.nextMapX == d) 
+        if(gPlayer.playerStruct.nextMapX == d) 
             return (struct FacingDist){.facing = false, .dist = d, .dir = e};
         // IF_NC goto Left;
-        if(wram->wPlayerStruct.nextMapX < d) { 
+        if(gPlayer.playerStruct.nextMapX < d) { 
             //  Right
             // CPL;
             // INC_A;
             // LD_D_A;
             // LD_E(OW_LEFT);
-            d = ((wram->wPlayerStruct.nextMapX - d) ^ 0xff) + 1;
+            d = ((gPlayer.playerStruct.nextMapX - d) ^ 0xff) + 1;
             e = OW_LEFT;
         }
         else {
@@ -298,7 +298,7 @@ struct FacingDist FacingPlayerDistance(struct Object* bc){
         // Left:
             // LD_D_A;
             // LD_E(OW_RIGHT);
-            d = wram->wPlayerStruct.nextMapX - d;
+            d = gPlayer.playerStruct.nextMapX - d;
             e = OW_RIGHT;
         }
     }

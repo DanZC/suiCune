@@ -4017,19 +4017,19 @@ void LoadSelectedPartiesForColosseum(void){
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyCount);
     // CALL(aLoadSelectedPartiesForColosseum_CopyThreeSpecies);
-    LoadSelectedPartiesForColosseum_CopyThreeSpecies(&gPokemon.partyCount, wram->wPlayerMonSelection);
+    LoadSelectedPartiesForColosseum_CopyThreeSpecies(&gPokemon.partyCount, gPlayer.playerMonSelection);
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyMon1Species);
     // CALL(aLoadSelectedPartiesForColosseum_CopyPartyStruct);
-    LoadSelectedPartiesForColosseum_CopyPartyStruct(gPokemon.partyMon, wram->wPlayerMonSelection);
+    LoadSelectedPartiesForColosseum_CopyPartyStruct(gPokemon.partyMon, gPlayer.playerMonSelection);
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyMonOTs);
     // CALL(aLoadSelectedPartiesForColosseum_CopyName);
-    LoadSelectedPartiesForColosseum_CopyName(gPokemon.partyMonOT[0], wram->wPlayerMonSelection);
+    LoadSelectedPartiesForColosseum_CopyName(gPokemon.partyMonOT[0], gPlayer.playerMonSelection);
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyMonNicknames);
     // CALL(aLoadSelectedPartiesForColosseum_CopyName);
-    LoadSelectedPartiesForColosseum_CopyName(gPokemon.partyMonNickname[0], wram->wPlayerMonSelection);
+    LoadSelectedPartiesForColosseum_CopyName(gPokemon.partyMonNickname[0], gPlayer.playerMonSelection);
     // LD_HL(wOTMonSelection);
     // LD_DE(wOTPartyCount);
     // CALL(aLoadSelectedPartiesForColosseum_CopyThreeSpecies);
@@ -4058,19 +4058,19 @@ void LoadSelectedPartyForBattleTower(void){
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyCount);
     // CALL(aLoadSelectedPartiesForColosseum_CopyThreeSpecies);
-    LoadSelectedPartiesForColosseum_CopyThreeSpecies(&gPokemon.partyCount, wram->wPlayerMonSelection);
+    LoadSelectedPartiesForColosseum_CopyThreeSpecies(&gPokemon.partyCount, gPlayer.playerMonSelection);
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyMon1Species);
     // CALL(aLoadSelectedPartiesForColosseum_CopyPartyStruct);
-    LoadSelectedPartiesForColosseum_CopyPartyStruct(gPokemon.partyMon, wram->wPlayerMonSelection);
+    LoadSelectedPartiesForColosseum_CopyPartyStruct(gPokemon.partyMon, gPlayer.playerMonSelection);
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyMonOTs);
     // CALL(aLoadSelectedPartiesForColosseum_CopyName);
-    LoadSelectedPartiesForColosseum_CopyName(gPokemon.partyMonOT[0], wram->wPlayerMonSelection);
+    LoadSelectedPartiesForColosseum_CopyName(gPokemon.partyMonOT[0], gPlayer.playerMonSelection);
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyMonNicknames);
     // CALL(aLoadSelectedPartiesForColosseum_CopyName);
-    LoadSelectedPartiesForColosseum_CopyName(gPokemon.partyMonNickname[0], wram->wPlayerMonSelection);
+    LoadSelectedPartiesForColosseum_CopyName(gPokemon.partyMonNickname[0], gPlayer.playerMonSelection);
     // RET;
 }
 
@@ -4081,19 +4081,19 @@ void Function1011f1(void){
     OpenSRAM(MBANK(as4_a60c));
     // LD_A_addr(s4_a60c);
     // LD_addr_A(wdc41);
-    wram->wdc41 = gb_read(s4_a60c);
+    gPlayer.wdc41 = gb_read(s4_a60c);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // LD_HL(wdc41);
     // RES_hl(4);
-    bit_reset(wram->wdc41, 4);
+    bit_reset(gPlayer.wdc41, 4);
     // LD_HL(wGameTimerPaused);
     // BIT_hl(GAME_TIMER_MOBILE_F);
     // IF_Z goto skip;
     if(bit_test(wram->wGameTimerPaused, GAME_TIMER_MOBILE_F)) {
         // LD_HL(wdc41);
         // SET_hl(4);
-        bit_set(wram->wdc41, 4);
+        bit_set(gPlayer.wdc41, 4);
     }
 
 // skip:
@@ -4101,9 +4101,9 @@ void Function1011f1(void){
     Function10209c();
     // XOR_A_A;
     // LD_addr_A(wdc5f);
-    wram->wdc5f = 0;
+    gPlayer.wdc5f = 0;
     // LD_addr_A(wdc60);
-    wram->wdc60 = 0;
+    gPlayer.wdc60 = 0;
     // LD_A(LINK_MOBILE);
     // LD_addr_A(wLinkMode);
     wram->wLinkMode = LINK_MOBILE;
@@ -4209,7 +4209,7 @@ void Function10127e(void){
     // LD_A_addr(wdc5f);
     // AND_A_A;
     // IF_Z goto zero;
-    if(wram->wdc5f == 0) {
+    if(gPlayer.wdc5f == 0) {
     // zero:
         // LD_C(0);
         wram->wMobileCommsJumptableIndex = 0;
@@ -4217,13 +4217,13 @@ void Function10127e(void){
     // CP_A(1);
     // LD_C(0x27);
     // IF_Z goto load;
-    else if(wram->wdc5f == 1) {
+    else if(gPlayer.wdc5f == 1) {
         wram->wMobileCommsJumptableIndex = 0x27;
     }
     // CP_A(2);
     // LD_C(0x37);
     // IF_Z goto load;
-    else if(wram->wdc5f == 2) {
+    else if(gPlayer.wdc5f == 2) {
         wram->wMobileCommsJumptableIndex = 0x27;
     }
     else {
@@ -5684,7 +5684,7 @@ void v_SelectMonsForMobileBattle(void){
     // LD_DE(wccb5);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wccb5, wram->wPlayerMonSelection, sizeof(wram->wPlayerMonSelection));
+    CopyBytes(wram->wccb5, gPlayer.playerMonSelection, sizeof(gPlayer.playerMonSelection));
     // LD_HL(wcd6c);
     // LD_A_hli;
     // LD_addr_A(wccb8);
@@ -5746,9 +5746,9 @@ void v_StartMobileBattle(void){
     Function100754();
     // XOR_A_A;
     // LD_addr_A(wdc5f);
-    wram->wdc5f = 0;
+    gPlayer.wdc5f = 0;
     // LD_addr_A(wdc60);
-    wram->wdc60 = 0;
+    gPlayer.wdc60 = 0;
     // FARCALL(aBlankScreen);
     BlankScreen();
     // CALL(aSpeechTextbox);
@@ -5901,7 +5901,7 @@ void Function101ac6(void){
     wram->wcd2f = 0x00;
     // LD_DE(wdc42);
     // CALL(aFunction102068);
-    Function102068(wram->wdc42);
+    Function102068(gPlayer.wdc42);
     // LD_A_addr(wMobileCommsJumptableIndex);
     // INC_A;
     // LD_addr_A(wMobileCommsJumptableIndex);
@@ -6126,7 +6126,7 @@ void Function101be5(void){
 void Function101c11(void){
     // LD_A(0x01);
     // LD_addr_A(wdc5f);
-    wram->wdc5f = 0x01;
+    gPlayer.wdc5f = 0x01;
     // LD_E(0x09);
     // CALL(aFunction101ee4);
     Function101ee4(MOBILESTATUS_USE_THE_CARD_FOLDER); // Use the card folder?
@@ -6145,7 +6145,7 @@ void Function101c11(void){
 void Function101c2b(void){
     // LD_A(0x02);
     // LD_addr_A(wdc5f);
-    wram->wdc5f = 0x02;
+    gPlayer.wdc5f = 0x02;
     // LD_E(0x07);
     // CALL(aFunction101ee4);
     Function101ee4(MOBILESTATUS_WAITING_FOR_CALL); // Waiting for call
@@ -6490,7 +6490,7 @@ void Function101dd0(void){
     // LD_A(0x1b);
     // LD_addr_A(wMobileCommsJumptableIndex);
     // RET;
-    wram->wMobileCommsJumptableIndex = (bit_test(wram->wdc41, 1))? 0x1b: 0x19;
+    wram->wMobileCommsJumptableIndex = (bit_test(gPlayer.wdc41, 1))? 0x1b: 0x19;
 }
 
 void Function101de3(void){
@@ -6672,7 +6672,7 @@ bool Function101e98(void){
     bit_set(wram->wGameTimerPaused, GAME_TIMER_MOBILE_F);
     // LD_HL(wdc41);
     // SET_hl(4);
-    bit_set(wram->wdc41, 4);
+    bit_set(gPlayer.wdc41, 4);
     // RET;
     return false;
 }
@@ -6686,7 +6686,7 @@ bool Function101ead(void){
     // LD_HL(wdc41);
     // BIT_hl(2);
     // IF_Z goto asm_101eca;
-    if(!bit_test(wram->wdc41, 2))
+    if(!bit_test(gPlayer.wdc41, 2))
         return true;
     // LD_A_addr(wcd2f);
     // AND_A_A;
@@ -6696,7 +6696,7 @@ bool Function101ead(void){
     // LD_HL(wdc41);
     // BIT_hl(1);
     // IF_Z goto asm_101eca;
-    if(!bit_test(wram->wdc41, 1))
+    if(!bit_test(gPlayer.wdc41, 1))
         return true;
 
 // asm_101ec8:
@@ -6938,7 +6938,7 @@ void Function10208e(const void* de){
     // CALL(aCopyBytes);
     // POP_DE;
     // RET;
-    CopyBytes(wram->wdc42, de, 8);
+    CopyBytes(gPlayer.wdc42, de, 8);
 }
 
 // ClearBufferWdc42
@@ -6947,7 +6947,7 @@ void Function10209c(void){
     // LD_HL(wdc42);
     // LD_BC(8);
     // CALL(aByteFill);
-    ByteFill(wram->wdc42, sizeof(wram->wdc42), 0xff);
+    ByteFill(gPlayer.wdc42, sizeof(gPlayer.wdc42), 0xff);
     // RET;
 }
 
@@ -6958,7 +6958,7 @@ bool Function1020a8(void){
     // LD_DE(wdc42);
     // FARCALL(aFunction17a68f);
     // RET_C ;
-    if(Function17a68f(wram->wdc42, 0x1))
+    if(Function17a68f(gPlayer.wdc42, 0x1))
         return true;
     // CALL(aFunction10208e);
     Function10208e(wram->wStringBuffer1);
@@ -7011,7 +7011,7 @@ bool Function1020ea(void){
     // LD_HL(wdc41);
     // BIT_hl(2);
     // IF_NZ goto quit;
-    if(!bit_test(wram->wdc41, 4) || bit_test(wram->wdc41, 2))
+    if(!bit_test(gPlayer.wdc41, 4) || bit_test(gPlayer.wdc41, 2))
         return true;
     // CALL(aFunction10218d);
     Function10218d();
@@ -7566,7 +7566,7 @@ void Function102387(void){
     bit_set(wram->wcd4b, 6);
     // XOR_A_A;
     // LD_addr_A(wdc5f);
-    wram->wdc5f = 0;
+    gPlayer.wdc5f = 0;
     // LD_DE(MUSIC_ROUTE_30);
     // CALL(aPlayMusic);
     PlayMusic(MUSIC_ROUTE_30);
@@ -8981,7 +8981,7 @@ void Function102a3b(void){
     // LD_DE(wPlayerTrademonSenderName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPlayerTrademon.senderName, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(wram->wPlayerTrademon.senderName, gPlayer.playerName, NAME_LENGTH);
     // LD_A_addr(wcd4c);
     // DEC_A;
     // LD_C_A;
@@ -9701,7 +9701,7 @@ void Function102e4f(void){
     v_InitMG_Mobile_LinkTradePalMap();
     // LD_DE(wPlayerName);
     // hlcoord(4, 0, wTilemap);
-    struct TextPrintState st = {.de = wram->wPlayerName, .hl = coord(4, 0, wram->wTilemap)};
+    struct TextPrintState st = {.de = gPlayer.playerName, .hl = coord(4, 0, wram->wTilemap)};
     // CALL(aPlaceString);
     PlaceString(&st, st.hl);
     // LD_A(0x14);
@@ -10232,9 +10232,9 @@ void Function103309(void){
     OpenSRAM(MBANK(as4_a60c));
     // LD_A_addr(wdc41);
     // LD_addr_A(s4_a60c);
-    gb_write(s4_a60c, wram->wdc41);
+    gb_write(s4_a60c, gPlayer.wdc41);
     // LD_addr_A(wd1ea);
-    wram->wd1ea = wram->wdc41;
+    wram->wd1ea = gPlayer.wdc41;
     // CALL(aCloseSRAM);
     CloseSRAM();
     // CALL(aFunction1035c6);
@@ -10309,7 +10309,7 @@ bool Function103362(void){
         // LD_addr_A(s4_a60c);
         gb_write(s4_a60c, wram->wd1ea);
         // LD_addr_A(wdc41);
-        wram->wdc41 = wram->wd1ea;
+        gPlayer.wdc41 = wram->wd1ea;
         // CALL(aCloseSRAM);
         CloseSRAM();
         // XOR_A_A;
@@ -10752,9 +10752,9 @@ void AskMobileOrCable(void){
     // LD_A_addr(wMobileOrCable_LastSelection);
     // AND_A(0x0f);
     // IF_Z goto skip_load;
-    if((wram->wMobileOrCable_LastSelection & 0x0f) != 0){
+    if((gPlayer.mobileOrCable_LastSelection & 0x0f) != 0){
         // LD_addr_A(wMenuCursorPosition);
-        wram->wMenuCursorPosition = wram->wMobileOrCable_LastSelection & 0x0f;
+        wram->wMenuCursorPosition = gPlayer.mobileOrCable_LastSelection & 0x0f;
     }
 
 // skip_load:
@@ -10779,7 +10779,7 @@ void AskMobileOrCable(void){
     // AND_A(0xf0);
     // OR_A_C;
     // LD_addr_A(wMobileOrCable_LastSelection);
-    wram->wMobileOrCable_LastSelection = (wram->wMobileOrCable_LastSelection & 0xf0) | wram->wMenuCursorY;
+    gPlayer.mobileOrCable_LastSelection = (gPlayer.mobileOrCable_LastSelection & 0xf0) | wram->wMenuCursorY;
     // RET;
 }
 
@@ -10864,9 +10864,9 @@ void Mobile_SelectThreeMons(void){
     // asm_10369b:
         // LD_HL(wMobileOrCable_LastSelection);
         // BIT_hl(7);
-        bool test = bit_test(wram->wMobileOrCable_LastSelection, 7) != 0;
+        bool test = bit_test(gPlayer.mobileOrCable_LastSelection, 7) != 0;
         // SET_hl(7);
-        bit_set(wram->wMobileOrCable_LastSelection, 7);
+        bit_set(gPlayer.mobileOrCable_LastSelection, 7);
         // IF_NZ goto asm_1036b5;
         if(!test){
             // LD_HL(mMobileBattleMoreInfoText);
@@ -10958,7 +10958,7 @@ bool Function103700(void){
     // LD_HL(wSwarmFlags);
     // BIT_hl(SWARMFLAGS_MOBILE_4_F);
     // IF_Z goto asm_10370f;
-    if(bit_test(wram->wSwarmFlags, SWARMFLAGS_MOBILE_4_F)){
+    if(bit_test(gPlayer.swarmFlags, SWARMFLAGS_MOBILE_4_F)){
         // FARCALL(aMobileBattleGetRemainingTime);
         c = MobileBattleGetRemainingTime().b;
     }
@@ -11091,12 +11091,12 @@ void Function10378c(void){
     // LD_HL(wSwarmFlags);
     // BIT_hl(SWARMFLAGS_MOBILE_4_F);
     // IF_NZ goto already_set;
-    if(!bit_test(wram->wSwarmFlags, SWARMFLAGS_MOBILE_4_F)) {
+    if(!bit_test(gPlayer.swarmFlags, SWARMFLAGS_MOBILE_4_F)) {
         // LD_C(1);
         c = 1;
         // LD_HL(wSwarmFlags);
         // SET_hl(SWARMFLAGS_MOBILE_4_F);
-        bit_set(wram->wSwarmFlags, SWARMFLAGS_MOBILE_4_F);
+        bit_set(gPlayer.swarmFlags, SWARMFLAGS_MOBILE_4_F);
     }
 
 // already_set:
@@ -11132,7 +11132,7 @@ void Function10378c(void){
         if(c != 0) {
             // LD_HL(wSwarmFlags);
             // RES_hl(SWARMFLAGS_MOBILE_4_F);
-            bit_reset(wram->wSwarmFlags, SWARMFLAGS_MOBILE_4_F);
+            bit_reset(gPlayer.swarmFlags, SWARMFLAGS_MOBILE_4_F);
         }
         // RET;
     }
@@ -11146,7 +11146,7 @@ void Function1037c2(void){
     // LD_A_addr(wdc5f);
     // AND_A_A;
     // IF_Z goto nope;
-    if(enough_time && wram->wdc5f != 0) {
+    if(enough_time && gPlayer.wdc5f != 0) {
         // LD_HL(mTryAgainUsingSameSettingsText);
         // CALL(aPrintText);
         PrintText(TryAgainUsingSameSettingsText);
@@ -11164,7 +11164,7 @@ void Function1037c2(void){
 // nope:
     // XOR_A_A;
     // LD_addr_A(wdc5f);
-    wram->wdc5f = 0x0;
+    gPlayer.wdc5f = 0x0;
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = 0x0;
     // RET;
@@ -11204,7 +11204,7 @@ void Function1037eb(void){
     // LD_A_addr(wdc60);
     // AND_A_A;
     // IF_NZ goto asm_103813;
-    else if(wram->wdc60 == 0) {
+    else if(gPlayer.wdc60 == 0) {
         // LD_A(0x01);
         // LD_addr_A(wScriptVar);
         wram->wScriptVar = 0x1;
@@ -11261,15 +11261,15 @@ bool MobileCheckRemainingBattleTime(void){
 void Function10383c(void){
     // LD_A(0x01);
     // LD_addr_A(wdc60);
-    wram->wdc60 = 0x01;
+    gPlayer.wdc60 = 0x01;
     // XOR_A_A;
     // LD_HL(wPlayerMonSelection);
     // LD_hli_A;
-    wram->wPlayerMonSelection[0] = 0x0;
+    gPlayer.playerMonSelection[0] = 0x0;
     // LD_hli_A;
-    wram->wPlayerMonSelection[1] = 0x0;
+    gPlayer.playerMonSelection[1] = 0x0;
     // LD_hl_A;
-    wram->wPlayerMonSelection[2] = 0x0;
+    gPlayer.playerMonSelection[2] = 0x0;
     // LD_HL(mPickThreeMonForMobileBattleText);
     // CALL(aPrintText);
     PrintText(PickThreeMonForMobileBattleText);
@@ -11291,7 +11291,7 @@ void Function10383c(void){
     // LD_DE(wPlayerMonSelection);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wPlayerMonSelection, wram->wMobileAdapterPlayerSelectionBuffer, 3);
+    CopyBytes(gPlayer.playerMonSelection, wram->wMobileAdapterPlayerSelectionBuffer, 3);
     // XOR_A_A;
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = 0x0;

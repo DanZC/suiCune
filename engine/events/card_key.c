@@ -28,7 +28,7 @@ void v_CardKey(void){
         // AND_A(0b1100);
         // CP_A(OW_UP);
         // IF_NZ goto nope;
-        if((wram->wPlayerStruct.facing & 0b1100) == OW_UP) {
+        if((gPlayer.playerStruct.facing & 0b1100) == OW_UP) {
             // CALL(aGetFacingTileCoord);
             struct CoordsTileId res = GetFacingTileCoord();
             // LD_A_D;

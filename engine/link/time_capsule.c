@@ -181,7 +181,7 @@ void PlaceTradePartnerNamesAndParty(void){
     // hlcoord(4, 0, wTilemap);
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
-    struct TextPrintState st = {.de = wram->wPlayerName, .hl = coord(4, 0, wram->wTilemap)};
+    struct TextPrintState st = {.de = gPlayer.playerName, .hl = coord(4, 0, wram->wTilemap)};
     PlaceString(&st, st.hl);
     // LD_A(0x14);
     // LD_bc_A;

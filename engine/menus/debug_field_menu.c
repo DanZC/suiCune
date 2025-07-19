@@ -74,7 +74,7 @@ static void DebugPhoneCall(void){
     LoadCallerScript(0x00);
     gQueuedScriptAddr = DebugSpecialPhoneCall;
     hram.hMenuReturn = HMENURETURN_SCRIPT;
-    wram->wSpecialPhoneCallID = SPECIALCALL_BIKESHOP;
+    gPlayer.specialPhoneCallID = SPECIALCALL_BIKESHOP;
 }
 
 // static bool DebugShowCatchTutorialScript(script_s* s){

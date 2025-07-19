@@ -22,7 +22,7 @@ static bool CheckForLuckyNumberWinners_CompareLuckyNumberToMonID(struct BoxMon* 
     // LD_DE(wLuckyIDNumber);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum(wram->wLuckyNumberDigitsBuffer, &wram->wLuckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(wram->wLuckyNumberDigitsBuffer, &gPlayer.luckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_B(5);
     uint8_t b = 5;
     // LD_C(0);
@@ -227,7 +227,7 @@ void CheckForLuckyNumberWinners(void){
         // AND_A(0xf);
         // CP_A_C;
         // IF_Z goto SkipBox;
-        if(wram->wCurBox == c)
+        if(gPlayer.curBox == c)
             continue;
         // LD_HL(mCheckForLuckyNumberWinners_BoxBankAddresses);
         // LD_B(0);
@@ -328,7 +328,7 @@ void PrintTodaysLuckyNumber(void){
     // LD_DE(wLuckyIDNumber);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum(wram->wStringBuffer3, &wram->wLuckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(wram->wStringBuffer3, &gPlayer.luckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_A(0x50);
     // LD_addr_A(wStringBuffer3 + 5);
     wram->wStringBuffer3[5] = 0x50;

@@ -47,7 +47,7 @@ uint8_t CountSetBits(const uint8_t* hl, uint8_t b){
 
 uint8_t GetWeekday(void){
     // LD_A_addr(wCurDay);
-    uint8_t day = wram->wCurDay;
+    uint8_t day = gPlayer.curDay;
 // mod:
 //         SUB_A(7);
 //     IF_NC goto mod;

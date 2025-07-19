@@ -141,7 +141,7 @@ void BargainShop(void){
     if(wram->wBargainShopFlags != 0){
         // LD_HL(wDailyFlags1);
         // SET_hl(DAILYFLAGS1_GOLDENROD_UNDERGROUND_BARGAIN_F);
-        bit_set(wram->wDailyFlags1, DAILYFLAGS1_GOLDENROD_UNDERGROUND_BARGAIN_F);
+        bit_set(gPlayer.dailyFlags1, DAILYFLAGS1_GOLDENROD_UNDERGROUND_BARGAIN_F);
     }
 
 // skip_set:
@@ -175,8 +175,8 @@ void RooftopSale(void){
     // IF_Z goto ok;
     // LD_B(BANK(aRooftopSaleMart2));
     // LD_DE(mRooftopSaleMart2);
-    const item_price_s* de = (bit_test(wram->wStatusFlags, STATUSFLAGS_HALL_OF_FAME_F))? RooftopSaleMart2: RooftopSaleMart1;
-    const uint32_t de_size = (bit_test(wram->wStatusFlags, STATUSFLAGS_HALL_OF_FAME_F))? RooftopSaleMart2_Size: RooftopSaleMart1_Size;
+    const item_price_s* de = (bit_test(gPlayer.statusFlags, STATUSFLAGS_HALL_OF_FAME_F))? RooftopSaleMart2: RooftopSaleMart1;
+    const uint32_t de_size = (bit_test(gPlayer.statusFlags, STATUSFLAGS_HALL_OF_FAME_F))? RooftopSaleMart2_Size: RooftopSaleMart1_Size;
 
 // ok:
     // CALL(aLoadMartPointer);
@@ -695,7 +695,7 @@ bool BuyMenuLoop(void){
         // LD_A(3);  // useless load
         // CALL(aCompareMoney);
         // IF_C goto insufficient_funds;
-        u8_flag_s res = CompareMoney(hram.hMoneyTemp, wram->wMoney);
+        u8_flag_s res = CompareMoney(hram.hMoneyTemp, gPlayer.money);
         if(res.flag) {
         // insufficient_funds:
             // LD_A(MARTTEXT_NOT_ENOUGH_MONEY);
@@ -734,7 +734,7 @@ bool BuyMenuLoop(void){
         // LD_DE(wMoney);
         // LD_BC(hMoneyTemp);
         // CALL(aTakeMoney);
-        TakeMoney(wram->wMoney, hram.hMoneyTemp);
+        TakeMoney(gPlayer.money, hram.hMoneyTemp);
         // LD_A(MARTTEXT_HERE_YOU_GO);
         // CALL(aLoadBuyMenuText);
         LoadBuyMenuText(MARTTEXT_HERE_YOU_GO);
@@ -1087,7 +1087,7 @@ static void SellMenu_TryToSellItem(void) {
                     // LD_DE(wMoney);
                     // LD_BC(hMoneyTemp);
                     // CALL(aGiveMoney);
-                    GiveMoney(wram->wMoney, hram.hMoneyTemp);
+                    GiveMoney(gPlayer.money, hram.hMoneyTemp);
                     // LD_A_addr(wMartItemID);
                     // LD_HL(wNumItems);
                     // CALL(aTossItem);

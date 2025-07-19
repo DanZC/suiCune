@@ -212,25 +212,25 @@ void Function170139(void){
     // LD_hli_A;
     // LD_A_addr(wPlayerID + 1);
     // LD_hli_A;
-    gBattleRecord.trainerID = wram->wPlayerID;
+    gBattleRecord.trainerID = gPlayer.playerID;
     // LD_A_addr(wSecretID);
     // LD_hli_A;
     // LD_A_addr(wSecretID + 1);
     // LD_hli_A;
-    gBattleRecord.secretID = wram->wSecretID;
+    gBattleRecord.secretID = gPlayer.secretID;
     // LD_E_L;
     // LD_D_H;
     // LD_HL(wPlayerName);
     // LD_BC(NAME_LENGTH_JAPANESE - 1);
     // CALL(aCopyBytes);
-    CopyBytes(gBattleRecord.name, wram->wPlayerName, PLAYER_NAME_LENGTH - 1);
+    CopyBytes(gBattleRecord.name, gPlayer.playerName, PLAYER_NAME_LENGTH - 1);
     // LD_BC(wPlayerID);
     // LD_DE(wPlayerGender);
     // FARCALL(aGetMobileOTTrainerClass);
     // LD_DE(wBT_OTTempMon1CaughtGender);
     // LD_A_C;
     // LD_de_A;
-    gBattleRecord.tclass = GetMobileOTTrainerClass(&wram->wPlayerGender, (const uint8_t *)&wram->wPlayerID);
+    gBattleRecord.tclass = GetMobileOTTrainerClass(&wram->wPlayerGender, (const uint8_t *)&gPlayer.playerID);
     // INC_DE;
     // LD_A(LOW(wPartyMons));
     // LD_addr_A(wcd49);
@@ -312,10 +312,10 @@ void BattleTower_GenerateFakeRecord(void){
 //  Store that number in wc608
     gBattleRecord.room[0] = HIGH(hl);
     gBattleRecord.room[1] = LOW(hl);
-    gBattleRecord.trainerID = wram->wPlayerID;
-    gBattleRecord.secretID = wram->wSecretID;
-    CopyBytes(gBattleRecord.name, wram->wPlayerName, PLAYER_NAME_LENGTH - 1);
-    gBattleRecord.tclass = GetMobileOTTrainerClass(&wram->wPlayerGender, (const uint8_t *)&wram->wPlayerID);
+    gBattleRecord.trainerID = gPlayer.playerID;
+    gBattleRecord.secretID = gPlayer.secretID;
+    CopyBytes(gBattleRecord.name, gPlayer.playerName, PLAYER_NAME_LENGTH - 1);
+    gBattleRecord.tclass = GetMobileOTTrainerClass(&wram->wPlayerGender, (const uint8_t *)&gPlayer.playerID);
 
     for(uint8_t i = 0; i < BATTLETOWER_PARTY_LENGTH; ++i) {
         CopyBytes(&gBattleRecord.party[i].pmon, gPokemon.partyMon + i, sizeof(gBattleRecord.party[i].pmon));
@@ -1629,7 +1629,7 @@ void Function1707ac(void){
         CloseSRAM();
         // LD_C_A;
         // LD_A_addr(wCurDay);
-        uint8_t day = wram->wCurDay;
+        uint8_t day = gPlayer.curDay;
         // SUB_A_C;
         // IF_C goto asm_1707e5;
         if(day >= c) {
@@ -1649,7 +1649,7 @@ void Function1707ac(void){
             // LD_A(0x8c);
             // SUB_A_C;
             // ADD_A_hl;
-            day = (0x8c - c) + wram->wCurDay;
+            day = (0x8c - c) + gPlayer.curDay;
             // CP_A(8);
             // RET_C ;
             if(day < 8)
@@ -1690,7 +1690,7 @@ void Function170807(void){
     OpenSRAM(MBANK(as5_b2f9));
     // LD_A_addr(wCurDay);
     // LD_addr_A(s5_b2f9);
-    gb_write(s5_b2f9, wram->wCurDay);
+    gb_write(s5_b2f9, gPlayer.curDay);
     // XOR_A_A;
     // LD_addr_A(s5_b2fa);
     gb_write(s5_b2fa, 0);
@@ -1724,13 +1724,13 @@ void Function17081d(void){
         // LD_A_addr(wCurDay);
         // SUB_A_C;
         // IF_C goto asm_170849;
-        if(wram->wCurDay < c) {
+        if(gPlayer.curDay < c) {
         // asm_170849:
             // LD_HL(wCurDay);
             // LD_A(140);
             // SUB_A_C;
             // ADD_A_hl;
-            uint8_t a = 140 - c + wram->wCurDay;
+            uint8_t a = 140 - c + gPlayer.curDay;
             // CP_A(11);
             // RET_C ;
             if(a < 11)
@@ -1742,7 +1742,7 @@ void Function17081d(void){
         // AND_A_A;
         // IF_NZ goto asm_170853;
         // RET;
-        else if(wram->wCurDay - c < 11 && b == 0)
+        else if(gPlayer.curDay - c < 11 && b == 0)
             return;
     }
 
@@ -1855,7 +1855,7 @@ void Function1708c8(void){
     OpenSRAM(MBANK(as5_aa8b));
     // LD_A_addr(wCurDay);
     // LD_addr_A(s5_aa8b);
-    gb_write(s5_aa8b, wram->wCurDay);
+    gb_write(s5_aa8b, gPlayer.curDay);
     // XOR_A_A;
     // LD_addr_A(s5_aa8c);
     gb_write(s5_aa8c, 0);
@@ -1865,7 +1865,7 @@ void Function1708c8(void){
     if(gb_read(s5_aa5d) < 2) {
         // LD_A_addr(wCurDay);
         // LD_addr_A(s5_aa48);
-        gb_write(s5_aa48, wram->wCurDay);
+        gb_write(s5_aa48, gPlayer.curDay);
         // LD_A(1);
         // LD_addr_A(s5_aa47);
         gb_write(s5_aa47, 1);
@@ -2137,7 +2137,7 @@ void Function1709bb(void){
             // LD_DE(wc608);
             // LD_BC(4);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wc608, wram->wRTC, 4);
+            CopyBytes(wram->wc608, gPlayer.RTC, 4);
             // CALL(aCloseSRAM);
             // LD_A(BANK(s5_b08c));
             // CALL(aOpenSRAM);
@@ -2420,7 +2420,7 @@ void LoadOpponentTrainerAndPokemonWithOTSprite(void){
     // INC_HL;
     // LD_A_addr(wBTTempOTSprite);
     // LD_hl_A;
-    wram->wMapObject[a-1].sprite = wram->wBTTempOTSprite;
+    gPlayer.mapObject[a-1].sprite = wram->wBTTempOTSprite;
     // LD_HL(wUsedSprites);
     // ADD_HL_DE;
     // LD_hli_A;
@@ -2460,13 +2460,13 @@ void CheckForBattleTowerRules(void){
 
 void BattleTowerAction_SavePokemonSelection(void) {
     OpenSRAM(MBANK(asBattleTowerChallengeState));
-    CopyBytes(GBToRAMAddr(0xbe60), wram->wPlayerMonSelection, 3);
+    CopyBytes(GBToRAMAddr(0xbe60), gPlayer.playerMonSelection, 3);
     CloseSRAM();
 }
 
 void BattleTowerAction_LoadPokemonSelection(void) {
     OpenSRAM(MBANK(asBattleTowerChallengeState));
-    CopyBytes(wram->wPlayerMonSelection, GBToRAMAddr(0xbe60), 3);
+    CopyBytes(gPlayer.playerMonSelection, GBToRAMAddr(0xbe60), 3);
     CloseSRAM();
 }
 

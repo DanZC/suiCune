@@ -17,10 +17,10 @@
 void InitDecorations(void){
     // LD_A(DECO_FEATHERY_BED);
     // LD_addr_A(wDecoBed);
-    wram->wDecoBed = DECO_FEATHERY_BED;
+    gPlayer.decoBed = DECO_FEATHERY_BED;
     // LD_A(DECO_TOWN_MAP);
     // LD_addr_A(wDecoPoster);
-    wram->wDecoPoster = DECO_TOWN_MAP;
+    gPlayer.decoPoster = DECO_TOWN_MAP;
     // RET;
 }
 
@@ -867,79 +867,79 @@ void DecoAction_nothing(void){
 void DecoAction_setupbed(void){
     // LD_HL(wDecoBed);
     // JP(mDecoAction_TrySetItUp);
-    DecoAction_TrySetItUp(&wram->wDecoBed);
+    DecoAction_TrySetItUp(&gPlayer.decoBed);
 
 }
 
 void DecoAction_putawaybed(void){
     // LD_HL(wDecoBed);
     // JP(mDecoAction_TryPutItAway);
-    DecoAction_TryPutItAway(&wram->wDecoBed);
+    DecoAction_TryPutItAway(&gPlayer.decoBed);
 }
 
 void DecoAction_setupcarpet(void){
     // LD_HL(wDecoCarpet);
     // JP(mDecoAction_TrySetItUp);
-    DecoAction_TrySetItUp(&wram->wDecoCarpet);
+    DecoAction_TrySetItUp(&gPlayer.decoCarpet);
 
 }
 
 void DecoAction_putawaycarpet(void){
     // LD_HL(wDecoCarpet);
     // JP(mDecoAction_TryPutItAway);
-    DecoAction_TryPutItAway(&wram->wDecoCarpet);
+    DecoAction_TryPutItAway(&gPlayer.decoCarpet);
 
 }
 
 void DecoAction_setupplant(void){
     // LD_HL(wDecoPlant);
     // JP(mDecoAction_TrySetItUp);
-    DecoAction_TrySetItUp(&wram->wDecoPlant);
+    DecoAction_TrySetItUp(&gPlayer.decoPlant);
 
 }
 
 void DecoAction_putawayplant(void){
     // LD_HL(wDecoPlant);
     // JP(mDecoAction_TryPutItAway);
-    DecoAction_TryPutItAway(&wram->wDecoPlant);
+    DecoAction_TryPutItAway(&gPlayer.decoPlant);
 }
 
 void DecoAction_setupposter(void){
     // LD_HL(wDecoPoster);
     // JP(mDecoAction_TrySetItUp);
-    DecoAction_TrySetItUp(&wram->wDecoPoster);
+    DecoAction_TrySetItUp(&gPlayer.decoPoster);
 
 }
 
 void DecoAction_putawayposter(void){
     // LD_HL(wDecoPoster);
     // JP(mDecoAction_TryPutItAway);
-    DecoAction_TryPutItAway(&wram->wDecoPoster);
+    DecoAction_TryPutItAway(&gPlayer.decoPoster);
 }
 
 void DecoAction_setupconsole(void){
     // LD_HL(wDecoConsole);
     // JP(mDecoAction_TrySetItUp);
-    DecoAction_TrySetItUp(&wram->wDecoConsole);
+    DecoAction_TrySetItUp(&gPlayer.decoConsole);
 }
 
 void DecoAction_putawayconsole(void){
     // LD_HL(wDecoConsole);
     // JP(mDecoAction_TryPutItAway);
-    DecoAction_TryPutItAway(&wram->wDecoConsole);
+    DecoAction_TryPutItAway(&gPlayer.decoConsole);
 
 }
 
 void DecoAction_setupbigdoll(void){
     // LD_HL(wDecoBigDoll);
     // JP(mDecoAction_TrySetItUp);
-    DecoAction_TrySetItUp(&wram->wDecoBigDoll);
+    DecoAction_TrySetItUp(&gPlayer.decoBigDoll);
 }
 
 void DecoAction_putawaybigdoll(void){
     // LD_HL(wDecoBigDoll);
     // JP(mDecoAction_TryPutItAway);
-    DecoAction_TryPutItAway(&wram->wDecoBigDoll);
+    DecoAction_TryPutItAway(&gPlayer.decoBigDoll);
 
 }
 
@@ -1253,9 +1253,9 @@ bool DecoAction_AskWhichSide(const txt_cmd_s* hl){
 
 u8_ptr_pair_s QueryWhichSide(void){
     // LD_HL(wDecoRightOrnament);
-    uint8_t* hl = &wram->wDecoRightOrnament;
+    uint8_t* hl = &gPlayer.decoRightOrnament;
     // LD_DE(wDecoLeftOrnament);
-    uint8_t* de = &wram->wDecoLeftOrnament;
+    uint8_t* de = &gPlayer.decoLeftOrnament;
     // LD_A_addr(wSelectedDecorationSide);
     // CP_A(1);  // right side
     // RET_Z ;
@@ -1397,7 +1397,7 @@ Script_fn_t DescribeDecoration(uint8_t b){
     //table_width ['2', 'DescribeDecoration.Jumptable']
     switch(b) {
         //dw ['DecorationDesc_Poster'];
-        case DECODESC_POSTER: return DecorationDesc_Poster(wram->wDecoPoster);
+        case DECODESC_POSTER: return DecorationDesc_Poster(gPlayer.decoPoster);
         //dw ['DecorationDesc_LeftOrnament'];
         case DECODESC_LEFT_DOLL: return DecorationDesc_LeftOrnament();
         //dw ['DecorationDesc_RightOrnament'];
@@ -1508,19 +1508,19 @@ static bool DecorationDesc_NullPoster(script_s* s){
 static Script_fn_t DecorationDesc_LeftOrnament(void){
     // LD_A_addr(wDecoLeftOrnament);
     // JR(mDecorationDesc_OrnamentOrConsole);
-    return DecorationDesc_OrnamentOrConsole(wram->wDecoLeftOrnament);
+    return DecorationDesc_OrnamentOrConsole(gPlayer.decoLeftOrnament);
 }
 
 static Script_fn_t DecorationDesc_RightOrnament(void){
     // LD_A_addr(wDecoRightOrnament);
     // JR(mDecorationDesc_OrnamentOrConsole);
-    return DecorationDesc_OrnamentOrConsole(wram->wDecoRightOrnament);
+    return DecorationDesc_OrnamentOrConsole(gPlayer.decoRightOrnament);
 }
 
 static Script_fn_t DecorationDesc_Console(void){
     // LD_A_addr(wDecoConsole);
     // JR(mDecorationDesc_OrnamentOrConsole);
-    return DecorationDesc_OrnamentOrConsole(wram->wDecoConsole);
+    return DecorationDesc_OrnamentOrConsole(gPlayer.decoConsole);
 }
 
 static bool DecorationDesc_OrnamentOrConsole_OrnamentConsoleScript(script_s* s) {
@@ -1566,15 +1566,15 @@ void ToggleMaptileDecorations(void){
     // LD_DE((0 << 8) | 4);  // bed coordinates
     // LD_A_addr(wDecoBed);
     // CALL(aSetDecorationTile);
-    SetDecorationTile(wram->wDecoBed, 0, 4);
+    SetDecorationTile(gPlayer.decoBed, 0, 4);
     // LD_DE((7 << 8) | 4);  // plant coordinates
     // LD_A_addr(wDecoPlant);
     // CALL(aSetDecorationTile);
-    SetDecorationTile(wram->wDecoPlant, 7, 4);
+    SetDecorationTile(gPlayer.decoPlant, 7, 4);
     // LD_DE((6 << 8) | 0);  // poster coordinates
     // LD_A_addr(wDecoPoster);
     // CALL(aSetDecorationTile);
-    SetDecorationTile(wram->wDecoPoster, 6, 0);
+    SetDecorationTile(gPlayer.decoPoster, 6, 0);
     // CALL(aSetPosterVisibility);
     SetPosterVisibility();
     // LD_DE((0 << 8) | 0);  // carpet top-left coordinates
@@ -1583,10 +1583,10 @@ void ToggleMaptileDecorations(void){
     // LD_A_addr(wDecoCarpet);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wDecoCarpet == 0)
+    if(gPlayer.decoCarpet == 0)
         return;
     // CALL(av_GetDecorationSprite);
-    uint8_t sprite = v_GetDecorationSprite(wram->wDecoCarpet);
+    uint8_t sprite = v_GetDecorationSprite(gPlayer.decoCarpet);
     // LD_hl_A;
     *hl = sprite;
     // PUSH_AF;
@@ -1612,7 +1612,7 @@ static void SetPosterVisibility(void){
     // AND_A_A;
     // IF_NZ goto ok;
     // LD_B(RESET_FLAG);
-    uint8_t b = (wram->wDecoPoster != 0)? SET_FLAG: RESET_FLAG;
+    uint8_t b = (gPlayer.decoPoster != 0)? SET_FLAG: RESET_FLAG;
 
 // ok:
     // LD_DE(EVENT_PLAYERS_ROOM_POSTER);
@@ -1640,22 +1640,22 @@ void ToggleDecorationsVisibility(void){
     // LD_HL(wVariableSprites + SPRITE_CONSOLE - SPRITE_VARS);
     // LD_A_addr(wDecoConsole);
     // CALL(aToggleDecorationVisibility);
-    ToggleDecorationVisibility(wram->wVariableSprites + (SPRITE_CONSOLE - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_CONSOLE, wram->wDecoConsole);
+    ToggleDecorationVisibility(gPlayer.variableSprites + (SPRITE_CONSOLE - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_CONSOLE, gPlayer.decoConsole);
     // LD_DE(EVENT_PLAYERS_HOUSE_2F_DOLL_1);
     // LD_HL(wVariableSprites + SPRITE_DOLL_1 - SPRITE_VARS);
     // LD_A_addr(wDecoLeftOrnament);
     // CALL(aToggleDecorationVisibility);
-    ToggleDecorationVisibility(wram->wVariableSprites + (SPRITE_DOLL_1 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_1, wram->wDecoLeftOrnament);
+    ToggleDecorationVisibility(gPlayer.variableSprites + (SPRITE_DOLL_1 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_1, gPlayer.decoLeftOrnament);
     // LD_DE(EVENT_PLAYERS_HOUSE_2F_DOLL_2);
     // LD_HL(wVariableSprites + SPRITE_DOLL_2 - SPRITE_VARS);
     // LD_A_addr(wDecoRightOrnament);
     // CALL(aToggleDecorationVisibility);
-    ToggleDecorationVisibility(wram->wVariableSprites + (SPRITE_DOLL_2 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_2, wram->wDecoRightOrnament);
+    ToggleDecorationVisibility(gPlayer.variableSprites + (SPRITE_DOLL_2 - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_DOLL_2, gPlayer.decoRightOrnament);
     // LD_DE(EVENT_PLAYERS_HOUSE_2F_BIG_DOLL);
     // LD_HL(wVariableSprites + SPRITE_BIG_DOLL - SPRITE_VARS);
     // LD_A_addr(wDecoBigDoll);
     // CALL(aToggleDecorationVisibility);
-    ToggleDecorationVisibility(wram->wVariableSprites + (SPRITE_BIG_DOLL - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_BIG_DOLL, wram->wDecoBigDoll);
+    ToggleDecorationVisibility(gPlayer.variableSprites + (SPRITE_BIG_DOLL - SPRITE_VARS), EVENT_PLAYERS_HOUSE_2F_BIG_DOLL, gPlayer.decoBigDoll);
     // RET;
 }
 

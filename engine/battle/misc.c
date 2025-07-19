@@ -325,7 +325,7 @@ void DoBadgeTypeBoosts(void){
     // LD_B_A;
     // LD_A_addr(wJohtoBadges);
     // LD_C_A;
-    uint16_t bc = (wram->wKantoBadges[0] << 8) | wram->wJohtoBadges[0];
+    uint16_t bc = (gPlayer.kantoBadges[0] << 8) | gPlayer.johtoBadges[0];
 
 
     do {

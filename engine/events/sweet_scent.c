@@ -57,7 +57,7 @@ void SweetScentEncounter(void){
         // LD_HL(wStatusFlags2);
         // BIT_hl(STATUSFLAGS2_BUG_CONTEST_TIMER_F);
         // IF_NZ goto not_in_bug_contest;
-        if(bit_test(wram->wStatusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
+        if(bit_test(gPlayer.statusFlags2, STATUSFLAGS2_BUG_CONTEST_TIMER_F)) {
         // not_in_bug_contest:
             // FARCALL(aChooseWildEncounter_BugContest);
             ChooseWildEncounter_BugContest();

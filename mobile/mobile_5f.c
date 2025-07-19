@@ -5523,7 +5523,7 @@ bool MobileScript_PlayerName(struct TextPrintState* state, uint8_t* saved){
     // LD_DE(wc608);
     // LD_BC(NAME_LENGTH_JAPANESE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wc608, wram->wPlayerName, NAME_LENGTH);
+    CopyBytes(wram->wc608, gPlayer.playerName, NAME_LENGTH);
     // LD_A(0x4);
     // LDH_addr_A(rSVBK);
     // POP_HL;

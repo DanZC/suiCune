@@ -137,7 +137,7 @@ AskForNumber:
 WantsBattle:
     scall_local(Rematch);
     winlosstext(FisherTullyBeatenText, 0)
-    readmem(wram_ptr(wTullyFightCount))
+    readmem(&gPlayer.TullyFightCount)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
     ifequal(1, Fight1)
@@ -155,21 +155,21 @@ LoadFight0:
     loadtrainer(FISHER, TULLY1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wTullyFightCount), 1)
+    loadmem(&gPlayer.TullyFightCount, 1)
     clearflag(ENGINE_TULLY_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(FISHER, TULLY2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wTullyFightCount), 2)
+    loadmem(&gPlayer.TullyFightCount, 2)
     clearflag(ENGINE_TULLY_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(FISHER, TULLY3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wTullyFightCount), 3)
+    loadmem(&gPlayer.TullyFightCount, 3)
     clearflag(ENGINE_TULLY_READY_FOR_REMATCH)
     s_end
 LoadFight3:

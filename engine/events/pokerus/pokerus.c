@@ -129,7 +129,7 @@ void GivePokerusAndConvertBerries(void){
     // LD_HL(wStatusFlags2);
     // BIT_hl(STATUSFLAGS2_REACHED_GOLDENROD_F);
     // RET_Z ;
-    if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_REACHED_GOLDENROD_F))
+    if(!bit_test(gPlayer.statusFlags2, STATUSFLAGS2_REACHED_GOLDENROD_F))
         return;
     // CALL(aRandom);
     Random();
@@ -200,7 +200,7 @@ void ConvertBerriesToBerryJuice(void){
     // LD_HL(wStatusFlags2);
     // BIT_hl(STATUSFLAGS2_REACHED_GOLDENROD_F);
     // RET_Z ;
-    if(!bit_test(wram->wStatusFlags2, STATUSFLAGS2_REACHED_GOLDENROD_F))
+    if(!bit_test(gPlayer.statusFlags2, STATUSFLAGS2_REACHED_GOLDENROD_F))
         return;
     // CALL(aRandom);
     // CP_A(1 out_of 16);  // 6.25% chance

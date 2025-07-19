@@ -824,7 +824,7 @@ void InitialSetDSTFlag(void){
     // LD_A_addr(wDST);
     // SET_A(7);
     // LD_addr_A(wDST);
-    bit_set(wram->wDST, 7);
+    bit_set(gPlayer.DST, 7);
     // hlcoord(1, 14, wTilemap);
     // LD_BC((3 << 8) | 18);
     // CALL(aClearBox);
@@ -862,7 +862,7 @@ void InitialClearDSTFlag(void){
     // LD_A_addr(wDST);
     // RES_A(7);
     // LD_addr_A(wDST);
-    bit_reset(wram->wDST, 7);
+    bit_reset(gPlayer.DST, 7);
     // hlcoord(1, 14, wTilemap);
     // LD_BC((3 << 8) | 18);
     // CALL(aClearBox);
@@ -937,7 +937,7 @@ static void MrChrono_Text(struct TextCmdState* state) {
 
     // LD_DE(wStartDay);
     // CALL(aMrChrono_PrintTime);
-    tile_t* hl = MrChrono_PrintTime(coord(4, 16, wram->wTilemap), &wram->wStartDay);
+    tile_t* hl = MrChrono_PrintTime(coord(4, 16, wram->wTilemap), &gPlayer.startDay);
 
     // LD_hl(0x7f);
     // INC_HL;
@@ -946,7 +946,7 @@ static void MrChrono_Text(struct TextCmdState* state) {
     // LD_A_addr(wDST);
     // BIT_A(7);
     // IF_Z goto off;
-    if(bit_test(wram->wDST, 7)) {
+    if(bit_test(gPlayer.DST, 7)) {
 
         // LD_hl(0x8e);
         // INC_HL;

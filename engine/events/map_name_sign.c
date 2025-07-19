@@ -113,9 +113,9 @@ void InitMapNameSign(void){
 // not_gate:
     // LD_HL(wEnteredMapFromContinue);
     // BIT_hl(1);
-    uint8_t map_from_cont = bit_test(wram->wEnteredMapFromContinue, 1);
+    uint8_t map_from_cont = bit_test(gPlayer.enteredMapFromContinue, 1);
     // RES_hl(1);
-    bit_reset(wram->wEnteredMapFromContinue, 1);
+    bit_reset(gPlayer.enteredMapFromContinue, 1);
     // IF_NZ goto dont_do_map_sign;
 
     // CALL(aInitMapNameSign_CheckMovingWithinLandmark);

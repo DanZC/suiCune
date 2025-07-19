@@ -349,7 +349,7 @@ void v_ShowLinkBattleParticipants(void){
     // hlcoord(4, 5, wTilemap);
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wPlayerName, coord(4, 5, wram->wTilemap));
+    PlaceStringSimple(gPlayer.playerName, coord(4, 5, wram->wTilemap));
     // hlcoord(4, 10, wTilemap);
     // LD_DE(wOTPlayerName);
     // CALL(aPlaceString);

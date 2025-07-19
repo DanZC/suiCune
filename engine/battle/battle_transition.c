@@ -410,7 +410,7 @@ static bool StartTrainerBattle_Flash_DoFlashAnimation(void) {
     // LD_A_addr(wTimeOfDayPalset);
     // CP_A(DARKNESS_PALSET);
     // IF_Z goto done;
-    if(wram->wTimeOfDayPalset == DARKNESS_PALSET) {
+    if(gPlayer.timeOfDayPalset == DARKNESS_PALSET) {
     // done:
         // XOR_A_A;
         // LD_addr_A(wBattleTransitionCounter);
@@ -1045,7 +1045,7 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
         // maskbits(NUM_DAYTIMES, 0);
         // CP_A(DARKNESS_F);
         // IF_NZ goto not_dark;
-        if((wram->wTimeOfDayPal & (NUM_DAYTIMES - 1)) == DARKNESS_F) {
+        if((gPlayer.timeOfDayPal & (NUM_DAYTIMES - 1)) == DARKNESS_F) {
             // LD_HL(mStartTrainerBattle_LoadPokeBallGraphics_darkpals);
             StartTrainerBattle_LoadPokeballGraphics_copypals(darkpals);
             CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);

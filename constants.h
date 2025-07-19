@@ -2,8 +2,6 @@
 #define CONSTANTS_H
 extern void (*redirectFunc[])(void);
 extern void (*convertedFunc[])(void);
-// Uncomment the below line to use converted overworld loop.
-#define CONVERTED_OVERWORLD_LOOP 1
 #include <stdio.h>
 #include "tools/emu/peanut_gb.h"
 
@@ -85,5 +83,6 @@ extern struct wram_s *wram;
 extern struct OptionsData gOptions;
 extern struct CurMapData gCurMapData;
 extern struct PokemonData gPokemon;
+extern struct PlayerData gPlayer;
 extern script_s gCurScript;
 #endif

@@ -342,27 +342,27 @@ void MobileScriptChar(struct TextPrintState* state) {
 
 void PrintMomsName(struct TextPrintState* state) {
     // print_name wMomsName
-    return PlaceCommandCharacter(state, wram->wMomsName);
+    return PlaceCommandCharacter(state, gPlayer.momsName);
 }
 
 void PrintPlayerName(struct TextPrintState* state) {
     // print_name wPlayerName
-    return PlaceCommandCharacter(state, wram->wPlayerName);
+    return PlaceCommandCharacter(state, gPlayer.playerName);
 }
 
 void PrintRivalName(struct TextPrintState* state) {
     // print_name wRivalName
-    return PlaceCommandCharacter(state, wram->wRivalName);
+    return PlaceCommandCharacter(state, gPlayer.rivalName);
 }
 
 void PrintRedsName(struct TextPrintState* state) {
     // print_name wRedsName
-    return PlaceCommandCharacter(state, wram->wRedsName);
+    return PlaceCommandCharacter(state, gPlayer.redsName);
 }
 
 void PrintGreensName(struct TextPrintState* state) {
     // print_name wGreensName
-    return PlaceCommandCharacter(state, wram->wGreensName);
+    return PlaceCommandCharacter(state, gPlayer.greensName);
 }
 
 void TrainerChar(struct TextPrintState* state) {
@@ -496,7 +496,7 @@ void PlaceEnemysName(struct TextPrintState* state) {
     // rival:
         // LD_DE(wRivalName);
         // JR(mPlaceCommandCharacter);
-        return PlaceCommandCharacter(state, wram->wRivalName);
+        return PlaceCommandCharacter(state, gPlayer.rivalName);
     }
 
     // LD_DE(wOTClassName);
@@ -526,7 +526,7 @@ void PlaceGenderedPlayerName(struct TextPrintState* state) {
     // PUSH_DE;
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
-    struct TextPrintState temp = {.hl = state->hl, .de = wram->wPlayerName, .bc = state->bc};
+    struct TextPrintState temp = {.hl = state->hl, .de = gPlayer.playerName, .bc = state->bc};
     PlaceString(&temp, state->hl);
     // LD_H_B;
     // LD_L_C;

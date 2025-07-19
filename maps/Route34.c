@@ -203,7 +203,7 @@ FinishAsk:
 Rematch:
     scall_local(RematchStd);
     winlosstext(CamperTodd1BeatenText, 0)
-    readmem(wram_ptr(wToddFightCount))
+    readmem(&gPlayer.ToddFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -225,28 +225,28 @@ LoadFight0:
     loadtrainer(CAMPER, TODD1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wToddFightCount), 1)
+    loadmem(&gPlayer.ToddFightCount, 1)
     clearflag(ENGINE_TODD_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(CAMPER, TODD2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wToddFightCount), 2)
+    loadmem(&gPlayer.ToddFightCount, 2)
     clearflag(ENGINE_TODD_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(CAMPER, TODD3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wToddFightCount), 3)
+    loadmem(&gPlayer.ToddFightCount, 3)
     clearflag(ENGINE_TODD_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(CAMPER, TODD4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wToddFightCount), 4)
+    loadmem(&gPlayer.ToddFightCount, 4)
     clearflag(ENGINE_TODD_READY_FOR_REMATCH)
     s_end
 LoadFight4:
@@ -314,7 +314,7 @@ FinishAsk:
 Rematch:
     scall_local(RematchStd);
     winlosstext(PicnickerGina1BeatenText, 0)
-    readmem(wram_ptr(wGinaFightCount))
+    readmem(&gPlayer.GinaFightCount)
     ifequal(4, Fight4)
     ifequal(3, Fight3)
     ifequal(2, Fight2)
@@ -336,28 +336,28 @@ LoadFight0:
     loadtrainer(PICNICKER, GINA1)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wGinaFightCount), 1)
+    loadmem(&gPlayer.GinaFightCount, 1)
     clearflag(ENGINE_GINA_READY_FOR_REMATCH)
     s_end
 LoadFight1:
     loadtrainer(PICNICKER, GINA2)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wGinaFightCount), 2)
+    loadmem(&gPlayer.GinaFightCount, 2)
     clearflag(ENGINE_GINA_READY_FOR_REMATCH)
     s_end
 LoadFight2:
     loadtrainer(PICNICKER, GINA3)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wGinaFightCount), 3)
+    loadmem(&gPlayer.GinaFightCount, 3)
     clearflag(ENGINE_GINA_READY_FOR_REMATCH)
     s_end
 LoadFight3:
     loadtrainer(PICNICKER, GINA4)
     startbattle
     reloadmapafterbattle
-    loadmem(wram_ptr(wGinaFightCount), 4)
+    loadmem(&gPlayer.GinaFightCount, 4)
     clearflag(ENGINE_GINA_READY_FOR_REMATCH)
     s_end
 LoadFight4:

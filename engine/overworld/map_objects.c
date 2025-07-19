@@ -366,7 +366,7 @@ void SetFacingBigDollAsym(struct Object* bc){
 
 void SetFacingBigDoll(struct Object* bc){
     // LD_A_addr(wVariableSprites + SPRITE_BIG_DOLL - SPRITE_VARS);
-    uint8_t a = wram->wVariableSprites[SPRITE_BIG_DOLL - SPRITE_VARS];
+    uint8_t a = gPlayer.variableSprites[SPRITE_BIG_DOLL - SPRITE_VARS];
     // LD_D(FACING_BIG_DOLL_SYM);  // symmetric
     // CP_A(SPRITE_BIG_SNORLAX);
     // IF_Z goto ok;
@@ -1927,7 +1927,7 @@ struct Object* InitMovementField1dField1e(struct Object* bc) {
     // POP_BC;
     struct Object* de = GetObjectStruct(range);
     // LD_HL(OBJECT_1D);
-    uint16_t vptr = de - &wram->wPlayerStruct;
+    uint16_t vptr = de - &gPlayer.playerStruct;
     // ADD_HL_BC;
     // LD_hl_E;
     bc->field_1D = LOW(vptr);
@@ -2018,7 +2018,7 @@ void v_RandomWalkContinue(struct Object* bc, uint8_t a) {
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_hl;
     // IF_Z goto centered;
-    if(wram->wCenteredObject == hram.hMapObjectIndex) {
+    if(gPlayer.centeredObject == hram.hMapObjectIndex) {
     // centered:
         // LD_HL(OBJECT_STEP_TYPE);
         // ADD_HL_BC;
@@ -2934,7 +2934,7 @@ static void StepFunction_TrackingObject(struct Object* bc) {
     // LD_E_hl;
     // INC_HL;
     // LD_D_hl;
-    struct Object* de = &wram->wPlayerStruct + (bc->field_1D | (bc->field_1E << 8));
+    struct Object* de = &gPlayer.playerStruct + (bc->field_1D | (bc->field_1E << 8));
     // LD_HL(OBJECT_SPRITE);
     // ADD_HL_DE;
     // LD_A_hl;
@@ -3299,14 +3299,14 @@ static void ApplyMovementToFollower(uint8_t a) {
     // LD_A_addr(wObjectFollow_Follower);
     // CP_A(-1);
     // RET_Z;
-    if(wram->wObjectFollow_Follower == 0xff)
+    if(gPlayer.objectFollow_Follower == 0xff)
         return;
     // LD_A_addr(wObjectFollow_Leader);
     // LD_D_A;
     // LDH_A_addr(hMapObjectIndex);
     // CP_A_D;
     // RET_NZ;
-    if(hram.hMapObjectIndex != wram->wObjectFollow_Leader)
+    if(hram.hMapObjectIndex != gPlayer.objectFollow_Leader)
         return;
     // LD_A_E;
     // CP_A(movement_step_sleep);
@@ -3326,12 +3326,12 @@ static void ApplyMovementToFollower(uint8_t a) {
     // INC_hl;
     // LD_E_hl;
     // LD_D(0);
-    uint16_t de = ++wram->wFollowerMovementQueueLength;
+    uint16_t de = ++gPlayer.followerMovementQueueLength;
     // LD_HL(wFollowMovementQueue);
     // ADD_HL_DE;
     // POP_AF;
     // LD_hl_A;
-    wram->wFollowMovementQueue[de] = a;
+    gPlayer.followMovementQueue[de] = a;
     // RET;
 }
 
@@ -3339,10 +3339,10 @@ static u8_flag_s GetFollowerNextMovementByte_CancelFollowIfLeaderMissing(void) {
     // LD_A_addr(wObjectFollow_Leader);
     // CP_A(-1);
     // IF_Z goto nope;
-    if(wram->wObjectFollow_Leader != 0xff) {
+    if(gPlayer.objectFollow_Leader != 0xff) {
         // PUSH_BC;
         // CALL(aGetObjectStruct);
-        struct Object* bc = GetObjectStruct(wram->wObjectFollow_Leader);
+        struct Object* bc = GetObjectStruct(gPlayer.objectFollow_Leader);
         // LD_HL(OBJECT_SPRITE);
         // ADD_HL_BC;
         // LD_A_hl;
@@ -3359,7 +3359,7 @@ static u8_flag_s GetFollowerNextMovementByte_CancelFollowIfLeaderMissing(void) {
 // nope:
     // LD_A(-1);
     // LD_addr_A(wObjectFollow_Follower);
-    wram->wObjectFollow_Follower = 0xff;
+    gPlayer.objectFollow_Follower = 0xff;
     // LD_A(movement_step_end);
     // SCF;
     // RET;
@@ -3375,8 +3375,8 @@ static uint8_t GetFollowerNextMovementByte(struct Object* bc) {
     // IF_Z goto done;
     // CP_A(-1);
     // IF_Z goto done;
-    if(wram->wFollowerMovementQueueLength == 0
-    || wram->wFollowerMovementQueueLength == 0xff) {
+    if(gPlayer.followerMovementQueueLength == 0
+    || gPlayer.followerMovementQueueLength == 0xff) {
     // done:
         // CALL(aGetFollowerNextMovementByte_CancelFollowIfLeaderMissing);
         u8_flag_s res = GetFollowerNextMovementByte_CancelFollowIfLeaderMissing();
@@ -3389,7 +3389,7 @@ static uint8_t GetFollowerNextMovementByte(struct Object* bc) {
     }
     // DEC_hl;
     // LD_E_A;
-    uint8_t e = wram->wFollowerMovementQueueLength--;
+    uint8_t e = gPlayer.followerMovementQueueLength--;
     // LD_D(0);
     // LD_HL(wFollowMovementQueue);
     // ADD_HL_DE;
@@ -3402,9 +3402,9 @@ static uint8_t GetFollowerNextMovementByte(struct Object* bc) {
     do {
     // loop:
         // LD_D_hl;
-        d = wram->wFollowMovementQueue[e-1];
+        d = gPlayer.followMovementQueue[e-1];
         // LD_hld_A;
-        wram->wFollowMovementQueue[e-1] = a;
+        gPlayer.followMovementQueue[e-1] = a;
         // LD_A_D;
         a = d;
         // DEC_E;
@@ -3536,7 +3536,7 @@ void DespawnEmote(struct Object* bc) {
     // LD_A(NUM_OBJECT_STRUCTS);
     for(size_t i = 0; i < NUM_OBJECT_STRUCTS; ++i) {
     // loop:
-        struct Object* const de = (&wram->wPlayerStruct + i);
+        struct Object* const de = (&gPlayer.playerStruct + i);
         // PUSH_AF;
         // LD_HL(OBJECT_FLAGS1);
         // ADD_HL_DE;
@@ -3639,7 +3639,7 @@ void UpdateAllObjectsFrozen(void) {
     
     // LD_BC(wObjectStructs);
     // XOR_A_A;
-    struct Object* bc = &wram->wPlayerStruct;
+    struct Object* bc = &gPlayer.playerStruct;
 
 // loop:
     for(uint8_t a = 0; a < NUM_OBJECT_STRUCTS; ++a) {
@@ -3735,7 +3735,7 @@ void HideAllObjects(void) {
     // SET_PC(aHideAllObjects);
     // XOR_A_A;
     // LD_BC(wObjectStructs);
-    struct Object* bc = &wram->wPlayerStruct;
+    struct Object* bc = &gPlayer.playerStruct;
     hram.hMapObjectIndex = 0;
 
     do {
@@ -4058,7 +4058,7 @@ void ResetStepVector(void) {
 void DoStepsForAllObjects(void) {
     // SET_PC(aDoStepsForAllObjects);
     // LD_BC(wObjectStructs);
-    struct Object* bc = &wram->wPlayerStruct;
+    struct Object* bc = &gPlayer.playerStruct;
     // XOR_A_A;
     uint8_t a = 0;
 
@@ -4098,7 +4098,7 @@ void RefreshPlayerSprite(void) {
     // LD_addr_A(wPlayerTurningDirection);
     wram->wPlayerTurningDirection = 0;
     // LD_addr_A(wPlayerObjectStepFrame);
-    wram->wPlayerStruct.stepFrame = 0;
+    gPlayer.playerStruct.stepFrame = 0;
     // CALL(aTryResetPlayerAction);
     TryResetPlayerAction();
     // FARCALL(aCheckWarpFacingDown);
@@ -4120,7 +4120,7 @@ void TryResetPlayerAction(void) {
     // ok:
         // LD_A(OBJECT_ACTION_00);
         // LD_addr_A(wPlayerAction);
-        wram->wPlayerStruct.action = OBJECT_ACTION_00;
+        gPlayer.playerStruct.action = OBJECT_ACTION_00;
         // RET;
         return;
     }
@@ -4153,7 +4153,7 @@ void v_ContinueSpawnFacing(uint8_t a) {
     // SET_PC(av_ContinueSpawnFacing);
     // LD_BC(wPlayerStruct);
     // CALL(aSetSpriteDirection);
-    SetSpriteDirection(&wram->wPlayerStruct, a);
+    SetSpriteDirection(&gPlayer.playerStruct, a);
     // RET;
 }
 
@@ -4180,10 +4180,10 @@ void v_SetPlayerPalette(uint8_t d) {
     // ADD_HL_BC;
     // LD_A_hl;
     // AND_A(~PALETTE_MASK);
-    wram->wPlayerStruct.palette &= ~PALETTE_MASK;
+    gPlayer.playerStruct.palette &= ~PALETTE_MASK;
     // OR_A_D;
     // LD_hl_A;
-    wram->wPlayerStruct.palette |= d;
+    gPlayer.playerStruct.palette |= d;
     // RET;
 }
 
@@ -4213,7 +4213,7 @@ bool SetLeaderIfVisible(uint8_t a) {
         return false;
     // LDH_A_addr(hObjectStructIndex);
     // LD_addr_A(wObjectFollow_Leader);
-    wram->wObjectFollow_Leader = hram.hObjectStructIndex;
+    gPlayer.objectFollow_Leader = hram.hObjectStructIndex;
     // RET;
     return true;
 }
@@ -4232,7 +4232,7 @@ void ResetLeader(void) {
     // LD_A(-1);
     // LD_addr_A(wObjectFollow_Leader);
     // RET;
-    wram->wObjectFollow_Leader = 0xff;
+    gPlayer.objectFollow_Leader = 0xff;
 }
 
 bool SetFollowerIfVisible(uint8_t a) {
@@ -4256,7 +4256,7 @@ bool SetFollowerIfVisible(uint8_t a) {
     bc->stepType = STEP_TYPE_RESET;
     // LDH_A_addr(hObjectStructIndex);
     // LD_addr_A(wObjectFollow_Follower);
-    wram->wObjectFollow_Follower = hram.hObjectStructIndex;
+    gPlayer.objectFollow_Follower = hram.hObjectStructIndex;
     // RET;
     return true;
 }
@@ -4266,15 +4266,15 @@ void ResetFollower(void) {
     // LD_A_addr(wObjectFollow_Follower);
     // CP_A(-1);
     // RET_Z;
-    if(wram->wObjectFollow_Follower == 0xff)
+    if(gPlayer.objectFollow_Follower == 0xff)
         return;
     // CALL(aGetObjectStruct);
-    struct Object* bc = GetObjectStruct(wram->wObjectFollow_Follower);
+    struct Object* bc = GetObjectStruct(gPlayer.objectFollow_Follower);
     // FARCALL(aResetObject);  // no need to farcall
     ResetObject(bc);
     // LD_A(-1);
     // LD_addr_A(wObjectFollow_Follower);
-    wram->wObjectFollow_Follower = 0xff;
+    gPlayer.objectFollow_Follower = 0xff;
     // RET;
 }
 
@@ -4319,7 +4319,7 @@ void FreezeAllObjects(void) {
     for(size_t i = 0; i < NUM_OBJECT_STRUCTS; ++i) {
     // loop:
         // PUSH_AF;
-        struct Object* bc = (&wram->wPlayerStruct + i);
+        struct Object* bc = (&gPlayer.playerStruct + i);
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto next;
         if(!DoesObjectHaveASprite(bc))
@@ -4348,11 +4348,11 @@ void v_UnfreezeFollowerObject(uint8_t c) {
     // LD_A_addr(wObjectFollow_Leader);
     // CP_A(-1);
     // RET_Z;
-    if(wram->wObjectFollow_Leader == 0xff)
+    if(gPlayer.objectFollow_Leader == 0xff)
         return;
     // PUSH_BC;
     // CALL(aGetObjectStruct);
-    struct Object* bc2 = GetObjectStruct(wram->wObjectFollow_Leader);
+    struct Object* bc2 = GetObjectStruct(gPlayer.objectFollow_Leader);
     // LD_HL(OBJECT_MAP_OBJECT_INDEX);
     // ADD_HL_BC;
     // LD_A_hl;
@@ -4364,10 +4364,10 @@ void v_UnfreezeFollowerObject(uint8_t c) {
     // LD_A_addr(wObjectFollow_Follower);
     // CP_A(-1);
     // RET_Z;
-    if(wram->wObjectFollow_Follower == 0xff)
+    if(gPlayer.objectFollow_Follower == 0xff)
         return;
     // CALL(aGetObjectStruct);
-    struct Object* bc = GetObjectStruct(wram->wObjectFollow_Follower);
+    struct Object* bc = GetObjectStruct(gPlayer.objectFollow_Follower);
     // LD_HL(OBJECT_FLAGS2);
     // ADD_HL_BC;
     // RES_hl(FROZEN_F);
@@ -4379,7 +4379,7 @@ void UnfreezeAllObjects(void) {
     // SET_PC(aUnfreezeAllObjects);
     // PUSH_BC;
     // LD_BC(wObjectStructs);
-    struct Object* bc = &wram->wPlayerStruct;
+    struct Object* bc = &gPlayer.playerStruct;
     // XOR_A_A;
 
     for(uint8_t a = 0; a < NUM_OBJECT_STRUCTS; ++a) {
@@ -4559,7 +4559,7 @@ void ApplyBGMapAnchorToObjects(void) {
     // loop:
 
         // PUSH_AF;
-        struct Object* bc = (&wram->wPlayerStruct + i);
+        struct Object* bc = (&gPlayer.playerStruct + i);
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto skip;
         if(!DoesObjectHaveASprite(bc))
@@ -4605,7 +4605,7 @@ static void InitSprites_DeterminePriorities(void) {
     // CALL(aByteFill);
     ByteFill(wram->wObjectPriorities, NUM_OBJECT_STRUCTS, 0);
     uint8_t d = 0;
-    struct Object* bc = &wram->wPlayerStruct;
+    struct Object* bc = &gPlayer.playerStruct;
     uint8_t* hl = wram->wObjectPriorities;
     uint8_t e;
     // LD_D(0);
@@ -4680,7 +4680,7 @@ static struct Object* InitSprites_GetObjectStructPointer(uint8_t a) {
     // INC_HL;
     // LD_B_hl;
     // RET;
-    return &wram->wPlayerStruct + a;
+    return &gPlayer.playerStruct + a;
 }
 
 static bool InitSprites_InitSprite(struct Object* bc) {

@@ -42,7 +42,7 @@ void SelectApricornForKurt(void){
     // LD_addr_A(wMenuScrollPosition);
     wram->wMenuScrollPosition = 0;
     // LD_addr_A(wKurtApricornQuantity);
-    wram->wKurtApricornQuantity = 0;
+    gPlayer.kurtApricornQuantity = 0;
 
     do {
     // loop:
@@ -75,7 +75,7 @@ void SelectApricornForKurt(void){
     } while(!Kurt_SelectQuantity());
     // LD_A_addr(wItemQuantityChange);
     // LD_addr_A(wKurtApricornQuantity);
-    wram->wKurtApricornQuantity = wram->wItemQuantityChange;
+    gPlayer.kurtApricornQuantity = wram->wItemQuantityChange;
     // CALL(aKurt_GiveUpSelectedQuantityOfSelectedApricorn);
     Kurt_GiveUpSelectedQuantityOfSelectedApricorn();
 

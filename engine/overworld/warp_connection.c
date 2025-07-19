@@ -495,7 +495,7 @@ bool CheckMovingOffEdgeOfMap(void){
             // ADD_A_A;
             // CP_A_B;
             // IF_Z goto ok;
-            if(wram->wPlayerStruct.nextMapY - 4 == wram->wMapHeight << 1)
+            if(gPlayer.playerStruct.nextMapY - 4 == wram->wMapHeight << 1)
                 return true;
             // AND_A_A;
             // RET;
@@ -508,7 +508,7 @@ bool CheckMovingOffEdgeOfMap(void){
             // SUB_A(4);
             // CP_A(-1);
             // IF_Z goto ok;
-            if((int8_t)(wram->wPlayerStruct.nextMapY - 4) == -1)
+            if((int8_t)(gPlayer.playerStruct.nextMapY - 4) == -1)
                 return true;
             // AND_A_A;
             // RET;
@@ -521,7 +521,7 @@ bool CheckMovingOffEdgeOfMap(void){
             // SUB_A(4);
             // CP_A(-1);
             // IF_Z goto ok;
-            if((int8_t)(wram->wPlayerStruct.nextMapX - 4) == -1)
+            if((int8_t)(gPlayer.playerStruct.nextMapX - 4) == -1)
                 return true;
             // AND_A_A;
             // RET;
@@ -537,7 +537,7 @@ bool CheckMovingOffEdgeOfMap(void){
             // ADD_A_A;
             // CP_A_B;
             // IF_Z goto ok;
-            if(wram->wPlayerStruct.nextMapX - 4 == wram->wMapWidth << 1)
+            if(gPlayer.playerStruct.nextMapX - 4 == wram->wMapWidth << 1)
                 return true;
             // AND_A_A;
             // RET;
@@ -572,7 +572,7 @@ bool CheckFacingOffEdgeOfMap(void){
             // ADD_A_A;
             // CP_A_B;
             // IF_Z goto ok;
-            if((wram->wMapConnections & SOUTH) == 0 && wram->wPlayerStruct.nextMapY - 4 == (wram->wMapHeight << 1) - 1)
+            if((wram->wMapConnections & SOUTH) == 0 && gPlayer.playerStruct.nextMapY - 4 == (wram->wMapHeight << 1) - 1)
                 return true;
             // AND_A_A;
             // RET;
@@ -585,7 +585,7 @@ bool CheckFacingOffEdgeOfMap(void){
             // SUB_A(4);
             // CP_A(-1);
             // IF_Z goto ok;
-            if((wram->wMapConnections & NORTH) == 0 && wram->wPlayerStruct.nextMapY - 4 == 0)
+            if((wram->wMapConnections & NORTH) == 0 && gPlayer.playerStruct.nextMapY - 4 == 0)
                 return true;
             // AND_A_A;
             // RET;
@@ -598,7 +598,7 @@ bool CheckFacingOffEdgeOfMap(void){
             // SUB_A(4);
             // CP_A(-1);
             // IF_Z goto ok;
-            if((wram->wMapConnections & WEST) == 0 && wram->wPlayerStruct.nextMapX - 4 == 0)
+            if((wram->wMapConnections & WEST) == 0 && gPlayer.playerStruct.nextMapX - 4 == 0)
                 return true;
             // AND_A_A;
             // RET;
@@ -614,7 +614,7 @@ bool CheckFacingOffEdgeOfMap(void){
             // ADD_A_A;
             // CP_A_B;
             // IF_Z goto ok;
-            if((wram->wMapConnections & EAST) == 0 && wram->wPlayerStruct.nextMapX - 4 == (wram->wMapWidth << 1) - 1)
+            if((wram->wMapConnections & EAST) == 0 && gPlayer.playerStruct.nextMapX - 4 == (wram->wMapWidth << 1) - 1)
                 return true;
             // AND_A_A;
             // RET;

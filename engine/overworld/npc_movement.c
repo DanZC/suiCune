@@ -340,7 +340,7 @@ struct Object* CheckFacingObject(void){
         // INC_A;
         // ADD_A_D;
         // LD_D_A;
-        res.x = -(wram->wPlayerStruct.nextMapX - res.x) + res.x;
+        res.x = -(gPlayer.playerStruct.nextMapX - res.x) + res.x;
 
         // LD_A_addr(wPlayerStandingMapY);
         // SUB_A_E;
@@ -348,7 +348,7 @@ struct Object* CheckFacingObject(void){
         // INC_A;
         // ADD_A_E;
         // LD_E_A;
-        res.y = -(wram->wPlayerStruct.nextMapY - res.y) + res.y;
+        res.y = -(gPlayer.playerStruct.nextMapY - res.y) + res.y;
     }
 
 // not_counter:
@@ -434,7 +434,7 @@ left:
 
 struct Object* IsNPCAtCoord(uint8_t d, uint8_t e){
     // LD_BC(wObjectStructs);
-    struct Object* bc = &wram->wPlayerStruct;
+    struct Object* bc = &gPlayer.playerStruct;
     // XOR_A_A;
     hram.hObjectStructIndex = 0;
 

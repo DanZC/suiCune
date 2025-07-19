@@ -2162,7 +2162,7 @@ void Function8998b(tile_t* hl, uint8_t a){
 void Function8999c(tile_t* hl){
     // LD_DE(wPlayerName);
     // CALL(aPlaceString);
-    struct TextPrintState st = {.de = wram->wPlayerName, .hl = hl};
+    struct TextPrintState st = {.de = gPlayer.playerName, .hl = hl};
     PlaceString(&st, st.hl);
     // INC_BC;
     // LD_H_B;
@@ -2189,7 +2189,7 @@ void Function899b2(void){
     // LD_DE(mString_89116);
     
 // asm_899c2:
-    uint8_t* de = (Function89346(wram->wPlayerName) == NULL)? U82C(String_89116): wram->wPlayerName;
+    uint8_t* de = (Function89346(gPlayer.playerName) == NULL)? U82C(String_89116): gPlayer.playerName;
     // hlcoord(6, 4, wTilemap);
     // CALL(aPlaceString);
     PlaceStringSimple(de, coord(4, 5, wram->wTilemap));
@@ -2200,7 +2200,7 @@ void Function899c9(tile_t* hl){
     // LD_DE(wPlayerID);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum(hl, &wram->wPlayerID, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(hl, &gPlayer.playerID, PRINTNUM_LEADINGZEROS | 2, 5);
     // RET;
 }
 

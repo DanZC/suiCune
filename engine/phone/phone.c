@@ -81,8 +81,8 @@ uint8_t* CheckCellNum(uint8_t c){
         // DEC_HL;
         // SCF;
         // RET;
-        if(wram->wPhoneList[b] == c)
-            return wram->wPhoneList + b;
+        if(gPlayer.phoneList[b] == c)
+            return gPlayer.phoneList + b;
         // DEC_B;
         // IF_NZ goto loop;
     }
@@ -100,11 +100,11 @@ uint8_t* Phone_FindOpenSlot(uint8_t c){
 
     for(uint8_t i = 0; i < b; ++i) {
         // LD_A_hli;
-        uint8_t a = wram->wPhoneList[i];
+        uint8_t a = gPlayer.phoneList[i];
         // AND_A_A;
         // IF_Z goto FoundOpenSpace;
         if(a == 0) {
-            return wram->wPhoneList + i;
+            return gPlayer.phoneList + i;
         }
         // DEC_B;
         // IF_NZ goto loop;
@@ -294,7 +294,7 @@ void GetAvailableCallers(void){
     // CALL(aByteFill);
     ByteFill(&wram->wNumAvailableCallers, CONTACT_LIST_SIZE + 1, 0);
     // LD_DE(wPhoneList);
-    uint8_t* de = wram->wPhoneList;
+    uint8_t* de = gPlayer.phoneList;
     // LD_A(CONTACT_LIST_SIZE);
     for(uint8_t a = 0; a < CONTACT_LIST_SIZE; ++a) {
     // loop:
@@ -360,7 +360,7 @@ bool CheckSpecialPhoneCall(void){
     // LD_A_addr(wSpecialPhoneCallID);
     // AND_A_A;
     // IF_Z goto NoPhoneCall;
-    if(wram->wSpecialPhoneCallID == 0)
+    if(gPlayer.specialPhoneCallID == 0)
         return false;
 
     // DEC_A;
@@ -372,7 +372,7 @@ bool CheckSpecialPhoneCall(void){
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    const struct SpecialCall* spec = SpecialPhoneCallList + (wram->wSpecialPhoneCallID);
+    const struct SpecialCall* spec = SpecialPhoneCallList + (gPlayer.specialPhoneCallID);
     // CALL(av_hl_);
     // IF_NC goto NoPhoneCall;
     if(!spec->condition())
@@ -465,7 +465,7 @@ void MakePhoneCallFromPokegear(uint8_t caller){
 // If the person can't take a call at that time, don't do the call
     // LD_A_B;
     // LD_addr_A(wCurCaller);
-    wram->wCurCaller = caller;
+    gPlayer.curCaller = caller;
     // LD_HL(mPhoneContacts);
     // LD_BC(PHONE_CONTACT_SIZE);
     // CALL(aAddNTimes);
@@ -547,7 +547,7 @@ void LoadCallerScript(uint8_t caller){
     // NOP;
     // LD_A_E;
     // LD_addr_A(wCurCaller);
-    wram->wCurCaller = caller;
+    gPlayer.curCaller = caller;
     // AND_A_A;
     // IF_NZ goto actualcaller;
     if(caller == 0) {
@@ -668,7 +668,7 @@ static void RingTwice_StartCall_CallerTextboxWithName(void) {
     // LD_B_A;
     // CALL(aPhone_TextboxWithName);
     // RET;
-    return Phone_TextboxWithName(wram->wCurCaller);
+    return Phone_TextboxWithName(gPlayer.curCaller);
 }
 
 static void RingTwice_StartCall_Ring(void) {
@@ -1009,7 +1009,7 @@ void GetCallerName(uint8_t* hl, struct TrainerId c){
 struct CallerLocation GetCallerLocation(void){
     // LD_A_addr(wCurCaller);
     // CALL(aGetCallerTrainerClass);
-    struct TrainerId tr = GetCallerTrainerClass(wram->wCurCaller);
+    struct TrainerId tr = GetCallerTrainerClass(gPlayer.curCaller);
     // LD_D_C;
     // LD_E_B;
     // PUSH_DE;
@@ -1018,10 +1018,10 @@ struct CallerLocation GetCallerLocation(void){
     // LD_BC(PHONE_CONTACT_SIZE);
     // CALL(aAddNTimes);
     // LD_B_hl;
-    uint8_t mgroup = PhoneContacts[wram->wCurCaller].mapGroup;
+    uint8_t mgroup = PhoneContacts[gPlayer.curCaller].mapGroup;
     // INC_HL;
     // LD_C_hl;
-    uint8_t mnum = PhoneContacts[wram->wCurCaller].mapNumber;
+    uint8_t mnum = PhoneContacts[gPlayer.curCaller].mapNumber;
     // PUSH_BC;
     // CALL(aGetWorldMapLocation);
     uint8_t landmark = GetWorldMapLocation(mgroup, mnum);

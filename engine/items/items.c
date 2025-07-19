@@ -5,7 +5,7 @@
 bool v_ReceiveItem(item_pocket_u* hl, item_t a, uint8_t count){
     // CALL(aDoesHLEqualNumItems);
     // JP_NZ (mPutItemInPocket);
-    if(hl != (item_pocket_u*)&wram->wNumItems)
+    if(hl != (item_pocket_u*)&gPlayer.numItems)
         return PutItemInPocket(&hl->quantity_pocket, a, count);
     // PUSH_HL;
     // CALL(aCheckItemPocket);
@@ -41,7 +41,7 @@ bool v_ReceiveItem(item_pocket_u* hl, item_t a, uint8_t count){
     // Ball:
         // LD_HL(wNumBalls);
         // JP(mPutItemInPocket);
-        return PutItemInPocket((item_quantity_pocket_s*)&wram->wNumBalls, a, count);
+        return PutItemInPocket((item_quantity_pocket_s*)&gPlayer.numBalls, a, count);
 
     case TM_HM:
     // TMHM:
@@ -59,7 +59,7 @@ bool v_ReceiveItem(item_pocket_u* hl, item_t a, uint8_t count){
 bool v_TossItem(item_pocket_u* hl, item_t item, uint8_t count){
     // CALL(aDoesHLEqualNumItems);
     // IF_NZ goto remove;
-    if(hl != (item_pocket_u*)&wram->wNumItems)
+    if(hl != (item_pocket_u*)&gPlayer.numItems)
         return RemoveItemFromPocket(&hl->quantity_pocket, item, count);
     // PUSH_HL;
     // CALL(aCheckItemPocket);
@@ -96,7 +96,7 @@ bool v_TossItem(item_pocket_u* hl, item_t item, uint8_t count){
         // Ball:
             // LD_HL(wNumBalls);
             // JP(mRemoveItemFromPocket);
-            return RemoveItemFromPocket((item_quantity_pocket_s*)&wram->wNumBalls, item, count);
+            return RemoveItemFromPocket((item_quantity_pocket_s*)&gPlayer.numBalls, item, count);
         //dw ['.TMHM'];
         case TM_HM: {
         // TMHM:
@@ -115,7 +115,7 @@ bool v_TossItem(item_pocket_u* hl, item_t item, uint8_t count){
 bool v_CheckItem(item_pocket_u* hl, item_t item){
     // CALL(aDoesHLEqualNumItems);
     // IF_NZ goto nope;
-    if(hl == (item_pocket_u*)&wram->wNumItems) {
+    if(hl == (item_pocket_u*)&gPlayer.numItems) {
         // PUSH_HL;
         // CALL(aCheckItemPocket);
         uint8_t pocket = CheckItemPocket(item);
@@ -138,7 +138,7 @@ bool v_CheckItem(item_pocket_u* hl, item_t item){
             // Ball:
                 // LD_HL(wNumBalls);
                 // JP(mCheckTheItem);
-                return CheckTheItem((item_quantity_pocket_s*)&wram->wNumBalls, item);
+                return CheckTheItem((item_quantity_pocket_s*)&gPlayer.numBalls, item);
             case TM_HM:
             // TMHM:
                 // LD_H_D;
@@ -170,7 +170,7 @@ bool v_CheckItem(item_pocket_u* hl, item_t item){
 
 // nope:
     // JP(mCheckTheItem);
-    return CheckTheItem((item_quantity_pocket_s*)&wram->wNumItems, item);
+    return CheckTheItem((item_quantity_pocket_s*)&gPlayer.numItems, item);
 }
 
 void DoesHLEqualNumItems(void){
@@ -191,7 +191,7 @@ uint8_t GetPocketCapacity(item_quantity_pocket_s* pocket){
     // LD_A_D;
     // CP_A(HIGH(wNumItems));
     // RET_Z ;
-    if(pocket == (item_quantity_pocket_s*)&wram->wNumItems) {
+    if(pocket == (item_quantity_pocket_s*)&gPlayer.numItems) {
         return MAX_ITEMS;
     }
 
@@ -203,7 +203,7 @@ uint8_t GetPocketCapacity(item_quantity_pocket_s* pocket){
     // LD_A_D;
     // CP_A(HIGH(wNumPCItems));
     // RET_Z ;
-    if(pocket == (item_quantity_pocket_s*)&wram->wNumPCItems) {
+    if(pocket == (item_quantity_pocket_s*)&gPlayer.numPCItems) {
         return MAX_PC_ITEMS;
     }
 
@@ -464,16 +464,16 @@ bool ReceiveKeyItem(item_t item){
     // LD_A_hli;
     // CP_A(MAX_KEY_ITEMS);
     // IF_NC goto nope;
-    if(wram->wNumKeyItems >= MAX_KEY_ITEMS)
+    if(gPlayer.numKeyItems >= MAX_KEY_ITEMS)
         return false;
     // LD_C_A;
     // LD_B(0);
     // ADD_HL_BC;
     // LD_A_addr(wCurItem);
     // LD_hli_A;
-    wram->wKeyItems[wram->wNumKeyItems++] = item;
+    gPlayer.keyItems[gPlayer.numKeyItems++] = item;
     // LD_hl(-1);
-    wram->wKeyItems[wram->wNumKeyItems] = (item_t)-1;
+    gPlayer.keyItems[gPlayer.numKeyItems] = (item_t)-1;
     // LD_HL(wNumKeyItems);
     // INC_hl;
     // SCF;
@@ -488,7 +488,7 @@ bool ReceiveKeyItem(item_t item){
 static item_t* TossKeyItem_Toss(item_t item){
 // Toss:
     // LD_HL(wNumKeyItems);
-    item_t* hl = wram->wKeyItems;
+    item_t* hl = gPlayer.keyItems;
     // LD_A_addr(wCurItem);
     item_t a;
     // LD_C_A;
@@ -505,7 +505,7 @@ static item_t* TossKeyItem_Toss(item_t item){
             // LD_A_addr(wNumKeyItems);
             // DEC_A;
             // LD_addr_A(wNumKeyItems);
-            wram->wNumKeyItems--;
+            gPlayer.numKeyItems--;
             // SCF;
             // RET;
             return hl - 1;
@@ -527,7 +527,7 @@ bool TossKeyItem(item_t item, uint8_t index){
     // LD_A_hl;
     // CP_A_E;
     // IF_NC goto ok;
-    if(wram->wNumKeyItems < index){
+    if(gPlayer.numKeyItems < index){
         // CALL(aTossKeyItem_Toss);
         hl = TossKeyItem_Toss(item);
         // RET_NC ;
@@ -538,10 +538,10 @@ bool TossKeyItem(item_t item, uint8_t index){
     else {
     // ok:
         // DEC_hl;
-        --wram->wNumKeyItems;
+        --gPlayer.numKeyItems;
         // INC_HL;
         // ADD_HL_DE;
-        hl = wram->wKeyItems + index;
+        hl = gPlayer.keyItems + index;
     }
 
 // ok2:
@@ -573,7 +573,7 @@ bool CheckKeyItems(item_t c){
     // LD_HL(wKeyItems);
     
     // uint8_t c = wram->wCurItem;
-    item_t* hl = wram->wKeyItems;
+    item_t* hl = gPlayer.keyItems;
     uint8_t a;
 
     do {
@@ -605,13 +605,13 @@ bool ReceiveTMHM(uint8_t id, uint8_t count){
 
     // LD_A_addr(wItemQuantityChange);
     // ADD_A_hl;
-    uint16_t a = count + wram->wTMsHMs[id - 1];
+    uint16_t a = count + gPlayer.TMsHMs[id - 1];
     // CP_A(MAX_ITEM_STACK + 1);
     // IF_NC goto toomany;
     if(a >= MAX_ITEM_STACK + 1)
         return false;
     // LD_hl_A;
-    wram->wTMsHMs[id - 1] = (uint8_t)a;
+    gPlayer.TMsHMs[id - 1] = (uint8_t)a;
     // SCF;
     // RET;
     return true;
@@ -631,11 +631,11 @@ bool TossTMHM(uint8_t tmhm, uint8_t count){
     // LD_A_hl;
     // SUB_A_B;
     // IF_C goto nope;
-    if(wram->wTMsHMs[tmhm] < count)
+    if(gPlayer.TMsHMs[tmhm] < count)
         return false;
-    uint8_t c = wram->wTMsHMs[tmhm] - count;
+    uint8_t c = gPlayer.TMsHMs[tmhm] - count;
     // LD_hl_A;
-    wram->wTMsHMs[tmhm] = c;
+    gPlayer.TMsHMs[tmhm] = c;
     // LD_addr_A(wItemQuantity);
     wram->wItemQuantity = c;
     // IF_NZ goto yup;
@@ -664,7 +664,7 @@ bool CheckTMHM(uint8_t c){
     // DEC_C;
     // LD_B(0x0);
     // LD_HL(wTMsHMs);
-    uint8_t* hl = wram->wTMsHMs;
+    uint8_t* hl = gPlayer.TMsHMs;
     // ADD_HL_BC;
     // LD_A_hl;
     uint8_t a = hl[c - 1];

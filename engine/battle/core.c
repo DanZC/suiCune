@@ -1094,7 +1094,7 @@ static bool CheckContestBattleOver(void){
     // LD_A_addr(wParkBallsRemaining);
     // AND_A_A;
     // IF_NZ goto contest_not_over;
-    if(wram->wParkBallsRemaining != 0)
+    if(gPlayer.parkBallsRemaining != 0)
         return false;
     // LD_A_addr(wBattleResult);
     // AND_A(BATTLERESULT_BITMASK);
@@ -3808,7 +3808,7 @@ static bool WinTrainerBattle_CheckMaxedOutMomMoney(void){
     // SBC_A(HIGH(MAX_MONEY));  // mid
     // LD_A_hl;
     // SBC_A(HIGH(MAX_MONEY >> 8));
-    uint32_t money = (wram->wMomsMoney[2]) | (wram->wMomsMoney[1] << 8) | (wram->wMomsMoney[0] << 16);
+    uint32_t money = (gPlayer.momsMoney[2]) | (gPlayer.momsMoney[1] << 8) | (gPlayer.momsMoney[0] << 16);
     // RET;
     return money >= MAX_MONEY;
 }
@@ -3818,7 +3818,7 @@ static void WinTrainerBattle_AddMoneyToMom(void){
     // LD_HL(wBattleReward + 2);
     // LD_DE(wMomsMoney + 2);
     // CALL(aAddBattleMoneyToAccount);
-    AddBattleMoneyToAccount(wram->wMomsMoney, wram->wBattleReward);
+    AddBattleMoneyToAccount(gPlayer.momsMoney, wram->wBattleReward);
     // POP_BC;
     // RET;
 }
@@ -3828,7 +3828,7 @@ static void WinTrainerBattle_AddMoneyToWallet(void){
     // LD_HL(wBattleReward + 2);
     // LD_DE(wMoney + 2);
     // CALL(aAddBattleMoneyToAccount);
-    AddBattleMoneyToAccount(wram->wMoney, wram->wBattleReward);
+    AddBattleMoneyToAccount(gPlayer.money, wram->wBattleReward);
     // POP_BC;
     // RET;
 }
@@ -3956,12 +3956,12 @@ static void WinTrainerBattle(void){
         // AND_A(MOM_SAVING_MONEY_MASK);
         // CP_A((1 << MOM_SAVING_SOME_MONEY_F) | (1 << MOM_SAVING_HALF_MONEY_F));
         // IF_NZ goto okay;
-        if((wram->wMomSavingMoney & MOM_SAVING_MONEY_MASK) == ((1 << MOM_SAVING_SOME_MONEY_F) | (1 << MOM_SAVING_HALF_MONEY_F))) {
+        if((gPlayer.momSavingMoney & MOM_SAVING_MONEY_MASK) == ((1 << MOM_SAVING_SOME_MONEY_F) | (1 << MOM_SAVING_HALF_MONEY_F))) {
         // INC_A;  // TRUE
             b = TRUE;
         }
         else {
-            b = wram->wMomSavingMoney & MOM_SAVING_MONEY_MASK;
+            b = gPlayer.momSavingMoney & MOM_SAVING_MONEY_MASK;
         }
     }
 
@@ -4006,7 +4006,7 @@ static void WinTrainerBattle(void){
     // LD_A_addr(wMomSavingMoney);
     // AND_A(MOM_SAVING_MONEY_MASK);
     // IF_Z goto KeepItAll;
-    if(!isMaxedOut && (wram->wMomSavingMoney & MOM_SAVING_MONEY_MASK) != 0){
+    if(!isMaxedOut && (gPlayer.momSavingMoney & MOM_SAVING_MONEY_MASK) != 0){
         static const txt_cmd_s* SentToMomTexts[] = {
         //  entries correspond to MOM_SAVING_* constants
             SentSomeToMomText,
@@ -4023,7 +4023,7 @@ static void WinTrainerBattle(void){
         // LD_H_hl;
         // LD_L_A;
         // JP(mStdBattleTextbox);
-        return StdBattleTextbox(SentToMomTexts[(wram->wMomSavingMoney & MOM_SAVING_MONEY_MASK) - 1]);
+        return StdBattleTextbox(SentToMomTexts[(gPlayer.momSavingMoney & MOM_SAVING_MONEY_MASK) - 1]);
     }
 
 // KeepItAll:
@@ -9786,7 +9786,7 @@ InitDVs:
             // LD_DE(wEnemyMonDVs);
             // LD_BC(wPlayerID);
             // CALLFAR(aCalcMagikarpLength);
-            CalcMagikarpLength(wram->wEnemyMon.dvs, wram->wPlayerID);
+            CalcMagikarpLength(wram->wEnemyMon.dvs, gPlayer.playerID);
 
         //  No reason to keep going if length > 1536 mm (i.e. if HIGH(length) > 6 feet)
             // LD_A_addr(wMagikarpLength);
@@ -10618,7 +10618,7 @@ void BadgeStatBoosts(void){
         return;
 
     // LD_A_addr(wJohtoBadges);
-    uint8_t badges = wram->wJohtoBadges[0];
+    uint8_t badges = gPlayer.johtoBadges[0];
 
 //  Swap badges 3 (PlainBadge) and 5 (MineralBadge).
     // LD_D_A;
@@ -11082,7 +11082,7 @@ void GiveExperiencePoints(void){
         // LD_A(0);
         uint8_t a = 0;
         // IF_Z goto no_boost;
-        if(bc->mon.id != wram->wPlayerID){
+        if(bc->mon.id != gPlayer.playerID){
         // boosted:
             // CALL(aBoostExp);
             bExp = BoostExp(bExp);
@@ -12333,7 +12333,7 @@ bool StartBattle(void){
 
     // LD_A_addr(wTimeOfDayPal);
     // PUSH_AF;
-    uint8_t pal = wram->wTimeOfDayPal;
+    uint8_t pal = gPlayer.timeOfDayPal;
     // CALL(aBattleIntro);
     BattleIntro();
     // CALL(aDoBattle);
@@ -12342,7 +12342,7 @@ bool StartBattle(void){
     ExitBattle();
     // POP_AF;
     // LD_addr_A(wTimeOfDayPal);
-    wram->wTimeOfDayPal = pal;
+    gPlayer.timeOfDayPal = pal;
     // SCF;
     // RET;
     return true;
@@ -12818,7 +12818,7 @@ static void CheckPayDay(void){
     // LD_HL(wPayDayMoney + 2);
     // LD_DE(wMoney + 2);
     // CALL(aAddBattleMoneyToAccount);
-    AddBattleMoneyToAccount(wram->wMoney, wram->wPayDayMoney);
+    AddBattleMoneyToAccount(gPlayer.money, wram->wPayDayMoney);
     // LD_HL(mBattleText_PlayerPickedUpPayDayMoney);
     // CALL(aStdBattleTextbox);
     StdBattleTextbox(BattleText_PlayerPickedUpPayDayMoney);
@@ -13002,7 +13002,7 @@ static bool ReadAndPrintLinkBattleRecord_PrintZerosIfNoSaveFileExists(tile_t* hl
     // LD_A_addr(wSavedAtLeastOnce);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wSavedAtLeastOnce)
+    if(gPlayer.savedAtLeastOnce)
         return false;
     // LD_DE(mReadAndPrintLinkBattleRecord_Scores);
     // CALL(aPlaceString);
@@ -13091,7 +13091,7 @@ void ReadAndPrintLinkBattleRecord(void){
         // LD_A_addr(wSavedAtLeastOnce);
         // AND_A_A;
         // IF_Z goto PrintFormatString;
-        if(de->name[0] == 0 || !wram->wSavedAtLeastOnce) {
+        if(de->name[0] == 0 || !gPlayer.savedAtLeastOnce) {
         // PrintFormatString:
             // LD_DE(mReadAndPrintLinkBattleRecord_Format);
             // CALL(aPlaceString);

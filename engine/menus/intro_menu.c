@@ -173,8 +173,8 @@ void MysteryGift(void) {
 
     OpenSRAM(MBANK(asPlayerData));
     wram->wPlayerGender = gb_read(sCrystalData);
-    CopyBytes(&wram->wPlayerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
-    CopyBytes(wram->wPlayerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
+    CopyBytes(&gPlayer.playerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
+    CopyBytes(gPlayer.playerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
     CloseSRAM();
 
     if(!LANTryConnection())
@@ -308,7 +308,7 @@ static void v_ResetWRAM(void) {
     // LDH_A_addr(hRandomAdd);
     // LD_addr_A(wPlayerID + 1);
     uint8_t pid_hi = hram.hRandomAdd;
-    wram->wPlayerID = (pid_hi << 8) | pid_lo;
+    gPlayer.playerID = (pid_hi << 8) | pid_lo;
 
     // CALL(aRandom);
     // LD_addr_A(wSecretID);
@@ -318,7 +318,7 @@ static void v_ResetWRAM(void) {
     uint8_t sid_lo = Random();
     DelayFrame();
     uint8_t sid_hi = Random();
-    wram->wSecretID = (sid_hi << 8) | sid_lo;
+    gPlayer.secretID = (sid_hi << 8) | sid_lo;
 
     // LD_HL(wPartyCount);
     // CALL(av_ResetWRAM_InitList);
@@ -326,9 +326,9 @@ static void v_ResetWRAM(void) {
 
     // XOR_A_A;
     // LD_addr_A(wCurBox);
-    wram->wCurBox = 0;
+    gPlayer.curBox = 0;
     // LD_addr_A(wSavedAtLeastOnce);
-    wram->wSavedAtLeastOnce = FALSE;
+    gPlayer.savedAtLeastOnce = FALSE;
 
     // CALL(aSetDefaultBoxNames);
     SetDefaultBoxNames();
@@ -401,39 +401,39 @@ static void v_ResetWRAM(void) {
     wram->wMonType = 0x0;
 
     // LD_addr_A(wJohtoBadges);
-    wram->wJohtoBadges[0] = 0;
+    gPlayer.johtoBadges[0] = 0;
     // LD_addr_A(wKantoBadges);
-    wram->wKantoBadges[0] = 0;
+    gPlayer.kantoBadges[0] = 0;
 
     // LD_addr_A(wCoins);
     // LD_addr_A(wCoins + 1);
-    wram->wCoins = NativeToBigEndian16(0);
+    gPlayer.coins = NativeToBigEndian16(0);
 
     // if (START_MONEY >= 10000)
     //     LD_A(HIGH(START_MONEY >> 8));
     // else
     //     LD_addr_A(wMoney);
-    wram->wMoney[0] = (START_MONEY >= 10000)? HIGH(START_MONEY >> 8): 0x0;
+    gPlayer.money[0] = (START_MONEY >= 10000)? HIGH(START_MONEY >> 8): 0x0;
     // LD_A(HIGH(START_MONEY));  // mid
     // LD_addr_A(wMoney + 1);
-    wram->wMoney[1] = HIGH(START_MONEY);
+    gPlayer.money[1] = HIGH(START_MONEY);
     // LD_A(LOW(START_MONEY));
     // LD_addr_A(wMoney + 2);
-    wram->wMoney[2] = LOW(START_MONEY);
+    gPlayer.money[2] = LOW(START_MONEY);
 
     // XOR_A_A;
     // LD_addr_A(wWhichMomItem);
-    wram->wWhichMomItem = NO_ITEM;
+    gPlayer.whichMomItem = NO_ITEM;
 
     // LD_HL(wMomItemTriggerBalance);
     // LD_hl(HIGH(MOM_MONEY >> 8));
-    wram->wMomItemTriggerBalance[0] = HIGH(MOM_MONEY >> 8);
+    gPlayer.momItemTriggerBalance[0] = HIGH(MOM_MONEY >> 8);
     // INC_HL;
     // LD_hl(HIGH(MOM_MONEY));  // mid
-    wram->wMomItemTriggerBalance[1] = HIGH(MOM_MONEY);
+    gPlayer.momItemTriggerBalance[1] = HIGH(MOM_MONEY);
     // INC_HL;
     // LD_hl(LOW(MOM_MONEY));
-    wram->wMomItemTriggerBalance[2] = LOW(MOM_MONEY);
+    gPlayer.momItemTriggerBalance[2] = LOW(MOM_MONEY);
 
     // CALL(aInitializeNPCNames);
     InitializeNPCNames();
@@ -454,7 +454,7 @@ static void v_ResetWRAM(void) {
 
 static void SetDefaultBoxNames(void) {
     // LD_HL(wBoxNames);
-    uint8_t* hl = wram->wBoxNames;
+    uint8_t* hl = gPlayer.boxNames;
     // LD_C(0);
 
     for(uint8_t c = 0; c < NUM_BOXES; c++){
@@ -521,21 +521,21 @@ static void InitializeNPCNames(void) {
     // LD_HL(mInitializeNPCNames_Rival);
     // LD_DE(wRivalName);
     // CALL(aInitializeNPCNames_Copy);
-    U82CB(wram->wRivalName, NAME_LENGTH, "???@");
+    U82CB(gPlayer.rivalName, NAME_LENGTH, "???@");
 
     // LD_HL(mInitializeNPCNames_Mom);
     // LD_DE(wMomsName);
     // CALL(aInitializeNPCNames_Copy);
-    U82CB(wram->wMomsName, NAME_LENGTH, "MOM@");
+    U82CB(gPlayer.momsName, NAME_LENGTH, "MOM@");
 
     // LD_HL(mInitializeNPCNames_Red);
     // LD_DE(wRedsName);
     // CALL(aInitializeNPCNames_Copy);
-    U82CB(wram->wRedsName, NAME_LENGTH, "RED@");
+    U82CB(gPlayer.redsName, NAME_LENGTH, "RED@");
 
     // LD_HL(mInitializeNPCNames_Green);
     // LD_DE(wGreensName);
-    U82CB(wram->wGreensName, NAME_LENGTH, "GREEN@");
+    U82CB(gPlayer.greensName, NAME_LENGTH, "GREEN@");
 
 // Copy:
     // LD_BC(NAME_LENGTH);
@@ -574,7 +574,7 @@ void LoadOrRegenerateLuckyIDNumber(void) {
     // LD_A_addr(wCurDay);
     // INC_A;
     // LD_B_A;
-    uint8_t b = wram->wCurDay + 1;
+    uint8_t b = gPlayer.curDay + 1;
     // LD_A_addr(sLuckyNumberDay);
     // CP_A_B;
     uint16_t id;
@@ -598,7 +598,7 @@ void LoadOrRegenerateLuckyIDNumber(void) {
 
 // skip:
     // LD_addr_A(wLuckyIDNumber);
-    wram->wLuckyIDNumber = id;
+    gPlayer.luckyIDNumber = id;
     // LD_addr_A(sLuckyIDNumber);
     // LD_A_C;
     gb_write16(sLuckyIDNumber, id);
@@ -819,7 +819,7 @@ void FinishContinueFunction(void) {
         bit_reset(wram->wGameTimerPaused, GAME_TIMER_MOBILE_F);
         // LD_HL(wEnteredMapFromContinue);
         // SET_hl(1);
-        bit_set(wram->wEnteredMapFromContinue, 1);
+        bit_set(gPlayer.enteredMapFromContinue, 1);
         // FARCALL(aOverworldLoop);
         OverworldLoop();
         // LD_A_addr(wSpawnAfterChampion);
@@ -940,7 +940,7 @@ static void Continue_LoadMenuHeader(uint8_t d, uint8_t e) {
 
 
 // show_menu:
-    const struct MenuHeader* hl = (bit_test(wram->wStatusFlags, STATUSFLAGS_POKEDEX_F))? &MenuHeader_Dex: &MenuHeader_NoDex;
+    const struct MenuHeader* hl = (bit_test(gPlayer.statusFlags, STATUSFLAGS_POKEDEX_F))? &MenuHeader_Dex: &MenuHeader_NoDex;
     // CALL(av_OffsetMenuHeader);
     v_OffsetMenuHeader(hl, d, e);
     // CALL(aMenuBox);
@@ -1019,7 +1019,7 @@ static tile_t* Continue_DisplayBadgeCount(tile_t* hl) {
     // LD_HL(wJohtoBadges);
     // LD_B(2);
     // CALL(aCountSetBits);
-    uint8_t count = CountSetBits(wram->wJohtoBadges, 2);
+    uint8_t count = CountSetBits(gPlayer.johtoBadges, 2);
     // POP_HL;
     // LD_DE(wNumSetBits);
     // LD_BC((1 << 8) | 2);
@@ -1031,7 +1031,7 @@ static tile_t* Continue_DisplayPokedexNumCaught(tile_t* hl) {
     // LD_A_addr(wStatusFlags);
     // BIT_A(STATUSFLAGS_POKEDEX_F);
     // RET_Z;
-    if(!bit_test(wram->wStatusFlags, STATUSFLAGS_POKEDEX_F))
+    if(!bit_test(gPlayer.statusFlags, STATUSFLAGS_POKEDEX_F))
         return hl;
     // PUSH_HL;
     // LD_HL(wPokedexCaught);
@@ -1052,14 +1052,14 @@ static void Continue_DisplayGameTime(tile_t* hl) {
     // LD_DE(wGameTimeHours);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    hl = PrintNum(hl, &wram->wGameTimeHours, 2, 3);
+    hl = PrintNum(hl, &gPlayer.gameTimeHours, 2, 3);
     // LD_hl(0x6d);
     // INC_HL;
     *(hl++) = 0x6d;
     // LD_DE(wGameTimeMinutes);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // JP(mPrintNum);
-    PrintNum(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl, &gPlayer.gameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
 }
 
 static void OakSpeech(void) {
@@ -1260,7 +1260,7 @@ static void NamePlayer(void) {
         // LD_B(NAME_PLAYER);
         // LD_DE(wPlayerName);
         // FARCALL(aNamingScreen);
-        NamingScreen(wram->wPlayerName, NAME_PLAYER);
+        NamingScreen(gPlayer.playerName, NAME_PLAYER);
 
         // CALL(aRotateThreePalettesRight);
         RotateThreePalettesRight();
@@ -1290,14 +1290,14 @@ static void NamePlayer(void) {
         // BIT_A(PLAYERGENDER_FEMALE_F);
         // IF_Z goto Male;
         if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
-            InitName(wram->wPlayerName, U82C(Kris));
+            InitName(gPlayer.playerName, U82C(Kris));
         }
         // LD_DE(mNamePlayer_Kris);
 
     // Male:
         // CALL(aInitName);
         else {
-            InitName(wram->wPlayerName, U82C(Chris));
+            InitName(gPlayer.playerName, U82C(Chris));
         }
         // RET;
     }
@@ -1321,11 +1321,11 @@ static void StorePlayerName(void) {
     // LD_BC(NAME_LENGTH);
     // LD_HL(wPlayerName);
     // CALL(aByteFill);
-    ByteFill(wram->wPlayerName, NAME_LENGTH, 0x50);
+    ByteFill(gPlayer.playerName, NAME_LENGTH, 0x50);
     // LD_HL(wPlayerName);
     // LD_DE(wStringBuffer2);
     // CALL(aCopyName2);
-    CopyName2(wram->wPlayerName, wram->wStringBuffer2);
+    CopyName2(gPlayer.playerName, wram->wStringBuffer2);
     // RET;
 }
 

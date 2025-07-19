@@ -48,7 +48,7 @@ static void LoadPoisonBGPals_LoadPals(void) {
     // LD_A(0b00000000);
     // IF_Z goto convert_pals;
     // LD_A(0b10101010);
-    uint8_t a = (wram->wTimeOfDayPal & (NUM_DAYTIMES - 1))? 0b10101010: 0b00000000;
+    uint8_t a = (gPlayer.timeOfDayPal & (NUM_DAYTIMES - 1))? 0b10101010: 0b00000000;
 
 // convert_pals:
     // CALL(aDmgToCgbBGPals);

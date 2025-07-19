@@ -56,7 +56,7 @@ bool TMHMPocket(void){
     // ADD_HL_BC;
     // LD_A_hl;
     // LD_addr_A(wItemQuantity);
-    wram->wItemQuantity = wram->wTMsHMs[wram->wCurItemQuantity];
+    wram->wItemQuantity = gPlayer.TMsHMs[wram->wCurItemQuantity];
     // CALL(aTMHMPocket_ConvertItemToTMHMNumber);
     TMHMPocket_ConvertItemToTMHMNumber();
     // SCF;
@@ -421,7 +421,7 @@ bool TMHM_PocketLoop(void){
                 // IF_Z goto loop;
                 // DEC_B;
                 // IF_NZ goto loop;
-            } while(wram->wTMsHMs[c-1] == 0 || --b != 0);
+            } while(gPlayer.TMsHMs[c-1] == 0 || --b != 0);
             // LD_HL(wTMHMPocketScrollPosition);
             // INC_hl;
             ++wram->wTMHMPocketScrollPosition;
@@ -538,7 +538,7 @@ bool TMHM_CheckHoveringOverCancel(void){
         // IF_Z goto loop;
         // DEC_B;
         // IF_NZ goto loop;
-    } while(wram->wTMsHMs[c-1] == 0 || --b != 0);
+    } while(gPlayer.TMsHMs[c-1] == 0 || --b != 0);
     // LD_A_C;
     a = c;
 
@@ -646,9 +646,9 @@ uint8_t TMHM_DisplayPocketItems(void){
             // LD_A_hli;
             // AND_A_A;
             // IF_Z goto loop2;
-        } while(wram->wTMsHMs[c-1] == 0);
+        } while(gPlayer.TMsHMs[c-1] == 0);
         // LD_B_A;
-        uint8_t b = wram->wTMsHMs[c-1];
+        uint8_t b = gPlayer.TMsHMs[c-1];
         // LD_A_C;
         // LD_addr_A(wTempTMHM);
         wram->wTempTMHM = c;
@@ -773,7 +773,7 @@ const char TMHM_CancelString[] = "CANCEL@";
 
 uint8_t TMHM_GetCurrentPocketPosition(void){
     // LD_HL(wTMsHMs);
-    uint8_t* hl = wram->wTMsHMs;
+    uint8_t* hl = gPlayer.TMsHMs;
     // LD_A_addr(wTMHMPocketScrollPosition);
     // LD_B_A;
     // INC_B;
@@ -866,7 +866,7 @@ void ConsumeTM(void){
     // LD_B(0);
     // LD_C_A;
     // ADD_HL_BC;
-    uint8_t* hl = wram->wTMsHMs + wram->wTempTMHM;
+    uint8_t* hl = gPlayer.TMsHMs + wram->wTempTMHM;
     // LD_A_hl;
     // AND_A_A;
     // RET_Z ;
@@ -894,7 +894,7 @@ void CountTMsHMs(void){
     // LD_C(NUM_TMS + NUM_HMS);
     uint8_t c = NUM_TMS + NUM_HMS;
     // LD_HL(wTMsHMs);
-    uint8_t* hl = wram->wTMsHMs;
+    uint8_t* hl = gPlayer.TMsHMs;
 
     do {
     // loop:

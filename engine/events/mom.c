@@ -72,13 +72,13 @@ void BankOfMom(void){
                 // LD_A_addr(wMomSavingMoney);
                 // BIT_A(MOM_ACTIVE_F);
                 // IF_NZ goto savingmoneyalready;
-                if(bit_test(wram->wMomSavingMoney, MOM_ACTIVE_F)) {
+                if(bit_test(gPlayer.momSavingMoney, MOM_ACTIVE_F)) {
                     wram->wJumptableIndex = BANKOFMOM_IS_THIS_ABOUT_YOUR_MONEY;
                 }
                 else {
                     // SET_A(MOM_ACTIVE_F);
                     // LD_addr_A(wMomSavingMoney);
-                    bit_set(wram->wMomSavingMoney, MOM_ACTIVE_F);
+                    bit_set(gPlayer.momSavingMoney, MOM_ACTIVE_F);
                     // LD_A(0x1);
                     // goto done_0;
                     wram->wJumptableIndex = BANKOFMOM_INIT_BANK;
@@ -105,12 +105,12 @@ void BankOfMom(void){
                     PrintText(MomLeavingText2);
                     // LD_A((1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F));
                     // goto done_1;
-                    wram->wMomSavingMoney = (1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F);
+                    gPlayer.momSavingMoney = (1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F);
                 }
                 else {
                 // DontSaveMoney:
                     // LD_A(1 << MOM_ACTIVE_F);
-                    wram->wMomSavingMoney = 1 << MOM_ACTIVE_F;
+                    gPlayer.momSavingMoney = 1 << MOM_ACTIVE_F;
                 }
 
 
@@ -245,7 +245,7 @@ void BankOfMom(void){
                     // LD_DE(wMoney);
                     // LD_BC(wStringBuffer2);
                     // FARCALL(aCompareMoney);
-                    u8_flag_s res = CompareMoney(wram->wStringBuffer2, wram->wMoney);
+                    u8_flag_s res = CompareMoney(wram->wStringBuffer2, gPlayer.money);
                     // IF_C goto InsufficientFundsInWallet;
                     if(res.flag) {
                     // InsufficientFundsInWallet:
@@ -263,7 +263,7 @@ void BankOfMom(void){
                     // LD_BC(wMomsMoney);
                     // LD_DE(wStringBuffer2);
                     // FARCALL(aGiveMoney);
-                    bool noroom = GiveMoney(wram->wStringBuffer2, wram->wMomsMoney);
+                    bool noroom = GiveMoney(wram->wStringBuffer2, gPlayer.momsMoney);
                     // IF_C goto NotEnoughRoomInBank;
                     if(noroom) {
                     // NotEnoughRoomInBank:
@@ -276,12 +276,12 @@ void BankOfMom(void){
                     // LD_BC(wStringBuffer2 + 3);
                     // LD_DE(wMoney);
                     // FARCALL(aTakeMoney);
-                    TakeMoney(wram->wMoney, wram->wStringBuffer2 + 3);
+                    TakeMoney(gPlayer.money, wram->wStringBuffer2 + 3);
                     // LD_HL(wStringBuffer2);
                     // LD_DE(wMomsMoney);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes(wram->wMomsMoney, wram->wStringBuffer2, 3);
+                    CopyBytes(gPlayer.momsMoney, wram->wStringBuffer2, 3);
                     // LD_DE(SFX_TRANSACTION);
                     // CALL(aPlaySFX);
                     PlaySFX(SFX_TRANSACTION);
@@ -346,7 +346,7 @@ void BankOfMom(void){
                     // LD_DE(wMomsMoney);
                     // LD_BC(wStringBuffer2);
                     // FARCALL(aCompareMoney);
-                    u8_flag_s res = CompareMoney(wram->wStringBuffer2, wram->wMomsMoney);
+                    u8_flag_s res = CompareMoney(wram->wStringBuffer2, gPlayer.momsMoney);
                     // IF_C goto InsufficientFundsInBank;
                     if(res.flag) {
                     // InsufficientFundsInBank:
@@ -359,7 +359,7 @@ void BankOfMom(void){
                     // LD_BC(wMoney);
                     // LD_DE(wStringBuffer2);
                     // FARCALL(aGiveMoney);
-                    bool noroom = GiveMoney(wram->wStringBuffer2, wram->wMoney);
+                    bool noroom = GiveMoney(wram->wStringBuffer2, gPlayer.money);
                     // IF_C goto NotEnoughRoomInWallet;
                     if(noroom) {
                     // NotEnoughRoomInWallet:
@@ -372,12 +372,12 @@ void BankOfMom(void){
                     // LD_BC(wStringBuffer2 + 3);
                     // LD_DE(wMomsMoney);
                     // FARCALL(aTakeMoney);
-                    TakeMoney(wram->wMomsMoney, wram->wStringBuffer2 + 3);
+                    TakeMoney(gPlayer.momsMoney, wram->wStringBuffer2 + 3);
                     // LD_HL(wStringBuffer2);
                     // LD_DE(wMoney);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes(wram->wMoney, wram->wStringBuffer2, 3);
+                    CopyBytes(gPlayer.money, wram->wStringBuffer2, 3);
                     // LD_DE(SFX_TRANSACTION);
                     // CALL(aPlaySFX);
                     PlaySFX(SFX_TRANSACTION);
@@ -410,7 +410,7 @@ void BankOfMom(void){
                 if(YesNoBox()) {
                     // LD_A((1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F));
                     // LD_addr_A(wMomSavingMoney);
-                    wram->wMomSavingMoney = (1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F);
+                    gPlayer.momSavingMoney = (1 << MOM_ACTIVE_F) | (1 << MOM_SAVING_SOME_MONEY_F);
                     // LD_HL(mMomStartSavingMoneyText);
                     // CALL(aPrintText);
                     PrintText(MomStartSavingMoneyText);
@@ -423,7 +423,7 @@ void BankOfMom(void){
                 // StopSavingMoney:
                     // LD_A(1 << MOM_ACTIVE_F);
                     // LD_addr_A(wMomSavingMoney);
-                    wram->wMomSavingMoney = (1 << MOM_ACTIVE_F);
+                    gPlayer.momSavingMoney = (1 << MOM_ACTIVE_F);
                     // LD_A(0x7);
                     // LD_addr_A(wJumptableIndex);
                     wram->wJumptableIndex = BANKOFMOM_JUST_DO_WHAT_YOU_CAN;
@@ -468,7 +468,7 @@ static void DSTChecks_ClearBox(void) {
 static void DSTChecks_SetClockForward(void) {
     // LD_A_addr(wStartHour);
     // ADD_A(1);
-    uint8_t hour = wram->wStartHour + 1;
+    uint8_t hour = gPlayer.startHour + 1;
     // SUB_A(24);
     uint8_t carry = 0;
     // IF_NC goto DontLoopHourForward;
@@ -480,12 +480,12 @@ static void DSTChecks_SetClockForward(void) {
 
 // DontLoopHourForward:
     // LD_addr_A(wStartHour);
-    wram->wStartHour = hour;
+    gPlayer.startHour = hour;
     // CCF;
     // LD_A_addr(wStartDay);
     // ADC_A(0);
     // LD_addr_A(wStartDay);
-    wram->wStartDay += carry;
+    gPlayer.startDay += carry;
     // RET;
 }
 
@@ -495,12 +495,12 @@ static void DSTChecks_SetClockBack(void) {
     // SUB_A(1);
     // IF_NC goto DontLoopHourBack;
     // ADD_A(24);
-    if(wram->wStartHour < 1) {
-        wram->wStartHour = (wram->wStartHour - 1) + 24;
+    if(gPlayer.startHour < 1) {
+        gPlayer.startHour = (gPlayer.startHour - 1) + 24;
         borrow = 1;
     }
     else {
-        wram->wStartHour -= 1;
+        gPlayer.startHour -= 1;
         borrow = 0;
     }
 
@@ -509,9 +509,9 @@ static void DSTChecks_SetClockBack(void) {
     // LD_A_addr(wStartDay);
     // SBC_A(0);
     // IF_NC goto DontLoopDayBack;
-    if(wram->wStartDay < borrow) {
+    if(gPlayer.startDay < borrow) {
         // ADD_A(7);
-        wram->wStartDay = 7 - borrow;
+        gPlayer.startDay = 7 - borrow;
     }
 
 // DontLoopDayBack:
@@ -564,8 +564,8 @@ void DSTChecks(void){
     // IF_NZ goto loop;
 // fallthrough
 
-    if((!bit_test(wram->wDST, 7) && hram.hHours == 23)    // within one hour of 23:00 outside of DST?
-    || ( bit_test(wram->wDST, 7) && hram.hHours == 0))    // within one hour of 00:00 in DST?
+    if((!bit_test(gPlayer.DST, 7) && hram.hHours == 23)    // within one hour of 23:00 outside of DST?
+    || ( bit_test(gPlayer.DST, 7) && hram.hHours == 0))    // within one hour of 00:00 in DST?
     {
     // LostBooklet:
         // CALL(aDSTChecks_ClearBox);
@@ -595,7 +595,7 @@ void DSTChecks(void){
     // LD_A_addr(wDST);
     // BIT_A(7);
     // IF_Z goto SetDST;
-    if(!bit_test(wram->wDST, 7)) {
+    if(!bit_test(gPlayer.DST, 7)) {
     // SetDST:
         // LD_HL(mDSTChecks_TimesetAskDSTText);
         // CALL(aPlaceHLTextAtBC);
@@ -607,7 +607,7 @@ void DSTChecks(void){
         // LD_A_addr(wDST);
         // SET_A(7);
         // LD_addr_A(wDST);
-        bit_set(wram->wDST, 7);
+        bit_set(gPlayer.DST, 7);
         // CALL(aDSTChecks_SetClockForward);
         DSTChecks_SetClockForward();
         // CALL(aDSTChecks_ClearBox);
@@ -629,7 +629,7 @@ void DSTChecks(void){
     // LD_A_addr(wDST);
     // RES_A(7);
     // LD_addr_A(wDST);
-    bit_reset(wram->wDST, 7);
+    bit_reset(gPlayer.DST, 7);
     // CALL(aDSTChecks_SetClockBack);
     DSTChecks_SetClockBack();
     // CALL(aDSTChecks_ClearBox);
@@ -676,7 +676,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // LD_DE(wMomsMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum(coord(12, 2, wram->wTilemap), wram->wMomsMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(coord(12, 2, wram->wTilemap), gPlayer.momsMoney, PRINTNUM_MONEY | 3, 6);
     // hlcoord(1, 4, wTilemap);
     // LD_DE(mMom_HeldString);
     // CALL(aPlaceString);
@@ -685,7 +685,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // LD_DE(wMoney);
     // LD_BC((PRINTNUM_MONEY | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum(coord(12, 4, wram->wTilemap), wram->wMoney, PRINTNUM_MONEY | 3, 6);
+    PrintNum(coord(12, 4, wram->wTilemap), gPlayer.money, PRINTNUM_MONEY | 3, 6);
     // hlcoord(1, 6, wTilemap);
     // POP_DE;
     // CALL(aPlaceString);

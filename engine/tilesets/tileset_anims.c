@@ -628,7 +628,7 @@ void ForestTreeLeftAnimation(uint8_t* de){
     // LD_A_addr(wCelebiEvent);
     // BIT_A(CELEBIEVENT_FOREST_IS_RESTLESS_F);
     // IF_NZ goto do_animation;
-    if(!bit_test(wram->wCelebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F)) {
+    if(!bit_test(gPlayer.celebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F)) {
         // LD_HL(mForestTreeLeftFrames);
         // goto got_frames;
         hl = ForestTreeLeftFrames[0];
@@ -683,7 +683,7 @@ void ForestTreeRightAnimation(uint8_t* de){
     // LD_A_addr(wCelebiEvent);
     // BIT_A(CELEBIEVENT_FOREST_IS_RESTLESS_F);
     // IF_NZ goto do_animation;
-    if(!bit_test(wram->wCelebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F)) {
+    if(!bit_test(gPlayer.celebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F)) {
         // LD_HL(mForestTreeRightFrames);
         hl = ForestTreeRightFrames[0];
         // goto got_frames;
@@ -732,7 +732,7 @@ void ForestTreeLeftAnimation2(uint8_t* de){
     // BIT_A(CELEBIEVENT_FOREST_IS_RESTLESS_F);
     // IF_NZ goto do_animation;
     const char* hl;
-    if(!bit_test(wram->wCelebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F)) {
+    if(!bit_test(gPlayer.celebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F)) {
         // LD_HL(mForestTreeLeftFrames);
         hl = ForestTreeLeftFrames[0];
         // goto got_frames;
@@ -780,7 +780,7 @@ void ForestTreeRightAnimation2(uint8_t* de){
     // LD_A_addr(wCelebiEvent);
     // BIT_A(CELEBIEVENT_FOREST_IS_RESTLESS_F);
     // IF_NZ goto do_animation;
-    if(!bit_test(wram->wCelebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F)) {
+    if(!bit_test(gPlayer.celebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F)) {
         // LD_HL(mForestTreeRightFrames);
         hl = ForestTreeRightFrames[0];
         // goto got_frames;
@@ -1217,7 +1217,7 @@ void FlickeringCaveEntrancePalette(uint8_t* de){
     // LD_A_addr(wTimeOfDayPalset);
     // CP_A(DARKNESS_PALSET);
     // RET_NZ ;
-    if(wram->wTimeOfDayPalset != DARKNESS_PALSET)
+    if(gPlayer.timeOfDayPalset != DARKNESS_PALSET)
         return;
 
     // LDH_A_addr(rSVBK);

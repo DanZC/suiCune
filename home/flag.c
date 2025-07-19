@@ -3,11 +3,11 @@
 #include "../engine/events/engine_flags.h"
 
 void ResetMapBufferEventFlags(void){
-    wram->wEventFlags[0] = 0;
+    gPlayer.eventFlags[0] = 0;
 }
 
 void ResetBikeFlags(void){
-    wram->wBikeFlags = 0;
+    gPlayer.bikeFlags = 0;
     wram->skip_119[0] = 0;
 }
 
@@ -15,12 +15,12 @@ void ResetFlashIfOutOfCave(void){
     uint8_t env = wram->wEnvironment;
     if(env == ROUTE || env == TOWN)
     {
-        bit_reset(wram->wStatusFlags, STATUSFLAGS_FLASH_F);
+        bit_reset(gPlayer.statusFlags, STATUSFLAGS_FLASH_F);
     }
 }
 
 uint8_t EventFlagAction(uint16_t bit, uint8_t func){
-    return FlagAction(wram->wEventFlags, bit, func);
+    return FlagAction(gPlayer.eventFlags, bit, func);
 }
 
 //  Perform action b on bit de in flag array hl.

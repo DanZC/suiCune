@@ -41,9 +41,9 @@ void BlankScreen(void){
 void SpawnPlayer(void){
     // LD_A(-1);
     // LD_addr_A(wObjectFollow_Leader);
-    wram->wObjectFollow_Leader = 0xff;
+    gPlayer.objectFollow_Leader = 0xff;
     // LD_addr_A(wObjectFollow_Follower);
-    wram->wObjectFollow_Follower = 0xff;
+    gPlayer.objectFollow_Follower = 0xff;
     // LD_A(PLAYER);
     // LD_HL(mPlayerObjectTemplate);
     // CALL(aCopyPlayerObjectTemplate);
@@ -79,10 +79,10 @@ void SpawnPlayer(void){
     // LDH_addr_A(hObjectStructIndex);
     // LD_DE(wObjectStructs);
     // CALL(aCopyMapObjectToObjectStruct);
-    CopyMapObjectToObjectStruct(&wram->wPlayerStruct, bc, PLAYER_OBJECT, PLAYER_OBJECT);
+    CopyMapObjectToObjectStruct(&gPlayer.playerStruct, bc, PLAYER_OBJECT, PLAYER_OBJECT);
     // LD_A(PLAYER);
     // LD_addr_A(wCenteredObject);
-    wram->wCenteredObject = PLAYER;
+    gPlayer.centeredObject = PLAYER;
     // RET;
 }
 
@@ -152,13 +152,13 @@ void RefreshPlayerCoords(void){
     // LD_HL(wPlayerStandingMapX);
     // SUB_A_hl;
     // LD_hl_D;
-    wram->wPlayerStruct.nextMapX = x;
+    gPlayer.playerStruct.nextMapX = x;
     // LD_HL(wMapObjects + MAPOBJECT_X_COORD);
     // LD_hl_D;
-    wram->wPlayerObject.objectXCoord = x;
+    gPlayer.playerObject.objectXCoord = x;
     // LD_HL(wPlayerLastMapX);
     // LD_hl_D;
-    wram->wPlayerStruct.mapX = x;
+    gPlayer.playerStruct.mapX = x;
     // LD_D_A;
     // LD_A_addr(wYCoord);
     // ADD_A(4);
@@ -167,13 +167,13 @@ void RefreshPlayerCoords(void){
     // LD_HL(wPlayerStandingMapY);
     // SUB_A_hl;
     // LD_hl_E;
-    wram->wPlayerStruct.nextMapY = y;
+    gPlayer.playerStruct.nextMapY = y;
     // LD_HL(wMapObjects + MAPOBJECT_Y_COORD);
     // LD_hl_E;
-    wram->wPlayerObject.objectYCoord = y;
+    gPlayer.playerObject.objectYCoord = y;
     // LD_HL(wPlayerLastMapY);
     // LD_hl_E;
-    wram->wPlayerStruct.mapY = y;
+    gPlayer.playerStruct.mapY = y;
     // LD_E_A;
 //  the next three lines are useless
     // LD_A_addr(wObjectFollow_Leader);
@@ -192,7 +192,7 @@ uint8_t CopyObjectStruct(struct MapObject* bc, uint8_t a){
     // LD_HL(wObjectStructs + OBJECT_LENGTH * 1);
     // LD_A(1);
     // LD_DE(OBJECT_LENGTH);
-    struct Object* hl = wram->wObjectStruct;
+    struct Object* hl = gPlayer.objectStruct;
     uint8_t b = 1;
 
     do {
@@ -313,7 +313,7 @@ static void CopyMapObjectToObjectStruct(struct Object* de, struct MapObject* bc,
 
 void InitializeVisibleSprites(void){
     // LD_BC(wMap1Object);
-    struct MapObject* bc = (struct MapObject*)wram_ptr(wMapObjects);
+    struct MapObject* bc = gPlayer.mapObjects;
     // LD_A(1);
     uint8_t a = 1;
 
@@ -411,7 +411,7 @@ void CheckObjectEnteringVisibleRange(void){
     // LD_HL(mCheckObjectEnteringVisibleRange_dw);
     // RST(aJumpTable);
     uint8_t d, e, a = 1;
-    struct MapObject* bc = (struct MapObject*)wram_ptr(wMapObjects);
+    struct MapObject* bc = gPlayer.mapObjects;
     switch(wram->wPlayerStepDirection) {
     case DOWN:
     // Down:
@@ -799,7 +799,7 @@ static uint8_t SurfStartStep_GetMovementData(void){
     // ADD_HL_DE;
     // LD_A_hl;
     // RET;
-    return movement_data[(wram->wPlayerStruct.facing & 0b00001100) >> 2];
+    return movement_data[(gPlayer.playerStruct.facing & 0b00001100) >> 2];
 }
 
 void SurfStartStep(void){
@@ -1081,7 +1081,7 @@ uint8_t GetRelativeFacing(uint8_t e, uint8_t d){
 static u8_flag_s QueueFollowerFirstStep_QueueFirstStep(void) {
     // LD_A_addr(wObjectFollow_Leader);
     // CALL(aGetObjectStruct);
-    struct Object* leader = GetObjectStruct(wram->wObjectFollow_Leader);
+    struct Object* leader = GetObjectStruct(gPlayer.objectFollow_Leader);
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_D_hl;
@@ -1092,7 +1092,7 @@ static u8_flag_s QueueFollowerFirstStep_QueueFirstStep(void) {
     uint8_t e = leader->nextMapY;
     // LD_A_addr(wObjectFollow_Follower);
     // CALL(aGetObjectStruct);
-    struct Object* follower = GetObjectStruct(wram->wObjectFollow_Follower);
+    struct Object* follower = GetObjectStruct(gPlayer.objectFollow_Follower);
     // LD_HL(OBJECT_NEXT_MAP_X);
     // ADD_HL_BC;
     // LD_A_D;
@@ -1150,15 +1150,15 @@ bool QueueFollowerFirstStep(void){
     // same:
         // LD_A(-1);
         // LD_addr_A(wFollowerMovementQueueLength);
-        wram->wFollowerMovementQueueLength = 0xff;
+        gPlayer.followerMovementQueueLength = 0xff;
         // RET;
         return false;
     }
     // LD_addr_A(wFollowMovementQueue);
-    wram->wFollowMovementQueue[0] = res.a;
+    gPlayer.followMovementQueue[0] = res.a;
     // XOR_A_A;
     // LD_addr_A(wFollowerMovementQueueLength);
-    wram->wFollowerMovementQueueLength = 0;
+    gPlayer.followerMovementQueueLength = 0;
     // RET;
     return true;
 }

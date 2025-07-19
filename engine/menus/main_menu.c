@@ -340,7 +340,7 @@ static uint8_t MainMenu_GetWhichMenu(void){
         // BIT_A(STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F);
         // IF_Z goto ok3;
         // goto ok3;
-        if(bit_test(wram->wStatusFlags, STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F)) {
+        if(bit_test(gPlayer.statusFlags, STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F)) {
             return MAINMENU_MOBILE_MYSTERY;
         }
 
@@ -361,7 +361,7 @@ static uint8_t MainMenu_GetWhichMenu(void){
         // LD_A(MAINMENU_MYSTERY); // MAINMENU_CONTINUE
         // IF_Z goto ok;
         // goto ok;
-        if(bit_test(wram->wStatusFlags, STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F)) {
+        if(bit_test(gPlayer.statusFlags, STATUSFLAGS_MAIN_MENU_MOBILE_CHOICES_F)) {
             return MAINMENU_MOBILE;
         }
 

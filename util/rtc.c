@@ -1,5 +1,6 @@
 #include "../constants.h"
 #include "rtc.h"
+#include "serialize.h"
 #include <time.h>
 #include <memory.h>
 #include "../home/sram.h"
@@ -90,16 +91,10 @@ void SetStartTimeToSystemTime(void) {
     buffer[5] = ((value >> 40ll) & 0xff);
     buffer[6] = ((value >> 48ll) & 0xff);
     buffer[7] = ((value >> 56ll) & 0xff);
-    wbank_push(MBANK(awRTC));
-    gb_write(wRTC + 4, buffer[0]);
-    gb_write(wRTC + 5, buffer[1]);
-    gb_write(wRTC + 6, buffer[2]);
-    gb_write(wRTC + 7, buffer[3]);
-    gb_write(wTimeOfDayPal + 1, buffer[4]);
-    gb_write(wTimeOfDayPal + 2, buffer[5]);
-    gb_write(wTimeOfDayPal + 3, buffer[6]);
-    gb_write(wTimeOfDayPal + 4, buffer[7]);
-    wbank_pop;
+    for(size_t i = 0; i < 4; ++i)
+        gPlayer.skip_104[i] = buffer[i];
+    for(size_t i = 0; i < 4; ++i)
+        gPlayer.skip_109[i] = buffer[4 + i];
     printf("start = %lld\n", (long long)*(time_t*)buffer);
 }
 
@@ -111,14 +106,12 @@ void LoadRTCStartTime(void) {
     uint8_t buffer[8];
     memset(buffer, 0, sizeof(buffer));
     OpenSRAM(MBANK(asPlayerData));
-    buffer[0] = gb_read(sPlayerData + (wRTC - wPlayerData) + 4);
-    buffer[1] = gb_read(sPlayerData + (wRTC - wPlayerData) + 5);
-    buffer[2] = gb_read(sPlayerData + (wRTC - wPlayerData) + 6);
-    buffer[3] = gb_read(sPlayerData + (wRTC - wPlayerData) + 7);
-    buffer[4] = gb_read(sPlayerData + (wTimeOfDayPal - wPlayerData) + 1);
-    buffer[5] = gb_read(sPlayerData + (wTimeOfDayPal - wPlayerData) + 2);
-    buffer[6] = gb_read(sPlayerData + (wTimeOfDayPal - wPlayerData) + 3);
-    buffer[7] = gb_read(sPlayerData + (wTimeOfDayPal - wPlayerData) + 4);
+    struct PlayerData pd;
+    Deserialize_PlayerData(&pd, (const uint8_t *)GBToRAMAddr(sPlayerData));
+    for(size_t i = 0; i < 4; ++i)
+        buffer[i] = pd.skip_104[i];
+    for(size_t i = 0; i < 4; ++i)
+        buffer[4 + i] = pd.skip_109[i];
     uint64_t value = buffer[0]
                     | ((uint64_t)(uint8_t)buffer[1] << 8ull)
                     | ((uint64_t)(uint8_t)buffer[2] << 16ull)
@@ -149,9 +142,9 @@ void RTCSyncWithSystemTime(void) {
         return;
 
     struct tm* lastTime = localtime(&sLastTimestamp);
-    wram->wCurDay = lastTime->tm_wday;
+    gPlayer.curDay = lastTime->tm_wday;
     if(lastTime->tm_isdst >= 0) {
-        wram->wDST = ((lastTime->tm_isdst == 0)? 0: (1 << 7));
+        gPlayer.DST = ((lastTime->tm_isdst == 0)? 0: (1 << 7));
     }
 }
 
@@ -159,15 +152,15 @@ void RTCInitTimeWithSystemTime(void) {
     if(!UpdateRTC())
         return;
     
-    wram->wStartHour = 0;
-    wram->wStartMinute = 0;
-    wram->wStartSecond = 0;
-    wram->wStartDay = 6 - ((gb.cart_rtc[3] | ((gb.cart_rtc[4] & 1) << 8)) % 7);
+    gPlayer.startHour = 0;
+    gPlayer.startMinute = 0;
+    gPlayer.startSecond = 0;
+    gPlayer.startDay = 6 - ((gb.cart_rtc[3] | ((gb.cart_rtc[4] & 1) << 8)) % 7);
 
     struct tm* lastTime = localtime(&sLastTimestamp);
-    wram->wCurDay = lastTime->tm_wday;
+    gPlayer.curDay = lastTime->tm_wday;
     if(lastTime->tm_isdst >= 0) {
-        wram->wDST = ((lastTime->tm_isdst == 0)? 0: (1 << 7));
+        gPlayer.DST = ((lastTime->tm_isdst == 0)? 0: (1 << 7));
     }
 }
 

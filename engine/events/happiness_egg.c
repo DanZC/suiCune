@@ -162,11 +162,11 @@ void ChangeHappiness(uint8_t c){
 void StepHappiness(void){
     // LD_HL(wHappinessStepCount);
     // LD_A_hl;
-    uint8_t stepCount = (wram->wHappinessStepCount + 1) & 1;
+    uint8_t stepCount = (gPlayer.happinessStepCount + 1) & 1;
     // INC_A;
     // AND_A(1);
     // LD_hl_A;
-    wram->wHappinessStepCount = stepCount;
+    gPlayer.happinessStepCount = stepCount;
     // RET_NZ ;
     if(stepCount != 0)
         return;

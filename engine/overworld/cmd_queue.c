@@ -313,7 +313,7 @@ static bool CmdQueue_Type3_IsPlayerFacingDown(void) {
     // AND_A_A;
     // POP_BC;
     // RET;
-    return GetSpriteDirection(&wram->wPlayerStruct) != 0;
+    return GetSpriteDirection(&gPlayer.playerStruct) != 0;
 }
 
 static void CmdQueue_Type3_PlayerNotFacingDown(uint8_t* bc) {
@@ -383,7 +383,7 @@ static void CmdQueue_Type3(uint8_t* bc){
 static void CmdQueue_StoneTable(struct CmdQueue* bc){
     (void)bc;
     // LD_DE(wPlayerStruct);
-    struct Object* de = &wram->wPlayerStruct;
+    struct Object* de = &gPlayer.playerStruct;
     // LD_A(NUM_OBJECT_STRUCTS);
 
     for(uint32_t i = 0; i < NUM_OBJECT_STRUCTS; ++i) {

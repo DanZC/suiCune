@@ -980,13 +980,13 @@ void BattleCommand_CheckObedience(void){
     // LD_A_addr(wPlayerID + 1);
     // CP_A_hl;
     // RET_Z ;
-    if(mon->mon.id == wram->wPlayerID)
+    if(mon->mon.id == gPlayer.playerID)
         return;
 
 // obeylevel:
 // The maximum obedience level is constrained by owned badges:
     // LD_HL(wJohtoBadges);
-    uint8_t* hl = wram->wJohtoBadges;
+    uint8_t* hl = gPlayer.johtoBadges;
     uint8_t lvl;
 
 // risingbadge

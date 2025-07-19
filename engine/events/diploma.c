@@ -50,7 +50,7 @@ void PlaceDiplomaOnScreen(void){
     // LD_DE(wPlayerName);
     // hlcoord(9, 5, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wPlayerName, coord(9, 5, wram->wTilemap));
+    PlaceStringSimple(gPlayer.playerName, coord(9, 5, wram->wTilemap));
     // LD_DE(mPlaceDiplomaOnScreen_Certification);
     // hlcoord(2, 8, wTilemap);
     // CALL(aPlaceString);
@@ -92,14 +92,14 @@ void PrintDiplomaPage2(void){
     // LD_DE(wGameTimeHours);
     // LD_BC((2 << 8) | 4);
     // CALL(aPrintNum);
-    tile_t* hl = PrintNum(coord(12, 15, wram->wTilemap), &wram->wGameTimeHours, 2, 4);
+    tile_t* hl = PrintNum(coord(12, 15, wram->wTilemap), &gPlayer.gameTimeHours, 2, 4);
     // LD_hl(0x67);  // colon
     *(hl++) = 0x67;
     // INC_HL;
     // LD_DE(wGameTimeMinutes);
     // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
     // CALL(aPrintNum);
-    PrintNum(hl, &wram->wGameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
+    PrintNum(hl, &gPlayer.gameTimeMinutes, PRINTNUM_LEADINGZEROS | 1, 2);
     // RET;
 
 

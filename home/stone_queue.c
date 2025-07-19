@@ -8,11 +8,7 @@ static u8_flag_s HandleStoneQueue_check_on_warp(uint8_t d, uint8_t e) {
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-#if CONVERTED_OVERWORLD_LOOP
     const struct WarpEventData* hl = gCurMapWarpsPointer;
-#else
-    const struct WarpEventData* hl = GBToRAMAddr(wram->wCurMapWarpsPointer);
-#endif
     // LD_A_addr(wCurMapWarpCount);
     // AND_A_A;
     // IF_Z goto nope2;

@@ -11,7 +11,7 @@ void GiveParkBalls(void){
     gPokemon.contestMon.mon.species = 0;
     // LD_A(BUG_CONTEST_BALLS);
     // LD_addr_A(wParkBallsRemaining);
-    wram->wParkBallsRemaining = BUG_CONTEST_BALLS;
+    gPlayer.parkBallsRemaining = BUG_CONTEST_BALLS;
     // FARCALL(aStartBugContestTimer);
     StartBugContestTimer();
     // RET;
