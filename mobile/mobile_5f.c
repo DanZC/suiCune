@@ -5645,7 +5645,7 @@ bool Function17f382(struct TextPrintState* state, uint8_t* saved){
         // de = GBToRAMAddr(sCrystalData + 3);
         OpenSRAM(MBANK(as5_b2f4));
         de = GBToRAMAddr(s5_b2f4);
-        pref = wram->wPrefecture;
+        pref = gCrystal.prefecture;
         // goto asm_17f3ab;
     }
     else {

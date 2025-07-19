@@ -230,7 +230,7 @@ void Function170139(void){
     // LD_DE(wBT_OTTempMon1CaughtGender);
     // LD_A_C;
     // LD_de_A;
-    gBattleRecord.tclass = GetMobileOTTrainerClass(&wram->wPlayerGender, (const uint8_t *)&gPlayer.playerID);
+    gBattleRecord.tclass = GetMobileOTTrainerClass(&gCrystal.playerGender, (const uint8_t *)&gPlayer.playerID);
     // INC_DE;
     // LD_A(LOW(wPartyMons));
     // LD_addr_A(wcd49);
@@ -315,7 +315,7 @@ void BattleTower_GenerateFakeRecord(void){
     gBattleRecord.trainerID = gPlayer.playerID;
     gBattleRecord.secretID = gPlayer.secretID;
     CopyBytes(gBattleRecord.name, gPlayer.playerName, PLAYER_NAME_LENGTH - 1);
-    gBattleRecord.tclass = GetMobileOTTrainerClass(&wram->wPlayerGender, (const uint8_t *)&gPlayer.playerID);
+    gBattleRecord.tclass = GetMobileOTTrainerClass(&gCrystal.playerGender, (const uint8_t *)&gPlayer.playerID);
 
     for(uint8_t i = 0; i < BATTLETOWER_PARTY_LENGTH; ++i) {
         CopyBytes(&gBattleRecord.party[i].pmon, gPokemon.partyMon + i, sizeof(gBattleRecord.party[i].pmon));

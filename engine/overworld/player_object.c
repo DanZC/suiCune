@@ -69,7 +69,7 @@ void SpawnPlayer(void){
 // ok:
     // LD_hl_E;
     bc->objectColor = 
-        (bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) || !bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
+        (bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) || !bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))
             ? (PAL_NPC_RED << 4) | OBJECTTYPE_SCRIPT
             : (PAL_NPC_BLUE << 4) | OBJECTTYPE_SCRIPT;
     // LD_A(PLAYER_OBJECT);

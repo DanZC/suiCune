@@ -172,7 +172,7 @@ void MysteryGift(void) {
     // FARCALL(aDoMysteryGift);
 
     OpenSRAM(MBANK(asPlayerData));
-    wram->wPlayerGender = gb_read(sCrystalData);
+    gCrystal.playerGender = gb_read(sCrystalData);
     CopyBytes(&gPlayer.playerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
     CopyBytes(gPlayer.playerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
     CloseSRAM();
@@ -662,7 +662,7 @@ bool Continue(void) {
             // LD_A_addr(wSpawnAfterChampion);
             // CP_A(SPAWN_LANCE);
             // IF_Z goto SpawnAfterE4;
-            if(wram->wSpawnAfterChampion != SPAWN_LANCE){
+            if(gPlayer.spawnAfterChampion != SPAWN_LANCE){
                 // LD_A(MAPSETUP_CONTINUE);
                 // LDH_addr_A(hMapEntryMethod);
                 hram.hMapEntryMethod = MAPSETUP_CONTINUE;
@@ -704,7 +704,7 @@ static void SpawnAfterRed(void) {
 static void PostCreditsSpawn(void) {
     // XOR_A_A;
     // LD_addr_A(wSpawnAfterChampion);
-    wram->wSpawnAfterChampion = 0;
+    gPlayer.spawnAfterChampion = 0;
     // LD_A(MAPSETUP_WARP);
     // LDH_addr_A(hMapEntryMethod);
     hram.hMapEntryMethod = MAPSETUP_WARP;
@@ -825,7 +825,7 @@ void FinishContinueFunction(void) {
         // LD_A_addr(wSpawnAfterChampion);
         // CP_A(SPAWN_RED);
         // IF_Z goto AfterRed;
-        if(wram->wSpawnAfterChampion != SPAWN_RED){
+        if(gPlayer.spawnAfterChampion != SPAWN_RED){
             // JP(mReset);
             return Intro_SetJumptableIndex(INTRO_SOFT_RESET);
         }
@@ -1289,7 +1289,7 @@ static void NamePlayer(void) {
         // LD_A_addr(wPlayerGender);
         // BIT_A(PLAYERGENDER_FEMALE_F);
         // IF_Z goto Male;
-        if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+        if(bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F)) {
             InitName(gPlayer.playerName, U82C(Kris));
         }
         // LD_DE(mNamePlayer_Kris);
@@ -1534,7 +1534,7 @@ static void Intro_PlacePlayerSprite(void){
         // LD_A_B;
 
         // LD_hli_A;  // attributes
-        wram->wVirtualOAMSprite[i].attributes = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? PAL_OW_BLUE: PAL_OW_RED;
+        wram->wVirtualOAMSprite[i].attributes = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? PAL_OW_BLUE: PAL_OW_RED;
         // DEC_C;
         // IF_NZ goto loop;
     }

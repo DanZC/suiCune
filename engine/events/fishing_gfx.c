@@ -30,7 +30,7 @@ void LoadFishingGFX(void){
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // IF_Z goto got_gender;
     // LD_DE(mKrisFishingGFX);
-    const char* gfx = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KrisFishingGFX: FishingGFX;
+    const char* gfx = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? KrisFishingGFX: FishingGFX;
 
 // got_gender:
     // Load all the gfx at once into a buffer and then copy the segments seperately.

@@ -1,9 +1,15 @@
 typedef void (*mobile_comm_fn_t)(void);
 typedef struct macro_100fc0_s {
     uint8_t bank;
-    uint32_t ptr1;
+    union {
+        void* ptr1;
+        uint32_t sptr1;
+    };
     uint16_t size;
-    uint32_t ptr2;
+    union {
+        void* ptr2;
+        uint32_t sptr2;
+    };
 } macro_100fc0_s;
 typedef struct Function100f02_Data {
     uint8_t c;

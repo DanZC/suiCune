@@ -129,7 +129,7 @@ const struct EngineFlag EngineFlags[] = {
     [ENGINE_62]                                     = engine_flag(wGameTimerPaused, GAME_TIMER_MOBILE_F),
 
 // engine_flag wPlayerGender, PLAYERGENDER_FEMALE_F
-    [ENGINE_PLAYER_IS_FEMALE]                       = engine_flag(wPlayerGender, PLAYERGENDER_FEMALE_F),
+    [ENGINE_PLAYER_IS_FEMALE]                       = engine_flag_(&gCrystal.playerGender, PLAYERGENDER_FEMALE_F),
 
 // engine_flag wCelebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F
     [ENGINE_FOREST_IS_RESTLESS]                     = engine_flag_(&gPlayer.celebiEvent, CELEBIEVENT_FOREST_IS_RESTLESS_F),

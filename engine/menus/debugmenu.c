@@ -849,7 +849,7 @@ void DebugMenu_Link(void) {
     CloseSRAM();
 
     printf("NAME: "); PrintCrystalStringFromRAM(gPlayer.playerName); printf("\n");
-    printf("GENDER: %s\n", (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? "FEMALE": "MALE");
+    printf("GENDER: %s\n", (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? "FEMALE": "MALE");
     printf("ID: %d\n", gPlayer.playerID);
 
     LANConnection();
@@ -1072,7 +1072,7 @@ void DebugMenu_MysteryGift(void) {
     ClearScreen();
 
     OpenSRAM(MBANK(asPlayerData));
-    wram->wPlayerGender = gb_read(sCrystalData);
+    gCrystal.playerGender = gb_read(sCrystalData);
     CopyBytes(&gPlayer.playerID,  GBToRAMAddr(sPlayerData + (wPlayerID - wPlayerData)), 2);
     CopyBytes(gPlayer.playerName, GBToRAMAddr(sPlayerData + (wPlayerName - wPlayerData)), NAME_LENGTH);
     CloseSRAM();

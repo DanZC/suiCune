@@ -122,7 +122,7 @@ static void GetPlayerSprite(void){
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // IF_Z goto go;
     if(bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F)
-    || !bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+    || !bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F)) {
         hl = ChrisStateSprites;
     }
     else {

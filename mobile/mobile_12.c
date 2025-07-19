@@ -222,7 +222,7 @@ uint8_t InitMobileProfile(uint8_t c){
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     LoadZipcodeWithUniversalFormat();
-    RetrieveZipcodeInfo(wram->wPrefecture);
+    RetrieveZipcodeInfo(gCrystal.prefecture);
     // CALL(aFunction48d3d);
     Function48d3d();
     // LD_A_addr(wd479);
@@ -342,13 +342,13 @@ uint8_t InitMobileProfile(uint8_t c){
         // hlcoord(11, 4, wTilemap);
         // CALL(aPlaceString);
         #if defined(_CRYSTAL_JP)
-        PlaceStringSimple(U82C(Strings_484fb[wram->wPlayerGender]), coord(11, 4, wram->wTilemap));
+        PlaceStringSimple(U82C(Strings_484fb[gCrystal.playerGender]), coord(11, 4, wram->wTilemap));
         #elif defined(_CRYSTAL_AU)
-        PlaceStringSimple(U82C(Strings_484fb[wram->wPlayerGender]), coord(14, 5, wram->wTilemap));
+        PlaceStringSimple(U82C(Strings_484fb[gCrystal.playerGender]), coord(14, 5, wram->wTilemap));
         #elif defined(_CRYSTAL_EU)
-        PlaceStringSimple(U82C(Strings_484fb[wram->wPlayerGender]), coord(12, 5, wram->wTilemap));
+        PlaceStringSimple(U82C(Strings_484fb[gCrystal.playerGender]), coord(12, 5, wram->wTilemap));
         #else
-        PlaceStringSimple(U82C(Strings_484fb[wram->wPlayerGender]), coord(12, 5, wram->wTilemap));
+        PlaceStringSimple(U82C(Strings_484fb[gCrystal.playerGender]), coord(12, 5, wram->wTilemap));
         #endif
     }
 
@@ -373,13 +373,13 @@ uint8_t InitMobileProfile(uint8_t c){
     // hlcoord(11, 8, wTilemap);
     // CALL(aPlaceString);
     #if defined(_CRYSTAL_JP)
-    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 9, wram->wTilemap));
+    PlaceStringSimple(U82C(Prefectures[gCrystal.prefecture]), coord(11, 9, wram->wTilemap));
     #elif defined(_CRYSTAL_AU)
-    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 9, wram->wTilemap));
+    PlaceStringSimple(U82C(Prefectures[gCrystal.prefecture]), coord(11, 9, wram->wTilemap));
     #elif defined(_CRYSTAL_EU)
-    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 9, wram->wTilemap));
+    PlaceStringSimple(U82C(Prefectures[gCrystal.prefecture]), coord(11, 9, wram->wTilemap));
     #else
-    PlaceStringSimple(U82C(Prefectures[wram->wPrefecture]), coord(11, 9, wram->wTilemap));
+    PlaceStringSimple(U82C(Prefectures[gCrystal.prefecture]), coord(11, 9, wram->wTilemap));
     #endif
     // hlcoord(11, 10, wTilemap);
     // CALL(aFunction489ea);
@@ -824,7 +824,7 @@ void asm_4828d(void){
     // LD_A_addr(wPlayerGender);
     // INC_A;
     // LD_addr_A(wMenuCursorPosition);
-    wram->wMenuCursorPosition = wram->wPlayerGender + 1;
+    wram->wMenuCursorPosition = gCrystal.playerGender + 1;
     // CALL(aStaticMenuJoypad);
     uint8_t joypad = StaticMenuJoypad();
     // CALL(aPlayClickSFX);
@@ -844,7 +844,7 @@ void asm_4828d(void){
         // asm_482ed:
             // XOR_A_A;
             // LD_addr_A(wPlayerGender);
-            wram->wPlayerGender = 0x0;
+            gCrystal.playerGender = 0x0;
             str = Strings_484fb[0];
         }
         else {
@@ -855,7 +855,7 @@ void asm_4828d(void){
             str = Strings_484fb[1];
             // LD_A(1 << PLAYERGENDER_FEMALE_F);
             // LD_addr_A(wPlayerGender);
-            wram->wPlayerGender = 1 << PLAYERGENDER_FEMALE_F;
+            gCrystal.playerGender = 1 << PLAYERGENDER_FEMALE_F;
             // goto asm_482f1;
         }
 
@@ -913,7 +913,7 @@ void Function48304(void){
     // PUSH_BC;
     // LD_A_addr(wd474);
     // DEC_A;
-    uint8_t a = wram->wPrefecture - 1;
+    uint8_t a = gCrystal.prefecture - 1;
     // CP_A(0x29);
     // IF_C goto asm_4833f;
     if(a >= NUM_REGION_CODES) {
@@ -1041,7 +1041,7 @@ void Function483bb(void){
     // LD_A_hl;
     // INC_A;
     // LD_addr_A(wd474);
-    wram->wPrefecture = wram->wScrollingMenuCursorPosition + 1;
+    gCrystal.prefecture = wram->wScrollingMenuCursorPosition + 1;
     // DEC_A;
     // LD_B_A;
     uint8_t b = wram->wScrollingMenuCursorPosition;
@@ -1548,7 +1548,7 @@ void Function4873c(void){
 
 // okay_gender:
     // LD_hli_A;  // cursor y
-    wram->wMenuCursorY = (wram->wPlayerGender ^ (1 << PLAYERGENDER_FEMALE_F)) + 1;
+    wram->wMenuCursorY = (gCrystal.playerGender ^ (1 << PLAYERGENDER_FEMALE_F)) + 1;
     // LD_A(0x1);
     // LD_hli_A;  // cursor x
     wram->wMenuCursorX = 0x1;
@@ -1596,7 +1596,7 @@ void Function4876f(void){
     // LD_A_addr(wd473);
     // AND_A_A;
     // IF_Z goto asm_487ab;
-    if(wram->wAge == 0) {
+    if(gCrystal.age == 0) {
     // asm_487ab:
         // hlcoord(12, 5, wTilemap);
         // LD_hl(0x10);
@@ -1609,7 +1609,7 @@ void Function4876f(void){
     }
     // CP_A(0x64);
     // IF_Z goto asm_487b2;
-    else if(wram->wAge == 0x64) {
+    else if(gCrystal.age == 0x64) {
     // asm_487b2:
         // hlcoord(12, 7, wTilemap);
         // LD_hl(0x11);
@@ -1651,7 +1651,7 @@ void Function4876f(void){
     DelayFrames(10);
     // LD_A_addr(wd473);
     // PUSH_AF;
-    uint8_t d473 = wram->wAge;
+    uint8_t d473 = gCrystal.age;
 
     u8_flag_s res;
     do {
@@ -1671,7 +1671,7 @@ void Function4876f(void){
     if(res.a == 0) {
         // LD_A_B;
         // LD_addr_A(wd473);
-        wram->wAge = d473;
+        gCrystal.age = d473;
     }
 
 // asm_487da:
@@ -1700,7 +1700,7 @@ void Function487ec(tile_t* hl){
     // PUSH_HL;
     // LD_DE(wd473);
     // CALL(aFunction487ff);
-    Function487ff(hl, &wram->wAge);
+    Function487ff(hl, &gCrystal.age);
     // POP_HL;
     // for(int rept = 0; rept < 4; rept++){
     // INC_HL;
@@ -1750,9 +1750,9 @@ u8_flag_s Function4880e(void){
         // LD_A_hl;
         // CP_A(0x64);
         // IF_NC goto asm_4884c;
-        if(wram->wAge < 0x64) {
+        if(gCrystal.age < 0x64) {
             // INC_A;
-            wram->wAge++;
+            gCrystal.age++;
         }
 
     // asm_4884c:
@@ -1768,9 +1768,9 @@ u8_flag_s Function4880e(void){
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto asm_48840;
-        if(wram->wAge != 0x0) {
+        if(gCrystal.age != 0x0) {
             // DEC_A;
-            wram->wAge--;
+            gCrystal.age--;
         }
 
     // asm_48840:
@@ -1785,15 +1785,15 @@ u8_flag_s Function4880e(void){
         // LD_A_addr(wd473);
         // CP_A(0x5b);
         // IF_C goto asm_48858;
-        if(wram->wAge > (0x64 - 0xa)) {
+        if(gCrystal.age > (0x64 - 0xa)) {
             // LD_A(0x5a);
-            wram->wAge = (0x64 - 0xa);
+            gCrystal.age = (0x64 - 0xa);
         }
 
     // asm_48858:
         // ADD_A(0xa);
         // LD_addr_A(wd473);
-        wram->wAge += 0xa;
+        gCrystal.age += 0xa;
         // goto asm_4886f;
     }
     // LD_A_hl;
@@ -1804,15 +1804,15 @@ u8_flag_s Function4880e(void){
         // LD_A_addr(wd473);
         // CP_A(0xa);
         // IF_NC goto asm_48868;
-        if(wram->wAge < 0xa) {
+        if(gCrystal.age < 0xa) {
             // LD_A(0xa);
-            wram->wAge = 0xa;
+            gCrystal.age = 0xa;
         }
 
     // asm_48868:
         // SUB_A(0xa);
         // LD_addr_A(wd473);
-        wram->wAge -= 0xa;
+        gCrystal.age -= 0xa;
         // goto asm_4886f;
     }
     else {
@@ -1826,7 +1826,7 @@ u8_flag_s Function4880e(void){
     // LD_A_addr(wd473);
     // AND_A_A;
     // IF_Z goto asm_48887;
-    if(wram->wAge == 0) {
+    if(gCrystal.age == 0) {
     // asm_48887:
         #if defined(_CRYSTAL_JP)
         // hlcoord(10, 5, wTilemap);
@@ -1852,7 +1852,7 @@ u8_flag_s Function4880e(void){
     // CP_A(0x64);
     // IF_Z goto asm_48898;
     // IF_Z goto asm_488a7; // Dummied out destination?
-    else if(wram->wAge == 0x64) {
+    else if(gCrystal.age == 0x64) {
     // asm_48898:
         #if defined(_CRYSTAL_JP)
         // hlcoord(10, 5, wTilemap);
@@ -1989,12 +1989,12 @@ void Function488d3(void){
     // LD_B_A;
     // LD_A_addr(wd476);
     // LD_C_A;
-    uint16_t bc = (wram->wd475 << 8) | wram->wd476;
+    uint16_t bc = (gCrystal.zipCode[0] << 8) | gCrystal.zipCode[1];
     // LD_A_addr(wd477);
     // LD_D_A;
     // LD_A_addr(wd478);
     // LD_E_A;
-    uint16_t de = (wram->wd477 << 8) | wram->wd478;
+    uint16_t de = (gCrystal.zipCode[2] << 8) | gCrystal.zipCode[3];
     // PUSH_DE;
     // PUSH_BC;
     // LD_D(0x0);
@@ -2124,17 +2124,17 @@ void asm_48922(uint16_t bc, uint16_t de, uint8_t b, uint8_t d, uint8_t inMenu){
         // POP_BC;
         // LD_A_B;
         // LD_addr_A(wd475);
-        wram->wd475 = HIGH(de);
+        gCrystal.zipCode[0] = HIGH(de);
         // LD_A_C;
         // LD_addr_A(wd476);
-        wram->wd476 = LOW(de);
+        gCrystal.zipCode[1] = LOW(de);
         // POP_BC;
         // LD_A_B;
         // LD_addr_A(wd477);
-        wram->wd477 = HIGH(bc);
+        gCrystal.zipCode[2] = HIGH(bc);
         // LD_A_C;
         // LD_addr_A(wd478);
-        wram->wd478 = LOW(bc);
+        gCrystal.zipCode[3] = LOW(bc);
         // goto asm_489c5;
     }
     else {
@@ -2559,18 +2559,18 @@ void Function489ea(tile_t* hl){
     // LD_A_addr(wd475);
     // AND_A(0xf);
     // CALL(aMobile12_Bin2Dec);
-    Mobile12_Bin2Dec(hl, wram->wd475 & 0xf);
+    Mobile12_Bin2Dec(hl, gCrystal.zipCode[0] & 0xf);
     // LD_A_addr(wd476);
     // AND_A(0xf0);
     // SWAP_A;
     // INC_HL;
     // CALL(aMobile12_Bin2Dec);
-    Mobile12_Bin2Dec(hl + 1, (wram->wd476 & 0xf0) >> 4);
+    Mobile12_Bin2Dec(hl + 1, (gCrystal.zipCode[1] & 0xf0) >> 4);
     // LD_A_addr(wd476);
     // AND_A(0xf);
     // INC_HL;
     // CALL(aMobile12_Bin2Dec);
-    Mobile12_Bin2Dec(hl + 2, wram->wd476 & 0xf);
+    Mobile12_Bin2Dec(hl + 2, gCrystal.zipCode[1] & 0xf);
     // INC_HL;
     // LD_DE(mString_48a38);
     // CALL(aPlaceString);
@@ -2581,23 +2581,23 @@ void Function489ea(tile_t* hl){
     // SWAP_A;
     // INC_HL;
     // CALL(aMobile12_Bin2Dec);
-    Mobile12_Bin2Dec(st.hl + 1, (wram->wd477 & 0xf0) >> 4);
+    Mobile12_Bin2Dec(st.hl + 1, (gCrystal.zipCode[2] & 0xf0) >> 4);
     // LD_A_addr(wd477);
     // AND_A(0xf);
     // INC_HL;
     // CALL(aMobile12_Bin2Dec);
-    Mobile12_Bin2Dec(st.hl + 2, wram->wd477 & 0xf);
+    Mobile12_Bin2Dec(st.hl + 2, gCrystal.zipCode[2] & 0xf);
     // LD_A_addr(wd478);
     // AND_A(0xf0);
     // SWAP_A;
     // INC_HL;
     // CALL(aMobile12_Bin2Dec);
-    Mobile12_Bin2Dec(st.hl + 3, (wram->wd478 & 0xf0) >> 4);
+    Mobile12_Bin2Dec(st.hl + 3, (gCrystal.zipCode[3] & 0xf0) >> 4);
     // LD_A_addr(wd478);
     // AND_A(0xf);
     // INC_HL;
     // CALL(aMobile12_Bin2Dec);
-    Mobile12_Bin2Dec(st.hl + 4, wram->wd478 & 0xf);
+    Mobile12_Bin2Dec(st.hl + 4, gCrystal.zipCode[3] & 0xf);
     // POP_DE;
     // RET;
 }
@@ -2847,10 +2847,10 @@ bool Function48a3a(void){
     // LD_BC(0x4);
     // LD_HL(wd475);
     // CALL(aByteFill);
-    wram->wd475 = 0;
-    wram->wd476 = 0;
-    wram->wd477 = 0;
-    wram->wd478 = 0;
+    gCrystal.zipCode[0] = 0;
+    gCrystal.zipCode[1] = 0;
+    gCrystal.zipCode[2] = 0;
+    gCrystal.zipCode[3] = 0;
     // JR(mFunction48a9a);
 
 // asm_48a98:
@@ -3175,7 +3175,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     case 0x0:
     // asm_48adf:
         // LD_HL(wd475);
-        hl = &wram->wd475;
+        hl = &gCrystal.zipCode[0];
         // LD_A_hl;
         // AND_A(0xf);
         a = *hl & 0xf;
@@ -3186,7 +3186,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     case 0x1:
     // asm_48ae7:
         // LD_HL(wd476);
-        hl = &wram->wd476;
+        hl = &gCrystal.zipCode[1];
         // LD_A_hl;
         // SWAP_A;
         // OR_A(0xf0);
@@ -3198,7 +3198,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     case 0x2:
     // asm_48af1:
         // LD_HL(wd476);
-        hl = &wram->wd476;
+        hl = &gCrystal.zipCode[1];
         // LD_A_hl;
         // AND_A(0xf);
         a = *hl & 0xf;
@@ -3209,7 +3209,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     case 0x3:
     // asm_48af9:
         // LD_HL(wd477);
-        hl = &wram->wd477;
+        hl = &gCrystal.zipCode[2];
         // LD_A_hl;
         // SWAP_A;
         // OR_A(0xf0);
@@ -3221,7 +3221,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     case 0x4:
     // asm_48b03:
         // LD_HL(wd477);
-        hl = &wram->wd477;
+        hl = &gCrystal.zipCode[2];
         // LD_A_hl;
         // AND_A(0xf);
         a = *hl & 0xf;
@@ -3232,7 +3232,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     case 0x5:
     // asm_48b0b:
         // LD_HL(wd478);
-        hl = &wram->wd478;
+        hl = &gCrystal.zipCode[3];
         // LD_A_hl;
         // SWAP_A;
         // OR_A(0xf0);
@@ -3245,7 +3245,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     case 0x6:
     // asm_48b15:
         // LD_HL(wd478);
-        hl = &wram->wd478;
+        hl = &gCrystal.zipCode[3];
         // LD_A_hl;
         // AND_A(0xf);
         a = *hl & 0xf;
@@ -3876,10 +3876,10 @@ tile_t* Function48d2a(tile_t* hl, tile_t a, uint8_t c){
 void Function48d30(void){
     // LD_HL(wd475);
     // CALL(aFunction48d4a);
-    Function48d4a(&wram->wd475);
+    Function48d4a(&gCrystal.zipCode[0]);
     // LD_HL(wd477);
     // CALL(aFunction48d4a);
-    Function48d4a(&wram->wd477);
+    Function48d4a(&gCrystal.zipCode[2]);
     // RET;
 
 }
@@ -3887,10 +3887,10 @@ void Function48d30(void){
 void Function48d3d(void){
     // LD_HL(wd475);
     // CALL(aFunction48d94);
-    Function48d94(&wram->wd475);
+    Function48d94(&gCrystal.zipCode[0]);
     // LD_HL(wd477);
     // CALL(aFunction48d94);
-    Function48d94(&wram->wd477);
+    Function48d94(&gCrystal.zipCode[2]);
     // RET;
 }
 

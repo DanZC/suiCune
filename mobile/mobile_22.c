@@ -891,7 +891,7 @@ uint8_t Function89492(void){
     // RET_Z ;
     // INC_D;
     // RET;
-    return (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? 1: 0;
+    return (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? 1: 0;
 }
 
 // Mobile22_LoadPalettes2
@@ -1772,7 +1772,7 @@ void Function89807(void){
     // LD_HL(mKrisSilhouetteGFX);
 
 // asm_89814:
-    const char* path = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KrisSilhouetteGFX: ChrisSilhouetteGFX;
+    const char* path = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? KrisSilhouetteGFX: ChrisSilhouetteGFX;
     // CALL(aDisableLCD);
     DisableLCD();
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x37);

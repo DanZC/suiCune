@@ -18,7 +18,7 @@ void ClearDailyTimers(void){
     // LD_addr_A(wLuckyNumberDayTimer);
     gPlayer.luckyNumberDayTimer = 0;
     // LD_addr_A(wUnusedTwoDayTimer);
-    wram->wUnusedTwoDayTimer = 0;
+    gPlayer.unusedTwoDayTimer = 0;
     // LD_addr_A(wDailyResetTimer);
     gPlayer.dailyResetTimer = 0;
     // RET;
@@ -176,7 +176,7 @@ void CheckDailyResetTimer(void){
     // LD_hli_A;  // wSwarmFlags
     gPlayer.swarmFlags = 0;
     // LD_hl_A;  // wSwarmFlags + 1
-    wram->skip_121[0] = 0;
+    gPlayer.skip_121[0] = 0;
     // LD_HL(wDailyRematchFlags);
     // for(int rept = 0; rept < 4; rept++){
     // LD_hli_A;

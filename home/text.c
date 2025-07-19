@@ -538,7 +538,7 @@ void PlaceGenderedPlayerName(struct TextPrintState* state) {
     // JR_Z(mPlaceCommandCharacter);
     // LD_DE(mChanSuffixText);
     // JR(mPlaceCommandCharacter);
-    if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+    if(bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F)) {
         return PlaceCommandCharacter(state, U82CA(buffer, "@")); // Chan suffix (empty string in English)
     }
     return PlaceCommandCharacter(state, U82CA(buffer, "@")); // Kun suffix (empty string in English)

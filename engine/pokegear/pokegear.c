@@ -1077,7 +1077,7 @@ static void PokegearMap_InitPlayerIcon(uint8_t landmark){
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // IF_Z goto got_gender;
     // LD_B(SPRITE_ANIM_INDEX_BLUE_WALK);
-    uint8_t b = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? SPRITE_ANIM_INDEX_BLUE_WALK: SPRITE_ANIM_INDEX_RED_WALK;
+    uint8_t b = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? SPRITE_ANIM_INDEX_BLUE_WALK: SPRITE_ANIM_INDEX_RED_WALK;
 
 // got_gender:
     // LD_A_B;
@@ -3837,7 +3837,7 @@ static void Pokedex_GetArea_HideNestsShowPlayer(void){
     // male:
         // LD_A_C;
         // LD_hli_A;  // attributes
-        hl->attributes = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? PAL_OW_BLUE: PAL_OW_RED;
+        hl->attributes = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? PAL_OW_BLUE: PAL_OW_RED;
         // POP_BC;
         // goto ShowPlayerLoop;
     }
@@ -4185,7 +4185,7 @@ static struct SpriteAnim* TownMapPlayerIcon(uint8_t location){
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // IF_Z goto got_gender;
     // LD_B(SPRITE_ANIM_INDEX_BLUE_WALK);  // Female
-    uint8_t b = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? SPRITE_ANIM_INDEX_BLUE_WALK: SPRITE_ANIM_INDEX_RED_WALK;
+    uint8_t b = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? SPRITE_ANIM_INDEX_BLUE_WALK: SPRITE_ANIM_INDEX_RED_WALK;
 
 // got_gender:
     // LD_A_B;

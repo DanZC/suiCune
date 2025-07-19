@@ -1293,7 +1293,7 @@ void v_SaveData(void){
     // LD_DE(sCrystalData);
     // LD_BC(wCrystalDataEnd - wCrystalData);
     // CALL(aCopyBytes);
-    CopyBytes(GBToRAMAddr(sCrystalData), wram->wCrystalData, wCrystalDataEnd - wCrystalData);
+    CopyBytes(GBToRAMAddr(sCrystalData), &gCrystal, wCrystalDataEnd - wCrystalData);
     CloseSRAM();
 
 // This block originally had some mobile functionality, but since we're still in
@@ -1328,7 +1328,7 @@ void v_LoadData(void){
     // LD_DE(wCrystalData);
     // LD_BC(wCrystalDataEnd - wCrystalData);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wCrystalData, GBToRAMAddr(sCrystalData), sizeof(wram->wCrystalData));
+    CopyBytes(&gCrystal, GBToRAMAddr(sCrystalData), sizeof(gCrystal));
 
 // This block originally had some mobile functionality to mirror _SaveData above, but instead it
 // (harmlessly) writes the aforementioned wEventFlags to the unused wd479.

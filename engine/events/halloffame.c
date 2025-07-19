@@ -40,7 +40,7 @@ void HallOfFame(void){
     DisableSpriteUpdates();
     // LD_A(SPAWN_LANCE);
     // LD_addr_A(wSpawnAfterChampion);
-    wram->wSpawnAfterChampion = SPAWN_LANCE;
+    gPlayer.spawnAfterChampion = SPAWN_LANCE;
 
 // Enable the Pokégear map to cycle through all of Kanto
     // LD_HL(wStatusFlags);
@@ -103,7 +103,7 @@ void RedCredits(void){
     DisableSpriteUpdates();
     // LD_A(SPAWN_RED);
     // LD_addr_A(wSpawnAfterChampion);
-    wram->wSpawnAfterChampion = SPAWN_RED;
+    gPlayer.spawnAfterChampion = SPAWN_RED;
     // LD_A_addr(wStatusFlags);
     // LD_B_A;
     // FARCALL(aCredits);

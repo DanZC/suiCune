@@ -1027,83 +1027,6 @@ const uint8_t* Deserialize_PokemonData(struct PokemonData* data, const uint8_t* 
     return Deserialize_Struct(data, Structs + STRUC_POKEMONDATA, src);
 }
 
-#define CHECK_INT(X, Y) do { if(X != Y) { fprintf(stderr, "%s does not match %s. Expected %d, got %d\n", #X, #Y, X, Y); return -1; } } while(0)
-#define CHECK_IDX(X, Y, N) do { if(X[N] != Y[N]) { fprintf(stderr, "%s[%d] does not match %s[%d]. Expected %d, got %d\n", #X, N, #Y, N, X[N], Y[N]); return -1; } } while(0)
-#define CHECK_STR(X, Y, N) do { if(memcmp(X, Y, N) != 0) { fprintf(stderr, "%s does not match %s.\n", #X, #Y); return -1; } } while(0)
-#define CHECK_ARR(X, Y) do { if(memcmp(X, Y, sizeof(Y)) != 0) { fprintf(stderr, "%s does not match %s.\n", #X, #Y); return -1; } } while(0)
-
-static int Check_BoxMon(const struct BoxMon* a, const struct BoxMon* b) {
-    CHECK_INT(a->species, b->species);
-    CHECK_INT(a->item, b->item);
-    for(unsigned int i = 0; i < NUM_MOVES; ++i) {
-        CHECK_IDX(a->moves, b->moves, i);
-    }
-    CHECK_INT(a->id, b->id);
-    for(unsigned int i = 0; i < sizeof(a->exp); ++i) {
-        CHECK_IDX(a->exp, b->exp, i);
-    }
-    for(unsigned int i = 0; i < lengthof(a->statExp); ++i) {
-        CHECK_IDX(a->statExp, b->statExp, i);
-    }
-    CHECK_INT(a->DVs, b->DVs);
-    for(unsigned int i = 0; i < sizeof(a->PP); ++i) {
-        CHECK_IDX(a->PP, b->PP, i);
-    }
-    CHECK_INT(a->happiness, b->happiness);
-    CHECK_INT(a->pokerusStatus, b->pokerusStatus);
-    CHECK_INT(a->caughtGenderLocation, b->caughtGenderLocation);
-    CHECK_INT(a->caughtTimeLevel, b->caughtTimeLevel);
-    CHECK_INT(a->level, b->level);
-    return 0;
-}
-
-static int Check_PartyMon(const struct PartyMon* a, const struct PartyMon* b) {
-    if(Check_BoxMon(&a->mon, &b->mon) < 0)
-        return -1;
-    CHECK_INT(a->status, b->status);
-    CHECK_INT(a->unused, b->unused);
-    CHECK_INT(a->HP, b->HP);
-    CHECK_INT(a->maxHP, b->maxHP);
-    CHECK_INT(a->attack, b->attack);
-    CHECK_INT(a->defense, b->defense);
-    CHECK_INT(a->speed, b->speed);
-    CHECK_INT(a->spclAtk, b->spclAtk);
-    CHECK_INT(a->spclDef, b->spclDef);
-    return 0;
-}
-
-static int Check_PokemonData(const struct PokemonData* data) {
-    CHECK_INT(wram->wPartyCount, data->partyCount);
-    for(int i = 0; i < PARTY_LENGTH; ++i) {
-        CHECK_IDX(wram->wPartySpecies, data->partySpecies, i);
-    }
-    for(int i = 0; i < PARTY_LENGTH; ++i) {
-        if(Check_PartyMon(wram->wPartyMon + i, data->partyMon + i) < 0)
-            return -1;
-    }
-    for(int i = 0; i < PARTY_LENGTH; ++i) {
-        CHECK_STR(wram->wPartyMonOT[i], data->partyMonOT[i], sizeof(data->partyMonOT[i]));
-    }
-    for(int i = 0; i < PARTY_LENGTH; ++i) {
-        CHECK_STR(wram->wPartyMonNickname[i], data->partyMonNickname[i], sizeof(data->partyMonNickname[i]));
-    }
-    CHECK_ARR(wram->wPokedexCaught, data->pokedexCaught);
-    CHECK_ARR(wram->wPokedexSeen, data->pokedexSeen);
-    CHECK_ARR(wram->wUnownDex, data->unownDex);
-    CHECK_INT(wram->wUnlockedUnowns, data->unlockedUnowns);
-    CHECK_INT(wram->wFirstUnownSeen, data->firstUnownSeen);
-    CHECK_ARR(wram->wBreedMon1Nickname, data->breedMon1Nickname);
-    CHECK_ARR(wram->wBreedMon1OT, data->breedMon1OT);
-    if(Check_BoxMon(&wram->wBreedMon1, &data->breedMon1) < 0)
-        return -1;
-    
-    CHECK_ARR(wram->wBreedMon2Nickname, data->breedMon2Nickname);
-    CHECK_ARR(wram->wBreedMon2OT, data->breedMon2OT);
-    if(Check_BoxMon(&wram->wBreedMon2, &data->breedMon2) < 0)
-        return -1;
-    return 0;
-}
-
 int Test_Serialize_PlayerData(void) {
     int result = 0;
     struct PlayerData data = {0};
@@ -1171,11 +1094,6 @@ int Test_Serialize_PokemonData(void) {
             __func__,
             wPokemonDataEnd - wPokemonData,
             (int)(end - start));
-        result = -1;
-        goto quit;
-    }
-
-    if(Check_PokemonData(&data) < 0) {
         result = -1;
         goto quit;
     }

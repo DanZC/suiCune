@@ -924,7 +924,7 @@ uint16_t* GetPlayerOrMonPalettePointer(uint16_t* dest, uint8_t a, uint16_t bc){
     // LD_A_addr(wPlayerSpriteSetupFlags);
     // BIT_A(PLAYERSPRITESETUP_FEMALE_TO_MALE_F);
     // IF_NZ goto male;
-    if(bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) || wram->wPlayerGender == MALE) {
+    if(bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) || gCrystal.playerGender == MALE) {
         ExtractPaletteFromPNGAssetToBuffer(dest, PlayerPalette);
         dest[0] = dest[1];
         dest[1] = dest[2];

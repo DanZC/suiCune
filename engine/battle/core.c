@@ -13746,7 +13746,7 @@ void GetTrainerBackpic(void){
     // LD_A_addr(wPlayerGender);
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // IF_Z goto Chris;
-    if(!bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) && bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+    if(!bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_FEMALE_TO_MALE_F) && bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F)) {
     //  It's a girl.
         // FARCALL(aGetKrisBackpic);
         // RET;

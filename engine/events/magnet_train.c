@@ -447,7 +447,7 @@ void MagnetTrain_Jumptable(void){
         // LD_B(SPRITE_ANIM_INDEX_MAGNET_TRAIN_BLUE);
 
     // got_gender:
-        const uint8_t b = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
+        const uint8_t b = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))
             ? SPRITE_ANIM_INDEX_MAGNET_TRAIN_BLUE
             : SPRITE_ANIM_INDEX_MAGNET_TRAIN_RED;
         // POP_AF;

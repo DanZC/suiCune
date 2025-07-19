@@ -2224,3 +2224,21 @@ struct PokemonData {
     uint8_t bestMagikarpLengthInches;
     uint8_t magikarpRecordHoldersName[NAME_LENGTH];
 };
+
+struct CrystalData {
+    // bit 0:
+    //	0 male
+    //	1 female
+    uint8_t playerGender;
+    uint8_t age; // wd473
+    uint8_t prefecture; // wd474
+    union {
+        struct {
+            uint8_t wd475; // wMobileProfileZipCode0
+            uint8_t wd476; // wMobileProfileZipCode1
+            uint8_t wd477; // wMobileProfileZipCode2
+            uint8_t wd478; // wMobileProfileZipCode3
+        };
+        uint8_t zipCode[4];
+    };
+};

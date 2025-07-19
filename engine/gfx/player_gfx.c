@@ -117,7 +117,7 @@ void ShowPlayerNamingChoices(void){
     // LD_HL(mKrisNameMenuHeader);
 
 // got_header:
-    const struct MenuHeader *hdr = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? &KrisNameMenuHeader: &ChrisNameMenuHeader;
+    const struct MenuHeader *hdr = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? &KrisNameMenuHeader: &ChrisNameMenuHeader;
     // CALL(aLoadMenuHeader);
     LoadMenuHeader(hdr);
     // CALL(aVerticalMenu);
@@ -149,7 +149,7 @@ got_array:
 }
 
 const char* GetPlayerIcon(void){
-    if(bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
+    if(bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))
     {
         // Load Kris graphics
         return KrisSpriteGFX;
@@ -169,7 +169,7 @@ void GetCardPic(void){
     // LD_HL(mKrisCardPic);
 
 // got_pic:
-    const char* path = (!bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
+    const char* path = (!bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))
         ? ChrisCardPic
         : KrisCardPic;
     // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
@@ -190,7 +190,7 @@ void GetPlayerBackpic(void){
     // LD_A_addr(wPlayerGender);
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // JR_Z (mGetChrisBackpic);
-    if(!bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))
+    if(!bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))
         return GetChrisBackpic();
     // CALL(aGetKrisBackpic);
     // RET;
@@ -225,7 +225,7 @@ void HOF_LoadTrainerFrontpic(void){
 // got_class:
     // LD_A_E;
     // LD_addr_A(wTrainerClass);
-    wram->wTrainerClass = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KRIS: CHRIS;
+    wram->wTrainerClass = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? KRIS: CHRIS;
 
 //  Load pic
     // LD_DE(mChrisPic);
@@ -233,7 +233,7 @@ void HOF_LoadTrainerFrontpic(void){
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // IF_Z goto got_pic;
     // LD_DE(mKrisPic);
-    const char* pic = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KrisPic: ChrisPic;
+    const char* pic = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? KrisPic: ChrisPic;
 
 // got_pic:
     // LD_HL(vTiles2);
@@ -262,7 +262,7 @@ void DrawIntroPlayerPic(void){
 // got_class:
     // LD_A_E;
     // LD_addr_A(wTrainerClass);
-    wram->wTrainerClass = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KRIS: CHRIS;
+    wram->wTrainerClass = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? KRIS: CHRIS;
 
 //  Load pic
     // LD_DE(mChrisPic);
@@ -270,7 +270,7 @@ void DrawIntroPlayerPic(void){
     // BIT_A(PLAYERGENDER_FEMALE_F);
     // IF_Z goto got_pic;
     // LD_DE(mKrisPic);
-    const char* pic = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? KrisPic: ChrisPic;
+    const char* pic = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? KrisPic: ChrisPic;
 
 // got_pic:
     // LD_HL(vTiles2);

@@ -1842,7 +1842,7 @@ void DrawPackGFX(uint8_t pocket){
     // IF_NZ goto female;
 
     if(wram->wBattleType == BATTLETYPE_TUTORIAL
-    || !bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+    || !bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F)) {
     // male_dude:
         // LD_HL(mPackGFXPointers);
         // ADD_HL_DE;

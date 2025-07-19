@@ -282,7 +282,7 @@ static void SetBoxmonOrEggmonCaughtData(struct BoxMon* boxmon, uint8_t level){
     uint8_t loc = GetWorldMapLocation(b, c);
     // LD_A_addr(wPlayerGender);
     // RRCA;  // shift bit 0 (PLAYERGENDER_FEMALE_F) to bit 7 (CAUGHT_GENDER_MASK)
-    uint8_t gender = (wram->wPlayerGender << 7);
+    uint8_t gender = (gCrystal.playerGender << 7);
     // OR_A_B;
     // LD_hl_A;
     // RET;

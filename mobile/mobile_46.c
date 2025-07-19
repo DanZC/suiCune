@@ -3757,7 +3757,7 @@ void Function119054(void){
     // LDH_addr_A(rSVBK);
     // LD_A_addr(wd474);
     // LD_addr_A(s5_b2f3);
-    gb_write(s5_b2f3, wram->wPrefecture);
+    gb_write(s5_b2f3, gCrystal.prefecture);
     // LD_HL(wd475);
     // LD_DE(s5_b2f4);
     // LD_BC(4);

@@ -272,7 +272,7 @@ void v_CGB_PokegearPals(void){
 // male:
     // LD_HL(mMalePokegearPals);
 
-    const char* palpath = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F))? FemalePokegearPals: MalePokegearPals;
+    const char* palpath = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? FemalePokegearPals: MalePokegearPals;
 
 // got_pals:
     LoadPaletteAssetColorsToArray(palbuf, palpath, 0, 6 * NUM_PAL_COLORS);
@@ -961,7 +961,7 @@ void v_CGB_TrainerCard(void){
     // LD_A(0x1);  // kris
     // IF_Z goto got_gender;
     // LD_A(0x0);  // chris
-    uint8_t gender = (wram->wPlayerGender != 0)? 0x0: 0x1;
+    uint8_t gender = (gCrystal.playerGender != 0)? 0x0: 0x1;
 
 // got_gender:
     // CALL(aByteFill);
@@ -974,7 +974,7 @@ void v_CGB_TrainerCard(void){
     // LD_A(0x0);  // chris
     // IF_Z goto got_gender2;
     // LD_A(0x1);  // kris
-    uint8_t gender2 = (wram->wPlayerGender != 0)? 0x1: 0x0;
+    uint8_t gender2 = (gCrystal.playerGender != 0)? 0x1: 0x0;
 
 // got_gender2:
     // CALL(aFillBoxCGB);
@@ -1023,7 +1023,7 @@ void v_CGB_TrainerCard(void){
     // AND_A_A;
     // PUSH_AF;
     // IF_Z goto got_gender3;
-    if(wram->wPlayerGender == 0) {
+    if(gCrystal.playerGender == 0) {
         // hlcoord(14, 14, wAttrmap);
         // LD_BC((2 << 8) | 4);
         // LD_A(0x1);
@@ -1195,7 +1195,7 @@ static const uint16_t KrisPackPals[] = {
     // IF_Z goto tutorial_male;
     const uint16_t* pals;
     if(wram->wBattleType == BATTLETYPE_TUTORIAL
-    || !bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)) {
+    || !bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F)) {
     // tutorial_male:
         // LD_HL(mv_CGB_PackPals_ChrisPackPals);
         pals = ChrisPackPals;

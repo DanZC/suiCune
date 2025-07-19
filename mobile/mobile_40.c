@@ -84,6 +84,11 @@ enum {
     MOBILESTATUS_CHOOSE_THE_SETTINGS,
 };
 
+enum {
+    SRC_SRAM,
+    SRC_RAM,
+};
+
 // macro_100fc0: MACRO
 //     ; first byte:
 //     ;     Bit 7 set: Not SRAM
@@ -98,7 +103,9 @@ enum {
 //     endc
 // ENDM
 
-#define macro_100fc0(A, B, C) {(0x80 * ((A & 0xffff) >= SRAM_End)) | (MBANK(A) * ((A & 0xffff) < SRAM_End)), A, B, C}
+#define macro_100fc0(A, B, C) {A, B, C}
+#define macro_100fc0_sram(A, B, C) {SRC_SRAM, .sptr1=A, .size=B, .sptr2=C}
+#define macro_100fc0_wram(A, B, C) {SRC_RAM, .ptr1=A, .size=B, .ptr2=C}
 
 //  d: 1 or 2
 //  e: bank
@@ -3522,8 +3529,8 @@ uint16_t Function100f02(uint8_t* de, const macro_100fc0_s* hl, uint8_t c){
         // IF_Z goto done;
         // LD_addr_A(wStringBuffer2 + 3);  // bank
         data.bank = hl->bank;
-        if(!bit_test(data.bank, 7)) {
-            OpenSRAM(data.bank);
+        if(data.bank == SRC_SRAM) {
+            OpenSRAM(MBANK(hl->sptr1));
         }
         // PUSH_HL;
         // INC_HL;
@@ -3532,7 +3539,12 @@ uint16_t Function100f02(uint8_t* de, const macro_100fc0_s* hl, uint8_t c){
         // LD_E_A;
         // LD_A_hli;
         // LD_D_A;
-        uint8_t* de2 = AbsGBToRAMAddr(hl->ptr1);
+        uint8_t* de2;
+        switch(data.bank) {
+            default:
+            case SRC_RAM: de2 = hl->ptr1; break;
+            case SRC_SRAM: de2 = AbsGBToRAMAddr(hl->sptr1); break;
+        }
     // size
         // LD_A_hli;
         // LD_C_A;
@@ -3543,11 +3555,18 @@ uint16_t Function100f02(uint8_t* de, const macro_100fc0_s* hl, uint8_t c){
         // LD_A_hli;
         // LD_H_hl;
         // LD_L_A;
-        uint8_t* hl2 = AbsGBToRAMAddr(hl->ptr2);
+        uint8_t* hl2;
+        switch(data.bank) {
+            default:
+            case SRC_RAM: hl2 = hl->ptr2; break;
+            case SRC_SRAM: hl2 = AbsGBToRAMAddr(hl->sptr2); break;
+        }
         // CALL(aFunction100f3d);
         Function100f3d(&data, de2, hl2, bc);
     // next line
-        CloseSRAM();
+        if(data.bank == SRC_SRAM) {
+            CloseSRAM();
+        }
         // POP_HL;
         // LD_DE(7);
         // ADD_HL_DE;
@@ -3680,6 +3699,7 @@ uint8_t* Function100f8d(Function100f02_Data_s* data, uint8_t* de, uint8_t* hl, u
     // RET;
 }
 
+// TODO: Implement serialization for wram values.
 const macro_100fc0_s Unknown_100fc0[] = {
     //macro_100fc0 ['wPlayerName', 'NAME_LENGTH', 'wOTPlayerName']
     //macro_100fc0 ['wPartyCount', '1 + PARTY_LENGTH + 1', 'wOTPartyCount']
@@ -3687,20 +3707,20 @@ const macro_100fc0_s Unknown_100fc0[] = {
     //macro_100fc0 ['wPartyMons', 'PARTYMON_STRUCT_LENGTH * PARTY_LENGTH', 'wOTPartyMons']
     //macro_100fc0 ['wPartyMonOTs', 'NAME_LENGTH * PARTY_LENGTH', 'wOTPartyMonOTs']
     //macro_100fc0 ['wPartyMonNicknames', 'MON_NAME_LENGTH * PARTY_LENGTH', 'wOTPartyMonNicknames']
-    macro_100fc0(awPlayerName, NAME_LENGTH, awOTPlayerName),
-    macro_100fc0(awPartyCount, 1 + PARTY_LENGTH + 1, awOTPartyCount),
-    macro_100fc0(awPlayerID, 2, awOTPlayerID),
-    macro_100fc0(awPartyMons, PARTYMON_STRUCT_LENGTH * PARTY_LENGTH, awOTPartyMons),
-    macro_100fc0(awPartyMonOTs, NAME_LENGTH * PARTY_LENGTH, awOTPartyMonOTs),
-    macro_100fc0(awPartyMonNicknames, MON_NAME_LENGTH * PARTY_LENGTH, awOTPartyMonNicknames),
-    {(uint8_t)-1, 0, 0, 0},
+    macro_100fc0_wram(gPlayer.playerName, NAME_LENGTH, wram_ptr(wOTPlayerName)),
+    macro_100fc0_wram(&gPokemon.partyCount, 1 + PARTY_LENGTH + 1, wram_ptr(wOTPartyCount)),
+    macro_100fc0_wram(&gPlayer.playerID, 2, wram_ptr(wOTPlayerID)),
+    macro_100fc0_wram(gPokemon.partyMon, PARTYMON_STRUCT_LENGTH * PARTY_LENGTH, wram_ptr(wOTPartyMons)),
+    macro_100fc0_wram(gPokemon.partyMonOT, NAME_LENGTH * PARTY_LENGTH, wram_ptr(wOTPartyMonOTs)),
+    macro_100fc0_wram(gPokemon.partyMonNickname, MON_NAME_LENGTH * PARTY_LENGTH, wram_ptr(wOTPartyMonNicknames)),
+    {(uint8_t)-1, .sptr1=0, .size=0, .sptr2=0},
     //db ['-1'];  // end
 };
 
 const macro_100fc0_s Unknown_100feb[] = {
     //macro_100fc0 ['sPartyMail', 'MAIL_STRUCT_LENGTH * PARTY_LENGTH']
-    macro_100fc0(asPartyMail, MAIL_STRUCT_LENGTH * PARTY_LENGTH, 0),
-    {(uint8_t)-1, 0, 0, 0},
+    macro_100fc0_sram(asPartyMail, MAIL_STRUCT_LENGTH * PARTY_LENGTH, 0),
+    {(uint8_t)-1, .sptr1=0, .size=0, .sptr2=0},
     //db ['-1'];  // end
 };
 
@@ -3713,15 +3733,15 @@ const macro_100fc0_s Unknown_100ff3[] = {
     //macro_100fc0 ['wPlayerGender', '1']
     //macro_100fc0 ['s4_a603', '8']
     //macro_100fc0 ['s4_a007', 'PARTYMON_STRUCT_LENGTH']
-    macro_100fc0(awdc41, 1, 0),
-    macro_100fc0(awPlayerName, NAME_LENGTH, 0),
-    macro_100fc0(awPlayerName, NAME_LENGTH, 0),
-    macro_100fc0(awPlayerID, 2, 0),
-    macro_100fc0(awSecretID, 2, 0),
-    macro_100fc0(awPlayerGender, 1, 0),
-    macro_100fc0(as4_a603, 8, 0),
-    macro_100fc0(as4_a007, PARTYMON_STRUCT_LENGTH, 0),
-    {(uint8_t)-1, 0, 0, 0},
+    macro_100fc0_wram(&gPlayer.wdc41, 1, NULL),
+    macro_100fc0_wram(&gPlayer.playerName, NAME_LENGTH, NULL),
+    macro_100fc0_wram(&gPlayer.playerName, NAME_LENGTH, NULL),
+    macro_100fc0_wram(&gPlayer.playerID, 2, NULL),
+    macro_100fc0_wram(&gPlayer.secretID, 2, NULL),
+    macro_100fc0_wram(&gCrystal.playerGender, 1, NULL),
+    macro_100fc0_sram(as4_a603, 8, 0),
+    macro_100fc0_sram(as4_a007, PARTYMON_STRUCT_LENGTH, 0),
+    {(uint8_t)-1, .sptr1=0, .size=0, .sptr2=0},
     //db ['-1'];  // end
 };
 

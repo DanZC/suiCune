@@ -8,7 +8,7 @@ void ResetMapBufferEventFlags(void){
 
 void ResetBikeFlags(void){
     gPlayer.bikeFlags = 0;
-    wram->skip_119[0] = 0;
+    gPlayer.skip_119[0] = 0;
 }
 
 void ResetFlashIfOutOfCave(void){
