@@ -255,8 +255,6 @@ const struct SerialField Struc_CurMapData[] = {
 };
 #undef FLD_TYPE
 
-enum { x = offsetof(struct PlayerData, skip_110)};
-
 #define FLD_TYPE struct PlayerData
 const struct SerialField Struc_PlayerData[] = {
     FLD(TY_U16LE, playerID),

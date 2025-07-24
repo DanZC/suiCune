@@ -510,6 +510,7 @@ void TrainerCard_Page2_3_InitObjectsAndStrings(void){
     // LD_HL(mTrainerCard_JohtoBadgesOAM);
     // CALL(aTrainerCard_Page2_3_OAMUpdate);
     // RET;
+    return TrainerCard_Page2_3_OAMUpdate(&TrainerCard_JohtoBadgesOAM);
 }
 
 void TrainerCardSetup_PlaceTilemapString(tile_t* hl, const uint8_t* de){
@@ -712,7 +713,7 @@ static void TrainerCard_Page2_3_AnimateBadges(const struct JohtoBadgesOAM* hl){
     return TrainerCard_Page2_3_OAMUpdate(hl);
 }
 
-static void TrainerCard_Page2_3_OAMUpdate_PrepOAM(struct SpriteOAM* de, uint8_t b, uint8_t c) {
+static struct SpriteOAM* TrainerCard_Page2_3_OAMUpdate_PrepOAM(struct SpriteOAM* de, uint8_t b, uint8_t c) {
     static const uint8_t facing1[] = {
         dbsprite(0, 0, 0, 0, 0x00, 0),
         dbsprite(1, 0, 0, 0, 0x01, 0),
@@ -751,7 +752,7 @@ static void TrainerCard_Page2_3_OAMUpdate_PrepOAM(struct SpriteOAM* de, uint8_t 
         // CP_A(-1);
         // RET_Z ;
         if(a == 0xff)
-            return;
+            return de;
 
         // ADD_A_B;
         // LD_de_A;  // y
@@ -805,7 +806,7 @@ static void TrainerCard_Page2_3_OAMUpdate(const struct JohtoBadgesOAM* hl){
         // SRL_C;
         // PUSH_BC;
         // IF_NC goto skip_badge;
-        if(c & 1) {
+        if(c & (1 << i)) {
             // PUSH_HL;
             // LD_A_hli;  // y
             // LD_B_A;
@@ -826,7 +827,7 @@ static void TrainerCard_Page2_3_OAMUpdate(const struct JohtoBadgesOAM* hl){
             // LD_addr_A(wTrainerCardBadgeTileID);
             wram->wTrainerCardBadgeTileID = hl->tilemaps[i].tileIDs[wram->wTrainerCardBadgeFrameCounter];
             // CALL(aTrainerCard_Page2_3_OAMUpdate_PrepOAM);
-            TrainerCard_Page2_3_OAMUpdate_PrepOAM(de, b, c);
+            de = TrainerCard_Page2_3_OAMUpdate_PrepOAM(de, b, c);
             // POP_HL;
         }
 
@@ -836,7 +837,6 @@ static void TrainerCard_Page2_3_OAMUpdate(const struct JohtoBadgesOAM* hl){
         // POP_BC;
         // DEC_B;
         // IF_NZ goto loop;
-        c >>= 1;
     }
     // RET;
 }
