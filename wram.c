@@ -6,6 +6,7 @@ struct OptionsData gOptions;
 struct CurMapData gCurMapData;
 struct PokemonData gPokemon;
 struct PlayerData gPlayer;
+struct CrystalData gCrystal;
 
 #include <stddef.h>
 
