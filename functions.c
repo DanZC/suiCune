@@ -5161,6 +5161,7 @@ void init_function_pointers(void) {
     CONVERTED_SCRIPT(Route29Sign1);
     CONVERTED_SCRIPT(Route29Sign2);
     CONVERTED_SCRIPT(Route29FruitTree);
+    CONVERTED_SCRIPT(Route29Potion);
 
     // maps/Route30.c
     CONVERTED_SCRIPT(YoungsterJoey_ImportantBattleScript);

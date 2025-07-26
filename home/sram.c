@@ -7,7 +7,7 @@ void OpenSRAM(uint8_t a){
     // IF_C goto valid;
     if(a >= NUM_SRAM_BANKS)
     {
-    #if defined(_DEBUG) && !defined(_MSC_VER)
+    #if DEBUG
         // PUSH_AF;
         // PUSH_BC;
         // LD_B(1);
@@ -23,7 +23,7 @@ void OpenSRAM(uint8_t a){
         // LD_A_addr(sOpenedInvalidSRAM);
         // OR_A_B;
         // LD_addr_A(sOpenedInvalidSRAM);
-        gb_writer(sOpenedInvalidSRAM, gb_read(sOpenedInvalidSRAM) | b);
+        gb_write(sOpenedInvalidSRAM, gb_read(sOpenedInvalidSRAM) | b);
         // POP_BC;
         // POP_AF;
     #endif

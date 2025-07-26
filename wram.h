@@ -3394,10 +3394,10 @@ struct wram_s
                     };
                 };
                 uint8_t skip_141[0x1c0];
-                uint8_t w3_dc00[SCREEN_WIDTH * SCREEN_HEIGHT];
+                uint8_t w3_dc00[SCREEN_WIDTH * SCREEN_HEIGHT]; // Backup tilemap for mobile?
                 union {
                     struct {
-                        uint8_t w3_dd68[SCREEN_WIDTH * SCREEN_HEIGHT];
+                        uint8_t w3_dd68[SCREEN_WIDTH * SCREEN_HEIGHT]; // Backup attrmap for mobile?
                         uint8_t skip_142[0x11c];
                         uint8_t w3_dfec[0x10];
                         uint8_t w3_dffc[4];

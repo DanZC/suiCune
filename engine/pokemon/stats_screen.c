@@ -395,7 +395,7 @@ static void EggStatsJoypad(void){
     // BIT_A(A_BUTTON_F);
     // IF_NZ goto quit;
     if(!bit_test(a, A_BUTTON_F)) {
-#if defined(_DEBUG) && 0
+#if DEBUG
 static const char HatchSoonString[] = "▶HATCH SOON!";
         // CP_A(START);
         // IF_Z goto hatch;
@@ -1635,7 +1635,7 @@ void EggStatsScreen(void){
     // hlcoord(11, 5, wTilemap);
     // CALL(aPlaceString);
     PlaceStringSimple(Utf8ToCrystal(FiveQMarkString), coord(11, 5, wram->wTilemap));
-#if defined(_DEBUG)
+#if DEBUG
     // LD_DE(EggStatsScreen_PushStartString);
     // hlcoord(8, 17, wTilemap);
     // CALL(aPlaceString);

@@ -117,7 +117,7 @@ static uint8_t GetFruitTreeFlag(uint8_t b, uint8_t tree){
     // POP_DE;
     // POP_HL;
     // RET;
-    return FlagAction(gPlayer.fruitTreeFlags, tree - 1, b);
+    return FlagAction(gPlayer.fruitTreeFlags, tree, b);
 }
 
 static item_t GetFruitTreeItem(uint8_t a){

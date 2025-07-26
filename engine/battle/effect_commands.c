@@ -4946,7 +4946,7 @@ void DoEnemyDamage(bool ignoreSub){
         // LD_addr_A(wEnemyMonHP);
         uint16_t hp = wram->wHPBuffer2 - dmg;
         wram->wEnemyMon.hp = NativeToBigEndian16(hp);
-    #if defined(_DEBUG) && !defined(_MSC_VER)
+    #if DEBUG
         // PUSH_AF;
         // LD_A(MBANK(asSkipBattle));
         // CALL(aOpenSRAM);
