@@ -114,7 +114,7 @@ void SeerAction1(void){
     PrintSeerText(SEER_TRADED);
     // LD_A(SEER_TIME_LEVEL);
     // CALL(aPrintSeerText);
-    PrintSeerText(SEER_CANT_TELL);
+    PrintSeerText(SEER_TIME_LEVEL);
     // CALL(aSeerAdvice);
     SeerAdvice();
     // RET;
@@ -302,9 +302,9 @@ void UnknownCaughtData(uint8_t* de){
 void GetCaughtLocation(void){
     // LD_A_addr(wSeerCaughtGender);
     // AND_A(CAUGHT_LOCATION_MASK);
-    uint8_t caughtGender = wram->wSeerCaughtGender & CAUGHT_LOCATION_MASK;
+    uint8_t caughtLoc = wram->wSeerCaughtGender & CAUGHT_LOCATION_MASK;
     // IF_Z goto Unknown;
-    if(caughtGender == 0) {
+    if(caughtLoc == 0) {
     // Unknown:
         // LD_DE(wSeerCaughtLocation);
         // JP(mUnknownCaughtData);
@@ -312,7 +312,7 @@ void GetCaughtLocation(void){
     }
     // CP_A(LANDMARK_EVENT);
     // IF_Z goto event;
-    else if(caughtGender == LANDMARK_EVENT) {
+    else if(caughtLoc == LANDMARK_EVENT) {
     // event:
         // LD_A(SEERACTION_LEVEL_ONLY);
         // LD_addr_A(wSeerAction);
@@ -323,7 +323,7 @@ void GetCaughtLocation(void){
     }
     // CP_A(LANDMARK_GIFT);
     // IF_Z goto fail;
-    else if(caughtGender == LANDMARK_GIFT) {
+    else if(caughtLoc == LANDMARK_GIFT) {
     // fail:
         // LD_A(SEERACTION_CANT_TELL_2);
         // LD_addr_A(wSeerAction);
@@ -334,7 +334,7 @@ void GetCaughtLocation(void){
     }
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
-    uint8_t* de = GetLandmarkName(caughtGender);
+    uint8_t* de = GetLandmarkName(caughtLoc);
     // LD_HL(wStringBuffer1);
     // LD_DE(wSeerCaughtLocation);
     // LD_BC(17);
@@ -523,13 +523,13 @@ uint8_t GetCaughtGender(struct BoxMon* mon){
     // ADD_HL_BC;
 
     // LD_A_hl;
-    uint8_t a = mon->caughtGenderLocation;
+    uint8_t loc = mon->caughtGenderLocation & CAUGHT_LOCATION_MASK;
     // AND_A(CAUGHT_LOCATION_MASK);
     // IF_Z goto genderless;
     // CP_A(LANDMARK_EVENT);
     // IF_Z goto genderless;
-    if((a & CAUGHT_LOCATION_MASK) == 0
-    || a == LANDMARK_EVENT) {
+    if(loc == 0
+    || loc == LANDMARK_EVENT) {
     // genderless:
         // LD_C(CAUGHT_BY_UNKNOWN);
         // RET;
@@ -540,7 +540,7 @@ uint8_t GetCaughtGender(struct BoxMon* mon){
     // IF_NZ goto male;
     // LD_C(CAUGHT_BY_GIRL);
     // RET;
-    return (a & CAUGHT_GENDER_MASK)? CAUGHT_BY_BOY: CAUGHT_BY_GIRL;
+    return (mon->caughtGenderLocation & CAUGHT_GENDER_MASK)? CAUGHT_BY_BOY: CAUGHT_BY_GIRL;
 
 // male:
     // LD_C(CAUGHT_BY_BOY);
