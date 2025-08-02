@@ -1188,10 +1188,10 @@ void Function117c89(void){
     } while(--bc != 0);
     // LD_A_L;
     // LD_addr_A(wcd83);
-    wram->wcd83[0] = LOW(bc);
+    wram->wcd83[0] = LOW(hl);
     // LD_A_H;
     // LD_addr_A(wcd84);
-    wram->wcd84[0] = HIGH(bc);
+    wram->wcd84[0] = HIGH(hl);
     // LD_HL(0xbfea);
     // LD_DE(wcd69);
     // LD_BC(0x10);

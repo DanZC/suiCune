@@ -118,11 +118,11 @@ uint8_t* gMobile_wc827;
 uint8_t* gMobile_wc833_wc834;
 uint8_t* gMobile_wc86e_wc86f;
 uint8_t* gMobile_wc874_wc875;
-uint8_t* gMobile_wc876;
+char* gMobileURL; // wc876
 uint8_t* gMobile_wc878;
 uint8_t* gMobile_wc87c_wc87d;
 uint8_t* gMobile_wc9aa_wc9ab;
-uint8_t* gMobile_wc9b5;
+mobile_api_recv_s* gMobile_wc9b5;
 uint8_t* gMobile_wc97f_wc980;
 uint8_t* gMobile_wc98f;
 
@@ -1550,7 +1550,7 @@ void Function110615(uint8_t a){
         // LD_L_A;
         // LD_DE(0x0007);
         // ADD_HL_DE;
-        uint8_t* hl2 = gMobile_wc876 + 0x0007;
+        uint8_t* hl2 = (uint8_t *)gMobileURL + 0x0007;
         hl = hl2;
         // LD_DE(wc8ff);
         uint8_t* de = wram->wc8ff;
@@ -1580,7 +1580,7 @@ void Function110615(uint8_t a){
         // LD_addr_A(wc876);
         // LD_A_H;
         // LD_addr_A(wc877);
-        gMobile_wc876 = --hl;
+        gMobileURL = (char *)--hl;
         // LD_HL(wc8ff);
         hl = wram->wc8ff;
         Network_ResolveHostToIPString((char*)wram->wc8ff, (const char*)wram->wc8ff, "80");
@@ -3100,16 +3100,15 @@ asm_110e00:
     // LD_addr_A(wc833);
     // LD_A_hli;
     // LD_addr_A(wc834);
-    gMobile_wc833_wc834 = GBToRAMAddr((gMobile_wc9b5[0] | (gMobile_wc9b5[1] << 8)));
-    uint16_t addr = (gMobile_wc9b5[2] | (gMobile_wc9b5[3] << 8));
-    char* hl = GBToRAMAddr(addr);
+    gMobile_wc833_wc834 = gMobile_wc9b5->field_00;
+    char* hl = gMobile_wc9b5->url;
     // INC_HL;
     // INC_HL;
     // LD_A_L;
     // LD_addr_A(wc97f);
     // LD_A_H;
     // LD_addr_A(wc980);
-    gMobile_wc97f_wc980 = (uint8_t*)gMobile_wc9b5 + 4;
+    gMobile_wc97f_wc980 = gMobile_wc9b5->data;
     // DEC_HL;
     // DEC_HL;
     // LD_A_hli;
@@ -3121,7 +3120,7 @@ asm_110e00:
     // LD_A(0xc8);
     // CP_A_H;
     // IF_Z goto asm_110dfd;
-    if(addr == 0xc880) {
+    if(hl == wram->wc880_str) {
         printf("error: addr is $c880\n");
         goto asm_110dfd;
     }
@@ -3143,7 +3142,7 @@ asm_110e00:
         // CP_A_hl;
         // IF_NZ goto asm_110df9;
         if(*de != *hl2) {
-            printf("error: missing URI prefix: %s\n", hl2);
+            printf("error: missing URI prefix: %s\n", hl);
             goto asm_110dfd;
         }
         // INC_HL;
@@ -3335,7 +3334,7 @@ asm_110ee3:
     // LD_addr_A(wc876);
     // LD_A_H;
     // LD_addr_A(wc877);
-    gMobile_wc876 = (uint8_t*)hl;
+    gMobileURL = hl;
     // LD_HL(wc872);
     // LD_A_C;
     // LD_hli_A;
@@ -3867,6 +3866,7 @@ uint16_t Function1111d7(const char* hl){
 //          hl - pointers to config data
 //          bc - buffer size
 void Function1111fe(mobile_api_data_s* data){
+    printf("MOBILEAPI_16 %d\n", data->bc);
     // LD_A_addr(wc821);
     // BIT_A(2);
     // LD_A_addr(wc86a);
@@ -3891,36 +3891,31 @@ void Function1111fe(mobile_api_data_s* data){
     // LD_addr_A(wc993);
     wram->wc993 = 0;
     // PUSH_HL;
-    char* hl = data->hl;
+    mobile_api_send_s* hl = data->hl;
     // PUSH_DE;
     // PUSH_BC;
     // PUSH_HL;
-    char* hl2 = hl;
     // for(int rept = 0; rept < 4; rept++){
     // INC_HL;
     // }
-    hl2 += 4;
     // LD_A_hli;
     // LD_addr_A(wc833);
     // LD_A_hli;
     // LD_addr_A(wc834);
-    gMobile_wc833_wc834 = GBToRAMAddr(hl2[0] | (hl2[1] << 8));
-    hl2 += 2;
+    gMobile_wc833_wc834 = hl->field_04;
     // INC_HL;
     // INC_HL;
-    hl2 += 2;
     // LD_A_L;
     // LD_addr_A(wc97f);
     // LD_A_H;
     // LD_addr_A(wc980);
-    gMobile_wc97f_wc980 = (uint8_t*)hl2;
+    gMobile_wc97f_wc980 = hl->data;
     // DEC_HL;
     // DEC_HL;
-    hl2 -= 2;
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    hl2 = GBToRAMAddr(hl2[0] | (hl2[1] << 8));
+    char* hl2 = hl->url;
     // LD_A(0x80);
     // CP_A_L;
     // IF_NZ goto asm_111251;
@@ -4091,11 +4086,10 @@ asm_1112cc:
     // POP_HL;
     // LD_DE(0x0006);
     // ADD_HL_DE;
-    hl += 0x0006;
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    hl2 = GBToRAMAddr(hl[0] | (hl[1] << 8));
+    hl2 = hl->url;
     // CALL(aFunction1111d7);
     uint16_t bc2 = Function1111d7(hl2);
     // LD_A_B;
@@ -4116,7 +4110,6 @@ asm_1112cc:
     // LD_addr_A(wc876);
     // LD_A_H;
     // LD_addr_A(wc877);
-    gMobile_wc876 = data->hl;
     // LD_HL(wc872);
     // LD_A_C;
     // LD_hli_A;
@@ -4137,30 +4130,29 @@ asm_1112cc:
     // LD_hl_A;
     gMobile_wc878 = data->de;
     // CALL(aFunction111335);
-    Function111335();
+    Function111335((mobile_api_send_s *)data->hl);
     // LD_HL(wc876);
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    uint8_t* hl4 = gMobile_wc876;
     // LD_A_hli;
     // LD_addr_A(wc9aa);
     // LD_A_hli;
     // LD_addr_A(wc9ab);
-    gMobile_wc9aa_wc9ab = GBToRAMAddr(hl4[0] | (hl4[1] << 8));
+    gMobile_wc9aa_wc9ab = hl->field_00;
     // LD_A_hli;
     // LD_addr_A(wc9ac);
-    wram->wc9ac = hl4[2];
+    wram->wc9ac = LOW(hl->size);
     // LD_A_hli;
     // LD_addr_A(wc9ad);
-    wram->wc9ad = hl4[3];
+    wram->wc9ad = HIGH(hl->size);
     // INC_HL;
     // INC_HL;
     // LD_A_hli;
     // LD_addr_A(wc876);
     // LD_A_hl;
     // LD_addr_A(wc877);
-    gMobile_wc876 = GBToRAMAddr(hl4[6] | (hl4[7] << 8));
+    gMobileURL = hl->url;
     // LD_A_addr(wc98f);
     // XOR_A(0x1);
     // LD_addr_A(wc994);
@@ -4169,19 +4161,17 @@ asm_1112cc:
     return Function110f07();
 }
 
-void Function111335(void){
+void Function111335(mobile_api_send_s* c876){
     // LD_HL(wc876);
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    uint8_t* hl2 = gMobile_wc876;
     // INC_HL;
     // INC_HL;
-    hl2 += 2;
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;
-    uint16_t hl = hl2[0] | (hl2[1] << 8);
+    uint16_t hl = c876->size;
     // XOR_A_A;
     uint8_t a = 0;
     // LD_addr_A(wc8c9);
@@ -4320,7 +4310,7 @@ void Function111335(void){
     // LD_DE(wc9a5);
     uint8_t* de = wram->wc9a5;
     // LD_HL(wc8c6);
-    hl2 = &wram->wc8c6;
+    uint8_t* hl2 = &wram->wc8c6;
     // LD_A_hli;
     // OR_A(0x30);
     // LD_de_A;
@@ -8110,7 +8100,7 @@ void Function112534(char* de, uint8_t c){
     // LD_addr_A(wc87c);
     // LD_A_addr(wc877);
     // LD_addr_A(wc87d);
-    gMobile_wc87c_wc87d = gMobile_wc876;
+    gMobile_wc87c_wc87d = (uint8_t *)gMobileURL;
     // LD_A_addr(wc87a);
     // LD_addr_A(wc87e);
     wram->wc87e = wram->wc87a;
@@ -11476,7 +11466,7 @@ void Function1133fe(void){
         // LD_A_hli;
         // LD_H_hl;
         // LD_L_A;
-        char* hl = GBToRAMAddr(gMobile_wc9b5[2] | (gMobile_wc9b5[3] << 8));
+        char* hl = gMobile_wc9b5->url;
         // CALL(aMobileSDK_CopyString);
         // LD_L_E;
         // LD_H_D;
@@ -11508,7 +11498,7 @@ void Function1133fe(void){
         // LD_A_hli;
         // LD_H_hl;
         // LD_L_A;
-        char* hl = GBToRAMAddr(gMobile_wc9b5[2] | (gMobile_wc9b5[3] << 8));
+        char* hl = gMobile_wc9b5->url;
         // LD_A_hl;
         // CP_A(0x2f);
         // IF_Z goto asm_113478;

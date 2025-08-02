@@ -1630,6 +1630,20 @@ typedef struct MobileAPIData
     void* de;
 } mobile_api_data_s;
 
+typedef struct MobileAPISendData {
+    uint8_t *field_00;
+    uint16_t size;
+    uint8_t *field_04;
+    char *url;
+    uint8_t data[128];
+} mobile_api_send_s;
+
+typedef struct MobileAPIRecvData {
+    uint8_t *field_00;
+    char *url;
+    uint8_t data[128];
+} mobile_api_recv_s;
+
 struct CoordsTileId
 {
     int8_t x;

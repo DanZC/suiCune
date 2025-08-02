@@ -905,12 +905,12 @@ bool Function17d314(void){
     CloseSRAM();
     // LD_A(0x5);
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(as5_aa73));
+    OpenSRAM(MBANK(asNewsId));
     // XOR_A_A;
     // LD_HL(0xaa73);
     // LD_BC(0xc);
     // CALL(aByteFill);
-    ByteFill(GBToRAMAddr(s5_aa73), 0xc, 0x0);
+    ByteFill(GBToRAMAddr(sNewsId), 0xc, 0x0);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // LD_A(0x2);
@@ -3758,6 +3758,16 @@ void Function17e1a1(void){
     // LD_DE(wc608);
     uint8_t* de = wram->wc608;
 
+    printf("a = ");
+    for(int i = 0; i < c; ++i)
+        printf("%02x ", hl[i]);
+    printf("\n");
+
+    printf("b = ");
+    for(int i = 0; i < c; ++i)
+        printf("%02x ", de[i]);
+    printf("\n");
+
     do {
     // asm_17e227:
         // LD_A_de;
@@ -3938,12 +3948,12 @@ void Function17e2a7(void){
         wram->wcd7a[0] = 0;
         // LD_A(0x5);
         // CALL(aOpenSRAM);
-        OpenSRAM(MBANK(as5_aa7f));
+        OpenSRAM(MBANK(asNewsIdBackup));
         // LD_HL(0xaa73);
         // LD_DE(0xaa7f);
         // LD_BC(0xc);
         // CALL(aCopyBytes);
-        CopyBytes(GBToRAMAddr(s5_aa7f), GBToRAMAddr(s5_aa73), 0xc);
+        CopyBytes(GBToRAMAddr(sNewsIdBackup), GBToRAMAddr(sNewsId), 0xc);
         // CALL(aCloseSRAM);
         CloseSRAM();
         // RET;

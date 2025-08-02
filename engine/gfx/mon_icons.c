@@ -182,9 +182,7 @@ static void Mobile_InitPartyMenuBGPal71(void){
     // LD_addr_A(wc608);
     // LD_A_B;
     // LD_addr_A(wc608 + 1);
-    uint16_t addr_bc = RAMAddrToGB(bc);
-    wram->wc608[0] = LOW(addr_bc);
-    wram->wc608[1] = HIGH(addr_bc);
+    wram->wc608[0] = bc - wram->wSpriteAnim;
     // RET;
 }
 

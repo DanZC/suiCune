@@ -53,7 +53,7 @@ uint8_t Function11115f(uint16_t* bc, uint8_t a);
 void Function1111ca(void);
 uint16_t Function1111d7(const char* hl);
 void Function1111fe(mobile_api_data_s *);
-void Function111335(void);
+void Function111335(mobile_api_send_s *);
 void Function1113ea(mobile_api_data_s *, uint8_t);
 void Function1113f7(void);
 void Function1113f8(void);

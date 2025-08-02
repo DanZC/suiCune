@@ -6,6 +6,7 @@
 #include "../../../data/battle_tower/trainer_text.h"
 #include "../../../data/trainers/genders.h"
 #include "../../../mobile/fixed_words.h"
+#include "../../../util/serialize.h"
 
 struct TrainerTexts {
     const txt_cmd_s** greetings;
@@ -171,6 +172,7 @@ struct EZChatAddr {
 // Call_047_4033
 // get address of easy chat data
 struct EZChatAddr BattleTowerText_GetEZChatAddress(uint8_t a) {
+    static struct BattleTowerData data;
     // dec a
     uint8_t i = gb_read(sNrOfBeatenBattleTowerTrainers);
     // sla a
@@ -183,11 +185,12 @@ struct EZChatAddr BattleTowerText_GetEZChatAddress(uint8_t a) {
     // ld de, -BATTLE_TOWER_STRUCT_LENGTH
     // ld hl, s5_aa8e + BATTLE_TOWER_STRUCT_LENGTH * (BATTLETOWER_STREAK_LENGTH - 1) + (BATTLE_TOWER_STRUCT_LENGTH - EASY_CHAT_MESSAGE_LENGTH * 3);$affe easy chat data for trainer
     // add hl, bc
+    Deserialize_BattleTowerData(&data, (const uint8_t *)GBToRAMAddr(s5_aa8e + BATTLE_TOWER_STRUCT_LENGTH * (BATTLETOWER_STREAK_LENGTH - 1 - i)));
     // ld a, [sNrOfBeatenBattleTowerTrainers];$aa3f
     // ret
     return (struct EZChatAddr){
         .a = i, 
-        .hl = (((struct BattleTowerData*)GBToRAMAddr(s5_aa8e)) + (BATTLETOWER_STREAK_LENGTH - 1 - i))->trainerData + (EASY_CHAT_MESSAGE_LENGTH * (a - 1)),
+        .hl = data.trainerData + (EASY_CHAT_MESSAGE_LENGTH * (a - 1)),
     };
 }
 

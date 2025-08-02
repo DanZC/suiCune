@@ -30,6 +30,7 @@
 #include "../../../mobile/mobile_5f.h"
 #include "../../../data/trainers/sprites.h"
 #include "../../../data/battle_tower/unknown_levels.h"
+#include "../../../util/serialize.h"
 
 uint8_t gBattleTowerType = BATTLE_TOWER_LOCAL;
 struct BattleRecord {
@@ -922,6 +923,7 @@ void SkipBattleTowerTrainer(void){
 
 struct BattleTowerData* Function1704ca(void){
 //  //  unreferenced
+    static struct BattleTowerData data;
     // LD_A_addr(s5_be46);
     uint8_t a = gb_read(s5_be46);
     // CP_A(BATTLETOWER_STREAK_LENGTH);
@@ -941,11 +943,11 @@ struct BattleTowerData* Function1704ca(void){
     // ADD_HL_DE;
     // DEC_A;
     // goto loop;
-    struct BattleTowerData* data = ((struct BattleTowerData*)GBToRAMAddr(s5_aa8e)) + (BATTLETOWER_STREAK_LENGTH - 1 - a);
+    Deserialize_BattleTowerData(&data, (const uint8_t *)GBToRAMAddr(s5_aa8e + (BATTLETOWER_STREAK_LENGTH - 1 - a) * BATTLE_TOWER_STRUCT_LENGTH));
 
 // done:
     // RET;
-    return data;
+    return &data;
 }
 
 static void Function1704e1_DrawBorder(void){

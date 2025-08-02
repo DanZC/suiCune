@@ -1111,8 +1111,8 @@ struct wram_s
                             char wc872_digit_buffer[3];
                         };
                         uint8_t wc875;
-                        uint8_t wc876;
-                        uint8_t wc877;
+                        uint8_t wc876; // URL pointer lo
+                        uint8_t wc877; // URL pointer hi
                         uint16_t wc878;
                         uint8_t wc87a;
                         uint8_t wc87b;

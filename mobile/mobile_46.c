@@ -48,6 +48,12 @@ static tile_t* gMobileMessageDestPtr; // wc31d-wc31e
 static const char** gMobileStringList; // wcd4b-wdc4c
 uint8_t* gMobile_wcd4d; // wcd4d-wcd4e
 
+uint8_t* gWRAMBank;
+static union {
+    mobile_api_recv_s recvData;
+    mobile_api_send_s sendData;
+} gMobileHTTP;
+
 void Function118000(void){
     // LD_A(0x1);
     // LD_addr_A(wcd38);
@@ -83,6 +89,7 @@ void asm_11800b(void){
     // LD_A(0x3);
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, 0x3);
+    gWRAMBank = wram->wram3;
 
     do {
     // loop:
@@ -150,6 +157,7 @@ void Function11805f(void){
     // LD_A(0x3);
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, 0x3);
+    gWRAMBank = wram->wram3;
 
     do {
     // asm_11807d:
@@ -210,6 +218,7 @@ void Function1180b8(void){
     // LD_A(0x3);
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, 0x3);
+    gWRAMBank = wram->wram3;
 
     do {
     // asm_1180d1:
@@ -295,6 +304,7 @@ void Function118125(void){
     // PUSH_AF;
     // LD_A(0x3);
     // LDH_addr_A(rSVBK);
+    gWRAMBank = wram->wram3;
 
     do {
     // loop:
@@ -367,6 +377,7 @@ void Mobile_BattleTowerRoomMenu(void){
     // LD_A(0x3);
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, 0x3);
+    gWRAMBank = wram->wram3;
 
     do {
     // loop:
@@ -497,6 +508,7 @@ void Function1181da(void){
     // LD_A(0x3);
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, 0x3);
+    gWRAMBank = wram->wram3;
 
     do {
     // asm_1181f8:
@@ -559,6 +571,7 @@ void Function118233(void){
     // LD_A(0x3);
     // LDH_addr_A(rSVBK);
     gb_write(rSVBK, 0x3);
+    gWRAMBank = wram->wram3;
 
     do {
     // asm_11824c:
@@ -2692,10 +2705,11 @@ void Function118aa4(void){
     CopyBytes(wram->wcc60_str, buffer, 0x80);
     // LD_A(0x5);
     // LDH_addr_A(rSVBK);
+    gWRAMBank = wram->wram5;
     // LD_DE(w3_d100);
     // LD_BC(0xe00);
     // JR(mFunction118b10);
-    Function118b10(wram->w3_d100, 0xe00);
+    Function118b10(wram->wram5 + 0x100, 0xe00);
 }
 
 void Function118abc(void){
@@ -2787,7 +2801,7 @@ void Function118b10(void* de, uint16_t bc){
     // CALL(aBattleTowerRoomMenu2);
     BattleTowerRoomMenu2();
     // CALL(aFunction118b24);
-    uint8_t* hl = Function118b24();
+    mobile_api_recv_s* hl = Function118b24();
     // POP_BC;
     // POP_DE;
     // LD_A(MOBILEAPI_15);
@@ -2795,29 +2809,27 @@ void Function118b10(void* de, uint16_t bc){
     Function119e2b(MOBILEAPI_15, &(mobile_api_data_s){.bc = bc, .de = de, .hl = hl});
 }
 
-uint8_t* Function118b24(void){
+mobile_api_recv_s* Function118b24(void){
     // LD_HL(wc346);
     // LD_A(0x8);
     // LD_hli_A;
-    wram->wc346[0] = LOW(0xc708);
     // LD_A(0xc7);
     // LD_hli_A;
-    wram->wc346[1] = HIGH(0xc708);
+    gMobileHTTP.recvData.field_00 = &wram->wc708;
     // LD_A(0x60);
     // LD_hli_A;
-    wram->wc346[2] = LOW(0xcc60);
     // LD_A(0xcc);
     // LD_hli_A;
-    wram->wc346[3] = HIGH(0xcc60);
+    gMobileHTTP.recvData.url = wram->wcc60_str;
     // CALL(aFunction119eb4);
     // CALL(aFunction119ec2);
-    Function119ec2(Function119eb4(wram->wc346 + 4));
+    Function119ec2(Function119eb4(gMobileHTTP.recvData.data));
     // LD_A(0x80);
     // LD_addr_A(wcd89);
     wram->wcd89 = 0x80;
     // LD_HL(wc346);
     // RET;
-    return wram->wc346;
+    return &gMobileHTTP.recvData;
 }
 
 bool RemovedFunction12(void){
@@ -3133,31 +3145,35 @@ void asm_118d9f(void){
     // LD_HL(w3_d800);
     // LD_A(0x8);
     // LD_hli_A;
-    wram->w3_d800[0] = LOW(0xc608);
+    // wram->w3_d800[0] = LOW(0xc608);
     // LD_A(0xc6);
     // LD_hli_A;
-    wram->w3_d800[1] = HIGH(0xc608);
+    // wram->w3_d800[1] = HIGH(0xc608);
+    gMobileHTTP.sendData.field_00 = wram->wc608;
     // LD_A_addr(wcd3b);
     // LD_hli_A;
-    wram->w3_d800[2] = wram->wcd3b[0];
+    // wram->w3_d800[2] = wram->wcd3b[0];
     // XOR_A_A;
     // LD_hli_A;
-    wram->w3_d800[3] = 0;
+    // wram->w3_d800[3] = 0;
+    gMobileHTTP.sendData.size = wram->wcd3b[0];
     // LD_A(0x8);
     // LD_hli_A;
-    wram->w3_d800[4] = LOW(0xc708);
+    // wram->w3_d800[4] = LOW(0xc708);
     // LD_A(0xc7);
     // LD_hli_A;
-    wram->w3_d800[5] = HIGH(0xc708);
+    // wram->w3_d800[5] = HIGH(0xc708);
+    gMobileHTTP.sendData.field_04 = &wram->wc708;
     // LD_A_addr(wcd39);
     // LD_hli_A;
-    wram->w3_d800[6] = wram->wcd39;
+    // wram->w3_d800[6] = wram->wcd39;
     // LD_A_addr(wcd3a);
     // LD_hli_A;
-    wram->w3_d800[7] = wram->wcd3a;
+    // wram->w3_d800[7] = wram->wcd3a;
+    gMobileHTTP.sendData.url = (char *)wram->wram3 + ((wram->wcd3a << 8) | wram->wcd39);
     // CALL(aFunction119eb4);
     // CALL(aFunction119ec2);
-    Function119ec2(Function119eb4(wram->w3_d800 + 8));
+    Function119ec2(Function119eb4(gMobileHTTP.sendData.data));
     // LD_A(0x40);
     // LD_addr_A(wcd89);
     wram->wcd89 = 0x40;
@@ -3166,7 +3182,7 @@ void asm_118d9f(void){
     // LD_BC(0x200);
     // LD_A(MOBILEAPI_16);
     // JP(mFunction119e2b);
-    return Function119e2b(MOBILEAPI_16, &(mobile_api_data_s){.hl = wram->w3_d800, .de = wram->w3_de00, .bc = 0x200});
+    return Function119e2b(MOBILEAPI_16, &(mobile_api_data_s){.hl = &gMobileHTTP.sendData, .de = wram->w3_de00, .bc = 0x200});
 }
 
 void Function118ded(void){
@@ -3216,10 +3232,10 @@ void Function118e06(void){
 // asm_118e1d:
     // LD_A_L;
     // LD_addr_A(wcd39);
-    wram->wcd39 = LOW(w3_d000 + hl);
+    wram->wcd39 = LOW(hl);
     // LD_A_H;
     // LD_addr_A(wcd3a);
-    wram->wcd3a = HIGH(w3_d000 + hl);
+    wram->wcd3a = HIGH(hl);
 
     do {
     // asm_118e25:
@@ -3368,7 +3384,7 @@ void Function118e92(void){
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
-    if(Function1191ad(wram->wcc60_str, (char*)wram->wram3 + hl))
+    if(Function1191ad(wram->wcc60_str, hl))
         return;
     // LD_DE(w3_d800);
     // LD_BC(0x0800);
@@ -3454,7 +3470,7 @@ void Function118f14(void){
     // LD_L_A;
     // LD_A_addr(wcd52);
     // LD_H_A;
-    const char* hl = (const char*)wram->wram3 + (wram->wcd51 | (wram->wcd52 << 8));
+    uint16_t hl = wram->wcd51 | (wram->wcd52 << 8);
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -3474,7 +3490,7 @@ void Function118f14(void){
     // LD_L_A;
     // LD_A_addr(wcd58);
     // LD_H_A;
-    hl = (const char*)wram->wram3 + (wram->wcd57 | (wram->wcd58 << 8));
+    hl = wram->wcd57 | (wram->wcd58 << 8);
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -3523,7 +3539,7 @@ void Function118f68(void){
     // LD_L_A;
     // LD_A_addr(wcd52);
     // LD_H_A;
-    const char* hl = (const char*)wram->wram3 + (wram->wcd51 | (wram->wcd52 << 8));
+    uint16_t hl = wram->wcd51 | (wram->wcd52 << 8);
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -3536,31 +3552,27 @@ void Function118f68(void){
         // LD_HL(wc346);
         // LD_A(LOW(0xc608));
         // LD_hli_A;
-        wram->wc346[0] = LOW(0xc608);
         // LD_A(HIGH(0xc608));
         // LD_hli_A;
-        wram->wc346[1] = HIGH(0xc608);
+        gMobileHTTP.sendData.field_00 = wram->wc608;
         // LD_A_addr(wcd4b);
         // LD_hli_A;
-        wram->wc346[2] = wram->wcd4b;
         // LD_A_addr(wcd4c);
         // LD_hli_A;
-        wram->wc346[3] = wram->wcd4c;
+        gMobileHTTP.sendData.size = (wram->wcd4b | (wram->wcd4c << 8));
         // LD_A(LOW(0xc708));
         // LD_hli_A;
-        wram->wc346[4] = LOW(0xc708);
         // LD_A(HIGH(0xc708));
         // LD_hli_A;
-        wram->wc346[5] = HIGH(0xc708);
+        gMobileHTTP.sendData.field_04 = &wram->wc708;
         // LD_A(0x60);
         // LD_hli_A;
-        wram->wc346[6] = LOW(0xcc60);
         // LD_A(0xcc);
         // LD_hli_A;
-        wram->wc346[7] = HIGH(0xcc60);
+        gMobileHTTP.sendData.url = wram->wcc60_str;
         // CALL(aFunction119eb4);
         // CALL(aFunction119ec2);
-        Function119ec2(Function119eb4(wram->wc346 + 8));
+        Function119ec2(Function119eb4(gMobileHTTP.sendData.data));
         // LD_A(0x40);
         // LD_addr_A(wcd89);
         wram->wcd89 = 0x40;
@@ -3569,7 +3581,7 @@ void Function118f68(void){
         // LD_BC(0x200);
         // LD_A(MOBILEAPI_16);
         // JP(mFunction119e2b);
-        return Function119e2b(MOBILEAPI_16, &(mobile_api_data_s){.de = wram->w3_de00, .hl = wram->wc346, .bc = 0x200});
+        return Function119e2b(MOBILEAPI_16, &(mobile_api_data_s){.de = wram->w3_de00, .hl = &gMobileHTTP.sendData, .bc = 0x200});
     }
 
 // asm_118fba:
@@ -3586,7 +3598,7 @@ void Function118fc0(void){
     // LD_L_A;
     // LD_A_addr(wcd56);
     // LD_H_A;
-    const char* hl = (const char*)wram->wram3 + (wram->wcd55 | (wram->wcd56 << 8));
+    uint16_t hl = wram->wcd55 | (wram->wcd56 << 8);
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -3612,7 +3624,7 @@ void Function118fc0(void){
     // LD_L_A;
     // LD_A_addr(wcd52);
     // LD_H_A;
-    hl = (const char*)wram->wram3 + (wram->wcd51 | (wram->wcd52 << 8));
+    hl = wram->wcd51 | (wram->wcd52 << 8);
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
@@ -3643,40 +3655,35 @@ void Function119009(void){
     // LD_L_A;
     // LD_A_addr(wcd56);
     // LD_H_A;
-    const char* hl = (const char*)wram->wram3 + (wram->wcd55 | (wram->wcd56 << 8));
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
-    if(Function1191ad(wram->wcc60_str, hl))
+    if(Function1191ad(wram->wcc60_str, wram->wcd55 | (wram->wcd56 << 8)))
         return;
     // LD_HL(wc346);
     // LD_A(0x8);
     // LD_hli_A;
-    wram->wc346[0] = LOW(0xc608);
     // LD_A(0xc6);
     // LD_hli_A;
-    wram->wc346[1] = HIGH(0xc608);
+    gMobileHTTP.sendData.field_00 = wram->wc608;
     // LD_A_addr(wcd4b);
     // LD_hli_A;
-    wram->wc346[2] = wram->wcd4b;
     // LD_A_addr(wcd4c);
     // LD_hli_A;
-    wram->wc346[3] = wram->wcd4c;
+    gMobileHTTP.sendData.size = (wram->wcd4b | (wram->wcd4c << 8));
     // LD_A(0x8);
     // LD_hli_A;
-    wram->wc346[4] = LOW(0xc708);
     // LD_A(0xc7);
     // LD_hli_A;
-    wram->wc346[5] = HIGH(0xc708);
+    gMobileHTTP.sendData.field_04 = &wram->wc708;
     // LD_A(0x60);
     // LD_hli_A;
-    wram->wc346[6] = LOW(0xcc60);
     // LD_A(0xcc);
     // LD_hli_A;
-    wram->wc346[7] = HIGH(0xcc60);
+    gMobileHTTP.sendData.url = wram->wcc60_str;
     // CALL(aFunction119eb4);
     // CALL(aFunction119ec2);
-    Function119ec2(Function119eb4(wram->wc346 + 8));
+    Function119ec2(Function119eb4(gMobileHTTP.sendData.data));
     // LD_A(0x40);
     // LD_addr_A(wcd89);
     wram->wcd89 = 0x40;
@@ -3685,7 +3692,7 @@ void Function119009(void){
     // LD_BC(0x1000);
     // LD_A(MOBILEAPI_16);
     // JP(mFunction119e2b);
-    Function119e2b(MOBILEAPI_16, &(mobile_api_data_s){.hl = wram->wc346, .de = wram->w3_d000, .bc = 0x1000});
+    Function119e2b(MOBILEAPI_16, &(mobile_api_data_s){.hl = &gMobileHTTP.sendData, .de = wram->w3_d000, .bc = 0x1000});
 }
 
 void Function119054(void){
@@ -3750,7 +3757,7 @@ void Function119054(void){
     // LD_DE(s5_aa7f);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes(GBToRAMAddr(s5_aa7f), &wram->wEZChatSelection, 12);
+    CopyBytes(GBToRAMAddr(sNewsIdBackup), &wram->wcd20, 12);
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wd474));  // aka BANK(wd475)
@@ -3782,7 +3789,7 @@ void Function1190d0(void){
     // LD_DE(wcc60);
     // CALL(aFunction1191ad);
     // RET_C ;
-    if(Function1191ad(wram->wcc60_str, (const char*)wram->wram3 + (wram->wcd57 | (wram->wcd58 << 8))))
+    if(Function1191ad(wram->wcc60_str, wram->wcd57 | (wram->wcd58 << 8)))
         return;
     // LD_DE(w3_d000);
     // LD_BC(0x1000);
@@ -3794,12 +3801,12 @@ void Function1190d0(void){
 void Function1190ec(void){
     // LD_A(BANK(s5_aa73));
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(as5_aa73));
+    OpenSRAM(MBANK(asNewsId));
     // LD_HL(wBGMapBuffer);
     // LD_DE(s5_aa73);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes(GBToRAMAddr(s5_aa73), &wram->wcd20, 12);
+    CopyBytes(GBToRAMAddr(sNewsId), &wram->wcd20, 12);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // LD_A(BANK(s5_aa72));
@@ -3876,11 +3883,11 @@ void Function11915d(void){
     CopyBytes(&wram->wcd20, wram->w3_d802, 12);
     // LD_A(BANK(s5_aa7f));
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(as5_aa7f));
+    OpenSRAM(MBANK(asNewsIdBackup));
     // LD_HL(wBGMapBuffer);
     const uint8_t* hl = &wram->wcd20;
     // LD_DE(s5_aa7f);
-    const uint8_t* de = GBToRAMAddr(s5_aa7f);
+    const uint8_t* de = GBToRAMAddr(sNewsIdBackup);
     // LD_C(12);
     uint8_t c = 12;
 
@@ -3950,17 +3957,18 @@ bool Function119192(uint16_t de, const void* hl_, uint16_t bc){
     return false;
 }
 
-bool Function1191ad(char* de, const char* hl){
+bool Function1191ad(char* de, uint16_t hl){
     // PUSH_BC;
     // LD_C(0x0);
     uint8_t c = 0x0;
     // LD_A(0x5);
     // LDH_addr_A(rSVBK);
+    gWRAMBank = wram->wram5;
 
     do {
     // asm_1191b4:
         // LD_A_hli;
-        char ch = *(hl++);
+        char ch = wram->wram5[hl++];
         // LD_de_A;
         // INC_DE;
         *(de++) = ch;
@@ -3970,6 +3978,7 @@ bool Function1191ad(char* de, const char* hl){
         // asm_1191cc:
             // LD_A(MBANK(aw3_d000)); // BANK("Battle Tower RAM")
             // LDH_addr_A(rSVBK);
+            gWRAMBank = wram->wram3;
             // POP_BC;
             // AND_A_A;
             // RET;
@@ -3985,6 +3994,7 @@ bool Function1191ad(char* de, const char* hl){
     SetMobileErrorCode(0xda);
     // LD_A(MBANK(aw3_d000)); // BANK("Battle Tower RAM")
     // LDH_addr_A(rSVBK);
+    gWRAMBank = wram->wram3;
     // POP_BC;
     // SCF;
     // RET;
@@ -4043,21 +4053,21 @@ uint16_t Function11920f(uint16_t hl){
         // LD_A_hli;
         // CP_A(0xd);
         // IF_NZ goto asm_11920f;
-        if(wram->wram3[hl++] != 0xd)
+        if(gWRAMBank[hl++] != 0xd)
             continue;
         // LD_A_hli;
         // CP_A(0xa);
         // IF_NZ goto asm_11920f;
-        if(wram->wram3[hl++] != 0xa)
+        if(gWRAMBank[hl++] != 0xa)
             continue;
         break;
     }
     // DEC_HL;
     // XOR_A_A;
     // LD_hld_A;
-    wram->wram3[hl - 1] = 0x0;
+    gWRAMBank[hl - 1] = 0x0;
     // LD_hli_A;
-    wram->wram3[hl - 2] = 0x0;
+    gWRAMBank[hl - 2] = 0x0;
     // INC_HL;
     // RET;
     return hl;
@@ -4237,12 +4247,12 @@ bool Function119223(void){
 bool Function1192cc(void){
     // LD_A(BANK(s5_aa73));
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(as5_aa73));
+    OpenSRAM(MBANK(asNewsId));
     // LD_HL(s5_aa73);
     // LD_DE(wc608);
     // LD_BC(12);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wc608, GBToRAMAddr(s5_aa73), 12);
+    CopyBytes(wram->wc608, GBToRAMAddr(sNewsId), 12);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // LD_HL(wc608);
@@ -5423,34 +5433,37 @@ void Function1198f7(void){
     // CALL(aFunction119940);
     Function119940(wram->wc608 + 2);
     // LD_HL(w3_d800);
-    uint8_t* hl = wram->w3_d800;
     // LD_A(LOW(wc608));
     // LD_hli_A;
-    *(hl++) = LOW(wc608);
+    // *(hl++) = LOW(wc608);
     // LD_A(HIGH(wc608));
     // LD_hli_A;
-    *(hl++) = HIGH(wc608);
+    // *(hl++) = HIGH(wc608);
+    gMobileHTTP.sendData.field_00 = wram->wc608;
     // LD_A(0xf6);
     // LD_hli_A;
-    *(hl++) = LOW(BATTLE_TOWER_DATA_UPLOAD_LENGTH);
+    // *(hl++) = LOW(BATTLE_TOWER_DATA_UPLOAD_LENGTH);
     // XOR_A_A;
     // LD_hli_A;
-    *(hl++) = HIGH(BATTLE_TOWER_DATA_UPLOAD_LENGTH);
+    // *(hl++) = HIGH(BATTLE_TOWER_DATA_UPLOAD_LENGTH);
+    gMobileHTTP.sendData.size = BATTLE_TOWER_DATA_UPLOAD_LENGTH;
     // LD_A(LOW(wc708));
     // LD_hli_A;
-    *(hl++) = LOW(wc708);
+    // *(hl++) = LOW(wc708);
     // LD_A(HIGH(wc708));
     // LD_hli_A;
-    *(hl++) = HIGH(wc708);
+    // *(hl++) = HIGH(wc708);
+    gMobileHTTP.sendData.field_04 = &wram->wc708;
     // LD_A_addr(wcd51);
     // LD_hli_A;
-    *(hl++) = LOW(w3_d000 + ((wram->wcd52 << 8) | wram->wcd51));
+    // *(hl++) = LOW(w3_d000 + ((wram->wcd52 << 8) | wram->wcd51));
     // LD_A_addr(wcd52);
     // LD_hli_A;
-    *(hl++) = HIGH(w3_d000 + ((wram->wcd52 << 8) | wram->wcd51));
+    // *(hl++) = HIGH(w3_d000 + ((wram->wcd52 << 8) | wram->wcd51));
+    gMobileHTTP.sendData.url = (char *)wram->wram3 + ((wram->wcd52 << 8) | wram->wcd51);
     // CALL(aFunction119eb4);
     // CALL(aFunction119ec2);
-    Function119ec2(Function119eb4(hl));
+    Function119ec2(Function119eb4(gMobileHTTP.sendData.data));
     // LD_A(0x40);
     // LD_addr_A(wcd89);
     wram->wcd89 = 0x40;
@@ -5459,7 +5472,7 @@ void Function1198f7(void){
     // LD_BC(0x200);
     // LD_A(MOBILEAPI_16);
     // JP(mFunction119e2b);
-    return Function119e2b(MOBILEAPI_16, &(mobile_api_data_s){.de = wram->w3_de00, .hl = wram->w3_d800, .bc = 0x200});
+    return Function119e2b(MOBILEAPI_16, &(mobile_api_data_s){.de = wram->w3_de00, .hl = &gMobileHTTP.sendData, .bc = 0x200});
 }
 
 void Function119937(void){
@@ -10288,17 +10301,17 @@ void Function11b295(void){
         // LD_C_A;
         // LD_A_addr(0xc608 + 1);
         // LD_B_A;
-        uint8_t* bc = GBToRAMAddr(wram->wc608[0] | (wram->wc608[1] << 8));
+        struct SpriteAnim *bc = wram->wSpriteAnim + wram->wc608[0];
         // LD_HL(0x0007);
         // ADD_HL_BC;
         // XOR_A_A;
         // LD_hl_A;
-        bc[0x0007] = 0;
+        bc->yOffset = 0;
         // LD_HL(0x0003);
         // ADD_HL_BC;
         // LD_E_hl;
         // FARCALL(aFlyFunction_GetMonIcon);
-        FlyFunction_GetMonIcon(bc[0x0003]);
+        FlyFunction_GetMonIcon(bc->tileID);
         // hlcoord(4, 14, wTilemap);
         // PUSH_HL;
         hl = coord(8, 4, wram->wTilemap);
@@ -10312,12 +10325,12 @@ void Function11b295(void){
         // LD_C_A;
         // LD_A_addr(0xc608 + 1);
         // LD_B_A;
-        uint8_t* bc = GBToRAMAddr(wram->wc608[0] | (wram->wc608[1] << 8));
+        struct SpriteAnim *bc = wram->wSpriteAnim + wram->wc608[0];
         // LD_HL(0x0007);
         // ADD_HL_BC;
         // LD_A(0x50);
         // LD_hl_A;
-        bc[0x0007] = 0x60;
+        bc->yOffset = 0x60;
         // hlcoord(4, 13, wTilemap);
         // PUSH_HL;
         hl = coord(8, 4, wram->wTilemap);

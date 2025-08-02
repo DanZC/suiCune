@@ -1136,7 +1136,7 @@ static const struct MenuHeader Menu_NewsMenu = {
 static void DebugMenu_News_DeleteNews(void) {
     OpenSRAM(MBANK(as5_aa72));
     gb_write(s5_aa72, 0);
-    ByteFill(GBToRAMAddr(s5_aa73), 0xc, 0x0);
+    ByteFill(GBToRAMAddr(sNewsId), 0xc, 0x0);
     CloseSRAM();
 }
 

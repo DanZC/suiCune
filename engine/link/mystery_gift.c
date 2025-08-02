@@ -108,16 +108,17 @@ static void DoMysteryGift_AddMysteryGiftPartnerID(void){
     // INC_hl;
     gb_write(sNumDailyMysteryGiftPartnerIDs, numIDs + 1);
     // LD_HL(sDailyMysteryGiftPartnerIDs);  // could have done "inc hl" instead
-    uint16_t* hl = (uint16_t*)GBToRAMAddr(sDailyMysteryGiftPartnerIDs);
+    uint8_t* hl = (uint8_t*)GBToRAMAddr(sDailyMysteryGiftPartnerIDs);
     // LD_E_A;
     // LD_D(0);
     // ADD_HL_DE;
     // ADD_HL_DE;
     // LD_A_addr(wMysteryGiftPartnerID);
     // LD_hli_A;
+    hl[numIDs*2] = LOW(wram->wMysteryGiftPartnerID);
     // LD_A_addr(wMysteryGiftPartnerID + 1);
+    hl[numIDs*2+1] = HIGH(wram->wMysteryGiftPartnerID);
     // LD_hl_A;
-    hl[numIDs] = wram->wMysteryGiftPartnerID;
     // JP(mCloseSRAM);
     CloseSRAM();
 }
