@@ -36,6 +36,7 @@
 #include "../engine/pokemon/move_mon.h"
 #include "../engine/pokedex/pokedex.h"
 #include "../util/network.h"
+#include "../util/serialize.h"
 #include "../charmap.h"
 #include <stddef.h>
 #include <string.h>
@@ -10933,7 +10934,7 @@ void Function11b483(void){
     // DEC_A;
     // AND_A_A;
     // IF_NZ goto loop9;
-    CopyBytes(&wram->wOfferMonMail, mail + (wram->wcd82[0] - 1) * MAIL_STRUCT_LENGTH, sizeof(wram->wOfferMonMail));
+    Deserialize_MailMsg(&wram->wOfferMonMail, mail + (wram->wcd82[0] - 1) * MAIL_STRUCT_LENGTH);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // JP(mFunction11ad8a);
@@ -11571,7 +11572,13 @@ void Function11b920(void){
     // LD_DE(0xc626);
     // LD_BC(8);
     // CALL(aCopyBytes);
-    CopyBytes(&wram->wOfferTrainerID, GBToRAMAddr(s5_a800 + 0x1f), 8);
+    const uint8_t* src = GBToRAMAddr(s5_a800 + 0x1f);
+    src = Deserialize_U16_LE(&wram->wOfferTrainerID, src);
+    src = Deserialize_U16_LE(&wram->wOfferSecretID, src);
+    wram->wOfferGender = *(src++);
+    src = Deserialize_Species(&wram->wOfferSpecies, src);
+    wram->wOfferReqGender = *(src++);
+    src = Deserialize_Species(&wram->wOfferReqSpecies, src);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // CALL(aFunction118000);
@@ -11590,7 +11597,16 @@ void Function11b93b(void){
     // LD_DE(0xc608);
     // LD_BC(0x008f);
     // CALL(aCopyBytes);
-    CopyBytes(&wram->wOfferGender, GBToRAMAddr(s5_a800 + 0x23), TRADE_CORNER_TRADE_REQUEST_LENGTH);
+    const uint8_t* src = GBToRAMAddr(s5_a800 + 0x23);
+    wram->wOfferGender = *(src++);
+    src = Deserialize_Species(&wram->wOfferSpecies, src);
+    wram->wOfferReqGender = *(src++);
+    src = Deserialize_Species(&wram->wOfferReqSpecies, src);
+    src = Deserialize_ByteBuffer(wram->wOfferMonSender, src, PLAYER_NAME_LENGTH - 1);
+    src = Deserialize_PartyMon(&wram->wOfferMon, src);
+    src = Deserialize_ByteBuffer(wram->wOfferMonOT, src, PLAYER_NAME_LENGTH - 1);
+    src = Deserialize_ByteBuffer(wram->wOfferMonNick, src, MON_NAME_LENGTH - 1);
+    src = Deserialize_MailMsg(&wram->wOfferMonMail, src);
     // CALL(aCloseSRAM);
     CloseSRAM();
 
@@ -11745,7 +11761,7 @@ void AddMobileMonToParty(const species_t* species, const struct PartyMon* mobile
         // LD_H_A;
         // LD_BC(MAIL_STRUCT_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(GBToRAMAddr(sPartyMail + MAIL_STRUCT_LENGTH * e), mail, MAIL_STRUCT_LENGTH);
+        Serialize_MailMsg((uint8_t *)GBToRAMAddr(sPartyMail + MAIL_STRUCT_LENGTH * e), mail);
 
         // CALL(aCloseSRAM);
         CloseSRAM();

@@ -1292,18 +1292,19 @@ static void Link_PrepPartyData_Gen2(void){
     // LD_B(PARTY_LENGTH);
     b = PARTY_LENGTH;
     // LD_DE(sPartyMail);
-    struct MailMsg* de2 = (struct MailMsg*)GBToRAMAddr(sPartyMail);
+    uint8_t* de2 = GBToRAMAddr(sPartyMail);
     // LD_HL(wLinkPlayerMailMessages);
     uint8_t* hl2 = wram->wLinkPlayerMailMessages;
 
     do {
     // loop4:
+        struct MailMsg msg = LoadMailMsg(de2);
         // PUSH_BC;
         // PUSH_HL;
         // PUSH_DE;
         // PUSH_HL;
         // FARCALL(aIsMailEuropean);
-        uint8_t c = IsMailEuropean(de2);
+        uint8_t c = IsMailEuropean(&msg);
         // POP_DE;
         // LD_A_C;
         // OR_A_A;
@@ -1328,7 +1329,7 @@ static void Link_PrepPartyData_Gen2(void){
         // POP_DE;
         // LD_HL(MAIL_STRUCT_LENGTH);
         // ADD_HL_DE;
-        de2++;
+        de2 += MAIL_STRUCT_LENGTH;
         // LD_D_H;
         // LD_E_L;
         // POP_HL;

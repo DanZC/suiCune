@@ -17,6 +17,7 @@
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/sprites.h"
 #include "../engine/events/poke_seer.h"
+#include "../util/serialize.h"
 
 // StagePlayerOfferMonDataForTrade
 void Function170000(void){
@@ -72,15 +73,16 @@ void Function17005a(void){
     // LD_A(0x5);
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(as5_a800));
-    struct OfferMon* offer = (struct OfferMon*)GBToRAMAddr(s5_a800 + 1);
+    struct OfferMon offer;
+    Deserialize_OfferMon(&offer, (const uint8_t *)GBToRAMAddr(s5_a800 + 1));
     // LD_A_addr(0xa824);
     // LD_addr_A(wOTTrademonSpecies);
-    wram->wOTTrademon.species = offer->species;
+    wram->wOTTrademon.species = offer.species;
     // LD_HL(0xa827);
     // LD_DE(wOTTrademonSenderName);
     // LD_BC(NAME_LENGTH_JAPANESE - 1);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOTTrademon.senderName, offer->sender, PLAYER_NAME_LENGTH - 1);
+    CopyBytes(wram->wOTTrademon.senderName, offer.sender, PLAYER_NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_de_A;
     wram->wOTTrademon.senderName[PLAYER_NAME_LENGTH - 1] = 0x50;
@@ -88,7 +90,7 @@ void Function17005a(void){
     // LD_DE(wOTTrademonOTName);
     // LD_BC(NAME_LENGTH_JAPANESE - 1);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOTTrademon.otName, offer->OT, PLAYER_NAME_LENGTH - 1);
+    CopyBytes(wram->wOTTrademon.otName, offer.OT, PLAYER_NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_de_A;
     wram->wOTTrademon.otName[PLAYER_NAME_LENGTH - 1] = 0x50;
@@ -97,18 +99,18 @@ void Function17005a(void){
     // LD_addr_A(wOTTrademonDVs);
     // LD_A_hl;
     // LD_addr_A(wOTTrademonDVs + 1);
-    wram->wPlayerTrademon.dvs = offer->mon.mon.DVs;
+    wram->wPlayerTrademon.dvs = offer.mon.mon.DVs;
     // LD_HL(0xa832);
     // LD_A_hli;
     // LD_addr_A(wOTTrademonID);
     // LD_A_hl;
     // LD_addr_A(wOTTrademonID + 1);
-    wram->wPlayerTrademon.id = offer->mon.mon.id;
+    wram->wPlayerTrademon.id = offer.mon.mon.id;
     // LD_BC(0xa82c);
     // FARCALL(aGetCaughtGender);
     // LD_A_C;
     // LD_addr_A(wOTTrademonCaughtData);
-    wram->wOTTrademon.caughtData = GetCaughtGender(&offer->mon.mon);
+    wram->wOTTrademon.caughtData = GetCaughtGender(&offer.mon.mon);
     // LD_A_addr(wcd81);
     // LD_addr_A(wc74e);
     wram->wc74e[0] = wram->wcd81[0];

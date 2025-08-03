@@ -48,6 +48,7 @@ enum {
     STRUC_MAPOBJECT,
     STRUC_BOX,
     STRUC_MAILMSG,
+    STRUC_OFFERMON,
     STRUC_OPTIONSDATA,
     STRUC_CURMAPDATA,
     STRUC_PLAYERDATA,
@@ -219,6 +220,22 @@ const struct SerialField Struc_MailMsg[] = {
     FLD(TY_U16LE, authorID),
     FLD(TY_SPECIES, species),
     FLD(TY_U8, type),
+};
+#undef FLD_TYPE
+
+#define FLD_TYPE struct OfferMon
+const struct SerialField Struc_OfferMon[] = {
+    FLD_ARR_(TY_U8, email),
+    FLD(TY_U16LE, trainerID),
+    FLD(TY_U16LE, secretID),
+    FLD(TY_U8, gender),
+    FLD(TY_SPECIES, species),
+    FLD(TY_U8, reqGender),
+    FLD(TY_SPECIES, reqSpecies),
+    FLD_ARR_(TY_U8, sender),
+    FLD_STR(STRUC_PARTYMON, mon),
+    FLD_ARR_(TY_U8, OT),
+    FLD_ARR_(TY_U8, Nick),
 };
 #undef FLD_TYPE
 
@@ -674,6 +691,7 @@ const struct SerialStruct Structs[] = {
     serial_struct(STRUC_MAPOBJECT, MapObject),
     serial_struct(STRUC_BOX, Box),
     serial_struct(STRUC_MAILMSG, MailMsg),
+    serial_struct(STRUC_OFFERMON, OfferMon),
     serial_struct(STRUC_OPTIONSDATA, OptionsData),
     serial_struct(STRUC_CURMAPDATA, CurMapData),
     serial_struct(STRUC_PLAYERDATA, PlayerData),
@@ -836,6 +854,10 @@ uint8_t* Serialize_Box(uint8_t* dest, const struct Box* box) {
 
 uint8_t* Serialize_MailMsg(uint8_t* dest, const struct MailMsg* mail) {
     return Serialize_Struct(dest, Structs + (STRUC_MAILMSG), mail);
+}
+
+uint8_t* Serialize_OfferMon(uint8_t* dest, const struct OfferMon* mail) {
+    return Serialize_Struct(dest, Structs + (STRUC_OFFERMON), mail);
 }
 
 uint8_t* Serialize_OptionsData(uint8_t* dest, const struct OptionsData* data) {
@@ -1007,6 +1029,10 @@ const uint8_t* Deserialize_Box(struct Box* box, const uint8_t* src) {
 
 const uint8_t* Deserialize_MailMsg(struct MailMsg* mail, const uint8_t* src) {
     return Deserialize_Struct(mail, Structs + STRUC_MAILMSG, src);
+}
+
+const uint8_t* Deserialize_OfferMon(struct OfferMon* mon, const uint8_t* src) {
+    return Deserialize_Struct(mon, Structs + STRUC_OFFERMON, src);
 }
 
 const uint8_t* Deserialize_OptionsData(struct OptionsData* data, const uint8_t* src) {
