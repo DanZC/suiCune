@@ -387,6 +387,7 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
     if(gPlayer.playerState == PLAYER_SURF || gPlayer.playerState == PLAYER_SURF_PIKA)
         return DoPlayerMovement_TrySurf();
     
+#if DEBUG
     // Athletic, wall phasing, blazing speed, running shoes.
     if(hram.hJoyDown & B_BUTTON) {
         uint8_t npc = DoPlayerMovement_CheckNPC();
@@ -400,6 +401,7 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
             return u8_flag(0, false);
         return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
     }
+#endif
 
     // CALL(aDoPlayerMovement_CheckLandPerms);
     // IF_C goto bump;
@@ -424,7 +426,11 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
 //  Downhill riding is slower when not moving down.
     // CALL(aDoPlayerMovement_BikeCheck);
     // IF_NZ goto walk;
+#if !DEBUG
+    if(!DoPlayerMovement_BikeCheck() && ((hram.hJoyDown & B_BUTTON) == 0))
+#else
     if(!DoPlayerMovement_BikeCheck())
+#endif
         return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_WALK), .flag = true};
 
     // LD_HL(wBikeFlags);
