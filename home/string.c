@@ -56,5 +56,5 @@ void v_InitString(uint8_t* hl, const uint8_t* de, uint8_t len){
     // INC_C;
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes(hl, de, c + 1);
+    CopyBytes(hl, de, len + 1);
 }
