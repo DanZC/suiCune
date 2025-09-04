@@ -373,9 +373,11 @@ static u8_flag_s DoPlayerMovement_CheckTurning(void) {
     // RET;
 }
 
+#if DEBUG
 static bool DoPlayerMovement_CheckFacingOffEdgeOfMap(void) {
     return CheckFacingOffEdgeOfMap();
 }
+#endif
 
 static u8_flag_s DoPlayerMovement_TryStep(void) {
 //  Surfing actually calls .TrySurf directly instead of passing through here.
