@@ -938,7 +938,7 @@ void Function48304(void){
         uint8_t a = ScrollingMenu();
         // LD_DE(0x629);
         // CALL(aFunction48383);
-        cont = Function48383(a, 0x629);
+        cont = Function48383(a, (6 << 8) | NUM_REGION_CODES);
         // IF_C goto asm_48348;
     } while(cont);
     // LD_D_A;
