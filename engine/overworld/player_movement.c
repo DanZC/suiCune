@@ -939,7 +939,7 @@ struct PlayerAction {
     uint8_t* const ptr;
 };
 
-#define player_action(_walk, _face, _x, _y, _ptr) {.dir=_walk, .facing=_face, .xMove=_x, .yMove=_y, .ptr=wram_ptr(_ptr)}
+#define player_action(_walk, _face, _x, _y, _ptr) {.dir=_walk, .facing=_face, .xMove=_x, .yMove=_y, .ptr=_ptr}
 //: MACRO
 // ; walk direction, facing, x movement, y movement, tile collision pointer
 //     db \1, \2, \3, \4
@@ -950,13 +950,13 @@ struct PlayerAction {
 static void DoPlayerMovement_GetAction(void) {
     static const struct PlayerAction action_table[] = {
     // action_table_1:
-        player_action(STANDING, FACE_CURRENT, 0, 0, wPlayerStandingTile),
+        player_action(STANDING, FACE_CURRENT, 0, 0, &gPlayer.playerStruct.nextTile),
 
     // action_table_1_end:
-        player_action(RIGHT, FACE_RIGHT, 1, 0, wTileRight),
-        player_action(LEFT, FACE_LEFT, -1, 0, wTileLeft),
-        player_action(UP, FACE_UP, 0, -1, wTileUp),
-        player_action(DOWN, FACE_DOWN, 0, 1, wTileDown),
+        player_action(RIGHT, FACE_RIGHT, 1, 0, wram_ptr(wTileRight)),
+        player_action(LEFT, FACE_LEFT, -1, 0, wram_ptr(wTileLeft)),
+        player_action(UP, FACE_UP, 0, -1, wram_ptr(wTileUp)),
+        player_action(DOWN, FACE_DOWN, 0, 1, wram_ptr(wTileDown)),
     };
 
     // LD_HL(mDoPlayerMovement_action_table);
