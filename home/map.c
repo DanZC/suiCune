@@ -2499,7 +2499,7 @@ void GetMovementPermissions(void){
 //  Return map coordinates in (d, e) and tile id in a
 //  of the tile the player is facing.
 struct CoordsTileId GetFacingTileCoord(void){
-    const struct {
+    static const struct {
         int8_t x;
         int8_t y;
         uint8_t* const ptr;

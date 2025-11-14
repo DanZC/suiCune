@@ -2078,7 +2078,7 @@ void PlacePackGFX(void){
 }
 
 void DrawPocketName(uint8_t pocket){
-    const char tilemap[] = "gfx/pack/pack_menu.tilemap";
+    static const char tilemap[] = "gfx/pack/pack_menu.tilemap";
 //   //  5x12
 //  the 5x3 pieces correspond to *_POCKET constants
 // INCBIN "gfx/pack/pack_menu.tilemap"

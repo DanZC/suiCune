@@ -244,35 +244,51 @@ void StubbedTrainerRankings_EndSlotsWinStreak(void){
     // RET;
 }
 
-void StubbedTrainerRankings_AddToSlotsPayouts(void){
-    RET;
-    LD_A(BANK(sTrainerRankingTotalSlotsPayouts));
-    CALL(aOpenSRAM);
-    LD_HL(sTrainerRankingTotalSlotsPayouts + 3);
-    LD_A_E;
-    ADD_A_hl;
-    LD_hld_A;
-    LD_A_D;
-    ADC_A_hl;
-    LD_hld_A;
-    IF_NC goto done;
-    INC_hl;
-    IF_NZ goto done;
-    DEC_HL;
-    INC_hl;
-    IF_NZ goto done;
-    LD_A(0xff);
-    LD_hli_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hl_A;
+void StubbedTrainerRankings_AddToSlotsPayouts(uint16_t de){
+    // RET;
+    // LD_A(BANK(sTrainerRankingTotalSlotsPayouts));
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(asTrainerRankingTotalSlotsPayouts));
+    // LD_HL(sTrainerRankingTotalSlotsPayouts + 3);
+    uint8_t* hl = GBToRAMAddr(sTrainerRankingTotalBattlePayouts);
+    // LD_A_E;
+    // ADD_A_hl;
+    uint16_t temp = hl[3] + LOW(de);
+    // LD_hld_A;
+    hl[3] = temp & 0xff;
+    // LD_A_D;
+    // ADC_A_hl;
+    temp = hl[2] + HIGH(de) + ((temp & 0xff00) > 0)? 1: 0;
+    // LD_hld_A;
+    hl[2] = temp & 0xff;
+    // IF_NC goto done;
+    if(temp & 0xff00) {
+        // INC_hl;
+        // IF_NZ goto done;
+        if(++hl[1] == 0) {
+            // DEC_HL;
+            // INC_hl;
+            // IF_NZ goto done;
+            if(++hl[0] == 0) {
+                // LD_A(0xff);
+                // LD_hli_A;
+                // LD_hli_A;
+                // LD_hli_A;
+                // LD_hl_A;
+                hl[0] = 0xff;
+                hl[1] = 0xff;
+                hl[2] = 0xff;
+                hl[3] = 0xff;
+            }
+        }
+    }
 
-
-done:
-    CALL(aUpdateTrainerRankingsChecksum);
-    CALL(aCloseSRAM);
-    RET;
-
+// done:
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // CALL(aCloseSRAM);
+    CloseSRAM();
+    // RET;
 }
 
 void StubbedTrainerRankings_AddToBattlePayouts(const uint8_t* bc){

@@ -3,7 +3,7 @@ void StubbedTrainerRankings_MagikarpLength(void);
 void StubbedTrainerRankings_BugContestScore(uint16_t score);
 void StubbedTrainerRankings_AddToSlotsWinStreak(void);
 void StubbedTrainerRankings_EndSlotsWinStreak(void);
-void StubbedTrainerRankings_AddToSlotsPayouts(void);
+void StubbedTrainerRankings_AddToSlotsPayouts(uint16_t de);
 void StubbedTrainerRankings_AddToBattlePayouts(const uint8_t* bc);
 void StubbedTrainerRankings_StepCount(void);
 void StubbedTrainerRankings_BattleTowerWins(void);

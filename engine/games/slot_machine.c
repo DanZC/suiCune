@@ -2729,6 +2729,7 @@ uint16_t Slots_GetPayout(void){
     gSlotData.payout = NativeToBigEndian16(PayoutTable[gSlotData.slotMatched / 4]);
     // LD_D_A;
     // FARCALL(aStubbedTrainerRankings_AddToSlotsPayouts);
+    StubbedTrainerRankings_AddToSlotsPayouts(PayoutTable[gSlotData.slotMatched / 4]);
     // RET;
     return gSlotData.payout;
 }

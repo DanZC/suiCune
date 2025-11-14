@@ -31,6 +31,7 @@
 #include "../../data/text/common.h"
 #include "../../data/collision/field_move_blocks.h"
 #include "../../util/scripting.h"
+#include "../../mobile/mobile_41.h"
 
 // field move data
 static struct FieldMoveData {
@@ -643,6 +644,7 @@ bool SurfFromMenuScript(script_s* s){
 
 static void UsedSurfScript_stubbed_fn(void) {
     // FARCALL(aStubbedTrainerRankings_Surf);
+    StubbedTrainerRankings_Surf();
     // RET;
 }
 
@@ -704,7 +706,7 @@ static uint8_t GetSurfType(void){
 //  Return true (carry) if a tile permission prevents you
 //  from moving in the direction you're facing.
 static bool CheckDirection(void){
-    const uint8_t Directions[] = {
+    static const uint8_t Directions[] = {
         FACE_DOWN,
         FACE_UP,
         FACE_LEFT,
@@ -923,7 +925,7 @@ static uint8_t FlyFunction_FailFly(void) {
 }
 
 void FlyFunction(void){
-    const field_move_fn_t Jumptable[] = {
+    static const field_move_fn_t Jumptable[] = {
         FlyFunction_TryFly,
         FlyFunction_DoFly,
         FlyFunction_FailFly,
@@ -1089,7 +1091,7 @@ bool Script_CantDoWaterfall(script_s* s){
 }
 
 bool Script_AskWaterfall(script_s* s){
-    const txt_cmd_s AskWaterfallText[] = {
+    static const txt_cmd_s AskWaterfallText[] = {
         text_far(v_AskWaterfallText)
         text_end
     };
@@ -1269,7 +1271,7 @@ static uint8_t EscapeRopeOrDig_FailDig(void) {
 }
 
 void EscapeRopeOrDig(uint8_t escapeType){
-    const field_move_fn_t DigTable[] = {
+    static const field_move_fn_t DigTable[] = {
         EscapeRopeOrDig_CheckCanDig,
         EscapeRopeOrDig_DoDig,
         EscapeRopeOrDig_FailDig,
@@ -2149,7 +2151,7 @@ static uint8_t FishFunction_FishNoFish(void) {
 }
 
 void FishFunction(uint8_t rod){
-    const field_move_fn_t Jumptable[] = {
+    static const field_move_fn_t Jumptable[] = {
         FishFunction_TryFish,
         FishFunction_FishNoBite,
         FishFunction_FishGotSomething,
@@ -2505,7 +2507,7 @@ bool Script_GetOffBike_Register(script_s* s){
 }
 
 bool Script_CantGetOffBike(script_s* s){
-    const txt_cmd_s CantGetOffBikeText[] = {
+    static const txt_cmd_s CantGetOffBikeText[] = {
         text_far(v_CantGetOffBikeText)
         text_end
     };
