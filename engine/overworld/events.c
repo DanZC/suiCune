@@ -2073,7 +2073,7 @@ static bool DoBikeStep(void){
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // IF_NZ goto NoCall;
-    if(GetMapPhoneService())
+    if(!GetMapPhoneService())
         return false;
 
 // Check the bike step count and check whether we've

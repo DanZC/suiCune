@@ -201,7 +201,7 @@ u8_flag_s CheckPhoneCall(void){
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // IF_NZ goto no_call;
-    if(GetMapPhoneService() != 0)
+    if(!GetMapPhoneService())
         return u8_flag(0, false);
 
     // CALL(aGetAvailableCallers);
@@ -448,7 +448,7 @@ void MakePhoneCallFromPokegear(uint8_t caller){
     // LD_A_addr(wLinkMode);
     // AND_A_A;
     // IF_NZ goto OutOfArea;
-    if(wram->wLinkMode != LINK_NULL || GetMapPhoneService() != 0) {
+    if(wram->wLinkMode != LINK_NULL || !GetMapPhoneService()) {
     OutOfArea:
         // LD_B(BANK(aLoadOutOfAreaScript));
         // LD_DE(mLoadOutOfAreaScript);

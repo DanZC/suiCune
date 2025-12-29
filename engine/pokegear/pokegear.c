@@ -570,8 +570,8 @@ static void InitPokegearTilemap_PlacePhoneBars(void) {
     *(hl++) = tile;
 
     // CALL(aGetMapPhoneService);
-    uint8_t srv = GetMapPhoneService();
-    if(srv != 0)
+    bool srv = GetMapPhoneService();
+    if(!srv)
     {
         return;
     }
@@ -1415,7 +1415,7 @@ static void PokegearPhone_MakePhoneCall(void){
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // IF_NZ goto no_service;
-    if(!GetMapPhoneService()) {
+    if(GetMapPhoneService()) {
         // LD_HL(wOptions);
         // RES_hl(NO_TEXT_SCROLL);
         bit_reset(gOptions.options, NO_TEXT_SCROLL);

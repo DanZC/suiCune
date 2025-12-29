@@ -104,7 +104,7 @@ uint8_t GetAnyMapTileset(uint8_t group, uint8_t map);
 uint8_t GetWorldMapLocation(uint8_t group, uint8_t map);
 uint16_t GetMapMusic(void);
 uint8_t GetMapTimeOfDay(void);
-uint8_t GetMapPhoneService(void);
+bool GetMapPhoneService(void);
 uint8_t GetPhoneServiceTimeOfDayByte(void);
 uint8_t GetFishingGroup(void);
 void LoadMapTileset(void);

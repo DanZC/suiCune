@@ -110,7 +110,7 @@ void MomTriesToBuySomething(void){
     // CALL(aGetMapPhoneService);
     // AND_A_A;
     // RET_NZ ;
-    if(GetMapPhoneService())
+    if(!GetMapPhoneService())
         return;
     // XOR_A_A;
     // LD_addr_A(wWhichMomItemSet);
@@ -386,12 +386,12 @@ void DummyPredef3A_DummyData(void){
 }
 
 void DummyPredef3A(void){
-    RET;
+    // RET;
 
 }
 
 void DummyPredef3A_DummyFunction(void){
 //  //  unreferenced
-    RET;
+    // RET;
 
 }

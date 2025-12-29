@@ -3217,9 +3217,10 @@ uint8_t GetMapTimeOfDay(void){
 }
 
 // Returns whether the phone service is available
-// 0: Phone service available
-uint8_t GetMapPhoneService(void){
-    return (GetPhoneServiceTimeOfDayByte() & 0xF0) >> 4;
+// true: Phone service available
+bool GetMapPhoneService(void){
+    // If the upper nibble of the phone service tod byte is 0, phone service is available.
+    return ((GetPhoneServiceTimeOfDayByte() & 0xF0) >> 4) == 0;
 }
 
 uint8_t GetPhoneServiceTimeOfDayByte(void){
