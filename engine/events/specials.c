@@ -27,6 +27,7 @@
 #include "../../home/names.h"
 #include "../../home/text.h"
 #include "../../home/pokedex_flags.h"
+#include "../../home/tilemap.h"
 #include "../../data/text/common.h"
 
 //  Run script special de.
@@ -90,29 +91,35 @@ void GameCornerPrizeMonCheckDex(void){
 }
 
 void UnusedSetSeenMon(void){
-    LD_A_addr(wScriptVar);
-    DEC_A;
-    CALL(aSetSeenMon);
-    RET;
-
+    // LD_A_addr(wScriptVar);
+    // DEC_A;
+    // CALL(aSetSeenMon);
+    SetSeenMon(wram->wScriptVar - 1);
+    // RET;
 }
 
 void FindPartyMonAboveLevel(void){
-    LD_A_addr(wScriptVar);
-    LD_B_A;
-    FARCALL(av_FindPartyMonAboveLevel);
-    JR_Z (mFoundNone);
-    JR(mFoundOne);
-
+    // LD_A_addr(wScriptVar);
+    // LD_B_A;
+    uint8_t level = wram->wScriptVar;
+    // FARCALL(av_FindPartyMonAboveLevel);
+    // JR_Z (mFoundNone);
+    if(v_FindPartyMonAboveLevel(level) == 0)
+        return FoundNone();
+    // JR(mFoundOne);
+    return FoundOne();
 }
 
 void FindPartyMonAtLeastThatHappy(void){
-    LD_A_addr(wScriptVar);
-    LD_B_A;
-    FARCALL(av_FindPartyMonAtLeastThatHappy);
-    JR_Z (mFoundNone);
-    JR(mFoundOne);
-
+    // LD_A_addr(wScriptVar);
+    // LD_B_A;
+    uint8_t happiness = wram->wScriptVar;
+    // FARCALL(av_FindPartyMonAtLeastThatHappy);
+    // JR_Z (mFoundNone);
+    if(v_FindPartyMonAtLeastThatHappy(happiness) == 0)
+        return FoundNone();
+    // JR(mFoundOne);
+    return FoundOne();
 }
 
 void FindPartyMonThatSpecies(void){
@@ -326,12 +333,15 @@ void CardFlip(void){
 }
 
 void UnusedMemoryGame(void){
-    CALL(aCheckCoinsAndCoinCase);
-    RET_C ;
-    LD_A(BANK(av_MemoryGame));
-    LD_HL(mv_MemoryGame);
-    CALL(aStartGameCornerGame);
-    RET;
+    // CALL(aCheckCoinsAndCoinCase);
+    // RET_C ;
+    if(!CheckCoinsAndCoinCase())
+        return;
+    // LD_A(BANK(av_MemoryGame));
+    // LD_HL(mv_MemoryGame);
+    // CALL(aStartGameCornerGame);
+    // StartGameCornerGame(v_MemoryGame); // TODO: Convert beta memory game?
+    // RET;
 
 }
 
@@ -398,10 +408,11 @@ bool CheckCoinsAndCoinCase(void){
 }
 
 void ClearBGPalettesBufferScreen(void){
-    CALL(aClearBGPalettes);
-    CALL(aBufferScreen);
-    RET;
-
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes();
+    // CALL(aBufferScreen);
+    BufferScreen();
+    // RET;
 }
 
 void ScriptReturnCarry(bool carry){
@@ -418,11 +429,12 @@ void ScriptReturnCarry(bool carry){
 }
 
 void UnusedCheckUnusedTwoDayTimer(void){
-    FARCALL(aCheckUnusedTwoDayTimer);
-    LD_A_addr(wUnusedTwoDayTimer);
-    LD_addr_A(wScriptVar);
-    RET;
-
+    // FARCALL(aCheckUnusedTwoDayTimer);
+    CheckUnusedTwoDayTimer();
+    // LD_A_addr(wUnusedTwoDayTimer);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = gPlayer.unusedTwoDayTimer;
+    // RET;
 }
 
 void ActivateFishingSwarm(void){

@@ -1,18 +1,18 @@
 #include "../../constants.h"
 #include "search2.h"
 
-void v_FindPartyMonAboveLevel(void){
-    LD_HL(wPartyMon1Level);
-    CALL(aFindAboveLevel);
-    RET;
-
+uint8_t v_FindPartyMonAboveLevel(uint8_t level){
+    // LD_HL(wPartyMon1Level);
+    // CALL(aFindAboveLevel);
+    // RET;
+    return FindAboveLevel(gPokemon.partyMon, level);
 }
 
-void v_FindPartyMonAtLeastThatHappy(void){
-    LD_HL(wPartyMon1Happiness);
-    CALL(aFindAtLeastThatHappy);
-    RET;
-
+uint8_t v_FindPartyMonAtLeastThatHappy(uint8_t happiness){
+    // LD_HL(wPartyMon1Happiness);
+    // CALL(aFindAtLeastThatHappy);
+    // RET;
+    return FindAtLeastThatHappy(gPokemon.partyMon, happiness);
 }
 
 u8_flag_s v_FindPartyMonThatSpecies(species_t b){
@@ -53,76 +53,87 @@ bool v_FindPartyMonThatSpeciesYourTrainerID(species_t b){
     return false;
 }
 
-void FindAtLeastThatHappy(void){
 //  Sets the bits for the Pokemon that have a happiness greater than or equal to b.
 //  The lowest bits are used.  Sets z if no Pokemon in your party is at least that happy.
-    LD_C(0x0);
-    LD_A_addr(wPartyCount);
-    LD_D_A;
+uint8_t FindAtLeastThatHappy(struct PartyMon* bc, uint8_t happiness){
+    // LD_C(0x0);
+    uint8_t c = 0x0;
+    // LD_A_addr(wPartyCount);
+    // LD_D_A;
 
-loop:
-    LD_A_D;
-    DEC_A;
-    PUSH_HL;
-    PUSH_BC;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    POP_BC;
-    LD_A_B;
-    CP_A_hl;
-    POP_HL;
-    IF_Z goto greater_equal;
-    IF_NC goto lower;
+    for(uint32_t i = gPokemon.partyCount; i > 0; --i) {
+    // loop:
+        // LD_A_D;
+        // DEC_A;
+        // PUSH_HL;
+        // PUSH_BC;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // POP_BC;
+        // LD_A_B;
+        // CP_A_hl;
+        // POP_HL;
+        // IF_Z goto greater_equal;
+        // IF_NC goto lower;
+        if(bc[i-1].mon.happiness >= happiness) {
+        // greater_equal:
+            // LD_A_C;
+            // OR_A(0x1);
+            // LD_C_A;
+            c |= 0x1;
+        }
 
-
-greater_equal:
-    LD_A_C;
-    OR_A(0x1);
-    LD_C_A;
-
-
-lower:
-    SLA_C;
-    DEC_D;
-    IF_NZ goto loop;
-    CALL(aRetroactivelyIgnoreEggs);
-    LD_A_C;
-    AND_A_A;
-    RET;
-
+    // lower:
+        // SLA_C;
+        c <<= 1;
+        // DEC_D;
+        // IF_NZ goto loop;
+    }
+    // CALL(aRetroactivelyIgnoreEggs);
+    // LD_A_C;
+    // AND_A_A;
+    // RET;
+    return RetroactivelyIgnoreEggs(c);
 }
 
-void FindAboveLevel(void){
-    LD_C(0x0);
-    LD_A_addr(wPartyCount);
-    LD_D_A;
+uint8_t FindAboveLevel(struct PartyMon* bc, uint8_t level){
+    // LD_C(0x0);
+    uint8_t c = 0x0;
+    // LD_A_addr(wPartyCount);
+    // LD_D_A;
 
-loop:
-    LD_A_D;
-    DEC_A;
-    PUSH_HL;
-    PUSH_BC;
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    POP_BC;
-    LD_A_B;
-    CP_A_hl;
-    POP_HL;
-    IF_C goto greater;
-    LD_A_C;
-    OR_A(0x1);
-    LD_C_A;
+    for(uint32_t i = gPokemon.partyCount; i > 0; --i) {
+    // loop:
+        // LD_A_D;
+        // DEC_A;
+        // PUSH_HL;
+        // PUSH_BC;
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        // CALL(aAddNTimes);
+        // POP_BC;
+        // LD_A_B;
+        // CP_A_hl;
+        // POP_HL;
+        // IF_C goto greater;
+        if(bc[i-1].mon.level >= level) {
+            // LD_A_C;
+            // OR_A(0x1);
+            // LD_C_A;
+            c |= 0x1;
+        }
 
-
-greater:
-    SLA_C;
-    DEC_D;
-    IF_NZ goto loop;
-    CALL(aRetroactivelyIgnoreEggs);
-    LD_A_C;
-    AND_A_A;
-    RET;
-
+    // greater:
+        // SLA_C;
+        c <<= 1;
+        // DEC_D;
+        // IF_NZ goto loop;
+    }
+    // CALL(aRetroactivelyIgnoreEggs);
+    c = RetroactivelyIgnoreEggs(c);
+    // LD_A_C;
+    // AND_A_A;
+    // RET;
+    return c;
 }
 
 //  Find species b in your party.
@@ -154,23 +165,28 @@ u8_flag_s FindThatSpecies(species_t b){
     // RET;
 }
 
-void RetroactivelyIgnoreEggs(void){
-    LD_E(0b11111110);
-    LD_HL(wPartySpecies);
+uint8_t RetroactivelyIgnoreEggs(uint8_t c){
+    // LD_E(0b11111110);
+    uint8_t e = 0b11111110;
+    // LD_HL(wPartySpecies);
+    for(uint32_t i = 0; i < lengthof(gPokemon.partySpecies) && gPokemon.partySpecies[i] != 0xff; ++i) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(-1);
+        // RET_Z ;
+        // CP_A(EGG);
+        // IF_NZ goto skip_notegg;
+        if(gPokemon.partySpecies[i] == EGG) {
+            // LD_A_C;
+            // AND_A_E;
+            // LD_C_A;
+            c &= e;
+        }
 
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    RET_Z ;
-    CP_A(EGG);
-    IF_NZ goto skip_notegg;
-    LD_A_C;
-    AND_A_E;
-    LD_C_A;
-
-
-skip_notegg:
-    RLC_E;
-    goto loop;
-
+    // skip_notegg:
+        // RLC_E;
+        e = RotateLeftC8(e);
+        // goto loop;
+    }
+    return c;
 }

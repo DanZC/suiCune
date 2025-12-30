@@ -39,6 +39,7 @@
 #include "../../engine/overworld/warp_connection.h"
 #include "../../engine/overworld/decorations.h"
 #include "../../engine/overworld/player_object.h"
+#include "../../engine/overworld/time.h"
 #include "../../engine/tilesets/timeofday_pals.h"
 #include "../../engine/pokemon/health.h"
 #include "../../engine/pokemon/caught_data.h"
@@ -101,8 +102,8 @@ void (*const SpecialsPointers[])(void) = {
     add_special(UnownPuzzle),
     add_special(SlotMachine),
     add_special(CardFlip),
-    // add_special(UnusedMemoryGame), // unused
-    // add_special(ClearBGPalettesBufferScreen), // unused
+    add_special(UnusedMemoryGame), // unused
+    add_special(ClearBGPalettesBufferScreen), // unused
     add_special(FadeOutPalettes),
     add_special(BattleTowerFade),
     add_special(FadeBlackQuickly),
@@ -121,11 +122,11 @@ void (*const SpecialsPointers[])(void) = {
     add_special(RestartMapMusic), // bank 0
     add_special(HealMachineAnim),
     add_special(SurfStartStep),
-    // add_special(FindPartyMonAboveLevel), // unused
-    // add_special(FindPartyMonAtLeastThatHappy), // unused
+    add_special(FindPartyMonAboveLevel), // unused
+    add_special(FindPartyMonAtLeastThatHappy), // unused
     add_special(FindPartyMonThatSpecies),
     add_special(FindPartyMonThatSpeciesYourTrainerID),
-    // add_special(UnusedCheckUnusedTwoDayTimer), // unused
+    add_special(UnusedCheckUnusedTwoDayTimer), // unused
     add_special(DayCareMon1),
     add_special(DayCareMon2),
     add_special(SelectRandomBugContestContestants),
@@ -208,7 +209,7 @@ void (*const SpecialsPointers[])(void) = {
     add_special(BuenasPassword),
     add_special(BuenaPrize),
     add_special(GiveDratini),
-    // add_special(SampleKenjiBreakCountdown),
+    add_special(SampleKenjiBreakCountdown),
     add_special(BeastsCheck),
     add_special(MonCheck),
     add_special(SetPlayerPalette),

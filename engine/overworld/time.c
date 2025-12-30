@@ -320,45 +320,51 @@ void CheckPokerusTick(void){
     // RET;
 }
 
-void SetUnusedTwoDayTimer(void){
 //  //  unreferenced
-    LD_A(2);
-    LD_HL(wUnusedTwoDayTimer);
-    LD_hl_A;
-    CALL(aUpdateTime);
-    LD_HL(wUnusedTwoDayTimerStartDate);
-    CALL(aCopyDayToHL);
-    RET;
+void SetUnusedTwoDayTimer(void){
+    // LD_A(2);
+    // LD_HL(wUnusedTwoDayTimer);
+    // LD_hl_A;
+    gPlayer.unusedTwoDayTimer = 2;
+    // CALL(aUpdateTime);
+    UpdateTime();
+    // LD_HL(wUnusedTwoDayTimerStartDate);
+    // CALL(aCopyDayToHL);
+    CopyDayToHL(&gPlayer.unusedTwoDayTimerStartDate);
+    // RET;
 
 }
 
 void CheckUnusedTwoDayTimer(void){
-    LD_HL(wUnusedTwoDayTimerStartDate);
-    CALL(aCalcDaysSince);
-    CALL(aGetDaysSince);
-    LD_HL(wUnusedTwoDayTimer);
-    CALL(aUpdateTimeRemaining);
-    RET;
-
+    // LD_HL(wUnusedTwoDayTimerStartDate);
+    // CALL(aCalcDaysSince);
+    CalcDaysSince(&gPlayer.unusedTwoDayTimerStartDate);
+    // CALL(aGetDaysSince);
+    // LD_HL(wUnusedTwoDayTimer);
+    // CALL(aUpdateTimeRemaining);
+    UpdateTimeRemaining(&gPlayer.unusedTwoDayTimer, GetDaysSince());
+    // RET;
 }
 
 void UnusedSetSwarmFlag(void){
 //  //  unreferenced
-    LD_HL(wDailyFlags1);
-    SET_hl(DAILYFLAGS1_FISH_SWARM_F);
-    RET;
-
+    // LD_HL(wDailyFlags1);
+    // SET_hl(DAILYFLAGS1_FISH_SWARM_F);
+    bit_set(gPlayer.dailyFlags1, DAILYFLAGS1_FISH_SWARM_F);
+    // RET;
 }
 
-void UnusedCheckSwarmFlag(void){
+bool UnusedCheckSwarmFlag(void){
 //  //  unreferenced
-    AND_A_A;
-    LD_HL(wDailyFlags1);
-    BIT_hl(DAILYFLAGS1_FISH_SWARM_F);
-    RET_NZ ;
-    SCF;
-    RET;
-
+    // AND_A_A;
+    // LD_HL(wDailyFlags1);
+    // BIT_hl(DAILYFLAGS1_FISH_SWARM_F);
+    // RET_NZ ;
+    if(bit_test(gPlayer.dailyFlags1, DAILYFLAGS1_FISH_SWARM_F))
+        return true;
+    // SCF;
+    // RET;
+    return false;
 }
 
 static uint8_t RestartLuckyNumberCountdown_GetDaysUntilNextFriday(void) {
@@ -522,10 +528,10 @@ uint8_t GetDaysSince(void){
     return wram->wDaysSince;
 }
 
+// DEPRECATED: Just return 0xff
 void GetTimeElapsed_ExceedsUnitLimit(void){
-    LD_A(-1);
-    RET;
-
+    // LD_A(-1);
+    // RET;
 }
 
 void CalcDaysSince(uint8_t* hl){
@@ -534,12 +540,12 @@ void CalcDaysSince(uint8_t* hl){
     return v_CalcDaysSince(hl, 0);
 }
 
-void CalcHoursDaysSince(void){
 //  //  unreferenced
-    INC_HL;
-    XOR_A_A;
-    JR(mv_CalcHoursDaysSince);
-
+void CalcHoursDaysSince(uint8_t *hl){
+    // INC_HL;
+    // XOR_A_A;
+    // JR(mv_CalcHoursDaysSince);
+    return v_CalcHoursDaysSince(hl + 1, false);
 }
 
 void CalcMinsHoursDaysSince(uint8_t* hl){
