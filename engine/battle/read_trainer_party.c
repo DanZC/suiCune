@@ -551,15 +551,15 @@ uint8_t* CopyTrainerName(const uint8_t* hl){
     return wram->wStringBuffer1;
 }
 
-void IncompleteCopyNameFunction(void){
+// void IncompleteCopyNameFunction(void){
 //  //  unreferenced
 //  Copy of CopyTrainerName but without "call CopyBytes"
-    LD_DE(wStringBuffer1);
-    PUSH_DE;
-    LD_BC(NAME_LENGTH);
-    POP_DE;
-    RET;
+    // LD_DE(wStringBuffer1);
+    // PUSH_DE;
+    // LD_BC(NAME_LENGTH);
+    // POP_DE;
+    // RET;
 
 // INCLUDE "data/trainers/parties.asm"
 
-}
+// }

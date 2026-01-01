@@ -2268,7 +2268,7 @@ void init_function_pointers(void) {
     // CONVERTED(TrainerType4);
     // CONVERTED(TrainerType2);
     // CONVERTED(Battle_GetTrainerName);
-    REDIRECTED(IncompleteCopyNameFunction);
+    // REDIRECTED(IncompleteCopyNameFunction);
     CONVERTED(ComputeTrainerReward);
     // CONVERTED(GetTrainerName);
 
