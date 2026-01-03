@@ -455,7 +455,7 @@ uint8_t* Battle_GetTrainerName(void){
     // BIT_A(0);
     // LD_HL(wOTPlayerName);
     // JP_NZ (mCopyTrainerName);
-    if(bit_test(wram->wInBattleTowerBattle, 0))
+    if(bit_test(wram->wInBattleTowerBattle, 0) || wram->wLinkMode != LINK_NULL)
         return CopyTrainerName(wram->wOTPlayerName);
 
     // LD_A_addr(wOtherTrainerID);
