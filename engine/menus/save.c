@@ -603,10 +603,14 @@ void ErasePreviousSave(void){
     EraseLinkBattleStats();
     // CALL(aEraseMysteryGift);
     EraseMysteryGift();
+    Function14d18();
     // CALL(aSaveData);
-    SaveData();
     // CALL(aEraseBattleTowerStatus);
     EraseBattleTowerStatus();
+    SaveData();
+    Function14d6c();
+    Function14d83();
+    Function14d93();
     // LD_A(BANK(sStackTop));
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asStackTop));
@@ -661,34 +665,71 @@ void EraseHallOfFame(void){
     return CloseSRAM();
 }
 
-void Function14d18(void){
 //  //  unreferenced
-    LD_A(BANK(s4_a007));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
-    CALL(aOpenSRAM);
-    LD_HL(mFunction14d18_Data);
-    LD_DE(s4_a007);
-    LD_BC(4 * 12);
-    CALL(aCopyBytes);
-    JP(mCloseSRAM);
-
-
-Data:
-    //db ['0x0d', '0x02', '0x00', '0x05', '0x00', '0x00', '0x22', '0x02', '0x01', '0x05', '0x00', '0x00'];
-    //db ['0x03', '0x04', '0x05', '0x08', '0x03', '0x05', '0x0e', '0x06', '0x03', '0x02', '0x00', '0x00'];
-    //db ['0x39', '0x07', '0x07', '0x04', '0x00', '0x05', '0x04', '0x07', '0x01', '0x05', '0x00', '0x00'];
-    //db ['0x0f', '0x05', '0x14', '0x07', '0x05', '0x05', '0x11', '0x0c', '0x0c', '0x06', '0x06', '0x04'];
-
-    return EraseBattleTowerStatus();
+// InitDefaultEZChatMsgs
+void Function14d18(void){
+    static const uint8_t Data[] = {
+        //db ['0x0d', '0x02', '0x00', '0x05', '0x00', '0x00', '0x22', '0x02', '0x01', '0x05', '0x00', '0x00'];
+        //db ['0x03', '0x04', '0x05', '0x08', '0x03', '0x05', '0x0e', '0x06', '0x03', '0x02', '0x00', '0x00'];
+        //db ['0x39', '0x07', '0x07', '0x04', '0x00', '0x05', '0x04', '0x07', '0x01', '0x05', '0x00', '0x00'];
+        //db ['0x0f', '0x05', '0x14', '0x07', '0x05', '0x05', '0x11', '0x0c', '0x0c', '0x06', '0x06', '0x04'];
+    // introduction
+        0x0d, EZCHAT_GREETINGS,    0x01, EZCHAT_EXCLAMATIONS,
+        0x23, EZCHAT_GREETINGS,    0x02, EZCHAT_EXCLAMATIONS,
+    // begin battle
+        0x29, EZCHAT_CONVERSATION, 0x04, EZCHAT_EXCLAMATIONS,
+        0x0d, EZCHAT_FAREWELLS,    0x01, EZCHAT_BATTLE,
+    // win battle
+        0x3d, EZCHAT_EXCLAMATIONS, 0x01, EZCHAT_EXCLAMATIONS,
+        0x04, EZCHAT_BATTLE,       0x02, EZCHAT_EXCLAMATIONS,
+    // lose battle
+        0x0f, EZCHAT_EXCLAMATIONS, 0x05, EZCHAT_EXCLAMATIONS,
+        0x38, EZCHAT_CONVERSATION, 0x02, EZCHAT_FAREWELLS,
+    };
+    // LD_A(BANK(s4_a007));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(as4_a007));
+    // LD_HL(mFunction14d18_Data);
+    // LD_DE(s4_a007);
+    // LD_BC(4 * 12);
+    // CALL(aCopyBytes);
+    CopyBytes(GBToRAMAddr(s4_a007), Data, 4 * EASY_CHAT_MESSAGE_LENGTH);
+    // JP(mCloseSRAM);
+    CloseSRAM();
 }
 
 void EraseBattleTowerStatus(void){
-    // LD_A(BANK(sBattleTowerChallengeState));
-    // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(asBattleTowerChallengeState));
-    // XOR_A_A;
-    // LD_addr_A(sBattleTowerChallengeState);
-    gb_write(sBattleTowerChallengeState, 0);
-    // JP(mCloseSRAM);
+    static const char HonorRollLevelRoomPlaceholder[] = "------@            ---";
+    // // LD_A(BANK(sBattleTowerChallengeState));
+    // // CALL(aOpenSRAM);
+    // OpenSRAM(MBANK(asBattleTowerChallengeState));
+    // // XOR_A_A;
+    // // LD_addr_A(sBattleTowerChallengeState);
+    // gb_write(sBattleTowerChallengeState, 0);
+    // // JP(mCloseSRAM);
+    // CloseSRAM();
+    // ld a, BANK(s5_a800)
+    // call OpenSRAM
+    OpenSRAM(MBANK(as5_a800));
+    // xor a
+    // ld [s5_a800], a
+    gb_write(s5_a800, 0);
+    // ld hl, sBattleTowerChallengeState;$aa3e
+    // ld bc, $05e5
+    // call ByteFill;$300d
+    ByteFill(GBToRAMAddr(sBattleTowerChallengeState), 0x5e5, 0);
+    // clear/init honor roll data
+    // ld hl, .HonorRollLevelRoomPlaceholder;$4d34
+    // ld de, s5_a89c
+    // ld bc, $0016
+    // call CopyBytes;$2ff2
+    U82CB(GBToRAMAddr(s5_a89c), 0x16, HonorRollLevelRoomPlaceholder);
+    // xor a
+    // ld hl, s5_a8b2
+    // ld bc, HONOR_ROLL_DATA_LENGTH;$0096
+    // call ByteFill;$300d
+    ByteFill(GBToRAMAddr(s5_a8b2), HONOR_ROLL_DATA_LENGTH, 0);
+    // jp CloseSRAM
     CloseSRAM();
 }
 
@@ -700,44 +741,51 @@ void SaveData(void){
 
 void Function14d6c(void){
 //  //  unreferenced
-    LD_A(BANK(s4_a60b));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
-    CALL(aOpenSRAM);
-    LD_A_addr(s4_a60b);  // address of MBC30 bank
-    LD_B(0x0);
-    AND_A_A;
-    IF_Z goto ok;
-    LD_B(0x2);
+    // LD_A(BANK(s4_a60b));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(as4_a60b));
+    // LD_A_addr(s4_a60b);  // address of MBC30 bank
+    // LD_B(0x0);
+    // AND_A_A;
+    // IF_Z goto ok;
+    // LD_B(0x2);
 
-
-ok:
-    LD_A_B;
-    LD_addr_A(s4_a60b);  // address of MBC30 bank
-    CALL(aCloseSRAM);
-    RET;
-
+// ok:
+    // LD_A_B;
+    // LD_addr_A(s4_a60b);  // address of MBC30 bank
+    gb_write(s4_a60b, gb_read(s4_a60b) == 0? 0x0: 0x2);
+    // CALL(aCloseSRAM);
+    CloseSRAM();
+    // RET;
 }
 
 void Function14d83(void){
 //  //  unreferenced
-    LD_A(BANK(s4_a60c));  // aka BANK(s4_a60d) // MBC30 bank used by JP Crystal// inaccessible by MBC3
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(s4_a60c);  // address of MBC30 bank
-    LD_addr_A(s4_a60d);  // address of MBC30 bank
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(s4_a60c));  // aka BANK(s4_a60d) // MBC30 bank used by JP Crystal// inaccessible by MBC3
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(as4_a60c));
+    // XOR_A_A;
+    // LD_addr_A(s4_a60c);  // address of MBC30 bank
+    gb_write(s4_a60c, 0);
+    // LD_addr_A(s4_a60d);  // address of MBC30 bank
+    gb_write(s4_a60d, 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM();
+    // RET;
 }
 
+// DisableMobileStadium
 void Function14d93(void){
 //  //  unreferenced
-    LD_A(BANK(s7_a000));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
-    CALL(aOpenSRAM);
-    XOR_A_A;
-    LD_addr_A(s7_a000);  // address of MBC30 bank
-    CALL(aCloseSRAM);
-    RET;
-
+    // LD_A(BANK(s7_a000));  // MBC30 bank used by JP Crystal// inaccessible by MBC3
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(as7_a000));
+    // XOR_A_A;
+    // LD_addr_A(s7_a000);  // address of MBC30 bank
+    gb_write(s7_a000, 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM();
+    // RET;
 }
 
 void HallOfFame_InitSaveIfNeeded(void){

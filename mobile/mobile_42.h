@@ -15,7 +15,7 @@ void MobileTradeAnim_ClearTiles(void);
 void MobileTradeAnim_ClearBGMap(void);
 void MobileTradeAnim_GetFrontpic(uint8_t* de, species_t species, uint16_t dvs);
 void Function108201(uint8_t* de, species_t species, uint16_t dvs);
-void Function108219(void);
+void Function108219(species_t species);
 void Function108229(species_t species);
 void MobileTradeAnim_InitSpeciesName(uint8_t* de, species_t species);
 bool MobileTradeAnim_JumptableLoop(void);

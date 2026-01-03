@@ -488,15 +488,17 @@ void Function108201(uint8_t* de, species_t species, uint16_t dvs){
     // RET;
 }
 
-void Function108219(void){
+// Mobile_AnimateFrontpic?
 //  //  unreferenced
-    LD_addr_A(wCurPartySpecies);
-    hlcoord(7, 2, wTilemap);
-    LD_D(0x0);
-    LD_E(ANIM_MON_TRADE);
-    PREDEF(pAnimateFrontpic);
-    RET;
-
+void Function108219(species_t species){
+    // LD_addr_A(wCurPartySpecies);
+    wram->wCurPartySpecies = species;
+    // hlcoord(7, 2, wTilemap);
+    // LD_D(0x0);
+    // LD_E(ANIM_MON_TRADE);
+    // PREDEF(pAnimateFrontpic);
+    AnimateFrontpic(coord(7, 2, wram->wTilemap), 0x0, ANIM_MON_TRADE);
+    // RET;
 }
 
 void Function108229(species_t species){

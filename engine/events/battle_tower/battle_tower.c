@@ -23,6 +23,7 @@
 #include "../../../home/clear_sprites.h"
 #include "../../../home/joypad.h"
 #include "../../../home/pokemon.h"
+#include "../../../home/random.h"
 #include "../../../mobile/mobile_40.h"
 #include "../../../mobile/mobile_41.h"
 #include "../../../mobile/mobile_46.h"
@@ -1374,6 +1375,7 @@ void BattleTowerAction(void){
         //dw ['Function1708c8'];
     case BATTLETOWERACTION_0C: return Function1708c8();
         //dw ['Function1708f0'];
+    case BATTLETOWERACTION_0D: return Function1708f0();
         //dw ['BattleTowerAction_EggTicket'];
     case BATTLETOWERACTION_EGGTICKET: return BattleTowerAction_EggTicket();
         //dw ['Function1709aa'];
@@ -1401,11 +1403,13 @@ void BattleTowerAction(void){
         //dw ['ResetBattleTowerTrainersSRAM'];
     case BATTLETOWERACTION_RESETDATA: return ResetBattleTowerTrainersSRAM();
         //dw ['BattleTower_GiveReward'];
+    case BATTLETOWERACTION_GIVEREWARD: return BattleTower_GiveReward();
         //dw ['Function17071b'];
     case BATTLETOWERACTION_1C: return Function17071b();
         //dw ['Function170729'];
     case BATTLETOWERACTION_1D: return Function170729();
         //dw ['BattleTower_RandomlyChooseReward'];
+    case BATTLETOWERACTION_CHOOSEREWARD: return BattleTower_RandomlyChooseReward();
         //dw ['BattleTower_SaveOptions'];
     case BATTLETOWERACTION_SAVESELECTION: return BattleTowerAction_SavePokemonSelection();
     case BATTLETOWERACTION_LOADSELECTION: return BattleTowerAction_LoadPokemonSelection();
@@ -1436,36 +1440,51 @@ void ResetBattleTowerTrainersSRAM(void){
     // RET;
 }
 
+// Unused
 void BattleTower_GiveReward(void){
-    LD_A(BANK(sBattleTowerReward));
-    CALL(aOpenSRAM);
+    // LD_A(BANK(sBattleTowerReward));
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(asBattleTowerReward));
+    // LD_A_addr(sBattleTowerReward);
+    uint8_t reward = gb_read(sBattleTowerReward);
+    // CALL(aCloseSRAM);
+    CloseSRAM();
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = reward;
+    // LD_HL(wNumItems);
+    // LD_A_hli;
+    // CP_A(MAX_ITEMS);
+    // RET_C ;
+    if(gPlayer.numItems >= MAX_ITEMS) {
+        // LD_B(MAX_ITEMS);
+        // LD_A_addr(wScriptVar);
+        // LD_C_A;
+        uint8_t c = wram->wScriptVar;
 
-    LD_A_addr(sBattleTowerReward);
-    CALL(aCloseSRAM);
-    LD_addr_A(wScriptVar);
-    LD_HL(wNumItems);
-    LD_A_hli;
-    CP_A(MAX_ITEMS);
-    RET_C ;
-    LD_B(MAX_ITEMS);
-    LD_A_addr(wScriptVar);
-    LD_C_A;
+        item_quantity_pocket_en_s* pocket = GetItemPocket(ITEM_POCKET)->quantity_pocket.pocket;
+        for(uint32_t i = 0; i < MAX_ITEMS; ++i) {
+        // loop:
+            // LD_A_hli;
+            // CP_A_C;
+            // IF_NZ goto next;
+            if(pocket[i].item == c) {
+                // LD_A_hl;
+                // CP_A(95);
+                // RET_C ;
+                if(pocket[i].quantity < MAX_ITEM_STACK - 4)
+                    return;
+            }
 
-loop:
-    LD_A_hli;
-    CP_A_C;
-    IF_NZ goto next;
-    LD_A_hl;
-    CP_A(95);
-    RET_C ;
-
-next:
-    INC_HL;
-    DEC_B;
-    IF_NZ goto loop;
-    LD_A(POTION);
-    LD_addr_A(wScriptVar);
-    RET;
+        // next:
+            // INC_HL;
+            // DEC_B;
+            // IF_NZ goto loop;
+        }
+        // LD_A(POTION);
+        // LD_addr_A(wScriptVar);
+        wram->wScriptVar = POTION;
+        // RET;
+    }
 
 }
 
@@ -1494,34 +1513,44 @@ void Function170729(void){
 }
 
 void BattleTower_SaveOptions(void){
-    FARCALL(aSaveOptions);
-    RET;
-
+    // FARCALL(aSaveOptions);
+    SaveOptions();
+    // RET;
 }
 
-void BattleTower_RandomlyChooseReward(void){
 //  Generate a random stat boosting item.
+void BattleTower_RandomlyChooseReward(void){
+    item_t a = 0;
+    do {
+    // loop:
+        // CALL(aRandom);
+        Random();
+        // LDH_A_addr(hRandomAdd);
+        a = hram.hRandomAdd;
+        // AND_A(0x7);
+        // CP_A(6);
+        // IF_C goto okay;
+        if((a & 0x7) >= 6) {
+            // SUB_A(6);
+            a -= 6;
+        }
 
-loop:
-    CALL(aRandom);
-    LDH_A_addr(hRandomAdd);
-    AND_A(0x7);
-    CP_A(6);
-    IF_C goto okay;
-    SUB_A(6);
-
-okay:
-    ADD_A(HP_UP);
-    CP_A(LUCKY_PUNCH);
-    IF_Z goto loop;
-    PUSH_AF;
-    LD_A(BANK(sBattleTowerReward));
-    CALL(aOpenSRAM);
-    POP_AF;
-    LD_addr_A(sBattleTowerReward);
-    CALL(aCloseSRAM);
-    RET;
-
+    // okay:
+        // ADD_A(HP_UP);
+        a += HP_UP;
+        // CP_A(LUCKY_PUNCH);
+        // IF_Z goto loop;
+    } while(a == LUCKY_PUNCH);
+    // PUSH_AF;
+    // LD_A(BANK(sBattleTowerReward));
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(asBattleTowerReward));
+    // POP_AF;
+    // LD_addr_A(sBattleTowerReward);
+    gb_write(sBattleTowerReward, a);
+    // CALL(aCloseSRAM);
+    CloseSRAM();
+    // RET;
 }
 
 void BattleTowerAction_CheckExplanationRead(void){
@@ -1879,33 +1908,48 @@ void Function1708c8(void){
     // RET;
 }
 
-void Function1708f0(void){
 //  //  BattleTowerAction $0d
-    XOR_A_A;  // FALSE
-    LD_addr_A(wScriptVar);
-    CALL(aUpdateTime);
-    LD_A(BANK(s5_aa48));  // aka BANK(s5_aa47)
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_aa48);
-    LD_C_A;
-    LD_A_addr(s5_aa47);
-    CALL(aCloseSRAM);
-    AND_A_A;
-    RET_Z ;
-    LD_HL(wCurDay);
-    LD_A_C;
-    CP_A_hl;
-    JR_NZ (mFunction170923);
-    LD_A(BANK(s5_aa5d));
-    CALL(aOpenSRAM);
-    LD_A_addr(s5_aa5d);
-    CALL(aCloseSRAM);
-    CP_A(5);
-    RET_C ;
-    LD_A(TRUE);
-    LD_addr_A(wScriptVar);
-    RET;
-
+void Function1708f0(void){
+    // XOR_A_A;  // FALSE
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = FALSE;
+    // CALL(aUpdateTime);
+    UpdateTime();
+    // LD_A(BANK(s5_aa48));  // aka BANK(s5_aa47)
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(as5_aa48));
+    // LD_A_addr(s5_aa48);
+    // LD_C_A;
+    uint8_t day = gb_read(s5_aa48);
+    // LD_A_addr(s5_aa47);
+    uint8_t active = gb_read(s5_aa47);
+    // CALL(aCloseSRAM);
+    CloseSRAM();
+    // AND_A_A;
+    // RET_Z ;
+    if(!active)
+        return;
+    // LD_HL(wCurDay);
+    // LD_A_C;
+    // CP_A_hl;
+    // JR_NZ (mFunction170923);
+    if(day != gPlayer.curDay)
+        return Function170923();
+    // LD_A(BANK(s5_aa5d));
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(as5_aa5d));
+    // LD_A_addr(s5_aa5d);
+    uint8_t a = gb_read(s5_aa5d);
+    // CALL(aCloseSRAM);
+    CloseSRAM();
+    // CP_A(5);
+    // RET_C ;
+    if(a < 5)
+        return;
+    // LD_A(TRUE);
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = TRUE;
+    // RET;
 }
 
 void Function170923(void){

@@ -764,6 +764,9 @@ void BackupMobileEventIndex(void){
     // POP_AF;
     // LD_addr_A(sMobileEventIndexBackup);
     gb_write(sMobileEventIndexBackup, mobileEventIndex);
+    // Reset Trainer Rankings if corrupted
+    if(!VerifyTrainerRankingsChecksum())
+        InitializeTrainerRankings();
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -788,18 +791,21 @@ void RestoreMobileEventIndex(void){
     // RET;
 }
 
-void VerifyTrainerRankingsChecksum(void){
 //  //  unreferenced
-    CALL(aCalculateTrainerRankingsChecksum);
-    LD_HL(sTrainerRankingsChecksum);
-    LD_A_D;
-    CP_A_hl;
-    RET_NZ ;
-    INC_HL;
-    LD_A_E;
-    CP_A_hl;
-    RET;
-
+bool VerifyTrainerRankingsChecksum(void){
+    // CALL(aCalculateTrainerRankingsChecksum);
+    uint16_t checksum = CalculateTrainerRankingsChecksum();
+    // LD_HL(sTrainerRankingsChecksum);
+    // LD_A_D;
+    // CP_A_hl;
+    // RET_NZ ;
+    uint16_t saved = gb_read(sTrainerRankingsChecksum + 1) 
+        | (gb_read(sTrainerRankingsChecksum) << 8);
+    // INC_HL;
+    // LD_A_E;
+    // CP_A_hl;
+    // RET;
+    return checksum == saved;
 }
 
 void DeleteMobileEventIndex(void){
@@ -814,27 +820,30 @@ void DeleteMobileEventIndex(void){
     // RET;
 }
 
+//  Initializes Trainer Rankings data for a new save file in JP Crystal.
 void InitializeTrainerRankings(void){
 //  //  unreferenced
-//  Initializes Trainer Rankings data for a new save file in JP Crystal.
-    LD_HL(sTrainerRankings);
-    LD_BC(sTrainerRankingsEnd - sTrainerRankings);
-    XOR_A_A;
-    CALL(aByteFill);
+    // LD_HL(sTrainerRankings);
+    // LD_BC(sTrainerRankingsEnd - sTrainerRankings);
+    // XOR_A_A;
+    // CALL(aByteFill);
+    ByteFill(GBToRAMAddr(sTrainerRankings), sTrainerRankingsEnd - sTrainerRankings, 0);
 
 // Initialize the shortest Magikarp to 100.0 cm
-    LD_HL(sTrainerRankingShortestMagikarp);
-    LD_A(0x3);
-    LD_hli_A;
-    LD_hl(0xe8);
+    // LD_HL(sTrainerRankingShortestMagikarp);
+    // LD_A(0x3);
+    // LD_hli_A;
+    // LD_hl(0xe8);
+    gb_write16(sTrainerRankingShortestMagikarp, 0xe803);
 
-    CALL(aUpdateTrainerRankingsChecksum);
-    LD_HL(sTrainerRankings);
-    LD_DE(sTrainerRankingsBackup);
-    LD_BC(sTrainerRankingsEnd - sTrainerRankings);
-    CALL(aCopyBytes);
-    RET;
-
+    // CALL(aUpdateTrainerRankingsChecksum);
+    UpdateTrainerRankingsChecksum();
+    // LD_HL(sTrainerRankings);
+    // LD_DE(sTrainerRankingsBackup);
+    // LD_BC(sTrainerRankingsEnd - sTrainerRankings);
+    // CALL(aCopyBytes);
+    CopyBytes(GBToRAMAddr(sTrainerRankingsBackup), GBToRAMAddr(sTrainerRankings), sTrainerRankingsEnd - sTrainerRankings);
+    // RET;
 }
 
 static void v_MobilePrintNum_Function1062b2(uint8_t* hl, uint32_t num) {
@@ -1492,7 +1501,19 @@ void Function106464(void){
 
 void Function10649b(void){
 //  //  unreferenced
+    static const char* FramePaths[] = {
+        "gfx/frames/1.png",
+        "gfx/frames/2.png",
+        "gfx/frames/3.png",
+        "gfx/frames/4.png",
+        "gfx/frames/5.png",
+        "gfx/frames/6.png",
+        "gfx/frames/7.png",
+        "gfx/frames/8.png",
+        "gfx/frames/9.png"
+    };
     // LD_A_addr(wTextboxFrame);
+    uint8_t a = gOptions.textboxFrame & 7;
     // maskbits(NUM_FRAMES, 0);
     // LD_BC(6 * LEN_1BPP_TILE);
     // LD_HL(mFrames);
@@ -1502,79 +1523,86 @@ void Function10649b(void){
     // LD_HL(vTiles2 + LEN_2BPP_TILE * "┌");  // $79
     // LD_C(6);  // "┌" to "┘"
     // LD_B(BANK(aFrames));
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x79, FramePaths[a], 0, 6);
     // CALL(aFunction1064c3);
+    Function1064c3(vram->vTiles2 + LEN_2BPP_TILE * 0x79, 6);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * " ");  // $7f
     // LD_DE(mTextboxSpaceGFX);
     // LD_C(1);
     // LD_B(BANK(aTextboxSpaceGFX));
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x7f, TextboxSpaceGFX, 0, 1);
     // CALL(aFunction1064c3);
+    Function1064c3(vram->vTiles2 + LEN_2BPP_TILE * 0x7f, 1);
     // RET;
 }
 
-void Function1064c3(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x6);
-    LDH_addr_A(rSVBK);
-    PUSH_BC;
-    PUSH_HL;
-    LD_HL(mFunction3f88);
-    LD_A_B;
-    RST(aFarCall);
-    POP_HL;
-    POP_BC;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    JR(masm_1064ed);
-
+void Function1064c3(uint8_t* de, uint8_t c){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x6);
+    // LDH_addr_A(rSVBK);
+    // PUSH_BC;
+    // PUSH_HL;
+    // LD_HL(mFunction3f88);
+    Function3f88(de, c);
+    // LD_A_B;
+    // RST(aFarCall);
+    // POP_HL;
+    // POP_BC;
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // JR(masm_1064ed);
+    return asm_1064ed(de);
 }
 
-void Function1064d8(void){
 //  //  unreferenced
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x6);
-    LDH_addr_A(rSVBK);
-    PUSH_BC;
-    PUSH_HL;
-    LD_HL(mFunction3f9f);
-    LD_A_B;
-    RST(aFarCall);
-    POP_HL;
-    POP_BC;
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    JR(masm_1064ed);
-
+void Function1064d8(uint8_t* de, uint8_t c){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x6);
+    // LDH_addr_A(rSVBK);
+    // PUSH_BC;
+    // PUSH_HL;
+    // LD_HL(mFunction3f9f);
+    Function3f9f(de, c);
+    // LD_A_B;
+    // RST(aFarCall);
+    // POP_HL;
+    // POP_BC;
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // JR(masm_1064ed);
+    return asm_1064ed(de);
 }
 
-void asm_1064ed(void){
-    LD_DE(wDecompressScratch);
-    LD_B(0x0);
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(0x6);
-    LDH_addr_A(rSVBK);
-    LDH_A_addr(rVBK);
-    PUSH_AF;
-    LD_A(0x1);
-    LDH_addr_A(rVBK);
-    CALL(aGet2bpp);
-    POP_AF;
-    LDH_addr_A(rVBK);
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+void asm_1064ed(uint8_t* hl){
+    // LD_DE(wDecompressScratch);
+    // LD_B(0x0);
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(0x6);
+    // LDH_addr_A(rSVBK);
+    // LDH_A_addr(rVBK);
+    // PUSH_AF;
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    // CALL(aGet2bpp);
+    CopyBytes(hl, wram->wDecompressScratch, 6 * LEN_1BPP_TILE);
+    // POP_AF;
+    // LDH_addr_A(rVBK);
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
-void Function10650a(void){
+// LoadMobilePhoneTilesGFX
 //  //  unreferenced
-    LD_DE(mMobilePhoneTilesGFX);
-    LD_BC((BANK(aMobilePhoneTilesGFX) << 8) | 17);
-    CALL(aGet2bpp);
-    RET;
-
+void Function10650a(uint8_t* hl){
+    // LD_DE(mMobilePhoneTilesGFX);
+    // LD_BC((BANK(aMobilePhoneTilesGFX) << 8) | 17);
+    // CALL(aGet2bpp);
+    LoadPNG2bppAssetSectionToVRAM(hl, MobilePhoneTilesGFX, 0, 17);
+    // RET;
 }
 
 const char MobileDialingFrameGFX[] = "gfx/mobile/dialing_frame.png";
