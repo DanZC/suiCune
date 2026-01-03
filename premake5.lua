@@ -92,7 +92,6 @@ startproject "suiCune"
             "physfs",
             "SDL2",
             "SDL2main",
-            "SDL2_net",
 			"maps",
 			"libmobile",
 		}
@@ -147,6 +146,10 @@ startproject "suiCune"
 		filter { "options:physfs" }
 			defines { "USE_PHYSFS=1" }
 			links { "physfs" }
+
+		filter { "options:sdlnet"}
+			defines { "USE_SDLNET=1" }
+			links { "SDL2_net" }
 		
 		filter {}
 		

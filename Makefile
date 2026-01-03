@@ -31,6 +31,10 @@ ifeq ($(USE_PHYSFS), 1)
 	EXTRA_CFLAGS += -DUSE_PHYSFS=1
 endif
 
+ifeq ($(USE_SDLNET), 1)
+	EXTRA_CFLAGS += -DUSE_SDLNET=1
+endif
+
 # File extension ".exe" is automatically appended on MinGW and MSVC builds, even
 # if we don't ask for it.
 ifeq ($(OS),Windows_NT)
@@ -106,7 +110,7 @@ CFLAGS += $(shell sdl2-config --cflags)
 ifeq ($(OS),Windows_NT)
 ifeq ($(STATIC),yes)
 	CFLAGS += -static
-	LDLIBS += -lSDL2_net -lmingw32 -lSDL2main -lSDL2 -lws2_32 -liphlpapi -ldinput8 -lshell32 -lsetupapi -ladvapi32 -luuid -lversion -loleaut32 -lole32 -limm32 -lwinmm -lgdi32 -luser32 -lm -lphysfs -Wl,--no-undefined 
+	LDLIBS += -lmingw32 -lSDL2main -lSDL2 -lws2_32 -liphlpapi -ldinput8 -lshell32 -lsetupapi -ladvapi32 -luuid -lversion -loleaut32 -lole32 -limm32 -lwinmm -lgdi32 -luser32 -lm -lphysfs -Wl,--no-undefined 
 #	LDLIBS += $(shell sdl2-config --static-libs)
 else
 	LDLIBS += -lSDL2main -lmingw32 -lSDL2 -mconsole -ldinput8 -lshell32 -lsetupapi -ladvapi32 -luuid -lversion -loleaut32 -lole32 -limm32 -lwinmm -lgdi32 -luser32 -lm -lphysfs -Wl,--no-undefined 
@@ -114,10 +118,14 @@ else
 endif
 else
 ifeq ($(STATIC),yes)
-	LDLIBS += $(shell sdl2-config --static-libs) -lSDL2_net
+	LDLIBS += $(shell sdl2-config --static-libs)
 else
-	LDLIBS += $(shell sdl2-config --libs) -lSDL2_net
+	LDLIBS += $(shell sdl2-config --libs)
 endif
+endif
+
+ifeq ($(USE_SDLNET), 1)
+	LDLIBS += -lSDL2_net
 endif
 
 LDLIBS += -lm

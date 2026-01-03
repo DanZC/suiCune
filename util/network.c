@@ -8,8 +8,10 @@
 #include "../home/delay.h"
 
 /// WIP experimental networking system to replace SDLNet.
-/// To enable it, set USE_SDLNET to 0
-#define USE_SDLNET 1
+/// To disable it, set USE_SDLNET to 1 or compile with USE_SDLNET=1
+#if !defined(USE_SDLNET)
+#define USE_SDLNET 0
+#endif
 
 #if defined(NETWORKING_SUPPORT)
 #if USE_SDLNET
@@ -889,6 +891,7 @@ bool NetworkCheckLAN(void) {
     return false;
 #else
     struct network_data* state = &gNetworkData;
+again:
     if(recv_packet(state->udp, &state->udp_packet) > 0 && gLANClientCandidateCount < 16) {
         struct network_packet* packet = &state->udp_packet;
 
@@ -898,15 +901,16 @@ bool NetworkCheckLAN(void) {
         }
 
         CmdPacket_s* cmd = (CmdPacket_s*)packet->buffer;
-        printf("UDP Packet: %d.%d.%d.%d\n", 
+        printf("UDP Packet: %d.%d.%d.%d id=%d, type=%d\n", 
             packet->sender._addr4.host[0],
             packet->sender._addr4.host[1],
             packet->sender._addr4.host[2],
-            packet->sender._addr4.host[3]);
+            packet->sender._addr4.host[3],
+            cmd->uid, cmd->type);
 
         // Did we send the packet? If so, ignore it.
         if(cmd->uid == htonl(hostUniqueId))
-            return false;
+            goto again; // Try again. Maybe the next packet is what we want.
 
         switch(cmd->type) {
             case CMD_HOST_LAN:
@@ -1058,7 +1062,12 @@ bool NetworkAcceptLANConnection(void) {
     struct network_packet* packet = &gNetworkData.udp_packet;
     state->serial = socket_open(MOBILE_SOCKTYPE_TCP, MOBILE_ADDRTYPE_IPV4, TCP_PORT);
     if(state->serial != INVALID_SOCKET) {
-        int err = socket_connect_ip(state->serial, &packet->sender);
+        int tries = 64;
+        int err;
+        packet->sender._addr4.port = TCP_PORT;
+        while((err = socket_connect_ip(state->serial, &packet->sender), err == 0) && --tries > 0) {
+            DelayFrame();
+        }
         if(err > 0) {
             state->linkSocket = state->serial;
             gNetworkState = NETSTATE_LAN_CLIENT;
