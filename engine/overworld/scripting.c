@@ -2528,20 +2528,21 @@ void Script_gettrainername(script_s* s, uint8_t a, uint8_t b, uint8_t c){
     return GetStringBuffer(a, GetTrainerName(c-1, b));
 }
 
-void Script_getname(void){
-    CALL(aGetScriptByte);
-    LD_addr_A(wNamedObjectType);
-
-    return ContinueToGetName();
+void Script_getname(script_s* s, uint8_t sb, uint8_t type, uint8_t id){
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wNamedObjectType);
+    (void)s;
+    return ContinueToGetName(sb, type, id);
 }
 
-void ContinueToGetName(void){
-    CALL(aGetScriptByte);
-    LD_addr_A(wCurSpecies);
-    CALL(aGetName);
-    LD_DE(wStringBuffer1);
-    JP(mGetStringBuffer);
-
+void ContinueToGetName(uint8_t sb, uint8_t type, uint8_t index){
+    // CALL(aGetScriptByte);
+    // LD_addr_A(wCurSpecies);
+    // CALL(aGetName);
+    uint8_t* de = GetName(type, index);
+    // LD_DE(wStringBuffer1);
+    // JP(mGetStringBuffer);
+    return GetStringBuffer(sb, de);
 }
 
 void Script_gettrainerclassname(script_s* s, uint8_t buffer, uint8_t tclass){

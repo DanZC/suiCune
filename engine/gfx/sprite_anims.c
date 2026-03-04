@@ -1157,23 +1157,24 @@ static void AnimSeq_Celebi(struct SpriteAnim* bc){
     return UpdateCelebiPosition(bc);
 }
 
+// DEPRECATED: Just use switch(bc->jumptableIndex) { ... }
 void AnimSeqs_AnonJumptable(void){
-    LD_HL_SP(0);
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    INC_DE;
+    // LD_HL_SP(0);
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    // INC_DE;
 
-    LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
-    ADD_HL_BC;
-    LD_L_hl;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    RET;
+    // LD_HL(SPRITEANIMSTRUCT_JUMPTABLE_INDEX);
+    // ADD_HL_BC;
+    // LD_L_hl;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // RET;
 
 }
 

@@ -235,12 +235,12 @@ bool SwitchSometimes(void){
     return AI_TrySwitch();
 }
 
-void CheckSubstatusCantRun(void){
+bool CheckSubstatusCantRun(void){
 //  //  unreferenced
-    LD_A_addr(wEnemySubStatus5);
-    BIT_A(SUBSTATUS_CANT_RUN);
-    RET;
-
+    // LD_A_addr(wEnemySubStatus5);
+    // BIT_A(SUBSTATUS_CANT_RUN);
+    // RET;
+    return bit_test(wram->wEnemySubStatus5, SUBSTATUS_CANT_RUN);
 }
 
 static bool AI_Items_DontUse(void){
@@ -1089,13 +1089,15 @@ const txt_cmd_s EnemyWithdrewText[] = {
     text_end
 };
 
-void EnemyUsedFullHealRed(void){
 //  //  unreferenced
-    CALL(aAIUsedItemSound);
-    CALL(aAI_HealStatus);
-    LD_A(FULL_HEAL_RED);  // X_SPEED
-    JP(mPrintText_UsedItemOn_AND_AIUpdateHUD);
-
+void EnemyUsedFullHealRed(void){
+    // CALL(aAIUsedItemSound);
+    AIUsedItemSound();
+    // CALL(aAI_HealStatus);
+    AI_HealStatus();
+    // LD_A(FULL_HEAL_RED);  // X_SPEED
+    // JP(mPrintText_UsedItemOn_AND_AIUpdateHUD);
+    PrintText_UsedItemOn_AND_AIUpdateHUD(FULL_HEAL_RED);
 }
 
 void AI_HealStatus(void){
@@ -1163,7 +1165,7 @@ void EnemyUsedDireHit(void){
     PrintText_UsedItemOn_AND_AIUpdateHUD(DIRE_HIT);
 }
 
-void AICheckEnemyFractionMaxHP(void){
+int AICheckEnemyFractionMaxHP(uint8_t a){
 //  //  unreferenced
 //  Input: a = divisor
 //  Work: bc = [wEnemyMonMaxHP] / a
@@ -1172,30 +1174,35 @@ void AICheckEnemyFractionMaxHP(void){
 //  -  c, nz if [wEnemyMonHP] > [wEnemyMonMaxHP] / a
 //  - nc,  z if [wEnemyMonHP] = [wEnemyMonMaxHP] / a
 //  - nc, nz if [wEnemyMonHP] < [wEnemyMonMaxHP] / a
-    LDH_addr_A(hDivisor);
-    LD_HL(wEnemyMonMaxHP);
-    LD_A_hli;
-    LDH_addr_A(hDividend);
-    LD_A_hl;
-    LDH_addr_A(hDividend + 1);
-    LD_B(2);
-    CALL(aDivide);
-    LDH_A_addr(hQuotient + 3);
-    LD_C_A;
-    LDH_A_addr(hQuotient + 2);
-    LD_B_A;
-    LD_HL(wEnemyMonHP + 1);
-    LD_A_hld;
-    LD_E_A;
-    LD_A_hl;
-    LD_D_A;
-    LD_A_D;
-    SUB_A_B;
-    RET_NZ ;
-    LD_A_E;
-    SUB_A_C;
-    RET;
+    // LDH_addr_A(hDivisor);
+    // LD_HL(wEnemyMonMaxHP);
+    if(a == 0)
+        return 0;
 
+    uint16_t mhp = BigEndianToNative16(wram->wEnemyMon.maxHP) / a;
+    uint16_t hp = BigEndianToNative16(wram->wEnemyMon.hp);
+    // LD_A_hli;
+    // LDH_addr_A(hDividend);
+    // LD_A_hl;
+    // LDH_addr_A(hDividend + 1);
+    // LD_B(2);
+    // CALL(aDivide);
+    // LDH_A_addr(hQuotient + 3);
+    // LD_C_A;
+    // LDH_A_addr(hQuotient + 2);
+    // LD_B_A;
+    // LD_HL(wEnemyMonHP + 1);
+    // LD_A_hld;
+    // LD_E_A;
+    // LD_A_hl;
+    // LD_D_A;
+    // LD_A_D;
+    // SUB_A_B;
+    // RET_NZ ;
+    // LD_A_E;
+    // SUB_A_C;
+    // RET;
+    return (hp > mhp)? 1: (hp == mhp)? 0: -1;
 }
 
 void EnemyUsedXAttack(void){

@@ -32,17 +32,17 @@ static const char KrisBackpic[] = "gfx/player/kris_back.png";
 
 void BetaLoadPlayerTrainerClass(void){
 //  //  unreferenced
-    LD_C(CAL);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto got_class;
-    LD_C(KAREN);  // not KRIS?
-
-got_class:
-    LD_A_C;
-    LD_addr_A(wTrainerClass);
-    RET;
-
+    // LD_C(CAL);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_class;
+    // LD_C(KAREN);  // not KRIS?
+    
+// got_class:
+    // LD_A_C;
+    // LD_addr_A(wTrainerClass);
+    wram->wTrainerClass = (bit_test(wram->wPlayerGender, PLAYERGENDER_FEMALE_F)? JODI: CAL);
+    // RET;
 }
 
 void MovePlayerPicRight(void){
@@ -135,17 +135,16 @@ void ShowPlayerNamingChoices(void){
 
 void GetPlayerNameArray(void){
 //  //  unreferenced
-    LD_HL(wPlayerName);
-    LD_DE(mMalePlayerNameArray);
-    LD_A_addr(wPlayerGender);
-    BIT_A(PLAYERGENDER_FEMALE_F);
-    IF_Z goto got_array;
-    LD_DE(mFemalePlayerNameArray);
+    // LD_HL(wPlayerName);
+    // LD_DE(mMalePlayerNameArray);
+    // LD_A_addr(wPlayerGender);
+    // BIT_A(PLAYERGENDER_FEMALE_F);
+    // IF_Z goto got_array;
+    // LD_DE(mFemalePlayerNameArray);
 
-got_array:
-    CALL(aInitName);
-    RET;
-
+// got_array:
+    // CALL(aInitName);
+    // RET;
 }
 
 const char* GetPlayerIcon(void){

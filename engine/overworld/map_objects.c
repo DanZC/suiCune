@@ -865,9 +865,9 @@ static void SetTallGrassFlags(struct Object* bc, uint8_t a) {
 }
 
 void UselessAndA(void) {
-    SET_PC(aUselessAndA);
-    AND_A_A;
-    RET;
+    // SET_PC(aUselessAndA);
+    // AND_A_A;
+    // RET;
 }
 
 static void EndSpriteMovement(struct Object* bc) {
@@ -1081,20 +1081,21 @@ static void UpdatePlayerStep(struct Object* bc) {
     // RET;
 }
 
+//  //  unreferenced
+// DEPRECATED: Use bc->[field_name_here]
 void GetMapObjectField(void) {
-    SET_PC(aGetMapObjectField);
-    //  //  unreferenced
-    PUSH_BC;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(OBJECT_MAP_OBJECT_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    CALL(aGetMapObject);
-    ADD_HL_DE;
-    LD_A_hl;
-    POP_BC;
-    RET;
+    // SET_PC(aGetMapObjectField);
+    // PUSH_BC;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(OBJECT_MAP_OBJECT_INDEX);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CALL(aGetMapObject);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // POP_BC;
+    // RET;
 }
 
 uint8_t RestoreDefaultMovement(struct Object* bc) {
@@ -1121,13 +1122,15 @@ uint8_t RestoreDefaultMovement(struct Object* bc) {
     return obj->objectMovement;
 }
 
-void ObjectMovementByte_ZeroAnonJumptableIndex(void) {
-    SET_PC(aObjectMovementByte_ZeroAnonJumptableIndex);
-    //  //  unreferenced
-    LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
-    ADD_HL_BC;
-    LD_hl(0);
-    RET;
+//  //  unreferenced
+// DEPRECATED: Use bc->movementByteIndex = 0
+void ObjectMovementByte_ZeroAnonJumptableIndex(struct Object *bc) {
+    // SET_PC(aObjectMovementByte_ZeroAnonJumptableIndex);
+    // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
+    // ADD_HL_BC;
+    // LD_hl(0);
+    bc->movementByteIndex = 0;
+    // RET;
 }
 
 void ObjectMovementByte_IncAnonJumptableIndex(struct Object* bc) {
@@ -3111,30 +3114,33 @@ static void StepFunction_SkyfallTop(struct Object* bc) {
     }
 }
 
-void Stubbed_UpdateYOffset(void) {
-    SET_PC(aStubbed_UpdateYOffset);
+void Stubbed_UpdateYOffset(struct Object *bc) {
+    // SET_PC(aStubbed_UpdateYOffset);
     //  dummied out
-    RET;
-    LD_HL(OBJECT_1D);
-    ADD_HL_BC;
-    INC_hl;
-    LD_A_hl;
-    SRL_A;
-    SRL_A;
-    AND_A(0b00000111);
-    LD_L_A;
-    LD_H(0);
-    LD_DE(mStubbed_UpdateYOffset_y_offsets);
-    ADD_HL_DE;
-    LD_A_hl;
-    LD_HL(OBJECT_SPRITE_Y_OFFSET);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
+    // RET;
+    return;
+    static const int8_t y_offsets[] = {
+        0, -1, -2, -3, -4, -3, -2, -1
+    };
+    // LD_HL(OBJECT_1D);
+    // ADD_HL_BC;
+    // INC_hl;
+    // LD_A_hl;
+    uint8_t a = (bc->field_1D >> 2) & 0b00000111;
+    // SRL_A;
+    // SRL_A;
+    // AND_A(0b00000111);
+    // LD_L_A;
+    // LD_H(0);
+    // LD_DE(mStubbed_UpdateYOffset_y_offsets);
+    // ADD_HL_DE;
+    // LD_A_hl;
+    // LD_HL(OBJECT_SPRITE_Y_OFFSET);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    bc->spriteYOffset = (uint8_t)y_offsets[a];
+    // RET;
 
-//y_offsets:
-
-    // db ['0', '-1', '-2', '-3', '-4', '-3', '-2', '-1'];
 }
 
 static void UpdateJumpPosition(struct Object* bc) {
@@ -4299,16 +4305,21 @@ bool FreezeAllOtherObjects(uint8_t c) {
     return true;
 }
 
-void FreezeObject(void) {
-    SET_PC(aFreezeObject);
-    //  //  unreferenced
-    CALL(aCheckObjectVisibility);
-    RET_C;
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    SET_hl(FROZEN_F);
-    XOR_A_A;
-    RET;
+//  //  unreferenced
+void FreezeObject(uint8_t a) {
+    // SET_PC(aFreezeObject);
+    // CALL(aCheckObjectVisibility);
+    struct Object *bc = CheckObjectVisibility(a);
+    // RET_C;
+    if(!bc)
+        return;
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // SET_hl(FROZEN_F);
+    bit_set(bc->flags2, FROZEN_F);
+    // XOR_A_A;
+    // RET;
+    return;
 }
 
 void FreezeAllObjects(void) {
@@ -4388,7 +4399,7 @@ void UnfreezeAllObjects(void) {
         // PUSH_AF;
         // CALL(aDoesObjectHaveASprite);
         // IF_Z goto next;
-        if(bc->sprite == 0)
+        if(bc[a].sprite == 0)
             continue;
         // LD_HL(OBJECT_FLAGS2);
         // ADD_HL_BC;
@@ -4410,15 +4421,19 @@ void UnfreezeAllObjects(void) {
     // RET;
 }
 
-void UnfreezeObject(void) {
-    SET_PC(aUnfreezeObject);
-    //  //  unreferenced
-    CALL(aCheckObjectVisibility);
-    RET_C;
-    LD_HL(OBJECT_FLAGS2);
-    ADD_HL_BC;
-    RES_hl(FROZEN_F);
-    RET;
+//  //  unreferenced
+void UnfreezeObject(uint8_t a) {
+    // SET_PC(aUnfreezeObject);
+    // CALL(aCheckObjectVisibility);
+    struct Object *bc = CheckObjectVisibility(a);
+    // RET_C;
+    if(!bc)
+        return;
+    // LD_HL(OBJECT_FLAGS2);
+    // ADD_HL_BC;
+    // RES_hl(FROZEN_F);
+    bit_reset(bc->flags2, FROZEN_F);
+    // RET;
 }
 
 static void ResetObject_set_standing(struct Object* bc) {

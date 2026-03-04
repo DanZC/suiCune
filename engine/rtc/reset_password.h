@@ -1,2 +1,2 @@
 void v_ResetClock(void);
-void ClockResetPassword(void);
+bool ClockResetPassword(void);

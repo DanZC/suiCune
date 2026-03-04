@@ -26,14 +26,14 @@ static void ArrangeUsedSprites(void);
 static uint8_t GetSpriteLength(uint8_t a);
 static void GetUsedSprites(void);
 
+// Unused
 void GetEmote2bpp(void){
-    LD_A(0x1);
-    LDH_addr_A(rVBK);
-    CALL(aGet2bpp);
-    XOR_A_A;
-    LDH_addr_A(rVBK);
-    RET;
-
+    // LD_A(0x1);
+    // LDH_addr_A(rVBK);
+    // CALL(aGet2bpp);
+    // XOR_A_A;
+    // LDH_addr_A(rVBK);
+    // RET;
 }
 
 void v_UpdatePlayerSprite(void){

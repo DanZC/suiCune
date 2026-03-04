@@ -19,7 +19,9 @@ void StatsScreenMobile(void);
 // bool StatsScreen_GetJoypad(uint8_t* a);
 // void StatsScreen_JoypadAction(uint8_t a);
 // void StatsScreen_InitUpperHalf(void);
-// void StatsScreen_PlaceVerticalDivider(void);
+#if defined(_CRYSTAL_JP)
+void StatsScreen_PlaceVerticalDivider(void);
+#endif
 // void StatsScreen_PlaceHorizontalDivider(void);
 // void StatsScreen_PlacePageSwitchArrows(void);
 // void StatsScreen_PlaceShinyIcon(void);

@@ -975,10 +975,10 @@ check_wram0_field(wTextboxFrame);
 check_wram0_field(wTextboxFlags);
 check_wram0_field(wGBPrinterBrightness);
 check_wram0_field(wOptions2);
-check_wram0_field(wSecondsSince);
-check_wram0_field(wMinutesSince);
-check_wram0_field(wHoursSince);
-check_wram0_field(wDaysSince);
+// check_wram0_field(wSecondsSince);
+// check_wram0_field(wMinutesSince);
+// check_wram0_field(wHoursSince);
+// check_wram0_field(wDaysSince);
 // bank 1
 // section WRAM 1
 check_wramx_field(wBetaTitleSequenceOpeningType, 1);

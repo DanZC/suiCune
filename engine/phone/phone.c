@@ -154,19 +154,18 @@ uint8_t GetRemainingSpaceInPhoneList(uint8_t c){
     return ret;
 }
 
-void BrokenPlaceFarString(void){
 //  This routine is not in bank 0 and will fail or crash if called.
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A_B;
-    RST(aBankswitch);
+void BrokenPlaceFarString(void){
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A_B;
+    // RST(aBankswitch);
 
-    CALL(aPlaceString);
+    // CALL(aPlaceString);
 
-    POP_AF;
-    RST(aBankswitch);
-    RET;
-
+    // POP_AF;
+    // RST(aBankswitch);
+    // RET;
 }
 
 static bool CheckPhoneCall_timecheck(void) {
@@ -800,12 +799,12 @@ void Phone_CallEnd(void){
     // RET;
 }
 
-void HangUp_ShutDown(void){
 //  //  unreferenced
-    LD_DE(SFX_SHUT_DOWN_PC);
-    CALL(aPlaySFX);
-    RET;
-
+void HangUp_ShutDown(void){
+    // LD_DE(SFX_SHUT_DOWN_PC);
+    // CALL(aPlaySFX);
+    PlaySFX(SFX_SHUT_DOWN_PC);
+    // RET;
 }
 
 void HangUp_Beep(void){

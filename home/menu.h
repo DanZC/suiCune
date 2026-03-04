@@ -38,7 +38,7 @@ u8_flag_s GetMenu2(const struct MenuHeader* hl);
 void CopyNameFromMenu(uint8_t a);
 bool YesNoBox(void);
 bool PlaceYesNoBox(uint8_t b, uint8_t c);
-void PlaceGenericTwoOptionBox(void);
+bool PlaceGenericTwoOptionBox(const struct MenuHeader *hl);
 bool v_YesNoBox(uint8_t b, uint8_t c);
 bool InterpretTwoOptionMenu(void);
 // void YesNoMenuHeader(void);

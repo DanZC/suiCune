@@ -1159,13 +1159,12 @@ void SellMenu(void){
     return;
 
 
-NothingToSell:
+// NothingToSell:
 //   //  unreferenced
-    LD_HL(mSellMenu_NothingToSellText);
-    CALL(aMenuTextboxBackup);
-    AND_A_A;
-    RET;
-
+    // LD_HL(mSellMenu_NothingToSellText);
+    // CALL(aMenuTextboxBackup);
+    // AND_A_A;
+    // RET;
 
 //NothingToSellText:
     //text_far(v_NothingToSellText)

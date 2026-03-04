@@ -642,14 +642,14 @@ struct WildMons v_WaterWildmonLookup(void){
     return v_NormalWildmonOK((struct WildMons){.type = 1, .waterMons = hl});
 }
 
+// DEPRECATED: Inlined
 void v_JohtoWildmonCheck(void){
-    CALL(aIsInJohto);
-    AND_A_A;
-    RET_Z ;
-    LD_H_D;
-    LD_L_E;
-    RET;
-
+    // CALL(aIsInJohto);
+    // AND_A_A;
+    // RET_Z ;
+    // LD_H_D;
+    // LD_L_E;
+    // RET;
 }
 
 struct WildMons v_SwarmWildmonCheck(struct WildMons mons){
@@ -701,10 +701,10 @@ struct WildMons v_SwarmWildmonCheck(struct WildMons mons){
     return (struct WildMons){.type = 0xff, .grassMons = NULL};
 }
 
+// DEPRECATED: Inlined
 void v_NoSwarmWildmon(void){
-    AND_A_A;
-    RET;
-
+    // AND_A_A;
+    // RET;
 }
 
 struct WildMons v_NormalWildmonOK(struct WildMons hl){

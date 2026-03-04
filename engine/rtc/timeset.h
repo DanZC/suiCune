@@ -1,7 +1,7 @@
 void InitClock(void);
 // bool SetHour(void);
 // uint8_t* DisplayHourOClock(uint8_t* hl);
-void DisplayHoursMinutesWithMinString(void);
+void DisplayHoursMinutesWithMinString(uint8_t* de);
 // bool SetMinutes(void);
 // uint8_t* DisplayMinutesWithMinString(uint8_t* hl);
 // uint8_t* PrintTwoDigitNumberLeftAlign(uint8_t* hl, uint8_t* de);

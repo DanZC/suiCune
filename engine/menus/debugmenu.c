@@ -18,6 +18,7 @@
 #include "../../data/pokemon/base_stats.h"
 #include "../../mobile/mobile_42.h"
 #include "../../mobile/mobile_5f.h"
+#include "../../util/serialize.h"
 #include "../gfx/load_font.h"
 #include "../gfx/place_graphic.h"
 #include "../gfx/load_pics.h"
@@ -843,9 +844,8 @@ void DebugMenu_Link(void) {
     WaitBGMap();
 
     OpenSRAM(MBANK(asPlayerData));
-    CopyBytes_GB(wCrystalData, sCrystalData, wCrystalDataEnd - wCrystalData);
-    CopyBytes_GB(wPlayerID, sPlayerData + (wPlayerID - wPlayerData), 2);
-    CopyBytes_GB(wPlayerName, sPlayerData + (wPlayerName - wPlayerData), NAME_LENGTH);
+    Deserialize_PlayerData(&gPlayer, (const uint8_t *)GBToRAMAddr(sPlayerData));
+    CopyBytes(&gCrystal, GBToRAMAddr(sCrystalData), sizeof(gCrystal));
     CloseSRAM();
 
     printf("NAME: "); PrintCrystalStringFromRAM(gPlayer.playerName); printf("\n");

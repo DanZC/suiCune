@@ -328,33 +328,40 @@ static uint8_t* DisplayHourOClock(uint8_t* hl){
     return st.bc;
 }
 
-void DisplayHoursMinutesWithMinString(void){
+void DisplayHoursMinutesWithMinString(uint8_t* de){
 //  //  unreferenced
-    LD_H_D;
-    LD_L_E;
-    PUSH_HL;
-    CALL(aDisplayHourOClock);
-    POP_DE;
-    INC_DE;
-    INC_DE;
-    LD_A(0x9c);
-    LD_de_A;
-    INC_DE;
-    PUSH_DE;
-    LD_HL(3);
-    ADD_HL_DE;
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    LD_A_de;
-    LD_hl_A;
-    POP_HL;
-    CALL(aDisplayMinutesWithMinString);
-    INC_HL;
-    INC_HL;
-    INC_HL;
-    RET;
-
+    // LD_H_D;
+    // LD_L_E;
+    uint8_t* de2;
+    uint8_t* hl = de;
+    // PUSH_HL;
+    // CALL(aDisplayHourOClock);
+    DisplayHourOClock(de);
+    // POP_DE;
+    // INC_DE;
+    // INC_DE;
+    // LD_A(0x9c);
+    // LD_de_A;
+    hl[2] = CHAR_COLON2;
+    // INC_DE;
+    // PUSH_DE;
+    de2 = hl + 3;
+    // LD_HL(3);
+    // ADD_HL_DE;
+    // LD_A_de;
+    // INC_DE;
+    // LD_hli_A;
+    hl[6] = hl[3];
+    // LD_A_de;
+    // LD_hl_A;
+    hl[7] = hl[4];
+    // POP_HL;
+    // CALL(aDisplayMinutesWithMinString);
+    DisplayMinutesWithMinString(de2);
+    // INC_HL;
+    // INC_HL;
+    // INC_HL;
+    // RET;
 }
 
 static bool SetMinutes(void){
@@ -660,7 +667,7 @@ static bool SetDayOfWeek_GetJoypadAction(void) {
         // LD_A_hl;
         // CP_A(6);
         // IF_C goto increase;
-        if(wram->wTempDayOfWeek >= 6) {
+        if(wram->wTempDayOfWeek >= SATURDAY) {
             // LD_A(SUNDAY - 1);
             wram->wTempDayOfWeek = SUNDAY;
         }
@@ -680,7 +687,7 @@ static bool SetDayOfWeek_GetJoypadAction(void) {
         // LD_A_hl;
         // AND_A_A;
         // IF_NZ goto decrease;
-        if(wram->wTempDayOfWeek == 0) {
+        if(wram->wTempDayOfWeek == SUNDAY) {
             // LD_A(SATURDAY + 1);
             wram->wTempDayOfWeek = SATURDAY;
         }

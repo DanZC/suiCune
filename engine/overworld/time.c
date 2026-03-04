@@ -7,6 +7,23 @@
 #include "../link/mystery_gift.h"
 #include "../events/pokerus/apply_pokerus_tick.h"
 
+struct TimeElapsed {
+    uint8_t secondsSince;
+    uint8_t minutesSince;
+    uint8_t hoursSince;
+    uint8_t daysSince;
+};
+
+static uint8_t GetMinutesSinceIfLessThan60(const struct TimeElapsed*);
+
+static struct TimeElapsed CalcDaysSince(uint8_t*);
+// static struct TimeElapsed CalcHoursDaysSince(uint8_t *hl); // Unused
+static struct TimeElapsed CalcMinsHoursDaysSince(uint8_t* hl);
+static struct TimeElapsed CalcSecsMinsHoursDaysSince(uint8_t* hl);
+static void v_CalcMinsHoursDaysSince(struct TimeElapsed* out, uint8_t* hl, uint8_t carry);
+static void v_CalcHoursDaysSince(struct TimeElapsed* out, uint8_t* hl, uint8_t carry);
+static void v_CalcDaysSince(struct TimeElapsed* out, uint8_t* hl, uint8_t carry);
+
 void v_InitializeStartDay(void){
     // CALL(aInitializeStartDay);
     InitializeStartDay();
@@ -120,13 +137,12 @@ bool CheckDayDependentEventHL(uint8_t* hl){
     // INC_HL;
     // PUSH_HL;
     // CALL(aCalcDaysSince);
-    CalcDaysSince(hl + 1);
+    struct TimeElapsed elapsed = CalcDaysSince(hl + 1);
     // CALL(aGetDaysSince);
-    uint8_t days = GetDaysSince();
     // POP_HL;
     // DEC_HL;
     // CALL(aUpdateTimeRemaining);
-    return UpdateTimeRemaining(hl, days);
+    return UpdateTimeRemaining(hl, elapsed.daysSince);
     // RET;
 }
 
@@ -145,9 +161,9 @@ void RestartReceiveCallDelay(uint8_t a){
 bool CheckReceiveCallDelay(void){
     // LD_HL(wReceiveCallDelay_StartTime);
     // CALL(aCalcMinsHoursDaysSince);
-    CalcMinsHoursDaysSince(wram->wReceiveCallDelay_StartTime);
+    struct TimeElapsed elapsed = CalcMinsHoursDaysSince(wram->wReceiveCallDelay_StartTime);
     // CALL(aGetMinutesSinceIfLessThan60);
-    uint8_t mins = GetMinutesSinceIfLessThan60();
+    uint8_t mins = GetMinutesSinceIfLessThan60(&elapsed);
     // LD_HL(wReceiveCallDelay_MinsRemaining);
     // CALL(aUpdateTimeRemaining);
     return UpdateTimeRemaining(&wram->wReceiveCallDelay_MinsRemaining, mins);
@@ -243,19 +259,19 @@ void StartBugContestTimer(void){
 bool CheckBugContestTimer(void){
     // LD_HL(wBugContestStartTime);
     // CALL(aCalcSecsMinsHoursDaysSince);
-    CalcSecsMinsHoursDaysSince(gPlayer.bugContestStartTime);
+    struct TimeElapsed elapsed = CalcSecsMinsHoursDaysSince(gPlayer.bugContestStartTime);
     // LD_A_addr(wDaysSince);
     // AND_A_A;
     // IF_NZ goto timed_out;
     // LD_A_addr(wHoursSince);
     // AND_A_A;
     // IF_NZ goto timed_out;
-    if(wram->wDaysSince == 0 && wram->wHoursSince == 0) {
+    if(elapsed.daysSince == 0 && elapsed.hoursSince == 0) {
         // LD_A_addr(wSecondsSince);
         // LD_B_A;
         // LD_A_addr(wBugContestSecsRemaining);
         // SUB_A_B;
-        uint16_t temp = wram->wBugContestSecsRemaining - wram->wSecondsSince;
+        uint16_t temp = wram->wBugContestSecsRemaining - elapsed.secondsSince;
         uint8_t a = (temp & 0xff);
         uint8_t carry = (temp & 0xff00)? 1: 0;
         // IF_NC goto okay;
@@ -270,7 +286,7 @@ bool CheckBugContestTimer(void){
         // LD_B_A;
         // LD_A_addr(wBugContestMinsRemaining);
         // SBC_A_B;
-        temp = wram->wBugContestMinsRemaining - wram->wMinutesSince - carry;
+        temp = wram->wBugContestMinsRemaining - elapsed.minutesSince - carry;
         // LD_addr_A(wBugContestMinsRemaining);
         wram->wBugContestMinsRemaining = (temp & 0xff);
         carry = (temp & 0xff00)? 1: 0;
@@ -305,9 +321,8 @@ void InitializeStartDay(void){
 void CheckPokerusTick(void){
     // LD_HL(wTimerEventStartDay);
     // CALL(aCalcDaysSince);
-    CalcDaysSince(&gPlayer.timerEventStartDay);
     // CALL(aGetDaysSince);
-    uint8_t days = GetDaysSince();
+    uint8_t days = CalcDaysSince(&gPlayer.timerEventStartDay).daysSince;
     // AND_A_A;
     // IF_Z goto done;  // not even a day has passed since game start
     if(days != 0) {
@@ -338,11 +353,11 @@ void SetUnusedTwoDayTimer(void){
 void CheckUnusedTwoDayTimer(void){
     // LD_HL(wUnusedTwoDayTimerStartDate);
     // CALL(aCalcDaysSince);
-    CalcDaysSince(&gPlayer.unusedTwoDayTimerStartDate);
+    struct TimeElapsed elapsed = CalcDaysSince(&gPlayer.unusedTwoDayTimerStartDate);
     // CALL(aGetDaysSince);
     // LD_HL(wUnusedTwoDayTimer);
     // CALL(aUpdateTimeRemaining);
-    UpdateTimeRemaining(&gPlayer.unusedTwoDayTimer, GetDaysSince());
+    UpdateTimeRemaining(&gPlayer.unusedTwoDayTimer, elapsed.daysSince);
     // RET;
 }
 
@@ -497,19 +512,19 @@ void GetSecondsSinceIfLessThan60(void){
 
 }
 
-uint8_t GetMinutesSinceIfLessThan60(void){
+static uint8_t GetMinutesSinceIfLessThan60(const struct TimeElapsed *elapsed){
     // LD_A_addr(wDaysSince);
     // AND_A_A;
     // JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
     // LD_A_addr(wHoursSince);
     // AND_A_A;
     // JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
-    if(wram->wDaysSince != 0 || wram->wHoursSince != 0) {
+    if(elapsed->daysSince != 0 || elapsed->hoursSince != 0) {
         return 0xff;
     }
     // LD_A_addr(wMinutesSince);
     // RET;
-    return wram->wMinutesSince;
+    return elapsed->minutesSince;
 }
 
 void GetHoursSinceIfLessThan24(void){
@@ -522,11 +537,10 @@ void GetHoursSinceIfLessThan24(void){
 
 }
 
-uint8_t GetDaysSince(void){
+// uint8_t GetDaysSince(void){
     // LD_A_addr(wDaysSince);
     // RET;
-    return wram->wDaysSince;
-}
+// }
 
 // DEPRECATED: Just return 0xff
 void GetTimeElapsed_ExceedsUnitLimit(void){
@@ -534,29 +548,36 @@ void GetTimeElapsed_ExceedsUnitLimit(void){
     // RET;
 }
 
-void CalcDaysSince(uint8_t* hl){
+static struct TimeElapsed CalcDaysSince(uint8_t* hl){
+    struct TimeElapsed ts = {0};
     // XOR_A_A;
     // JR(mv_CalcDaysSince);
-    return v_CalcDaysSince(hl, 0);
+    v_CalcDaysSince(&ts, hl, 0);
+    return ts;
 }
 
 //  //  unreferenced
-void CalcHoursDaysSince(uint8_t *hl){
+// static struct TimeElapsed CalcHoursDaysSince(uint8_t *hl){
+    // struct TimeElapsed ts = {0};
     // INC_HL;
     // XOR_A_A;
     // JR(mv_CalcHoursDaysSince);
-    return v_CalcHoursDaysSince(hl + 1, false);
-}
+    // v_CalcHoursDaysSince(&ts, hl + 1, false);
+    // return ts;
+// }
 
-void CalcMinsHoursDaysSince(uint8_t* hl){
+static struct TimeElapsed CalcMinsHoursDaysSince(uint8_t* hl){
+    struct TimeElapsed elapsed = {0};
     // INC_HL;
     // INC_HL;
     // XOR_A_A;
     // JR(mv_CalcMinsHoursDaysSince);
-    return v_CalcMinsHoursDaysSince(hl + 2, 0);
+    v_CalcMinsHoursDaysSince(&elapsed, hl + 2, 0);
+    return elapsed;
 }
 
-void CalcSecsMinsHoursDaysSince(uint8_t* hl){
+static struct TimeElapsed CalcSecsMinsHoursDaysSince(uint8_t* hl){
+    struct TimeElapsed elapsed = {0};
     // INC_HL;
     // INC_HL;
     // INC_HL;
@@ -579,12 +600,13 @@ void CalcSecsMinsHoursDaysSince(uint8_t* hl){
     // DEC_HL;
     hl--;
     // LD_addr_A(wSecondsSince);  // seconds since
-    wram->wSecondsSince = a;
+    elapsed.secondsSince = a;
 
-    return v_CalcMinsHoursDaysSince(hl, carry);
+    v_CalcMinsHoursDaysSince(&elapsed, hl, carry);
+    return elapsed;
 }
 
-void v_CalcMinsHoursDaysSince(uint8_t* hl, uint8_t carry){
+static void v_CalcMinsHoursDaysSince(struct TimeElapsed* out, uint8_t* hl, uint8_t carry){
     // LDH_A_addr(hMinutes);
     // LD_C_A;
     // SBC_A_hl;
@@ -603,12 +625,12 @@ void v_CalcMinsHoursDaysSince(uint8_t* hl, uint8_t carry){
     // DEC_HL;
     --hl;
     // LD_addr_A(wMinutesSince);  // minutes since
-    wram->wMinutesSince = a;
+    out->minutesSince = a;
 
-    return v_CalcHoursDaysSince(hl, carry);
+    return v_CalcHoursDaysSince(out, hl, carry);
 }
 
-void v_CalcHoursDaysSince(uint8_t* hl, uint8_t carry){
+static void v_CalcHoursDaysSince(struct TimeElapsed* out, uint8_t* hl, uint8_t carry){
     // LDH_A_addr(hHours);
     // LD_C_A;
     // SBC_A_hl;
@@ -627,12 +649,12 @@ void v_CalcHoursDaysSince(uint8_t* hl, uint8_t carry){
     // DEC_HL;
     hl--;
     // LD_addr_A(wHoursSince);  // hours since
-    wram->wHoursSince = a;
+    out->hoursSince = a;
 
-    return v_CalcDaysSince(hl, carry);
+    return v_CalcDaysSince(out, hl, carry);
 }
 
-void v_CalcDaysSince(uint8_t* hl, uint8_t carry){
+static void v_CalcDaysSince(struct TimeElapsed* out, uint8_t* hl, uint8_t carry){
     // LD_A_addr(wCurDay);
     // LD_C_A;
     // SBC_A_hl;
@@ -649,7 +671,7 @@ void v_CalcDaysSince(uint8_t* hl, uint8_t carry){
     // LD_hl_C;  // current days
     *hl = gPlayer.curDay;
     // LD_addr_A(wDaysSince);  // days since
-    wram->wDaysSince = a;
+    out->daysSince = a;
     // RET;
 }
 

@@ -388,48 +388,44 @@ static bool WillObjectBumpIntoSomeoneElse(struct Object* bc){
     return IsNPCAtCoord(bc->nextMapX, bc->nextMapY) != NULL;
 }
 
-void IsObjectFacingSomeoneElse(void){
 //  //  unreferenced
-    LDH_A_addr(hMapObjectIndex);
-    CALL(aGetObjectStruct);
-    CALL(aIsObjectFacingSomeoneElse_GetFacingCoords);
-    CALL(aIsNPCAtCoord);
-    RET;
+// DEPRECATED: Use WillObjectBumpIntoSomeoneElse instead.
+void IsObjectFacingSomeoneElse(void){
+    // LDH_A_addr(hMapObjectIndex);
+    // CALL(aGetObjectStruct);
+    // CALL(aIsObjectFacingSomeoneElse_GetFacingCoords);
+    // CALL(aIsNPCAtCoord);
+    // RET;
 
-
-GetFacingCoords:
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_E_hl;
-    CALL(aGetSpriteDirection);
-    AND_A_A;  // OW_DOWN?
-    IF_Z goto down;
-    CP_A(OW_UP);
-    IF_Z goto up;
-    CP_A(OW_LEFT);
-    IF_Z goto left;
+// GetFacingCoords:
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    // CALL(aGetSpriteDirection);
+    // AND_A_A;  // OW_DOWN?
+    // IF_Z goto down;
+    // CP_A(OW_UP);
+    // IF_Z goto up;
+    // CP_A(OW_LEFT);
+    // IF_Z goto left;
 // OW_RIGHT
-    INC_D;
-    RET;
+    // INC_D;
+    // RET;
 
+// down:
+    // INC_E;
+    // RET;
 
-down:
-    INC_E;
-    RET;
+// up:
+    // DEC_E;
+    // RET;
 
-
-up:
-    DEC_E;
-    RET;
-
-
-left:
-    DEC_D;
-    RET;
-
+// left:
+    // DEC_D;
+    // RET;
 }
 
 struct Object* IsNPCAtCoord(uint8_t d, uint8_t e){
@@ -664,78 +660,74 @@ yes:
     return true;
 }
 
-void IsNPCAtPlayerCoord(void){
 //  //  unreferenced
-    LD_A_addr(wPlayerStandingMapX);
-    LD_D_A;
-    LD_A_addr(wPlayerStandingMapY);
-    LD_E_A;
-    LD_BC(wObjectStructs);
-    XOR_A_A;
+// DEPRECATED
+void IsNPCAtPlayerCoord(void){
+    // LD_A_addr(wPlayerStandingMapX);
+    // LD_D_A;
+    // LD_A_addr(wPlayerStandingMapY);
+    // LD_E_A;
+    // LD_BC(wObjectStructs);
+    // XOR_A_A;
 
-loop:
+// loop:
     LDH_addr_A(hObjectStructIndex);
-    CALL(aDoesObjectHaveASprite);
-    IF_Z goto next;
+    // CALL(aDoesObjectHaveASprite);
+    // IF_Z goto next;
 
-    LD_HL(OBJECT_MOVEMENTTYPE);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A(SPRITEMOVEDATA_BIGDOLLSYM);
-    IF_NZ goto not_big;
-    CALL(aWillObjectIntersectBigObject);
-    IF_C goto yes;
-    goto next;
+    // LD_HL(OBJECT_MOVEMENTTYPE);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A(SPRITEMOVEDATA_BIGDOLLSYM);
+    // IF_NZ goto not_big;
+    // CALL(aWillObjectIntersectBigObject);
+    // IF_C goto yes;
+    // goto next;
 
+// not_big:
+    // LD_HL(OBJECT_NEXT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A_E;
+    // IF_NZ goto check_current_coords;
+    // LD_HL(OBJECT_NEXT_MAP_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A_D;
+    // IF_NZ goto check_current_coords;
+    // LDH_A_addr(hObjectStructIndex);
+    // CP_A(PLAYER_OBJECT);
+    // IF_Z goto next;
+    // goto yes;
 
-not_big:
-    LD_HL(OBJECT_NEXT_MAP_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A_E;
-    IF_NZ goto check_current_coords;
-    LD_HL(OBJECT_NEXT_MAP_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A_D;
-    IF_NZ goto check_current_coords;
-    LDH_A_addr(hObjectStructIndex);
-    CP_A(PLAYER_OBJECT);
-    IF_Z goto next;
-    goto yes;
+// check_current_coords:
+    // LD_HL(OBJECT_MAP_Y);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A_E;
+    // IF_NZ goto next;
+    // LD_HL(OBJECT_MAP_X);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // CP_A_D;
+    // IF_NZ goto next;
+    // goto yes;
 
+// next:
+    // LD_HL(OBJECT_LENGTH);
+    // ADD_HL_BC;
+    // LD_B_H;
+    // LD_C_L;
+    // LDH_A_addr(hObjectStructIndex);
+    // INC_A;
+    // CP_A(NUM_OBJECT_STRUCTS);
+    // IF_NZ goto loop;
+    // XOR_A_A;
+    // RET;
 
-check_current_coords:
-    LD_HL(OBJECT_MAP_Y);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A_E;
-    IF_NZ goto next;
-    LD_HL(OBJECT_MAP_X);
-    ADD_HL_BC;
-    LD_A_hl;
-    CP_A_D;
-    IF_NZ goto next;
-    goto yes;
-
-
-next:
-    LD_HL(OBJECT_LENGTH);
-    ADD_HL_BC;
-    LD_B_H;
-    LD_C_L;
-    LDH_A_addr(hObjectStructIndex);
-    INC_A;
-    CP_A(NUM_OBJECT_STRUCTS);
-    IF_NZ goto loop;
-    XOR_A_A;
-    RET;
-
-
-yes:
-    SCF;
-    RET;
-
+// yes:
+    // SCF;
+    // RET;
 }
 
 static bool WillObjectIntersectBigObject(struct Object* bc, uint8_t d, uint8_t e){

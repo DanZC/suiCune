@@ -1809,10 +1809,10 @@ struct wram_s
                 // Time buffer, for counting the amount of time since
                 // an event began.
                 //union wOptionsEnd
-                uint8_t wSecondsSince;
-                uint8_t wMinutesSince;
-                uint8_t wHoursSince;
-                uint8_t wDaysSince;
+                // uint8_t wSecondsSince;
+                // uint8_t wMinutesSince;
+                // uint8_t wHoursSince;
+                // uint8_t wDaysSince;
             };
         };
     };

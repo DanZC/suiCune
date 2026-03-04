@@ -353,20 +353,20 @@ void FixPicBank(void){
 
 #define PICS_FIX (0x36)
 
-    PUSH_HL;
-    PUSH_BC;
-    SUB_A(BANK(aHoOhFrontpic) - PICS_FIX);
-    LD_C_A;
-    LD_B(0);
-    LD_HL(mFixPicBank_PicsBanks);
-    ADD_HL_BC;
-    LD_A_hl;
-    POP_BC;
-    POP_HL;
-    RET;
+    // PUSH_HL;
+    // PUSH_BC;
+    // SUB_A(BANK(aHoOhFrontpic) - PICS_FIX);
+    // LD_C_A;
+    // LD_B(0);
+    // LD_HL(mFixPicBank_PicsBanks);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // POP_BC;
+    // POP_HL;
+    // RET;
 
 
-PicsBanks:
+// PicsBanks:
     //db ['BANK("Pics 1")'];  // BANK("Pics 1") + 0
     //db ['BANK("Pics 2")'];  // BANK("Pics 1") + 1
     //db ['BANK("Pics 3")'];  // BANK("Pics 1") + 2
@@ -392,7 +392,7 @@ PicsBanks:
     //db ['BANK("Pics 23")'];  // BANK("Pics 1") + 22
     //db ['BANK("Pics 24")'];  // BANK("Pics 1") + 23
 
-    return GSIntro_GetMonFrontpic();
+    // return GSIntro_GetMonFrontpic();
 }
 
 void GSIntro_GetMonFrontpic(void){

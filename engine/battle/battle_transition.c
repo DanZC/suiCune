@@ -76,7 +76,6 @@ static void DoBattleTransition_InitGFX(void) {
 }
 
 void DoBattleTransition(void){
-    PEEK("");
     // CALL(aDoBattleTransition_InitGFX);
     DoBattleTransition_InitGFX();
     // LDH_A_addr(rBGP);
@@ -1213,13 +1212,12 @@ void StartTrainerBattle_ZoomToBlack(void){
     // RET;
 }
 
-void UnusedWaitBGMapOnce(void){
+// void UnusedWaitBGMapOnce(void){
 //  //  unreferenced
-    LD_A(1);
-    LDH_addr_A(hBGMapMode);  // redundant
-    CALL(aWaitBGMap);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    RET;
-
-}
+    // LD_A(1);
+    // LDH_addr_A(hBGMapMode);  // redundant
+    // CALL(aWaitBGMap);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    // RET;
+// }

@@ -5,7 +5,7 @@ bool WriteCmdQueue(const struct CmdQueue* hl);
 bool DelCmdQueue(uint8_t b);
 void v_DelCmdQueue(uint8_t* bc);
 // void HandleQueuedCommand(struct CmdQueue* bc);
-void CmdQueues_AnonJumptable(void);
+// void CmdQueues_AnonJumptable(void);
 // void CmdQueues_IncAnonJumptableIndex(uint8_t* bc);
 // void CmdQueues_DecAnonJumptableIndex(uint8_t* bc);
 void CmdQueue_Null(void);

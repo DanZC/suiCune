@@ -196,47 +196,50 @@ const txt_cmd_s EndUsedMove5Text[] = {
     text_end
 };
 
+#if defined(_CRYSTAL_JP)
+// TODO: Actually have a working Grammar table for Japanese.
 void GetMoveGrammar(void){
 //  store move grammar type in wMoveGrammar
 
-    PUSH_BC;
+    // PUSH_BC;
 //  wMoveGrammar contains move id
-    LD_A_addr(wMoveGrammar);
-    LD_C_A;  // move id
-    LD_B(0);  // grammar index
+    // LD_A_addr(wMoveGrammar);
+    // LD_C_A;  // move id
+    // LD_B(0);  // grammar index
 
 //  read grammar table
-    LD_HL(mMoveGrammar);
+    // LD_HL(mMoveGrammar);
 
-loop:
-    LD_A_hli;
+// loop:
+    // LD_A_hli;
 //  end of table?
-    CP_A(-1);
-    IF_Z goto end;
+    // CP_A(-1);
+    // IF_Z goto end;
 //  match?
-    CP_A_C;
-    IF_Z goto end;
+    // CP_A_C;
+    // IF_Z goto end;
 //  advance grammar type at 0
-    AND_A_A;
-    IF_NZ goto loop;
+    // AND_A_A;
+    // IF_NZ goto loop;
 //  next grammar type
-    INC_B;
-    goto loop;
+    // INC_B;
+    // goto loop;
 
 
-end:
+// end:
 //  wMoveGrammar now contains move grammar
-    LD_A_B;
-    LD_addr_A(wMoveGrammar);
+    // LD_A_B;
+    // LD_addr_A(wMoveGrammar);
 
 //  we're done
-    POP_BC;
-    RET;
+    // POP_BC;
+    // RET;
 
 // INCLUDE "data/moves/grammar.asm"
 
     // return UpdateUsedMoves();
 }
+#endif
 
 //  append move a to wPlayerUsedMoves unless it has already been used
 static void UpdateUsedMoves(move_t a){

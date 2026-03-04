@@ -295,13 +295,15 @@ void Function17a78f(void){
     }
 }
 
-void Function17a7a6(void){
+// IncrementD087
+// DEPRECATED: Use wram->wd087++
 //  //  unreferenced
-    LD_A_addr(0xd087);
-    INC_A;
-    LD_addr_A(0xd087);
-    RET;
-
+void Function17a7a6(void){
+    // LD_A_addr(0xd087);
+    // INC_A;
+    // LD_addr_A(0xd087);
+    wram->wd087++;
+    // RET;
 }
 
 void Function17a7ae(void){

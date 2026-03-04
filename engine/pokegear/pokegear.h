@@ -36,7 +36,7 @@ void PokegearJumptable(void);
 // void PokegearPhone_UpdateDisplayList(void);
 // void PokegearPhone_DeletePhoneNumber(void);
 bool PokegearPhoneContactSubmenu(void);
-void GetAMPMHours(void);
+u8_flag_s GetAMPMHours(void);
 // void Pokegear_SwitchPage(uint8_t c, uint8_t b);
 void ExitPokegearRadio_HandleMusic(void);
 void DeleteSpriteAnimStruct2ToEnd(void);

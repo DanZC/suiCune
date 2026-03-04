@@ -401,24 +401,27 @@ static void PrintRadioLine(uint8_t a){
     wram->wRadioTextDelay = 100;
 }
 
-void ReplacePeriodsWithSpaces(void){
 //  //  unreferenced
-    PUSH_HL;
-    LD_B(SCREEN_WIDTH * 2);
+void ReplacePeriodsWithSpaces(uint8_t* hl){
+    // PUSH_HL;
+    // LD_B(SCREEN_WIDTH * 2);
 
-loop:
-    LD_A_hl;
-    CP_A(0xe8);
-    IF_NZ goto next;
-    LD_hl(0x7f);
+    for(uint32_t i = 0; i < SCREEN_WIDTH * 2; ++i) {
+    // loop:
+        // LD_A_hl;
+        // CP_A(0xe8);
+        // IF_NZ goto next;
+        // LD_hl(0x7f);
+        if(hl[i] == CHAR_PERIOD)
+            hl[i] = CHAR_SPACE;
 
-next:
-    INC_HL;
-    DEC_B;
-    IF_NZ goto loop;
-    POP_HL;
-    RET;
-
+    // next:
+        // INC_HL;
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
+    // POP_HL;
+    // RET;
 }
 
 static void RadioScroll(void){

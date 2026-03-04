@@ -8547,21 +8547,21 @@ void PassedBattleMonEntrance(void){
     return SpikesDamage();
 }
 
+// DEPRECATED: Inlined into BattleMenu
 void BattleMenu_Run(void){
-    CALL(aSafeLoadTempTilemapToTilemap);
-    LD_A(0x3);
-    LD_addr_A(wMenuCursorY);
-    LD_HL(wBattleMonSpeed);
-    LD_DE(wEnemyMonSpeed);
-    CALL(aTryToRunAwayFromBattle);
-    LD_A(FALSE);
-    LD_addr_A(wFailedToFlee);
-    RET_C ;
-    LD_A_addr(wBattlePlayerAction);
-    AND_A_A;  // BATTLEPLAYERACTION_USEMOVE?
-    RET_NZ ;
-    JP(mBattleMenu);
-
+    // CALL(aSafeLoadTempTilemapToTilemap);
+    // LD_A(0x3);
+    // LD_addr_A(wMenuCursorY);
+    // LD_HL(wBattleMonSpeed);
+    // LD_DE(wEnemyMonSpeed);
+    // CALL(aTryToRunAwayFromBattle);
+    // LD_A(FALSE);
+    // LD_addr_A(wFailedToFlee);
+    // RET_C ;
+    // LD_A_addr(wBattlePlayerAction);
+    // AND_A_A;  // BATTLEPLAYERACTION_USEMOVE?
+    // RET_NZ ;
+    // JP(mBattleMenu);
 }
 
 static void CheckAmuletCoin(void){

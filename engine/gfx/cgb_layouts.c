@@ -725,16 +725,19 @@ StartersCharizardScene:
 }
 
 void v_CGB_BetaPoker(void){
-    LD_HL(mBetaPokerPals);
-    LD_DE(wBGPals1);
-    LD_BC(5 * PALETTE_SIZE);
-    LD_A(MBANK(awBGPals1));
-    CALL(aFarCopyWRAM);
-    CALL(aApplyPals);
-    CALL(aWipeAttrmap);
-    CALL(aApplyAttrmap);
-    RET;
-
+    // LD_HL(mBetaPokerPals);
+    // LD_DE(wBGPals1);
+    // LD_BC(5 * PALETTE_SIZE);
+    // LD_A(MBANK(awBGPals1));
+    // CALL(aFarCopyWRAM);
+    LoadPaletteAssetColorsToArray(wram->wBGPals1, BetaPokerPals, 0, 5 * NUM_PAL_COLORS);
+    // CALL(aApplyPals);
+    ApplyPals();
+    // CALL(aWipeAttrmap);
+    WipeAttrmap();
+    // CALL(aApplyAttrmap);
+    ApplyAttrmap();
+    // RET;
 }
 
 void v_CGB_Diploma(void){

@@ -1248,16 +1248,16 @@ bool RetrieveBreedmon(void){
     return false;
 }
 
+// DEPRECATED: Use gPokemon.partyMon[gPokemon.partyCount - 1]
 void GetLastPartyMon(void){
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    LD_HL(wPartyMon1Species);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    RET;
-
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // LD_HL(wPartyMon1Species);
+    // LD_BC(PARTYMON_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_D_H;
+    // LD_E_L;
+    // RET;
 }
 
 void DepositMonWithDayCareMan(uint8_t a){

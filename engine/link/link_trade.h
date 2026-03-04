@@ -1,7 +1,9 @@
 extern const char LinkCommsBorderGFX[];
 void v__LoadTradeScreenBorderGFX(void);
 void LoadMobileTradeBorderTilemap(void);
+#if DEBUG
 void TestMobileTradeBorderTilemap(void);
+#endif
 extern const char MobileTradeBorderTilemap[];
 extern const char CableTradeBorderTopTilemap[];
 extern const char CableTradeBorderBottomTilemap[];

@@ -78,7 +78,7 @@ void Diacritic(void);
 void LoadBlinkingCursor(void);
 void UnloadBlinkingCursor(void);
 void PlaceFarString(uint8_t bank, struct TextPrintState* state, uint8_t* hl);
-// void PokeFluteTerminator(void);
+void PokeFluteTerminator(struct TextCmdState* state);
 void PlaceHLTextAtBC(uint8_t* bc, const struct TextCmd* hl);
 void PlaceHLTextAtBC_GB(uint8_t* hl, uint8_t* bc);
 void DoTextUntilTerminator(struct TextCmdState* state);

@@ -2474,9 +2474,8 @@ bool Script_GetOnBike_Register(script_s* s){
 
 void Overworld_DummyFunction(void){
 //  //  unreferenced
-    NOP;
-    RET;
-
+    // NOP;
+    // RET;
 }
 
 bool Script_GetOffBike(script_s* s){

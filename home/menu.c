@@ -601,10 +601,12 @@ bool PlaceYesNoBox(uint8_t b, uint8_t c) {
     return v_YesNoBox(b, c);
 }
 
-void PlaceGenericTwoOptionBox(void) {
-    //  //  unreferenced
-    CALL(aLoadMenuHeader);
-    JR(mInterpretTwoOptionMenu);
+//  //  unreferenced
+bool PlaceGenericTwoOptionBox(const struct MenuHeader *hl) {
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader(hl);
+    // JR(mInterpretTwoOptionMenu);
+    return InterpretTwoOptionMenu();
 }
 
 //  Return true (yes) or false (no).

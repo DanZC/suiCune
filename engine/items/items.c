@@ -173,15 +173,14 @@ bool v_CheckItem(item_pocket_u* hl, item_t item){
     return CheckTheItem((item_quantity_pocket_s*)&gPlayer.numItems, item);
 }
 
-void DoesHLEqualNumItems(void){
-    LD_A_L;
-    CP_A(LOW(wNumItems));
-    RET_NZ ;
-    LD_A_H;
-    CP_A(HIGH(wNumItems));
-    RET;
-
-}
+// void DoesHLEqualNumItems(void){
+    // LD_A_L;
+    // CP_A(LOW(wNumItems));
+    // RET_NZ ;
+    // LD_A_H;
+    // CP_A(HIGH(wNumItems));
+    // RET;
+// }
 
 uint8_t GetPocketCapacity(item_quantity_pocket_s* pocket){
     // LD_C(MAX_ITEMS);
@@ -786,40 +785,38 @@ uint8_t CheckItemMenu(item_t item){
     return ItemAttributes[item].helpField;
 }
 
-void GetItemAttr(void){
 //  Get attribute a of wCurItem.
+// DEPRECATED: Use ItemAttributes[item].xxx
+// void GetItemAttr(void){
+    // PUSH_HL;
+    // PUSH_BC;
 
-    PUSH_HL;
-    PUSH_BC;
+    // LD_HL(mItemAttributes);
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
 
-    LD_HL(mItemAttributes);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
+    // XOR_A_A;
+    // LD_addr_A(wItemAttributeValue);
 
-    XOR_A_A;
-    LD_addr_A(wItemAttributeValue);
+    // LD_A_addr(wCurItem);
+    // DEC_A;
+    // LD_C_A;
+    // LD_A(ITEMATTR_STRUCT_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A(BANK(aItemAttributes));
+    // CALL(aGetFarByte);
 
-    LD_A_addr(wCurItem);
-    DEC_A;
-    LD_C_A;
-    LD_A(ITEMATTR_STRUCT_LENGTH);
-    CALL(aAddNTimes);
-    LD_A(BANK(aItemAttributes));
-    CALL(aGetFarByte);
-
-    POP_BC;
-    POP_HL;
-    RET;
-
-}
+    // POP_BC;
+    // POP_HL;
+    // RET;
+// }
 
 void ItemAttr_ReturnCarry(void){
-    LD_A(1);
-    LD_addr_A(wItemAttributeValue);
-    SCF;
-    RET;
-
+    // LD_A(1);
+    // LD_addr_A(wItemAttributeValue);
+    // SCF;
+    // RET;
 }
 
 //  Return the price of wCurItem in de.

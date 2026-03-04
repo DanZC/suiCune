@@ -17,7 +17,7 @@ void DummyPredef35(void){
 }
 
 void DummyPredef36(void){
-    RET;
+    // RET;
 
 }
 

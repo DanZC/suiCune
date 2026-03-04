@@ -3394,16 +3394,16 @@ void Pokedex_ApplyUsualPals(void){
     // RET;
 }
 
+// DEPRECATED: Use C's index operator.
 void Pokedex_LoadPointer(void){
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    RET;
-
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // RET;
 }
 
 //  Loads the tiles of the currently selected Pokémon.

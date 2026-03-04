@@ -97,40 +97,41 @@ void v_MobileStatsScreenInit(void){
     return StatsScreenInit_Common(StatsScreenMobile);
 }
 
+// DEPRECATED: Unused copy of StatsScreenInit_Common
 void StatsScreenInit_gotaddress(void){
-    LDH_A_addr(hMapAnims);
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hMapAnims);  // disable overworld tile animations
-    LD_A_addr(wBoxAlignment);  // whether sprite is to be mirrorred
-    PUSH_AF;
-    LD_A_addr(wJumptableIndex);
-    LD_B_A;
-    LD_A_addr(wStatsScreenFlags);
-    LD_C_A;
+    // LDH_A_addr(hMapAnims);
+    // PUSH_AF;
+    // XOR_A_A;
+    // LDH_addr_A(hMapAnims);  // disable overworld tile animations
+    // LD_A_addr(wBoxAlignment);  // whether sprite is to be mirrorred
+    // PUSH_AF;
+    // LD_A_addr(wJumptableIndex);
+    // LD_B_A;
+    // LD_A_addr(wStatsScreenFlags);
+    // LD_C_A;
 
-    PUSH_BC;
-    PUSH_HL;
-    CALL(aClearBGPalettes);
-    CALL(aClearTilemap);
-    CALL(aUpdateSprites);
-    FARCALL(aStatsScreen_LoadFont);
-    POP_HL;
-    CALL(av_hl_);
-    CALL(aClearBGPalettes);
-    CALL(aClearTilemap);
-    POP_BC;
+    // PUSH_BC;
+    // PUSH_HL;
+    // CALL(aClearBGPalettes);
+    // CALL(aClearTilemap);
+    // CALL(aUpdateSprites);
+    // FARCALL(aStatsScreen_LoadFont);
+    // POP_HL;
+    // CALL(av_hl_);
+    // CALL(aClearBGPalettes);
+    // CALL(aClearTilemap);
+    // POP_BC;
 
 // restore old values
-    LD_A_B;
-    LD_addr_A(wJumptableIndex);
-    LD_A_C;
-    LD_addr_A(wStatsScreenFlags);
-    POP_AF;
-    LD_addr_A(wBoxAlignment);
-    POP_AF;
-    LDH_addr_A(hMapAnims);
-    RET;
+    // LD_A_B;
+    // LD_addr_A(wJumptableIndex);
+    // LD_A_C;
+    // LD_addr_A(wStatsScreenFlags);
+    // POP_AF;
+    // LD_addr_A(wBoxAlignment);
+    // POP_AF;
+    // LDH_addr_A(hMapAnims);
+    // RET;
 
 }
 
@@ -815,22 +816,29 @@ static void StatsScreen_InitUpperHalf(void){
     //dw ['wBufferMonNickname'];
 }
 
+#if defined(_CRYSTAL_JP)
 void StatsScreen_PlaceVerticalDivider(void){
 //  //  unreferenced
 //  The Japanese stats screen has a vertical divider.
-    hlcoord(7, 0, wTilemap);
-    LD_BC(SCREEN_WIDTH);
-    LD_D(SCREEN_HEIGHT);
+    // hlcoord(7, 0, wTilemap);
+    tile_t* hl = coord(7, 0, wram->wTilemap);
+    // LD_BC(SCREEN_WIDTH);
+    // LD_D(SCREEN_HEIGHT);
+    uint8_t d = SCREEN_HEIGHT;
 
-loop:
-    LD_A(0x31);  // vertical divider
-    LD_hl_A;
-    ADD_HL_BC;
-    DEC_D;
-    IF_NZ goto loop;
-    RET;
-
+    do {
+    // loop:
+        // LD_A(0x31);  // vertical divider
+        // LD_hl_A;
+        *hl = CHAR_VERT_DIV;
+        // ADD_HL_BC;
+        hl += SCREEN_WIDTH;
+        // DEC_D;
+        // IF_NZ goto loop;
+    } while(--d != 0);
+    // RET;
 }
+#endif
 
 static void StatsScreen_PlaceHorizontalDivider(void){
     // hlcoord(0, 7, wTilemap);

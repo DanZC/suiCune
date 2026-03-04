@@ -299,15 +299,17 @@ void SetClock(void){
 void ClearRTCStatus(void){
     //  //  unreferenced
 //  clear sRTCStatusFlags
-    XOR_A_A;
-    PUSH_AF;
-    LD_A(MBANK(asRTCStatusFlags));
-    CALL(aOpenSRAM);
-    POP_AF;
-    LD_addr_A(sRTCStatusFlags);
-    CALL(aCloseSRAM);
-    RET;
-
+    // XOR_A_A;
+    // PUSH_AF;
+    // LD_A(MBANK(asRTCStatusFlags));
+    // CALL(aOpenSRAM);
+    OpenSRAM(MBANK(asRTCStatusFlags));
+    // POP_AF;
+    // LD_addr_A(sRTCStatusFlags);
+    gb_write(sRTCStatusFlags, 0);
+    // CALL(aCloseSRAM);
+    CloseSRAM();
+    // RET;
 }
 
 //  append flags to sRTCStatusFlags

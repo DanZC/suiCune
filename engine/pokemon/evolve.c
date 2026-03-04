@@ -550,12 +550,11 @@ void UpdateSpeciesNameIfNotNicknamed(void){
 // Inlined CancelEvolution to reduce stack smashing. 
 // Unused
 void CancelEvolution(void){
-    LD_HL(mStoppedEvolvingText);
-    CALL(aPrintText);
-    CALL(aClearTilemap);
-    POP_HL;
-    JP(mEvolveAfterBattle_MasterLoop);
-
+    // LD_HL(mStoppedEvolvingText);
+    // CALL(aPrintText);
+    // CALL(aClearTilemap);
+    // POP_HL;
+    // JP(mEvolveAfterBattle_MasterLoop);
 }
 
 bool IsMonHoldingEverstone(void){

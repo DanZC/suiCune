@@ -33,6 +33,7 @@
 #include "../events/sacred_ash.h"
 #include "../events/bug_contest/caught_mon.h"
 #include "../menus/naming_screen.h"
+#include "../overworld/decorations.h"
 #include "../pokemon/party_menu.h"
 #include "../pokemon/health.h"
 #include "../pokemon/experience.h"
@@ -130,7 +131,7 @@ void v_DoItemEffect(item_t item){
     case X_SPECIAL:     return XItemEffect();  // X_SPECIAL
     case COIN_CASE:     return CoinCaseEffect();  // COIN_CASE
     case ITEMFINDER:    return ItemfinderEffect();  // ITEMFINDER
-    //dw ['PokeFluteEffect'];  // POKE_FLUTE
+    case POKE_FLUTE:    return PokeFluteEffect();  // POKE_FLUTE
     case EXP_SHARE:     return NoEffect();  // EXP_SHARE
     case OLD_ROD:       return OldRodEffect();  // OLD_ROD
     case GOOD_ROD:      return GoodRodEffect();  // GOOD_ROD
@@ -241,8 +242,8 @@ void v_DoItemEffect(item_t item){
     case FRIEND_BALL:   return PokeBallEffect();  // FRIEND_BALL
     case MOON_BALL:     return PokeBallEffect();  // MOON_BALL
     case LOVE_BALL:     return PokeBallEffect();  // LOVE_BALL
-    //dw ['NormalBoxEffect'];  // NORMAL_BOX
-    //dw ['GorgeousBoxEffect'];  // GORGEOUS_BOX
+    case NORMAL_BOX:    return NormalBoxEffect();  // NORMAL_BOX
+    case GORGEOUS_BOX:  return GorgeousBoxEffect();  // GORGEOUS_BOX
     case SUN_STONE:     return EvoStoneEffect();  // SUN_STONE
     case POLKADOT_BOW:  return NoEffect();  // POLKADOT_BOW
     case ITEM_AB:       return NoEffect();  // ITEM_AB
@@ -3317,106 +3318,125 @@ void XItemEffect(void){
 // INCLUDE "data/items/x_stats.asm"
 }
 
+static void PokeFluteEffect_CureSleep(struct PartyMon *hl){
+    // LD_DE(PARTYMON_STRUCT_LENGTH);
+    // LD_C(PARTY_LENGTH);
+    for(uint32_t i = 0; i < PARTY_LENGTH; ++i){
+    // loop:
+        // LD_A_hl;
+        // PUSH_AF;
+        // AND_A(SLP);
+        // IF_Z goto not_asleep;
+        if(hl[i].status & SLP) {
+            // LD_A(TRUE);
+            // LD_addr_A(wPokeFluteCuredSleep);
+            wram->wPokeFluteCuredSleep = TRUE;
+        }
+
+    // not_asleep:
+        // POP_AF;
+        // AND_A_B;
+        // LD_hl_A;
+        hl[i].status &= ~SLP;
+        // ADD_HL_DE;
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+    // RET;
+}
+
+static void PokeFluteEffect_FluteWakeUpText_Function(struct TextCmdState* state) {
+    // LD_A_addr(wBattleMode);
+    // AND_A_A;
+    // IF_NZ goto battle;
+    if(wram->wBattleMode == 0) {
+        // PUSH_DE;
+        // LD_DE(SFX_POKEFLUTE);
+        // CALL(aWaitPlaySFX);
+        WaitPlaySFX(SFX_POKEFLUTE);
+        // CALL(aWaitSFX);
+        WaitSFX();
+        // POP_DE;
+    }
+
+// battle:
+    // JP(mPokeFluteTerminator);
+    return PokeFluteTerminator(state);
+}
+
 void PokeFluteEffect(void){
-    LD_A_addr(wBattleMode);
-    AND_A_A;
-    IF_NZ goto in_battle;
+    static const txt_cmd_s PlayedFluteText[] = {
+        text_far(v_PlayedFluteText)
+        text_end
+    };
+    static const txt_cmd_s FluteWakeUpText[] = {
+        text_far(v_FluteWakeUpText)
+        text_end
+    };
+    static const txt_cmd_s PlayedTheFlute[] = {
+    // played the # FLUTE.@ @
+        text_far(v_Text_PlayedPokeFlute)
+        text_asm(PokeFluteEffect_FluteWakeUpText_Function)
+    };
+    // LD_A_addr(wBattleMode);
+    // AND_A_A;
+    // IF_NZ goto in_battle;
+    if(wram->wBattleMode == 0)
+        return;
 // overworld flute code was dummied out here
 
 
-in_battle:
-    XOR_A_A;
-    LD_addr_A(wPokeFluteCuredSleep);
+// in_battle:
+    // XOR_A_A;
+    // LD_addr_A(wPokeFluteCuredSleep);
+    wram->wPokeFluteCuredSleep = FALSE;
 
-    LD_B(~SLP);
+    // LD_B(~SLP);
 
-    LD_HL(wPartyMon1Status);
-    CALL(aPokeFluteEffect_CureSleep);
+    // LD_HL(wPartyMon1Status);
+    // CALL(aPokeFluteEffect_CureSleep);
+    PokeFluteEffect_CureSleep(gPokemon.partyMon);
 
-    LD_A_addr(wBattleMode);
-    CP_A(WILD_BATTLE);
-    IF_Z goto skip_otrainer;
-    LD_HL(wOTPartyMon1Status);
-    CALL(aPokeFluteEffect_CureSleep);
+    // LD_A_addr(wBattleMode);
+    // CP_A(WILD_BATTLE);
+    // IF_Z goto skip_otrainer;
+    if(wram->wBattleMode != WILD_BATTLE){
+        // LD_HL(wOTPartyMon1Status);
+        // CALL(aPokeFluteEffect_CureSleep);
+        PokeFluteEffect_CureSleep(wram->wOTPartyMon);
+    }
 
-skip_otrainer:
+// skip_otrainer:
+    // LD_HL(wBattleMonStatus);
+    // LD_A_hl;
+    // AND_A_B;
+    // LD_hl_A;
+    wram->wBattleMon.status[0] &= ~SLP;
+    // LD_HL(wEnemyMonStatus);
+    // LD_A_hl;
+    // AND_A_B;
+    // LD_hl_A;
+    wram->wEnemyMon.status[0] &= ~SLP;
 
-    LD_HL(wBattleMonStatus);
-    LD_A_hl;
-    AND_A_B;
-    LD_hl_A;
-    LD_HL(wEnemyMonStatus);
-    LD_A_hl;
-    AND_A_B;
-    LD_hl_A;
+    // LD_A_addr(wPokeFluteCuredSleep);
+    // AND_A_A;
+    // LD_HL(mPokeFluteEffect_PlayedFluteText);
+    // JP_Z (mPrintText);
+    if(!wram->wPokeFluteCuredSleep)
+        return PrintText(PlayedFluteText);
+    // LD_HL(mPokeFluteEffect_PlayedTheFlute);
+    // CALL(aPrintText);
+    PrintText(PlayedTheFlute);
 
-    LD_A_addr(wPokeFluteCuredSleep);
-    AND_A_A;
-    LD_HL(mPokeFluteEffect_PlayedFluteText);
-    JP_Z (mPrintText);
-    LD_HL(mPokeFluteEffect_PlayedTheFlute);
-    CALL(aPrintText);
-
-    LD_A_addr(wLowHealthAlarm);
-    AND_A(1 << DANGER_ON_F);
-    IF_NZ goto dummy;
+    // LD_A_addr(wLowHealthAlarm);
+    // AND_A(1 << DANGER_ON_F);
+    // IF_NZ goto dummy;
 // more code was dummied out here
 
-dummy:
-    LD_HL(mPokeFluteEffect_FluteWakeUpText);
-    JP(mPrintText);
-
-
-CureSleep:
-    LD_DE(PARTYMON_STRUCT_LENGTH);
-    LD_C(PARTY_LENGTH);
-
-loop:
-    LD_A_hl;
-    PUSH_AF;
-    AND_A(SLP);
-    IF_Z goto not_asleep;
-    LD_A(TRUE);
-    LD_addr_A(wPokeFluteCuredSleep);
-
-not_asleep:
-    POP_AF;
-    AND_A_B;
-    LD_hl_A;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
-
-PlayedFluteText:
-    //text_far ['_PlayedFluteText']
-    //text_end ['?']
-
-
-FluteWakeUpText:
-    //text_far ['_FluteWakeUpText']
-    //text_end ['?']
-
-
-PlayedTheFlute:
-// played the # FLUTE.@ @
-    //text_far ['Text_PlayedPokeFlute']
-    //text_asm ['?']
-    LD_A_addr(wBattleMode);
-    AND_A_A;
-    IF_NZ goto battle;
-
-    PUSH_DE;
-    LD_DE(SFX_POKEFLUTE);
-    CALL(aWaitPlaySFX);
-    CALL(aWaitSFX);
-    POP_DE;
-
-
-battle:
-    JP(mPokeFluteTerminator);
-
+// dummy:
+    // LD_HL(mPokeFluteEffect_FluteWakeUpText);
+    // JP(mPrintText);
+    return PrintText(FluteWakeUpText);
 }
 
 void BlueCardEffect(void){
@@ -3848,30 +3868,30 @@ void SacredAshEffect(void){
 }
 
 void NormalBoxEffect(void){
-    LD_C(DECOFLAG_SILVER_TROPHY_DOLL);
-    JR(mOpenBox);
-
+    // LD_C(DECOFLAG_SILVER_TROPHY_DOLL);
+    // JR(mOpenBox);
+    return OpenBox(DECOFLAG_SILVER_TROPHY_DOLL);
 }
 
 void GorgeousBoxEffect(void){
-    LD_C(DECOFLAG_GOLD_TROPHY_DOLL);
-    return OpenBox();
+    // LD_C(DECOFLAG_GOLD_TROPHY_DOLL);
+    return OpenBox(DECOFLAG_GOLD_TROPHY_DOLL);
 }
 
-void OpenBox(void){
-    FARCALL(aSetSpecificDecorationFlag);
+void OpenBox(uint8_t c){
+    static const txt_cmd_s SentTrophyHomeText[] = {
+        text_far(v_SentTrophyHomeText)
+        text_end
+    };
+    // FARCALL(aSetSpecificDecorationFlag);
+    SetSpecificDecorationFlag(c);
 
-    LD_HL(mOpenBox_SentTrophyHomeText);
-    CALL(aPrintText);
+    // LD_HL(mOpenBox_SentTrophyHomeText);
+    // CALL(aPrintText);
+    PrintText(SentTrophyHomeText);
 
-    JP(mUseDisposableItem);
-
-
-SentTrophyHomeText:
-    //text_far ['_SentTrophyHomeText']
-    //text_end ['?']
-
-    return NoEffect();
+    // JP(mUseDisposableItem);
+    return UseDisposableItem();
 }
 
 void NoEffect(void){
@@ -4348,18 +4368,19 @@ uint8_t GetMaxPPOfMove(void* mon, uint8_t montype, uint8_t n){
 
 }
 
+// DEPRECATED
 void GetMthMoveOfNthPartymon(void){
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aAddNTimes);
 
-    return GetMthMoveOfCurrentMon();
+    // return GetMthMoveOfCurrentMon();
 }
 
+// DEPRECATED
 void GetMthMoveOfCurrentMon(void){
-    LD_A_addr(wMenuCursorY);
-    LD_C_A;
-    LD_B(0);
-    ADD_HL_BC;
-    RET;
-
+    // LD_A_addr(wMenuCursorY);
+    // LD_C_A;
+    // LD_B(0);
+    // ADD_HL_BC;
+    // RET;
 }

@@ -395,16 +395,15 @@ uint8_t* FlyFunction_GetMonIcon(uint16_t de){
     // RET;
 }
 
-void GetMonIconDE(void){
 //  //  unreferenced
-    PUSH_DE;
-    LD_A_addr(wTempIconSpecies);
-    CALL(aReadMonMenuIcon);
-    LD_addr_A(wCurIcon);
-    POP_DE;
-    CALL(aGetIcon_de);
-    RET;
-
+void GetMonIconDE(void){
+    // PUSH_DE;
+    // LD_A_addr(wTempIconSpecies);
+    // CALL(aReadMonMenuIcon);
+    // LD_addr_A(wCurIcon);
+    // POP_DE;
+    // CALL(aGetIcon_de);
+    // RET;
 }
 
 static void GetMemIconGFX(void){

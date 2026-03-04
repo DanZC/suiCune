@@ -10,6 +10,7 @@
 #include "../../home/tilemap.h"
 #include "../../home/serial.h"
 #include "../../home/time_palettes.h"
+#include "../../home/clear_sprites.h"
 #include "../gfx/crystal_layouts.h"
 #include "../gfx/sprites.h"
 #include "../menus/menu.h"
@@ -34,26 +35,38 @@ void LoadMobileTradeBorderTilemap(void){
     // RET;
 }
 
+#if DEBUG
 void TestMobileTradeBorderTilemap(void){
 //  //  unreferenced
 //  Loads the mobile trade border graphics and tilemap,
 //  with a placeholder SCGB_DIPLOMA layout, and exits
 //  after pressing A or B. Possibly used for testing.
-    CALL(aLoadStandardMenuHeader);
-    CALL(aClearBGPalettes);
-    CALL(aClearTilemap);
-    CALL(aClearSprites);
-    FARCALL(av__LoadTradeScreenBorderGFX);  // useless to farcall
-    FARCALL(aLoadMobileTradeBorderTilemap);  // useless to farcall
-    LD_B(SCGB_DIPLOMA);
-    CALL(aGetSGBLayout);
-    CALL(aSetPalettes);
-    CALL(aWaitBGMap);
-    CALL(aJoyWaitAorB);
-    CALL(aCall_ExitMenu);
-    RET;
-
+    // CALL(aLoadStandardMenuHeader);
+    LoadStandardMenuHeader();
+    // CALL(aClearBGPalettes);
+    ClearBGPalettes();
+    // CALL(aClearTilemap);
+    ClearTilemap();
+    // CALL(aClearSprites);
+    ClearSprites();
+    // FARCALL(av__LoadTradeScreenBorderGFX);  // useless to farcall
+    v__LoadTradeScreenBorderGFX();
+    // FARCALL(aLoadMobileTradeBorderTilemap);  // useless to farcall
+    LoadMobileTradeBorderTilemap();
+    // LD_B(SCGB_DIPLOMA);
+    // CALL(aGetSGBLayout);
+    GetSGBLayout(SCGB_DIPLOMA);
+    // CALL(aSetPalettes);
+    SetPalettes();
+    // CALL(aWaitBGMap);
+    WaitBGMap();
+    // CALL(aJoyWaitAorB);
+    JoyWaitAorB();
+    // CALL(aCall_ExitMenu);
+    ExitMenu();
+    // RET;
 }
+#endif
 
 const char MobileTradeBorderTilemap[] = "gfx/trade/border_mobile.tilemap";
 const char CableTradeBorderTopTilemap[] = "gfx/trade/border_cable_top.tilemap";

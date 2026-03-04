@@ -1953,22 +1953,22 @@ bool PokegearPhoneContactSubmenu(void){
     }
 }
 
-void GetAMPMHours(void){
 //  //  unreferenced
-    LDH_A_addr(hHours);
-    CP_A(NOON_HOUR);
-    IF_C goto am;
-    SUB_A(NOON_HOUR);
-    LD_addr_A(wTempByteValue);
-    SCF;
-    RET;
+u8_flag_s GetAMPMHours(void){
+    // LDH_A_addr(hHours);
+    // CP_A(NOON_HOUR);
+    // IF_C goto am;
+    // SUB_A(NOON_HOUR);
+    // LD_addr_A(wTempByteValue);
+    // SCF;
+    // RET;
 
 
-am:
-    LD_addr_A(wTempByteValue);
-    AND_A_A;
-    RET;
-
+// am:
+    // LD_addr_A(wTempByteValue);
+    // AND_A_A;
+    // RET;
+    return u8_flag((hram.hHours < NOON_HOUR)? hram.hHours: hram.hHours - NOON_HOUR, hram.hHours >= NOON_HOUR);
 }
 
 static void Pokegear_SwitchPage(uint8_t c, uint8_t b){
@@ -3431,8 +3431,7 @@ uint8_t HasVisitedSpawn(uint8_t c){
 }
 
 void Pokegear_DummyFunction(void){
-    RET;
-
+    // RET;
 }
 
 static void FlyMap_MapHud(void){

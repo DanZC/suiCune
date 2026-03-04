@@ -827,14 +827,19 @@ void Function4a373(void){
 
 }
 
+// MobileMenu_InitGFXTilemapAndPalettes
+//  [Unused]
 void Function4a39a(void){
 //  //  unreferenced
-    CALL(aFunction4a485);
-    CALL(aFunction4a492);
-    CALL(aFunction4a3aa);
-    CALL(aSetPalettes);
-    RET;
-
+    // CALL(aFunction4a485);
+    Function4a485();
+    // CALL(aFunction4a492);
+    Function4a492();
+    // CALL(aFunction4a3aa);
+    Function4a3aa();
+    // CALL(aSetPalettes);
+    SetPalettes();
+    // RET;
 }
 
 // MobileMenu_InitGFX
@@ -930,30 +935,43 @@ void Function4a3aa(void){
 
 void Function4a449(void){
 //  //  unreferenced
-    LD_BC(3 * SCREEN_WIDTH);
-    LD_A(0x0);
-    hlcoord(0, 0, wTilemap);
-    CALL(aByteFill);
-    LD_BC(2 * SCREEN_WIDTH);
-    LD_A(0x1);
-    CALL(aByteFill);
-    LD_BC(2 * SCREEN_WIDTH);
-    LD_A(0x0);
-    CALL(aByteFill);
-    LD_BC(2 * SCREEN_WIDTH);
-    LD_A(0x1);
-    CALL(aByteFill);
-    LD_BC(SCREEN_WIDTH);
-    LD_A(0x2);
-    CALL(aByteFill);
-    LD_BC(SCREEN_WIDTH);
-    LD_A(0x3);
-    CALL(aByteFill);
-    LD_BC(SCREEN_WIDTH);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    RET;
-
+    // LD_BC(3 * SCREEN_WIDTH);
+    // LD_A(0x0);
+    // hlcoord(0, 0, wTilemap);
+    tile_t* hl = coord(0, 0, wram->wTilemap);
+    // CALL(aByteFill);
+    ByteFill(hl, 3 * SCREEN_WIDTH, 0x0);
+    hl += 3 * SCREEN_WIDTH;
+    // LD_BC(2 * SCREEN_WIDTH);
+    // LD_A(0x1);
+    // CALL(aByteFill);
+    ByteFill(hl, 2 * SCREEN_WIDTH, 0x1);
+    hl += 2 * SCREEN_WIDTH;
+    // LD_BC(2 * SCREEN_WIDTH);
+    // LD_A(0x0);
+    // CALL(aByteFill);
+    ByteFill(hl, 2 * SCREEN_WIDTH, 0x0);
+    hl += 2 * SCREEN_WIDTH;
+    // LD_BC(2 * SCREEN_WIDTH);
+    // LD_A(0x1);
+    // CALL(aByteFill);
+    ByteFill(hl, 2 * SCREEN_WIDTH, 0x1);
+    hl += 2 * SCREEN_WIDTH;
+    // LD_BC(SCREEN_WIDTH);
+    // LD_A(0x2);
+    // CALL(aByteFill);
+    ByteFill(hl, SCREEN_WIDTH, 0x2);
+    hl += SCREEN_WIDTH;
+    // LD_BC(SCREEN_WIDTH);
+    // LD_A(0x3);
+    // CALL(aByteFill);
+    ByteFill(hl, SCREEN_WIDTH, 0x3);
+    hl += SCREEN_WIDTH;
+    // LD_BC(SCREEN_WIDTH);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    ByteFill(hl, SCREEN_WIDTH, 0x7f);
+    // RET;
 }
 
 // MobileMenu_LoadGFX

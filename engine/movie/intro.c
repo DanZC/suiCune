@@ -2705,26 +2705,27 @@ static void Intro_ClearBGPals(void){
     // RET;
 }
 
-void Intro_DecompressRequest2bpp_128Tiles(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
+// DEPRECATED
+// void Intro_DecompressRequest2bpp_128Tiles(void){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
 
-    PUSH_DE;
-    LD_DE(wDecompressScratch);
-    CALL(aDecompress);
-    POP_HL;
+    // PUSH_DE;
+    // LD_DE(wDecompressScratch);
+    // CALL(aDecompress);
+    // POP_HL;
 
-    LD_DE(wDecompressScratch);
-    LD_BC((0x01 << 8) | 0x80);
-    CALL(aRequest2bpp);
+    // LD_DE(wDecompressScratch);
+    // LD_BC((0x01 << 8) | 0x80);
+    // CALL(aRequest2bpp);
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 
-}
+// }
 
 // static void Intro_DecompressRequest2bpp_128Tiles(uint16_t hl, uint16_t de) {
 //     uint8_t svbk = gb_read(rSVBK);
@@ -2734,26 +2735,26 @@ void Intro_DecompressRequest2bpp_128Tiles(void){
 //     gb_write(rSVBK, svbk);
 // }
 
-void Intro_DecompressRequest2bpp_255Tiles(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
+// DEPRECATED
+// void Intro_DecompressRequest2bpp_255Tiles(void){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
 
-    PUSH_DE;
-    LD_DE(wDecompressScratch);
-    CALL(aDecompress);
-    POP_HL;
+    // PUSH_DE;
+    // LD_DE(wDecompressScratch);
+    // CALL(aDecompress);
+    // POP_HL;
 
-    LD_DE(wDecompressScratch);
-    LD_BC((0x01 << 8) | 0xff);
-    CALL(aRequest2bpp);
+    // LD_DE(wDecompressScratch);
+    // LD_BC((0x01 << 8) | 0xff);
+    // CALL(aRequest2bpp);
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
-}
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
+// }
 
 // Unused
 // static void Intro_DecompressRequest2bpp_255Tiles(uint16_t hl, uint16_t de) {
@@ -2764,26 +2765,27 @@ void Intro_DecompressRequest2bpp_255Tiles(void){
 //     gb_write(rSVBK, svbk);
 // }
 
-void Intro_DecompressRequest2bpp_64Tiles(void){
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
+// DEPRECATED
+// void Intro_DecompressRequest2bpp_64Tiles(void){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
 
-    PUSH_DE;
-    LD_DE(wDecompressScratch);
-    CALL(aDecompress);
-    POP_HL;
+    // PUSH_DE;
+    // LD_DE(wDecompressScratch);
+    // CALL(aDecompress);
+    // POP_HL;
 
-    LD_DE(wDecompressScratch);
-    LD_BC((0x01 << 8) | 0x40);
-    CALL(aRequest2bpp);
+    // LD_DE(wDecompressScratch);
+    // LD_BC((0x01 << 8) | 0x40);
+    // CALL(aRequest2bpp);
 
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 
-}
+// }
 
 // static void Intro_DecompressRequest2bpp_64Tiles(uint16_t hl, uint16_t de){
 //     // LDH_A_addr(rSVBK);

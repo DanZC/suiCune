@@ -1014,15 +1014,20 @@ void PlaceFarString(uint8_t bank, struct TextPrintState* state, uint8_t* hl) {
     bank_pop;
 }
 
-// void PokeFluteTerminator(void) {
-//     LD_HL(mPokeFluteTerminator_stop);
-//     RET;
+void PokeFluteTerminator(struct TextCmdState* state) {
+    static const txt_cmd_s stop[] = {
+        text_end
+    };
+    // LD_HL(mPokeFluteTerminator_stop);
+    state->hl = stop;
+    // RET;
+
 
 // stop:
 //     // text_end ['?']
 
 //     return PlaceHLTextAtBC();
-// }
+}
 
 void PlaceHLTextAtBC_GB(uint8_t* hl, uint8_t* bc) {
     uint8_t tflags = gOptions.textboxFlags;

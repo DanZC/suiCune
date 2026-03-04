@@ -441,22 +441,24 @@ const struct MenuHeader BillsPCDepositMenuHeader = {
     .defaultOption = 1,  // default option
 };
 
-void BillsPCClearThreeBoxes(void){
 //  //  unreferenced
-    hlcoord(0, 0, wTilemap);
-    LD_B(4);
-    LD_C(8);
-    CALL(aClearBox);
-    hlcoord(0, 4, wTilemap);
-    LD_B(10);
-    LD_C(9);
-    CALL(aClearBox);
-    hlcoord(0, 14, wTilemap);
-    LD_B(2);
-    LD_C(8);
-    CALL(aClearBox);
-    RET;
-
+void BillsPCClearThreeBoxes(void){
+    // hlcoord(0, 0, wTilemap);
+    // LD_B(4);
+    // LD_C(8);
+    // CALL(aClearBox);
+    ClearBox(coord(0, 0, wram->wTilemap), 8, 4);
+    // hlcoord(0, 4, wTilemap);
+    // LD_B(10);
+    // LD_C(9);
+    // CALL(aClearBox);
+    ClearBox(coord(0, 4, wram->wTilemap), 9, 10);
+    // hlcoord(0, 14, wTilemap);
+    // LD_B(2);
+    // LD_C(8);
+    // CALL(aClearBox);
+    ClearBox(coord(0, 14, wram->wTilemap), 8, 2);
+    // RET;
 }
 
 static void v_WithdrawPKMN_RunJumptable(void);
@@ -2379,25 +2381,24 @@ void BillsPC_UpdateInsertCursor(void){
     }
 }
 
-void BillsPC_FillBox(void){
 //  //  unreferenced
+// DEPRECATED
+void BillsPC_FillBox(void){
+// row:
+    // PUSH_BC;
+    // PUSH_HL;
 
-row:
-    PUSH_BC;
-    PUSH_HL;
-
-col:
-    LD_hli_A;
-    DEC_C;
-    IF_NZ goto col;
-    POP_HL;
-    LD_BC(SCREEN_WIDTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto row;
-    RET;
-
+// col:
+    // LD_hli_A;
+    // DEC_C;
+    // IF_NZ goto col;
+    // POP_HL;
+    // LD_BC(SCREEN_WIDTH);
+    // ADD_HL_BC;
+    // POP_BC;
+    // DEC_B;
+    // IF_NZ goto row;
+    // RET;
 }
 
 bool BillsPC_CheckSpaceInDestination(void){
@@ -3286,16 +3287,16 @@ void BillsPC_ApplyPalettes(uint8_t a){
     // RET;
 }
 
+// DEPRECATED: Just do switch(wram->wJumptableIndex) { ... }
 void BillsPC_Jumptable(void){
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    RET;
-
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // RET;
 }
 
 void BillsPC_InitGFX(void){

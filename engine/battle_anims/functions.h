@@ -78,7 +78,7 @@ void BattleAnimFunction_PerishSong(struct BattleAnim* bc);
 void BattleAnimFunction_RapidSpin(struct BattleAnim* bc);
 void BattleAnimFunction_BetaPursuit(struct BattleAnim* bc);
 void BattleAnimFunction_RainSandstorm(struct BattleAnim* bc);
-void BattleAnimFunction_AnimObjB0(void);
+void BattleAnimFunction_AnimObjB0(struct BattleAnim *bc);
 void BattleAnimFunction_PsychUp(struct BattleAnim* bc);
 void BattleAnimFunction_Cotton(struct BattleAnim* bc);
 void BattleAnimFunction_AncientPower(struct BattleAnim* bc);

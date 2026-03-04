@@ -4,6 +4,7 @@
 #include "../../home/print_text.h"
 
 static void PrintParkBallsRemaining(void);
+static void PrintSafariBallsRemaining(void);
 
 const struct MenuHeader BattleMenuHeader = {
     .flags = MENU_BACKUP_TILES,
@@ -41,14 +42,6 @@ bool LoadBattleMenu(void){
     ExitMenu();
     // RET;
     return res.flag;
-}
-
-void SafariBattleMenu(void){
-//  //  unreferenced
-    LD_HL(mSafariBattleMenuHeader);
-    CALL(aLoadMenuHeader);
-    JR(mCommonBattleMenu);
-
 }
 
 static const struct MenuHeader ContestBattleMenuHeader = {
@@ -118,35 +111,52 @@ void CommonBattleMenu(void){
     // return SafariBattleMenuHeader();
 // }
 
-void SafariBattleMenuHeader(void){
+static const struct MenuHeader SafariBattleMenuHeader = {
     //db ['MENU_BACKUP_TILES'];  // flags
-    //menu_coords ['0', '12', 'SCREEN_WIDTH - 1', 'SCREEN_HEIGHT - 1'];
+    .flags = MENU_BACKUP_TILES,
+    .coord = menu_coords(0, 12, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1),
     //dw ['.MenuData'];
-    //db ['1'];  // default option
+    .data = &(struct MenuData) {
+    // MenuData:
+        .flags = STATICMENU_CURSOR | STATICMENU_DISABLE_B,  // flags
+        ._2dMenu = {
+            .rows=2, .cols=2,  // rows, columns
+            .spacing=11,  // spacing
+            //dba ['.Text']
 
+    // Text:
+        //db ['"サファりボール×\u3000\u3000@"'];  // "SAFARI BALL×  @"
+        //db ['"エサをなげる@"'];  // "THROW BAIT"
+        //db ['"いしをなげる@"'];  // "THROW ROCK"
+        //db ['"にげる@"'];  // "RUN"
+            .options = (const char*[]) {
+                "SAFARI BALL×  @",
+                "THROW BAIT@",
+                "THROW ROCK@",
+                "RUN@",
+            },
+        },
+        .function = PrintSafariBallsRemaining,
+    },
+    .defaultOption = 1,  // default option
+};
 
-MenuData:
-    //db ['STATICMENU_CURSOR | STATICMENU_DISABLE_B'];  // flags
-    //dn ['2', '2'];  // rows, columns
-    //db ['11'];  // spacing
-    //dba ['.Text']
-    //dba ['.PrintSafariBallsRemaining']
+void SafariBattleMenu(void){
+//  //  unreferenced
+    // LD_HL(mSafariBattleMenuHeader);
+    // CALL(aLoadMenuHeader);
+    LoadMenuHeader(&SafariBattleMenuHeader);
+    // JR(mCommonBattleMenu);
+    return CommonBattleMenu();
+}
 
-
-Text:
-    //db ['"サファりボール×\u3000\u3000@"'];  // "SAFARI BALL×  @"
-    //db ['"エサをなげる@"'];  // "THROW BAIT"
-    //db ['"いしをなげる@"'];  // "THROW ROCK"
-    //db ['"にげる@"'];  // "RUN"
-
-
-PrintSafariBallsRemaining:
-    hlcoord(17, 13, wTilemap);
-    LD_DE(wSafariBallsRemaining);
-    LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
-    CALL(aPrintNum);
-    RET;
-
+static void PrintSafariBallsRemaining(void) {
+    // hlcoord(17, 13, wTilemap);
+    // LD_DE(wSafariBallsRemaining);
+    // LD_BC((PRINTNUM_LEADINGZEROS | 1 << 8) | 2);
+    // CALL(aPrintNum);
+    PrintNum(coord(13, 16, wram->wTilemap), &gPlayer.safariBallsRemaining, PRINTNUM_LEADINGZEROS | 1, 2);
+    // RET;
 }
 
 static void PrintParkBallsRemaining(void) {

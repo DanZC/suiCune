@@ -119,9 +119,9 @@ void LoadMapObjects(void){
     // RET;
 }
 
-void MapSetup_DummyFunction(void){
 //  //  unreferenced
-    RET;
+void MapSetup_DummyFunction(void){
+    // RET;
 
 }
 

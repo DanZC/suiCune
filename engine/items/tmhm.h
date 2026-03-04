@@ -20,7 +20,7 @@ bool TMHM_ExitPocket(void);
 void TMHM_ScrollPocket(void);
 uint8_t TMHM_DisplayPocketItems(void);
 uint8_t* TMHMPocket_GetCurrentLineCoord(uint8_t d);
-void PlaceMoveNameAfterTMHMName(void);
+// void PlaceMoveNameAfterTMHMName(void);
 extern const char TMHM_CancelString[];
 uint8_t TMHM_GetCurrentPocketPosition(void);
 uint8_t Tutorial_TMHMPocket(void);

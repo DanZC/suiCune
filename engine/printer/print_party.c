@@ -419,14 +419,14 @@ void PrintPartyMonPage2(void){
     // RET;
 }
 
+// DEPRECATED: Use name[gPokemon.curPartyMon]
 void GetCurPartyMonName(void){
-    LD_BC(NAME_LENGTH);
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    LD_E_L;
-    LD_D_H;
-    RET;
-
+    // LD_BC(NAME_LENGTH);
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aAddNTimes);
+    // LD_E_L;
+    // LD_D_H;
+    // RET;
 }
 
 void PlaceMoveNameString(tile_t* hl, move_t move){

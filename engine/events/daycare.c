@@ -738,15 +738,15 @@ bool DayCare_GiveEgg(void){
     return false;
 }
 
-void DayCare_GetCurrentPartyMember(void){
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    CALL(aAddNTimes);
-    LD_D_H;
-    LD_E_L;
-    RET;
-
-}
+// DEPRECATED: Use gPokemon.partyMon[gPokemon.partyCount] instead
+// void DayCare_GetCurrentPartyMember(void){
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // CALL(aAddNTimes);
+    // LD_D_H;
+    // LD_E_L;
+    // RET;
+// }
 
 void DayCare_InitBreeding(void){
     // LD_A_addr(wDayCareLady);

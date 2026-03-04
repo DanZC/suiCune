@@ -1788,7 +1788,7 @@ const txt_cmd_s v_SentTrophyHomeText[] = {
 
         t_para "@"
         )
-    text_ram(wram_ptr(wPlayerName))
+    text_ram(gPlayer.playerName)
     text_start(" sent the"
         t_line "trophy home."
         t_prompt )

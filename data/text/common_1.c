@@ -1871,7 +1871,7 @@ const txt_cmd_s v_SavingRecordText[] = {
 };
 
 const txt_cmd_s v_ReceiveItemText[] = {
-    text_ram(wram_ptr(wPlayerName))
+    text_ram(gPlayer.playerName)
     text_start(" received"
         t_line "@"
         )

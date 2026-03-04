@@ -63,14 +63,14 @@ void HandleCmdQueue(void){
     // RET;
 }
 
-void GetNthCmdQueueEntry(void){
 //  //  unreferenced
-    LD_HL(wCmdQueue);
-    LD_BC(CMDQUEUE_ENTRY_SIZE);
-    CALL(aAddNTimes);
-    LD_B_H;
-    LD_C_L;
-    RET;
+void GetNthCmdQueueEntry(void){
+    // LD_HL(wCmdQueue);
+    // LD_BC(CMDQUEUE_ENTRY_SIZE);
+    // CALL(aAddNTimes);
+    // LD_B_H;
+    // LD_C_L;
+    // RET;
 
 }
 
@@ -206,15 +206,14 @@ static void HandleQueuedCommand(struct CmdQueue* bc){
     //dba ['CmdQueue_Type4']
 }
 
-void CmdQueues_AnonJumptable(void){
-    LD_HL(CMDQUEUE_05);
-    ADD_HL_BC;
-    LD_A_hl;
-    POP_HL;
-    RST(aJumpTable);
-    RET;
-
-}
+// void CmdQueues_AnonJumptable(void){
+    // LD_HL(CMDQUEUE_05);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // POP_HL;
+    // RST(aJumpTable);
+    // RET;
+// }
 
 static void CmdQueues_IncAnonJumptableIndex(uint8_t* bc){
     // LD_HL(CMDQUEUE_05);

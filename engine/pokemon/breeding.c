@@ -1386,10 +1386,11 @@ static const txt_cmd_s BreedShowsInterestText[] = {
     return BreedShowsInterestText;
 }
 
-void DayCareMonPrintEmptyString(void){
 //  //  unreferenced
-    LD_HL(mDayCareMonPrintEmptyString_string);
-    RET;
+// DEPRECATED
+void DayCareMonPrintEmptyString(void){
+    // LD_HL(mDayCareMonPrintEmptyString_string);
+    // RET;
 
 
 //string:

@@ -350,32 +350,33 @@ void BattleBGEffect_End(struct BattleBGEffect* bc) {
 }
 
 void BatttleBGEffects_GetNamedJumptablePointer(void) {
-    SET_PC(aBatttleBGEffects_GetNamedJumptablePointer);
-    LD_HL(BG_EFFECT_STRUCT_JT_INDEX);
-    ADD_HL_BC;
-    LD_L_hl;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    RET;
+    // SET_PC(aBatttleBGEffects_GetNamedJumptablePointer);
+    // LD_HL(BG_EFFECT_STRUCT_JT_INDEX);
+    // ADD_HL_BC;
+    // LD_L_hl;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // RET;
 }
 
+// DEPRECATED: Use BattleBGEffects[bc->jumptableIndex](bc)
 void BattleBGEffects_AnonJumptable(void) {
-    SET_PC(aBattleBGEffects_AnonJumptable);
-    POP_DE;
-    LD_HL(BG_EFFECT_STRUCT_JT_INDEX);
-    ADD_HL_BC;
-    LD_L_hl;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+    // SET_PC(aBattleBGEffects_AnonJumptable);
+    // POP_DE;
+    // LD_HL(BG_EFFECT_STRUCT_JT_INDEX);
+    // ADD_HL_BC;
+    // LD_L_hl;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
 }
 
 static void BattleBGEffects_IncAnonJumptableIndex(struct BattleBGEffect* bc) {

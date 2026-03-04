@@ -998,7 +998,7 @@ void init_function_pointers(void) {
     // CONVERTED(BattleAnimFunction_Bubble);
     // CONVERTED(BattleAnimFunction_AbsorbCircle);
     // CONVERTED(DoBattleAnimFrame);
-    REDIRECTED(BattleAnimFunction_AnimObjB0);
+    // REDIRECTED(BattleAnimFunction_AnimObjB0);
     // REDIRECTED(BattleAnim_ScatterHorizontal);
     // CONVERTED(BattleAnimFunction_RazorWind);
     // CONVERTED(BattleAnimFunction_Clamp_Encore);
@@ -1826,7 +1826,7 @@ void init_function_pointers(void) {
     // CONVERTED(LuckyNumberShow9);
     // REDIRECTED(LC_Text7);
     // REDIRECTED(PnP_PickyText);
-    REDIRECTED(ReplacePeriodsWithSpaces);
+    // CONVERTED(ReplacePeriodsWithSpaces);
     // CONVERTED(RocketRadio8);
     // REDIRECTED(OPT_IntroText3);
     // CONVERTED(OaksPKMNTalk7);
@@ -2013,16 +2013,16 @@ void init_function_pointers(void) {
     CONVERTED(StartTrainerBattle_SpinToBlack);
     // REDIRECTED(TrainerBattlePokeballTiles);
     CONVERTED(StartTrainerBattle_SineWave);
-    REDIRECTED(UnusedWaitBGMapOnce);
+    // REDIRECTED(UnusedWaitBGMapOnce);
     REDIRECTED(ConvertTrainerBattlePokeballTilesTo2bpp);
     CONVERTED(StartTrainerBattle_DetermineWhichAnimation);
     CONVERTED(StartTrainerBattle_SetUpForWavyOutro);
     CONVERTED(StartTrainerBattle_SpeckleToBlack);
-    REDIRECTED(WipeLYOverrides);
+    CONVERTED(WipeLYOverrides);
     // CONVERTED(StartTrainerBattle_DrawSineWave);
     CONVERTED(StartTrainerBattle_SetUpForRandomScatterOutro);
     REDIRECTED(StartTrainerBattle_LoadPokeBallGraphics);
-    REDIRECTED(LoadTrainerBattlePokeballTiles);
+    CONVERTED(LoadTrainerBattlePokeballTiles);
 
     // engine/menus/main_menu.c
     // REDIRECTED(MainMenuItems);
@@ -10406,8 +10406,8 @@ CONVERTED(v_AnimateTileset);
     // CONVERTED(CardFlip_CopyOAM);
 
     // engine/rtc/reset_password.c
-    CONVERTED(ClockResetPassword);
-    REDIRECTED(v_ResetClock);
+    // CONVERTED(ClockResetPassword);
+    CONVERTED(v_ResetClock);
 
     // engine/events/print_unown.c
     CONVERTED(v_UnownPrinter);

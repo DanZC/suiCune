@@ -4,24 +4,25 @@
 #include "../../home/text.h"
 #include "../../charmap.h"
 
-void PrintFiveDigitNumber(void){
 //  //  unreferenced
 //  Debug function?
 //  Input: bc = value, de = destination
-    LD_A_B;
-    LD_B_C;
-    LD_C_A;
-    PUSH_BC;  // de points to this on the stack for PrintNum
-    PUSH_DE;
-    LD_HL_SP(2);
-    LD_D_H;
-    LD_E_L;
-    POP_HL;
-    LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
-    CALL(aPrintNum);
-    POP_BC;
-    RET;
-
+tile_t* PrintFiveDigitNumber(tile_t* de, uint16_t bc){
+    // LD_A_B;
+    // LD_B_C;
+    // LD_C_A;
+    // PUSH_BC;  // de points to this on the stack for PrintNum
+    // PUSH_DE;
+    uint16_t value = NativeToBigEndian16(bc);
+    // LD_HL_SP(2);
+    // LD_D_H;
+    // LD_E_L;
+    // POP_HL;
+    // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
+    // CALL(aPrintNum);
+    // POP_BC;
+    // RET;
+    return PrintNum(de, &value, PRINTNUM_LEADINGZEROS | 2, 5);
 }
 
 //  Prints hours and minutes to tilemap destination de.

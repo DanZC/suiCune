@@ -10,5 +10,5 @@ void GetPriceToRetrieveBreedmon(const uint8_t* hl, u8_pair_s lvlGrowth);
 void PrintDayCareText(uint8_t a);
 void DayCareManOutside(void);
 bool DayCare_GiveEgg(void);
-void DayCare_GetCurrentPartyMember(void);
+// void DayCare_GetCurrentPartyMember(void);
 void DayCare_InitBreeding(void);

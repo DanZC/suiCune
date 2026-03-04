@@ -121,7 +121,7 @@ void BasementKeyEffect(void);
 void SacredAshEffect(void);
 void NormalBoxEffect(void);
 void GorgeousBoxEffect(void);
-void OpenBox(void);
+void OpenBox(uint8_t c);
 void NoEffect(void);
 void Play_SFX_FULL_HEAL(void);
 void UseItemText(void);

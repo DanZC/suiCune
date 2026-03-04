@@ -5904,40 +5904,46 @@ void BattleAnimFunction_RainSandstorm(struct BattleAnim* bc) {
     }
 }
 
-void BattleAnimFunction_AnimObjB0(void) {
-    SET_PC(aBattleAnimFunction_AnimObjB0);
+void BattleAnimFunction_AnimObjB0(struct BattleAnim *bc) {
+    // SET_PC(aBattleAnimFunction_AnimObjB0);
     //  //  unused
     //  Used by object ANIM_OBJ_B0, with itself is not used in any animation
     //  Obj Param: Lower nybble is added to VAR1 while upper nybble is added to XCOORD
-    LD_HL(BATTLEANIMSTRUCT_XCOORD);
-    ADD_HL_BC;
-    LD_D_hl;
-    LD_HL(BATTLEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_E_hl;
-    LD_HL(BATTLEANIMSTRUCT_PARAM);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_L_A;
-    AND_A(0xf0);
-    LD_H_A;
-    SWAP_A;
-    OR_A_H;
-    LD_H_A;
-    LD_A_L;
-    AND_A(0xf);
-    SWAP_A;
-    LD_L_A;
-    ADD_HL_DE;
-    LD_E_L;
-    LD_D_H;
-    LD_HL(BATTLEANIMSTRUCT_XCOORD);
-    ADD_HL_BC;
-    LD_hl_D;
-    LD_HL(BATTLEANIMSTRUCT_VAR1);
-    ADD_HL_BC;
-    LD_hl_E;
-    RET;
+    // LD_HL(BATTLEANIMSTRUCT_XCOORD);
+    // ADD_HL_BC;
+    // LD_D_hl;
+    uint8_t d = bc->xCoord;
+    // LD_HL(BATTLEANIMSTRUCT_VAR1);
+    // ADD_HL_BC;
+    // LD_E_hl;
+    uint8_t e = bc->var1;
+    // LD_HL(BATTLEANIMSTRUCT_PARAM);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_L_A;
+    // AND_A(0xf0);
+    // LD_H_A;
+    // SWAP_A;
+    // OR_A_H;
+    // LD_H_A;
+    // LD_A_L;
+    // AND_A(0xf);
+    // SWAP_A;
+    // LD_L_A;
+    uint16_t hl = ((bc->param & 0xf) << 4) | (((bc->param & 0xf0) >> 4) << 8);
+    // ADD_HL_DE;
+    // LD_E_L;
+    // LD_D_H;
+    uint16_t de = ((d << 8) | e) + hl;
+    // LD_HL(BATTLEANIMSTRUCT_XCOORD);
+    // ADD_HL_BC;
+    // LD_hl_D;
+    bc->xCoord += HIGH(de);
+    // LD_HL(BATTLEANIMSTRUCT_VAR1);
+    // ADD_HL_BC;
+    // LD_hl_E;
+    bc->var1 += LOW(de);
+    // RET;
 }
 
 //  Object moves in a circle
@@ -6049,49 +6055,49 @@ void BattleAnim_StepToTarget(struct BattleAnim* bc, uint8_t a) {
 }
 
 void BattleAnim_AnonJumptable(void) {
-    SET_PC(aBattleAnim_AnonJumptable);
-    POP_DE;
-    LD_HL(BATTLEANIMSTRUCT_JUMPTABLE_INDEX);
-    ADD_HL_BC;
-    LD_L_hl;
-    LD_H(0x0);
-    ADD_HL_HL;
-    ADD_HL_DE;
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    JP_hl;
+    // SET_PC(aBattleAnim_AnonJumptable);
+    // POP_DE;
+    // LD_HL(BATTLEANIMSTRUCT_JUMPTABLE_INDEX);
+    // ADD_HL_BC;
+    // LD_L_hl;
+    // LD_H(0x0);
+    // ADD_HL_HL;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // JP_hl;
 }
 
 void BattleAnim_IncAnonJumptableIndex(void) {
-    SET_PC(aBattleAnim_IncAnonJumptableIndex);
-    LD_HL(BATTLEANIMSTRUCT_JUMPTABLE_INDEX);
-    ADD_HL_BC;
-    INC_hl;
-    RET;
+    // SET_PC(aBattleAnim_IncAnonJumptableIndex);
+    // LD_HL(BATTLEANIMSTRUCT_JUMPTABLE_INDEX);
+    // ADD_HL_BC;
+    // INC_hl;
+    // RET;
 }
 
 void BattleAnim_AbsSinePrecise(void) {
-    SET_PC(aBattleAnim_AbsSinePrecise);
+    // SET_PC(aBattleAnim_AbsSinePrecise);
     //  //  unreferenced
-    LD_A_E;
-    CALL(aBattleAnim_Sine);
-    LD_E_L;
-    LD_D_H;
-    RET;
+    // LD_A_E;
+    // CALL(aBattleAnim_Sine);
+    // LD_E_L;
+    // LD_D_H;
+    // RET;
 }
 
 void BattleAnim_AbsCosinePrecise(void) {
-    SET_PC(aBattleAnim_AbsCosinePrecise);
+    // SET_PC(aBattleAnim_AbsCosinePrecise);
     //  //  unreferenced
-    LD_A_E;
-    CALL(aBattleAnim_Cosine);
-    LD_E_L;
-    LD_D_H;
-    RET;
+    // LD_A_E;
+    // CALL(aBattleAnim_Cosine);
+    // LD_E_L;
+    // LD_D_H;
+    // RET;
 }
 
 void BattleAnimSineWave(void) {
-    SET_PC(aBattleAnimSineWave);
+    // SET_PC(aBattleAnimSineWave);
     // sine_table ['32']
 }

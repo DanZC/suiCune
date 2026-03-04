@@ -1366,21 +1366,23 @@ uint8_t GetDecorationID(uint8_t c){
 
 void SetAllDecorationFlags(void){
 //  //  unreferenced
-    LD_HL(mDecorationIDs);
+    // LD_HL(mDecorationIDs);
 
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto done;
-    PUSH_HL;
-    LD_B(SET_FLAG);
-    CALL(aDecorationFlagAction);
-    POP_HL;
-    goto loop;
+    for(uint32_t i = 0; i < NUM_DECOS && DecorationIDs[i] != 0xff; ++i) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(-1);
+        // IF_Z goto done;
+        // PUSH_HL;
+        // LD_B(SET_FLAG);
+        // CALL(aDecorationFlagAction);
+        DecorationFlagAction(DecorationIDs[i], SET_FLAG);
+        // POP_HL;
+        // goto loop;
+    }
 
-
-done:
-    RET;
+// done:
+    // RET;
 
 // INCLUDE "data/decorations/decorations.asm"
 

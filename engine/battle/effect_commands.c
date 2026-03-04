@@ -10010,12 +10010,11 @@ void PlayOpponentBattleAnim(uint16_t de){
     // RET;
 }
 
-void CallBattleCore(void){
-    LD_A(BANK(aDoBattle)); // AKA BANK("Battle Core")
-    RST(aFarCall);
-    RET;
-
-}
+// void CallBattleCore(void){
+    // LD_A(BANK(aDoBattle)); // AKA BANK("Battle Core")
+    // RST(aFarCall);
+    // RET;
+// }
 
 void AnimateFailedMove(void){
     // CALL(aBattleCommand_LowerSub);
@@ -10091,10 +10090,10 @@ void GetMoveData(struct Move* de, move_t a){
     CopyBytes(de, Moves + a, sizeof(*de));
 }
 
+// DEPRECATED: Use Moves + a
 void GetMoveByte(void){
-    LD_A(BANK(aMoves));
-    JP(mGetFarByte);
-
+    // LD_A(BANK(aMoves));
+    // JP(mGetFarByte);
 }
 
 void DisappearUser(void){

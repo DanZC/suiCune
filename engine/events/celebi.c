@@ -157,24 +157,29 @@ void CelebiEvent_CountDown(void){
 
 void CelebiEvent_SpawnLeaf(void){
 //  //  unreferenced
-    LD_HL(wFrameCounter2);
-    LD_A_hl;
-    INC_hl;
-    AND_A(0x7);
-    RET_NZ ;
-    LD_A_hl;
-    AND_A(0x18);
-    SLA_A;
-    ADD_A(0x40);
-    LD_D_A;
-    LD_E(0x0);
-    LD_A(SPRITE_ANIM_INDEX_FLY_LEAF);  // fly land
-    CALL(aInitSpriteAnimStruct);
-    LD_HL(SPRITEANIMSTRUCT_TILE_ID);
-    ADD_HL_BC;
-    LD_hl(0x80);
-    RET;
-
+    // LD_HL(wFrameCounter2);
+    // LD_A_hl;
+    // INC_hl;
+    uint8_t a = wram->wFrameCounter2++;
+    // AND_A(0x7);
+    // RET_NZ ;
+    if(a & 0x7)
+        return;
+    // LD_A_hl;
+    // AND_A(0x18);
+    // SLA_A;
+    // ADD_A(0x40);
+    // LD_D_A;
+    uint16_t de = (((wram->wFrameCounter2 & 0x18) << 1) + 0x40) << 8;
+    // LD_E(0x0);
+    // LD_A(SPRITE_ANIM_INDEX_FLY_LEAF);  // fly land
+    // CALL(aInitSpriteAnimStruct);
+    struct SpriteAnim* bc = InitSpriteAnimStruct(SPRITE_ANIM_INDEX_FLY_LEAF, de);
+    // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
+    // ADD_HL_BC;
+    // LD_hl(0x80);
+    bc->tileID = 0x80;
+    // RET;
 }
 
 const char SpecialCelebiLeafGFX[] = "gfx/overworld/cut_grass.png";

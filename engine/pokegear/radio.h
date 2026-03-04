@@ -1,7 +1,7 @@
 void PlayRadioShow(void);
 void RadioJumptable(void);
 // void PrintRadioLine(uint8_t a);
-void ReplacePeriodsWithSpaces(void);
+void ReplacePeriodsWithSpaces(uint8_t* hl);
 // void RadioScroll(void);
 // void OaksPKMNTalk1(void);
 // void OaksPKMNTalk2(void);

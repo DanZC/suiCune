@@ -334,7 +334,8 @@
 #define CHAR_FEMALE_ICON      ((uint8_t)'\xf5') // "♀"
 
 // Japanese control characters (see home/text.asm)
-#define CHAR_KOUGEKI ('\x23') // "こうげき"
-#define CHAR_ROUTE   ('\x35') // "ばん　どうろ"
-#define CHAR_WATASHI ('\x36') // "わたし"
-#define CHAR_KOKO_WA ('\x37') // "ここは"
+#define CHAR_KOUGEKI 	('\x23') // "こうげき"
+#define CHAR_ROUTE   	('\x35') // "ばん　どうろ"
+#define CHAR_WATASHI 	('\x36') // "わたし"
+#define CHAR_KOKO_WA 	('\x37') // "ここは"
+#define CHAR_VERT_DIV 	('\x31') // Vertical divider for Japanese stat screen

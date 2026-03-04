@@ -1776,28 +1776,29 @@ void UnmaskObject(uint8_t a){
     gPlayer.objectMasks[a] = 0;
 }
 
+// DEPRECATED: No need in PC port
 //  if DEF(_DEBUG)
 void ComputeROMXChecksum(void) {
 #if defined(_DEBUG) && !defined(_MSC_VER)
-    LDH_A_addr(hROMBank);
-    PUSH_AF;
-    LD_A_C;
-    RST(aBankSwitch);
-    LD_HL(0x4000);
+    // LDH_A_addr(hROMBank);
+    // PUSH_AF;
+    // LD_A_C;
+    // RST(aBankSwitch);
+    // LD_HL(0x4000);
 
-loop:
-    LD_A_hli;
-    ADD_A_E;
-    LD_E_A;
-    LD_A_D;
-    ADC_A(0);
-    LD_D_A;
-    LD_A_H;
-    CP_A(0x80);
-    IF_C goto loop;
-    POP_AF;
-    RST(aBankSwitch);
-    RET;
+// loop:
+    // LD_A_hli;
+    // ADD_A_E;
+    // LD_E_A;
+    // LD_A_D;
+    // ADC_A(0);
+    // LD_D_A;
+    // LD_A_H;
+    // CP_A(0x80);
+    // IF_C goto loop;
+    // POP_AF;
+    // RST(aBankSwitch);
+    // RET;
 #endif
 
     return ScrollMapUp();

@@ -53,47 +53,48 @@ void SaveMenu_CopyTilemapAtOnce(void) {
     // RET;
 }
 
+//  Copy all tiles to vBGMap
+// DEPRECATED
 void SaveMenu_CopyTilemapAtOnce_CopyBGMapViaStack(void) {
-    //  Copy all tiles to vBGMap
-    LD_addr_SP(hSPBuffer);
-    LD_SP_HL;
-    LDH_A_addr(hBGMapAddress + 1);
-    LD_H_A;
-    LD_L(0);
-    LD_A(SCREEN_HEIGHT);
-    LDH_addr_A(hTilesPerCycle);
-    LD_B(1 << 1);  // not in v/hblank
-    LD_C(LOW(rSTAT));
+    // LD_addr_SP(hSPBuffer);
+    // LD_SP_HL;
+    // LDH_A_addr(hBGMapAddress + 1);
+    // LD_H_A;
+    // LD_L(0);
+    // LD_A(SCREEN_HEIGHT);
+    // LDH_addr_A(hTilesPerCycle);
+    // LD_B(1 << 1);  // not in v/hblank
+    // LD_C(LOW(rSTAT));
 
-loop:
+// loop:
 
-    for (int rept = 0; rept < SCREEN_WIDTH / 2; rept++) {
-        POP_DE;
-        //  if in v/hblank, wait until not in v/hblank
+    // for (int rept = 0; rept < SCREEN_WIDTH / 2; rept++) {
+    //     POP_DE;
+    //     //  if in v/hblank, wait until not in v/hblank
 
-        // loop\@:
+    //     // loop\@:
 
-        LDH_A_c;
-        AND_A_B;
-        // IF_NZ goto loop\@;
-        //  load vBGMap
-        LD_hl_E;
-        INC_L;
-        LD_hl_D;
-        INC_L;
-    }
+    //     LDH_A_c;
+    //     AND_A_B;
+    //     // IF_NZ goto loop\@;
+    //     //  load vBGMap
+    //     LD_hl_E;
+    //     INC_L;
+    //     LD_hl_D;
+    //     INC_L;
+    // }
 
-    LD_DE(BG_MAP_WIDTH - SCREEN_WIDTH);
-    ADD_HL_DE;
-    LDH_A_addr(hTilesPerCycle);
-    DEC_A;
-    LDH_addr_A(hTilesPerCycle);
-    IF_NZ goto loop;
+    // LD_DE(BG_MAP_WIDTH - SCREEN_WIDTH);
+    // ADD_HL_DE;
+    // LDH_A_addr(hTilesPerCycle);
+    // DEC_A;
+    // LDH_addr_A(hTilesPerCycle);
+    // IF_NZ goto loop;
 
-    LDH_A_addr(hSPBuffer);
-    LD_L_A;
-    LDH_A_addr(hSPBuffer + 1);
-    LD_H_A;
-    LD_SP_HL;
-    RET;
+    // LDH_A_addr(hSPBuffer);
+    // LD_L_A;
+    // LDH_A_addr(hSPBuffer + 1);
+    // LD_H_A;
+    // LD_SP_HL;
+    // RET;
 }

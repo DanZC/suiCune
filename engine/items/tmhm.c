@@ -453,49 +453,50 @@ bool TMHM_PocketLoop(void){
     }
 }
 
+// DEPRECATED: Inlined
 void TMHM_JoypadLoop(void){
-    CALL(aTMHM_DisplayPocketItems);
-    CALL(aStaticMenuJoypad);
-    LD_B_A;
-    LD_A_addr(wMenuCursorY);
-    DEC_A;
-    LD_addr_A(wTMHMPocketCursor);
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    LD_A_addr(w2DMenuFlags2);
-    BIT_A(7);
-    JP_NZ (mTMHM_ScrollPocket);
-    LD_A_B;
-    LD_addr_A(wMenuJoypad);
-    BIT_A(A_BUTTON_F);
-    JP_NZ (mTMHM_ChooseTMorHM);
-    BIT_A(B_BUTTON_F);
-    JP_NZ (mTMHM_ExitPack);
-    BIT_A(D_RIGHT_F);
-    JP_NZ (mTMHM_ExitPocket);
-    BIT_A(D_LEFT_F);
-    JP_NZ (mTMHM_ExitPocket);
-    return TMHM_ShowTMMoveDescription();
+    // CALL(aTMHM_DisplayPocketItems);
+    // CALL(aStaticMenuJoypad);
+    // LD_B_A;
+    // LD_A_addr(wMenuCursorY);
+    // DEC_A;
+    // LD_addr_A(wTMHMPocketCursor);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    // LD_A_addr(w2DMenuFlags2);
+    // BIT_A(7);
+    // JP_NZ (mTMHM_ScrollPocket);
+    // LD_A_B;
+    // LD_addr_A(wMenuJoypad);
+    // BIT_A(A_BUTTON_F);
+    // JP_NZ (mTMHM_ChooseTMorHM);
+    // BIT_A(B_BUTTON_F);
+    // JP_NZ (mTMHM_ExitPack);
+    // BIT_A(D_RIGHT_F);
+    // JP_NZ (mTMHM_ExitPocket);
+    // BIT_A(D_LEFT_F);
+    // JP_NZ (mTMHM_ExitPocket);
+    // return TMHM_ShowTMMoveDescription();
 }
 
+// DEPRECATED: Inlined
 void TMHM_ShowTMMoveDescription(void){
-    CALL(aTMHM_CheckHoveringOverCancel);
-    JP_NC (mTMHM_ExitPocket);
-    hlcoord(0, 12, wTilemap);
-    LD_B(4);
-    LD_C(SCREEN_WIDTH - 2);
-    CALL(aTextbox);
-    LD_A_addr(wCurItem);
-    CP_A(NUM_TMS + NUM_HMS + 1);
-    JR_NC (mTMHM_JoypadLoop);
-    LD_addr_A(wTempTMHM);
-    PREDEF(pGetTMHMMove);
-    LD_A_addr(wTempTMHM);
-    LD_addr_A(wCurSpecies);
-    hlcoord(1, 14, wTilemap);
-    CALL(aPrintMoveDescription);
-    JP(mTMHM_JoypadLoop);
-
+    // CALL(aTMHM_CheckHoveringOverCancel);
+    // JP_NC (mTMHM_ExitPocket);
+    // hlcoord(0, 12, wTilemap);
+    // LD_B(4);
+    // LD_C(SCREEN_WIDTH - 2);
+    // CALL(aTextbox);
+    // LD_A_addr(wCurItem);
+    // CP_A(NUM_TMS + NUM_HMS + 1);
+    // JR_NC (mTMHM_JoypadLoop);
+    // LD_addr_A(wTempTMHM);
+    // PREDEF(pGetTMHMMove);
+    // LD_A_addr(wTempTMHM);
+    // LD_addr_A(wCurSpecies);
+    // hlcoord(1, 14, wTilemap);
+    // CALL(aPrintMoveDescription);
+    // JP(mTMHM_JoypadLoop);
 }
 
 bool TMHM_ChooseTMorHM(void){
@@ -752,22 +753,21 @@ uint8_t* TMHMPocket_GetCurrentLineCoord(uint8_t d){
     return coord(5, 0, wram->wTilemap) + (2 * SCREEN_WIDTH * (6 - d));
 }
 
-void PlaceMoveNameAfterTMHMName(void){
+// void PlaceMoveNameAfterTMHMName(void){
 //  //  unreferenced
 //  Similar to a part of TMHM_DisplayPocketItems.
-    POP_HL;
-    LD_BC(3);
-    ADD_HL_BC;
-    PREDEF(pGetTMHMMove);
-    LD_A_addr(wTempTMHM);
-    LD_addr_A(wPutativeTMHMMove);
-    CALL(aGetMoveName);
-    PUSH_HL;
-    CALL(aPlaceString);
-    POP_HL;
-    RET;
-
-}
+    // POP_HL;
+    // LD_BC(3);
+    // ADD_HL_BC;
+    // PREDEF(pGetTMHMMove);
+    // LD_A_addr(wTempTMHM);
+    // LD_addr_A(wPutativeTMHMMove);
+    // CALL(aGetMoveName);
+    // PUSH_HL;
+    // CALL(aPlaceString);
+    // POP_HL;
+    // RET;
+// }
 
 const char TMHM_CancelString[] = "CANCEL@";
 
@@ -819,42 +819,66 @@ void TMHM_PlaySFX_ReadText2(void){
     // RET;
 }
 
-void VerboseReceiveTMHM(void){
+static bool VerboseReceiveTMHM_CheckHaveRoomForTMHM(void){
+    // LD_A_addr(wTempTMHM);
+    // DEC_A;
+    // LD_HL(wTMsHMs);
+    uint8_t* hl = gPlayer.TMsHMs + (wram->wTempTMHM - 1);
+    // LD_B(0);
+    // LD_C_A;
+    // ADD_HL_BC;
+    // LD_A_hl;
+    uint8_t count = *hl;
+    // INC_A;
+    // CP_A(MAX_ITEM_STACK + 1);
+    // RET_NC ;
+    if(count >= MAX_ITEM_STACK)
+        return false;
+    // LD_hl_A;
+    *hl = count + 1;
+    // RET;
+    return true;
+}
+
 //  //  unreferenced
-    CALL(aConvertCurItemIntoCurTMHM);
-    CALL(aVerboseReceiveTMHM_CheckHaveRoomForTMHM);
-    LD_HL(mVerboseReceiveTMHM_NoRoomTMHMText);
-    IF_NC goto print;
-    LD_HL(mVerboseReceiveTMHM_ReceivedTMHMText);
+void VerboseReceiveTMHM(void){
+    static const txt_cmd_s NoRoomTMHMText[] = {
+        text_far(v_NoRoomTMHMText)
+        text_end
+    };
+    static const txt_cmd_s ReceivedTMHMText[] = {
+        text_far(v_ReceivedTMHMText)
+        text_end
+    };
+    // CALL(aConvertCurItemIntoCurTMHM);
+    ConvertCurItemIntoCurTMHM();
+    // CALL(aVerboseReceiveTMHM_CheckHaveRoomForTMHM);
+    bool have_room = VerboseReceiveTMHM_CheckHaveRoomForTMHM();
+    // LD_HL(mVerboseReceiveTMHM_NoRoomTMHMText);
+    // IF_NC goto print;
+    // LD_HL(mVerboseReceiveTMHM_ReceivedTMHMText);
+    const struct TextCmd* txt = (have_room)
+        ? ReceivedTMHMText
+        : NoRoomTMHMText;
 
-print:
-    JP(mPrintText);
+// print:
+    // JP(mPrintText);
+    PrintText(txt);
 
 
-NoRoomTMHMText:
-    //text_far ['_NoRoomTMHMText']
-    //text_end ['?']
-
-
-ReceivedTMHMText:
-    //text_far ['_ReceivedTMHMText']
-    //text_end ['?']
-
-
-CheckHaveRoomForTMHM:
-    LD_A_addr(wTempTMHM);
-    DEC_A;
-    LD_HL(wTMsHMs);
-    LD_B(0);
-    LD_C_A;
-    ADD_HL_BC;
-    LD_A_hl;
-    INC_A;
-    CP_A(MAX_ITEM_STACK + 1);
-    RET_NC ;
-    LD_hl_A;
-    RET;
-
+// CheckHaveRoomForTMHM:
+    // LD_A_addr(wTempTMHM);
+    // DEC_A;
+    // LD_HL(wTMsHMs);
+    // LD_B(0);
+    // LD_C_A;
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // INC_A;
+    // CP_A(MAX_ITEM_STACK + 1);
+    // RET_NC ;
+    // LD_hl_A;
+    // RET;
 }
 
 void ConsumeTM(void){

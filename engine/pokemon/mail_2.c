@@ -1065,20 +1065,21 @@ void MailGFX_PlaceMessage(const struct MailMsg* hl){
     PlaceStringSimple(wram->wMonOrItemNameBuffer, de);
 }
 
-void InvertBytes(void){
 //  //  unreferenced
 //  invert bc bytes starting at hl
-
-loop:
-    LD_A_hl;
-    XOR_A(0xff);
-    LD_hli_A;
-    DEC_BC;
-    LD_A_B;
-    OR_A_C;
-    IF_NZ goto loop;
-    RET;
-
+void InvertBytes(uint8_t* hl, uint16_t bc){
+    for(uint32_t i = 0; i < bc; ++i) {
+    // loop:
+        // LD_A_hl;
+        // XOR_A(0xff);
+        // LD_hli_A;
+        hl[i] ^= 0xff;
+        // DEC_BC;
+        // LD_A_B;
+        // OR_A_C;
+        // IF_NZ goto loop;
+    }
+    // RET;
 }
 
 void DrawMailBorder(void){
@@ -1156,12 +1157,12 @@ void Mail_Place14TileAlternatingRow(tile_t* hl, tile_t a){
     return Mail_PlaceAlternatingRow(hl, a, 14 / 2);
 }
 
-void Mail_Place16TileAlternatingRow(void){
 //  //  unreferenced
-    PUSH_AF;
-    LD_B(16 / 2);
-    JR(mMail_PlaceAlternatingRow);
-
+void Mail_Place16TileAlternatingRow(tile_t* hl, tile_t a){
+    // PUSH_AF;
+    // LD_B(16 / 2);
+    // JR(mMail_PlaceAlternatingRow);
+    return Mail_PlaceAlternatingRow(hl, a, 16 / 2);
 }
 
 void Mail_Place18TileAlternatingRow(tile_t* hl, tile_t a){
@@ -1227,11 +1228,11 @@ void Mail_PlaceAlternatingColumn(tile_t* hl, tile_t a, uint8_t b){
     // RET;
 }
 
-void Mail_Draw7TileRow(void){
 //  //  unreferenced
-    LD_B(7);
-    JR(mMail_DrawRowLoop);
-
+tile_t* Mail_Draw7TileRow(tile_t* hl, tile_t a){
+    // LD_B(7);
+    // JR(mMail_DrawRowLoop);
+    return Mail_DrawRowLoop(hl, a, 7);
 }
 
 tile_t* Mail_Draw13TileRow(tile_t* hl, tile_t a){
