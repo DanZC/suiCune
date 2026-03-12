@@ -592,7 +592,7 @@ void CopyFourPalettes(const uint8_t* pal){
     // LD_DE(wBGPals1);
     // LD_C(4);
 
-    return CopyPalettes((uint16_t*)&((struct wram_s*)gb.wram)->wBGPals1, pal, 4);
+    return CopyPalettes((uint16_t*)wram->wBGPals1, pal, 4);
 }
 
 void CopyPalettes(uint16_t* de, const uint8_t* hl, uint8_t c){

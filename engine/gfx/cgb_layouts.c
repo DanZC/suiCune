@@ -741,6 +741,7 @@ void v_CGB_BetaPoker(void){
 }
 
 void v_CGB_Diploma(void){
+    static const uint8_t DiplomaPredefs[] = {PREDEFPAL_DIPLOMA, PREDEFPAL_ROUTES, PREDEFPAL_ROUTES, PREDEFPAL_ROUTES};
     // LD_HL(mDiplomaPalettes);
     // LD_DE(wBGPals1);
     // LD_BC(16 * PALETTE_SIZE);
@@ -751,7 +752,7 @@ void v_CGB_Diploma(void){
 
     // LD_HL(mPalPacket_Diploma + 1);
     // CALL(aCopyFourPalettes);
-    CopyFourPalettes((uint8_t[]){PREDEFPAL_DIPLOMA, PREDEFPAL_ROUTES, PREDEFPAL_ROUTES, PREDEFPAL_ROUTES});
+    CopyFourPalettes(DiplomaPredefs);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // CALL(aApplyAttrmap);

@@ -3662,13 +3662,13 @@ void sdl_loop(void) {
 void cleanup(void) {
     MobileQuit();
     NetworkDeinit();
+    SDL_DestroyTexture(texture);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
 #if defined(DEBUG_WINDOW)
     SDL_DestroyRenderer(dbg_renderer);
     SDL_DestroyWindow(dbg_window);
 #endif
-    SDL_DestroyTexture(texture);
     SDL_GameControllerClose(controller);
     SDL_Quit();
     /* Record save file. */
