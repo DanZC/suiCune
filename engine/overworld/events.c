@@ -1843,6 +1843,11 @@ static u8_flag_s TryTileCollisionEvent(void){
 
 //  Random encounter
 static u8_flag_s RandomEncounter(void){
+#if DEBUG
+    // In debug builds, pressing B supresses wild encounters.
+    if(bit_test(hram.hJoyDown, B_BUTTON_F))
+        return u8_flag(1, false);
+#endif
     // CALL(aCheckWildEncounterCooldown);
     // IF_C goto nope;
     if(CheckWildEncounterCooldown())

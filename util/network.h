@@ -1,7 +1,5 @@
 #pragma once
 
-#define NETWORKING_SUPPORT
-
 #define NETWORK_XCHG_ERROR_SEND -1
 #define NETWORK_XCHG_ERROR_RECV -2
 #define NETWORK_XCHG_TIMEOUT -3

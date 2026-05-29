@@ -13,7 +13,6 @@
 #define USE_SDLNET 0
 #endif
 
-#if defined(NETWORKING_SUPPORT)
 #if USE_SDLNET
 #if defined(_MSC_VER)
 #include <SDL_NET.h>
@@ -2177,15 +2176,3 @@ void MobileQuit(void) {
     gMobileAdapter = NULL;
 }
 
-#else 
-
-bool NetworkInit(void) {
-    printf("Networking is not supported.\n");
-    return false;
-}
-
-void NetworkDeinit(void) {
-
-}
-
-#endif

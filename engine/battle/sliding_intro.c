@@ -255,11 +255,8 @@ static void BattleIntroSlidingPics_subfunction2(void) {
 void BattleIntroSlidingPics(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
-    uint8_t tempVBK = gb_read(rSVBK);
     // LD_A(MBANK(awLYOverrides));
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, MBANK(awLYOverrides));
-
     // CALL(aBattleIntroSlidingPics_subfunction1);
     BattleIntroSlidingPics_subfunction1();
     // LD_A(LOW(rSCX));
@@ -272,6 +269,5 @@ void BattleIntroSlidingPics(void){
     hram.hLCDCPointer = 0;
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, tempVBK);
     // RET;
 }

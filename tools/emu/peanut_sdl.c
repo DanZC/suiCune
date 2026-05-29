@@ -39,7 +39,7 @@
 
 extern jmp_buf reset_point;
 
-#if defined(NETWORKING_SUPPORT)
+#if defined(USE_SDLNET)
 #if defined(_MSC_VER)
 #include "SDL_net.h"
 #else
@@ -1065,7 +1065,7 @@ void gb_draw_line(void) {
 
     // draw sprites
     if (gb.gb_reg.LCDC & LCDC_OBJ_ENABLE) {
-        uint8_t count = 0;
+        // uint8_t count = 0;
 
         for (uint8_t s = NUM_SPRITES - 1;
              s != 0xFF /* && count < MAX_SPRITES_LINE */;
@@ -1086,7 +1086,7 @@ void gb_draw_line(void) {
                 gb.gb_reg.LY + 16 < OY)
                 continue;
 
-            count++;
+            // count++;
 
             /* Continue if sprite not visible. */
             if (OX == 0 || OX >= 168)
@@ -3493,10 +3493,6 @@ void get_input(void) {
 
                     case SDLK_LEFT:
                         gb.direct.joypad_bits.left = 0;
-                        break;
-
-                    case SDLK_r:
-                        SoftReset(RESET_TYPE_RESET);
                         break;
                 }
 

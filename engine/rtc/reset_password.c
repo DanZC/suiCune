@@ -15,7 +15,7 @@
 #include "../../charmap.h"
 
 // Set this value to 1 to bypass clock password system
-#define BYPASS_CLOCK_PASSWORD 0
+#define BYPASS_CLOCK_PASSWORD 1
 
 static const struct MenuHeader NoYes_MenuHeader = {
     .flags = 0,  // flags
@@ -41,10 +41,12 @@ void v_ResetClock(void){
         text_end
     };
 
+#if !BYPASS_CLOCK_PASSWORD
     static const txt_cmd_s PasswordWrongText[] = {
         text_far(v_PasswordWrongText)
         text_end
     };
+#endif
 
     static const txt_cmd_s PasswordAskResetClockText[] = {
         text_far(v_PasswordAskResetClockText)
