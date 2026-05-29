@@ -689,7 +689,7 @@ void CopyMapAttributes(const struct MapAttr* attr){
     uint32_t scripts_ptr = GetGBMapScriptsPointer(gCurMapData.mapGroup, gCurMapData.mapNumber);
     // wram->wMapScriptsBank = *(uint8_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 6);
     wram->wMapScriptsBank = BANK(scripts_ptr);
-    printf("scripts_ptr=%08x bank=%d\n", scripts_ptr, wram->wMapScriptsBank);
+    log_debug("scripts_ptr=%08x bank=%d\n", scripts_ptr, wram->wMapScriptsBank);
     // wMapScriptsPointer:: dw
     gMapScriptsPointer = attr->scripts;
     // wram->wMapScriptsPointer = *(uint16_t*)AbsGBROMBankAddrToRAMAddr(wram->wMapAttributesBank, wram->wMapAttributesPointer + 7);
@@ -711,7 +711,7 @@ void CopyMapAttributes(const struct MapAttr* attr){
     if(attr->connections[WEST_F])  bit_set(connections, WEST_F);
     if(attr->connections[EAST_F])  bit_set(connections, EAST_F);
     wram->wMapConnections = connections;
-    printf("connections=%c%c%c%c\n",
+    log_debug("connections=%c%c%c%c\n",
         (connections & NORTH)? 'N': ' ',
         (connections & SOUTH)? 'S': ' ',
         (connections & WEST)? 'W': ' ',
@@ -756,7 +756,7 @@ void GetMapConnections(const struct MapAttr* attr){
         // LD_DE(wNorthMapConnection);
         // CALL(aGetMapConnection);
         GetMapConnection(gMapConnections + NORTH_F, attr->connections[NORTH_F]);
-        printf("North connection loaded.\n");
+        log_debug("North connection loaded.\n");
         // CopyBytes(wram_ptr(wNorthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
         // _hl += wSouthMapConnection - wNorthMapConnection;
         uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[NORTH_F].connectedMapGroup, gMapConnections[NORTH_F].connectedMapNumber);
@@ -777,7 +777,7 @@ void GetMapConnections(const struct MapAttr* attr){
         // LD_DE(wSouthMapConnection);
         // CALL(aGetMapConnection);
         GetMapConnection(gMapConnections + SOUTH_F, attr->connections[SOUTH_F]);
-        printf("South connection loaded.\n");
+        log_debug("South connection loaded.\n");
         // CopyBytes(wram_ptr(wSouthMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
         // _hl += wSouthMapConnection - wNorthMapConnection;
         uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[SOUTH_F].connectedMapGroup, gMapConnections[SOUTH_F].connectedMapNumber);
@@ -798,7 +798,7 @@ void GetMapConnections(const struct MapAttr* attr){
         // LD_DE(wWestMapConnection);
         // CALL(aGetMapConnection);
         GetMapConnection(gMapConnections + WEST_F, attr->connections[WEST_F]);
-        printf("West connection loaded.\n");
+        log_debug("West connection loaded.\n");
         // CopyBytes(wram_ptr(wWestMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
         // _hl += wSouthMapConnection - wNorthMapConnection;
         uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[WEST_F].connectedMapGroup, gMapConnections[WEST_F].connectedMapNumber);
@@ -819,7 +819,7 @@ void GetMapConnections(const struct MapAttr* attr){
         // LD_DE(wEastMapConnection);
         // CALL(aGetMapConnection);
         GetMapConnection(gMapConnections + EAST_F, attr->connections[EAST_F]);
-        printf("East connection loaded.\n");
+        log_debug("East connection loaded.\n");
         // CopyBytes(wram_ptr(wEastMapConnection), _hl, wSouthMapConnection - wNorthMapConnection);
         // _hl += wSouthMapConnection - wNorthMapConnection;
         uint32_t blocks_ptr = GetGBMapBlocksPointer(gMapConnections[EAST_F].connectedMapGroup, gMapConnections[EAST_F].connectedMapNumber);
@@ -902,7 +902,7 @@ void ReadWarps(const struct MapEvents* hl){
     // LD_addr_A(wCurMapWarpsPointer + 1);
     gCurMapWarpsPointer = hl->warp_events;
     gPlayer.curMapWarpsPointer = wram->wMapEventsPointer + 3;
-    printf("warps=%d, 0x%02X\n", gPlayer.curMapWarpCount, gPlayer.curMapWarpsPointer);
+    log_debug("warps=%d, 0x%02X\n", gPlayer.curMapWarpCount, gPlayer.curMapWarpsPointer);
     // LD_A_C;
     // AND_A_A;
     // RET_Z ;
@@ -925,7 +925,7 @@ void ReadCoordEvents(const struct MapEvents* hl){
     // LD_addr_A(wCurMapCoordEventsPointer + 1);
     gCurMapCoordEventsPointer = hl->coord_events;
     gPlayer.curMapCoordEventsPointer = wram->wMapEventsPointer + 2 + 1 + (gPlayer.curMapWarpCount * WARP_EVENT_SIZE) + 1;
-    printf("coords=%d, 0x%02X\n", gPlayer.curMapCoordEventCount, gPlayer.curMapCoordEventsPointer);
+    log_debug("coords=%d, 0x%02X\n", gPlayer.curMapCoordEventCount, gPlayer.curMapCoordEventsPointer);
 
     // LD_A_C;
     // AND_A_A;
@@ -1053,10 +1053,10 @@ uint8_t CopyMapObjectEvents(struct MapObject* hl, const struct ObjEvent* de, uin
         hl[i].objectScript = 0x4000 | (GetGBScriptPointer(gCurMapData.mapGroup, gCurMapData.mapNumber, i) & 0x3fff);
         hl[i].objectEventFlag = (uint16_t)de[i].eventFlag;
         if(hl[i].objectEventFlag != 0xffff)
-            printf("%02d: x=%d, y=%d, script=$%04x, eventFlag=%d (%c)\n", i, hl[i].objectXCoord, hl[i].objectYCoord, hl[i].objectScript, (uint16_t)de[i].eventFlag,
+            log_debug("%02d: x=%d, y=%d, script=$%04x, eventFlag=%d (%c)\n", i, hl[i].objectXCoord, hl[i].objectYCoord, hl[i].objectScript, (uint16_t)de[i].eventFlag,
                 (EventFlagAction(hl[i].objectEventFlag, CHECK_FLAG))? '1': '0');
         else {
-            printf("%02d: x=%d, y=%d, script=$%04x\n", i, hl[i].objectXCoord, hl[i].objectYCoord, hl[i].objectScript);
+            log_debug("%02d: x=%d, y=%d, script=$%04x\n", i, hl[i].objectXCoord, hl[i].objectYCoord, hl[i].objectScript);
         }
     // loop2:
         // LD_A_de;
@@ -1148,7 +1148,6 @@ void GetWarpDestCoords(void){
 }
 
 void LoadBlockData(void){
-    PEEK("");
     // LD_HL(wOverworldMapBlocks);
     // LD_BC(wOverworldMapBlocksEnd - wOverworldMapBlocks);
     // LD_A(0);

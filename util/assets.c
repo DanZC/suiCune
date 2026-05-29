@@ -21,18 +21,18 @@ asset_s LoadAsset(const char* filename) {
     #if defined(USE_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
-        fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
+        log_err("%s\nfilename=%s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = PHYSFS_fileLength(file);
     if(size == -1) {
-        fprintf(stderr, "%s Error: %s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        log_err("%s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         PHYSFS_close(file);
         return (asset_s){NULL, 0};
     }
     uint8_t* buf = malloc((size_t)size);
     if(buf == NULL) {
-        fprintf(stderr, "%s Error: Bad malloc.", __func__);
+        log_err("Bad malloc.");
         return (asset_s){NULL, 0};
     }
     size_t read = (size_t)PHYSFS_readBytes(file, buf, (size_t)size);
@@ -40,18 +40,18 @@ asset_s LoadAsset(const char* filename) {
     #else 
     FILE* file = fopen(filename, "rb");
     if(!file) {
-        fprintf(stderr, "LoadAsset Error: %s", filename);
+        log_err("Can't open %s\n", filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = fsize(file);
     if(size == -1) {
-        fprintf(stderr, "%s Error", __func__);
+        log_err("bad file size\n");
         fclose(file);
         return (asset_s){NULL, 0};
     }
     uint8_t* buf = malloc((size_t)size);
     if(buf == NULL) {
-        fprintf(stderr, "LoadAsset Error: Bad malloc.");
+        log_err("Bad malloc.\n");
         return (asset_s){NULL, 0};
     }
     size_t read = fread(buf, 1, (size_t)size, file);
@@ -67,12 +67,12 @@ asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
 #if defined(USE_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
-        fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
+        log_err("%s\nfilename=%s",PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = PHYSFS_fileLength(file);
     if(size == -1) {
-        fprintf(stderr, "%s Error: %s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        log_err("%s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         PHYSFS_close(file);
         return (asset_s){NULL, 0};
     }
@@ -82,20 +82,15 @@ asset_s LoadAssetToBuffer(void* buffer, size_t buf_size, const char* filename) {
 #else 
     FILE* file = fopen(filename, "rb");
     if(!file) {
-        fprintf(stderr, "%s Error\nfilename=%s", __func__, filename);
+        log_err("Could not open file %s", filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = fsize(file);
     if(size == -1) {
-        fprintf(stderr, "%s Error. Bad size.\n", __func__);
+        log_err("Bad size.\n");
         fclose(file);
         return (asset_s){NULL, 0};
     }
-    // uint8_t* buf = malloc((size_t)size);
-    // if(buf == NULL) {
-    //     fprintf(stderr, "LoadAsset Error: Bad malloc.");
-    //     return (asset_s){NULL, 0};
-    // }
     size_t rsize = ((size_t)size > buf_size)? buf_size: (size_t)size;
     size_t read = fread(buffer, 1, rsize, file);
     fclose(file);
@@ -108,18 +103,18 @@ asset_s LoadTextAsset(const char* filename) {
 #if defined(USE_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
-        fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
+        log_err("%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = PHYSFS_fileLength(file);
     if(size == -1) {
-        fprintf(stderr, "%s Error: %s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        log_err("%s Error: %s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         PHYSFS_close(file);
         return (asset_s){NULL, 0};
     }
     uint8_t* buf = malloc((size_t)size + 1);
     if(buf == NULL) {
-        fprintf(stderr, "%s Error: Bad malloc.", __func__);
+        log_err("%s Error: Bad malloc.", __func__);
         return (asset_s){NULL, 0};
     }
     size_t read = (size_t)PHYSFS_readBytes(file, buf, (size_t)size);
@@ -128,13 +123,13 @@ asset_s LoadTextAsset(const char* filename) {
 #else 
     FILE* file = fopen(filename, "r");
     if(!file) {
-        fprintf(stderr, "%s Error: %s", __func__, filename);
+        log_err("%s\n", filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = fsize(file);
     uint8_t* buf = malloc((size_t)size + 1);
     if(buf == NULL) {
-        fprintf(stderr, "LoadAsset Error: Bad malloc.");
+        log_err("Bad malloc.\n");
         return (asset_s){NULL, 0};
     }
     memset(buf, 0, (size_t)size + 1);
@@ -164,7 +159,7 @@ bool WriteAsset(const char* filename, const void* buffer, size_t buf_size) {
 #if defined(USE_PHYSFS)
     PHYSFS_File* file = PHYSFS_openWrite(filename);
     if(!file) {
-        fprintf(stderr, "%s Error: %s\nfilename=%s", __func__, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
+        log_err("%s filename=%s\n", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()), filename);
         return false;
     }
     PHYSFS_writeBytes(file, buffer, (size_t)buf_size);
@@ -172,7 +167,7 @@ bool WriteAsset(const char* filename, const void* buffer, size_t buf_size) {
 #else 
     FILE* file = fopen(filename, "wb");
     if(!file) {
-        fprintf(stderr, "%s Error: %s", __func__, filename);
+        log_err("%s\n", filename);
         return false;
     }
     fwrite(buffer, 1, buf_size, file);
@@ -193,7 +188,7 @@ static void CopyPNG1bppGrayTileToGB(uint8_t* dest, const uint8_t* src, int strid
             uint8_t pixel;
             switch(src[yy*stride + xx]) {
                 case 0x00: pixel = 0x3; break;
-                default: fprintf(stderr, "%s: Pixel error #%06X.\n", __func__, src[yy*stride + xx]);
+                default: log_err("%s: Pixel error #%06X.\n", __func__, src[yy*stride + xx]);
                     // fallthrough
                 case 0xff: pixel = 0x0; break;
             }
@@ -217,7 +212,7 @@ static void CopyPNG2bppGrayTileToGB(uint8_t* dest, const uint8_t* src, int strid
                 case 0x00: pixel = 0x3; break;
                 case 0x55: pixel = 0x2; break;
                 case 0xaa: pixel = 0x1; break;
-                default: fprintf(stderr, "%s: Pixel error #%06X.\n", __func__, src[yy*stride + xx]);
+                default: log_err("Pixel error #%06X.\n", src[yy*stride + xx]);
                     // fallthrough
                 case 0xff: pixel = 0x0; break;
             }
@@ -241,7 +236,7 @@ static bool CopyPNG1bppGrayTileToGBIfNotEmpty(uint8_t* dest, const uint8_t* src,
             uint8_t pixel;
             switch(src[yy*stride + xx]) {
                 case 0x00: pixel = 0x3; empty = false; break;
-                default: fprintf(stderr, "%s: Pixel error #%06X.\n", __func__, src[yy*stride + xx]);
+                default: log_err("Pixel error #%06X.\n", src[yy*stride + xx]);
                     // fallthrough
                 case 0xff: pixel = 0x0; break;
             }
@@ -272,7 +267,7 @@ static bool CopyPNG2bppGrayTileToGBIfNotEmpty(uint8_t* dest, const uint8_t* src,
                 case 0x00: pixel = 0x3; empty = false; break;
                 case 0x55: pixel = 0x2; empty = false; break;
                 case 0xaa: pixel = 0x1; empty = false; break;
-                default: fprintf(stderr, "%s: Pixel error #%06X.\n", __func__, src[yy*stride + xx]);
+                default: log_err("%s: Pixel error #%06X.\n", src[yy*stride + xx]);
                     // fallthrough
                 case 0xff: pixel = 0x0; break;
             }
@@ -310,8 +305,8 @@ static void CopyPNG2bppColorTileToGB(uint8_t* dest, const uint8_t* src, int stri
             } else if(pixel == pal[0]) {
                 pixel = 0x0;
             } else {
-                fprintf(stderr, "%s: Pixel error #%06X.\n", __func__, pixel);
-                fprintf(stderr, "Colors available: #%06X, #%06X, #%06X, #%06X.\n", pal[0], pal[1], pal[2], pal[3]);
+                log_err("Pixel error #%06X.\n", pixel);
+                log_err("Colors available: #%06X, #%06X, #%06X, #%06X.\n", pal[0], pal[1], pal[2], pal[3]);
                 pixel = 0x0;
             }
             dest[yy * 2 + 0] |= ((pixel & 0b01)? (1 << (7 - xx)): 0);
@@ -332,14 +327,14 @@ void LoadPNG1bppAssetToVRAM(void* dest, const char* filename) {
     int x, y, n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         exit(-1);
     }
     // printf("%d-channel %dx%d image\n", n, x, y);
     FreeAsset(a);
     int numTiles = (y / 8) * (x / 8);
     int tilesPerRow = (x / 8);
-    printf("%d tiles to write.\n", numTiles);
+    log_info("%d tiles to write.\n", numTiles);
     if(n == 1) {
         for(int i = 0; i < numTiles; ++i) {
             CopyPNG1bppGrayTileToGB(&d[i * LEN_2BPP_TILE], &pix[(((i/tilesPerRow)*8)*x) + ((i%tilesPerRow)*8)], x);
@@ -370,7 +365,7 @@ void LoadPNG2bppAssetToVRAM(void* dest, const char* filename) {
     int x, y, n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         exit(-1);
     }
     // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
@@ -409,7 +404,7 @@ void LoadPNG2bppAssetToVRAMByColumn(void* dest, const char* filename) {
     int x, y, n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         exit(-1);
     }
     // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
@@ -447,7 +442,7 @@ void LoadPNG1bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
     int x, y, n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         exit(-1);
     }
     // printf("1bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
@@ -485,7 +480,7 @@ void LoadPNG1bppAssetSectionToVRAM_SkipEmptyTiles(void* dest, const char* filena
     int x, y, n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         exit(-1);
     }
     // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
@@ -526,7 +521,7 @@ void LoadPNG2bppAssetSectionToVRAM(void* dest, const char* filename, int start_t
     int x, y, n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         exit(-1);
     }
     // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
@@ -564,7 +559,7 @@ void LoadPNG2bppAssetSectionToVRAM_SkipEmptyTiles(void* dest, const char* filena
     int x, y, n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         exit(-1);
     }
     // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);
@@ -602,7 +597,7 @@ void LoadDimensionsFromPNG(const char* filename, int* w, int* h) {
     int n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, w, h, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         exit(-1);
     }
     FreeAsset(a);
@@ -673,7 +668,7 @@ void LoadPaletteAssetColorsToBuffer(void* dest, size_t dest_size, const char* fi
 
     const char* text = a.ptr;
 
-    // printf("Loading %lld colors from palette file (%s)\n", color_count, filename);
+    // log_debug("Loading %lld colors from palette file (%s)\n", color_count, filename);
     ParsePalFromText(d, dest_size, text, color_idx, color_count);
 
     FreeAsset(a);
@@ -691,7 +686,7 @@ void ExtractPaletteFromPNGAssetToBuffer(void* dest, const char* filename) {
     int x, y, n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, &x, &y, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         exit(-1);
     }
     // printf("Extracting colors from %d-channel %dx%d image (%s)\n", n, x, y, filename);
@@ -714,18 +709,18 @@ void ExtractPaletteFromPNGAssetToBuffer(void* dest, const char* filename) {
 // data loaded will be truncated to the buffer size, flooring to last segment size.
 asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* filename, size_t segment_size, size_t start, size_t count) {
     if(segment_size == 0) {
-        fprintf(stderr, "%s Error: Segment size is 0.", __func__);
+        log_err("Segment size is 0.\n");
         return (asset_s){NULL, 0};
     }
 #if defined(USE_PHYSFS)
     PHYSFS_File* file = PHYSFS_openRead(filename);
     if(!file) {
-        fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        log_err("LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         return (asset_s){NULL, 0};
     }
     int64_t size = PHYSFS_fileLength(file);
     if(size == -1) {
-        fprintf(stderr, "LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
+        log_err("LoadAsset Error: %s", PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         PHYSFS_close(file);
         return (asset_s){NULL, 0};
     }
@@ -743,12 +738,12 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
 #else
     FILE* file = fopen(filename, "rb");
     if(!file) {
-        fprintf(stderr, "%s Error: %s", __func__, filename);
+        log_err("%s\n", filename);
         return (asset_s){NULL, 0};
     }
     int64_t size = fsize(file);
     if(size == -1) {
-        fprintf(stderr, "%s Error: %s", __func__, filename);
+        log_err("%s\n", filename);
         fclose(file);
         return (asset_s){NULL, 0};
     }
@@ -781,7 +776,7 @@ void* LoadPixelsFromPNG(const char* filename, int* w, int* h) {
     int n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, w, h, &n, 0);
     if(!pix) {
-        fprintf(stderr, "%s: Load error on image %s. Reason: %s\n", __func__, filename, stbi_failure_reason());
+        log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         return NULL;
     }
     // printf("2bpp %d-channel %dx%d image (%s)\n", n, x, y, filename);

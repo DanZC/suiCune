@@ -37,9 +37,3 @@
 //);
 
 #endif
-
-#if DEBUG
-#define dlogf(fmt, ...) printf(fmt, __VA_ARGS__)
-#else
-#define dlogf(...)
-#endif

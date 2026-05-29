@@ -163,14 +163,13 @@ static struct SpriteAnim* TownMapMon(void);
 static struct SpriteAnim* TownMapPlayerIcon(uint8_t location);
 
 void PokeGear(void){
-    PEEK("");
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
-#if DEBUG
-    bit_set(gPlayer.pokegearFlags, POKEGEAR_RADIO_CARD_F);
-    bit_set(gPlayer.pokegearFlags, POKEGEAR_MAP_CARD_F);
-#endif
+    if(debug_mode()) {
+        bit_set(gPlayer.pokegearFlags, POKEGEAR_RADIO_CARD_F);
+        bit_set(gPlayer.pokegearFlags, POKEGEAR_MAP_CARD_F);
+    }
     uint8_t options = gOptions.options;
     // SET_hl(NO_TEXT_SCROLL);
     bit_set(gOptions.options, NO_TEXT_SCROLL);
@@ -2746,9 +2745,9 @@ static void v_TownMap_loop(uint8_t d, uint8_t e){
 
         // okay:
             // INC_hl;
-            wram->wTownMapCursorLandmark = (wram->wTownMapCursorLandmark < d)
-                ? wram->wTownMapCursorLandmark + 1
-                : e;
+            wram->wTownMapCursorLandmark = (wram->wTownMapCursorLandmark >= d)
+                ? e
+                : wram->wTownMapCursorLandmark + 1;
             // goto next;
             break;
         }
@@ -2927,32 +2926,31 @@ void v_TownMap(void){
     // LDH_A_addr(hCGB);
     // AND_A_A;
     // IF_Z goto dmg;
-    if(hram.hCGB == 0) {
-    // dmg:
-        // LD_A_addr(wTownMapPlayerIconLandmark);
-        // CP_A(KANTO_LANDMARK);
-        // IF_NC goto kanto;
-        if(wram->wTownMapPlayerIconLandmark >= KANTO_LANDMARK)
-            goto kanto;
-        // LD_D(KANTO_LANDMARK - 1);
-        // LD_E(1);
-        // CALL(av_TownMap_loop);
-        v_TownMap_loop(KANTO_LANDMARK - 1, 1);
-        // goto resume;
-    }
-    else {
+    if(hram.hCGB != 0) {
         // LD_A(0b11100100);
         // CALL(aDmgToCgbObjPal0);
         DmgToCgbObjPal0(0b11100100);
         // CALL(aDelayFrame);
         DelayFrame();
+    }
 
-        kanto: {
-            // CALL(aTownMap_GetKantoLandmarkLimits);
-            u8_pair_s de = TownMap_GetKantoLandmarkLimits();
-            // CALL(av_TownMap_loop);
-            v_TownMap_loop(de.a, de.b);
-        }
+// dmg:
+    // LD_A_addr(wTownMapPlayerIconLandmark);
+    // CP_A(KANTO_LANDMARK);
+    // IF_NC goto kanto;
+    if(wram->wTownMapPlayerIconLandmark >= KANTO_LANDMARK) {
+    // kanto:
+        // CALL(aTownMap_GetKantoLandmarkLimits);
+        u8_pair_s de = TownMap_GetKantoLandmarkLimits();
+        // CALL(av_TownMap_loop);
+        v_TownMap_loop(de.a, de.b);
+    }
+    else {
+        // LD_D(KANTO_LANDMARK - 1);
+        // LD_E(1);
+        // CALL(av_TownMap_loop);
+        v_TownMap_loop(KANTO_LANDMARK - 1, LANDMARK_NEW_BARK_TOWN);
+        // goto resume;
     }
 
 // resume:

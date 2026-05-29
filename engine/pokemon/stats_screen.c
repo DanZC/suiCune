@@ -396,49 +396,49 @@ static void EggStatsJoypad(void){
     // BIT_A(A_BUTTON_F);
     // IF_NZ goto quit;
     if(!bit_test(a, A_BUTTON_F)) {
-#if DEBUG
-static const char HatchSoonString[] = "▶HATCH SOON!";
-        // CP_A(START);
-        // IF_Z goto hatch;
-        if(a == START) {
-        // hatch:
-            // LD_A_addr(wMonType);
-            // OR_A_A;
-            // IF_NZ goto skip;
-            if(wram->wMonType == TEMPMON) {
-                // PUSH_BC;
-                // PUSH_DE;
-                // PUSH_HL;
-                // LD_A_addr(wCurPartyMon);
-                // LD_BC(PARTYMON_STRUCT_LENGTH);
-                // LD_HL(wPartyMon1Happiness);
-                // CALL(aAddNTimes);
-                // LD_hl(1);
-                gPokemon.partyMon[wram->wCurPartyMon].mon.happiness = 1;
-                // LD_A(1);
-                // LD_addr_A(wTempMonHappiness);
-                wram->wTempMon.mon.happiness = 1;
-                // LD_A(127);
-                // LD_addr_A(wStepCount);
-                gPlayer.stepCount = 127;
-                // LD_DE(HatchSoonString);
-                // hlcoord(8, 17, wTilemap);
-                // CALL(aPlaceString);
-                PlaceStringSimple(U82C(HatchSoonString), coord(8, 17, wram->wTilemap));
-                // LD_HL(wStatsScreenFlags);
-                // SET_hl(5);
-                bit_set(wram->wStatsScreenFlags, 5);
-                // POP_HL;
-                // POP_DE;
-                // POP_BC;
-            }
+        if(debug_mode()) {
+            static const char HatchSoonString[] = "▶HATCH SOON!";
+            // CP_A(START);
+            // IF_Z goto hatch;
+            if(a == START) {
+            // hatch:
+                // LD_A_addr(wMonType);
+                // OR_A_A;
+                // IF_NZ goto skip;
+                if(wram->wMonType == TEMPMON) {
+                    // PUSH_BC;
+                    // PUSH_DE;
+                    // PUSH_HL;
+                    // LD_A_addr(wCurPartyMon);
+                    // LD_BC(PARTYMON_STRUCT_LENGTH);
+                    // LD_HL(wPartyMon1Happiness);
+                    // CALL(aAddNTimes);
+                    // LD_hl(1);
+                    gPokemon.partyMon[wram->wCurPartyMon].mon.happiness = 1;
+                    // LD_A(1);
+                    // LD_addr_A(wTempMonHappiness);
+                    wram->wTempMon.mon.happiness = 1;
+                    // LD_A(127);
+                    // LD_addr_A(wStepCount);
+                    gPlayer.stepCount = 127;
+                    // LD_DE(HatchSoonString);
+                    // hlcoord(8, 17, wTilemap);
+                    // CALL(aPlaceString);
+                    PlaceStringSimple(U82C(HatchSoonString), coord(8, 17, wram->wTilemap));
+                    // LD_HL(wStatsScreenFlags);
+                    // SET_hl(5);
+                    bit_set(wram->wStatsScreenFlags, 5);
+                    // POP_HL;
+                    // POP_DE;
+                    // POP_BC;
+                }
 
-        // skip:
-            // XOR_A_A;
-            // JP(mStatsScreen_JoypadAction);
-            return StatsScreen_JoypadAction(0);
+            // skip:
+                // XOR_A_A;
+                // JP(mStatsScreen_JoypadAction);
+                return StatsScreen_JoypadAction(0);
+            }
         }
-#endif
         // AND_A(D_DOWN | D_UP | A_BUTTON | B_BUTTON);
         // JP(mStatsScreen_JoypadAction);
         return StatsScreen_JoypadAction(a & (D_DOWN | D_UP | A_BUTTON | B_BUTTON));
@@ -1643,20 +1643,19 @@ void EggStatsScreen(void){
     // hlcoord(11, 5, wTilemap);
     // CALL(aPlaceString);
     PlaceStringSimple(Utf8ToCrystal(FiveQMarkString), coord(11, 5, wram->wTilemap));
-#if DEBUG
-    // LD_DE(EggStatsScreen_PushStartString);
-    // hlcoord(8, 17, wTilemap);
-    // CALL(aPlaceString);
-    PlaceStringSimple(Utf8ToCrystal("▶PUSH START.@"), coord(8, 17, wram->wTilemap));
-    // goto placed_push_start;
 
+    if(debug_mode()) {
+        // LD_DE(EggStatsScreen_PushStartString);
+        // hlcoord(8, 17, wTilemap);
+        // CALL(aPlaceString);
+        PlaceStringSimple(Utf8ToCrystal("▶PUSH START.@"), coord(8, 17, wram->wTilemap));
+        // goto placed_push_start;
 
-// PushStartString:
-    //db ['"▶PUSH START.@"'];
-
+    // PushStartString:
+        //db ['"▶PUSH START.@"'];
+    }
 
 // placed_push_start:
-#endif
     // LD_A_addr(wTempMonHappiness);  // egg status
     uint8_t a = wram->wTempMon.mon.happiness;
     const char* de;

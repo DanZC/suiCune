@@ -1160,7 +1160,7 @@ void Place2DMenuItemName(uint8_t* hl, const char* de) {
     // RST(aBankswitch);
 
     // CALL(aPlaceString);
-    printf("%s\n", de);
+    log_debug("%s\n", de);
     PlaceStringSimple(U82CA(buf, de), hl);
     // POP_AF;
     // RST(aBankswitch);

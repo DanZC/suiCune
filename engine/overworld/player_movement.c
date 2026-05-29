@@ -373,11 +373,9 @@ static u8_flag_s DoPlayerMovement_CheckTurning(void) {
     // RET;
 }
 
-#if DEBUG
 static bool DoPlayerMovement_CheckFacingOffEdgeOfMap(void) {
     return CheckFacingOffEdgeOfMap();
 }
-#endif
 
 static u8_flag_s DoPlayerMovement_TryStep(void) {
 //  Surfing actually calls .TrySurf directly instead of passing through here.
@@ -389,21 +387,21 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
     if(gPlayer.playerState == PLAYER_SURF || gPlayer.playerState == PLAYER_SURF_PIKA)
         return DoPlayerMovement_TrySurf();
     
-#if DEBUG
-    // Athletic, wall phasing, blazing speed, running shoes.
-    if(hram.hJoyDown & B_BUTTON) {
-        uint8_t npc = DoPlayerMovement_CheckNPC();
-        if(npc == 0 || npc == 2)
-            return (u8_flag_s) {.a = 0, .flag = false};
-        u8_flag_s res = DoPlayerMovement_CheckWarp();
-        if(res.flag)
-            return res;
-        // Stop the player from walking off the edge of the map where there isn't a map connection.
-        if(DoPlayerMovement_CheckFacingOffEdgeOfMap())
-            return u8_flag(0, false);
-        return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
+    if(debug_mode()) {
+        // Athletic, wall phasing, blazing speed, running shoes.
+        if(hram.hJoyDown & B_BUTTON) {
+            uint8_t npc = DoPlayerMovement_CheckNPC();
+            if(npc == 0 || npc == 2)
+                return (u8_flag_s) {.a = 0, .flag = false};
+            u8_flag_s res = DoPlayerMovement_CheckWarp();
+            if(res.flag)
+                return res;
+            // Stop the player from walking off the edge of the map where there isn't a map connection.
+            if(DoPlayerMovement_CheckFacingOffEdgeOfMap())
+                return u8_flag(0, false);
+            return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_BIKE), .flag = true};
+        }
     }
-#endif
 
     // CALL(aDoPlayerMovement_CheckLandPerms);
     // IF_C goto bump;

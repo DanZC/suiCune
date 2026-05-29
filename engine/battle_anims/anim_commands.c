@@ -1107,7 +1107,7 @@ void BattleAnimCmd_NGFX(uint8_t c, ...){
     // XOR_A_A;
     // LD_addr_A(wBattleAnimGFXTempTileID);
     wram->wBattleAnimGFXTempTileID = 0;
-    printf("NGFX %d - ", c);
+    log_debug("NGFX %d - ", c);
     va_list v;
     va_start(v, c);
 
@@ -1118,12 +1118,12 @@ void BattleAnimCmd_NGFX(uint8_t c, ...){
         // RET_NC ;
         if(wram->wBattleAnimGFXTempTileID >= (vTiles1 - vTiles0) / LEN_2BPP_TILE - BATTLEANIM_BASE_TILE) {
             va_end(v);
-            printf("\n");
+            log_debug("\n");
             return;
         }
         // CALL(aGetBattleAnimByte);
         uint8_t byte = (uint8_t)va_arg(v, int);
-        printf("%d, ", (int)byte);
+        log_debug("%d, ", (int)byte);
         // LD_hli_A;
         *(hl++) = byte;
         // LD_A_addr(wBattleAnimGFXTempTileID);
@@ -1150,7 +1150,7 @@ void BattleAnimCmd_NGFX(uint8_t c, ...){
         // DEC_C;
         // IF_NZ goto loop;
     } while(--c != 0);
-    printf("\n");
+    log_debug("\n");
 
     va_end(v);
     // RET;
@@ -1291,7 +1291,7 @@ static uint8_t* BattleAnimCmd_BattlerGFX_1Row_LoadFeet(uint8_t* hl, const uint8_
 }
 
 void BattleAnimCmd_BattlerGFX_1Row(void){
-    printf("BattlerGFX_1Row::\n");
+    log_debug("BattlerGFX_1Row::\n");
     // LD_HL(wBattleAnimTileDict);
     uint8_t* hl = wram->wBattleAnimTileDict;
 
@@ -1369,7 +1369,7 @@ static uint8_t* BattleAnimCmd_BattlerGFX_2Row_LoadHead(uint8_t* hl, const uint8_
 }
 
 void BattleAnimCmd_BattlerGFX_2Row(void){
-    printf("BattlerGFX_2Row::\n");
+    log_debug("BattlerGFX_2Row::\n");
     // LD_HL(wBattleAnimTileDict);
     uint8_t* hl = wram->wBattleAnimTileDict;
 
@@ -1826,7 +1826,7 @@ void BattleAnimCmd_F7(void){
 }
 
 void BattleAnimCmd_Sound(uint8_t duration, uint8_t tracks, uint16_t sfx){
-    printf("%s:: (%d, %d, %d)\n", __func__, duration, tracks, sfx);
+    log_debug(":: (%d, %d, %d)\n", duration, tracks, sfx);
     static const uint8_t GetPanning[] = {0xf0, 0x0f, 0xf0, 0x0f};
     // CALL(aGetBattleAnimByte);
     // LD_E_A;

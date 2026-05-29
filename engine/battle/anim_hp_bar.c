@@ -107,7 +107,7 @@ static uint16_t v_AnimateHPBar_ComputePixels(void){
         // goto got_direction;
     }
 
-    printf("HP Anim: %d -> %d (%d, %d)\n", wram->wCurHPAnimOldHP, wram->wCurHPAnimNewHP, (int16_t)de, (int16_t)bc);
+    log_debug("HP Anim: %d -> %d (%d, %d)\n", wram->wCurHPAnimOldHP, wram->wCurHPAnimNewHP, (int16_t)de, (int16_t)bc);
 
 // got_direction:
     // LD_A_D;

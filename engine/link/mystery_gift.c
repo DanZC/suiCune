@@ -1464,7 +1464,7 @@ void SendIRDataMessage(const uint8_t* hl, uint8_t b){
             if(try_count++ >= 1000) {
                 return InfraredLEDReceiveTimedOut();
             }
-            fprintf(stderr, "Error sending byte: %02x\n", hl[i]);
+            log_err("Error sending byte: %02x\n", hl[i]);
         }
         hram.hMGChecksum += hl[i];
     }

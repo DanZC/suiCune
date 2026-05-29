@@ -1208,7 +1208,7 @@ void TextCommand_START_GB(struct TextPrintState* state) {
     // LD_L_C;
     state->hl = state->bc;
     // CALL(aPlaceString);
-    printf("text $%04x\n", RAMAddrToGB(state->de));
+    log_debug("text $%04x\n", RAMAddrToGB(state->de));
     PlaceString(state, state->bc);
     // struct TextPrintState tempstate = {.hl = state->bc, .de = state->hl};
 
@@ -1230,7 +1230,7 @@ void TextCommand_START(struct TextCmdState* state, const struct TextCmd* cmd) {
     // LD_H_B;
     // LD_L_C;
     // CALL(aPlaceString);
-    printf("Text start: %s\n", cmd->text);
+    log_debug("Text start: %s\n", cmd->text);
     struct TextPrintState temp = {.hl = state->bc, .de = U82CA(tempbuf, cmd->text)};
     if(!PlaceString(&temp, state->bc)) {
         state->hl = &cmd_end;
@@ -1253,7 +1253,7 @@ void TextCommand_RAM_GB(struct TextPrintState* state) {
     // LD_D_A;
     uint16_t addr = (uint16_t)(state->hl[0] | (state->hl[1] << 8));
     state->hl += 2;
-    printf("text_ram $%04x\n", addr);
+    log_debug("text_ram $%04x\n", addr);
 
     uint8_t* de = GBToRAMAddr(addr);
 
@@ -1310,7 +1310,7 @@ void TextCommand_FAR_GB(struct TextPrintState* state) {
     // LD_A_hli;
     uint8_t newBank = *(state->hl++);
 
-    printf("text_far bank %d, $%04x\n", newBank, de_v);
+    log_debug("text_far bank %d, $%04x\n", newBank, de_v);
 
     // LDH_addr_A(hROMBank);
     hram.hROMBank = newBank;
@@ -1649,7 +1649,7 @@ void TextCommand_START_ASM_GB(struct TextPrintState* state) {
     REG_HL = RAMAddrToGB(state->hl);
     REG_DE = RAMAddrToGB(state->de);
     REG_BC = RAMAddrToGB(state->bc);
-    printf("text_asm $%04x (de=%04x, bc=%04x)\n", REG_HL, REG_DE, REG_BC);
+    log_debug("text_asm $%04x (de=%04x, bc=%04x)\n", REG_HL, REG_DE, REG_BC);
     CALL((gb.selected_rom_bank << 14) | REG_HL);
     // PEEK("after");
     uint8_t* hl = GBToRAMAddr(REG_HL);
@@ -1726,15 +1726,15 @@ void TextCommand_DECIMAL_GB(struct TextPrintState* state) {
     // LD_B_A;
     uint8_t b = ((a & 0xf0) >> 4) | (1 << PRINTNUM_LEFTALIGN_F);
 
-    printf("text_decimal de=$%04x, bytes=%d, digits=%d", de_v, b & 0xf, c);
+    log_debug("text_decimal de=$%04x, bytes=%d, digits=%d", de_v, b & 0xf, c);
     if((b & 0xf) == 2) {
-        printf(" (%d)\n", *(uint16_t*)state->de);
+        loga_debug(" (%d)\n", *(uint16_t*)state->de);
     }
     else if((b & 0xf) == 1) {
-        printf(" (%d)\n", (int)*state->de);
+        loga_debug(" (%d)\n", (int)*state->de);
     }
     else {
-        printf(" \n");
+        loga_debug(" \n");
     }
 
     // CALL(aPrintNum);
@@ -1774,7 +1774,7 @@ void TextCommand_DECIMAL(struct TextCmdState* state, const struct TextCmd* cmd) 
     // LD_B_A;
     uint8_t b = (a & 0xf) | (1 << PRINTNUM_LEFTALIGN_F);
 
-    printf("text_decimal de=$%04x, bytes=%d, digits=%d", (de[0] << 8) | de[1], b & 0xf, c);
+    log_debug("text_decimal de=$%04x, bytes=%d, digits=%d", (de[0] << 8) | de[1], b & 0xf, c);
     // CALL(aPrintNum);
     state->bc = PrintNum(state->bc, de, b, c);
 
@@ -1918,10 +1918,10 @@ void TextCommand_SOUND(struct TextCmdState* state, const struct TextCmd* cmd) {
     // LD_B_A;
     uint8_t b = cmd->cmd;
     switch(b) {
-        case TX_SOUND_FANFARE:            printf("sound_fanfare\n"); break;
-        case TX_SOUND_CAUGHT_MON:         printf("sound_caught_mon\n"); break;
-        case TX_SOUND_SLOT_MACHINE_START: printf("sound_slot_machine_start\n"); break;
-        default: printf("sound_unk\n"); break;
+        case TX_SOUND_FANFARE:            log_debug("sound_fanfare\n"); break;
+        case TX_SOUND_CAUGHT_MON:         log_debug("sound_caught_mon\n"); break;
+        case TX_SOUND_SLOT_MACHINE_START: log_debug("sound_slot_machine_start\n"); break;
+        default: log_debug("sound_unk\n"); break;
     }
     // PUSH_HL;
     // LD_HL(mTextSFX);

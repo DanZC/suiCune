@@ -137,7 +137,7 @@ void MainMenu(void){
         // LD_A_addr(wMenuSelection);
         // LD_HL(mMainMenu_Jumptable);
         // RST(aJumpTable);
-        printf("wMenuSelection = %d\n", wram->wMenuSelection);
+        log_debug("wMenuSelection = %d\n", wram->wMenuSelection);
         if(Jumptable[wram->wMenuSelection]())
             return;
         // goto loop;

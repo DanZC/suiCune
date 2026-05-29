@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "log.h"
+
 #if defined(__unix__)
 #include <arpa/inet.h>
 #include <poll.h>
@@ -16,14 +18,14 @@
 // Print last socket-related error
 void socket_perror(const char *func)
 {
-    if (func) fprintf(stderr, "%s: ", func);
+    if (func) log_err("%s: ", func);
 #if defined(__unix__)
     char error[0x100];
     if (strerror_r(errno, error, sizeof(error))) {
         putc('\n', stderr);
         return;
     }
-    fprintf(stderr, "%s\n", error);
+    log_err("%s\n", error);
 #elif defined(_WIN32)
     LPWSTR error = NULL;
     if (!FormatMessageW(
@@ -32,7 +34,7 @@ void socket_perror(const char *func)
         putc('\n', stderr);
         return;
     }
-    fprintf(stderr, "%ls", error);
+    log_err("%ls", error);
     LocalFree(error);
 #endif
 }
@@ -183,9 +185,9 @@ SOCKET socket_connect(const char *host, const char *port)
     int gai_errno = getaddrinfo(host, port, &hints, &result);
     if (gai_errno) {
 #if defined(__unix__)
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gai_errno));
+        log_err("getaddrinfo: %s\n", gai_strerror(gai_errno));
 #elif defined(_WIN32)
-        fprintf(stderr, "getaddrinfo: Error %d: ", gai_errno);
+        log_err("getaddrinfo: Error %d: ", gai_errno);
         socket_perror(NULL);
 #endif
         return INVALID_SOCKET;
@@ -222,9 +224,9 @@ int resolve_host(const char* host, const char* port, struct sockaddr* addr)
     int gai_errno = getaddrinfo(host, port, &hints, &result);
     if (gai_errno) {
 #if defined(__unix__)
-        fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(gai_errno));
+        log_err("getaddrinfo: %s\n", gai_strerror(gai_errno));
 #elif defined(_WIN32)
-        fprintf(stderr, "getaddrinfo: Error %d: ", gai_errno);
+        log_err("getaddrinfo: Error %d: ", gai_errno);
         socket_perror(NULL);
 #endif
         return 0;

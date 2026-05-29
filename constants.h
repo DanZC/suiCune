@@ -3,11 +3,14 @@
 extern void (*redirectFunc[])(void);
 extern void (*convertedFunc[])(void);
 #include <stdio.h>
+#include <stdint.h>
 #include "tools/emu/peanut_gb.h"
 
 //#include "charmap.h"
 #include "util/bugfix.h"
 #include "util/enhancements.h"
+#include "util/debug.h"
+#include "util/log.h"
 #include "macros.h"
 
 #include "tools/emu/macros.h"

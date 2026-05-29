@@ -17,7 +17,7 @@ uint64_t GetNanoseconds(void){
     int return_code = clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
     if (return_code == -1)
     {
-        printf("Failed to obtain timestamp. errno = %i: %s\n", errno, 
+        log_err("Failed to obtain timestamp. errno = %i: %s\n", errno, 
             strerror(errno));
         nanoseconds = UINT64_MAX; // use this to indicate error
     }
@@ -37,12 +37,12 @@ uint64_t GetNanoseconds(void){
     LARGE_INTEGER freq;
     if (!QueryPerformanceCounter(&ticks))
     {
-        printf("Failed to obtain timestamp.\n");
+        log_err("Failed to obtain timestamp.\n");
         return UINT64_MAX; // use this to indicate error
     }
     if (!QueryPerformanceFrequency(&freq))
     {
-        printf("Failed to obtain frequency.\n");
+        log_err("Failed to obtain frequency.\n");
         return UINT64_MAX; // use this to indicate error
     }
     return (uint64_t)(SEC_TO_NS((double)ticks.QuadPart / (double)freq.QuadPart));

@@ -185,7 +185,7 @@ void SwitchItemsInBag(void){
     // JP_C (mSwitchItemsInBag_combine_stacks);
     if(SwitchItemsInBag_try_combining_stacks())
         return SwitchItemsInBag_combine_stacks();
-    printf("%d -> %d\n", wram->wSwitchItem, wram->wScrollingMenuCursorPosition);
+    log_debug("%d -> %d\n", wram->wSwitchItem, wram->wScrollingMenuCursorPosition);
     // LD_A_addr(wScrollingMenuCursorPosition);
     // LD_C_A;
     // LD_A_addr(wSwitchItem);

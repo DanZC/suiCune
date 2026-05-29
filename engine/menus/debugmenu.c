@@ -151,7 +151,6 @@ static void DebugMenu_MenuBox(void) {
 }
 
 void DebugMenu(void) {
-    PEEK("");
     uint8_t inMenu = hram.hInMenu;
     hram.hInMenu = 1;
 
@@ -848,9 +847,9 @@ void DebugMenu_Link(void) {
     CopyBytes(&gCrystal, GBToRAMAddr(sCrystalData), sizeof(gCrystal));
     CloseSRAM();
 
-    printf("NAME: "); PrintCrystalStringFromRAM(gPlayer.playerName); printf("\n");
-    printf("GENDER: %s\n", (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? "FEMALE": "MALE");
-    printf("ID: %d\n", gPlayer.playerID);
+    log_debug("NAME: "); PrintCrystalStringFromRAM(gPlayer.playerName); printf("\n");
+    log_debug("GENDER: %s\n", (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? "FEMALE": "MALE");
+    log_debug("ID: %d\n", gPlayer.playerID);
 
     LANConnection();
     

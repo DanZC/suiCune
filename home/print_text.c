@@ -263,10 +263,10 @@ uint8_t* PrintNum(uint8_t* hl, const void* de, uint8_t b, uint8_t c) {
 uint8_t* MobilePrintNum(uint8_t* hl, const void* de, uint8_t b, uint8_t c) {
     // HOMECALL(av_MobilePrintNum);
     switch(b & 0xf) {
-        case 0x1: printf("MobilePrintNum(%d)\n", *(uint8_t*)de); break;
-        case 0x2: printf("MobilePrintNum(%d)\n", *(uint16_t*)de); break;
-        case 0x3: printf("MobilePrintNum(%d)\n", ((uint8_t*)de)[0] | (((uint8_t*)de)[1] << 8) | (((uint8_t*)de)[2])); break;
-        case 0x4: printf("MobilePrintNum(%d)\n", *(uint32_t*)de); break;
+        case 0x1: log_debug("MobilePrintNum(%d)\n", *(uint8_t*)de); break;
+        case 0x2: log_debug("MobilePrintNum(%d)\n", *(uint16_t*)de); break;
+        case 0x3: log_debug("MobilePrintNum(%d)\n", ((uint8_t*)de)[0] | (((uint8_t*)de)[1] << 8) | (((uint8_t*)de)[2])); break;
+        case 0x4: log_debug("MobilePrintNum(%d)\n", *(uint32_t*)de); break;
     };
     // RET;
     return v_MobilePrintNum(hl, de, b, c);

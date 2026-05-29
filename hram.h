@@ -278,6 +278,6 @@ extern struct hram_s hram;
 
 #define CHECK_HRAM_FLD(_fld) do {\
         if((uint8_t*)&hram._fld != &gb.hram[_fld - IO_ADDR]) {\
-            printf("Bad casted field %s ptr %p != %p\n", _s(_fld), (uint8_t*)&hram._fld, &gb.hram[_fld - HRAM_Begin]);\
+            log_err("Bad casted field %s ptr %p != %p\n", _s(_fld), (uint8_t*)&hram._fld, &gb.hram[_fld - HRAM_Begin]);\
         }\
     } while(0)

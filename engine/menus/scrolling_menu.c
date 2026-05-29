@@ -79,7 +79,7 @@ void v_ScrollingMenu(const struct MenuData* data){
     MenuClickSound(res.a);
     // LD_addr_A(wMenuJoypad);
     wram->wMenuJoypad = res.a;
-    printf("%c%c%c%c%c%c%c%c\n", 
+    log_debug("%c%c%c%c%c%c%c%c\n", 
         (wram->wMenuJoypad & D_DOWN)?   'D': ' ',
         (wram->wMenuJoypad & D_UP)?     'U': ' ',
         (wram->wMenuJoypad & D_LEFT)?   'L': ' ',
@@ -351,7 +351,7 @@ static void InitScrollingMenuCursor(const struct MenuData* data){
     // CALL(aGetFarByte);
     // LD_addr_A(wScrollingMenuListSize);
     wram->wScrollingMenuListSize = *(hl++);
-    printf("scrolling menu size: %d\n", wram->wScrollingMenuListSize);
+    log_debug("scrolling menu size: %d\n", wram->wScrollingMenuListSize);
     // LD_A_addr(wMenuData_ScrollingMenuHeight);
     // LD_C_A;
     // LD_A_addr(wMenuScrollPosition);

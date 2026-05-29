@@ -814,10 +814,10 @@ uint8_t* v_PrintNum(uint8_t* hl, const uint8_t* de, uint8_t b, uint8_t c){
 #define PRINT_DEBUG_PRINTNUM_CALL 0
 #if PRINT_DEBUG_PRINTNUM_CALL
     switch(b & 0xf) {
-        case 1: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, de[0]); break;
-        case 2: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, (de[1] + (de[0] << 8))); break;
-        case 3: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, (de[2] + (de[1] << 8) + (de[0] << 16))); break;
-        case 4: printf("%s: Printing %d digits of %u\n", __func__, c & 0xf, (de[3] + (de[2] << 8) + (de[1] << 16) + (de[0] << 24))); break;
+        case 1: log_debug("Printing %d digits of %u\n", c & 0xf, de[0]); break;
+        case 2: log_debug("Printing %d digits of %u\n", c & 0xf, (de[1] + (de[0] << 8))); break;
+        case 3: log_debug("Printing %d digits of %u\n", c & 0xf, (de[2] + (de[1] << 8) + (de[0] << 16))); break;
+        case 4: log_debug("Printing %d digits of %u\n", c & 0xf, (de[3] + (de[2] << 8) + (de[1] << 16) + (de[0] << 24))); break;
     }
 #endif
 //  increments the pointer unless leading zeroes are not being printed,

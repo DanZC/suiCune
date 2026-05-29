@@ -47,7 +47,7 @@ void ReadTrainerParty(void){
     // LD_A_addr(wOtherTrainerID);
     // CP_A(CAL2);
     // LD_A_addr(wOtherTrainerClass);
-    printf("tclass %d, tid %d\n", wram->wOtherTrainerClass, wram->wOtherTrainerID);
+    log_debug("tclass %d, tid %d\n", wram->wOtherTrainerClass, wram->wOtherTrainerID);
     uint8_t tclass = wram->wOtherTrainerClass;
     if((tclass == CAL || tclass == JODI) && wram->wOtherTrainerID == CAL2) {
         // IF_Z goto cal2;
@@ -125,7 +125,7 @@ void ReadTrainerParty(void){
             case TRAINERTYPE_MOVES: TrainerType2(de); break;
             case TRAINERTYPE_ITEM: TrainerType3(de); break;
             case TRAINERTYPE_ITEM_MOVES: TrainerType4(de); break;
-            default: printf("Bad trainer type %d.\n", de->trainer_type); break;
+            default: log_err("Bad trainer type %d.\n", de->trainer_type); break;
         }
     }
 done:
@@ -146,7 +146,7 @@ void TrainerType1(const struct TrainerParty* de){
 //  normal (level, species)
     // LD_H_D;
     // LD_L_E;
-    printf("Trainer type 1 (%d)\n", de->size);
+    log_debug("Trainer type 1 (%d)\n", de->size);
 
     for(uint8_t i = 0; i < de->size; ++i) {
     // loop:
@@ -156,11 +156,11 @@ void TrainerType1(const struct TrainerParty* de){
 
         // LD_addr_A(wCurPartyLevel);
         wram->wCurPartyLevel = de->pnormal[i].level;
-        printf("level=%d ", wram->wCurPartyLevel);
+        log_debug("level=%d ", wram->wCurPartyLevel);
         // LD_A_hli;
         // LD_addr_A(wCurPartySpecies);
         wram->wCurPartySpecies = de->pnormal[i].species;
-        printf("species=%d\n", wram->wCurPartySpecies);
+        log_debug("species=%d\n", wram->wCurPartySpecies);
         // LD_A(OTPARTYMON);
         // LD_addr_A(wMonType);
         wram->wMonType = OTPARTYMON;
@@ -424,7 +424,7 @@ void TrainerType4(const struct TrainerParty* de){
 }
 
 void ComputeTrainerReward(void){
-    printf("Trainer reward: base %d, level %d\n", wram->wEnemyTrainerBaseReward, wram->wCurPartyLevel);
+    log_debug("Trainer reward: base %d, level %d\n", wram->wEnemyTrainerBaseReward, wram->wCurPartyLevel);
     // LD_HL(hProduct);
     // XOR_A_A;
     // LD_hli_A;
@@ -469,8 +469,7 @@ uint8_t* Battle_GetTrainerName(void){
 }
 
 uint8_t* GetTrainerName(uint8_t tid, uint8_t tclass){
-    PEEK("");
-    printf("GetTrainerName: class:%d, id:%d\n", tclass, tid);
+    log_debug("GetTrainerName: class:%d, id:%d\n", tclass, tid);
     // LD_A_C;
     // CP_A(CAL);
     // IF_NZ goto not_cal2;

@@ -304,7 +304,7 @@ bool TMHM_PocketLoop(void){
     wram->w2DMenuNumCols = 1;
     // LD_A(5);
     uint8_t a = 5;
-    printf("Rows: %d-%d\n", a, d);
+    log_debug("Rows: %d-%d\n", a, d);
     // SUB_A_D;
     // INC_A;
     // CP_A(6);
@@ -374,7 +374,7 @@ bool TMHM_PocketLoop(void){
         // DEC_A;
         // LD_addr_A(wTMHMPocketCursor);
         wram->wTMHMPocketCursor = wram->wMenuCursorY - 1;
-        printf("wTMHMPocketCursor: %d\n", wram->wTMHMPocketCursor);
+        log_debug("wTMHMPocketCursor: %d\n", wram->wTMHMPocketCursor);
         // XOR_A_A;
         // LDH_addr_A(hBGMapMode);
         hram.hBGMapMode = BGMAPMODE_NONE;

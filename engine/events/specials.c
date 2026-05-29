@@ -47,7 +47,7 @@ void Special(uint16_t de){
 
 // INCLUDE "data/events/special_pointers.asm"
     if(SpecialsPointers[de] == NULL) {
-        printf("special %d is undefined.\n", de);
+        log_err("special %d is undefined.\n", de);
         return;
     }
 

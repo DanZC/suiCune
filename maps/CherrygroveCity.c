@@ -188,7 +188,7 @@ bool CherrygroveSilverSceneNorth(script_s* s) {
     iftrue(Totodile)
     checkevent(EVENT_GOT_CHIKORITA_FROM_ELM)
     iftrue(Chikorita)
-    printf("Cyndaquil.");
+    log_debug("Cyndaquil.");
     winlosstext(SilverCherrygroveWinText, SilverCherrygroveLossText)
     setlasttalked(CHERRYGROVECITY_SILVER)
     loadtrainer(RIVAL1, RIVAL1_1_TOTODILE)
@@ -199,7 +199,7 @@ bool CherrygroveSilverSceneNorth(script_s* s) {
     iftrue(AfterVictorious)
     goto AfterYourDefeat;
 Totodile:
-    printf("Totodile.");
+    log_debug("Totodile.");
     winlosstext(SilverCherrygroveWinText, SilverCherrygroveLossText)
     setlasttalked(CHERRYGROVECITY_SILVER)
     loadtrainer(RIVAL1, RIVAL1_1_CHIKORITA)
@@ -210,7 +210,7 @@ Totodile:
     iftrue(AfterVictorious)
     goto AfterYourDefeat;
 Chikorita:
-    printf("Chikorita.");
+    log_debug("Chikorita.");
     winlosstext(SilverCherrygroveWinText, SilverCherrygroveLossText)
     setlasttalked(CHERRYGROVECITY_SILVER)
     loadtrainer(RIVAL1, RIVAL1_1_CYNDAQUIL)

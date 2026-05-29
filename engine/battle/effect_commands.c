@@ -2009,7 +2009,7 @@ void BattleCommand_Stab(void){
     // LD_addr_A(wTypeModifier);
     wram->wTypeModifier = (wram->wTypeModifier & 0b10000000) | matchup;
     // RET;
-    printf("Calculated stab damage: %d.\n", BigEndianToNative16(wram->wCurDamage));
+    log_debug("Calculated stab damage: %d.\n", BigEndianToNative16(wram->wCurDamage));
 }
 
 uint8_t BattleCheckTypeMatchup(void){
@@ -2225,7 +2225,7 @@ void BattleCommand_DamageVariation(void){
     // LD_hl_A;
     wram->wCurDamage = NativeToBigEndian16((uint16_t)n);
     // RET;
-    printf("Damage variation: %d.\n", BigEndianToNative16(wram->wCurDamage));
+    log_debug("Damage variation: %d.\n", BigEndianToNative16(wram->wCurDamage));
 }
 
 static bool BattleCommand_CheckHit_DreamEater(void) {
@@ -2459,7 +2459,7 @@ static void BattleCommand_CheckHit_StatModifiers(void) {
             return;
     }
 
-    printf("Input accuracy: %d.\n", *acc);
+    log_debug("Input accuracy: %d.\n", *acc);
 // skip_foresight_check:
 // subtract evasion from 14
     // LD_A(MAX_STAT_LEVEL + 1);
@@ -2535,7 +2535,7 @@ static void BattleCommand_CheckHit_StatModifiers(void) {
     // POP_HL;
     // LD_hl_A;
     *acc = (uint8_t)n;
-    printf("Output accuracy: %d.\n", *acc);
+    log_debug("Output accuracy: %d.\n", *acc);
     // RET;
 }
 
@@ -3120,7 +3120,7 @@ static void BattleCommand_ApplyDamage_update_damage_taken(void) {
         *taken = NativeToBigEndian16((uint16_t)dmg2);
     }
     // RET;
-    printf("Damage taken: %d.\n", BigEndianToNative16(*taken));
+    log_debug("Damage taken: %d.\n", BigEndianToNative16(*taken));
     return;
 }
 
@@ -4282,7 +4282,7 @@ void BattleCommand_DamageCalc(void){
     uint8_t atk = gBattleCmdState.b;
 
     gBattleCmdState.a = DamageCalc(pwr, lvl, def, atk);
-    printf("Calculated %d damage. (pwr=%d, lvl=%d, def=%d, atk=%d)\n", BigEndianToNative16(wram->wCurDamage),
+    log_debug("Calculated %d damage. (pwr=%d, lvl=%d, def=%d, atk=%d)\n", BigEndianToNative16(wram->wCurDamage),
         pwr, lvl, def, atk);
 }
 

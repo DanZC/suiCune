@@ -67,27 +67,29 @@ void NextCallReceiveDelay(void){
     // ADD_HL_DE;
     // LD_A_hl;
     a = ReceiveCallDelays[a];
-#if DEBUG
-    // LD_H_A;
-    // LD_A(BANK(sDebugTimeCyclesSinceLastCall));
-    // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(asDebugTimeCyclesSinceLastCall));
-    // LD_A_addr(sDebugTimeCyclesSinceLastCall);
-    uint8_t a2 = gb_read(sDebugTimeCyclesSinceLastCall);
-    // CALL(aCloseSRAM);
-    CloseSRAM();
-    // DEC_A;
-    // CP_A(2);
-    // IF_NC goto debug_ok;
-    if(a2 < 2) {
-        // XOR_A(1);
+
+    if(debug_mode()) {
         // LD_H_A;
-        a = a2 ^ 1;
+        // LD_A(BANK(sDebugTimeCyclesSinceLastCall));
+        // CALL(aOpenSRAM);
+        OpenSRAM(MBANK(asDebugTimeCyclesSinceLastCall));
+        // LD_A_addr(sDebugTimeCyclesSinceLastCall);
+        uint8_t a2 = gb_read(sDebugTimeCyclesSinceLastCall);
+        // CALL(aCloseSRAM);
+        CloseSRAM();
+        // DEC_A;
+        // CP_A(2);
+        // IF_NC goto debug_ok;
+        if(a2 < 2) {
+            // XOR_A(1);
+            // LD_H_A;
+            a = a2 ^ 1;
+        }
+
+    // debug_ok:
+        // LD_A_H;
     }
 
-// debug_ok:
-    // LD_A_H;
-#endif
     // JP(mRestartReceiveCallDelay);
     RestartReceiveCallDelay(a);
 }

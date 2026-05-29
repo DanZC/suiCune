@@ -62,7 +62,7 @@ void Function11148c(mobile_api_data_s *);
 void Function111540(mobile_api_data_s *);
 void Function111541(mobile_api_data_s *);
 void Function111596(void);
-void Function1115e4(void);
+void Function1115e4(uint8_t a);
 void Function111610(void);
 void Function11162d(mobile_api_data_s *);
 void Function11164f(void);

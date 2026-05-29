@@ -3,6 +3,7 @@
 #include "../tools/emu/peanut_gb.h"
 #include <stdlib.h>
 #include "record.h"
+#include "log.h"
 #include <memory.h>
 
 #define FFMPEG_PROG "/path/to/ffmpeg" // Replace with path to ffmpeg.
@@ -37,7 +38,7 @@ void TakeScreenshot(const char* path) {
     SDL_Surface* surf = SDL_CreateRGBSurfaceWithFormatFrom(pix, LCD_WIDTH, LCD_HEIGHT, 16, 2 * LCD_WIDTH, SDL_PIXELFORMAT_RGB555);
     char name[128];
     if(!surf) {
-        fprintf(stderr, "SDL error: %s\n", SDL_GetError());
+        log_err("SDL error: %s\n", SDL_GetError());
         exit(-1);
     }
     if(path == NULL) {
@@ -51,46 +52,46 @@ void TakeScreenshot(const char* path) {
         SDL_SaveBMP(surf, path);
     }
     SDL_FreeSurface(surf);
-    printf("Saved screenshot to \"%s\".\n", path);
+    log_info("Saved screenshot to \"%s\".\n", path);
 }
 
 static void GenerateMP4(const char* in_dir, const char* out) {
     char cmd[512];
     if(snprintf(cmd, sizeof(cmd), FFMPEG_PROG " -framerate 60 -pattern_type sequence -i \"%s/frame%%08d.bmp\" -c:v libx264 -pix_fmt yuv420p %s", in_dir, out) < 0)
         return;
-    printf("%s\n", cmd);
+    log_info("%s\n", cmd);
     int error = system(cmd);
     if(error == EXIT_SUCCESS) {
-        printf("Wrote recording to %s.\n", out);
+        log_info("Wrote recording to %s.\n", out);
     }
     else {
-        fprintf(stderr, "cmd error: %d\n", error);
+        log_err("cmd error: %d\n", error);
     }
 }
 
 static void DeleteDir(const char* in_dir) {
     char cmd[PATH_MAX + 21];
     snprintf(cmd, sizeof(cmd), "rm -rf %s", in_dir);
-    printf("%s\n", cmd);
+    log_info("%s\n", cmd);
     int error = system(cmd);
     if(error == EXIT_SUCCESS) {
-        printf("Deleted directory \"%s\"\n", in_dir);
+        log_info("Deleted directory \"%s\"\n", in_dir);
     }
     else {
-        fprintf(stderr, "cmd error: %d\n", error);
+        log_err("cmd error: %d\n", error);
     }
 }
 
 static void CreateDir(const char* in_dir) {
     char cmd[PATH_MAX + 21];
     snprintf(cmd, sizeof(cmd), "mkdir \"%s\"", in_dir);
-    printf("%s\n", cmd);
+    log_info("%s\n", cmd);
     int error = system(cmd);
     if(error == EXIT_SUCCESS) {
-        printf("Created directory \"%s\"\n", in_dir);
+        log_info("Created directory \"%s\"\n", in_dir);
     }
     else {
-        fprintf(stderr, "cmd error: %d\n", error);
+        log_err("cmd error: %d\n", error);
     }
 }
 
@@ -134,7 +135,7 @@ void StartRecording(const char* dest, const char* dir) {
     gRecording.buffer.frames = malloc(sizeof(gRecording.buffer.frames[0]) * 64);
     gRecording.buffer.frame_count = 0;
     gRecording.buffer.capacity = 16;
-    printf("Started recording to %s.\n", gRecording.dest);
+    log_info("Started recording to %s.\n", gRecording.dest);
 }
 
 void RecordFrame(void) {
@@ -144,14 +145,14 @@ void RecordFrame(void) {
         return StopAndSaveRecording();
     }
     if(gRecording.buffer.frame_count == gRecording.buffer.capacity) {
-        printf("Resizing buffer to %zu frames...\n", ((gRecording.buffer.capacity * 3) / 2));
+        log_info("Resizing buffer to %zu frames...\n", ((gRecording.buffer.capacity * 3) / 2));
         void* new_buf = realloc(gRecording.buffer.frames, sizeof(gRecording.buffer.frames[0]) * ((gRecording.buffer.capacity * 3) / 2));
         if(new_buf) {
             gRecording.buffer.capacity = (gRecording.buffer.capacity * 3) / 2;
             gRecording.buffer.frames = new_buf;
         }
         else {
-            fprintf(stderr, "Out of memory.\n");
+            log_err("Out of memory.\n");
             return StopAndDiscardRecording();
         }
     }
@@ -162,7 +163,7 @@ void StopAndSaveRecording(void) {
     if(!gRecording.recording)
         return;
     gRecording.recording = false;
-    printf("Stopping recording...\n");
+    log_info("Stopping recording...\n");
     for(size_t i = 0; i < gRecording.buffer.frame_count; i++) {
         char dest[FILENAME_MAX * 2];
         sprintf(dest, "%s/frame%08zu.bmp", gRecording.dir, i);

@@ -3780,7 +3780,6 @@ void WaitForLinkedFriend(void){
 }
 
 void CheckLinkTimeout_Receptionist(void){
-    PEEK("");
     // LD_A(0x1);
     // LD_addr_A(wPlayerLinkAction);
     wram->wPlayerLinkAction = 0x1;
@@ -3863,7 +3862,7 @@ void CheckLinkTimeout_Gen2(void){
     // CP_A(0x5);
     // IF_NZ goto timeout;
 
-    printf("Check wOtherPlayerLinkMode == 5: %d\n", wram->wOtherPlayerLinkMode);
+    log_debug("Check wOtherPlayerLinkMode == 5: %d\n", wram->wOtherPlayerLinkMode);
     if(wram->wOtherPlayerLinkMode == 0x5) {
     //  Another check to increase reliability
         // LD_A(0x6);
@@ -3879,7 +3878,7 @@ void CheckLinkTimeout_Gen2(void){
         // LD_A_addr(wOtherPlayerLinkMode);
         // CP_A(0x6);
         // IF_Z goto exit;
-        printf("Check wOtherPlayerLinkMode == 6: %d\n", wram->wOtherPlayerLinkMode);
+        log_debug("Check wOtherPlayerLinkMode == 6: %d\n", wram->wOtherPlayerLinkMode);
         if(wram->wOtherPlayerLinkMode == 0x6) {
         // exit:
             // XOR_A_A;
@@ -4017,7 +4016,6 @@ void TryQuickSave(void){
 }
 
 void CheckBothSelectedSameRoom(void){
-    PEEK("");
     // LD_A_addr(wChosenCableClubRoom);
     // CALL(aLink_EnsureSync);
     uint8_t byte = Link_EnsureSync(wram->wChosenCableClubRoom);
@@ -4141,7 +4139,7 @@ void Link_ResetSerialRegistersAfterLinkClosure(void){
 }
 
 uint8_t Link_EnsureSync(uint8_t a){
-    printf("%s:\n", __func__);
+    log_debug("%d", a);
     Network_FlushPendingPacketsAndSync();
     // ADD_A(0xd0);
     // LD_addr_A(wLinkPlayerSyncBuffer);

@@ -1159,9 +1159,7 @@ void gb_draw_line(void) {
 #include "../../data/gb_map_pointers.h"
 #include "../../data/script_pointers.h"
 #include "../../data/json_load.h"
-#if DEBUG
 #include "../../util/serialize.h"
-#endif
 
 /**
  * Internal function used to step the CPU.
@@ -3215,7 +3213,7 @@ void gb_init_lcd(
  */
 uint8_t gb_rom_read(const uint_fast32_t addr) {
     const struct priv_t *const p = gb.direct.priv;
-    printf("gb_rom_read[$%08x] -> %02x\n", (unsigned int)addr, p->rom[addr]);
+    log_debug("gb_rom_read[$%08x] -> %02x\n", (unsigned int)addr, p->rom[addr]);
     return p->rom[addr];
 }
 
@@ -3274,7 +3272,7 @@ void read_cart_ram_file(const char *save_file_name, const char *save_file2_name,
 
     /* Allocate enough memory to hold save file. */
     if ((*dest = malloc(len * 2)) == NULL) {
-        printf("%d: %s\n", __LINE__, strerror(errno));
+        log_err("%s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
@@ -3288,7 +3286,7 @@ void read_cart_ram_file(const char *save_file_name, const char *save_file2_name,
     }
 
     /* Read save file to allocated memory. */
-    if (fread(*dest, sizeof(uint8_t), len, f)) printf("Save loaded\n");
+    if (fread(*dest, sizeof(uint8_t), len, f)) log_info("Save loaded\n");
     fclose(f);
 
     f = fopen(save_file2_name, "rb");
@@ -3301,7 +3299,7 @@ void read_cart_ram_file(const char *save_file_name, const char *save_file2_name,
     }
 
     /* Read second save file to allocated memory. */
-    if (fread(*dest + len, sizeof(uint8_t), len, f)) printf("Save 2 loaded\n");
+    if (fread(*dest + len, sizeof(uint8_t), len, f)) log_info("Save 2 loaded\n");
     fclose(f);
 }
 
@@ -3313,8 +3311,8 @@ void write_cart_ram_file(const char *save_file_name, const char *save_file2_name
         return;
 
     if ((f = fopen(save_file_name, "wb")) == NULL) {
-        puts("Unable to open save file.");
-        printf("%d: %s\n", __LINE__, strerror(errno));
+        log_err("Unable to open save file.\n");
+        log_err("%s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
@@ -3323,8 +3321,8 @@ void write_cart_ram_file(const char *save_file_name, const char *save_file2_name
     fclose(f);
 
     if ((f = fopen(save_file2_name, "wb")) == NULL) {
-        puts("Unable to open second save file.");
-        printf("%d: %s\n", __LINE__, strerror(errno));
+        log_err("Unable to open second save file.\n");
+        log_err("%s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 
@@ -3344,7 +3342,7 @@ void gb_error(const enum gb_error_e gb_err, const uint16_t val) {
         case GB_INVALID_OPCODE:
             /* We compensate for the post-increment in the gb_step_cpu
              * function. */
-            fprintf(stdout, "Invalid opcode %#04x at PC: %#06x, SP: %#06x\n",
+            log_err("Invalid opcode %#04x at PC: %#06x, SP: %#06x\n",
                     val,
                     gb.cpu_reg.pc - 1,
                     gb.cpu_reg.sp);
@@ -3356,11 +3354,11 @@ void gb_error(const enum gb_error_e gb_err, const uint16_t val) {
             return;
 
         default:
-            printf("Unknown error");
+            log_err("Unknown error");
             break;
     }
 
-    fprintf(stderr, "Error. Press q to exit, or any other key to continue.");
+    log_err("Error. Press q to exit, or any other key to continue.");
 
     if (getchar() == 'q') {
         /* Record save file. */
@@ -3713,6 +3711,10 @@ int main(int argc, char* argv[]) {
     PHYSFS_mount("./crystal_ue_10.zip", NULL, 1);
 #endif
 
+#if DEBUG
+    log_set_level(LOG_DEBUG);
+#endif
+
     /* Initialise frontend implementation, in this case, SDL2. */
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO) < 0) {
         char buf[128];
@@ -3730,7 +3732,7 @@ int main(int argc, char* argv[]) {
                               SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_FOCUS);
 
     if (window == NULL) {
-        printf("Could not create window: %s\n", SDL_GetError());
+        log_err("Could not create window: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
     }
@@ -3750,7 +3752,7 @@ int main(int argc, char* argv[]) {
             SDL_Surface* surf = SDL_CreateRGBSurfaceFrom(pixels, w, h, 32, w*4, 0x0000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
             if(surf) {
                 SDL_SetWindowIcon(window, surf);
-                printf("Window icon set to icon.png\n");
+                log_info("Window icon set to icon.png\n");
                 SDL_FreeSurface(surf);
             }
             free(pixels);
@@ -3766,7 +3768,7 @@ int main(int argc, char* argv[]) {
                               SDL_WINDOW_RESIZABLE);
 
     if (dbg_window == NULL) {
-        printf("Could not create window: %s\n", SDL_GetError());
+        log_err("Could not create window: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
     }
@@ -3775,7 +3777,7 @@ int main(int argc, char* argv[]) {
     /* Copy input ROM file to allocated memory. */
 #if USE_ROM_FILE
     if ((priv.rom = read_rom_to_ram(rom_file_name)) == NULL) {
-        printf("%d: %s\n", __LINE__, strerror(errno));
+        log_debug("%d: %s\n", __LINE__, strerror(errno));
         ret = EXIT_FAILURE;
         goto out;
     }
@@ -3792,7 +3794,7 @@ int main(int argc, char* argv[]) {
         save_file_name = malloc(strlen(rom_file_name) + strlen(extension) + 1);
 
         if (save_file_name == NULL) {
-            printf("%d: %s\n", __LINE__, strerror(errno));
+            log_err("%s\n", strerror(errno));
             ret = EXIT_FAILURE;
             goto out;
         }
@@ -3822,7 +3824,7 @@ int main(int argc, char* argv[]) {
         save_file2_name = malloc(strlen(rom_file_name) + strlen(extension) + 1);
 
         if (save_file2_name == NULL) {
-            printf("%d: %s\n", __LINE__, strerror(errno));
+            log_err("%s\n", strerror(errno));
             ret = EXIT_FAILURE;
             goto out;
         }
@@ -3854,17 +3856,17 @@ int main(int argc, char* argv[]) {
             break;
 
         case GB_INIT_CARTRIDGE_UNSUPPORTED:
-            puts("Unsupported cartridge.");
+            log_err("Unsupported cartridge.\n");
             ret = EXIT_FAILURE;
             goto out;
 
         case GB_INIT_INVALID_CHECKSUM:
-            puts("Invalid ROM: Checksum failure.");
+            log_err("Invalid ROM: Checksum failure.\n");
             ret = EXIT_FAILURE;
             goto out;
 
         default:
-            printf("Unknown error: %d\n", gb_ret);
+            log_err("Unknown error: %d\n", gb_ret);
             ret = EXIT_FAILURE;
             goto out;
     }
@@ -3913,17 +3915,19 @@ int main(int argc, char* argv[]) {
         LoadRTCStartTime();
     }
 
+    debug_mode_set_default();
+
     PopulateConstantsHashtable();
     PopulateMapPointerTable();
     PopulateMapScriptTable();
     JSONLoadTables();
 
-#if DEBUG
-    if(!Test_Serialization()) {
-        ret = EXIT_FAILURE;
-        goto out;
+    if(debug_mode()) {
+        if(!Test_Serialization()) {
+            ret = EXIT_FAILURE;
+            goto out;
+        }
     }
-#endif
 
     SDL_AudioDeviceID dev;
 
@@ -3937,11 +3941,11 @@ int main(int argc, char* argv[]) {
         want.callback = audio_callback;
         want.userdata = NULL;
 
-        printf("Audio device: %s\n", SDL_GetAudioDeviceName(0, 0));
-        printf("Audio driver: %s\n", SDL_GetCurrentAudioDriver());
+        log_info("Audio device: %s\n", SDL_GetAudioDeviceName(0, 0));
+        log_info("Audio driver: %s\n", SDL_GetCurrentAudioDriver());
 
         if ((dev = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0)) == 0) {
-            printf("SDL could not open audio device: %s\n", SDL_GetError());
+            log_err("SDL could not open audio device: %s\n", SDL_GetError());
             exit(EXIT_FAILURE);
         }
 
@@ -3956,7 +3960,7 @@ int main(int argc, char* argv[]) {
     SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 
     if (SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt") < 0) {
-        /*printf("Unable to assign joystick mappings: %s\n",
+        /*log_err("Unable to assign joystick mappings: %s\n",
                SDL_GetError());*/
     }
 
@@ -3968,11 +3972,11 @@ int main(int argc, char* argv[]) {
         controller = SDL_GameControllerOpen(i);
 
         if (controller) {
-            printf("Game Controller %s connected.\n",
+            log_info("Game Controller %s connected.\n",
                    SDL_GameControllerName(controller));
             break;
         } else {
-            printf("Could not open game controller %i: %s\n",
+            log_err("Could not open game controller %i: %s\n",
                    i, SDL_GetError());
         }
     }
@@ -3983,19 +3987,19 @@ int main(int argc, char* argv[]) {
                                   SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
 
     if (renderer == NULL) {
-        printf("Could not create renderer: %s\n", SDL_GetError());
+        log_err("Could not create renderer: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
     }
 
     if (SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255) < 0) {
-        printf("Renderer could not draw color: %s\n", SDL_GetError());
+        log_err("Renderer could not draw color: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
     }
 
     if (SDL_RenderClear(renderer) < 0) {
-        printf("Renderer could not clear: %s\n", SDL_GetError());
+        log_err("Renderer could not clear: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
     }
@@ -4012,7 +4016,7 @@ int main(int argc, char* argv[]) {
                                 LCD_WIDTH, LCD_HEIGHT);
 
     if (texture == NULL) {
-        printf("Texture could not be created: %s\n", SDL_GetError());
+        log_err("Texture could not be created: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
     }
@@ -4024,19 +4028,19 @@ int main(int argc, char* argv[]) {
     dbg_renderer = SDL_CreateRenderer(dbg_window, -1, SDL_RENDERER_ACCELERATED);
 
     if (dbg_renderer == NULL) {
-        printf("Could not create renderer: %s\n", SDL_GetError());
+        log_err("Could not create renderer: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
     }
 
     if (SDL_SetRenderDrawColor(dbg_renderer, 0, 0, 0, 255) < 0) {
-        printf("Renderer could not draw color: %s\n", SDL_GetError());
+        log_err("Renderer could not draw color: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
     }
 
     if (SDL_RenderClear(dbg_renderer) < 0) {
-        printf("Renderer could not clear: %s\n", SDL_GetError());
+        log_err("Renderer could not clear: %s\n", SDL_GetError());
         ret = EXIT_FAILURE;
         goto out;
     }

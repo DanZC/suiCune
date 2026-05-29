@@ -30,6 +30,7 @@
 #endif
 #include "../tools/emu/peanut_gb.h"
 #include "../lib/libmobile/mobile.h"
+#include "log.h"
 #include "socket.h"
 extern struct gb_s gb;
 
@@ -372,7 +373,7 @@ int socket_connect_ip(SOCKET sock, const struct mobile_addr *addr)
     char sock_str[SOCKET_STRADDR_MAXLEN] = {0};
     socket_straddr(sock_str, sizeof(sock_str), sock_addr, sock_addrlen);
     socket_seterror(err);
-    fprintf(stderr, "Could not connect (%s): ", sock_str);
+    log_err("Could not connect (%s): ", sock_str);
     socket_perror(NULL);
     return -1;
 }
@@ -489,11 +490,11 @@ bool Network_ResolveHost(const char* hostname, const char* port, struct mobile_a
 bool NetworkInit(void) {
 #if USE_SDLNET
     if (SDLNet_Init() < 0) {
-        printf("An error occurred while initializing SDL_Net.\n");
+        log_err("An error occurred while initializing SDL_Net.\n");
         return false;
     }
     else {
-        printf("Initialized SDLNet library.\n");
+        log_info("Initialized SDLNet library.\n");
         host = SDLNet_UDP_Open(UDP_PORT);
         // localhost = SDLNet_UDP_GetPeerAddress(host, -1);
         SDLNet_ResolveHost(&localhost, "localhost", UDP_PORT);
@@ -505,7 +506,7 @@ bool NetworkInit(void) {
         sockets = SDLNet_AllocSocketSet(1);
 
         hostUniqueId = (uint32_t)rand() + (uint32_t)time(NULL);
-        printf("Unique id: %d\n", hostUniqueId);
+        log_debug("Unique id: %d\n", hostUniqueId);
         gNetworkingInit = true;
         gNetworkState = NETSTATE_NOTHING;
         gb.gb_serial_rx = gb_serial_rx_test;
@@ -514,7 +515,7 @@ bool NetworkInit(void) {
     }
 #else 
     if(!NetworkStart()) {
-        printf("An error occurred while initializing networking.\n");
+        log_err("An error occurred while initializing networking.\n");
         return false;
     }
 
@@ -536,7 +537,7 @@ bool NetworkInit(void) {
     memset(&state->linkAddr, 0, sizeof(state->linkAddr));
     state->serial = INVALID_SOCKET;
     hostUniqueId = (uint32_t)rand() + (uint32_t)time(NULL);
-    printf("Unique id: %d\n", hostUniqueId);
+    log_debug("Unique id: %d\n", hostUniqueId);
     gNetworkingInit = true;
     gNetworkState = NETSTATE_NOTHING;
     gb.gb_serial_rx = gb_serial_rx_test;
@@ -559,7 +560,7 @@ int recv_packet(SOCKET sock, struct network_packet* packet) {
 
 void gb_serial_tx(const uint8_t x) {
     // send byte
-    printf("Send: $%02x\n", x);
+    log_debug("Send: $%02x\n", x);
 #if USE_SDLNET
     SDLNet_TCP_Send(linkSocket, &x, sizeof(x));
 #else
@@ -573,7 +574,7 @@ enum gb_serial_rx_ret_e gb_serial_rx(uint8_t* x) {
 #if USE_SDLNET
     int ready = SDLNet_CheckSockets(sockets, 0);
     if(ready < 0) {
-        printf("Error: %s\n", SDLNet_GetError());
+        log_err("Error: %s\n", SDLNet_GetError());
         return GB_SERIAL_RX_NO_CONNECTION;
     }
     else if(ready == 0) {
@@ -584,14 +585,14 @@ enum gb_serial_rx_ret_e gb_serial_rx(uint8_t* x) {
         return GB_SERIAL_RX_NO_CONNECTION;
     }
     else if(bytes < 0) {
-        printf("Error: %s\n", SDLNet_GetError());
+        log_err("Error: %s\n", SDLNet_GetError());
         return GB_SERIAL_RX_NO_CONNECTION;
     }
 #else
     struct network_data* state = &gNetworkData;
     int ready = socket_hasdata(state->linkSocket);
     if(ready < 0) {
-        // printf("Error: %s\n", SDLNet_GetError());
+        // log_err("Error: %s\n", SDLNet_GetError());
         return GB_SERIAL_RX_NO_CONNECTION;
     }
     else if(ready == 0) {
@@ -602,11 +603,11 @@ enum gb_serial_rx_ret_e gb_serial_rx(uint8_t* x) {
         return GB_SERIAL_RX_NO_CONNECTION;
     }
     else if(bytes < 0) {
-        // printf("Error: %s\n", SDLNet_GetError());
+        // log_err("Error: %s\n", SDLNet_GetError());
         return GB_SERIAL_RX_NO_CONNECTION;
     }
 #endif
-    printf("Recv: $%02x\n", *x);
+    log_err("Recv: $%02x\n", *x);
     return GB_SERIAL_RX_SUCCESS;
 }
 
@@ -643,10 +644,10 @@ bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
     packet->len = sizeof(*cmd);
     packet->channel = 1;
     if(SDLNet_UDP_Send(host, -1, packet) == 0) {
-        printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
+        log_err("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
         return false;
     }
-    printf("Sent UDP packet on port %d.\n", UDP_PORT);
+    log_debug("Sent UDP packet on port %d.\n", UDP_PORT);
     if(gNetworkState != NETSTATE_HOSTING)
         gNetworkState = NETSTATE_HOSTING;
     return true;
@@ -666,10 +667,10 @@ bool NetworkBroadcastLAN(const uint8_t* name, uint16_t id, uint8_t gender) {
     packet->sender = make_mobile_addr(MOBILE_ADDRTYPE_IPV4, INADDR_BROADCAST, UDP_PORT);
     packet->len = sizeof(*cmd);
     if(socket_send(state->udp, packet->buffer, packet->len, &packet->sender) <= 0) {
-        printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
+        log_err("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
         return false;
     }
-    printf("Sent UDP packet on port %d.\n", UDP_PORT);
+    log_debug("Sent UDP packet on port %d.\n", UDP_PORT);
     if(gNetworkState != NETSTATE_HOSTING)
         gNetworkState = NETSTATE_HOSTING;
     return true;
@@ -700,10 +701,10 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
         packet->address.host = gLANClientCandidates[which].address;
         packet->len = sizeof(CmdPacket_s);
         if(SDLNet_UDP_Send(host, -1, packet) == 0) {
-            printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
+            log_err("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
             return false;
         }
-        printf("Joining %d.%d.%d.%d...\n", 
+        log_info("Joining %d.%d.%d.%d...\n", 
             packet->address.host & 0xff, 
             (packet->address.host >> 8) & 0xff,
             (packet->address.host >> 16) & 0xff,
@@ -722,10 +723,10 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
         memcpy(packet->sender._addr4.host, &gLANClientCandidates[which].address, sizeof(packet->sender._addr4.host));
         packet->len = sizeof(CmdPacket_s);
         if(socket_send(state->udp, packet->buffer, packet->len, &packet->sender) <= 0) {
-            printf("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
+            log_err("Could not send UDP packet on port %d. Is the port blocked?\n", UDP_PORT);
             return false;
         }
-        printf("Joining %d.%d.%d.%d...\n", 
+        log_info("Joining %d.%d.%d.%d...\n", 
             packet->sender._addr4.host[0],
             packet->sender._addr4.host[1],
             packet->sender._addr4.host[2],
@@ -740,7 +741,7 @@ bool NetworkTryJoinLAN(uint8_t which, const uint8_t* name, uint16_t id, uint8_t 
 bool NetworkTryRecvUDP(void) {
     int error = SDLNet_UDP_Recv(host, packet);
     if(error == -1) {
-        printf("SDLNet: %s", SDLNet_GetError());
+        log_err("SDLNet: %s", SDLNet_GetError());
         return false;
     }
     return error == 1;
@@ -760,7 +761,7 @@ static bool NetworkCheckDuplicateLANCandidate(uint32_t uid) {
 static void NetworkAddLANCandidate(void) {
     LANClient* lan = gLANClientCandidates + gLANClientCandidateCount;
     lan->address = packet->address.host;
-    printf("Received packet from %d.%d.%d.%d\n", 
+    log_debug("Received packet from %d.%d.%d.%d\n", 
         lan->address & 0xff, 
         (lan->address >> 8) & 0xff,
         (lan->address >> 16) & 0xff,
@@ -780,7 +781,7 @@ static void NetworkAddLANCandidate(struct network_packet* packet) {
         (packet->sender._addr4.host[1] << 8) |
         (packet->sender._addr4.host[2] << 16) |
         (packet->sender._addr4.host[3] << 24);
-    printf("Received packet from %d.%d.%d.%d\n", 
+    log_debug("Received packet from %d.%d.%d.%d\n", 
         lan->address & 0xff, 
         (lan->address >> 8) & 0xff,
         (lan->address >> 16) & 0xff,
@@ -817,7 +818,7 @@ static bool NetworkTryAddLANCandidate(struct network_packet* packet) {
 static void NetworkStageLANCandidate(void) {
     LANClient* lan = gLANClientCandidates + 0;
     lan->address = packet->address.host;
-    printf("Received packet from %d.%d.%d.%d\n", 
+    log_debug("Received packet from %d.%d.%d.%d\n", 
         lan->address & 0xff, 
         (lan->address >> 8) & 0xff,
         (lan->address >> 16) & 0xff,
@@ -836,7 +837,7 @@ static void NetworkStageLANCandidate(struct network_packet* packet) {
         (packet->sender._addr4.host[1] << 8) |
         (packet->sender._addr4.host[2] << 16) |
         (packet->sender._addr4.host[3] << 24);
-    printf("Received packet from %d.%d.%d.%d\n", 
+    log_debug("Received packet from %d.%d.%d.%d\n", 
         lan->address & 0xff, 
         (lan->address >> 8) & 0xff,
         (lan->address >> 16) & 0xff,
@@ -854,12 +855,12 @@ bool NetworkCheckLAN(void) {
 #if USE_SDLNET
     if(NetworkTryRecvUDP() && gLANClientCandidateCount < 16) {
         if(packet->len < UDP_PACKET_SIZE - 16 || packet->len > UDP_PACKET_SIZE + 16) {
-            printf("Packet length was not in expected range (%d-%d): %d\n", UDP_PACKET_SIZE - 16, UDP_PACKET_SIZE + 16, packet->len);
+            log_warn("Packet length was not in expected range (%d-%d): %d\n", UDP_PACKET_SIZE - 16, UDP_PACKET_SIZE + 16, packet->len);
             return false;
         }
 
         CmdPacket_s* cmd = (CmdPacket_s*)packet->data;
-        printf("UDP Packet: %d.%d.%d.%d\n", packet->address.host & 0xff,
+        log_debug("UDP Packet: %d.%d.%d.%d\n", packet->address.host & 0xff,
             (packet->address.host >> 8) & 0xff,
             (packet->address.host >> 16) & 0xff,
             (packet->address.host >> 24) & 0xff);
@@ -895,12 +896,12 @@ again:
         struct network_packet* packet = &state->udp_packet;
 
         if(packet->len < UDP_PACKET_SIZE - 16 || packet->len > UDP_PACKET_SIZE + 16) {
-            printf("Packet length was not in expected range (%d-%d): %d\n", UDP_PACKET_SIZE - 16, UDP_PACKET_SIZE + 16, packet->len);
+            log_warn("Packet length was not in expected range (%d-%d): %d\n", UDP_PACKET_SIZE - 16, UDP_PACKET_SIZE + 16, packet->len);
             return false;
         }
 
         CmdPacket_s* cmd = (CmdPacket_s*)packet->buffer;
-        printf("UDP Packet: %d.%d.%d.%d id=%d, type=%d\n", 
+        log_debug("UDP Packet: %d.%d.%d.%d id=%d, type=%d\n", 
             packet->sender._addr4.host[0],
             packet->sender._addr4.host[1],
             packet->sender._addr4.host[2],
@@ -974,13 +975,13 @@ bool NetworkLANDirectConnect(uint32_t which) {
     while(!(cserial = SDLNet_TCP_Accept(serial))) {
         DelayFrame();
         if(--timeout == 0) {
-            printf("Connection timed out...\n");
+            log_err("Connection timed out...\n");
             SDLNet_TCP_Close(serial);
             serial = NULL;
             return false;
         }
     }
-    printf("Hosting %d.%d.%d.%d!\n", 
+    log_info("Hosting %d.%d.%d.%d!\n", 
         packet->address.host & 0xff, 
         (packet->address.host >> 8) & 0xff,
         (packet->address.host >> 16) & 0xff,
@@ -1006,7 +1007,7 @@ bool NetworkLANDirectConnect(uint32_t which) {
             while((cserial = socket_accept(state->serial), cserial == INVALID_SOCKET)) {
                 DelayFrame();
                 if(--timeout == 0) {
-                    printf("Connection timed out...\n");
+                    log_err("Connection timed out...\n");
                     socket_close(state->serial);
                     state->serial = INVALID_SOCKET;
                     return false;
@@ -1014,7 +1015,7 @@ bool NetworkLANDirectConnect(uint32_t which) {
             }
             state->serial = cserial;
             state->linkSocket = state->serial;
-            printf("Hosting %d.%d.%d.%d!\n", 
+            log_info("Hosting %d.%d.%d.%d!\n", 
                 packet->sender._addr4.host[0], 
                 packet->sender._addr4.host[1], 
                 packet->sender._addr4.host[2], 
@@ -1040,7 +1041,7 @@ bool NetworkAcceptLANConnection(void) {
     if(serial != NULL) {
         NetworkSetLinkSocket(serial);
         gNetworkState = NETSTATE_LAN_CLIENT;
-        printf("Connected to %d.%d.%d.%d!\n",
+        log_info("Connected to %d.%d.%d.%d!\n",
             packet->address.host & 0xff, 
             (packet->address.host >> 8) & 0xff,
             (packet->address.host >> 16) & 0xff,
@@ -1049,7 +1050,7 @@ bool NetworkAcceptLANConnection(void) {
         gb.gb_serial_tx = gb_serial_tx;
         return true;
     }
-    printf("SDLNet: Error trying to connect to %d.%d.%d.%d\n %s\n",
+    log_err("SDLNet: Error trying to connect to %d.%d.%d.%d\n %s\n",
         packet->address.host & 0xff, 
         (packet->address.host >> 8) & 0xff,
         (packet->address.host >> 16) & 0xff,
@@ -1070,7 +1071,7 @@ bool NetworkAcceptLANConnection(void) {
         if(err > 0) {
             state->linkSocket = state->serial;
             gNetworkState = NETSTATE_LAN_CLIENT;
-            printf("Connected to %d.%d.%d.%d!\n",
+            log_info("Connected to %d.%d.%d.%d!\n",
                 packet->sender._addr4.host[0], 
                 packet->sender._addr4.host[1], 
                 packet->sender._addr4.host[2], 
@@ -1085,7 +1086,7 @@ bool NetworkAcceptLANConnection(void) {
             state->serial = INVALID_SOCKET;
         }
     }
-    printf("Error trying to connect to %d.%d.%d.%d\n",
+    log_err("Error trying to connect to %d.%d.%d.%d\n",
         packet->sender._addr4.host[0], 
         packet->sender._addr4.host[1], 
         packet->sender._addr4.host[2], 
@@ -1276,18 +1277,18 @@ try_again:
     case NETWORK_XCHG_ERROR_RECV:
     case NETWORK_XCHG_ERROR_SEND:
         #if USE_SDLNET
-        printf("SDLNet error: %s\n", SDLNet_GetError());
+        log_err("SDLNet error: %s\n", SDLNet_GetError());
         #endif
         return false;
     case NETWORK_XCHG_TIMEOUT:
-        printf("Timeout, trying again...\n");
+        log_warn("Timeout, trying again...\n");
         timeout_count++;
         if(timeout_count > 8)
             return false;
         goto try_again;
     case NETWORK_XCHG_NO_CONNECTION:
     no_connection:
-        printf("No connection established...\n");
+        log_err("No connection established...\n");
         return false;
     }
     return false;
@@ -1409,32 +1410,32 @@ try_again:
     error = Network_ExchangeBytes(rx, tx, len);
     switch(error) {
     case NETWORK_XCHG_OK:
-        printf("Send:");
+        log_debug("Send:");
         for(int i = 0; i < len; ++i) {
-            printf(" $%02X", ((uint8_t*)tx)[i]);
+            log_debug(" $%02X", ((uint8_t*)tx)[i]);
         }
-        printf(".\n");
-        printf("Recv:");
+        log_debug(".\n");
+        log_debug("Recv:");
         for(int i = 0; i < len; ++i) {
-            printf(" $%02X", ((uint8_t*)rx)[i]);
+            log_debug(" $%02X", ((uint8_t*)rx)[i]);
         }
-        printf(".\n");
+        log_debug(".\n");
         return true;
     case NETWORK_XCHG_ERROR_RECV:
     case NETWORK_XCHG_ERROR_SEND:
         #if USE_SDLNET
-        printf("SDLNet error: %s\n", SDLNet_GetError());
+        log_err("SDLNet error: %s\n", SDLNet_GetError());
         #endif
         return false;
     case NETWORK_XCHG_TIMEOUT:
-        printf("Timeout, trying again...\n");
+        log_warn("Timeout, trying again...\n");
         timeout_count++;
         if(timeout_count > 8)
             return false;
         goto try_again;
     case NETWORK_XCHG_NO_CONNECTION:
     no_connection:
-        printf("No connection established...\n");
+        log_warn("No connection established...\n");
         return false;
     }
     return false;
@@ -1464,9 +1465,7 @@ int Network_SendByte(uint8_t byte) {
     if(socket_send(state->linkSocket, &byte, 1, &state->linkAddr) <= 0)
         return NETWORK_XCHG_ERROR_SEND;
 #endif
-#if DEBUG
-    printf("Send $%02x (%d)\n", byte, byte);
-#endif
+    log_debug("Send $%02x (%d)\n", byte, byte);
     return NETWORK_XCHG_OK;
 }
 
@@ -1481,9 +1480,7 @@ int Network_TryRecvByte(uint8_t* dest) {
         int error = SDLNet_TCP_Recv(linkSocket, dest, 1);
         if(error <= 0)
             return NETWORK_XCHG_ERROR_RECV;
-#if DEBUG
-        printf("Recv $%02x (%d)\n", *dest, *dest);
-#endif
+        log_debug("Recv $%02x (%d)\n", *dest, *dest);
         return NETWORK_XCHG_OK;
     }
 #else
@@ -1510,7 +1507,7 @@ bool Network_SafeTryRecvByte(uint8_t* dest) {
     default:
     case NETWORK_XCHG_ERROR_RECV:
         #if USE_SDLNET
-        printf("Error: %s\n", SDLNet_GetError());
+        log_err("Error: %s\n", SDLNet_GetError());
         #endif
         return false;
     case NETWORK_XCHG_TIMEOUT:
@@ -1521,7 +1518,7 @@ bool Network_SafeTryRecvByte(uint8_t* dest) {
 bool Network_ResolveHost(const char* hostname, const char* port, struct mobile_addr* addr) {
     union u_sockaddr u_addr;
     if(!resolve_host(hostname, port, &u_addr.addr)) {
-        printf("%s:%s => Error\n",
+        log_err("%s:%s => Error\n",
             hostname, port);
         return false;
     }
@@ -1529,7 +1526,7 @@ bool Network_ResolveHost(const char* hostname, const char* port, struct mobile_a
     struct mobile_addr4* addr4 = (struct mobile_addr4*)addr;
     addr4->port = ntohs(u_addr.addr4.sin_port);
     memcpy(addr4->host, &u_addr.addr4.sin_addr.s_addr, sizeof(addr4->host));
-    printf("%s:%s => %d.%d.%d.%d:%d\n",
+    log_debug("%s:%s => %d.%d.%d.%d:%d\n",
         hostname, port,
         addr4->host[0], addr4->host[1],
         addr4->host[2], addr4->host[3],
@@ -1580,16 +1577,14 @@ static void gb_serial_tx_test(const uint8_t x) {
         // fclose(f);
         if(gMobileByte == 0xD2 && x == 0x4B)
             return;
-    #if DEBUG
-        // printf("A %02X %02X\n", gMobileByte, x);
-    #endif
+        // log_debug("A %02X %02X\n", gMobileByte, x);
     }
 }
 
 static enum gb_serial_rx_ret_e gb_serial_rx_test(uint8_t* x) {
     // receive byte
     if(MobileCheckSerialEnabled()) {
-        // printf("serial recv: %02x (%d)\n", gMobileByteLast, gMobileByteLast);
+        // log_debug("serial recv: %02x (%d)\n", gMobileByteLast, gMobileByteLast);
         *x = gMobileByte;
         return GB_SERIAL_RX_SUCCESS;
     }
@@ -1605,9 +1600,7 @@ void MobileDebugLog(void* user, const char* line) {
         fclose(f);
     }
     else {
-    #if DEBUG
-        printf("mobile: %s\n", line);
-    #endif
+        log_debug("mobile: %s\n", line);
     }
 }
 
@@ -1935,7 +1928,7 @@ void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg
                 continue;
 
             if(s->string_size != sizeof(cfg->loginName)) {
-                fprintf(stderr, "For field %s, Bad string size: %llu\n", it->name->string, (unsigned long long)s->string_size);
+                log_err("For field %s, Bad string size: %llu\n", it->name->string, (unsigned long long)s->string_size);
                 continue;
             }
             
@@ -1950,7 +1943,7 @@ void LoadMobileServerConfig(struct server_config* srv, struct mobile_config* cfg
                 continue;
 
             if(s->string_size != 8) {
-                fprintf(stderr, "For field %s, Bad string size: %llu\n", it->name->string, (unsigned long long)s->string_size);
+                log_err("For field %s, Bad string size: %llu\n", it->name->string, (unsigned long long)s->string_size);
                 continue;
             }
             
@@ -2017,7 +2010,7 @@ bool MobileConfigRead(void* user, void* dest, uintptr_t offset, size_t size) {
     struct mobile_user_data* udata = user;
     FILE* f = fopen("mobile.bin", "rb");
     if(f == NULL) {
-        printf("Couldn't load mobile.bin. Creating default mobile.bin.\n");
+        log_info("Couldn't load mobile.bin. Creating default mobile.bin.\n");
         FILE* temp = fopen("mobile.bin", "wb");
         MobileConfigCreateDefault(temp);
         fclose(temp);
@@ -2032,17 +2025,17 @@ bool MobileConfigRead(void* user, void* dest, uintptr_t offset, size_t size) {
         struct mobile_addr relay;
         if(!Network_ResolveHost(gServerConfig.relayServer, gServerConfig.relayPort, &relay)) {
             // Disable relay
-            printf("Could not resolve \"%s\". Disabling relay server...\n", gServerConfig.relayServer);
+            log_warn("Could not resolve \"%s\". Disabling relay server...\n", gServerConfig.relayServer);
             mobile_config_set_relay(gMobileAdapter, &(struct mobile_addr){.type = MOBILE_ADDRTYPE_NONE});
         }
         else {
             // Enable relay
-            printf("Enabling relay server at \"%s\"...\n", gServerConfig.relayServer);
+            log_info("Enabling relay server at \"%s\"...\n", gServerConfig.relayServer);
             mobile_config_set_relay(gMobileAdapter, &relay);
         }
     }
     else {
-        printf("Relay server disabled...\n");
+        log_info("Relay server disabled...\n");
         mobile_config_set_relay(gMobileAdapter, &(struct mobile_addr){.type = MOBILE_ADDRTYPE_NONE});
     }
 // Recalculate checksum.

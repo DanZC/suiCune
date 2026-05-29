@@ -938,7 +938,7 @@ void Function118473(void){
 // Mobile_UploadGTSMonJumptable
 void Function1184a5(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    dlogf("Upload GTS Mon Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    log_debug("Upload GTS Mon Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
     // Jumptable:
         case 0x00: return Function11886e(); //dw ['Function11886e'];
@@ -974,7 +974,7 @@ void Function1184a5(void){
 
 void Function1184ec(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    dlogf("Check GTS Mon Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    log_debug("Check GTS Mon Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
     // Jumptable:
         case 0x00: return Function11886e(); //dw ['Function11886e'];
@@ -1063,7 +1063,7 @@ void BattleTowerRoomMenu_Jumptable(void){
 
 void BattleTowerRoomMenu_Mobile_Jumptable(void) {
     // the jumptable in the japanese version
-    dlogf("Mobile Battle Tower Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    log_debug("Mobile Battle Tower Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
         case 0x00: return BattleTowerRoomMenu_PickLevelMessage(); // BattleTowerRoomMenu_PickLevelMessage ;6849
         case 0x01: return BattleTowerRoomMenu_PlacePickLevelMenu(); //7C49
@@ -1121,7 +1121,7 @@ void BattleTowerRoomMenu_Mobile_Jumptable(void) {
 
 void Function11857c(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    dlogf("Send Battle Tower Record Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    log_debug("Send Battle Tower Record Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
 
 // Jumptable:
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
@@ -1159,7 +1159,7 @@ void Function11857c(void){
 // Mobile_DownloadNewsJumptable?
 void Function1185c3(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    dlogf("Download News Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    log_debug("Download News Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
     // Jumptable:
         case 0x00: return Function11886e(); //dw ['Function11886e'];
@@ -1209,7 +1209,7 @@ void Function1185c3(void){
 // Mobile_UpdateNewsRankingsJumptable?
 void Function118624(void){
     //jumptable ['.Jumptable', 'wBattleTowerRoomMenuJumptableIndex']
-    dlogf("Update News Rankings Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
+    log_debug("Update News Rankings Jumptable 0x%02x\n", wram->wBattleTowerRoomMenuJumptableIndex);
     switch(wram->wBattleTowerRoomMenuJumptableIndex) {
     // Jumptable:
         case 0x00: return Function118866(); //dw ['Function118866'];
@@ -3035,7 +3035,7 @@ void Function118d35(void){
         // IF_NZ goto asm_118d7b;
         if(size != BATTLE_TOWER_STRUCT_LENGTH * BATTLETOWER_STREAK_LENGTH) {
         // asm_118d7b:
-            printf("Battle Download Error: Expected size %d, got %d.\n", BATTLE_TOWER_STRUCT_LENGTH * BATTLETOWER_STREAK_LENGTH, size);
+            log_err("Battle Download Error: Expected size %d, got %d.\n", BATTLE_TOWER_STRUCT_LENGTH * BATTLETOWER_STREAK_LENGTH, size);
             // LD_A(0xd3);
             // JP(mSetMobileErrorCode);
             return SetMobileErrorCode(0xd3);
@@ -6316,7 +6316,6 @@ void BattleTowerRoomMenu_DelayRestartMenu(void){
 }
 
 void BattleTowerRoomMenu_QuitMessage(void){
-    PEEK("");
     // LD_A_addr(wcd38);
     // AND_A_A;
     // IF_Z goto asm_119cd1;
@@ -6348,7 +6347,6 @@ void BattleTowerRoomMenu_QuitMessage(void){
 }
 
 void BattleTowerRoomMenu_PlaceYesNoMenu(void){
-    PEEK("");
     // LD_A_addr(wc31a);
     // AND_A_A;
     // RET_NZ ;
@@ -6365,7 +6363,6 @@ void BattleTowerRoomMenu_PlaceYesNoMenu(void){
 
 void BattleTowerRoomMenu_UpdateYesNoMenu(void){
 // Only ever called when [wBattleTowerRoomMenu2JumptableIndex] is $10
-    PEEK("");
     // CALL(aBattleTowerRoomMenu2);
     // RET_C ;
     if(BattleTowerRoomMenu2())
@@ -6751,7 +6748,7 @@ uint8_t* Function119eb4(uint8_t* hl){
 uint8_t* Function119ec2(uint8_t* hl){
     const char* set_password = Mobile_GetServerLoginPassword(8);
     if(set_password != NULL) {
-        printf("Using password from server.json\n");
+        log_info("Using password from server.json\n");
         for(const char* str = set_password; *str != 0; str++) {
             *(hl++) = *str;
         }
@@ -6759,7 +6756,7 @@ uint8_t* Function119ec2(uint8_t* hl){
         return hl;
     }
 
-    printf("Using stored password in SRAM\n");
+    log_info("Using stored password in SRAM\n");
 // End
     // LD_A(BANK(sMobileLoginPassword));
     // CALL(aOpenSRAM);
@@ -6795,7 +6792,7 @@ bool BattleTowerRoomMenu2(void){
 
     bool result = false;
     // CALL(aBattleTowerRoomMenu2_RunJumptable);
-    // dlogf("Battle Tower Room Menu 2 (0x%02x)", wram->wBattleTowerRoomMenu2JumptableIndex);
+    // log_debug("Battle Tower Room Menu 2 (0x%02x)", wram->wBattleTowerRoomMenu2JumptableIndex);
     switch(wram->wBattleTowerRoomMenu2JumptableIndex){
     // RunJumptable:
         //jumptable ['.Jumptable', 'wBattleTowerRoomMenu2JumptableIndex']

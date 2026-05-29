@@ -793,7 +793,7 @@ void FillMoves(move_t* de, uint8_t* pp, species_t species, uint8_t level){
         // LD_A_hl;
         // LD_de_A;
         de[c] = moves[i].move;
-        printf("Filled move #%d with move %02X\n", c, de[c]);
+        log_debug("Filled move #%d with move %02X\n", c, de[c]);
         // LD_A_addr(wEvolutionOldSpecies);
         // AND_A_A;
         // IF_Z goto NextMove;

@@ -1062,8 +1062,7 @@ int Test_Serialize_PlayerData(void) {
     const uint8_t* start = sram;
     const uint8_t* end = Deserialize_PlayerData(&data, start);
     if(end - start != wPlayerDataEnd - wPlayerData) {
-        fprintf(stderr, "[%s - FAILED] Failed to deserialize player data. Expected size %d, got %d\n",
-            __func__,
+        log_err("[FAILED] Failed to deserialize player data. Expected size %d, got %d\n",
             wPlayerDataEnd - wPlayerData,
             (int)(end - start));
         result = -1;
@@ -1073,8 +1072,7 @@ int Test_Serialize_PlayerData(void) {
     start = buffer;
     end = Serialize_PlayerData(buffer, &data);
     if(end - start != wPlayerDataEnd - wPlayerData) {
-        fprintf(stderr, "[%s - FAILED] Failed to serialize player data. Expected size %d, got %d\n",
-            __func__,
+        log_err("[FAILED] Failed to serialize player data. Expected size %d, got %d\n",
             wPlayerDataEnd - wPlayerData,
             (int)(end - start));
         result = -1;
@@ -1082,8 +1080,7 @@ int Test_Serialize_PlayerData(void) {
     }
 
     if(memcmp(buffer, sram, wPlayerDataEnd - wPlayerData) != 0) {
-        fprintf(stderr, "[%s - FAILED] Failed to produce matching serialized player data\n",
-            __func__);
+        log_err("[FAILED] Failed to produce matching serialized player data\n");
         FILE* f;
         f = fopen("player_data_gen.bin", "wb");
         fwrite(buffer, 1, wPlayerDataEnd - wPlayerData, f);
@@ -1095,7 +1092,7 @@ int Test_Serialize_PlayerData(void) {
         goto quit;
     }
 
-    printf("[%s - SUCCESS]\n", __func__);
+    log_info("[SUCCESS]\n");
 
 quit:
     CloseSRAM();
@@ -1114,8 +1111,7 @@ int Test_Serialize_PokemonData(void) {
     const uint8_t* start = sram;
     const uint8_t* end = Deserialize_PokemonData(&data, start);
     if(end - start != wPokemonDataEnd - wPokemonData) {
-        fprintf(stderr, "[%s - FAILED] Failed to deserialize player data. Expected size %d, got %d\n",
-            __func__,
+        log_err("[FAILED] Failed to deserialize player data. Expected size %d, got %d\n",
             wPokemonDataEnd - wPokemonData,
             (int)(end - start));
         result = -1;
@@ -1125,8 +1121,7 @@ int Test_Serialize_PokemonData(void) {
     start = buffer;
     end = Serialize_PokemonData(buffer, &data);
     if(end - start != wPokemonDataEnd - wPokemonData) {
-        fprintf(stderr, "[%s - FAILED] Failed to serialize player data. Expected size %d, got %d\n",
-            __func__,
+        log_err("[FAILED] Failed to serialize player data. Expected size %d, got %d\n",
             wPokemonDataEnd - wPokemonData,
             (int)(end - start));
         result = -1;
@@ -1134,8 +1129,7 @@ int Test_Serialize_PokemonData(void) {
     }
 
     if(memcmp(buffer, sram, wPokemonDataEnd - wPokemonData) != 0) {
-        fprintf(stderr, "[%s - FAILED] Failed to produce matching serialized player data\n",
-            __func__);
+        log_err("[FAILED] Failed to produce matching serialized player data\n");
         FILE* f;
         f = fopen("pokemon_data_gen.bin", "wb");
         fwrite(buffer, 1, wPokemonDataEnd - wPokemonData, f);
@@ -1147,7 +1141,7 @@ int Test_Serialize_PokemonData(void) {
         goto quit;
     }
 
-    printf("[%s - SUCCESS]\n", __func__);
+    log_info("[SUCCESS]\n");
 
 quit:
     CloseSRAM();
@@ -1165,8 +1159,7 @@ int Test_Serialize_CurMapData(void) {
     const uint8_t* start = sram;
     const uint8_t* end = Deserialize_CurMapData(&data, start);
     if(end - start != wCurMapDataEnd - wCurMapData) {
-        fprintf(stderr, "[%s - FAILED] Failed to deserialize map data. Expected size %d, got %d\n",
-            __func__,
+        log_err("[FAILED] Failed to deserialize map data. Expected size %d, got %d\n",
             wCurMapDataEnd - wCurMapData,
             (int)(end - start));
         result = -1;
@@ -1181,8 +1174,7 @@ int Test_Serialize_CurMapData(void) {
     start = buffer;
     end = Serialize_CurMapData(buffer, &data);
     if(end - start != wCurMapDataEnd - wCurMapData) {
-        fprintf(stderr, "[%s - FAILED] Failed to serialize map data. Expected size %d, got %d\n",
-            __func__,
+        log_err("[FAILED] Failed to serialize map data. Expected size %d, got %d\n",
             wCurMapDataEnd - wCurMapData,
             (int)(end - start));
         result = -1;
@@ -1190,8 +1182,7 @@ int Test_Serialize_CurMapData(void) {
     }
 
     if(memcmp(buffer, sram, wCurMapDataEnd - wCurMapData) != 0) {
-        fprintf(stderr, "[%s - FAILED] Failed to produce matching serialized map data\n",
-            __func__);
+        log_err("[FAILED] Failed to produce matching serialized map data\n");
         FILE* f;
         f = fopen("map_data_gen.bin", "wb");
         fwrite(buffer, 1, wCurMapDataEnd - wCurMapData, f);
@@ -1203,7 +1194,7 @@ int Test_Serialize_CurMapData(void) {
         goto quit;
     }
 
-    printf("[%s - SUCCESS]\n", __func__);
+    log_info("[SUCCESS]\n");
 
 quit:
     CloseSRAM();
@@ -1221,8 +1212,7 @@ int Test_Serialize_OptionsData(void) {
     const uint8_t* start = sram;
     const uint8_t* end = Deserialize_OptionsData(&data, start);
     if(end - start != wOptionsEnd - wOptions) {
-        fprintf(stderr, "[%s - FAILED] Failed to deserialize options data. Expected size %d, got %d\n",
-            __func__,
+        log_err("[FAILED] Failed to deserialize options data. Expected size %d, got %d\n",
             wOptionsEnd - wOptions,
             (int)(end - start));
         result = -1;
@@ -1237,8 +1227,7 @@ int Test_Serialize_OptionsData(void) {
     start = buffer;
     end = Serialize_OptionsData(buffer, &data);
     if(end - start != wOptionsEnd - wOptions) {
-        fprintf(stderr, "[%s - FAILED] Failed to serialize options data. Expected size %d, got %d\n",
-            __func__,
+        log_err("[FAILED] Failed to serialize options data. Expected size %d, got %d\n",
             wOptionsEnd - wOptions,
             (int)(end - start));
         result = -1;
@@ -1246,8 +1235,7 @@ int Test_Serialize_OptionsData(void) {
     }
 
     if(memcmp(buffer, sram, wOptionsEnd - wOptions) != 0) {
-        fprintf(stderr, "[%s - FAILED] Failed to produce matching serialized options data\n",
-            __func__);
+        log_err("[FAILED] Failed to produce matching serialized options data\n");
         FILE* f;
         f = fopen("options_data_gen.bin", "wb");
         fwrite(buffer, 1, wOptionsEnd - wOptions, f);
@@ -1259,7 +1247,7 @@ int Test_Serialize_OptionsData(void) {
         goto quit;
     }
 
-    printf("[%s - SUCCESS]\n", __func__);
+    log_info("[SUCCESS]\n");
 
 quit:
     CloseSRAM();
@@ -1277,7 +1265,7 @@ int Test_Serialize_Box(void) {
     const uint8_t* start = sram;
     const uint8_t* end = Deserialize_Box(&data, start);
     if(end - start != size) {
-        fprintf(stderr, "[%s - FAILED] Failed to deserialize box data. Expected size %d, got %d\n",
+        log_err("[FAILED] Failed to deserialize box data. Expected size %d, got %d\n",
             __func__,
             size,
             (int)(end - start));
@@ -1288,7 +1276,7 @@ int Test_Serialize_Box(void) {
     start = buffer;
     end = Serialize_Box(buffer, &data);
     if(end - start != size) {
-        fprintf(stderr, "[%s - FAILED] Failed to serialize box data. Expected size %d, got %d\n",
+        log_err("[FAILED] Failed to serialize box data. Expected size %d, got %d\n",
             __func__,
             size,
             (int)(end - start));
@@ -1297,8 +1285,7 @@ int Test_Serialize_Box(void) {
     }
 
     if(memcmp(buffer, sram, size) != 0) {
-        fprintf(stderr, "[%s - FAILED] Failed to produce matching serialized box data\n",
-            __func__);
+        log_err("[FAILED] Failed to produce matching serialized box data\n");
         FILE* f;
         f = fopen("box_data_gen.bin", "wb");
         fwrite(buffer, 1, size, f);
@@ -1310,7 +1297,7 @@ int Test_Serialize_Box(void) {
         goto quit;
     }
 
-    printf("[%s - SUCCESS]\n", __func__);
+    log_info("[SUCCESS]\n");
 
 quit:
     CloseSRAM();

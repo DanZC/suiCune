@@ -191,8 +191,7 @@ static void Serial_ExchangeByte_ShortDelay(void) {
     DelayFrame();
 }
 
-uint8_t Serial_ExchangeByte(const uint8_t* hl){ 
-    printf("%s:\n", __func__);
+uint8_t Serial_ExchangeByte(const uint8_t* hl){
 timeout_loop:
     // XOR_A_A;
     // LDH_addr_A(hSerialReceivedNewData);
@@ -376,7 +375,6 @@ static uint8_t SerialDisconnected(uint8_t a){
 }
 
 void Serial_ExchangeSyncBytes(void){
-    PEEK("");
     // LD_HL(wLinkPlayerSyncBuffer);
     const uint8_t* hl = wram->wLinkPlayerSyncBuffer;
     // LD_DE(wLinkReceivedSyncBuffer);
@@ -512,7 +510,7 @@ void WaitLinkTransfer(void){
     // LD_A_addr(wOtherPlayerLinkAction);
     // LD_addr_A(wOtherPlayerLinkMode);
     wram->wOtherPlayerLinkMode = wram->wOtherPlayerLinkAction;
-    printf("wOtherPlayerLinkMode = %d\n", wram->wOtherPlayerLinkMode);
+    log_debug("wOtherPlayerLinkMode = %d\n", wram->wOtherPlayerLinkMode);
     // RET;
 }
 
@@ -521,7 +519,7 @@ static void LinkTransfer_Receive(uint8_t b) {
     // LDH_A_addr(hSerialReceive);
     // LD_addr_A(wOtherPlayerLinkMode);
     Network_SafeTryRecvByte(&wram->wOtherPlayerLinkMode);
-    printf("wOtherPlayerLinkMode = %d\n", wram->wOtherPlayerLinkMode);
+    log_debug("wOtherPlayerLinkMode = %d\n", wram->wOtherPlayerLinkMode);
     // AND_A(0xf0);
     // CP_A_B;
     // RET_NZ ;
@@ -534,11 +532,11 @@ static void LinkTransfer_Receive(uint8_t b) {
     // AND_A(0xf);
     // LD_addr_A(wOtherPlayerLinkAction);
     wram->wOtherPlayerLinkAction = wram->wOtherPlayerLinkMode & 0xf;
-    printf("wOtherPlayerLinkAction = %d\n", wram->wOtherPlayerLinkAction);
+    log_debug("wOtherPlayerLinkAction = %d\n", wram->wOtherPlayerLinkAction);
     // RET;
 #else
     if(Network_SafeExchangeBytes(&wram->wOtherPlayerLinkMode, &b, 1)) {
-        printf("%d ?= %d\n", wram->wOtherPlayerLinkMode, b);
+        log_debug("%d ?= %d\n", wram->wOtherPlayerLinkMode, b);
         if((wram->wOtherPlayerLinkMode & 0xf0) != (b & 0xf0))
             return;
         wram->wOtherPlayerLinkAction = wram->wOtherPlayerLinkMode & 0xf;

@@ -453,7 +453,7 @@ void RunBattleTowerTrainer(void){
         // LD_A(0x50);
         // LD_hl_A;
         wram->wStringBuffer3[1] = 0x50;
-        printf("Number of beaten trainers: %d\n", wram->wNrOfBeatenBattleTowerTrainers);
+        log_debug("Number of beaten trainers: %d\n", wram->wNrOfBeatenBattleTowerTrainers);
     }
 
 // lost:
@@ -572,7 +572,7 @@ void ReadBTTrainerParty(void){
     // LD_A_hli;
     // LD_addr_A(wOtherTrainerClass);
     wram->wOtherTrainerClass = wram->wBT_OTTemp.trainerClass;
-    printf("BTTrainer (class: %d)\n", wram->wBT_OTTemp.trainerClass);
+    log_debug("BTTrainer (class: %d)\n", wram->wBT_OTTemp.trainerClass);
     // LD_A(LOW(wOTPartyMonNicknames));
     // LD_addr_A(wBGMapBuffer);
     // LD_A(HIGH(wOTPartyMonNicknames));
@@ -905,7 +905,7 @@ void CopyBTTrainer_FromBT_OT_TowBT_OTTemp(void){
         // ld bc, BATTLE_TOWER_STRUCT_LENGTH;$00cc ; jp battle tower data length
         // call CopyBytes;$2ff2
         CopyBytes(&wram->wBT_OTTemp, Function1704ca(), sizeof(wram->wBT_OTTemp));
-        printf("BTTrainer (class: %d)\n", wram->wBT_OTTemp.trainerClass);
+        log_debug("BTTrainer (class: %d)\n", wram->wBT_OTTemp.trainerClass);
         CloseSRAM();
         OpenSRAM(MBANK(asBattleTowerChallengeState));
         // ld hl, sNrOfBeatenBattleTowerTrainers

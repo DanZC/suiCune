@@ -15,12 +15,12 @@ const char MartJSONPath[] = "data/items/marts.json";
 u32_flag_s JSONStringToConstant(json_value_t* const value) {
     json_string_t* str = json_value_as_string(value);
     if(str == NULL) {
-        fprintf(stderr, "Could not parse JSON value as string.");
+        log_err("Could not parse JSON value as string.");
         return u32_flag((uint32_t)-1, false);
     }
     u32_flag_s res = FindConstantValueByString(str->string);
     if(!res.flag) {
-        fprintf(stderr, "Could not find constant value '%s'.", str->string);
+        log_err("Could not find constant value '%s'.", str->string);
         return u32_flag((uint32_t)-1, false);
     }
     return res;
@@ -29,7 +29,7 @@ u32_flag_s JSONStringToConstant(json_value_t* const value) {
 int_flag_s JSONValueToInt(json_value_t* const value) {
     json_number_t* num = json_value_as_number(value);
     if(num == NULL) {
-        fprintf(stderr, "Could not parse JSON value as number.");
+        log_err("Could not parse JSON value as number.");
         return int_flag(-1, false);
     }
     return int_flag(atoi(num->number), true);

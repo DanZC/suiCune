@@ -482,7 +482,7 @@ static void LinkTradeMenu_loop(void) {
         // AND_A_B;
         // IF_Z goto loop;
     } while((wram->wMenuJoypadFilter & LinkTradeMenu_GetJoypad()) == 0);
-    printf("CursorY = %d\n", (wram->wMenuCursorY));
+    log_debug("CursorY = %d\n", (wram->wMenuCursorY));
 
 // done:
     // RET;

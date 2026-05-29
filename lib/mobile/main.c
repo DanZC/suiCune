@@ -309,7 +309,7 @@ void v_MobileAPI(mobile_api_data_s *api){
     // CP_A_H;
 
 // okay:
-    printf("Mobile API %02X\n", wram->wMobileAPIIndex);
+    log_debug("Mobile API %02X\n", wram->wMobileAPIIndex);
     // CALL_NZ (aFunction1100b4);
     if(wram->wMobileAPIIndex != MOBILEAPI_01)
         Function1100b4();
@@ -1589,7 +1589,7 @@ void Function110615(uint8_t a){
         // LD_B(0x40);
         b = 0x40;
         // JP(mFunction110615_asm_110631);
-        printf("DNS Query: %s %s\n", (const char*)wram->wc8ff, (const char*)hl2);
+        log_debug("DNS Query: %s %s\n", (const char*)wram->wc8ff, (const char*)hl2);
     }
     else {
         // RET;
@@ -3121,7 +3121,7 @@ asm_110e00:
     // CP_A_H;
     // IF_Z goto asm_110dfd;
     if(hl == wram->wc880_str) {
-        printf("error: addr is $c880\n");
+        log_err("error: addr is $c880\n");
         goto asm_110dfd;
     }
 // asm_110e4a:
@@ -3142,7 +3142,7 @@ asm_110e00:
         // CP_A_hl;
         // IF_NZ goto asm_110df9;
         if(*de != *hl2) {
-            printf("error: missing URI prefix: %s\n", hl);
+            log_err("missing URI prefix: %s\n", hl);
             goto asm_110dfd;
         }
         // INC_HL;
@@ -3156,7 +3156,7 @@ asm_110e00:
     // Skip the domain name, since that can change.
     while(*hln != '/') {
         if(*hln == '\0') {
-            printf("error: no path\n");
+            log_err("no path\n");
             goto asm_110dfd;
         }
         hln++;
@@ -3282,14 +3282,14 @@ asm_110eb3:
     // CALL(aFunction11039a);
     // JP_C (mFunction110ddd_asm_110df9);
     if(Function11039a(&hl4, 0x12)) {
-        printf("error: Function11039a error 1\n");
+        log_err("error: Function11039a error 1\n");
         goto asm_110dfd;
     }
     // LD_C(0x12);
     // CALL(aFunction11039a);
     // JP_C (mFunction110ddd_asm_110df9);
     if(Function11039a(&hl4, 0x12)) {
-        printf("error: Function11039a error 2\n");
+        log_err("error: Function11039a error 2\n");
         goto asm_110dfd;
     }
     // LD_C(0x1);
@@ -3312,7 +3312,7 @@ asm_110ecb:
     // OR_A_C;
     // JP_NZ (mFunction110ddd_asm_110dfa);
     if(bc >= 0x400) {
-        printf("error: Length is bigger than 0x400\n");
+        log_err("error: Length is bigger than 0x400: %d\n", bc);
         goto asm_110dfd;
     }
 
@@ -3866,7 +3866,7 @@ uint16_t Function1111d7(const char* hl){
 //          hl - pointers to config data
 //          bc - buffer size
 void Function1111fe(mobile_api_data_s* data){
-    printf("MOBILEAPI_16 %d\n", data->bc);
+    log_debug("MOBILEAPI_16 %d\n", data->bc);
     // LD_A_addr(wc821);
     // BIT_A(2);
     // LD_A_addr(wc86a);
@@ -4767,9 +4767,9 @@ void Function111596(void){
     LD_A_addr(wc800);
     BIT_A(1);
     IF_NZ goto asm_1115af;
-    LD_A(0x2a);
-    JR(mFunction1115e4);
-
+    // LD_A(0x2a);
+    // JR(mFunction1115e4);
+    return Function1115e4(0x2a);
 
 asm_1115af:
     LD_A_addr(wMobileSDK_SendCommandID);
@@ -4805,65 +4805,79 @@ asm_1115dd:
 
 }
 
-void Function1115e4(void){
-    NOP;
-    PUSH_AF;
-    LD_HL(wc821);
-    SET_hl(0);
-    LD_A(0x1);
-    LD_addr_A(wc86b);
-    LD_A_addr(wc86d);
-    OR_A_A;
-    LD_A_addr(wMobileSDK_ReceivePacketBuffer);
-    IF_Z goto asm_111609;
-    CP_A(0x9f);
-    IF_Z goto asm_11160d;
-    CP_A(0xa4);
-    IF_Z goto asm_11160d;
+void Function1115e4(uint8_t a){
+    // NOP;
+    // PUSH_AF;
+    // LD_HL(wc821);
+    // SET_hl(0);
+    bit_set(wram->wc821, 0);
+    // LD_A(0x1);
+    // LD_addr_A(wc86b);
+    wram->wc86b = 0x1;
+    // LD_A_addr(wc86d);
+    // OR_A_A;
+    // LD_A_addr(wMobileSDK_ReceivePacketBuffer);
+    // IF_Z goto asm_111609;
+    if(wram->wc86d == 0) {
+    // asm_111609:
+        // CP_A(0xa3);
+        // IF_Z goto asm_111601;
+        if(wram->wMobileSDK_ReceivePacketBuffer[0] == (MOBILE_COMMAND_OPEN_TCP_CONNECTION | 0x80))
+            goto asm_111601;
+    }
 
-asm_111601:
-    CALL(aFunction112430);
+    // CP_A(0x9f);
+    // IF_Z goto asm_11160d;
+    // CP_A(0xa4);
+    // IF_Z goto asm_11160d;
+    else if(wram->wMobileSDK_ReceivePacketBuffer[0] == (MOBILE_COMMAND_TRANSFER_DATA_END | 0x80)
+        ||  wram->wMobileSDK_ReceivePacketBuffer[0] == (MOBILE_COMMAND_CLOSE_TCP_CONNECTION | 0x80)) {
+    // asm_11160d:
+        // NOP;
+        // goto asm_111604;
+    }
 
-asm_111604:
-    POP_AF;
-    LD_addr_A(wc86a);
-    RET;
+    else {
+    asm_111601:
+        // CALL(aFunction112430);
+        Function112430();
+    }
 
-
-asm_111609:
-    CP_A(0xa3);
-    IF_Z goto asm_111601;
-
-
-asm_11160d:
-    NOP;
-    goto asm_111604;
-
-    return Function111610();
+// asm_111604:
+    // POP_AF;
+    // LD_addr_A(wc86a);
+    wram->wc86a = a;
+    // RET;
+    return;
 }
 
 // MobileAPI_1E
 void Function111610(void){
-    LD_HL(wc86a);
-    LD_A_hl;
-    DEC_A;
-    JP_Z (mFunction110226);
-    DEC_A;
-    JP_Z (mFunction110226);
-    LD_A_addr(wc800);
-    OR_A_A;
-    IF_NZ goto asm_111626;
-    LD_A(0x28);
-    JR(mFunction1115e4);
+    // LD_HL(wc86a);
+    // LD_A_hl;
+    // DEC_A;
+    // JP_Z (mFunction110226);
+    // DEC_A;
+    // JP_Z (mFunction110226);
+    if(wram->wc86a == 1 || wram->wc86a == 2)
+        return Function110226();
+    // LD_A_addr(wc800);
+    // OR_A_A;
+    // IF_NZ goto asm_111626;
+    if(wram->wc800 == 0) {
+        // LD_A(0x28);
+        // JR(mFunction1115e4);
+        return Function1115e4(0x28);
+    }
 
-
-asm_111626:
-    LD_A(0x28);
-    LD_B(0x2);
-    LD_hli_A;
-    LD_hl_B;
-    RET;
-
+// asm_111626:
+    // LD_A(0x28);
+    // LD_B(0x2);
+    // LD_hli_A;
+    wram->wc86a = 0x28;
+    // LD_hl_B;
+    wram->wc86b = 0x2;
+    // RET;
 }
 
 // MobileAPI_1B
@@ -5191,7 +5205,7 @@ void Function11177c(void){
     // LD_A_hl;
     // DEC_A;
     uint16_t de = ((wram->wc81f - 1) << 8) | wram->wc820;
-    printf("Timer set: %d\n", de);
+    log_info("Timer set: %d\n", de);
     // LD_B(0x3);
 
     // do {
@@ -6538,7 +6552,7 @@ void ParseResponse_BeginSession(void){
 
 // done:
     // LD_addr_A(wMobileSDK_AdapterType);
-    printf("Adapter type = %d\n", wram->wMobileSDK_AdapterType);
+    log_debug("Adapter type = %d\n", wram->wMobileSDK_AdapterType);
     // LD_A(0x2);
     // LD_addr_A(wc807);
     wram->wc807 = 0x2;
@@ -7929,7 +7943,7 @@ void Function112451(uint8_t* hl, uint8_t a){
         }
 
     // asm_11248b:
-        printf("TCP %u.%u.%u.%u:%u\n", wram->wMobileSDK_PacketBuffer[86], wram->wMobileSDK_PacketBuffer[87],
+        log_debug("TCP %u.%u.%u.%u:%u\n", wram->wMobileSDK_PacketBuffer[86], wram->wMobileSDK_PacketBuffer[87],
             wram->wMobileSDK_PacketBuffer[88], wram->wMobileSDK_PacketBuffer[89],
             (wram->wMobileSDK_PacketBuffer[90] << 8) | wram->wMobileSDK_PacketBuffer[91]);
         // LD_A(0xa3);
@@ -8190,7 +8204,7 @@ void Function112597(void){
 
 // asm_1125bc:
     // LD_addr_A(wc86a);
-    printf("wc86a=%d, wc86b=%d, wc98f=%d\n", wram->wc86a, wram->wc86b, wram->wc98f);
+    log_debug("wc86a=%d, wc86b=%d, wc98f=%d\n", wram->wc86a, wram->wc86b, wram->wc98f);
 
     return Function1125bf();
 }
@@ -10607,7 +10621,7 @@ char* Function113054(char* hl){
         // LD_B(0x30);
         // CALL(aFunction1136c1);
         Function1136c1(hl2, &wram->wc9b5, 0x30);
-        printf("Challenge=%s\nResponse:%s\n", hl2, &wram->wc9b5);
+        log_debug("Challenge=%s\nResponse:%s\n", hl2, &wram->wc9b5);
         // POP_BC;
         // POP_HL;
         // RET;

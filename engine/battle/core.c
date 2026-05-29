@@ -181,7 +181,6 @@ static void BattleStartMessage(void);
 //  Core components of the battle engine.
 
 void DoBattle(void){
-    PEEK("");
     // XOR_A_A;
     // LD_addr_A(wBattleParticipantsNotFainted);
     wram->wBattleParticipantsNotFainted = 0;
@@ -228,7 +227,7 @@ void DoBattle(void){
     if(wram->wLinkMode == LINK_NULL || hram.hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
     // not_linked:
         // LD_A_addr(wBattleMode);
-        printf("wBattleMode = %s\n", (wram->wBattleMode == TRAINER_BATTLE)? "trainer": "wild");
+        log_debug("wBattleMode = %s\n", (wram->wBattleMode == TRAINER_BATTLE)? "trainer": "wild");
         // DEC_A;
         // IF_Z goto wild;
         if(wram->wBattleMode != WILD_BATTLE) {
@@ -925,7 +924,7 @@ bool DetermineMoveOrder(void){
         if(priority != 0) {
             // JP_C (mDetermineMoveOrder_player_first);  // player goes first
             // JP(mDetermineMoveOrder_enemy_first);
-            printf("DetermineMoveOrder: priority %s\n", (priority > 0)? "player": "enemy");
+            log_debug("DetermineMoveOrder: priority %s\n", (priority > 0)? "player": "enemy");
             return priority > 0; // True if player has higher priority, false otherwise
         }
 
@@ -1010,8 +1009,8 @@ bool DetermineMoveOrder(void){
         if(cmp_speed != 0) {
             // JP_NC (mDetermineMoveOrder_player_first);
             // JP(mDetermineMoveOrder_enemy_first);
-            printf("DetermineMoveOrder: speed %s\n", (cmp_speed > 0)? "player": "enemy");
-            printf("   player: %d\n   enemy: %d\n", wram->wBattleMon.speed[0] << 8 | wram->wBattleMon.speed[1], wram->wEnemyMon.speed[0] << 8 | wram->wEnemyMon.speed[1]);
+            log_debug("DetermineMoveOrder: speed %s\n", (cmp_speed > 0)? "player": "enemy");
+            log_debug("   player: %d\n   enemy: %d\n", wram->wBattleMon.speed[0] << 8 | wram->wBattleMon.speed[1], wram->wEnemyMon.speed[0] << 8 | wram->wEnemyMon.speed[1]);
             return cmp_speed > 0; // true if player's speed is higher, false otherwise.
         }
 
@@ -1951,7 +1950,7 @@ bool ResidualDamage(void){
     // BIT_hl(SUBSTATUS_CURSE);
     // IF_Z goto not_cursed;
     if(bit_test(*GetBattleVarAddr(BATTLE_VARS_SUBSTATUS1), SUBSTATUS_CURSE)){
-        PEEK("cursed");
+        log_debug("cursed\n");
         // XOR_A_A;
         // LD_addr_A(wNumHits);
         wram->wNumHits = 0x0;
@@ -3262,7 +3261,6 @@ void UpdateHPBar(void){
 }
 
 void HandleEnemyMonFaint(void){
-    PEEK("");
     // CALL(aFaintEnemyPokemon);
     FaintEnemyPokemon();
     // LD_HL(wBattleMonHP);
@@ -3694,7 +3692,6 @@ static bool CheckEnemyTrainerDefeated(void){
 }
 
 static uint8_t HandleEnemySwitch(void){
-    PEEK("");
     // LD_HL(wEnemyHPPal);
     // LD_E(HP_BAR_LENGTH_PX);
     // CALL(aUpdateHPPal);
@@ -3835,7 +3832,6 @@ static void WinTrainerBattle_AddMoneyToWallet(void){
 
 static void WinTrainerBattle(void){
 //  Player won the battle
-    PEEK("");
     // CALL(aStopDangerSound);
     StopDangerSound();
     // LD_A(0x1);
@@ -3937,9 +3933,7 @@ static void WinTrainerBattle(void){
     // goto give_money;
 
 // give_money:
-    PEEK("give_money");
-    
-    printf("reward %d\n", (wram->wBattleReward[0] << 16) | (wram->wBattleReward[1] << 8) | wram->wBattleReward[2]);
+    log_debug("reward %d\n", (wram->wBattleReward[0] << 16) | (wram->wBattleReward[1] << 8) | wram->wBattleReward[2]);
     // LD_A_addr(wAmuletCoin);
     // AND_A_A;
     // CALL_NZ (aWinTrainerBattle_DoubleReward);
@@ -4027,7 +4021,7 @@ static void WinTrainerBattle(void){
     }
 
 // KeepItAll:
-    PEEK("KeepItAll");
+    log_debug("KeepItAll\n");
     // LD_HL(mGotMoneyForWinningText);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox(GotMoneyForWinningText);
@@ -5615,7 +5609,6 @@ static void ClearEnemyMonBox(void){
 }
 
 void ShowBattleTextEnemySentOut(void){
-    PEEK("");
     // CALLFAR(aBattle_GetTrainerName);
     Battle_GetTrainerName();
     // LD_HL(mBattleText_EnemySentOut);
@@ -5627,7 +5620,6 @@ void ShowBattleTextEnemySentOut(void){
 }
 
 void ShowSetEnemyMonAndSendOutAnimation(void){
-    PEEK("");
     // LD_A_addr(wTempEnemyMonSpecies);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = wram->wTempEnemyMonSpecies;
@@ -6236,7 +6228,6 @@ void ResetPlayerStatLevels(void){
 }
 
 void InitEnemyMon(void){
-    PEEK("");
     // LD_A_addr(wCurPartyMon);
     // LD_HL(wOTPartyMon1Species);
     // CALL(aGetPartyLocation);
@@ -6247,7 +6238,7 @@ void InitEnemyMon(void){
     wram->wEnemyMon.item = wram->wOTPartyMon[wram->wCurPartyMon].mon.item;
     CopyBytes(wram->wEnemyMon.moves, &wram->wOTPartyMon[wram->wCurPartyMon].mon.moves, NUM_MOVES * sizeof(move_t));
     for(int i = 0; i < NUM_MOVES; ++i) {
-        printf("Move %d = %02X\n", i, wram->wEnemyMon.moves[i]);
+        log_debug("Move %d = %02X\n", i, wram->wEnemyMon.moves[i]);
     }
     // LD_BC(MON_DVS - MON_ID);
     // ADD_HL_BC;
@@ -7401,7 +7392,7 @@ void UpdateEnemyHUD(void){
 }
 
 static uint8_t DrawEnemyHUD_draw_bar(uint8_t c, uint8_t e, uint8_t d) {
-    printf("%d tiles, %d pixels\n", d, e);
+    log_debug("%d tiles, %d pixels\n", d, e);
     // XOR_A_A;
     // LD_addr_A(wWhichHPBar);
     wram->wWhichHPBar = 0;
@@ -7524,7 +7515,7 @@ uint8_t DrawEnemyHUD(void){
 // not_fainted:
     uint16_t HP = BigEndianToNative16(wram->wEnemyMon.hp);
     uint16_t maxHP = BigEndianToNative16(wram->wEnemyMon.maxHP);
-    printf("%d HP / %d maxHP\n", HP, maxHP);
+    log_debug("%d HP / %d maxHP\n", HP, maxHP);
     // XOR_A_A;
     // LDH_addr_A(hMultiplicand + 0);
     // LD_A(HP_BAR_LENGTH_PX);
@@ -7589,7 +7580,7 @@ void UpdateEnemyHPPal(uint8_t e){
     // LD_HL(wEnemyHPPal);
     // CALL(aUpdateHPPal);
     // RET;
-    printf("SET ENEMY HP PAL(e=%d)\n", e);
+    log_debug("SET ENEMY HP PAL(e=%d)\n", e);
     return UpdateHPPal(&wram->wEnemyHPPal, e);
 }
 
@@ -9318,7 +9309,7 @@ void ParseEnemyAction(void){
         // LD_HL(wEnemyMonMoves);
         const move_t* moves = wram->wEnemyMon.moves;
         for(int i = 0; i < NUM_MOVES; ++i) {
-            printf("MOVE %d = %02X\n", i, moves[i]);
+            log_debug("MOVE %d = %02X\n", i, moves[i]);
         }
         // LD_DE(wEnemyMonPP);
         const uint8_t* pp = wram->wEnemyMon.pp;
@@ -9411,7 +9402,7 @@ void ParseEnemyAction(void){
 finish:
     // LD_addr_A(wCurEnemyMove);
     wram->wCurEnemyMove = curMove;
-    printf("Chosen move %02X (moves[%d])\n", curMove, wram->wCurEnemyMoveNum);
+    log_debug("Chosen move %02X (moves[%d])\n", curMove, wram->wCurEnemyMoveNum);
 
 skip_load:
     // CALL(aSetEnemyTurn);
@@ -9515,7 +9506,6 @@ void LinkBattleSendReceiveAction(void){
 void LoadEnemyMon(void){
 //  Notes:
 //    BattleRandom is used to ensure sync between Game Boys
-    PEEK("");
 //  Clear the whole enemy mon struct (wEnemyMon)
     // XOR_A_A;
     // LD_HL(wEnemyMonSpecies);
@@ -9992,7 +9982,7 @@ Happiness:
         // CALL(aCopyBytes);
         CopyBytes(moves, &wram->wOTPartyMon[wram->wCurPartyMon].mon.moves, NUM_MOVES * sizeof(move_t));
         for(int i = 0; i < NUM_MOVES; ++i) {
-            printf("Move %d = %02X\n", i, moves[i]);
+            log_debug("Move %d = %02X\n", i, moves[i]);
         }
         // goto PP;
     }
@@ -10009,12 +9999,12 @@ Happiness:
         ByteFill(moves, 0, 4 * sizeof(move_t));
         // LD_addr_A(wSkipMovesBeforeLevelUp);
         wram->wSkipMovesBeforeLevelUp = FALSE;
-        printf("wSkipMovesBeforeLevelUp = %d\n", wram->wSkipMovesBeforeLevelUp);
+        log_debug("wSkipMovesBeforeLevelUp = %d\n", wram->wSkipMovesBeforeLevelUp);
     //  Fill moves based on level
         // PREDEF(pFillMoves);
         FillMoves(moves, wram->wEnemyMon.pp, wram->wEnemyMon.species, wram->wEnemyMon.level);
         for(int i = 0; i < NUM_MOVES; ++i) {
-            printf("Move %d = %02X\n", i, moves[i]);
+            log_debug("Move %d = %02X\n", i, moves[i]);
         }
     }
 
@@ -10342,7 +10332,6 @@ static void ApplyStatusEffectOnStats(uint8_t turn){
 }
 
 void ApplyPrzEffectOnSpeed(uint8_t turn){
-    PEEK("");
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto enemy;
@@ -12324,7 +12313,6 @@ bool StartBattle(void){
 //  This check prevents you from entering a battle without any Pokemon.
 //  Those using walk-through-walls to bypass getting a Pokemon experience
 //  the effects of this check.
-    PEEK("");
     // LD_A_addr(wPartyCount);
     // AND_A_A;
     // RET_Z ;
@@ -12455,7 +12443,6 @@ void InitEnemy(void){
 }
 
 void BackUpBGMap2(void){
-    PEEK("");
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awDecompressScratch));
@@ -12484,7 +12471,6 @@ void BackUpBGMap2(void){
 }
 
 static void InitEnemyTrainer(uint8_t tclass){
-    PEEK("");
     // LD_addr_A(wTrainerClass);
     wram->wTrainerClass = tclass;
     // FARCALL(aStubbedTrainerRankings_TrainerBattles);

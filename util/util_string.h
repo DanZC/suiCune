@@ -8,7 +8,6 @@ void CopyUTF8NStringToGB(uint16_t dest, uint16_t n, const char* src);
 void CopyStringFromGB(uint8_t* dest, size_t dest_size, uint16_t src);
 uint16_t PrintCrystalStringFromGB(uint16_t ptr);
 uint8_t* PrintCrystalStringFromRAM(uint8_t* ptr);
-void PrintCrystalTextFromGB(uint16_t ptr);
 
 /// Convenience macros
 

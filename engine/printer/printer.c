@@ -327,7 +327,6 @@ bool Printer_ResetRegistersAndStartDataSend(void){
 }
 
 void PrintUnownStamp(void){
-    PEEK("");
     // LD_A_addr(wPrinterQueueLength);
     // PUSH_AF;
     uint8_t queueLength = wram->wPrinterQueueLength;
@@ -1035,7 +1034,7 @@ void Printer_PrintBoxListSegment(tile_t* hl, uint8_t c){
         // LD_A_de;
         // CP_A(0xff);
         // JP_Z (mPrinter_PrintBoxListSegment_finish);
-        printf("species = %d vs %d vs %d\n", *boxSpecies, boxSpecies[1], boxSpecies[-1]);
+        log_debug("species = %d vs %d vs %d\n", *boxSpecies, boxSpecies[1], boxSpecies[-1]);
         if(*boxSpecies == (species_t)-1)
             break;
         // LD_addr_A(wNamedObjectIndex);

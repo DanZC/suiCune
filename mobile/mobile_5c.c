@@ -293,7 +293,7 @@ void Function170c06(void){
     // LD_hl_A;
     hl[5] += c;
     // CALL(aCloseSRAM);
-    printf("Battle record stats: %d, %d, %d, %d\n",
+    log_debug("Battle record stats: %d, %d, %d, %d\n",
         hl[0], hl[2] | (hl[1] << 8), hl[4] | (hl[3] << 8),
         hl[5]);
     CloseSRAM();

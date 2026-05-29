@@ -462,7 +462,7 @@ void StartTrainerBattle_Flash(void){
 }
 
 void StartTrainerBattle_SetUpForWavyOutro(void){
-    PEEK("");
+    log_debug("\n");
     // FARCALL(aRespawnPlayerAndOpponent);
     RespawnPlayerAndOpponent();
     // LD_A(MBANK(awLYOverrides));
@@ -526,7 +526,7 @@ static void StartTrainerBattle_DoSineWave(void) {
 }
 
 void StartTrainerBattle_SineWave(void){
-    PEEK("");
+    log_debug("\n");
     // LD_A_addr(wBattleTransitionCounter);
     // CP_A(0x60);
     // IF_NC goto end;

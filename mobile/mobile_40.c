@@ -278,7 +278,7 @@ void Function1000ba(void){
         // CALL(aGetFarWord);
         // LD_A_addr(wcd22);
         // RST(aFarCall);
-        printf("Mobile comms 0x%02X\n", wram->wMobileCommsJumptableIndex);
+        log_debug("Mobile comms 0x%02X\n", wram->wMobileCommsJumptableIndex);
         gMobileCommsJumptable[wram->wMobileCommsJumptableIndex]();
 
         // CALL(aFunction1000e8);
@@ -855,7 +855,7 @@ u8_flag_s Function10034d(void){
 void Function100382(void){
     // LD_A_addr(wcd27);
     // LD_HL(mJumptable_10044e);
-    printf("P2PTransfer 0x%02x\n", wram->wcd27);
+    log_debug("P2PTransfer 0x%02x\n", wram->wcd27);
     // RST(aJumpTable);
     switch(wram->wcd27) {
         case 0x0: Function10046a(); break;
@@ -1008,7 +1008,7 @@ bool Function100406(void){
         // LD_A(0xf4);
         // LD_addr_A(wcd2b);
         wram->wcd2b = 0xf4;
-        printf("Failed packet checksum! Checksums does not match! Expected %d, Got %d.\n",
+        log_err("Failed packet checksum! Checksums does not match! Expected %d, Got %d.\n",
             de,
             (wram->wcc60_arr[bc+1] | (wram->wcc60_arr[bc+2] << 8)));
         // goto asm_100432;
@@ -1022,12 +1022,12 @@ bool Function100406(void){
         // LD_A(0xf3);
         // LD_addr_A(wcd2b);
         wram->wcd2b = 0xf3;
-        printf("Failed packet checksum! Command ID is incorrect! Expected %d, Got %d.\n", 
+        log_err("Failed packet checksum! Command ID is incorrect! Expected %d, Got %d.\n", 
             wram->wcd48,
             wram->wcc61[bc-1]);
     }
     else {
-        printf("Passed packet checksum.\n");
+        log_info("Passed packet checksum.\n");
         // XOR_A_A;
         // RET;
         return false;

@@ -3033,7 +3033,7 @@ uint16_t GetHealingItemAmount(item_t item){
         // CP_A_D;
         // IF_Z goto done;
         if(hl->item == item) {
-            printf("Healing item: %d, amount %d\n", hl->item, hl->amount);
+            log_debug("Healing item: %d, amount %d\n", hl->item, hl->amount);
             return hl->amount;
         }
         // INC_HL;
@@ -3053,7 +3053,7 @@ uint16_t GetHealingItemAmount(item_t item){
     // RET;
 
 // INCLUDE "data/items/heal_hp.asm"
-    printf("Healing item: %d, amount %d\n", item, 0);
+    log_debug("Healing item: %d, amount %d\n", item, 0);
     return 0;
 }
 

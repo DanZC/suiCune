@@ -163,7 +163,7 @@ uint8_t* Utf8ToCrystal(const char* src)
     nextchar:;
     }
     if(i >= sizeof(lCrystalTextConvBuffer) - 1) {
-        printf("Truncated string of size %zu+ to size %zu.\n", i, sizeof(lCrystalTextConvBuffer) - 1);
+        log_warn("Truncated string of size %zu+ to size %zu.\n", i, sizeof(lCrystalTextConvBuffer) - 1);
     }
     lCrystalTextConvBuffer[i] = CHAR_TERM;
     return lCrystalTextConvBuffer;
@@ -208,7 +208,7 @@ uint8_t* Utf8ToCrystalBuffer(uint8_t* dest, size_t dest_size, const char* src)
     nextchar:;
     }
     if(i - 1 >= dest_size) {
-        printf("Truncated string of size %zu+ to size %zu.\n", i, dest_size);
+        log_warn("Truncated string of size %zu+ to size %zu.\n", i, dest_size);
     }
     dest[i] = CHAR_TERM;
     return dest;
@@ -382,34 +382,4 @@ uint8_t* PrintCrystalStringFromRAM(uint8_t* ptr) {
         c = *(++ptr);
     }
     return ptr + 1;
-}
-
-void PrintCrystalTextFromGB(uint16_t ptr) {
-    uint8_t cmd = gb_read(ptr++);
-    uint8_t oldbank;
-    while(cmd != TX_END) {
-        switch(cmd)
-        {
-            case TX_START: 
-                printf("text \""); 
-                ptr = PrintCrystalStringFromGB(ptr); 
-                printf("\"\n"); 
-                if(gb_read(ptr - 1) == CHAR_DONE) 
-                    return; 
-                break;
-            case TX_RAM: printf("text_ram \""); PrintCrystalStringFromGB(gb_read16(ptr)); ptr += 2; printf("\"\n"); break;
-            case TX_FAR: 
-                printf("text_far \"");
-                oldbank = hram.hROMBank;
-                Bankswitch(gb_read(ptr++));
-                PrintCrystalStringFromGB(gb_read16(ptr)); 
-                ptr += 2;
-                Bankswitch(oldbank);
-                break;
-            default: 
-                printf("text_unk\n"); break;
-        }
-        cmd = gb_read(ptr++);
-    }
-    printf("text_end\n");
 }

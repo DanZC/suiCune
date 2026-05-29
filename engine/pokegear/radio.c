@@ -581,13 +581,13 @@ static void OaksPKMNTalk4(void){
     // ADD_HL_DE;
     // INC_HL;  // skip level
     // LD_A(BANK(aJohtoGrassWildMons));
-    printf("Picked map %d at tod %d.\n", i, tod);
+    log_debug("Picked map %d at tod %d.\n", i, tod);
     for(int j = 0; j < 7; ++j) {
-        printf("    mon lvl=%d, species=%d\n", hl[i].mons[tod][j].level, hl[i].mons[tod][j].species);
+        loga_debug("    mon lvl=%d, species=%d\n", hl[i].mons[tod][j].level, hl[i].mons[tod][j].species);
     }
     // CALL(aGetFarByte);
     species_t species = hl[i].mons[tod][whichMon].species;
-    printf("species=%d, tod=%d, mon=%d\n", species, tod, whichMon);
+    log_debug("species=%d, tod=%d, mon=%d\n", species, tod, whichMon);
     // LD_addr_A(wNamedObjectIndex);
     // LD_addr_A(wCurPartySpecies);
     wram->wCurPartySpecies = species;

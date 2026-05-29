@@ -2094,7 +2094,7 @@ void CalcMonStats(uint16_t* stats, const uint16_t* statExp, uint16_t dvs, uint8_
         // INC_C;
         // CALL(aCalcMonStatC);
         uint16_t stat = NativeToBigEndian16(CalcMonStatC(statExp, dvs, b, c));
-        printf("Stat[%d]: %d\n", c - STAT_HP, BigEndianToNative16(stat));
+        log_debug("Stat[%d]: %d\n", c - STAT_HP, BigEndianToNative16(stat));
         // LDH_A_addr(hMultiplicand + 1);
         // LD_de_A;
         // INC_DE;

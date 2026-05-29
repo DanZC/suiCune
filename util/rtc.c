@@ -95,7 +95,7 @@ void SetStartTimeToSystemTime(void) {
         gPlayer.skip_104[i] = buffer[i];
     for(size_t i = 0; i < 4; ++i)
         gPlayer.skip_109[i] = buffer[4 + i];
-    printf("start = %lld\n", (long long)*(time_t*)buffer);
+    log_debug("start = %lld\n", (long long)*(time_t*)buffer);
 }
 
 static char tempTimeBuffer[32];
@@ -121,18 +121,18 @@ void LoadRTCStartTime(void) {
                     | ((uint64_t)(uint8_t)buffer[6] << 48ull)
                     | ((uint64_t)(uint8_t)buffer[7] << 56ull);
     if(!(time_t)value || (time_t)value == -1) {
-        printf("No RTC data found. Start timestamp is %lld. Loading day at 0.\n", (long long)(time_t)value);
+        log_warn("No RTC data found. Start timestamp is %lld. Loading day at 0.\n", (long long)(time_t)value);
         CloseSRAM();
         sStartTimestamp = 0;
         return;
     }
     sStartTimestamp = (time_t)value;
     strftime(tempTimeBuffer, sizeof(tempTimeBuffer), "%a %Y-%m-%d %H:%M:%S", localtime(&sStartTimestamp));
-    printf("Start timestamp is %lld (%s).\n", (long long)sStartTimestamp, tempTimeBuffer);
+    log_debug("Start timestamp is %lld (%s).\n", (long long)sStartTimestamp, tempTimeBuffer);
     sLastTimestamp = time(NULL);
     if(sLastTimestamp != (time_t)-1) {
         strftime(tempTimeBuffer, sizeof(tempTimeBuffer), "%a %Y-%m-%d %H:%M:%S", localtime(&sLastTimestamp));
-        printf("Current timestamp is %lld (%s).\n", (long long)sLastTimestamp, tempTimeBuffer);
+        log_debug("Current timestamp is %lld (%s).\n", (long long)sLastTimestamp, tempTimeBuffer);
     }
     CloseSRAM();
 }

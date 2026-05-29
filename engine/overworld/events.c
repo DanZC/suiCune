@@ -49,9 +49,7 @@
 // INCLUDE "constants.asm"
 
 Script_fn_t gMapReentryScriptAddress;
-#if DEBUG
 static bool DebugFieldMenuScript(script_s* s);
-#endif
 
 static void EnableWildEncounters(void);
 static bool CheckWarpConnxnScriptFlag(void);
@@ -903,8 +901,7 @@ static void PlayTalkObject(void){
 }
 
 static u8_flag_s ObjectEventTypeArray_script(struct MapObject* bc) {
-    PEEK("");
-    printf("script=$%04x\n", bc->objectScript);
+    log_debug("script=$%04x\n", bc->objectScript);
     // LD_HL(MAPOBJECT_SCRIPT_POINTER);
     // ADD_HL_BC;
     // LD_A_hli;
@@ -918,7 +915,7 @@ static u8_flag_s ObjectEventTypeArray_script(struct MapObject* bc) {
         return u8_flag(CallScript(hl), true);
     }
     else {
-        printf("script_gb=$%08x\n", (GetMapScriptsBank() << 14) | (bc->objectScript & 0x3fff));
+        log_debug("script_gb=$%08x\n", (GetMapScriptsBank() << 14) | (bc->objectScript & 0x3fff));
         if(!redirectFunc[(GetMapScriptsBank() << 14) | (bc->objectScript & 0x3fff)])
             return u8_flag(CallScript(ObjectEvent), true);
         Script_fn_t script = (Script_fn_t)redirectFunc[(GetMapScriptsBank() << 14) | (bc->objectScript & 0x3fff)];
@@ -1384,11 +1381,11 @@ static u8_flag_s CheckMenuOW(void){
     // LDH_A_addr(hJoyPressed);
     uint8_t a = hram.hJoyPressed;
 
-#if DEBUG
-    if(bit_test(a, SELECT_F) && bit_test(hram.hJoyDown, B_BUTTON_F)) {
-        return u8_flag(CallScript(DebugFieldMenuScript), true);
+    if(debug_mode()) {
+        if(bit_test(a, SELECT_F) && bit_test(hram.hJoyDown, B_BUTTON_F)) {
+            return u8_flag(CallScript(DebugFieldMenuScript), true);
+        }
     }
-#endif
     // BIT_A(SELECT_F);
     // IF_NZ goto Select;
     if(bit_test(a, SELECT_F)) {
@@ -1420,14 +1417,12 @@ static u8_flag_s CheckMenuOW(void){
     return u8_flag(0, false);
 }
 
-#if DEBUG
 static bool DebugFieldMenuScript(script_s* s){
     SCRIPT_BEGIN
     DebugFieldMenu();
     sjump(SelectMenuCallback)
     SCRIPT_END
 }
-#endif
 
 static bool StartMenuScript(script_s* s){
     SCRIPT_BEGIN
@@ -1843,11 +1838,11 @@ static u8_flag_s TryTileCollisionEvent(void){
 
 //  Random encounter
 static u8_flag_s RandomEncounter(void){
-#if DEBUG
-    // In debug builds, pressing B supresses wild encounters.
-    if(bit_test(hram.hJoyDown, B_BUTTON_F))
-        return u8_flag(1, false);
-#endif
+    if(debug_mode()) {
+        // In debug mode, pressing B supresses wild encounters.
+        if(bit_test(hram.hJoyDown, B_BUTTON_F))
+            return u8_flag(1, false);
+    }
     // CALL(aCheckWildEncounterCooldown);
     // IF_C goto nope;
     if(CheckWildEncounterCooldown())

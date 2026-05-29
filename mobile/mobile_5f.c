@@ -1757,7 +1757,7 @@ void Function17d711(uint8_t a){
     // LD_H_hl;
     // LD_L_A;
     // JP_hl;
-    printf("RunNewsCommand(%d)\n", a);
+    log_debug("RunNewsCommand(%d)\n", a);
     return Jumptable17d72a[a]();
 }
 
@@ -3758,15 +3758,15 @@ void Function17e1a1(void){
     // LD_DE(wc608);
     uint8_t* de = wram->wc608;
 
-    printf("a = ");
+    log_debug("a = ");
     for(int i = 0; i < c; ++i)
-        printf("%02x ", hl[i]);
-    printf("\n");
+        log_debug("%02x ", hl[i]);
+    log_debug("\n");
 
-    printf("b = ");
+    log_debug("b = ");
     for(int i = 0; i < c; ++i)
-        printf("%02x ", de[i]);
-    printf("\n");
+        log_debug("%02x ", de[i]);
+    log_debug("\n");
 
     do {
     // asm_17e227:
@@ -4884,7 +4884,7 @@ bool v_RunMobileScript(struct TextPrintState* state){
         // LD_H_hl;
         // LD_L_A;
         // JP_hl;
-        printf("RunMobileCommand(%d)\n", ch - 1);
+        log_debug("RunMobileCommand(%d)\n", ch - 1);
         switch(ch - 1) {
         // Jumptable:
             case 0x0: return Function17f081(state, state->de);  // 0
@@ -5755,14 +5755,14 @@ bool Function17f3f0(struct TextPrintState* state, uint8_t* saved){
     // POP_HL;
     // PUSH_HL;
     state->hl = saved;
-    printf("[%02x %02x%02x %02x%02x %02x%02x %02x%02x]",
+    log_debug("[%02x %02x%02x %02x%02x %02x%02x %02x%02x]",
         state->hl[0], state->hl[1], state->hl[2], state->hl[3],
         state->hl[4], state->hl[5], state->hl[6], state->hl[7],
         state->hl[8]);
     // LD_A_hli;
     // PUSH_AF;
     uint8_t a = *(state->hl++);
-    printf("news_text_switch %d", a);
+    log_debug("news_text_switch %d", a);
     // PUSH_BC;
     uint8_t* hl = state->bc;
     // LD_A_hli;
@@ -5770,12 +5770,12 @@ bool Function17f3f0(struct TextPrintState* state, uint8_t* saved){
     // LD_A_hli;
     // LD_D_A;
     uint8_t* de = GBToRAMAddr(state->hl[0] | (state->hl[1] << 8));
-    printf(", 0x%x", state->hl[0] | (state->hl[1] << 8));
+    log_debug(", 0x%x", state->hl[0] | (state->hl[1] << 8));
     state->hl += 2;
     // LD_A_de;
     // LD_C_A;
     uint8_t c = *de;
-    printf(" (%d)", c);
+    log_debug(" (%d)", c);
     // LD_B(0);
     // ADD_HL_BC;
     // ADD_HL_BC;
@@ -5789,7 +5789,7 @@ bool Function17f3f0(struct TextPrintState* state, uint8_t* saved){
     // LD_E_L;
     // LD_D_H;
     state->de = wram->wram4 + (state->hl[0] | (state->hl[1] << 8));
-    printf(", 0x%x\n", state->hl[0] | (state->hl[1] << 8));
+    log_debug(", 0x%x\n", state->hl[0] | (state->hl[1] << 8));
     // POP_HL;
     state->hl = hl;
     // CALL(aPlaceString);
