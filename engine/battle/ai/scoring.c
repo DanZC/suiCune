@@ -797,13 +797,11 @@ static void AI_Smart_LockOn(uint8_t* hl){
     // player_locked_on:
         // PUSH_HL;
         // LD_HL(wEnemyAIMoveScores - 1);
-        uint8_t* hl2 = wram->wEnemyAIMoveScores - 1;
         // LD_DE(wEnemyMonMoves);
         const move_t* de = wram->wEnemyMon.moves;
         // LD_C(NUM_MOVES + 1);
-        uint8_t c = NUM_MOVES + 1;
 
-        while(++hl2, ++c != 0) {
+        for(uint8_t c = 0; c < NUM_MOVES; ++c) {
         // checkmove2:
             // INC_HL;
             // DEC_C;
@@ -829,7 +827,7 @@ static void AI_Smart_LockOn(uint8_t* hl){
 
             // DEC_hl;
             // DEC_hl;
-            (*hl) -= 2;
+            wram->wEnemyAIMoveScores[c] -= 2;
             // goto checkmove2;
         }
 

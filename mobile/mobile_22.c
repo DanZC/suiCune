@@ -2552,7 +2552,6 @@ bool Function89b45(uint8_t* hl){
     // LD_C(0x10);
     uint8_t c = 0x10;
     // LD_E(0x0);
-    uint8_t e = 0;
 
     do {
     // loop:
@@ -2576,7 +2575,6 @@ bool Function89b45(uint8_t* hl){
         // SWAP_B;
         b = (b >> 4);
         // INC_E;
-        e++;
         // LD_A_B;
         // AND_A(0xf);
         // CP_A(10);
@@ -2593,9 +2591,8 @@ bool Function89b45(uint8_t* hl){
         // INC_E;
         // DEC_C;
         // IF_NZ goto loop;
-    } while(++e, --c != 0);
+    } while(--c != 0);
     // DEC_E;
-    --e;
 
 // set_carry:
     // SCF;

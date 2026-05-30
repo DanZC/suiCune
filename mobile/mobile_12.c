@@ -3257,7 +3257,7 @@ u8_flag_s Function48ab5(uint8_t* d){
     // PUSH_HL;
     // PUSH_AF;
     // LD_E(0x0);
-    uint8_t e = 0x0;
+    // uint8_t e = 0x0;
     // hlcoord(11, 10, wTilemap);
     // LD_A_D;
     uint8_t a2 = *d;
@@ -3267,7 +3267,7 @@ u8_flag_s Function48ab5(uint8_t* d){
         // AND_A_A;
         // IF_Z goto asm_48b2c;
         // INC_E;
-        e++;
+        // e++;
         // DEC_A;
         a2--;
         // goto asm_48b25;

@@ -9680,17 +9680,17 @@ void Function11b03d(uint8_t* hl, uint8_t a){
         // IF_Z goto gender;
         // CP_A(0xf5);
         // IF_Z goto gender;
-        if(a2 == 0xef || a2 == 0xf5) {
+        if(a2 == CHAR_MALE_ICON || a2 == CHAR_FEMALE_ICON) {
         // gender:
             // DEC_HL;
             // LD_A(0x50);
             // LD_hli_A;
-            *hl2 = 0x50;
+            *hl2 = CHAR_TERM;
             break;
         }
         // CP_A(0x50);
         // IF_Z goto done;
-        else if(a2 == 0x50)
+        else if(a2 == CHAR_TERM)
             break;
         // INC_C;
         c++, hl2++;
@@ -9705,15 +9705,19 @@ void Function11b03d(uint8_t* hl, uint8_t a){
     // ADD_HL_DE;
     // LD_E_L;
     // LD_D_H;
-    uint8_t* de = hl2;
+    uint8_t* de = hl2 + 4;
     // POP_HL;
 
-// loop2:
-    // LD_A_hld;
-    // LD_de_A;
-    // DEC_DE;
-    // DEC_C;
-    // IF_NZ goto loop2;
+    do {
+    // loop2:
+        // LD_A_hld;
+        // LD_de_A;
+        *de = *hl2;
+        // DEC_DE;
+        --de, --hl2;
+        // DEC_C;
+        // IF_NZ goto loop2;
+    } while(--c != 0);
     // POP_AF;
     // POP_DE;
     // CP_A(0x1);
@@ -9721,12 +9725,12 @@ void Function11b03d(uint8_t* hl, uint8_t a){
     if(a == 0x1) {
         // LD_HL(mFunction11b03d_MaleString);
         // goto got_string;
-        U82CB(de, 2, MaleString);
+        U82CB(hl, 2, MaleString);
     }
     else {
     // female:
         // LD_HL(mFunction11b03d_FemaleString);
-        U82CB(de, 2, FemaleString);
+        U82CB(hl, 2, FemaleString);
     }
 
 // got_string:

@@ -3866,7 +3866,7 @@ uint16_t Function1010de(const uint8_t* hl, uint16_t bc){
     // POP_BC;
     // POP_HL;
     // RET;
-    return bc;
+    return de;
 }
 
 static species_t LoadSelectedPartiesForColosseum_GetNthSpecies(const uint8_t* de, const uint8_t* hl, uint8_t a) {
@@ -9681,7 +9681,6 @@ static const char CancelString[] = "CANCEL@";
 
 static void Function102e4f_PlaceSpeciesNames(tile_t* hl, const species_t* de){
     // LD_C(0);
-    uint8_t c = 0;
 
     while(*de != 0xff) {
     // count_loop:
@@ -9708,7 +9707,6 @@ static void Function102e4f_PlaceSpeciesNames(tile_t* hl, const species_t* de){
         // ADD_HL_BC;
         // POP_BC;
         // INC_C;
-        c++;
         // goto count_loop;
     }
 }
