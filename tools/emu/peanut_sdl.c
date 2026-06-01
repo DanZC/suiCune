@@ -3536,6 +3536,13 @@ void get_input(void) {
     }
 }
 
+void sync_save_to_disk(void) {
+    write_cart_ram_file(save_file_name,
+                        save_file2_name,
+                        &priv.cart_ram,
+                        gb_get_save_size());
+}
+
 void sdl_loop(void) {
     int delay;
     static unsigned int rtc_timer = 0;

@@ -47,6 +47,9 @@ static const struct BoxAddress BoxAddresses[] = {
 };
 static_assert(lengthof(BoxAddresses) == NUM_BOXES, "");
 
+// Force sync save file data to disk.
+void sync_save_to_disk(void);
+
 bool SaveMenu(void){
     // CALL(aLoadStandardMenuHeader);
     LoadStandardMenuHeader();
@@ -109,6 +112,7 @@ void SaveAfterLinkTrade(void){
     BackupPartyMonMail();
     // FARCALL(aSaveRTC);
     SaveRTC();
+    sync_save_to_disk();
     // CALL(aResumeGameLogic);
     ResumeGameLogic();
     // RET;
@@ -234,6 +238,7 @@ void MoveMonWOMail_InsertMon_SaveGame(uint8_t e){
     BackupMobileEventIndex();
     // FARCALL(aSaveRTC);
     SaveRTC();
+    sync_save_to_disk();
     // CALL(aLoadBox);
     LoadBox();
     // CALL(aResumeGameLogic);
@@ -506,6 +511,7 @@ void v_SaveGameData(void){
 // ok:
     // CALL(aCloseSRAM);
     CloseSRAM();
+    sync_save_to_disk();
     // RET;
 }
 
@@ -1031,6 +1037,7 @@ bool TryLoadSaveFile(void){
         SavePokemonData();
         // CALL(aSaveChecksum);
         SaveChecksum();
+        sync_save_to_disk();
         // AND_A_A;
         // RET;
         return true;
