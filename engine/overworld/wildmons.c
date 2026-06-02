@@ -463,7 +463,7 @@ bool ChooseWildEncounter(void){
 //  This next loop chooses which mon to load up.
 
     uint8_t i;
-    for(i = 0; de[i] <= a; ++i) {
+    for(i = 0; de[i] < a; ++i) {
     // prob_bracket_loop:
         // LD_A_hli;
         // CP_A_B;
@@ -471,6 +471,7 @@ bool ChooseWildEncounter(void){
         // INC_HL;
         // goto prob_bracket_loop;
     }
+    log_debug("index = %d\n", i);
 
 // got_it:
     // LD_C_hl;
@@ -516,6 +517,11 @@ bool ChooseWildEncounter(void){
 // ok:
     // LD_A_B;
     // LD_addr_A(wCurPartyLevel);
+    /// Placing this here for safety reasons.
+    if(level > 100) {
+        log_err("Pokemon level OOB: %d\n", level);
+        return false;
+    }
     wram->wCurPartyLevel = level;
     // LD_B_hl;
     species_t s = (hl.type == 1)? hl.waterMons->mons[i].species: hl.grassMons->mons[wram->wTimeOfDay][i].species;
