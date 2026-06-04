@@ -105,7 +105,7 @@ void Function17a6a8(uint8_t* de, uint8_t c){
 
 void Function17a6f5(uint8_t* de){
     // LD_HL(wd1ea);
-    uint8_t* hl = &wram->wd1ea;
+    uint8_t* hl = wram->wd1ea_buf;
     // LD_C(0x0);
     uint8_t c = 0x0;
     // LD_B(0x8);

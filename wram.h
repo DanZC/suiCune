@@ -601,17 +601,22 @@ struct wram_s
                                 struct MailMsg wOfferMonMail;
                             };
                             struct {
-                                uint8_t wc608[16];
-                                uint8_t wc618[37];
-                                uint8_t wc63d[5];
-                                uint8_t wc642[5];
-                                uint8_t wc647[1];
-                                uint8_t wc648[2];
-                                uint8_t wc64a[30];
-                                uint8_t wc668[32];
-                                uint8_t wc688[2];
-                                uint8_t wc68a[30];
-                                uint8_t wc6a8[40];
+                                union {
+                                    struct {
+                                        uint8_t wc608[16];
+                                        uint8_t wc618[37];
+                                        uint8_t wc63d[5];
+                                        uint8_t wc642[5];
+                                        uint8_t wc647[1];
+                                        uint8_t wc648[2];
+                                        uint8_t wc64a[30];
+                                        uint8_t wc668[32];
+                                        uint8_t wc688[2];
+                                        uint8_t wc68a[30];
+                                        uint8_t wc6a8[40];
+                                    };
+                                    uint8_t wc608_buf[16+37+5+5+1];
+                                };
                             };
                         };
                         // This union spans 280 bytes.
@@ -1085,9 +1090,14 @@ struct wram_s
                         uint8_t wc82c;
                         uint8_t wc82d;
                         uint8_t wc82e;
-                        uint8_t wc82f[3];
-                        uint8_t wc832;
-                        uint8_t wc833;
+                        union {
+                            uint8_t wc82f_buf[5];
+                            struct {
+                                uint8_t wc82f[3];
+                                uint8_t wc832;
+                                uint8_t wc833;
+                            };
+                        };
                         uint8_t wc834;
                         uint8_t wc835;
                         uint8_t wc836[8];
@@ -2040,10 +2050,15 @@ struct wram_s
                         // WRAMX
                         // link battle record data
                         //union wLinkBattleRecordBuffer
-                        uint8_t wLinkBattleRecordName[NAME_LENGTH];
-                        uint16_t wLinkBattleRecordWins;
-                        uint16_t wLinkBattleRecordLosses;
-                        uint16_t wLinkBattleRecordDraws;
+                        union {
+                            struct {
+                                uint8_t wLinkBattleRecordName[NAME_LENGTH];
+                                uint16_t wLinkBattleRecordWins;
+                                uint16_t wLinkBattleRecordLosses;
+                                uint16_t wLinkBattleRecordDraws;
+                            };
+                            uint8_t wLinkBattleRecordBuffer[NUM_LINK_BATTLE_RECORDS * 3];
+                        };
                     };
                     struct {
                         // WRAMX
@@ -2586,17 +2601,23 @@ struct wram_s
                         };
                         struct {
                             // mobile
-                            uint8_t wd1ea;
-                            uint8_t wd1eb;
-                            uint8_t wd1ec; // mobile OAM timer?
-                            uint8_t wd1ed; // mobile OAM X Offset
-                            uint8_t wd1ee; // mobile OAM Y Offset
-                            uint8_t wd1ef; // mobile OAM tile ID
-                            uint8_t wd1f0; // mobile OAM attributes
-                            uint8_t wd1f1;
-                            uint8_t wd1f2;
-                            uint8_t wd1f3;
-                            uint8_t skip_89[6];
+                            union {
+                                struct {
+                                    uint8_t wd1ea;
+                                    uint8_t wd1eb;
+                                    uint8_t wd1ec; // mobile OAM timer?
+                                    uint8_t wd1ed; // mobile OAM X Offset
+                                    uint8_t wd1ee; // mobile OAM Y Offset
+                                    uint8_t wd1ef; // mobile OAM tile ID
+                                    uint8_t wd1f0; // mobile OAM attributes
+                                    uint8_t wd1f1;
+                                    uint8_t wd1f2;
+                                    uint8_t wd1f3;
+                                    uint8_t skip_89[6];
+                                };
+                                uint8_t wd1ea_buf[16];
+                            };
+
                         };
                         struct {
                             // miscellaneous bytes
@@ -2867,419 +2888,419 @@ struct wram_s
                 uint8_t wd479[2];
                 //union wGameData
                 //union wPlayerData
-                uint16_t wPlayerID;
-                uint8_t wPlayerName[NAME_LENGTH];
-                uint8_t wMomsName[NAME_LENGTH];
-                uint8_t wRivalName[NAME_LENGTH];
-                uint8_t wRedsName[NAME_LENGTH];
-                uint8_t wGreensName[NAME_LENGTH];
-                uint8_t wSavedAtLeastOnce;
-                uint8_t wSpawnAfterChampion;
-                // init time set at newgame
-                uint8_t wStartDay;
-                uint8_t wStartHour;
-                uint8_t wStartMinute;
-                uint8_t wStartSecond;
-                uint8_t wRTC[4];
-                uint8_t skip_104[4];
-                // bit 7: dst
-                uint8_t wDST;
-                // used only for BANK(wGameTime)
-                //union wGameTime
-                uint8_t wGameTimeCap;
-                uint16_t wGameTimeHours;
-                uint8_t wGameTimeMinutes;
-                uint8_t wGameTimeSeconds;
-                uint8_t wGameTimeFrames;
-                uint8_t skip_105[2];
-                uint8_t wCurDay;
-                uint8_t skip_106[1];
-                uint8_t wObjectFollow_Leader;
-                uint8_t wObjectFollow_Follower;
-                uint8_t wCenteredObject;
-                uint8_t wFollowerMovementQueueLength;
-                uint8_t wFollowMovementQueue[5];
-                //union wObjectStructs
-                struct Object wPlayerStruct;
-                // player is object struct 0
-                // wObjectStruct1 - wObjectStruct12
-                // for n, 1, NUM_OBJECT_STRUCTS
-                struct Object wObjectStruct[(NUM_OBJECT_STRUCTS) - 1];
-                uint8_t wCmdQueue[CMDQUEUE_CAPACITY * CMDQUEUE_ENTRY_SIZE];
-                uint8_t wZipCode_Saved[ZIPCODE_MAX_LENGTH];
-                uint8_t skip_107[40 - ZIPCODE_MAX_LENGTH];
-                //union wMapObjects
-                struct MapObject wPlayerObject;
-                // player is map object 0
-                // wMap1Object - wMap15Object
-                // for n, 1, NUM_OBJECTS
-                struct MapObject wMapObject[(NUM_OBJECTS) - 1];
-                uint8_t wObjectMasks[NUM_OBJECTS];
-                uint8_t wVariableSprites[0x100 - SPRITE_VARS];
-                uint8_t wEnteredMapFromContinue;
-                uint8_t skip_108[2];
-                uint8_t wTimeOfDayPal;
-                uint8_t skip_109[4];
-                uint8_t wTimeOfDayPalFlags;
-                uint8_t wTimeOfDayPalset;
-                uint8_t wCurTimeOfDay;
-                uint8_t skip_110[1];
-                uint16_t wSecretID;
-                // bit 0: pokedex
-                // bit 1: unown dex
-                // bit 2: flash
-                // bit 3: caught pokerus
-                // bit 4: rocket signal
-                // bit 5: wild encounters on/off
-                // bit 6: hall of fame
-                // bit 7: bug contest on
-                uint8_t wStatusFlags;
-                // bit 0: rockets
-                // bit 1: safari game (unused)
-                // bit 2: bug contest timer
-                // bit 3: unused
-                // bit 4: bike shop call
-                // bit 5: can use sweet scent
-                // bit 6: reached goldenrod
-                // bit 7: rockets in mahogany
-                uint8_t wStatusFlags2;
-                uint8_t wMoney[3];
-                uint8_t wMomsMoney[3];
-                // bit 0: saving some money
-                // bit 1: saving half money (unused)
-                // bit 2: saving all money (unused)
-                // bit 7: active
-                uint8_t wMomSavingMoney;
-                uint16_t wCoins;
-                //union wBadges
-                uint8_t wJohtoBadges[((NUM_JOHTO_BADGES) + 7) / 8];
-                uint8_t wKantoBadges[((NUM_KANTO_BADGES) + 7) / 8];
-                uint8_t wTMsHMs[NUM_TMS + NUM_HMS];
-                uint8_t wNumItems;
-                item_t wItems[MAX_ITEMS * 2 + 1];
-                uint8_t wNumKeyItems;
-                item_t wKeyItems[MAX_KEY_ITEMS + 1];
-                uint8_t wNumBalls;
-                item_t wBalls[MAX_BALLS * 2 + 1];
-                uint8_t wNumPCItems;
-                item_t wPCItems[MAX_PC_ITEMS * 2 + 1];
-                // bit 0: map
-                // bit 1: radio
-                // bit 2: phone
-                // bit 3: expn
-                // bit 7: on/off
-                uint8_t wPokegearFlags;
-                uint8_t wRadioTuningKnob;
-                uint8_t wLastDexMode;
-                uint8_t skip_111[1];
-                uint8_t wWhichRegisteredItem;
-                uint8_t wRegisteredItem;
-                uint8_t wPlayerState;
-                uint8_t wHallOfFameCount;
-                uint8_t skip_112[1];
-                uint8_t wTradeFlags[((NUM_NPC_TRADES) + 7) / 8];
-                uint8_t skip_113[1];
-                uint8_t wMooMooBerries;
-                uint8_t wUndergroundSwitchPositions;
-                uint8_t wFarfetchdPosition;
-                uint8_t skip_114[13];
-                // map scene ids
-                uint8_t wPokecenter2FSceneID;
-                uint8_t wTradeCenterSceneID;
-                uint8_t wColosseumSceneID;
-                uint8_t wTimeCapsuleSceneID;
-                uint8_t wPowerPlantSceneID;
-                uint8_t wCeruleanGymSceneID;
-                uint8_t wRoute25SceneID;
-                uint8_t wTrainerHouseB1FSceneID;
-                uint8_t wVictoryRoadGateSceneID;
-                uint8_t wSaffronMagnetTrainStationSceneID;
-                uint8_t wRoute16GateSceneID;
-                uint8_t wRoute17Route18GateSceneID;
-                uint8_t wIndigoPlateauPokecenter1FSceneID;
-                uint8_t wWillsRoomSceneID;
-                uint8_t wKogasRoomSceneID;
-                uint8_t wBrunosRoomSceneID;
-                uint8_t wKarensRoomSceneID;
-                uint8_t wLancesRoomSceneID;
-                uint8_t wHallOfFameSceneID;
-                uint8_t wRoute27SceneID;
-                uint8_t wNewBarkTownSceneID;
-                uint8_t wElmsLabSceneID;
-                uint8_t wPlayersHouse1FSceneID;
-                uint8_t wRoute29SceneID;
-                uint8_t wCherrygroveCitySceneID;
-                uint8_t wMrPokemonsHouseSceneID;
-                uint8_t wRoute32SceneID;
-                uint8_t wRoute35NationalParkGateSceneID;
-                uint8_t wRoute36SceneID;
-                uint8_t wRoute36NationalParkGateSceneID;
-                uint8_t wAzaleaTownSceneID;
-                uint8_t wGoldenrodGymSceneID;
-                uint8_t wGoldenrodMagnetTrainStationSceneID;
-                uint8_t wGoldenrodPokecenter1FSceneID;
-                uint8_t wOlivineCitySceneID;
-                uint8_t wRoute34SceneID;
-                uint8_t wRoute34IlexForestGateSceneID;
-                uint8_t wEcruteakTinTowerEntranceSceneID;
-                uint8_t wWiseTriosRoomSceneID;
-                uint8_t wEcruteakPokecenter1FSceneID;
-                uint8_t wEcruteakGymSceneID;
-                uint8_t wMahoganyTownSceneID;
-                uint8_t wRoute42SceneID;
-                uint8_t wCianwoodCitySceneID;
-                uint8_t wBattleTower1FSceneID;
-                uint8_t wBattleTowerBattleRoomSceneID;
-                uint8_t wBattleTowerElevatorSceneID;
-                uint8_t wBattleTowerHallwaySceneID;
-                uint8_t wBattleTowerOutsideSceneID;
-                uint8_t wRoute43GateSceneID;
-                uint8_t wMountMoonSceneID;
-                uint8_t wSproutTower3FSceneID;
-                uint8_t wTinTower1FSceneID;
-                uint8_t wBurnedTower1FSceneID;
-                uint8_t wBurnedTowerB1FSceneID;
-                uint8_t wRadioTower5FSceneID;
-                uint8_t wRuinsOfAlphOutsideSceneID;
-                uint8_t wRuinsOfAlphResearchCenterSceneID;
-                uint8_t wRuinsOfAlphHoOhChamberSceneID;
-                uint8_t wRuinsOfAlphKabutoChamberSceneID;
-                uint8_t wRuinsOfAlphOmanyteChamberSceneID;
-                uint8_t wRuinsOfAlphAerodactylChamberSceneID;
-                uint8_t wRuinsOfAlphInnerChamberSceneID;
-                uint8_t wMahoganyMart1FSceneID;
-                uint8_t wTeamRocketBaseB1FSceneID;
-                uint8_t wTeamRocketBaseB2FSceneID;
-                uint8_t wTeamRocketBaseB3FSceneID;
-                uint8_t wGoldenrodUndergroundSwitchRoomEntrancesSceneID;
-                uint8_t wSilverCaveRoom3SceneID;
-                uint8_t wVictoryRoadSceneID;
-                uint8_t wDragonsDenB1FSceneID;
-                uint8_t wDragonShrineSceneID;
-                uint8_t wOlivinePortSceneID;
-                uint8_t wVermilionPortSceneID;
-                uint8_t wFastShip1FSceneID;
-                uint8_t wFastShipB1FSceneID;
-                uint8_t wMountMoonSquareSceneID;
-                uint8_t wMobileTradeRoomSceneID;
-                uint8_t wMobileBattleRoomSceneID;
-                uint8_t skip_115[49];
-                // fight counts
-                uint8_t wJackFightCount;
-                uint8_t wBeverlyFightCount;
-                // unreferenced
-                uint8_t wHueyFightCount;
-                uint8_t wGavenFightCount;
-                uint8_t wBethFightCount;
-                uint8_t wJoseFightCount;
-                uint8_t wReenaFightCount;
-                uint8_t wJoeyFightCount;
-                uint8_t wWadeFightCount;
-                uint8_t wRalphFightCount;
-                uint8_t wLizFightCount;
-                uint8_t wAnthonyFightCount;
-                uint8_t wToddFightCount;
-                uint8_t wGinaFightCount;
-                uint8_t wIrwinFightCount;
-                // unreferenced
-                uint8_t wArnieFightCount;
-                uint8_t wAlanFightCount;
-                uint8_t wDanaFightCount;
-                uint8_t wChadFightCount;
-                uint8_t wDerekFightCount;
-                // unreferenced
-                uint8_t wTullyFightCount;
-                uint8_t wBrentFightCount;
-                uint8_t wTiffanyFightCount;
-                uint8_t wVanceFightCount;
-                uint8_t wWiltonFightCount;
-                uint8_t wKenjiFightCount;
-                // unreferenced
-                uint8_t wParryFightCount;
-                uint8_t wErinFightCount;
-                uint8_t skip_116[100];
-                uint8_t wEventFlags[((NUM_EVENTS) + 7) / 8];
-                uint8_t wCurBox;
-                uint8_t skip_117[2];
-                uint8_t wBoxNames[BOX_NAME_LENGTH * NUM_BOXES];
-                // bit 2: forest is restless
-                uint8_t wCelebiEvent;
-                uint8_t skip_118[1];
-                // bit 0: using strength
-                // bit 1: always on bike
-                // bit 2: downhill
-                uint8_t wBikeFlags;
-                uint8_t skip_119[1];
-                // cleared along with wBikeFlags by ResetBikeFlags
-                uint16_t wCurMapSceneScriptPointer;
-                uint16_t wCurCaller;
-                uint8_t wCurMapWarpCount;
-                uint16_t wCurMapWarpsPointer;
-                uint8_t wCurMapCoordEventCount;
-                uint16_t wCurMapCoordEventsPointer;
-                uint8_t wCurMapBGEventCount;
-                uint16_t wCurMapBGEventsPointer;
-                uint8_t wCurMapObjectEventCount;
-                uint16_t wCurMapObjectEventsPointer;
-                uint8_t wCurMapSceneScriptCount;
-                uint16_t wCurMapSceneScriptsPointer;
-                uint8_t wCurMapCallbackCount;
-                uint16_t wCurMapCallbacksPointer;
-                uint8_t skip_120[2];
-                // Sprite id of each decoration
-                uint8_t wDecoBed;
-                uint8_t wDecoCarpet;
-                uint8_t wDecoPlant;
-                uint8_t wDecoPoster;
-                uint8_t wDecoConsole;
-                uint8_t wDecoLeftOrnament;
-                uint8_t wDecoRightOrnament;
-                uint8_t wDecoBigDoll;
-                // Items bought from Mom
-                uint8_t wWhichMomItem;
-                uint8_t wWhichMomItemSet;
-                uint8_t wMomItemTriggerBalance[3];
-                uint16_t wDailyResetTimer;
-                uint8_t wDailyFlags1;
-                uint8_t wDailyFlags2;
-                uint8_t wSwarmFlags;
-                uint8_t skip_121[2];
-                uint8_t wTimerEventStartDay;
-                uint8_t skip_122[3];
-                uint8_t wFruitTreeFlags[((NUM_FRUIT_TREES) + 7) / 8];
-                uint8_t skip_123[2];
-                uint16_t wLuckyNumberDayTimer;
-                uint8_t skip_124[2];
-                uint16_t wSpecialPhoneCallID;
-                uint8_t skip_125[2];
-                uint8_t wBugContestStartTime[4];
-                // day, hour, min, sec
-                uint8_t wUnusedTwoDayTimerOn;
-                uint8_t wUnusedTwoDayTimer;
-                uint8_t wUnusedTwoDayTimerStartDate;
-                uint8_t skip_126[4];
-                uint8_t wMobileOrCable_LastSelection;
-                uint8_t wdc41;
-                uint8_t wdc42[8];
-                uint8_t wBuenasPassword;
-                uint8_t wBlueCardBalance;
-                uint8_t wDailyRematchFlags[4];
-                uint8_t wDailyPhoneItemFlags[4];
-                uint8_t wDailyPhoneTimeOfDayFlags[4];
-                uint8_t wKenjiBreakTimer[2];
-                // Kenji
-                uint8_t wYanmaMapGroup;
-                uint8_t wYanmaMapNumber;
-                uint8_t wPlayerMonSelection[3];
-                uint8_t wdc5f;
-                uint8_t wdc60;
-                uint8_t skip_127[18];
-                uint8_t wStepCount;
-                uint8_t wPoisonStepCount;
-                uint8_t skip_128[2];
-                uint8_t wHappinessStepCount;
-                uint8_t skip_129[1];
-                union {
-                    uint8_t wParkBallsRemaining;
-                    uint8_t wSafariBallsRemaining;
-                };
-                uint16_t wSafariTimeRemaining;
-                uint8_t wPhoneList[CONTACT_LIST_SIZE + 1];
-                uint8_t skip_130[22];
-                uint8_t wLuckyNumberShowFlag;
-                uint8_t skip_131[1];
-                uint16_t wLuckyIDNumber;
-                uint8_t wRepelEffect;
-                // If a Repel is in use, it contains the nr of steps it's still active
-                uint16_t wBikeStep;
-                uint8_t wKurtApricornQuantity;
-                //union wPlayerDataEnd
-                //union wCurMapData
-                uint8_t wVisitedSpawns[((NUM_SPAWNS) + 7) / 8];
-                uint8_t wDigWarpNumber;
-                uint8_t wDigMapGroup;
-                uint8_t wDigMapNumber;
-                // used on maps like second floor pokécenter, which are reused, so we know which
-                // map to return to
-                uint8_t wBackupWarpNumber;
-                uint8_t wBackupMapGroup;
-                uint8_t wBackupMapNumber;
-                uint8_t skip_132[3];
-                uint8_t wLastSpawnMapGroup;
-                uint8_t wLastSpawnMapNumber;
-                uint8_t wWarpNumber;
-                uint8_t wMapGroup;
-                uint8_t wMapNumber;
-                uint8_t wYCoord;
-                uint8_t wXCoord;
-                uint8_t wScreenSave[SCREEN_META_WIDTH * SCREEN_META_HEIGHT];
+                // uint16_t wPlayerID;
+                // uint8_t wPlayerName[NAME_LENGTH];
+                // uint8_t wMomsName[NAME_LENGTH];
+                // uint8_t wRivalName[NAME_LENGTH];
+                // uint8_t wRedsName[NAME_LENGTH];
+                // uint8_t wGreensName[NAME_LENGTH];
+                // uint8_t wSavedAtLeastOnce;
+                // uint8_t wSpawnAfterChampion;
+                // // init time set at newgame
+                // uint8_t wStartDay;
+                // uint8_t wStartHour;
+                // uint8_t wStartMinute;
+                // uint8_t wStartSecond;
+                // uint8_t wRTC[4];
+                // uint8_t skip_104[4];
+                // // bit 7: dst
+                // uint8_t wDST;
+                // // used only for BANK(wGameTime)
+                // //union wGameTime
+                // uint8_t wGameTimeCap;
+                // uint16_t wGameTimeHours;
+                // uint8_t wGameTimeMinutes;
+                // uint8_t wGameTimeSeconds;
+                // uint8_t wGameTimeFrames;
+                // uint8_t skip_105[2];
+                // uint8_t wCurDay;
+                // uint8_t skip_106[1];
+                // uint8_t wObjectFollow_Leader;
+                // uint8_t wObjectFollow_Follower;
+                // uint8_t wCenteredObject;
+                // uint8_t wFollowerMovementQueueLength;
+                // uint8_t wFollowMovementQueue[5];
+                // //union wObjectStructs
+                // struct Object wPlayerStruct;
+                // // player is object struct 0
+                // // wObjectStruct1 - wObjectStruct12
+                // // for n, 1, NUM_OBJECT_STRUCTS
+                // struct Object wObjectStruct[(NUM_OBJECT_STRUCTS) - 1];
+                // uint8_t wCmdQueue[CMDQUEUE_CAPACITY * CMDQUEUE_ENTRY_SIZE];
+                // uint8_t wZipCode_Saved[ZIPCODE_MAX_LENGTH];
+                // uint8_t skip_107[40 - ZIPCODE_MAX_LENGTH];
+                // //union wMapObjects
+                // struct MapObject wPlayerObject;
+                // // player is map object 0
+                // // wMap1Object - wMap15Object
+                // // for n, 1, NUM_OBJECTS
+                // struct MapObject wMapObject[(NUM_OBJECTS) - 1];
+                // uint8_t wObjectMasks[NUM_OBJECTS];
+                // uint8_t wVariableSprites[0x100 - SPRITE_VARS];
+                // uint8_t wEnteredMapFromContinue;
+                // uint8_t skip_108[2];
+                // uint8_t wTimeOfDayPal;
+                // uint8_t skip_109[4];
+                // uint8_t wTimeOfDayPalFlags;
+                // uint8_t wTimeOfDayPalset;
+                // uint8_t wCurTimeOfDay;
+                // uint8_t skip_110[1];
+                // uint16_t wSecretID;
+                // // bit 0: pokedex
+                // // bit 1: unown dex
+                // // bit 2: flash
+                // // bit 3: caught pokerus
+                // // bit 4: rocket signal
+                // // bit 5: wild encounters on/off
+                // // bit 6: hall of fame
+                // // bit 7: bug contest on
+                // uint8_t wStatusFlags;
+                // // bit 0: rockets
+                // // bit 1: safari game (unused)
+                // // bit 2: bug contest timer
+                // // bit 3: unused
+                // // bit 4: bike shop call
+                // // bit 5: can use sweet scent
+                // // bit 6: reached goldenrod
+                // // bit 7: rockets in mahogany
+                // uint8_t wStatusFlags2;
+                // uint8_t wMoney[3];
+                // uint8_t wMomsMoney[3];
+                // // bit 0: saving some money
+                // // bit 1: saving half money (unused)
+                // // bit 2: saving all money (unused)
+                // // bit 7: active
+                // uint8_t wMomSavingMoney;
+                // uint16_t wCoins;
+                // //union wBadges
+                // uint8_t wJohtoBadges[((NUM_JOHTO_BADGES) + 7) / 8];
+                // uint8_t wKantoBadges[((NUM_KANTO_BADGES) + 7) / 8];
+                // uint8_t wTMsHMs[NUM_TMS + NUM_HMS];
+                // uint8_t wNumItems;
+                // item_t wItems[MAX_ITEMS * 2 + 1];
+                // uint8_t wNumKeyItems;
+                // item_t wKeyItems[MAX_KEY_ITEMS + 1];
+                // uint8_t wNumBalls;
+                // item_t wBalls[MAX_BALLS * 2 + 1];
+                // uint8_t wNumPCItems;
+                // item_t wPCItems[MAX_PC_ITEMS * 2 + 1];
+                // // bit 0: map
+                // // bit 1: radio
+                // // bit 2: phone
+                // // bit 3: expn
+                // // bit 7: on/off
+                // uint8_t wPokegearFlags;
+                // uint8_t wRadioTuningKnob;
+                // uint8_t wLastDexMode;
+                // uint8_t skip_111[1];
+                // uint8_t wWhichRegisteredItem;
+                // uint8_t wRegisteredItem;
+                // uint8_t wPlayerState;
+                // uint8_t wHallOfFameCount;
+                // uint8_t skip_112[1];
+                // uint8_t wTradeFlags[((NUM_NPC_TRADES) + 7) / 8];
+                // uint8_t skip_113[1];
+                // uint8_t wMooMooBerries;
+                // uint8_t wUndergroundSwitchPositions;
+                // uint8_t wFarfetchdPosition;
+                // uint8_t skip_114[13];
+                // // map scene ids
+                // uint8_t wPokecenter2FSceneID;
+                // uint8_t wTradeCenterSceneID;
+                // uint8_t wColosseumSceneID;
+                // uint8_t wTimeCapsuleSceneID;
+                // uint8_t wPowerPlantSceneID;
+                // uint8_t wCeruleanGymSceneID;
+                // uint8_t wRoute25SceneID;
+                // uint8_t wTrainerHouseB1FSceneID;
+                // uint8_t wVictoryRoadGateSceneID;
+                // uint8_t wSaffronMagnetTrainStationSceneID;
+                // uint8_t wRoute16GateSceneID;
+                // uint8_t wRoute17Route18GateSceneID;
+                // uint8_t wIndigoPlateauPokecenter1FSceneID;
+                // uint8_t wWillsRoomSceneID;
+                // uint8_t wKogasRoomSceneID;
+                // uint8_t wBrunosRoomSceneID;
+                // uint8_t wKarensRoomSceneID;
+                // uint8_t wLancesRoomSceneID;
+                // uint8_t wHallOfFameSceneID;
+                // uint8_t wRoute27SceneID;
+                // uint8_t wNewBarkTownSceneID;
+                // uint8_t wElmsLabSceneID;
+                // uint8_t wPlayersHouse1FSceneID;
+                // uint8_t wRoute29SceneID;
+                // uint8_t wCherrygroveCitySceneID;
+                // uint8_t wMrPokemonsHouseSceneID;
+                // uint8_t wRoute32SceneID;
+                // uint8_t wRoute35NationalParkGateSceneID;
+                // uint8_t wRoute36SceneID;
+                // uint8_t wRoute36NationalParkGateSceneID;
+                // uint8_t wAzaleaTownSceneID;
+                // uint8_t wGoldenrodGymSceneID;
+                // uint8_t wGoldenrodMagnetTrainStationSceneID;
+                // uint8_t wGoldenrodPokecenter1FSceneID;
+                // uint8_t wOlivineCitySceneID;
+                // uint8_t wRoute34SceneID;
+                // uint8_t wRoute34IlexForestGateSceneID;
+                // uint8_t wEcruteakTinTowerEntranceSceneID;
+                // uint8_t wWiseTriosRoomSceneID;
+                // uint8_t wEcruteakPokecenter1FSceneID;
+                // uint8_t wEcruteakGymSceneID;
+                // uint8_t wMahoganyTownSceneID;
+                // uint8_t wRoute42SceneID;
+                // uint8_t wCianwoodCitySceneID;
+                // uint8_t wBattleTower1FSceneID;
+                // uint8_t wBattleTowerBattleRoomSceneID;
+                // uint8_t wBattleTowerElevatorSceneID;
+                // uint8_t wBattleTowerHallwaySceneID;
+                // uint8_t wBattleTowerOutsideSceneID;
+                // uint8_t wRoute43GateSceneID;
+                // uint8_t wMountMoonSceneID;
+                // uint8_t wSproutTower3FSceneID;
+                // uint8_t wTinTower1FSceneID;
+                // uint8_t wBurnedTower1FSceneID;
+                // uint8_t wBurnedTowerB1FSceneID;
+                // uint8_t wRadioTower5FSceneID;
+                // uint8_t wRuinsOfAlphOutsideSceneID;
+                // uint8_t wRuinsOfAlphResearchCenterSceneID;
+                // uint8_t wRuinsOfAlphHoOhChamberSceneID;
+                // uint8_t wRuinsOfAlphKabutoChamberSceneID;
+                // uint8_t wRuinsOfAlphOmanyteChamberSceneID;
+                // uint8_t wRuinsOfAlphAerodactylChamberSceneID;
+                // uint8_t wRuinsOfAlphInnerChamberSceneID;
+                // uint8_t wMahoganyMart1FSceneID;
+                // uint8_t wTeamRocketBaseB1FSceneID;
+                // uint8_t wTeamRocketBaseB2FSceneID;
+                // uint8_t wTeamRocketBaseB3FSceneID;
+                // uint8_t wGoldenrodUndergroundSwitchRoomEntrancesSceneID;
+                // uint8_t wSilverCaveRoom3SceneID;
+                // uint8_t wVictoryRoadSceneID;
+                // uint8_t wDragonsDenB1FSceneID;
+                // uint8_t wDragonShrineSceneID;
+                // uint8_t wOlivinePortSceneID;
+                // uint8_t wVermilionPortSceneID;
+                // uint8_t wFastShip1FSceneID;
+                // uint8_t wFastShipB1FSceneID;
+                // uint8_t wMountMoonSquareSceneID;
+                // uint8_t wMobileTradeRoomSceneID;
+                // uint8_t wMobileBattleRoomSceneID;
+                // uint8_t skip_115[49];
+                // // fight counts
+                // uint8_t wJackFightCount;
+                // uint8_t wBeverlyFightCount;
+                // // unreferenced
+                // uint8_t wHueyFightCount;
+                // uint8_t wGavenFightCount;
+                // uint8_t wBethFightCount;
+                // uint8_t wJoseFightCount;
+                // uint8_t wReenaFightCount;
+                // uint8_t wJoeyFightCount;
+                // uint8_t wWadeFightCount;
+                // uint8_t wRalphFightCount;
+                // uint8_t wLizFightCount;
+                // uint8_t wAnthonyFightCount;
+                // uint8_t wToddFightCount;
+                // uint8_t wGinaFightCount;
+                // uint8_t wIrwinFightCount;
+                // // unreferenced
+                // uint8_t wArnieFightCount;
+                // uint8_t wAlanFightCount;
+                // uint8_t wDanaFightCount;
+                // uint8_t wChadFightCount;
+                // uint8_t wDerekFightCount;
+                // // unreferenced
+                // uint8_t wTullyFightCount;
+                // uint8_t wBrentFightCount;
+                // uint8_t wTiffanyFightCount;
+                // uint8_t wVanceFightCount;
+                // uint8_t wWiltonFightCount;
+                // uint8_t wKenjiFightCount;
+                // // unreferenced
+                // uint8_t wParryFightCount;
+                // uint8_t wErinFightCount;
+                // uint8_t skip_116[100];
+                // uint8_t wEventFlags[((NUM_EVENTS) + 7) / 8];
+                // uint8_t wCurBox;
+                // uint8_t skip_117[2];
+                // uint8_t wBoxNames[BOX_NAME_LENGTH * NUM_BOXES];
+                // // bit 2: forest is restless
+                // uint8_t wCelebiEvent;
+                // uint8_t skip_118[1];
+                // // bit 0: using strength
+                // // bit 1: always on bike
+                // // bit 2: downhill
+                // uint8_t wBikeFlags;
+                // uint8_t skip_119[1];
+                // // cleared along with wBikeFlags by ResetBikeFlags
+                // uint16_t wCurMapSceneScriptPointer;
+                // uint16_t wCurCaller;
+                // uint8_t wCurMapWarpCount;
+                // uint16_t wCurMapWarpsPointer;
+                // uint8_t wCurMapCoordEventCount;
+                // uint16_t wCurMapCoordEventsPointer;
+                // uint8_t wCurMapBGEventCount;
+                // uint16_t wCurMapBGEventsPointer;
+                // uint8_t wCurMapObjectEventCount;
+                // uint16_t wCurMapObjectEventsPointer;
+                // uint8_t wCurMapSceneScriptCount;
+                // uint16_t wCurMapSceneScriptsPointer;
+                // uint8_t wCurMapCallbackCount;
+                // uint16_t wCurMapCallbacksPointer;
+                // uint8_t skip_120[2];
+                // // Sprite id of each decoration
+                // uint8_t wDecoBed;
+                // uint8_t wDecoCarpet;
+                // uint8_t wDecoPlant;
+                // uint8_t wDecoPoster;
+                // uint8_t wDecoConsole;
+                // uint8_t wDecoLeftOrnament;
+                // uint8_t wDecoRightOrnament;
+                // uint8_t wDecoBigDoll;
+                // // Items bought from Mom
+                // uint8_t wWhichMomItem;
+                // uint8_t wWhichMomItemSet;
+                // uint8_t wMomItemTriggerBalance[3];
+                // uint16_t wDailyResetTimer;
+                // uint8_t wDailyFlags1;
+                // uint8_t wDailyFlags2;
+                // uint8_t wSwarmFlags;
+                // uint8_t skip_121[2];
+                // uint8_t wTimerEventStartDay;
+                // uint8_t skip_122[3];
+                // uint8_t wFruitTreeFlags[((NUM_FRUIT_TREES) + 7) / 8];
+                // uint8_t skip_123[2];
+                // uint16_t wLuckyNumberDayTimer;
+                // uint8_t skip_124[2];
+                // uint16_t wSpecialPhoneCallID;
+                // uint8_t skip_125[2];
+                // uint8_t wBugContestStartTime[4];
+                // // day, hour, min, sec
+                // uint8_t wUnusedTwoDayTimerOn;
+                // uint8_t wUnusedTwoDayTimer;
+                // uint8_t wUnusedTwoDayTimerStartDate;
+                // uint8_t skip_126[4];
+                // uint8_t wMobileOrCable_LastSelection;
+                // uint8_t wdc41;
+                // uint8_t wdc42[8];
+                // uint8_t wBuenasPassword;
+                // uint8_t wBlueCardBalance;
+                // uint8_t wDailyRematchFlags[4];
+                // uint8_t wDailyPhoneItemFlags[4];
+                // uint8_t wDailyPhoneTimeOfDayFlags[4];
+                // uint8_t wKenjiBreakTimer[2];
+                // // Kenji
+                // uint8_t wYanmaMapGroup;
+                // uint8_t wYanmaMapNumber;
+                // uint8_t wPlayerMonSelection[3];
+                // uint8_t wdc5f;
+                // uint8_t wdc60;
+                // uint8_t skip_127[18];
+                // uint8_t wStepCount;
+                // uint8_t wPoisonStepCount;
+                // uint8_t skip_128[2];
+                // uint8_t wHappinessStepCount;
+                // uint8_t skip_129[1];
+                // union {
+                //     uint8_t wParkBallsRemaining;
+                //     uint8_t wSafariBallsRemaining;
+                // };
+                // uint16_t wSafariTimeRemaining;
+                // uint8_t wPhoneList[CONTACT_LIST_SIZE + 1];
+                // uint8_t skip_130[22];
+                // uint8_t wLuckyNumberShowFlag;
+                // uint8_t skip_131[1];
+                // uint16_t wLuckyIDNumber;
+                // uint8_t wRepelEffect;
+                // // If a Repel is in use, it contains the nr of steps it's still active
+                // uint16_t wBikeStep;
+                // uint8_t wKurtApricornQuantity;
+                // //union wPlayerDataEnd
+                // //union wCurMapData
+                // uint8_t wVisitedSpawns[((NUM_SPAWNS) + 7) / 8];
+                // uint8_t wDigWarpNumber;
+                // uint8_t wDigMapGroup;
+                // uint8_t wDigMapNumber;
+                // // used on maps like second floor pokécenter, which are reused, so we know which
+                // // map to return to
+                // uint8_t wBackupWarpNumber;
+                // uint8_t wBackupMapGroup;
+                // uint8_t wBackupMapNumber;
+                // uint8_t skip_132[3];
+                // uint8_t wLastSpawnMapGroup;
+                // uint8_t wLastSpawnMapNumber;
+                // uint8_t wWarpNumber;
+                // uint8_t wMapGroup;
+                // uint8_t wMapNumber;
+                // uint8_t wYCoord;
+                // uint8_t wXCoord;
+                // uint8_t wScreenSave[SCREEN_META_WIDTH * SCREEN_META_HEIGHT];
                 //void wCurMapDataEnd
             };
             // Party
             struct {
                 // WRAMX
                 //union wPokemonData
-                uint8_t wPartyCount;
-                species_t wPartySpecies[PARTY_LENGTH];
-                uint8_t wPartyEnd;
-                // older code doesn't check wPartyCount
-                // wPartyMon1 - wPartyMon6
-                //union wPartyMons
-                // for n, 1, PARTY_LENGTH + 1
-                // wPartyMon1 - wPartyMon6
-                struct PartyMon wPartyMon[(PARTY_LENGTH + 1) - 1];
-                // wPartyMon1OT - wPartyMon6OT
-                //union wPartyMonOTs
-                // for n, 1, PARTY_LENGTH + 1
-                uint8_t wPartyMonOT[(PARTY_LENGTH + 1) - 1][NAME_LENGTH];
-                // wPartyMon1Nickname - wPartyMon6Nickname
-                //union wPartyMonNicknames
-                // for n, 1, PARTY_LENGTH + 1
-                uint8_t wPartyMonNickname[(PARTY_LENGTH + 1) - 1][MON_NAME_LENGTH];
-                uint8_t wPartyMonNicknamesEnd[22];
-                uint8_t wPokedexCaught[((NUM_POKEMON) + 7) / 8];
-                //union wEndPokedexCaught
-                uint8_t wPokedexSeen[((NUM_POKEMON) + 7) / 8];
-                //union wEndPokedexSeen
-                uint8_t wUnownDex[NUM_UNOWN];
-                uint8_t wUnlockedUnowns;
-                uint8_t wFirstUnownSeen;
-                // bit 7: active
-                // bit 6: egg ready
-                // bit 5: monsters are compatible
-                // bit 0: monster 1 in day-care
-                uint8_t wDayCareMan;
-                uint8_t wBreedMon1Nickname[MON_NAME_LENGTH];
-                uint8_t wBreedMon1OT[NAME_LENGTH];
-                struct BoxMon wBreedMon1;
-                // bit 7: active
-                // bit 0: monster 2 in day-care
-                uint8_t wDayCareLady;
-                uint8_t wStepsToEgg;
-                //  z: yes
-                // nz: no
-                uint8_t wBreedMotherOrNonDitto;
-                uint8_t wBreedMon2Nickname[MON_NAME_LENGTH];
-                uint8_t wBreedMon2OT[NAME_LENGTH];
-                struct BoxMon wBreedMon2;
-                uint8_t wEggMonNickname[MON_NAME_LENGTH];
-                uint8_t wEggMonOT[NAME_LENGTH];
-                struct BoxMon wEggMon;
-                uint8_t wBugContestSecondPartySpecies;
-                struct PartyMon wContestMon;
-                uint8_t wDunsparceMapGroup;
-                uint8_t wDunsparceMapNumber;
-                uint8_t wFishingSwarmFlag;
-                struct Roamer wRoamMon1;
-                struct Roamer wRoamMon2;
-                struct Roamer wRoamMon3;
-                uint8_t wRoamMons_CurMapNumber;
-                uint8_t wRoamMons_CurMapGroup;
-                uint8_t wRoamMons_LastMapNumber;
-                uint8_t wRoamMons_LastMapGroup;
-                uint8_t wBestMagikarpLengthFeet;
-                uint8_t wBestMagikarpLengthInches;
-                uint8_t wMagikarpRecordHoldersName[NAME_LENGTH];
+                // uint8_t wPartyCount;
+                // species_t wPartySpecies[PARTY_LENGTH];
+                // uint8_t wPartyEnd;
+                // // older code doesn't check wPartyCount
+                // // wPartyMon1 - wPartyMon6
+                // //union wPartyMons
+                // // for n, 1, PARTY_LENGTH + 1
+                // // wPartyMon1 - wPartyMon6
+                // struct PartyMon wPartyMon[(PARTY_LENGTH + 1) - 1];
+                // // wPartyMon1OT - wPartyMon6OT
+                // //union wPartyMonOTs
+                // // for n, 1, PARTY_LENGTH + 1
+                // uint8_t wPartyMonOT[(PARTY_LENGTH + 1) - 1][NAME_LENGTH];
+                // // wPartyMon1Nickname - wPartyMon6Nickname
+                // //union wPartyMonNicknames
+                // // for n, 1, PARTY_LENGTH + 1
+                // uint8_t wPartyMonNickname[(PARTY_LENGTH + 1) - 1][MON_NAME_LENGTH];
+                // uint8_t wPartyMonNicknamesEnd[22];
+                // uint8_t wPokedexCaught[((NUM_POKEMON) + 7) / 8];
+                // //union wEndPokedexCaught
+                // uint8_t wPokedexSeen[((NUM_POKEMON) + 7) / 8];
+                // //union wEndPokedexSeen
+                // uint8_t wUnownDex[NUM_UNOWN];
+                // uint8_t wUnlockedUnowns;
+                // uint8_t wFirstUnownSeen;
+                // // bit 7: active
+                // // bit 6: egg ready
+                // // bit 5: monsters are compatible
+                // // bit 0: monster 1 in day-care
+                // uint8_t wDayCareMan;
+                // uint8_t wBreedMon1Nickname[MON_NAME_LENGTH];
+                // uint8_t wBreedMon1OT[NAME_LENGTH];
+                // struct BoxMon wBreedMon1;
+                // // bit 7: active
+                // // bit 0: monster 2 in day-care
+                // uint8_t wDayCareLady;
+                // uint8_t wStepsToEgg;
+                // //  z: yes
+                // // nz: no
+                // uint8_t wBreedMotherOrNonDitto;
+                // uint8_t wBreedMon2Nickname[MON_NAME_LENGTH];
+                // uint8_t wBreedMon2OT[NAME_LENGTH];
+                // struct BoxMon wBreedMon2;
+                // uint8_t wEggMonNickname[MON_NAME_LENGTH];
+                // uint8_t wEggMonOT[NAME_LENGTH];
+                // struct BoxMon wEggMon;
+                // uint8_t wBugContestSecondPartySpecies;
+                // struct PartyMon wContestMon;
+                // uint8_t wDunsparceMapGroup;
+                // uint8_t wDunsparceMapNumber;
+                // uint8_t wFishingSwarmFlag;
+                // struct Roamer wRoamMon1;
+                // struct Roamer wRoamMon2;
+                // struct Roamer wRoamMon3;
+                // uint8_t wRoamMons_CurMapNumber;
+                // uint8_t wRoamMons_CurMapGroup;
+                // uint8_t wRoamMons_LastMapNumber;
+                // uint8_t wRoamMons_LastMapGroup;
+                // uint8_t wBestMagikarpLengthFeet;
+                // uint8_t wBestMagikarpLengthInches;
+                // uint8_t wMagikarpRecordHoldersName[NAME_LENGTH];
                 //union wPokemonDataEnd
                 //void wGameDataEnd
             };
@@ -3378,19 +3399,24 @@ struct wram_s
                         uint8_t skip_140[0x1];
                         uint8_t w3_d810[0x59];
                         uint8_t w3_d869[0x17];
-                        uint8_t w3_d880[1];
-                        uint8_t w3_d881[8];
-                        uint8_t w3_d889[1];
-                        uint8_t w3_d88a[4];
+                        uint8_t w3_d880[0xe];
+                        // uint8_t w3_d881[8];
+                        // uint8_t w3_d889[1];
+                        // uint8_t w3_d88a[4];
                         uint8_t w3_d88e[1];
                         uint8_t w3_d88f[4];
                         uint8_t w3_d893[1];
                         uint8_t w3_d894[1];
                         uint8_t w3_d895[11];
-                        uint8_t w3_d8a0;
-                        uint8_t w3_d8a1;
-                        uint8_t w3_d8a2;
-                        uint8_t w3_d8a3;
+                        union {
+                            struct {
+                                uint8_t w3_d8a0;
+                                uint8_t w3_d8a1;
+                                uint8_t w3_d8a2;
+                                uint8_t w3_d8a3;
+                            };
+                            uint8_t w3_d8a0_buf[4];
+                        };
                     };
                 };
                 uint8_t skip_141[0x1c0];

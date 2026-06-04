@@ -5691,17 +5691,17 @@ void Function1199e2(void){
     // LD_A_addr(w3_d880);
     // CP_A(0x31);
     // JP_NZ (mFunction1199e2_asm_119aa7);
-    if(wram->w3_d880[0] != 0x31)
+    if(wram->w3_d880[0x0] != 0x31)
         return Function1199e2_asm_119aa7();
     // LD_A_addr(w3_d881);
     // CP_A(0x20);
     // JP_NZ (mFunction1199e2_asm_119aa7);
-    if(wram->w3_d881[0] != 0x20)
+    if(wram->w3_d880[0x1] != 0x20)
         return Function1199e2_asm_119aa7();
     // LD_A_addr(w3_d88a);
     // CP_A(0x20);
     // JP_NZ (mFunction1199e2_asm_119aa7);
-    if(wram->w3_d88a[0] != 0x20)
+    if(wram->w3_d880[0xa] != 0x20)
         return Function1199e2_asm_119aa7();
     // LD_A_addr(w3_d894);
     // CP_A(0x20);
@@ -5718,9 +5718,9 @@ void Function1199e2(void){
     // LD_addr_A(w3_d8a3);
     wram->w3_d8a3 = 0;
     // LD_HL(w3_d8a0);
-    uint8_t* hl2 = &wram->w3_d8a0;
+    uint8_t* hl2 = wram->w3_d8a0_buf;
     // LD_BC(w3_d889);
-    uint8_t* bc2 = wram->w3_d889;
+    uint8_t* bc2 = wram->w3_d880 + 9;
     // CALL(aFunction119e98);
     Function119e98(hl2, bc2);
     // CALL(aFunction119e98);
@@ -5759,7 +5759,7 @@ void Function1199e2(void){
     // LD_addr_A(w3_d8a3);
     wram->w3_d8a3 = 0;
     // LD_HL(w3_d8a0);
-    hl2 = &wram->w3_d8a0;
+    hl2 = wram->w3_d8a0_buf;
     // LD_BC(w3_d88e);
     // CALL(aFunction119e98);
     Function119e98(hl2, wram->w3_d88e);

@@ -1174,7 +1174,7 @@ void Function17d48d(void){
     // LD_A_hli;
     a = *(hl++);
     // LD_DE(wc608);
-    uint8_t* de2 = wram->wc608;
+    uint8_t* de2 = wram->wc608_buf;
     // LD_C(0x8);
     uint8_t c = 0x8;
 

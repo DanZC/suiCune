@@ -10900,7 +10900,7 @@ static void GiveExperiencePoints_EvenlyDivideExpAmongParticipants(void){
     // LD_HL(wEnemyMonBaseStats);
     uint8_t* hl = wram->wEnemyMonBaseStats;
     // LD_C(wEnemyMonEnd - wEnemyMonBaseStats);
-    c = wEnemyMonEnd - wEnemyMonBaseStats;
+    c = sizeof(wram->wEnemyMonBaseStats);
 
     do {
     // base_stat_division_loop:
@@ -13402,7 +13402,7 @@ static void AddLastLinkBattleToLinkRecord_FindOpponentAndAppendRecord(void){
     // LD_HL(sLinkBattleRecord1End - 1);
     uint8_t* hl = GBToRAMAddr(sLinkBattleRecord1End - 6);
     // LD_DE(wLinkBattleRecordBuffer);
-    uint8_t* de = wram->wLinkBattleRecordName;
+    uint8_t* de = wram->wLinkBattleRecordBuffer;
 
     do {
     // loop3:

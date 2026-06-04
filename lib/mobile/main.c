@@ -6393,7 +6393,7 @@ void Function111c17(void){
         // LD_D_H;
         // LD_HL(wMobileSDK_ReceivePacketBuffer + 5);
         // CALL(aMobileSDK_CopyBytes);
-        MobileSDK_CopyBytes((&wram->wc880) + l, wram->wMobileSDK_ReceivePacketBuffer + 5, b);
+        MobileSDK_CopyBytes((wram->wc880_str) + l, wram->wMobileSDK_ReceivePacketBuffer + 5, b);
         // JR(mFunction111d07);
         return Function111d07();
     }
@@ -8766,7 +8766,7 @@ void Function112807(void){
         // LD_B(0x5);
         // LD_DE(wc82f);
         // goto asm_11282a;
-        MobileSDK_CopyBytes(wram->wc82f, wram->wMobileSDK_ReceivePacketBuffer + 5 + (a - 0x5), 0x5);
+        MobileSDK_CopyBytes(wram->wc82f_buf, wram->wMobileSDK_ReceivePacketBuffer + 5 + (a - 0x5), 0x5);
         return;
     }
     // LD_A(0x5);
@@ -8778,7 +8778,7 @@ void Function112807(void){
     // ADD_HL_DE;
     // LD_DE(wc82f);
     // CALL(aMobileSDK_CopyBytes);
-    uint8_t* de = MobileSDK_CopyBytes(wram->wc82f, wram->wc82f + a, 0x5 - a);
+    uint8_t* de = MobileSDK_CopyBytes(wram->wc82f_buf, wram->wc82f_buf + a, 0x5 - a);
     // LD_HL(wMobileSDK_ReceivePacketBuffer + 5);
     // LD_B_C;
 
