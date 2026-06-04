@@ -45,6 +45,17 @@ Then run
 
 Then run suiCune to launch
 
+### CMake
+
+Install gcc, cmake, make, SDL2-devel, SDL2_net-devel, and PhysFS using your distro's package manager.
+
+Then run
+
+    mkdir build && build
+    cmake -DCMAKE_BUILD_TYPE=Release .. && make
+
+Then run suiCune to launch
+
 ### Visual Studio
 
 - Download the latest SDL2 VC devel libraries
@@ -58,7 +69,6 @@ Then run suiCune to launch
 - ???
 - Profit
 
-
 ### Build options
 
 #### make
@@ -69,6 +79,14 @@ Then run suiCune to launch
 | `FASTBG=1`  | Removes extra frame delays on render, increasing the framerate.
 | `BUGFIX=1`  | Enables bugfixes for suiCune (see util/bugfix.h).
 | `USE_PCG=1` | Uses the PCG rng instead of the default Crystal one.
+
+#### CMake
+
+| Option | Notes
+|--------|--------
+| `-DFASTBG=1`  | Removes extra frame delays on render, increasing the framerate.
+| `-DBUGFIX=1`  | Enables bugfixes for suiCune (see util/bugfix.h).
+| `-DUSE_PCG=1` | Uses the PCG rng instead of the default Crystal one.
 
 ## Save compatibility
 

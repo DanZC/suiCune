@@ -23,6 +23,7 @@ gfx/pokemon/*/frames.asm
 *.sym
 
 # tool binaries and directories
+suiCune
 *.exe
 build/
 test/
