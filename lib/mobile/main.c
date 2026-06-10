@@ -9452,7 +9452,7 @@ u8_flag_s Function112b60(char** de, const char** hl, uint8_t* b){
     // IF_C goto asm_112b6f;
     // CP_A(0x3a);
     // IF_NC goto asm_112b6f;
-    if(a >= '0' || a <= '9') {
+    if(a >= '0' && a <= '9') {
         // AND_A(0xf);
         // LD_de_A;
         **de = a & 0xf;

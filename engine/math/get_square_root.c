@@ -13,9 +13,12 @@
 //  Return the square root of de in b.
 uint8_t GetSquareRoot(uint16_t de){
 #if USE_CMATH_SQRT
+//  This function returns 1 if the input is 0, for some reason.
+    if(de == 0)
+        return 1;
 //  Use cmath's sqrt and downcast to uint8_t.
     double x = (double)de;
-    double res = sqrt(x);
+    double res = ceil(sqrt(x));
     return (uint8_t)res;
 #else
 //  Rather than calculating the result, we take the index of the
@@ -75,7 +78,7 @@ uint8_t GetSquareRoot(uint16_t de){
 
         // IF_C goto loop;
         if(Square[i] >= de) {
-            return i;
+            return i+1;
         }
     }
     // RET;
