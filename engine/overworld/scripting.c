@@ -2501,20 +2501,20 @@ void Script_getcurlandmarkname(script_s* s, uint8_t b){
     return ConvertLandmarkToText(loc, b);
 }
 
-static void ConvertLandmarkToText(uint8_t a, uint8_t b){
+static void ConvertLandmarkToText(uint8_t loc, uint8_t buf){
     // LD_E_A;
     // FARCALL(aGetLandmarkName);
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
     
-    return GetStringBuffer(b, GetLandmarkName(a));
+    return GetStringBuffer(buf, GetLandmarkName(loc));
 }
 
-void Script_getlandmarkname(script_s* s, uint8_t a, uint8_t b){
+void Script_getlandmarkname(script_s* s, uint8_t buf, uint8_t loc){
     // CALL(aGetScriptByte);
     // JR(mConvertLandmarkToText);
     (void)s;
-    return ConvertLandmarkToText(a, b);
+    return ConvertLandmarkToText(loc, buf);
 }
 
 void Script_gettrainername(script_s* s, uint8_t a, uint8_t b, uint8_t c){
