@@ -63,7 +63,7 @@ jobs:
             mingw-w64-x86_64-physfs
       - name: Test release build
         run: |
-          make -j $(nproc) RELEASE=1
+          mingw32-make -j $(nproc) RELEASE=1
 
   Windows-CMake:
     runs-on: windows-latest
