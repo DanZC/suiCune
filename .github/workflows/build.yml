@@ -19,6 +19,23 @@ jobs:
 
       - name: Test release build
         run: |
+          make -j $(nproc) RELEASE=1
+
+  Linux-CMake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev
+
+      - name: Test release build
+        run: |
           mkdir build && cd build
           cmake -DCMAKE_BUILD_TYPE=Release ..
           make -j $(nproc)
