@@ -864,7 +864,8 @@ void SavePokemonData(void){
     // LD_DE(sPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    Serialize_PokemonData((uint8_t*)GBToRAMAddr(sPokemonData), &gPokemon);
+    uint8_t* dest = GBToRAMAddr(sPokemonData);
+    Serialize_PokemonData(dest, &gPokemon);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -885,7 +886,8 @@ void SaveChecksum(void){
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asGameData));
     // CALL(aChecksum);
-    uint16_t checksum = Checksum(GBToRAMAddr(sGameData), sGameDataEnd - sGameData);
+    const uint8_t* data = GBToRAMAddr(sGameData);
+    uint16_t checksum = Checksum(data, sGameDataEnd - sGameData);
     // LD_A_E;
     // LD_addr_A(sChecksum + 0);
     // LD_A_D;
@@ -917,9 +919,10 @@ void SaveBackupOptions(void){
     OpenSRAM(MBANK(asBackupOptions));
     // LD_HL(wOptions);
     // LD_DE(sBackupOptions);
+    uint8_t* dest = GBToRAMAddr(sBackupOptions);
     // LD_BC(wOptionsEnd - wOptions);
     // CALL(aCopyBytes);
-    Serialize_OptionsData((uint8_t*)GBToRAMAddr(sBackupOptions), &gOptions);
+    Serialize_OptionsData(dest, &gOptions);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -954,7 +957,8 @@ void SaveBackupPokemonData(void){
     // LD_DE(sBackupPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    CopyBytes_GB(sBackupPokemonData, wPokemonData, wPokemonDataEnd - wPokemonData);
+    uint8_t* dest = GBToRAMAddr(sBackupPokemonData);
+    Serialize_PokemonData(dest, &gPokemon);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -967,7 +971,8 @@ void SaveBackupChecksum(void){
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBackupGameData));
     // CALL(aChecksum);
-    uint16_t checksum = Checksum(GBToRAMAddr(sBackupGameData), sBackupGameDataEnd - sBackupGameData);
+    const uint8_t* data = GBToRAMAddr(sBackupGameData);
+    uint16_t checksum = Checksum(data, sBackupGameDataEnd - sBackupGameData);
     // LD_A_E;
     // LD_addr_A(sBackupChecksum + 0);
     // LD_A_D;
@@ -984,6 +989,7 @@ bool TryLoadSaveFile(void){
     // CALL(aVerifyChecksum);
     // IF_NZ goto backup;
     if(VerifyChecksum()) {
+        log_info("Primary checksum ok!\n");
         // CALL(aLoadPlayerData);
         LoadPlayerData();
         // CALL(aLoadPokemonData);
@@ -1011,10 +1017,12 @@ bool TryLoadSaveFile(void){
         return true;
     }
 
+    log_warn("Failed primary checksum! Trying backup checksum.\n");
 // backup:
     // CALL(aVerifyBackupChecksum);
     // IF_NZ goto corrupt;
     if(VerifyBackupChecksum()) {
+        log_info("Backup checksum ok!\n");
         // CALL(aLoadBackupPlayerData);
         LoadBackupPlayerData();
         // CALL(aLoadBackupPokemonData);
@@ -1236,7 +1244,8 @@ void LoadPokemonData(void){
     // LD_DE(wPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    Deserialize_PokemonData(&gPokemon, (const uint8_t*)GBToRAMAddr(sPokemonData));
+    const uint8_t* data = GBToRAMAddr(sPokemonData);
+    Deserialize_PokemonData(&gPokemon, data);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -1257,7 +1266,8 @@ bool VerifyChecksum(void){
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asGameData));
     // CALL(aChecksum);
-    uint16_t checksum = Checksum(GBToRAMAddr(sGameData), sGameDataEnd - sGameData);
+    const uint8_t* data = GBToRAMAddr(sGameData);
+    uint16_t checksum = Checksum(data, sGameDataEnd - sGameData);
     // LD_A_addr(sChecksum + 0);
     // CP_A_E;
     // IF_NZ goto fail;
@@ -1265,6 +1275,12 @@ bool VerifyChecksum(void){
     // CP_A_D;
     bool success = gb_read16(sChecksum) == checksum;
 
+    if(!success) {
+        log_warn("Checksum does not match %d vs %d\n", gb_read16(sChecksum), checksum);
+    }
+    else {
+        log_info("Checksum matches! %d vs %d\n", gb_read16(sChecksum), checksum);
+    }
 // fail:
     // PUSH_AF;
     // CALL(aCloseSRAM);
@@ -1301,10 +1317,11 @@ void LoadBackupPokemonData(void){
     // CALL(aOpenSRAM);
     OpenSRAM(MBANK(asBackupPokemonData));
     // LD_HL(sBackupPokemonData);
+    const uint8_t* src = GBToRAMAddr(sBackupPokemonData);
     // LD_DE(wPokemonData);
     // LD_BC(wPokemonDataEnd - wPokemonData);
     // CALL(aCopyBytes);
-    Deserialize_PokemonData(&gPokemon, (const uint8_t*)GBToRAMAddr(sBackupPokemonData));
+    Deserialize_PokemonData(&gPokemon, src);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // RET;
@@ -1685,7 +1702,7 @@ void EraseBoxes(void){
 
 }
 
-uint16_t Checksum(uint8_t* hl, uint16_t bc){
+uint16_t Checksum(const uint8_t* hl, uint16_t bc){
     // LD_DE(0);
     uint16_t de = 0;
 

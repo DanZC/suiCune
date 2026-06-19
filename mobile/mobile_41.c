@@ -764,7 +764,9 @@ void BackupMobileEventIndex(void){
     // POP_AF;
     // LD_addr_A(sMobileEventIndexBackup);
     gb_write(sMobileEventIndexBackup, mobileEventIndex);
+    CloseSRAM();
     // Reset Trainer Rankings if corrupted
+    OpenSRAM(MBANK(asTrainerRankings));
     if(!VerifyTrainerRankingsChecksum())
         InitializeTrainerRankings();
     // CALL(aCloseSRAM);

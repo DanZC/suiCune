@@ -291,7 +291,9 @@ static void v_ResetWRAM(void) {
     // LD_BC(wGameDataEnd - wGameData);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill_GB(wGameData, wGameDataEnd - wGameData, 0);
+    ByteFill(&gPlayer, sizeof(gPlayer), 0);
+    ByteFill(&gCurMapData, sizeof(gCurMapData), 0);
+    ByteFill(&gPokemon, sizeof(gPokemon), 0);
 
     // LDH_A_addr(rLY);
     // LDH_addr_A(hUnusedBackup);

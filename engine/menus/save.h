@@ -58,7 +58,7 @@ void SaveBoxAddress(uint32_t de);
 void LoadBoxAddress(uint32_t de);
 void EraseBoxes(void);
 // void BoxAddresses(void);
-uint16_t Checksum(uint8_t* hl, uint16_t bc);
+uint16_t Checksum(const uint8_t* hl, uint16_t bc);
 extern const txt_cmd_s WouldYouLikeToSaveTheGameText[];
 extern const txt_cmd_s SavingDontTurnOffThePowerText[];
 extern const txt_cmd_s SavedTheGameText[];
