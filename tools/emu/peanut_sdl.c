@@ -3922,7 +3922,11 @@ int main(int argc, char* argv[]) {
         LoadRTCStartTime();
     }
 
-    debug_mode_set_default();
+#if DEBUG
+    debug_mode_set(1);
+#else
+    debug_mode_set(0);
+#endif // DEBUG
 
     PopulateConstantsHashtable();
     PopulateMapPointerTable();

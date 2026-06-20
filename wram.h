@@ -562,9 +562,13 @@ struct wram_s
                             };
                             struct {
                                 // debug mon color picker
-                                //union wDebugMiddleColors
-                                uint8_t wDebugLightColor[2];
-                                uint8_t wDebugDarkColor[2];
+                                union {
+                                    uint8_t wDebugMiddleColors[4];
+                                    struct {
+                                        uint8_t wDebugLightColor[2];
+                                        uint8_t wDebugDarkColor[2];
+                                    };
+                                };
                                 uint8_t skip_27[6];
                                 uint8_t wDebugRedChannel;
                                 uint8_t wDebugGreenChannel;
@@ -572,11 +576,15 @@ struct wram_s
                             };
                             struct {
                                 // debug tileset color picker
-                                //union wDebugPalette
-                                uint8_t wDebugWhiteTileColor[2];
-                                uint8_t wDebugLightTileColor[2];
-                                uint8_t wDebugDarkTileColor[2];
-                                uint8_t wDebugBlackTileColor[2];
+                                union {
+                                    uint8_t wDebugPalette[8];
+                                    struct {
+                                        uint8_t wDebugWhiteTileColor[2];
+                                        uint8_t wDebugLightTileColor[2];
+                                        uint8_t wDebugDarkTileColor[2];
+                                        uint8_t wDebugBlackTileColor[2];
+                                    };
+                                };
                             };
                             struct {
                                 // mobile trade mon

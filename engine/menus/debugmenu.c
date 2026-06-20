@@ -19,6 +19,7 @@
 #include "../../mobile/mobile_42.h"
 #include "../../mobile/mobile_5f.h"
 #include "../../util/serialize.h"
+#include "../debug/color_picker.h"
 #include "../gfx/load_font.h"
 #include "../gfx/place_graphic.h"
 #include "../gfx/load_pics.h"
@@ -45,10 +46,10 @@ typedef struct {
 
 static void Handler_Fight(void);
 static void Handler_Link(void);
-static void Handler_Field(void);
+static void Handler_Color(void);
+static void Handler_Color2(void);
 static void Handler_SoundTest(void);
 static void Handler_Subgame(void);
-static void Handler_Anime(void);
 static void Handler_Graphics(void);
 static void Handler_Pokedex(void);
 static void Handler_Trainergear(void);
@@ -64,10 +65,10 @@ static void Handler_News(void);
 static DebugMenuOption debugMenuOptions[] = {
     {"FIGHT@", Handler_Fight},
     {"LINK@", Handler_Link},
-    {"FIELD@", Handler_Field},
+    {"COLOR@", Handler_Color},
+    {"COLOR2@", Handler_Color2},
     {"SOUND@", Handler_SoundTest},
     {"MINIGAME@", Handler_Subgame},
-    {"ANIME@", Handler_Anime},
     {"GRAPHICS@", Handler_Graphics},
     {"POKEDEX@", Handler_Pokedex},
     {"POKEGEAR@", Handler_Trainergear},
@@ -215,8 +216,16 @@ static void Handler_Link(void) {
     PlayMusic(DEBUG_MENU_MUSIC);
 }
 
-static void Handler_Field(void) {
-    // TODO: Implement this function
+static void Handler_Color(void) {
+    wram->wDebugColorIsTrainer = TRUE;
+    DebugColorPicker();
+    PlayMusic(DEBUG_MENU_MUSIC);
+}
+
+static void Handler_Color2(void) {
+    wram->wDebugColorIsTrainer = FALSE;
+    DebugColorPicker();
+    PlayMusic(DEBUG_MENU_MUSIC);
 }
 
 static void Handler_SoundTest(void) {
@@ -225,10 +234,6 @@ static void Handler_SoundTest(void) {
 }
 
 static void Handler_Subgame(void) {
-    // TODO: Implement this function
-}
-
-static void Handler_Anime(void) {
     // TODO: Implement this function
 }
 

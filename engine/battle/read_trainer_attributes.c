@@ -3,6 +3,7 @@
 #include "../../home/copy.h"
 #include "../../home/names.h"
 #include "../../data/trainers/attributes.h"
+#include "../../charmap.h"
 
 uint8_t* GetTrainerClassName(uint8_t c){
     // LD_HL(wRivalName);
@@ -30,7 +31,7 @@ uint8_t* GetTrainerClassName(uint8_t c){
     return GetName(TRAINER_NAME, c);
 }
 
-void GetOTName(uint8_t c){
+uint8_t* GetOTName(uint8_t c){
     // LD_HL(wOTPlayerName);
     uint8_t* hl;
     // LD_A_addr(wLinkMode);
@@ -62,9 +63,10 @@ void GetOTName(uint8_t c){
     // PUSH_DE;
     // CALL(aCopyBytes);
     CopyBytes(wram->wOTClassName, hl, TRAINER_CLASS_NAME_LENGTH);
+    wram->wOTClassName[TRAINER_CLASS_NAME_LENGTH - 1] = CHAR_TERM;
     // POP_DE;
     // RET;
-
+    return wram->wOTClassName;
 }
 
 void GetTrainerAttributes(uint8_t tclass){

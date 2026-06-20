@@ -4946,30 +4946,35 @@ void DoEnemyDamage(bool ignoreSub){
         // LD_addr_A(wEnemyMonHP);
         uint16_t hp = wram->wHPBuffer2 - dmg;
         wram->wEnemyMon.hp = NativeToBigEndian16(hp);
-    #if DEBUG
-        // PUSH_AF;
-        // LD_A(MBANK(asSkipBattle));
-        // CALL(aOpenSRAM);
-        OpenSRAM(MBANK(asSkipBattle));
-        // LD_A_addr(sSkipBattle);
-        uint8_t skipBattle = gb_read(sSkipBattle);
-        // CALL(aCloseSRAM);
-        CloseSRAM();
-        // OR_A_A;
-    // If [sSkipBattle] is nonzero, skip the "jr nc, .no_underflow" check,
-    // so any attack deals maximum damage to the enemy.
-        // IF_NZ goto debug_skip;
-        if(skipBattle != 0 || wram->wHPBuffer2 < dmg)
-        // POP_AF;
-        // IF_NC goto no_underflow;
-        // PUSH_AF;
 
-    // debug_skip:
-        // POP_AF;
-    #else
+        bool defeated = false;
+
+        if(debug_mode()) {
+            // PUSH_AF;
+            // LD_A(MBANK(asSkipBattle));
+            // CALL(aOpenSRAM);
+            OpenSRAM(MBANK(asSkipBattle));
+            // LD_A_addr(sSkipBattle);
+            uint8_t skipBattle = gb_read(sSkipBattle);
+            // CALL(aCloseSRAM);
+            CloseSRAM();
+            // OR_A_A;
+        // If [sSkipBattle] is nonzero, skip the "jr nc, .no_underflow" check,
+        // so any attack deals maximum damage to the enemy.
+            // IF_NZ goto debug_skip;
+            defeated = skipBattle != 0 || wram->wHPBuffer2 < dmg;
+            // POP_AF;
+            // IF_NC goto no_underflow;
+            // PUSH_AF;
+
+        // debug_skip:
+            // POP_AF;
+        }
+        else {
+            defeated = wram->wHPBuffer2 < dmg;
+        }
         // IF_NC goto no_underflow;
-        if(wram->wHPBuffer2 < dmg)
-    #endif
+        if(defeated)
         {
             // LD_A_addr(wHPBuffer2 + 1);
             // LD_hli_A;

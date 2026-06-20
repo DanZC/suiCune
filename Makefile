@@ -74,6 +74,7 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard engine/battle/*.c) \
 	$(wildcard engine/battle/ai/*.c) \
 	$(wildcard engine/battle_anims/*.c) \
+	$(wildcard engine/debug/*.c) \
 	$(wildcard engine/events/*.c) \
 	$(wildcard engine/events/battle_tower/*.c) \
 	$(wildcard engine/events/bug_contest/*.c) \
@@ -189,6 +190,7 @@ clean:
 	$(wildcard engine/battle/*.o) \
 	$(wildcard engine/battle/ai/*.o) \
 	$(wildcard engine/battle_anims/*.o) \
+	$(wildcard engine/debug/*.o) \
 	$(wildcard engine/events/*.o) \
 	$(wildcard engine/events/battle_tower/*.o) \
 	$(wildcard engine/events/bug_contest/*.o) \

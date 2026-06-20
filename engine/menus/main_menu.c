@@ -19,11 +19,6 @@ static bool MainMenuJoypadLoop(void);
 static void MainMenu_PrintCurrentTimeAndDay(void);
 static void ClearTilemapEtc(void);
 
-#if DEBUG
-#define SHOW_DEBUG_MENU 1
-#else
-#define SHOW_DEBUG_MENU 0
-#endif
 void DebugMenu(void);
 
 // MainMenuItems indexes
@@ -61,9 +56,7 @@ void MainMenu(void){
         [MAINMENUITEM_MYSTERY_GIFT]   = MainMenu_MysteryGift,
         [MAINMENUITEM_MOBILE]         = MainMenu_Mobile,
         [MAINMENUITEM_MOBILE_STUDIUM] = MainMenu_MobileStudium,
-    #if SHOW_DEBUG_MENU
         [MAINMENUITEM_DEBUG_ROOM]     = MainMenu_DebugRoom,
-    #endif
     };
 
     static const char* Strings[] = {
@@ -74,9 +67,7 @@ void MainMenu(void){
         [MAINMENUITEM_MYSTERY_GIFT]     = "MYSTERY GIFT@",
         [MAINMENUITEM_MOBILE]           = "MOBILE@",
         [MAINMENUITEM_MOBILE_STUDIUM]   = "MOBILE STUDIUM@",
-    #if SHOW_DEBUG_MENU
         [MAINMENUITEM_DEBUG_ROOM]       = "DEBUG ROOM@",
-    #endif
     };
 
     static const struct MenuData MainMenu_MenuData = {
@@ -93,11 +84,34 @@ void MainMenu(void){
         .function = NULL,
     };
 
+    static const struct MenuData MainMenuDebug_MenuData = {
+        .flags = STATICMENU_CURSOR,  // flags
+        .setupMenu = {
+            .count = 0,  // items
+            //dw ['MainMenuItems'];
+            .itemList = MainMenuItemsDebug,
+            //dw ['PlaceMenuStrings'];
+            .displayFunction = PlaceMenuStrings,
+            //dw ['.Strings'];
+            .stringsList = Strings,
+        },
+        .function = NULL,
+    };
+
     static const struct MenuHeader MainMenu_MenuHeader = {
         .flags = MENU_BACKUP_TILES,  // flags
         .coord = menu_coords(0, 0, 16, 7),
         //dw ['.MenuData'];
         .data = &MainMenu_MenuData,
+        //db ['1'];  // default option
+        .defaultOption = 1,
+    };
+
+    static const struct MenuHeader MainMenuDebug_MenuHeader = {
+        .flags = MENU_BACKUP_TILES,  // flags
+        .coord = menu_coords(0, 0, 16, 7),
+        //dw ['.MenuData'];
+        .data = &MainMenuDebug_MenuData,
         //db ['1'];  // default option
         .defaultOption = 1,
     };
@@ -124,7 +138,14 @@ void MainMenu(void){
         MainMenu_PrintCurrentTimeAndDay();
         // LD_HL(mMainMenu_MenuHeader);
         // CALL(aLoadMenuHeader);
-        LoadMenuHeader(&MainMenu_MenuHeader);
+        if(debug_mode()) {
+            LoadMenuHeader(&MainMenuDebug_MenuHeader);
+            log_info("DEBUG MENU");
+        }
+        else {
+            LoadMenuHeader(&MainMenu_MenuHeader);
+            log_info("DEBUG MENU");
+        }
         // CALL(aMainMenuJoypadLoop);
         bool q = MainMenuJoypadLoop();
         // CALL(aCloseWindow);
@@ -163,143 +184,195 @@ const uint8_t* MainMenuItems[] = {
 // MAINMENU_CONTINUE
     [MAINMENU_CONTINUE] = (const uint8_t[]){
     //db ['3 + DEF(_DEBUG)'];
-#if SHOW_DEBUG_MENU
-        4,
-#else
         3,
-#endif
         MAINMENUITEM_CONTINUE,
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
-#if SHOW_DEBUG_MENU
-        MAINMENUITEM_DEBUG_ROOM,
-#endif
         0xff,
     },
 
 // MAINMENU_MOBILE_MYSTERY
     [MAINMENU_MOBILE_MYSTERY] = (const uint8_t[]){
     //db ['5 + DEF(_DEBUG)'];
-#if SHOW_DEBUG_MENU
-        6,
-#else
         5,
-#endif
         MAINMENUITEM_CONTINUE,
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
         MAINMENUITEM_MYSTERY_GIFT,
         MAINMENUITEM_MOBILE,
-#if SHOW_DEBUG_MENU
-        MAINMENUITEM_DEBUG_ROOM,
-#endif
         0xff,
     },
 
 // MAINMENU_MOBILE
     [MAINMENU_MOBILE] = (const uint8_t[]){
     //db ['4 + DEF(_DEBUG)'];
-#if SHOW_DEBUG_MENU
-        5,
-#else
         4,
-#endif
         MAINMENUITEM_CONTINUE,
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
         MAINMENUITEM_MOBILE,
-#if SHOW_DEBUG_MENU
-        MAINMENUITEM_DEBUG_ROOM,
-#endif
         0xff,
     },
 
 // MAINMENU_MOBILE_STUDIUM
     [MAINMENU_MOBILE_STUDIUM] = (const uint8_t[]){
-#if SHOW_DEBUG_MENU
-        6,
-#else
         5,
-#endif
         MAINMENUITEM_CONTINUE,
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
         MAINMENUITEM_MOBILE,
         MAINMENUITEM_MOBILE_STUDIUM,
-#if SHOW_DEBUG_MENU
-        MAINMENUITEM_DEBUG_ROOM,
-#endif
         0xff,
     },
 
 // MAINMENU_MYSTERY_MOBILE_STUDIUM
     [MAINMENU_MYSTERY_MOBILE_STUDIUM] = (const uint8_t[]){
-#if SHOW_DEBUG_MENU
-        7,
-#else
         6,
-#endif
         MAINMENUITEM_CONTINUE,
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
         MAINMENUITEM_MYSTERY_GIFT,
         MAINMENUITEM_MOBILE,
         MAINMENUITEM_MOBILE_STUDIUM,
-#if SHOW_DEBUG_MENU
-        MAINMENUITEM_DEBUG_ROOM,
-#endif
         0xff,
     },
 
 // MAINMENU_MYSTERY
     [MAINMENU_MYSTERY] = (const uint8_t[]){
-#if SHOW_DEBUG_MENU
-        5,
-#else
         4,
-#endif
         MAINMENUITEM_CONTINUE,
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
         MAINMENUITEM_MYSTERY_GIFT,
-#if SHOW_DEBUG_MENU
-        MAINMENUITEM_DEBUG_ROOM,
-#endif
         0xff,
     },
 
 // MAINMENU_MYSTERY_STUDIUM
     [MAINMENU_MYSTERY_STUDIUM] = (const uint8_t[]){
-#if SHOW_DEBUG_MENU
-        6,
-#else
         5,
-#endif
         MAINMENUITEM_CONTINUE,
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
         MAINMENUITEM_MYSTERY_GIFT,
         MAINMENUITEM_MOBILE_STUDIUM,
-#if SHOW_DEBUG_MENU
-        MAINMENUITEM_DEBUG_ROOM,
-#endif
         0xff,
     },
 
 // MAINMENU_STUDIUM
     [MAINMENU_STUDIUM] = (const uint8_t[]){
-#if SHOW_DEBUG_MENU
-        5,
-#else
         4,
-#endif
         MAINMENUITEM_CONTINUE,
         MAINMENUITEM_NEW_GAME,
         MAINMENUITEM_OPTION,
         MAINMENUITEM_MOBILE_STUDIUM,
-#if SHOW_DEBUG_MENU
+        0xff,
+    },
+};
+
+const uint8_t* MainMenuItemsDebug[] = {
+//  entries correspond to MAINMENU_* constants
+
+// MAINMENU_NEW_GAME
+    [MAINMENU_NEW_GAME] = (const uint8_t[]){
+        //db ['2'];
+        2,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        0xff,
+    },
+
+// MAINMENU_CONTINUE
+    [MAINMENU_CONTINUE] = (const uint8_t[]){
+    //db ['3 + DEF(_DEBUG)'];
+        4,
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
         MAINMENUITEM_DEBUG_ROOM,
-#endif
+        0xff,
+    },
+
+// MAINMENU_MOBILE_MYSTERY
+    [MAINMENU_MOBILE_MYSTERY] = (const uint8_t[]){
+    //db ['5 + DEF(_DEBUG)'];
+        6,
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MYSTERY_GIFT,
+        MAINMENUITEM_MOBILE,
+        MAINMENUITEM_DEBUG_ROOM,
+        0xff,
+    },
+
+// MAINMENU_MOBILE
+    [MAINMENU_MOBILE] = (const uint8_t[]){
+    //db ['4 + DEF(_DEBUG)'];
+        5,
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MOBILE,
+        MAINMENUITEM_DEBUG_ROOM,
+        0xff,
+    },
+
+// MAINMENU_MOBILE_STUDIUM
+    [MAINMENU_MOBILE_STUDIUM] = (const uint8_t[]){
+        6,
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MOBILE,
+        MAINMENUITEM_MOBILE_STUDIUM,
+        MAINMENUITEM_DEBUG_ROOM,
+        0xff,
+    },
+
+// MAINMENU_MYSTERY_MOBILE_STUDIUM
+    [MAINMENU_MYSTERY_MOBILE_STUDIUM] = (const uint8_t[]){
+        7,
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MYSTERY_GIFT,
+        MAINMENUITEM_MOBILE,
+        MAINMENUITEM_MOBILE_STUDIUM,
+        MAINMENUITEM_DEBUG_ROOM,
+        0xff,
+    },
+
+// MAINMENU_MYSTERY
+    [MAINMENU_MYSTERY] = (const uint8_t[]){
+        5,
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MYSTERY_GIFT,
+        MAINMENUITEM_DEBUG_ROOM,
+        0xff,
+    },
+
+// MAINMENU_MYSTERY_STUDIUM
+    [MAINMENU_MYSTERY_STUDIUM] = (const uint8_t[]){
+        6,
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MYSTERY_GIFT,
+        MAINMENUITEM_MOBILE_STUDIUM,
+        MAINMENUITEM_DEBUG_ROOM,
+        0xff,
+    },
+
+// MAINMENU_STUDIUM
+    [MAINMENU_STUDIUM] = (const uint8_t[]){
+        5,
+        MAINMENUITEM_CONTINUE,
+        MAINMENUITEM_NEW_GAME,
+        MAINMENUITEM_OPTION,
+        MAINMENUITEM_MOBILE_STUDIUM,
+        MAINMENUITEM_DEBUG_ROOM,
         0xff,
     },
 };

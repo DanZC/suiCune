@@ -40,6 +40,7 @@ extern const uint16_t BattleObjectPals[];
 void CGBCopyTwoPredefObjectPals(void);
 const char* v_GetMonPalettePointer(species_t a);
 uint16_t* GetMonNormalOrShinyPalettePointer(uint16_t* dest, species_t a, uint16_t bc);
+uint16_t* GetMonNormalOrShinyPalettePointerCustom(uint16_t* dest, species_t a, bool shiny);
 void PushSGBPals(void);
 void v_PushSGBPals(void);
 void InitSGBBorder(void);

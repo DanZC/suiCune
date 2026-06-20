@@ -1123,6 +1123,24 @@ uint16_t* GetMonNormalOrShinyPalettePointer(uint16_t* dest, species_t a, uint16_
     }
 }
 
+uint16_t* GetMonNormalOrShinyPalettePointerCustom(uint16_t* dest, species_t a, bool shiny){
+    if(!shiny) {
+        if(v_GetMonPalettePointer(a) == NULL)
+            return GetCustomMonPalette(dest, a, false);
+        ExtractPaletteFromPNGAssetToBuffer(dest, v_GetMonPalettePointer(a));
+        // First palette color should be ignored 
+        dest[0] = dest[1];
+        dest[1] = dest[2];
+        return dest;
+    }
+    else {
+        if(PokemonShinyPals[a] == NULL)
+            return GetCustomMonPalette(dest, a, true);
+        LoadPaletteAssetColorsToBuffer(dest, 4 * sizeof(uint16_t), PokemonShinyPals[a], 0, 2);
+        return dest;
+    }
+}
+
 void PushSGBPals(void){
     LD_A_addr(wJoypadDisable);
     PUSH_AF;

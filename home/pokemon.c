@@ -314,7 +314,9 @@ void GetBaseData(species_t species){
     }
     else 
     {
-
+    // If the species value is OOB, get Bulbasaur's data as a failsafe.
+        if(species > NUM_POKEMON || species == 0)
+            species = BULBASAUR;
     //  Get BaseData
         //DEC_A;
         const struct BaseData* hl = BasePokemonData + (species - 1);

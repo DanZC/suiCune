@@ -426,12 +426,14 @@ static u8_flag_s DoPlayerMovement_TryStep(void) {
 //  Downhill riding is slower when not moving down.
     // CALL(aDoPlayerMovement_BikeCheck);
     // IF_NZ goto walk;
-#if !DEBUG
-    if(!DoPlayerMovement_BikeCheck() && ((hram.hJoyDown & B_BUTTON) == 0))
-#else
-    if(!DoPlayerMovement_BikeCheck())
-#endif
-        return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_WALK), .flag = true};
+    if(!debug_mode()) {
+        if(!DoPlayerMovement_BikeCheck() && ((hram.hJoyDown & B_BUTTON) == 0))
+            return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_WALK), .flag = true};
+    }
+    else {
+        if(!DoPlayerMovement_BikeCheck())
+            return (u8_flag_s) {.a = DoPlayerMovement_DoStep(STEP_WALK), .flag = true};
+    }
 
     // LD_HL(wBikeFlags);
     // BIT_hl(BIKEFLAGS_DOWNHILL_F);

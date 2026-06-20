@@ -79,6 +79,7 @@ typedef uint8_t move_t;         // Move id type
 
 typedef uint8_t tile_t;
 typedef uint16_t sfx_t;
+typedef uint16_t color_t;
 
 // ROM structs
 

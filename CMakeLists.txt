@@ -334,6 +334,7 @@ add_executable(${PROJECT_NAME}
   engine/battle_anims/functions.c
   engine/battle_anims/helpers.c
   engine/battle_anims/pokeball_wobble.c
+  engine/debug/color_picker.c
   engine/events/basement_key.c
   engine/events/buena.c
   engine/events/buena_menu.c

@@ -122,6 +122,10 @@ static const struct {
     CHARMAP_ENTRY("<3e>", 0x3e),
     CHARMAP_ENTRY("<3f>", 0x3f),
     CHARMAP_ENTRY("<ff>", 0xff),
+
+    CHARMAP_ENTRY("<DEBUGTEST_BLACK>", 0x6e),
+    CHARMAP_ENTRY("<DEBUGTEST_A>", 0x79),
+    CHARMAP_ENTRY("<DEBUGTEST_B>", 0x7a),
 };
 
 // Converts UTF-8 encoded string to Crystal encoding.

@@ -3,6 +3,7 @@ extern const char MobileMenuGFX[];
 void MainMenu(void);
 // void MainMenuItems(void);
 extern const uint8_t* MainMenuItems[];
+extern const uint8_t* MainMenuItemsDebug[];
 // uint8_t MainMenu_GetWhichMenu(void);
 // bool MainMenuJoypadLoop(void);
 // void MainMenu_PrintCurrentTimeAndDay(void);
