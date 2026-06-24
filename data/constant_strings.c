@@ -1,7 +1,12 @@
-#include "../constants.h"
 #include <string.h>
 #include <assert.h>
-#include "../input_system/uthash.h"
+#include "../util/uthash.h"
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
+#include <SDL2/SDL.h>
+#endif // _MSVC_VER
+#include "../constants.h"
 
 struct StringIDPair {
     const char* string;
@@ -1305,6 +1310,680 @@ void PopulateConstantsHashtable(void) {
     entry(GROWTH_FAST);
     entry(GROWTH_SLOW);
     entry(NUM_GROWTH_RATES);
+
+    entry(SDL_CONTROLLER_BUTTON_INVALID);
+    entry(SDL_CONTROLLER_BUTTON_A);
+    entry(SDL_CONTROLLER_BUTTON_B);
+    entry(SDL_CONTROLLER_BUTTON_X);
+    entry(SDL_CONTROLLER_BUTTON_Y);
+    entry(SDL_CONTROLLER_BUTTON_BACK);
+    entry(SDL_CONTROLLER_BUTTON_GUIDE);
+    entry(SDL_CONTROLLER_BUTTON_START);
+    entry(SDL_CONTROLLER_BUTTON_LEFTSTICK);
+    entry(SDL_CONTROLLER_BUTTON_RIGHTSTICK);
+    entry(SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
+    entry(SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
+    entry(SDL_CONTROLLER_BUTTON_DPAD_UP);
+    entry(SDL_CONTROLLER_BUTTON_DPAD_DOWN);
+    entry(SDL_CONTROLLER_BUTTON_DPAD_LEFT);
+    entry(SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
+    entry(SDL_CONTROLLER_BUTTON_MISC1);    /* Xbox Series X share button, PS5 microphone button, Nintendo Switch Pro capture button, Amazon Luna microphone button */
+    entry(SDL_CONTROLLER_BUTTON_PADDLE1);  /* Xbox Elite paddle P1 (upper left, facing the back) */
+    entry(SDL_CONTROLLER_BUTTON_PADDLE2);  /* Xbox Elite paddle P3 (upper right, facing the back) */
+    entry(SDL_CONTROLLER_BUTTON_PADDLE3);  /* Xbox Elite paddle P2 (lower left, facing the back) */
+    entry(SDL_CONTROLLER_BUTTON_PADDLE4);  /* Xbox Elite paddle P4 (lower right, facing the back) */
+    entry(SDL_CONTROLLER_BUTTON_TOUCHPAD); /* PS4/PS5 touchpad button */
+
+    entry(SDLK_UNKNOWN);
+
+    entry(SDLK_RETURN);
+    entry(SDLK_ESCAPE);
+    entry(SDLK_BACKSPACE);
+    entry(SDLK_TAB);
+    entry(SDLK_SPACE);
+    entry(SDLK_EXCLAIM);
+    entry(SDLK_QUOTEDBL);
+    entry(SDLK_HASH);
+    entry(SDLK_PERCENT);
+    entry(SDLK_DOLLAR);
+    entry(SDLK_AMPERSAND);
+    entry(SDLK_QUOTE);
+    entry(SDLK_LEFTPAREN);
+    entry(SDLK_RIGHTPAREN);
+    entry(SDLK_ASTERISK);
+    entry(SDLK_PLUS);
+    entry(SDLK_COMMA);
+    entry(SDLK_MINUS);
+    entry(SDLK_PERIOD);
+    entry(SDLK_SLASH);
+    entry(SDLK_0);
+    entry(SDLK_1);
+    entry(SDLK_2);
+    entry(SDLK_3);
+    entry(SDLK_4);
+    entry(SDLK_5);
+    entry(SDLK_6);
+    entry(SDLK_7);
+    entry(SDLK_8);
+    entry(SDLK_9);
+    entry(SDLK_COLON);
+    entry(SDLK_SEMICOLON);
+    entry(SDLK_LESS);
+    entry(SDLK_EQUALS);
+    entry(SDLK_GREATER);
+    entry(SDLK_QUESTION);
+    entry(SDLK_AT);
+
+    /*
+       Skip uppercase letters
+     */
+
+    entry(SDLK_LEFTBRACKET);
+    entry(SDLK_BACKSLASH);
+    entry(SDLK_RIGHTBRACKET);
+    entry(SDLK_CARET);
+    entry(SDLK_UNDERSCORE);
+    entry(SDLK_BACKQUOTE);
+    entry(SDLK_a);
+    entry(SDLK_b);
+    entry(SDLK_c);
+    entry(SDLK_d);
+    entry(SDLK_e);
+    entry(SDLK_f);
+    entry(SDLK_g);
+    entry(SDLK_h);
+    entry(SDLK_i);
+    entry(SDLK_j);
+    entry(SDLK_k);
+    entry(SDLK_l);
+    entry(SDLK_m);
+    entry(SDLK_n);
+    entry(SDLK_o);
+    entry(SDLK_p);
+    entry(SDLK_q);
+    entry(SDLK_r);
+    entry(SDLK_s);
+    entry(SDLK_t);
+    entry(SDLK_u);
+    entry(SDLK_v);
+    entry(SDLK_w);
+    entry(SDLK_x);
+    entry(SDLK_y);
+    entry(SDLK_z);
+
+    entry(SDLK_CAPSLOCK);
+
+    entry(SDLK_F1);
+    entry(SDLK_F2);
+    entry(SDLK_F3);
+    entry(SDLK_F4);
+    entry(SDLK_F5);
+    entry(SDLK_F6);
+    entry(SDLK_F7);
+    entry(SDLK_F8);
+    entry(SDLK_F9);
+    entry(SDLK_F10);
+    entry(SDLK_F11);
+    entry(SDLK_F12);
+
+    entry(SDLK_PRINTSCREEN);
+    entry(SDLK_SCROLLLOCK);
+    entry(SDLK_PAUSE);
+    entry(SDLK_INSERT);
+    entry(SDLK_HOME);
+    entry(SDLK_PAGEUP);
+    entry(SDLK_DELETE);
+    entry(SDLK_END);
+    entry(SDLK_PAGEDOWN);
+    entry(SDLK_RIGHT);
+    entry(SDLK_LEFT);
+    entry(SDLK_DOWN);
+    entry(SDLK_UP);
+
+    entry(SDLK_NUMLOCKCLEAR);
+    entry(SDLK_KP_DIVIDE);
+    entry(SDLK_KP_MULTIPLY);
+    entry(SDLK_KP_MINUS);
+    entry(SDLK_KP_PLUS);
+    entry(SDLK_KP_ENTER);
+    entry(SDLK_KP_1);
+    entry(SDLK_KP_2);
+    entry(SDLK_KP_3);
+    entry(SDLK_KP_4);
+    entry(SDLK_KP_5);
+    entry(SDLK_KP_6);
+    entry(SDLK_KP_7);
+    entry(SDLK_KP_8);
+    entry(SDLK_KP_9);
+    entry(SDLK_KP_0);
+    entry(SDLK_KP_PERIOD);
+
+    entry(SDLK_APPLICATION);
+    entry(SDLK_POWER);
+    entry(SDLK_KP_EQUALS);
+    entry(SDLK_F13);
+    entry(SDLK_F14);
+    entry(SDLK_F15);
+    entry(SDLK_F16);
+    entry(SDLK_F17);
+    entry(SDLK_F18);
+    entry(SDLK_F19);
+    entry(SDLK_F20);
+    entry(SDLK_F21);
+    entry(SDLK_F22);
+    entry(SDLK_F23);
+    entry(SDLK_F24);
+    entry(SDLK_EXECUTE);
+    entry(SDLK_HELP);
+    entry(SDLK_MENU);
+    entry(SDLK_SELECT);
+    entry(SDLK_STOP);
+    entry(SDLK_AGAIN);
+    entry(SDLK_UNDO);
+    entry(SDLK_CUT);
+    entry(SDLK_COPY);
+    entry(SDLK_PASTE);
+    entry(SDLK_FIND);
+    entry(SDLK_MUTE);
+    entry(SDLK_VOLUMEUP);
+    entry(SDLK_VOLUMEDOWN);
+    entry(SDLK_KP_COMMA);
+    entry(SDLK_KP_EQUALSAS400);
+
+    entry(SDLK_ALTERASE);
+    entry(SDLK_SYSREQ);
+    entry(SDLK_CANCEL);
+    entry(SDLK_CLEAR);
+    entry(SDLK_PRIOR);
+    entry(SDLK_RETURN2);
+    entry(SDLK_SEPARATOR);
+    entry(SDLK_OUT);
+    entry(SDLK_OPER);
+    entry(SDLK_CLEARAGAIN);
+    entry(SDLK_CRSEL);
+    entry(SDLK_EXSEL);
+
+    entry(SDLK_KP_00);
+    entry(SDLK_KP_000);
+    entry(SDLK_THOUSANDSSEPARATOR);
+    entry(SDLK_DECIMALSEPARATOR);
+    entry(SDLK_CURRENCYUNIT);
+    entry(SDLK_CURRENCYSUBUNIT);
+    entry(SDLK_KP_LEFTPAREN);
+    entry(SDLK_KP_RIGHTPAREN);
+    entry(SDLK_KP_LEFTBRACE);
+    entry(SDLK_KP_RIGHTBRACE);
+    entry(SDLK_KP_TAB);
+    entry(SDLK_KP_BACKSPACE);
+    entry(SDLK_KP_A);
+    entry(SDLK_KP_B);
+    entry(SDLK_KP_C);
+    entry(SDLK_KP_D);
+    entry(SDLK_KP_E);
+    entry(SDLK_KP_F);
+    entry(SDLK_KP_XOR);
+    entry(SDLK_KP_POWER);
+    entry(SDLK_KP_PERCENT);
+    entry(SDLK_KP_LESS);
+    entry(SDLK_KP_GREATER);
+    entry(SDLK_KP_AMPERSAND);
+    entry(SDLK_KP_DBLAMPERSAND);
+    entry(SDLK_KP_VERTICALBAR);
+    entry(SDLK_KP_DBLVERTICALBAR);
+    entry(SDLK_KP_COLON);
+    entry(SDLK_KP_HASH);
+    entry(SDLK_KP_SPACE);
+    entry(SDLK_KP_AT);
+    entry(SDLK_KP_EXCLAM);
+    entry(SDLK_KP_MEMSTORE);
+    entry(SDLK_KP_MEMRECALL);
+    entry(SDLK_KP_MEMCLEAR);
+    entry(SDLK_KP_MEMADD);
+    entry(SDLK_KP_MEMSUBTRACT);
+    entry(SDLK_KP_MEMMULTIPLY);
+    entry(SDLK_KP_MEMDIVIDE);
+    entry(SDLK_KP_PLUSMINUS);
+    entry(SDLK_KP_CLEAR);
+    entry(SDLK_KP_CLEARENTRY);
+    entry(SDLK_KP_BINARY);
+    entry(SDLK_KP_OCTAL);
+    entry(SDLK_KP_DECIMAL);
+    entry(SDLK_KP_HEXADECIMAL);
+
+    entry(SDLK_LCTRL);
+    entry(SDLK_LSHIFT);
+    entry(SDLK_LALT);
+    entry(SDLK_LGUI);
+    entry(SDLK_RCTRL);
+    entry(SDLK_RSHIFT);
+    entry(SDLK_RALT);
+    entry(SDLK_RGUI);
+
+    entry(SDLK_MODE);
+
+    entry(SDLK_AUDIONEXT);
+    entry(SDLK_AUDIOPREV);
+    entry(SDLK_AUDIOSTOP);
+    entry(SDLK_AUDIOPLAY);
+    entry(SDLK_AUDIOMUTE);
+    entry(SDLK_MEDIASELECT);
+    entry(SDLK_WWW);
+    entry(SDLK_MAIL);
+    entry(SDLK_CALCULATOR);
+    entry(SDLK_COMPUTER);
+    entry(SDLK_AC_SEARCH);
+    entry(SDLK_AC_HOME);
+    entry(SDLK_AC_BACK);
+    entry(SDLK_AC_FORWARD);
+    entry(SDLK_AC_STOP);
+    entry(SDLK_AC_REFRESH);
+    entry(SDLK_AC_BOOKMARKS);
+
+    entry(SDLK_BRIGHTNESSDOWN);
+    entry(SDLK_BRIGHTNESSUP);
+    entry(SDLK_DISPLAYSWITCH);
+    entry(SDLK_KBDILLUMTOGGLE);
+    entry(SDLK_KBDILLUMDOWN);
+    entry(SDLK_KBDILLUMUP);
+    entry(SDLK_EJECT);
+    entry(SDLK_SLEEP);
+    entry(SDLK_APP1);
+    entry(SDLK_APP2);
+
+    entry(SDLK_AUDIOREWIND);
+    entry(SDLK_AUDIOFASTFORWARD);
+
+    entry(SDLK_SOFTLEFT);
+    entry(SDLK_SOFTRIGHT);
+    entry(SDLK_CALL);
+    entry(SDLK_ENDCALL);
+
+    entry(SDL_SCANCODE_UNKNOWN);
+
+    /**
+     *  \name Usage page 0x07
+     *
+     *  These values are from usage page 0x07 (USB keyboard page).
+     */
+    /* @{ */
+
+    entry(SDL_SCANCODE_A);
+    entry(SDL_SCANCODE_B);
+    entry(SDL_SCANCODE_C);
+    entry(SDL_SCANCODE_D);
+    entry(SDL_SCANCODE_E);
+    entry(SDL_SCANCODE_F);
+    entry(SDL_SCANCODE_G);
+    entry(SDL_SCANCODE_H);
+    entry(SDL_SCANCODE_I);
+    entry(SDL_SCANCODE_J);
+    entry(SDL_SCANCODE_K);
+    entry(SDL_SCANCODE_L);
+    entry(SDL_SCANCODE_M);
+    entry(SDL_SCANCODE_N);
+    entry(SDL_SCANCODE_O);
+    entry(SDL_SCANCODE_P);
+    entry(SDL_SCANCODE_Q);
+    entry(SDL_SCANCODE_R);
+    entry(SDL_SCANCODE_S);
+    entry(SDL_SCANCODE_T);
+    entry(SDL_SCANCODE_U);
+    entry(SDL_SCANCODE_V);
+    entry(SDL_SCANCODE_W);
+    entry(SDL_SCANCODE_X);
+    entry(SDL_SCANCODE_Y);
+    entry(SDL_SCANCODE_Z);
+
+    entry(SDL_SCANCODE_1);
+    entry(SDL_SCANCODE_2);
+    entry(SDL_SCANCODE_3);
+    entry(SDL_SCANCODE_4);
+    entry(SDL_SCANCODE_5);
+    entry(SDL_SCANCODE_6);
+    entry(SDL_SCANCODE_7);
+    entry(SDL_SCANCODE_8);
+    entry(SDL_SCANCODE_9);
+    entry(SDL_SCANCODE_0);
+
+    entry(SDL_SCANCODE_RETURN);
+    entry(SDL_SCANCODE_ESCAPE);
+    entry(SDL_SCANCODE_BACKSPACE);
+    entry(SDL_SCANCODE_TAB);
+    entry(SDL_SCANCODE_SPACE);
+
+    entry(SDL_SCANCODE_MINUS);
+    entry(SDL_SCANCODE_EQUALS);
+    entry(SDL_SCANCODE_LEFTBRACKET);
+    entry(SDL_SCANCODE_RIGHTBRACKET);
+    entry(SDL_SCANCODE_BACKSLASH); /**< Located at the lower left of the return
+                                  *   key on ISO keyboards and at the right end
+                                  *   of the QWERTY row on ANSI keyboards.
+                                  *   Produces REVERSE SOLIDUS (backslash) and
+                                  *   VERTICAL LINE in a US layout, REVERSE
+                                  *   SOLIDUS and VERTICAL LINE in a UK Mac
+                                  *   layout, NUMBER SIGN and TILDE in a UK
+                                  *   Windows layout, DOLLAR SIGN and POUND SIGN
+                                  *   in a Swiss German layout, NUMBER SIGN and
+                                  *   APOSTROPHE in a German layout, GRAVE
+                                  *   ACCENT and POUND SIGN in a French Mac
+                                  *   layout, and ASTERISK and MICRO SIGN in a
+                                  *   French Windows layout.
+                                  */
+    entry(SDL_SCANCODE_NONUSHASH); /**< ISO USB keyboards actually use this code
+                                  *   instead of 49 for the same key, but all
+                                  *   OSes I've seen treat the two codes
+                                  *   identically. So, as an implementor, unless
+                                  *   your keyboard generates both of those
+                                  *   codes and your OS treats them differently,
+                                  *   you should generate SDL_SCANCODE_BACKSLASH
+                                  *   instead of this code. As a user, you
+                                  *   should not rely on this code because SDL
+                                  *   will never generate it with most (all?)
+                                  *   keyboards.
+                                  */
+    entry(SDL_SCANCODE_SEMICOLON);
+    entry(SDL_SCANCODE_APOSTROPHE);
+    entry(SDL_SCANCODE_GRAVE); /**< Located in the top left corner (on both ANSI
+                              *   and ISO keyboards). Produces GRAVE ACCENT and
+                              *   TILDE in a US Windows layout and in US and UK
+                              *   Mac layouts on ANSI keyboards, GRAVE ACCENT
+                              *   and NOT SIGN in a UK Windows layout, SECTION
+                              *   SIGN and PLUS-MINUS SIGN in US and UK Mac
+                              *   layouts on ISO keyboards, SECTION SIGN and
+                              *   DEGREE SIGN in a Swiss German layout (Mac:
+                              *   only on ISO keyboards), CIRCUMFLEX ACCENT and
+                              *   DEGREE SIGN in a German layout (Mac: only on
+                              *   ISO keyboards), SUPERSCRIPT TWO and TILDE in a
+                              *   French Windows layout, COMMERCIAL AT and
+                              *   NUMBER SIGN in a French Mac layout on ISO
+                              *   keyboards, and LESS-THAN SIGN and GREATER-THAN
+                              *   SIGN in a Swiss German, German, or French Mac
+                              *   layout on ANSI keyboards.
+                              */
+    entry(SDL_SCANCODE_COMMA);
+    entry(SDL_SCANCODE_PERIOD);
+    entry(SDL_SCANCODE_SLASH);
+
+    entry(SDL_SCANCODE_CAPSLOCK);
+
+    entry(SDL_SCANCODE_F1);
+    entry(SDL_SCANCODE_F2);
+    entry(SDL_SCANCODE_F3);
+    entry(SDL_SCANCODE_F4);
+    entry(SDL_SCANCODE_F5);
+    entry(SDL_SCANCODE_F6);
+    entry(SDL_SCANCODE_F7);
+    entry(SDL_SCANCODE_F8);
+    entry(SDL_SCANCODE_F9);
+    entry(SDL_SCANCODE_F10);
+    entry(SDL_SCANCODE_F11);
+    entry(SDL_SCANCODE_F12);
+
+    entry(SDL_SCANCODE_PRINTSCREEN);
+    entry(SDL_SCANCODE_SCROLLLOCK);
+    entry(SDL_SCANCODE_PAUSE);
+    entry(SDL_SCANCODE_INSERT); /**< insert on PC, help on some Mac keyboards (but
+                                   does send code 73, not 117) */
+    entry(SDL_SCANCODE_HOME);
+    entry(SDL_SCANCODE_PAGEUP);
+    entry(SDL_SCANCODE_DELETE);
+    entry(SDL_SCANCODE_END);
+    entry(SDL_SCANCODE_PAGEDOWN);
+    entry(SDL_SCANCODE_RIGHT);
+    entry(SDL_SCANCODE_LEFT);
+    entry(SDL_SCANCODE_DOWN);
+    entry(SDL_SCANCODE_UP);
+
+    entry(SDL_SCANCODE_NUMLOCKCLEAR); /**< num lock on PC, clear on Mac keyboards
+                                     */
+    entry(SDL_SCANCODE_KP_DIVIDE);
+    entry(SDL_SCANCODE_KP_MULTIPLY);
+    entry(SDL_SCANCODE_KP_MINUS);
+    entry(SDL_SCANCODE_KP_PLUS);
+    entry(SDL_SCANCODE_KP_ENTER);
+    entry(SDL_SCANCODE_KP_1);
+    entry(SDL_SCANCODE_KP_2);
+    entry(SDL_SCANCODE_KP_3);
+    entry(SDL_SCANCODE_KP_4);
+    entry(SDL_SCANCODE_KP_5);
+    entry(SDL_SCANCODE_KP_6);
+    entry(SDL_SCANCODE_KP_7);
+    entry(SDL_SCANCODE_KP_8);
+    entry(SDL_SCANCODE_KP_9);
+    entry(SDL_SCANCODE_KP_0);
+    entry(SDL_SCANCODE_KP_PERIOD);
+
+    entry(SDL_SCANCODE_NONUSBACKSLASH); /**< This is the additional key that ISO
+                                        *   keyboards have over ANSI ones,
+                                        *   located between left shift and Y.
+                                        *   Produces GRAVE ACCENT and TILDE in a
+                                        *   US or UK Mac layout, REVERSE SOLIDUS
+                                        *   (backslash) and VERTICAL LINE in a
+                                        *   US or UK Windows layout, and
+                                        *   LESS-THAN SIGN and GREATER-THAN SIGN
+                                        *   in a Swiss German, German, or French
+                                        *   layout. */
+    entry(SDL_SCANCODE_APPLICATION); /**< windows contextual menu, compose */
+    entry(SDL_SCANCODE_POWER); /**< The USB document says this is a status flag,
+                               *   not a physical key - but some Mac keyboards
+                               *   do have a power key. */
+    entry(SDL_SCANCODE_KP_EQUALS);
+    entry(SDL_SCANCODE_F13);
+    entry(SDL_SCANCODE_F14);
+    entry(SDL_SCANCODE_F15);
+    entry(SDL_SCANCODE_F16);
+    entry(SDL_SCANCODE_F17);
+    entry(SDL_SCANCODE_F18);
+    entry(SDL_SCANCODE_F19);
+    entry(SDL_SCANCODE_F20);
+    entry(SDL_SCANCODE_F21);
+    entry(SDL_SCANCODE_F22);
+    entry(SDL_SCANCODE_F23);
+    entry(SDL_SCANCODE_F24);
+    entry(SDL_SCANCODE_EXECUTE);
+    entry(SDL_SCANCODE_HELP);    /**< AL Integrated Help Center */
+    entry(SDL_SCANCODE_MENU);    /**< Menu (show menu) */
+    entry(SDL_SCANCODE_SELECT);
+    entry(SDL_SCANCODE_STOP);    /**< AC Stop */
+    entry(SDL_SCANCODE_AGAIN);   /**< AC Redo/Repeat */
+    entry(SDL_SCANCODE_UNDO);    /**< AC Undo */
+    entry(SDL_SCANCODE_CUT);     /**< AC Cut */
+    entry(SDL_SCANCODE_COPY);    /**< AC Copy */
+    entry(SDL_SCANCODE_PASTE);   /**< AC Paste */
+    entry(SDL_SCANCODE_FIND);    /**< AC Find */
+    entry(SDL_SCANCODE_MUTE);
+    entry(SDL_SCANCODE_VOLUMEUP);
+    entry(SDL_SCANCODE_VOLUMEDOWN);
+/* not sure whether there's a reason to enable these */
+/*     SDL_SCANCODE_LOCKINGCAPSLOCK = 130,  */
+/*     SDL_SCANCODE_LOCKINGNUMLOCK = 131, */
+/*     SDL_SCANCODE_LOCKINGSCROLLLOCK = 132, */
+    entry(SDL_SCANCODE_KP_COMMA);
+    entry(SDL_SCANCODE_KP_EQUALSAS400);
+
+    entry(SDL_SCANCODE_INTERNATIONAL1); /**< used on Asian keyboards, see
+                                            footnotes in USB doc */
+    entry(SDL_SCANCODE_INTERNATIONAL2);
+    entry(SDL_SCANCODE_INTERNATIONAL3); /**< Yen */
+    entry(SDL_SCANCODE_INTERNATIONAL4);
+    entry(SDL_SCANCODE_INTERNATIONAL5);
+    entry(SDL_SCANCODE_INTERNATIONAL6);
+    entry(SDL_SCANCODE_INTERNATIONAL7);
+    entry(SDL_SCANCODE_INTERNATIONAL8);
+    entry(SDL_SCANCODE_INTERNATIONAL9);
+    entry(SDL_SCANCODE_LANG1); /**< Hangul/English toggle */
+    entry(SDL_SCANCODE_LANG2); /**< Hanja conversion */
+    entry(SDL_SCANCODE_LANG3); /**< Katakana */
+    entry(SDL_SCANCODE_LANG4); /**< Hiragana */
+    entry(SDL_SCANCODE_LANG5); /**< Zenkaku/Hankaku */
+    entry(SDL_SCANCODE_LANG6); /**< reserved */
+    entry(SDL_SCANCODE_LANG7); /**< reserved */
+    entry(SDL_SCANCODE_LANG8); /**< reserved */
+    entry(SDL_SCANCODE_LANG9); /**< reserved */
+
+    entry(SDL_SCANCODE_ALTERASE);    /**< Erase-Eaze */
+    entry(SDL_SCANCODE_SYSREQ);
+    entry(SDL_SCANCODE_CANCEL);      /**< AC Cancel */
+    entry(SDL_SCANCODE_CLEAR);
+    entry(SDL_SCANCODE_PRIOR);
+    entry(SDL_SCANCODE_RETURN2);
+    entry(SDL_SCANCODE_SEPARATOR);
+    entry(SDL_SCANCODE_OUT);
+    entry(SDL_SCANCODE_OPER);
+    entry(SDL_SCANCODE_CLEARAGAIN);
+    entry(SDL_SCANCODE_CRSEL);
+    entry(SDL_SCANCODE_EXSEL);
+
+    entry(SDL_SCANCODE_KP_00);
+    entry(SDL_SCANCODE_KP_000);
+    entry(SDL_SCANCODE_THOUSANDSSEPARATOR);
+    entry(SDL_SCANCODE_DECIMALSEPARATOR);
+    entry(SDL_SCANCODE_CURRENCYUNIT);
+    entry(SDL_SCANCODE_CURRENCYSUBUNIT);
+    entry(SDL_SCANCODE_KP_LEFTPAREN);
+    entry(SDL_SCANCODE_KP_RIGHTPAREN);
+    entry(SDL_SCANCODE_KP_LEFTBRACE);
+    entry(SDL_SCANCODE_KP_RIGHTBRACE);
+    entry(SDL_SCANCODE_KP_TAB);
+    entry(SDL_SCANCODE_KP_BACKSPACE);
+    entry(SDL_SCANCODE_KP_A);
+    entry(SDL_SCANCODE_KP_B);
+    entry(SDL_SCANCODE_KP_C);
+    entry(SDL_SCANCODE_KP_D);
+    entry(SDL_SCANCODE_KP_E);
+    entry(SDL_SCANCODE_KP_F);
+    entry(SDL_SCANCODE_KP_XOR);
+    entry(SDL_SCANCODE_KP_POWER);
+    entry(SDL_SCANCODE_KP_PERCENT);
+    entry(SDL_SCANCODE_KP_LESS);
+    entry(SDL_SCANCODE_KP_GREATER);
+    entry(SDL_SCANCODE_KP_AMPERSAND);
+    entry(SDL_SCANCODE_KP_DBLAMPERSAND);
+    entry(SDL_SCANCODE_KP_VERTICALBAR);
+    entry(SDL_SCANCODE_KP_DBLVERTICALBAR);
+    entry(SDL_SCANCODE_KP_COLON);
+    entry(SDL_SCANCODE_KP_HASH);
+    entry(SDL_SCANCODE_KP_SPACE);
+    entry(SDL_SCANCODE_KP_AT);
+    entry(SDL_SCANCODE_KP_EXCLAM);
+    entry(SDL_SCANCODE_KP_MEMSTORE);
+    entry(SDL_SCANCODE_KP_MEMRECALL);
+    entry(SDL_SCANCODE_KP_MEMCLEAR);
+    entry(SDL_SCANCODE_KP_MEMADD);
+    entry(SDL_SCANCODE_KP_MEMSUBTRACT);
+    entry(SDL_SCANCODE_KP_MEMMULTIPLY);
+    entry(SDL_SCANCODE_KP_MEMDIVIDE);
+    entry(SDL_SCANCODE_KP_PLUSMINUS);
+    entry(SDL_SCANCODE_KP_CLEAR);
+    entry(SDL_SCANCODE_KP_CLEARENTRY);
+    entry(SDL_SCANCODE_KP_BINARY);
+    entry(SDL_SCANCODE_KP_OCTAL);
+    entry(SDL_SCANCODE_KP_DECIMAL);
+    entry(SDL_SCANCODE_KP_HEXADECIMAL);
+
+    entry(SDL_SCANCODE_LCTRL);
+    entry(SDL_SCANCODE_LSHIFT);
+    entry(SDL_SCANCODE_LALT); /**< alt, option */
+    entry(SDL_SCANCODE_LGUI); /**< windows, command (apple), meta */
+    entry(SDL_SCANCODE_RCTRL);
+    entry(SDL_SCANCODE_RSHIFT);
+    entry(SDL_SCANCODE_RALT); /**< alt gr, option */
+    entry(SDL_SCANCODE_RGUI); /**< windows, command (apple), meta */
+
+    entry(SDL_SCANCODE_MODE);    /**< I'm not sure if this is really not covered
+                                 *   by any of the above, but since there's a
+                                 *   special KMOD_MODE for it I'm adding it here
+                                 */
+
+    /* @} *//* Usage page 0x07 */
+
+    /**
+     *  \name Usage page 0x0C
+     *
+     *  These values are mapped from usage page 0x0C (USB consumer page).
+     *  See https://usb.org/sites/default/files/hut1_2.pdf
+     *
+     *  There are way more keys in the spec than we can represent in the
+     *  current scancode range, so pick the ones that commonly come up in
+     *  real world usage.
+     */
+    /* @{ */
+
+    entry(SDL_SCANCODE_AUDIONEXT);
+    entry(SDL_SCANCODE_AUDIOPREV);
+    entry(SDL_SCANCODE_AUDIOSTOP);
+    entry(SDL_SCANCODE_AUDIOPLAY);
+    entry(SDL_SCANCODE_AUDIOMUTE);
+    entry(SDL_SCANCODE_MEDIASELECT);
+    entry(SDL_SCANCODE_WWW);             /**< AL Internet Browser */
+    entry(SDL_SCANCODE_MAIL);
+    entry(SDL_SCANCODE_CALCULATOR);      /**< AL Calculator */
+    entry(SDL_SCANCODE_COMPUTER);
+    entry(SDL_SCANCODE_AC_SEARCH);       /**< AC Search */
+    entry(SDL_SCANCODE_AC_HOME);         /**< AC Home */
+    entry(SDL_SCANCODE_AC_BACK);         /**< AC Back */
+    entry(SDL_SCANCODE_AC_FORWARD);      /**< AC Forward */
+    entry(SDL_SCANCODE_AC_STOP);         /**< AC Stop */
+    entry(SDL_SCANCODE_AC_REFRESH);      /**< AC Refresh */
+    entry(SDL_SCANCODE_AC_BOOKMARKS);    /**< AC Bookmarks */
+
+    /* @} *//* Usage page 0x0C */
+
+    /**
+     *  \name Walther keys
+     *
+     *  These are values that Christian Walther added (for mac keyboard?).
+     */
+    /* @{ */
+
+    entry(SDL_SCANCODE_BRIGHTNESSDOWN);
+    entry(SDL_SCANCODE_BRIGHTNESSUP);
+    entry(SDL_SCANCODE_DISPLAYSWITCH); /**< display mirroring/dual display
+                                           switch, video mode switch */
+    entry(SDL_SCANCODE_KBDILLUMTOGGLE);
+    entry(SDL_SCANCODE_KBDILLUMDOWN);
+    entry(SDL_SCANCODE_KBDILLUMUP);
+    entry(SDL_SCANCODE_EJECT);
+    entry(SDL_SCANCODE_SLEEP);           /**< SC System Sleep */
+
+    entry(SDL_SCANCODE_APP1);
+    entry(SDL_SCANCODE_APP2);
+
+    /* @} *//* Walther keys */
+
+    /**
+     *  \name Usage page 0x0C (additional media keys)
+     *
+     *  These values are mapped from usage page 0x0C (USB consumer page).
+     */
+    /* @{ */
+
+    entry(SDL_SCANCODE_AUDIOREWIND);
+    entry(SDL_SCANCODE_AUDIOFASTFORWARD);
+
+    /* @} *//* Usage page 0x0C (additional media keys) */
+
+    /**
+     *  \name Mobile keys
+     *
+     *  These are values that are often used on mobile phones.
+     */
+    /* @{ */
+
+    entry(SDL_SCANCODE_SOFTLEFT); /**< Usually situated below the display on phones and
+                                      used as a multi-function feature key for selecting
+                                      a software defined function shown on the bottom left
+                                      of the display. */
+    entry(SDL_SCANCODE_SOFTRIGHT); /**< Usually situated below the display on phones and
+                                       used as a multi-function feature key for selecting
+                                       a software defined function shown on the bottom right
+                                       of the display. */
+    entry(SDL_SCANCODE_CALL); /**< Used for accepting phone calls. */
+    entry(SDL_SCANCODE_ENDCALL); /**< Used for rejecting phone calls. */
+
+    /* @} *//* Mobile keys */
+
+    /* Add any other keys here. */
 }
 
 u32_flag_s FindConstantValueByString(const char* name) {

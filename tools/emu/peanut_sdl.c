@@ -33,6 +33,7 @@
 #include "../../util/soft_reset.h"
 #include "../../util/intro_jumptable.h"
 #include "../../audio/load.h"
+#include "../../util/input.h"
 #include <stdbool.h>
 #include "../../home/serial.h"
 #include <setjmp.h>
@@ -3409,130 +3410,8 @@ void get_input(void) {
                 }
             } break;
 #endif
-            case SDL_CONTROLLERBUTTONDOWN:
-            case SDL_CONTROLLERBUTTONUP:
-                switch (event.cbutton.button) {
-                    case SDL_CONTROLLER_BUTTON_A:
-                        gb.direct.joypad_bits.a = !event.cbutton.state;
-                        break;
-
-                    case SDL_CONTROLLER_BUTTON_B:
-                        gb.direct.joypad_bits.b = !event.cbutton.state;
-                        break;
-
-                    case SDL_CONTROLLER_BUTTON_BACK:
-                        gb.direct.joypad_bits.select = !event.cbutton.state;
-                        break;
-
-                    case SDL_CONTROLLER_BUTTON_START:
-                        gb.direct.joypad_bits.start = !event.cbutton.state;
-                        break;
-
-                    case SDL_CONTROLLER_BUTTON_DPAD_UP:
-                        gb.direct.joypad_bits.up = !event.cbutton.state;
-                        break;
-
-                    case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
-                        gb.direct.joypad_bits.right = !event.cbutton.state;
-                        break;
-
-                    case SDL_CONTROLLER_BUTTON_DPAD_DOWN:
-                        gb.direct.joypad_bits.down = !event.cbutton.state;
-                        break;
-
-                    case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
-                        gb.direct.joypad_bits.left = !event.cbutton.state;
-                        break;
-                }
-
-                break;
-
-            case SDL_KEYDOWN:
-                switch (event.key.keysym.sym) {
-                    case SDLK_RETURN:
-                        gb.direct.joypad_bits.start = 0;
-                        break;
-
-                    case SDLK_BACKSPACE:
-                        gb.direct.joypad_bits.select = 0;
-                        break;
-
-                    case SDLK_INSERT:
-                        TakeScreenshot(NULL);
-                        break;
-
-                    case SDLK_F7:
-                        StartRecording(NULL, NULL);
-                        break;
-
-                    case SDLK_F5:
-                        StopAndSaveRecording();
-                        break;
-
-                    case SDLK_z:
-                        gb.direct.joypad_bits.a = 0;
-                        break;
-
-                    case SDLK_x:
-                        gb.direct.joypad_bits.b = 0;
-                        break;
-
-                    case SDLK_UP:
-                        gb.direct.joypad_bits.up = 0;
-                        break;
-
-                    case SDLK_RIGHT:
-                        gb.direct.joypad_bits.right = 0;
-                        break;
-
-                    case SDLK_DOWN:
-                        gb.direct.joypad_bits.down = 0;
-                        break;
-
-                    case SDLK_LEFT:
-                        gb.direct.joypad_bits.left = 0;
-                        break;
-                }
-
-                break;
-
-            case SDL_KEYUP:
-                switch (event.key.keysym.sym) {
-                    case SDLK_RETURN:
-                        gb.direct.joypad_bits.start = 1;
-                        break;
-
-                    case SDLK_BACKSPACE:
-                        gb.direct.joypad_bits.select = 1;
-                        break;
-
-                    case SDLK_z:
-                        gb.direct.joypad_bits.a = 1;
-                        break;
-
-                    case SDLK_x:
-                        gb.direct.joypad_bits.b = 1;
-                        break;
-
-                    case SDLK_UP:
-                        gb.direct.joypad_bits.up = 1;
-                        break;
-
-                    case SDLK_RIGHT:
-                        gb.direct.joypad_bits.right = 1;
-                        break;
-
-                    case SDLK_DOWN:
-                        gb.direct.joypad_bits.down = 1;
-                        break;
-
-                    case SDLK_LEFT:
-                        gb.direct.joypad_bits.left = 1;
-                        break;
-                }
-
-                break;
         }
+        handle_input_event(&event, &gb.direct.joypad);
     }
 }
 
@@ -3932,6 +3811,8 @@ int main(int argc, char* argv[]) {
     PopulateMapPointerTable();
     PopulateMapScriptTable();
     JSONLoadTables();
+
+    init_input_mapping();
 
     if(debug_mode()) {
         if(!Test_Serialization()) {

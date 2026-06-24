@@ -611,10 +611,6 @@ add_executable(${PROJECT_NAME}
   gfx/pokemon/unown_anims.c
   gfx/pokemon/unown_idles.c
   gfx/sgb/pal_packets.c
-  input_system/config.c
-  input_system/default_config.c
-  input_system/ini.c
-  input_system/input.c
   lib/mobile/main.c
   maps/AzaleaGym.c
   maps/AzaleaMart.c
@@ -1012,6 +1008,7 @@ add_executable(${PROJECT_NAME}
   util/debug.c
   util/gb_ptr.c
   util/hrc.c
+  util/input.c
   util/intro_jumptable.c
   util/log.c
   util/misc.c

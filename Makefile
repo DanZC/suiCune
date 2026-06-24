@@ -99,7 +99,6 @@ SRCS   := tools/emu/peanut_sdl.c tools/emu/minigb_apu/minigb_apu.c \
 	$(wildcard gfx/*.c) \
 	$(wildcard gfx/pokemon/*.c) \
 	$(wildcard gfx/sgb/*.c) \
-	$(wildcard input_system/*.c) \
 	$(wildcard lib/mobile/*.c) \
 	$(wildcard maps/*.c) \
 	$(wildcard mobile/*.c) \
@@ -215,7 +214,6 @@ clean:
 	$(wildcard gfx/*.o) \
 	$(wildcard gfx/pokemon/*.o) \
 	$(wildcard gfx/sgb/*.o) \
-	$(wildcard input_system/*.o) \
 	$(wildcard lib/mobile/*.o) \
 	$(wildcard maps/*.o) \
 	$(wildcard mobile/*.o) \

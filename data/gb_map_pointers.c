@@ -3,7 +3,7 @@
 #include <assert.h>
 #include "maps/attributes.h"
 #include "../home/map.h"
-#include "../input_system/uthash.h"
+#include "../util/uthash.h"
 
 // This is needed to keep compatability with OG Crystal, since Crystal expects map data pointers to be preloaded with a save file.
 

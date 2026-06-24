@@ -19,6 +19,10 @@ void log_set_dest(FILE* f) {
     s_logdest = f;
 }
 
+log_level_t log_get_level(void) {
+    return s_loglevel;
+}
+
 void logger_set_level(struct Logger *l, log_level_t level) {
     l->level = level;
 }
