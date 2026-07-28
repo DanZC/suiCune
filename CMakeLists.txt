@@ -43,6 +43,11 @@ if(NOT FEATURE_MOBILE)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFEATURE_MOBILE=0")
 endif(FEATURE_MOBILE)
 
+option(FEATURE_TIME_CAPSULE "Enable mobile adapter features" OFF)
+if(FEATURE_TIME_CAPSULE)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFEATURE_TIME_CAPSULE=1")
+endif(FEATURE_TIME_CAPSULE)
+
 set(USE_PHYSFS_DEFAULT OFF)
 if(WIN32)
     set(USE_PHYSFS_DEFAULT ON)
@@ -259,6 +264,8 @@ add_executable(${PROJECT_NAME}
   data/pokemon/egg_moves.c
   data/pokemon/evos_attacks_pointers.c
   data/pokemon/ezchat_order.c
+  data/pokemon/gen1_base_special.c
+  data/pokemon/gen1_order.c
   data/pokemon/menu_icons.c
   data/pokemon/names.c
   data/pokemon/palettes.c
@@ -460,6 +467,7 @@ add_executable(${PROJECT_NAME}
   engine/link/mystery_gift.c
   engine/link/place_waiting_text.c
   engine/link/time_capsule.c
+  engine/link/time_capsule_2.c
   engine/math/get_square_root.c
   engine/math/math.c
   engine/math/print_num.c
@@ -948,6 +956,7 @@ add_executable(${PROJECT_NAME}
   maps/TeamRocketBaseB1F.c
   maps/TeamRocketBaseB2F.c
   maps/TeamRocketBaseB3F.c
+  maps/TimeCapsule.c
   maps/TinTower1F.c
   maps/TinTower2F.c
   maps/TinTower3F.c
