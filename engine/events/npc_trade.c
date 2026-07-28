@@ -405,21 +405,21 @@ const struct NPCTrade* GetTradeAttr(void){
     return NPCTrades + (wram->wJumptableIndex & 0xf);
 }
 
+// DEPRECATED: Use wram->wPartyMon[wram->wCurPartyMon].whatever
 void Trade_GetAttributeOfCurrentPartymon(void){
-    LD_A_addr(wCurPartyMon);
-    CALL(aAddNTimes);
-    RET;
-
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aAddNTimes);
+    // RET;
 }
 
+// DEPRECATED: Use wram->wPartyMon[wram->wPartyCount - 1].whatever
 void Trade_GetAttributeOfLastPartymon(void){
-    LD_A_addr(wPartyCount);
-    DEC_A;
-    CALL(aAddNTimes);
-    LD_E_L;
-    LD_D_H;
-    RET;
-
+    // LD_A_addr(wPartyCount);
+    // DEC_A;
+    // CALL(aAddNTimes);
+    // LD_E_L;
+    // LD_D_H;
+    // RET;
 }
 
 uint8_t* GetTradeMonName(species_t a){
@@ -442,42 +442,39 @@ void CopyTradeName(uint8_t* de, const uint8_t* hl){
 
 void Trade_CopyFourCharString(void){
 //  //  unreferenced
-    LD_BC(4);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-    RET;
+    // LD_BC(4);
+    // CALL(aCopyBytes);
+    // LD_A(0x50);
+    // LD_de_A;
+    // RET;
 
 }
 
 void Trade_CopyThreeCharString(void){
 //  //  unreferenced
-    LD_BC(3);
-    CALL(aCopyBytes);
-    LD_A(0x50);
-    LD_de_A;
-    RET;
-
+    // LD_BC(3);
+    // CALL(aCopyBytes);
+    // LD_A(0x50);
+    // LD_de_A;
+    // RET;
 }
 
 void Trade_CopyTwoBytes(void){
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    LD_de_A;
-    RET;
-
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_hl;
+    // LD_de_A;
+    // RET;
 }
 
 void Trade_CopyTwoBytesReverseEndian(void){
-    LD_A_hli;
-    LD_de_A;
-    DEC_DE;
-    LD_A_hl;
-    LD_de_A;
-    RET;
-
+    // LD_A_hli;
+    // LD_de_A;
+    // DEC_DE;
+    // LD_A_hl;
+    // LD_de_A;
+    // RET;
 }
 
 void GetTradeMonNames(void){

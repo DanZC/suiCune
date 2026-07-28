@@ -2121,15 +2121,14 @@ void AnimateTuningKnob(struct SpriteAnim* bc){
     // RET;
 }
 
-void LoadPokegearRadioChannelPointer(void){
 //  //  unreferenced
-    LD_addr_A(wPokegearRadioChannelBank);
-    LD_A_hli;
-    LD_addr_A(wPokegearRadioChannelAddr);
-    LD_A_hli;
-    LD_addr_A(wPokegearRadioChannelAddr + 1);
-    RET;
-
+void LoadPokegearRadioChannelPointer(void){
+    // LD_addr_A(wPokegearRadioChannelBank);
+    // LD_A_hli;
+    // LD_addr_A(wPokegearRadioChannelAddr);
+    // LD_A_hli;
+    // LD_addr_A(wPokegearRadioChannelAddr + 1);
+    // RET;
 }
 
 static const char* RadioChannels_NoSignal(void) {
@@ -2299,6 +2298,7 @@ const struct RadioChannel RadioChannels[] = {
     {radio_freq(20.5), RadioChannels_EvolutionRadio},
 };
 
+// NOTE: Do we need this anymore?
 #if 0
 void RadioChannels(void){
 //  entries correspond to constants/radio_constants.asm

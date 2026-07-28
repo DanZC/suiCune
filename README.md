@@ -81,6 +81,7 @@ Then run suiCune to launch
 | `USE_PCG=1` | Uses the PCG rng instead of the default Crystal one.
 | `NETWORK=0` | Disables networking (and mobile) features.
 | `MOBILE=0`  | Disables mobile features.
+| `TIMECAPSULE=1` | Enables the time capsule (experimental).
 
 #### CMake
 
@@ -91,6 +92,7 @@ Then run suiCune to launch
 | `-DUSE_PCG=1` | Uses the PCG rng instead of the default Crystal one.
 | `-DFEATURE_NETWORKING=0` | Disables networking (and mobile) features.
 | `-DFEATURE_MOBILE=0`  | Disables mobile features.
+| `-DFEATURE_TIME_CAPSULE=1` | Enables the time capsule (experimental).
 
 ## Save compatibility
 

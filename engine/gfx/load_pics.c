@@ -395,26 +395,25 @@ void FixPicBank(void){
     // return GSIntro_GetMonFrontpic();
 }
 
-void GSIntro_GetMonFrontpic(void){
 //  //  unreferenced
-    LD_A_C;
-    PUSH_DE;
-    LD_HL(mPokemonPicPointers);
-    DEC_A;
-    LD_BC(6);
-    CALL(aAddNTimes);
-    LD_A(BANK(aPokemonPicPointers));
-    CALL(aGetFarByte);
-    CALL(aFixPicBank);
-    PUSH_AF;
-    INC_HL;
-    LD_A(BANK(aPokemonPicPointers));
-    CALL(aGetFarWord);
-    POP_AF;
-    POP_DE;
-    CALL(aFarDecompress);
-    RET;
-
+void GSIntro_GetMonFrontpic(void){
+    // LD_A_C;
+    // PUSH_DE;
+    // LD_HL(mPokemonPicPointers);
+    // DEC_A;
+    // LD_BC(6);
+    // CALL(aAddNTimes);
+    // LD_A(BANK(aPokemonPicPointers));
+    // CALL(aGetFarByte);
+    // CALL(aFixPicBank);
+    // PUSH_AF;
+    // INC_HL;
+    // LD_A(BANK(aPokemonPicPointers));
+    // CALL(aGetFarWord);
+    // POP_AF;
+    // POP_DE;
+    // CALL(aFarDecompress);
+    // RET;
 }
 
 void GetTrainerPic(uint8_t* de, uint8_t tclass){
@@ -468,30 +467,29 @@ void GetTrainerPic(uint8_t* de, uint8_t tclass){
     // RET;
 }
 
-void DecompressGet2bpp(void){
 //  Decompress lz data from b:hl to wDecompressScratch, then copy it to address de.
+//  Unused since we just copy the pixels from the PNG and format them directly.
+void DecompressGet2bpp(void){
+    // LDH_A_addr(rSVBK);
+    // PUSH_AF;
+    // LD_A(MBANK(awDecompressScratch));
+    // LDH_addr_A(rSVBK);
 
-    LDH_A_addr(rSVBK);
-    PUSH_AF;
-    LD_A(MBANK(awDecompressScratch));
-    LDH_addr_A(rSVBK);
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A_B;
+    // LD_DE(wDecompressScratch);
+    // CALL(aFarDecompress);
+    // POP_BC;
+    // LD_DE(wDecompressScratch);
+    // POP_HL;
+    // LDH_A_addr(hROMBank);
+    // LD_B_A;
+    // CALL(aGet2bpp);
 
-    PUSH_DE;
-    PUSH_BC;
-    LD_A_B;
-    LD_DE(wDecompressScratch);
-    CALL(aFarDecompress);
-    POP_BC;
-    LD_DE(wDecompressScratch);
-    POP_HL;
-    LDH_A_addr(hROMBank);
-    LD_B_A;
-    CALL(aGet2bpp);
-
-    POP_AF;
-    LDH_addr_A(rSVBK);
-    RET;
-
+    // POP_AF;
+    // LDH_addr_A(rSVBK);
+    // RET;
 }
 
 static void FixBackpicAlignment(uint8_t* hl, uint8_t c){

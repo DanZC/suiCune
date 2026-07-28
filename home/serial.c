@@ -439,12 +439,11 @@ void Serial_PrintWaitingTextAndSyncAndExchangeNybble(void){
     return SafeLoadTempTilemapToTilemap();
 }
 
+//  //  unreferenced
 void Serial_SyncAndExchangeNybble(void){
-    //  //  unreferenced
-    CALL(aLoadTilemapToTempTilemap);
-    CALLFAR(aPlaceWaitingText);
-    JP(mWaitLinkTransfer);  // pointless
-
+    // CALL(aLoadTilemapToTempTilemap);
+    // CALLFAR(aPlaceWaitingText);
+    // JP(mWaitLinkTransfer);  // pointless
 }
 
 void WaitLinkTransfer(void){

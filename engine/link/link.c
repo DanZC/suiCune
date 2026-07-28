@@ -3,10 +3,14 @@
 #include "link_trade.h"
 #include "link_2.h"
 #include "time_capsule.h"
+#if FEATURE_TIME_CAPSULE
+#include "time_capsule_2.h"
+#endif // FEATURE_TIME_CAPSULE
 #include "../gfx/crystal_layouts.h"
 #include "../events/poke_seer.h"
 #include "../pokemon/move_mon.h"
 #include "../pokemon/mail.h"
+#include "../pokemon/mail_2.h"
 #include "../pokemon/evolve.h"
 #include "../pokemon/european_mail.h"
 #include "../menus/save.h"
@@ -14,6 +18,7 @@
 #include "../../home/map.h"
 #include "../../home/audio.h"
 #include "../../home/copy.h"
+#include "../../home/copy_name.h"
 #include "../../home/delay.h"
 #include "../../home/serial.h"
 #include "../../home/sprite_updates.h"
@@ -27,12 +32,17 @@
 #include "../../home/map_objects.h"
 #include "../../home/joypad.h"
 #include "../../home/clear_sprites.h"
+#include "../../home/pokemon.h"
 #include "../../home/sram.h"
 #include "../../home/random.h"
 #include "../../mobile/mobile_41.h"
 #include "../../data/text/common.h"
 #include "../../data/items/catch_rate_items.h"
 #if FEATURE_NETWORKING
+#if FEATURE_TIME_CAPSULE
+#include "../../data/pokemon/gen1_base_special.h"
+#include <stddef.h>
+#endif // FEATURE_TIME_CAPSULE
 #include "../../util/network.h"
 #include "../../util/serialize.h"
 
@@ -103,176 +113,230 @@ void LinkCommunications(void){
     wram->wLinkByteTimeout = SERIAL_LINK_BYTE_TIMEOUT;
     // LD_A_addr(wLinkMode);
     // CP_A(LINK_TIMECAPSULE);
+#if FEATURE_TIME_CAPSULE
     if(wram->wLinkMode == LINK_TIMECAPSULE) {
         return Gen2ToGen1LinkComms();
     }
+#endif // FEATURE_TIME_CAPSULE
     // JP_NZ (mGen2ToGen2LinkComms);
 
     return Gen2ToGen2LinkComms();
 }
 
+#if FEATURE_TIME_CAPSULE
 void Gen2ToGen1LinkComms(void){
-    CALL(aClearLinkData);
-    CALL(aLink_PrepPartyData_Gen1);
-    CALL(aFixDataForLinkTransfer);
-    XOR_A_A;
-    LD_addr_A(wPlayerLinkAction);
-    CALL(aWaitLinkTransfer);
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_INTERNAL_CLOCK);
-    IF_NZ goto player_1;
+    // CALL(aClearLinkData);
+    ClearLinkData();
+    // CALL(aLink_PrepPartyData_Gen1);
+    Link_PrepPartyData_Gen1();
+    // CALL(aFixDataForLinkTransfer);
+    FixDataForLinkTransfer();
+    // XOR_A_A;
+    // LD_addr_A(wPlayerLinkAction);
+    wram->wPlayerLinkAction = 0x0;
+    // CALL(aWaitLinkTransfer);
+    WaitLinkTransfer();
+    // LDH_A_addr(hSerialConnectionStatus);
+    // CP_A(USING_INTERNAL_CLOCK);
+    // IF_NZ goto player_1;
+    if(hram.hSerialConnectionStatus != USING_INTERNAL_CLOCK) {
+        // LD_C(3);
+        // CALL(aDelayFrames);
+        DelayFrames(3);
+        // XOR_A_A;
+        // LDH_addr_A(hSerialSend);
+        // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
+        // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
 
-    LD_C(3);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LDH_addr_A(hSerialSend);
-    LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
+        // CALL(aDelayFrame);
+        DelayFrame();
+        // XOR_A_A;
+        // LDH_addr_A(hSerialSend);
+        // LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
+        // LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
+        // LDH_addr_A(rSC);
+    }
 
-    CALL(aDelayFrame);
-    XOR_A_A;
-    LDH_addr_A(hSerialSend);
-    LD_A((0 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_A((1 << rSC_ON) | (1 << rSC_CLOCK));
-    LDH_addr_A(rSC);
+// player_1:
+    // LD_DE(MUSIC_NONE);
+    // CALL(aPlayMusic);
+    PlayMusic(MUSIC_NONE);
+    // LD_C(3);
+    // CALL(aDelayFrames);
+    DelayFrames(3);
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    // LD_A(1 << SERIAL);
+    // LDH_addr_A(rIE);
+    gb_write(rIE, (1 << SERIAL));
+
+    // LD_HL(wLinkBattleRNPreamble);
+    // LD_DE(wEnemyMon);
+    // LD_BC(SERIAL_RN_PREAMBLE_LENGTH + SERIAL_RNS_LENGTH);
+    // CALL(aSerial_ExchangeBytes);
+    Network_SafeExchangeBytes(&wram->wEnemyMon, wram->wLinkBattleRNs, SERIAL_RNS_LENGTH);
+    // LD_A(SERIAL_NO_DATA_BYTE);
+    // LD_de_A;
+
+    // LD_HL(wLinkData);
+    // LD_DE(wOTPartyData);
+    // LD_BC(SERIAL_PREAMBLE_LENGTH + NAME_LENGTH + 1 + PARTY_LENGTH + 1 + (REDMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH + 3);
+    Network_SafeExchangeBytes(&wram->wOTPlayerName, wram->wLinkPlayerName,
+        NAME_LENGTH + 1 + PARTY_LENGTH + 1 + (REDMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH + 3);
+    // CALL(aSerial_ExchangeBytes);
+    // LD_A(SERIAL_NO_DATA_BYTE);
+    // LD_de_A;
+
+    // LD_HL(wPlayerPatchLists);
+    // LD_DE(wOTPatchLists);
+    // LD_BC(200);
+    // CALL(aSerial_ExchangeBytes);
+    Network_SafeExchangeBytes(wram->wOTPatchLists, wram->wPlayerPatchLists, 200);
+
+    // XOR_A_A;
+    // LDH_addr_A(rIF);
+    gb_write(rIF, 0x0);
+    // LD_A((1 << JOYPAD) | (1 << SERIAL) | (1 << TIMER) | (1 << VBLANK));
+    // LDH_addr_A(rIE);
+    gb_write(rIE, ((1 << JOYPAD) | (1 << SERIAL) | (1 << TIMER) | (1 << VBLANK)));
+
+    // CALL(aLink_CopyRandomNumbers);
+    Link_CopyRandomNumbers();
+
+    // LD_HL(wOTPartyData);
+    // CALL(aLink_FindFirstNonControlCharacter_SkipZero);
+    const uint8_t* hl0 = Link_FindFirstNonControlCharacter_SkipZero(wram->wOTPlayerName);
+    // PUSH_HL;
+    // LD_BC(NAME_LENGTH);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // POP_HL;
+    // AND_A_A;
+    // JP_Z (mExitLinkCommunications);
+    // CP_A(0x7);
+    // JP_NC (mExitLinkCommunications);
+    if(hl0[NAME_LENGTH] == 0 || hl0[NAME_LENGTH] >= 0x7)
+        return ExitLinkCommunications();
+
+    // LD_DE(wLinkData);
+    // LD_BC(NAME_LENGTH + 1 + PARTY_LENGTH + 1 + (REDMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH + 3);
+    // CALL(aLink_CopyOTData);
+    Link_CopyOTData(wram->wLinkData, hl0,
+        NAME_LENGTH + 1 + PARTY_LENGTH + 1 + (REDMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH + 3);
+
+    // LD_DE(wOTPatchLists);
+    uint8_t* de = wram->wOTPatchLists;
+    // LD_HL(wLinkPatchList1);
+    uint8_t* hl = wram->wLinkPatchList1;
+    // LD_C(2);
+    uint8_t c = 2;
+
+    do {
+    // loop:
+        while(1) {
+            // LD_A_de;
+            uint8_t a = *(de++);
+            // INC_DE;
+            // AND_A_A;
+            // IF_Z goto loop;
+            // CP_A(SERIAL_PREAMBLE_BYTE);
+            // IF_Z goto loop;
+            // CP_A(SERIAL_NO_DATA_BYTE);
+            // IF_Z goto loop;
+            if(a == SERIAL_PREAMBLE_BYTE || a == SERIAL_NO_DATA_BYTE)
+                continue;
+            // CP_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
+            // IF_Z goto next;
+            if(a == SERIAL_PATCH_LIST_PART_TERMINATOR)
+                break;
+            // PUSH_HL;
+            // PUSH_BC;
+            // LD_B(0);
+            // DEC_A;
+            // LD_C_A;
+            // ADD_HL_BC;
+            // LD_A(SERIAL_NO_DATA_BYTE);
+            // LD_hl_A;
+            hl[a - 1] = SERIAL_NO_DATA_BYTE;
+            // POP_BC;
+            // POP_HL;
+            // goto loop;
+        }
+
+    // next:
+        // LD_HL(wLinkPatchList2);
+        hl = wram->wLinkPatchList2;
+        // DEC_C;
+        // IF_NZ goto loop;
+    } while(--c != 0);
+
+    // LD_HL(wLinkPlayerName);
+    // LD_DE(wOTPlayerName);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wOTPlayerName, wram->wLinkPlayerName, NAME_LENGTH);
+
+    // LD_DE(wOTPartyCount);
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    wram->wOTPartyCount = wram->wLinkPartyCount;
+
+    for(uint32_t i = 0; i < PARTY_LENGTH; ++i) {
+    // party_loop:
+        // LD_A_hli;
+        species_t a = wram->wLinkPartySpecies[i];
+        // CP_A(-1);
+        // IF_Z goto done_party;
+        if(a == (species_t)-1) {
+            wram->wOTPartySpecies[i] = a;
+            break;
+        }
+        // LD_addr_A(wTempSpecies);
+        // PUSH_HL;
+        // PUSH_DE;
+        // CALLFAR(aConvertMon_1to2);
+        // POP_DE;
+        // POP_HL;
+        // LD_A_addr(wTempSpecies);
+        // LD_de_A;
+        wram->wOTPartySpecies[i] = ConvertMon_1to2(a);
+        // INC_DE;
+        // goto party_loop;
+    }
 
 
-player_1:
-    LD_DE(MUSIC_NONE);
-    CALL(aPlayMusic);
-    LD_C(3);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_A(1 << SERIAL);
-    LDH_addr_A(rIE);
+// done_party:
+    // LD_de_A;
+    wram->wOTPartyEnd = (species_t)-1;
+    // LD_HL(wTimeCapsulePlayerData);
+    // CALL(aLink_ConvertPartyStruct1to2);
+    Link_ConvertPartyStruct1to2(wram->wTimeCapsulePartyMon);
 
-    LD_HL(wLinkBattleRNPreamble);
-    LD_DE(wEnemyMon);
-    LD_BC(SERIAL_RN_PREAMBLE_LENGTH + SERIAL_RNS_LENGTH);
-    CALL(aSerial_ExchangeBytes);
-    LD_A(SERIAL_NO_DATA_BYTE);
-    LD_de_A;
+    // LD_A(LOW(wOTPartyMonOTs));
+    // LD_addr_A(wUnusedNamesPointer);
+    // LD_A(HIGH(wOTPartyMonOTs));
+    // LD_addr_A(wUnusedNamesPointer + 1);
 
-    LD_HL(wLinkData);
-    LD_DE(wOTPartyData);
-    LD_BC(SERIAL_PREAMBLE_LENGTH + NAME_LENGTH + 1 + PARTY_LENGTH + 1 + (REDMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH + 3);
-    CALL(aSerial_ExchangeBytes);
-    LD_A(SERIAL_NO_DATA_BYTE);
-    LD_de_A;
-
-    LD_HL(wPlayerPatchLists);
-    LD_DE(wOTPatchLists);
-    LD_BC(200);
-    CALL(aSerial_ExchangeBytes);
-
-    XOR_A_A;
-    LDH_addr_A(rIF);
-    LD_A((1 << JOYPAD) | (1 << SERIAL) | (1 << TIMER) | (1 << VBLANK));
-    LDH_addr_A(rIE);
-
-    CALL(aLink_CopyRandomNumbers);
-
-    LD_HL(wOTPartyData);
-    CALL(aLink_FindFirstNonControlCharacter_SkipZero);
-    PUSH_HL;
-    LD_BC(NAME_LENGTH);
-    ADD_HL_BC;
-    LD_A_hl;
-    POP_HL;
-    AND_A_A;
-    JP_Z (mExitLinkCommunications);
-    CP_A(0x7);
-    JP_NC (mExitLinkCommunications);
-
-    LD_DE(wLinkData);
-    LD_BC(NAME_LENGTH + 1 + PARTY_LENGTH + 1 + (REDMON_STRUCT_LENGTH + NAME_LENGTH * 2) * PARTY_LENGTH + 3);
-    CALL(aLink_CopyOTData);
-
-    LD_DE(wOTPatchLists);
-    LD_HL(wLinkPatchList1);
-    LD_C(2);
-
-loop:
-    LD_A_de;
-    INC_DE;
-    AND_A_A;
-    IF_Z goto loop;
-    CP_A(SERIAL_PREAMBLE_BYTE);
-    IF_Z goto loop;
-    CP_A(SERIAL_NO_DATA_BYTE);
-    IF_Z goto loop;
-    CP_A(SERIAL_PATCH_LIST_PART_TERMINATOR);
-    IF_Z goto next;
-    PUSH_HL;
-    PUSH_BC;
-    LD_B(0);
-    DEC_A;
-    LD_C_A;
-    ADD_HL_BC;
-    LD_A(SERIAL_NO_DATA_BYTE);
-    LD_hl_A;
-    POP_BC;
-    POP_HL;
-    goto loop;
-
-
-next:
-    LD_HL(wLinkPatchList2);
-    DEC_C;
-    IF_NZ goto loop;
-
-    LD_HL(wLinkPlayerName);
-    LD_DE(wOTPlayerName);
-    LD_BC(NAME_LENGTH);
-    CALL(aCopyBytes);
-
-    LD_DE(wOTPartyCount);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-
-
-party_loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto done_party;
-    LD_addr_A(wTempSpecies);
-    PUSH_HL;
-    PUSH_DE;
-    CALLFAR(aConvertMon_1to2);
-    POP_DE;
-    POP_HL;
-    LD_A_addr(wTempSpecies);
-    LD_de_A;
-    INC_DE;
-    goto party_loop;
-
-
-done_party:
-    LD_de_A;
-    LD_HL(wTimeCapsulePlayerData);
-    CALL(aLink_ConvertPartyStruct1to2);
-
-    LD_A(LOW(wOTPartyMonOTs));
-    LD_addr_A(wUnusedNamesPointer);
-    LD_A(HIGH(wOTPartyMonOTs));
-    LD_addr_A(wUnusedNamesPointer + 1);
-
-    LD_DE(MUSIC_NONE);
-    CALL(aPlayMusic);
-    LDH_A_addr(hSerialConnectionStatus);
-    CP_A(USING_INTERNAL_CLOCK);
-    LD_C(66);
-    CALL_Z (aDelayFrames);
-    LD_DE(MUSIC_ROUTE_30);
-    CALL(aPlayMusic);
-    JP(mInitTradeMenuDisplay);
-
+    // LD_DE(MUSIC_NONE);
+    // CALL(aPlayMusic);
+    PlayMusic(MUSIC_NONE);
+    // LDH_A_addr(hSerialConnectionStatus);
+    // CP_A(USING_INTERNAL_CLOCK);
+    // LD_C(66);
+    // CALL_Z (aDelayFrames);
+    if(hram.hSerialConnectionStatus == USING_INTERNAL_CLOCK)
+        DelayFrames(66);
+    // LD_DE(MUSIC_ROUTE_30);
+    // CALL(aPlayMusic);
+    PlayMusic(MUSIC_ROUTE_30);
+    // JP(mInitTradeMenuDisplay);
+    InitTradeMenuDisplay();
 }
+#endif // FEATURE_TIME_CAPSULE
 
 void Gen2ToGen2LinkComms(void){
     // CALL(aClearLinkData);
@@ -996,186 +1060,239 @@ static void FixDataForLinkTransfer(void){
     // RET;
 }
 
-void Link_PrepPartyData_Gen1(void){
-    LD_DE(wLinkData);
-    LD_A(SERIAL_PREAMBLE_BYTE);
-    LD_B(SERIAL_PREAMBLE_LENGTH);
-
-loop1:
-    LD_de_A;
-    INC_DE;
-    DEC_B;
-    IF_NZ goto loop1;
-
-    LD_HL(wPlayerName);
-    LD_BC(NAME_LENGTH);
-    CALL(aCopyBytes);
-
-    PUSH_DE;
-    LD_HL(wPartyCount);
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-
-loop2:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto done_party;
-    LD_addr_A(wTempSpecies);
-    PUSH_HL;
-    PUSH_DE;
-    CALLFAR(aConvertMon_2to1);
-    POP_DE;
-    POP_HL;
-    LD_A_addr(wTempSpecies);
-    LD_de_A;
-    INC_DE;
-    goto loop2;
-
-done_party:
-    LD_de_A;
-    POP_DE;
-    LD_HL(1 + PARTY_LENGTH + 1);
-    ADD_HL_DE;
-
-    LD_D_H;
-    LD_E_L;
-    LD_HL(wPartyMon1Species);
-    LD_C(PARTY_LENGTH);
-
-mon_loop:
-    PUSH_BC;
-    CALL(aLink_PrepPartyData_Gen1_ConvertPartyStruct2to1);
-    LD_BC(PARTYMON_STRUCT_LENGTH);
-    ADD_HL_BC;
-    POP_BC;
-    DEC_C;
-    IF_NZ goto mon_loop;
-
-    LD_HL(wPartyMonOTs);
-    CALL(aLink_PrepPartyData_Gen1_copy_ot_nicks);
-
-    LD_HL(wPartyMonNicknames);
-
-copy_ot_nicks:
-    LD_BC(PARTY_LENGTH * NAME_LENGTH);
-    JP(mCopyBytes);
-
-
-ConvertPartyStruct2to1:
-    LD_B_H;
-    LD_C_L;
-    PUSH_DE;
-    PUSH_BC;
-    LD_A_hl;
-    LD_addr_A(wTempSpecies);
-    CALLFAR(aConvertMon_2to1);
-    POP_BC;
-    POP_DE;
-    LD_A_addr(wTempSpecies);
-    LD_de_A;
-    INC_DE;
-    LD_HL(MON_HP);
-    ADD_HL_BC;
-    LD_A_hli;
-    LD_de_A;
-    INC_DE;
-    LD_A_hl;
-    LD_de_A;
-    INC_DE;
-    XOR_A_A;
-    LD_de_A;
-    INC_DE;
-    LD_HL(MON_STATUS);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_de_A;
-    INC_DE;
-    LD_A_bc;
-    CP_A(MAGNEMITE);
-    IF_Z goto steel_type;
-    CP_A(MAGNETON);
-    IF_NZ goto skip_steel;
-
-
-steel_type:
-    LD_A(ELECTRIC);
-    LD_de_A;
-    INC_DE;
-    LD_de_A;
-    INC_DE;
-    goto done_steel;
-
-
-skip_steel:
-    PUSH_BC;
-    DEC_A;
-    LD_HL(mBaseData + BASE_TYPES);
-    LD_BC(BASE_DATA_SIZE);
-    CALL(aAddNTimes);
-    LD_BC(BASE_CATCH_RATE - BASE_TYPES);
-    LD_A(BANK(aBaseData));
-    CALL(aFarCopyBytes);
-    POP_BC;
-
-
-done_steel:
-    PUSH_BC;
-    LD_HL(MON_ITEM);
-    ADD_HL_BC;
-    LD_BC(MON_HAPPINESS - MON_ITEM);
-    CALL(aCopyBytes);
-    POP_BC;
-
-    LD_HL(MON_LEVEL);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_de_A;
-    LD_addr_A(wCurPartyLevel);
-    INC_DE;
-
-    PUSH_BC;
-    LD_HL(MON_MAXHP);
-    ADD_HL_BC;
-    LD_BC(MON_SAT - MON_MAXHP);
-    CALL(aCopyBytes);
-    POP_BC;
-
-    PUSH_DE;
-    PUSH_BC;
-
-    LD_A_bc;
-    DEC_A;
-    PUSH_BC;
-    LD_B(0);
-    LD_C_A;
-    LD_HL(mKantoMonSpecials);
-    ADD_HL_BC;
-    LD_A(BANK(aKantoMonSpecials));
-    CALL(aGetFarByte);
-    LD_addr_A(wBaseSpecialAttack);
-    POP_BC;
-
-    LD_HL(MON_STAT_EXP - 1);
-    ADD_HL_BC;
-    LD_C(STAT_SATK);
-    LD_B(TRUE);
-    PREDEF(pCalcMonStatC);
-
-    POP_BC;
-    POP_DE;
-
-    LDH_A_addr(hQuotient + 2);
-    LD_de_A;
-    INC_DE;
-    LDH_A_addr(hQuotient + 3);
-    LD_de_A;
-    INC_DE;
-    LD_H_B;
-    LD_L_C;
-    RET;
-
+#if FEATURE_TIME_CAPSULE
+static uint8_t GetKantoMonSpecial(species_t a) {
+    if(a >= JOHTO_POKEMON || a == 0)
+        return wram->wBaseSpecialAttack;
+    return KantoMonSpecials[a - 1];
 }
+
+static void Link_PrepPartyData_Gen1_ConvertPartyStruct2to1(struct RedPartyMon* de, const struct PartyMon* hl) {
+    // LD_B_H;
+    // LD_C_L;
+    species_t mon_species = hl->mon.species;
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_A_hl;
+    // LD_addr_A(wTempSpecies);
+    // CALLFAR(aConvertMon_2to1);
+    // POP_BC;
+    // POP_DE;
+    // LD_A_addr(wTempSpecies);
+    // LD_de_A;
+    // INC_DE;
+    de->boxmon.species = ConvertMon_2to1(mon_species);
+    // LD_HL(MON_HP);
+    // ADD_HL_BC;
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    // LD_A_hl;
+    // LD_de_A;
+    // INC_DE;
+    de->boxmon.HP = hl->HP;
+    // XOR_A_A;
+    // LD_de_A;
+    // INC_DE;
+    de->boxmon.boxLevel = 0;
+    // LD_HL(MON_STATUS);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_de_A;
+    // INC_DE;
+    de->boxmon.status = hl->status;
+    GetBaseData(mon_species);
+    // LD_A_bc;
+    // CP_A(MAGNEMITE);
+    // IF_Z goto steel_type;
+    // CP_A(MAGNETON);
+    // IF_NZ goto skip_steel;
+    if(mon_species == MAGNEMITE || mon_species == MAGNETON) {
+    // steel_type:
+        // LD_A(ELECTRIC);
+        // LD_de_A;
+        // INC_DE;
+        // LD_de_A;
+        // INC_DE;
+        // goto done_steel;
+        de->boxmon.type1 = ELECTRIC;
+        de->boxmon.type2 = ELECTRIC;
+    }
+    else {
+    // skip_steel:
+        // PUSH_BC;
+        // DEC_A;
+        // LD_HL(mBaseData + BASE_TYPES);
+        // LD_BC(BASE_DATA_SIZE);
+        // CALL(aAddNTimes);
+        // LD_BC(BASE_CATCH_RATE - BASE_TYPES);
+        // LD_A(BANK(aBaseData));
+        CopyBytes(de->boxmon.types, wram->wBaseType, sizeof(wram->wBaseType));
+        // CALL(aFarCopyBytes);
+        // POP_BC;
+    }
+
+// done_steel:
+    // PUSH_BC;
+    // LD_HL(MON_ITEM);
+    de->boxmon.catchRate = hl->mon.item;
+    CopyBytes(de->boxmon.moves, hl->mon.moves, sizeof(hl->mon.moves));
+    de->boxmon.id = hl->mon.id;
+    CopyBytes(de->boxmon.exp, hl->mon.exp, sizeof(hl->mon.exp));
+    CopyBytes(de->boxmon.statExp, hl->mon.statExp, sizeof(hl->mon.statExp));
+    de->boxmon.dvs = hl->mon.DVs;
+    CopyBytes(de->boxmon.pp, hl->mon.PP, sizeof(hl->mon.PP));
+    // ADD_HL_BC;
+    // LD_BC(MON_HAPPINESS - MON_ITEM);
+    // CALL(aCopyBytes);
+    // POP_BC;
+
+    // LD_HL(MON_LEVEL);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_de_A;
+    // LD_addr_A(wCurPartyLevel);
+    // INC_DE;
+    de->level = hl->mon.level;
+
+    // PUSH_BC;
+    // LD_HL(MON_MAXHP);
+    // ADD_HL_BC;
+    // LD_BC(MON_SAT - MON_MAXHP);
+    // CALL(aCopyBytes);
+    // POP_BC;
+    de->maxHP = hl->maxHP;
+    de->attack = hl->attack;
+    de->defense = hl->defense;
+    de->speed = hl->speed;
+
+    // PUSH_DE;
+    // PUSH_BC;
+
+    // LD_A_bc;
+    // DEC_A;
+    // PUSH_BC;
+    // LD_B(0);
+    // LD_C_A;
+    // LD_HL(mKantoMonSpecials);
+    // ADD_HL_BC;
+    // LD_A(BANK(aKantoMonSpecials));
+    // CALL(aGetFarByte);
+    // LD_addr_A(wBaseSpecialAttack);
+    wram->wBaseSpecialAttack = GetKantoMonSpecial(mon_species);
+    // POP_BC;
+
+
+    // LD_HL(MON_STAT_EXP - 1);
+    // ADD_HL_BC;
+    // LD_C(STAT_SATK);
+    // LD_B(TRUE);
+    // PREDEF(pCalcMonStatC);
+    uint16_t* statxp = (uint16_t*)((uint8_t*)hl + offsetof(struct BoxMon, statExp));
+    de->spcl = NativeToBigEndian16(CalcMonStatC(statxp, hl->mon.DVs, TRUE, STAT_SATK));
+
+    // POP_BC;
+    // POP_DE;
+
+    // LDH_A_addr(hQuotient + 2);
+    // LD_de_A;
+    // INC_DE;
+    // LDH_A_addr(hQuotient + 3);
+    // LD_de_A;
+    // INC_DE;
+    // LD_H_B;
+    // LD_L_C;
+    // RET;
+}
+
+void Link_PrepPartyData_Gen1(void){
+    // LD_DE(wLinkData);
+    uint8_t* de = wram->wLinkData;
+    // LD_A(SERIAL_PREAMBLE_BYTE);
+    // LD_B(SERIAL_PREAMBLE_LENGTH);
+    uint8_t b = SERIAL_PREAMBLE_LENGTH;
+
+    do {
+    // loop1:
+        // LD_de_A;
+        *(de++) = SERIAL_PREAMBLE_BYTE;
+        // INC_DE;
+        // DEC_B;
+        // IF_NZ goto loop1;
+    } while(--b != 0);
+
+    // LD_HL(wPlayerName);
+    // LD_BC(NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes(de, gPlayer.playerName, NAME_LENGTH);
+    de += NAME_LENGTH;
+
+    // PUSH_DE;
+    // LD_HL(wPartyCount);
+    // LD_A_hli;
+    // LD_de_A;
+    // INC_DE;
+    *(de++) = gPokemon.partyCount;
+
+    uint32_t i;
+    for(i = 0; i < PARTY_LENGTH; ++i) {
+    // loop2:
+        // LD_A_hli;
+        // CP_A(-1);
+        // IF_Z goto done_party;
+        if(gPokemon.partySpecies[i] == (species_t)-1)
+            break;
+        // LD_addr_A(wTempSpecies);
+        // PUSH_HL;
+        // PUSH_DE;
+        // CALLFAR(aConvertMon_2to1);
+        // POP_DE;
+        // POP_HL;
+        // LD_A_addr(wTempSpecies);
+        // LD_de_A;
+        de[i] = ConvertMon_2to1(gPokemon.partySpecies[i]);
+        // INC_DE;
+        // goto loop2;
+    }
+
+// done_party:
+    // LD_de_A;
+    de[i] = (species_t)-1;
+    // POP_DE;
+    // LD_HL(1 + PARTY_LENGTH + 1);
+    // ADD_HL_DE;
+    de += 1 + PARTY_LENGTH + 1;
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(wPartyMon1Species);
+    // LD_C(PARTY_LENGTH);
+    for(i = 0; i < PARTY_LENGTH + 1; ++i) {
+    // mon_loop:
+        // PUSH_BC;
+        // CALL(aLink_PrepPartyData_Gen1_ConvertPartyStruct2to1);
+        Link_PrepPartyData_Gen1_ConvertPartyStruct2to1((struct RedPartyMon*)de, gPokemon.partyMon);
+        // LD_BC(PARTYMON_STRUCT_LENGTH);
+        de += sizeof(struct RedPartyMon);
+        // ADD_HL_BC;
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto mon_loop;
+    }
+
+    // LD_HL(wPartyMonOTs);
+    // CALL(aLink_PrepPartyData_Gen1_copy_ot_nicks);
+    CopyBytes(de, gPokemon.partyMonOT, PARTY_LENGTH * NAME_LENGTH);
+    de += PARTY_LENGTH * NAME_LENGTH;
+    // LD_HL(wPartyMonNicknames);
+
+// copy_ot_nicks:
+    // LD_BC(PARTY_LENGTH * NAME_LENGTH);
+    // JP(mCopyBytes);
+    CopyBytes(de, gPokemon.partyMonNickname, PARTY_LENGTH * NAME_LENGTH);
+    de += PARTY_LENGTH * NAME_LENGTH;
+    return;
+}
+#endif // FEATURE_TIME_CAPSULE
 
 static void Link_PrepPartyData_Gen2(void){
     // LD_DE(wLinkData);
@@ -1204,7 +1321,7 @@ static void Link_PrepPartyData_Gen2(void){
     // LD_HL(wPartyCount);
     // LD_BC(1 + PARTY_LENGTH + 1);
     // CALL(aCopyBytes);
-    CopyBytes(de, &gPokemon.partySpecies, sizeof(gPokemon.partySpecies));
+    CopyBytes(de, gPokemon.partySpecies, sizeof(gPokemon.partySpecies));
     de += sizeof(gPokemon.partySpecies);
     CopyBytes(de, &gPokemon.partyEnd, sizeof(gPokemon.partyEnd));
     de += sizeof(gPokemon.partyEnd);
@@ -1419,157 +1536,188 @@ static void Link_CopyMailPreamble(uint8_t* de, uint8_t a){
     // RET;
 }
 
-void Link_ConvertPartyStruct1to2(void){
-    PUSH_HL;
-    LD_D_H;
-    LD_E_L;
-    LD_BC(wLinkOTPartyMonTypes);
-    LD_HL(wCurLinkOTPartyMonTypePointer);
-    LD_A_C;
-    LD_hli_A;
-    LD_hl_B;
-    LD_HL(wOTPartyMon1Species);
-    LD_C(PARTY_LENGTH);
+#if FEATURE_TIME_CAPSULE
+static void Link_ConvertPartyStruct1to2_ConvertToGen2(struct PartyMon* bc, const struct RedPartyMon* de, uint8_t *mon_type) {
+    // LD_B_H;
+    // LD_C_L;
+    // LD_A_de;
+    // INC_DE;
+    // PUSH_BC;
+    // PUSH_DE;
+    // LD_addr_A(wTempSpecies);
+    // CALLFAR(aConvertMon_1to2);
+    // POP_DE;
+    // POP_BC;
+    // LD_A_addr(wTempSpecies);
+    // LD_bc_A;
+    bc->mon.species = ConvertMon_1to2(de->boxmon.species);
+    // LD_addr_A(wCurSpecies);
+    // LD_HL(MON_HP);
+    // ADD_HL_BC;
+    // LD_A_de;
+    // INC_DE;
+    // LD_hli_A;
+    // LD_A_de;
+    // INC_DE;
+    // LD_hl_A;
+    bc->HP = de->boxmon.HP;
+    // INC_DE;
+    // LD_HL(MON_STATUS);
+    // ADD_HL_BC;
+    // LD_A_de;
+    // INC_DE;
+    // LD_hl_A;
+    bc->status = de->boxmon.status;
+    // LD_HL(wCurLinkOTPartyMonTypePointer);
+    // LD_A_hli;
+    // LD_H_hl;
+    // LD_L_A;
+    // LD_A_de;
+    // LD_hli_A;
+    mon_type[0] = de->boxmon.type1;
+    // INC_DE;
+    // LD_A_de;
+    // LD_hli_A;
+    mon_type[1] = de->boxmon.type2;
+    // INC_DE;
+    // LD_A_L;
+    // LD_addr_A(wCurLinkOTPartyMonTypePointer);
+    // LD_A_H;
+    // LD_addr_A(wCurLinkOTPartyMonTypePointer + 1);
+    // PUSH_BC;
+    // LD_HL(MON_ITEM);
+    // ADD_HL_BC;
+    // PUSH_HL;
+    // LD_H_D;
+    // LD_L_E;
+    // POP_DE;
+    // PUSH_BC;
+    // LD_A_hli;
+    // LD_B_A;
+    // CALL(aTimeCapsule_ReplaceTeruSama);
+    // LD_A_B;
+    // LD_de_A;
+    bc->mon.item = TimeCapsule_ReplaceTeruSama(de->boxmon.catchRate);
+    // INC_DE;
+    // POP_BC;
+    // LD_BC(0x19);
+    // CALL(aCopyBytes);
+    CopyBytes(bc->mon.moves, de->boxmon.moves, NUM_MOVES);
+    bc->mon.id = de->boxmon.id;
+    CopyBytes(bc->mon.exp, de->boxmon.exp, sizeof(bc->mon.exp));
+    CopyBytes(bc->mon.statExp, de->boxmon.statExp, sizeof(bc->mon.statExp));
+    bc->mon.DVs = de->boxmon.dvs;
+    CopyBytes(bc->mon.PP, de->boxmon.pp, sizeof(bc->mon.PP));
+    // POP_BC;
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(0x1f);
+    // ADD_HL_BC;
+    // LD_A_de;
+    // INC_DE;
+    // LD_hl_A;
+    bc->mon.level = de->level;
+    // LD_addr_A(wCurPartyLevel);
+    // PUSH_BC;
+    // LD_HL(0x24);
+    // ADD_HL_BC;
+    // PUSH_HL;
+    // LD_H_D;
+    // LD_L_E;
+    // POP_DE;
+    // LD_BC(8);
+    // CALL(aCopyBytes);
+    bc->maxHP = de->maxHP;
+    bc->attack = de->attack;
+    bc->defense = de->defense;
+    bc->speed = de->speed;
+    // POP_BC;
+    // CALL(aGetBaseData);
+    GetBaseData(bc->mon.species);
+    // PUSH_DE;
+    // PUSH_BC;
+    // LD_D_H;
+    // LD_E_L;
+    // LD_HL(MON_STAT_EXP - 1);
+    // ADD_HL_BC;
+    // LD_C(STAT_SATK);
+    // LD_B(TRUE);
+    // PREDEF(pCalcMonStatC);
+    // POP_BC;
+    // POP_HL;
+    // LDH_A_addr(hQuotient + 2);
+    // LD_hli_A;
+    // LDH_A_addr(hQuotient + 3);
+    // LD_hli_A;
+    uint16_t* statxp = (uint16_t*)((uint8_t*)bc + offsetof(struct BoxMon, statExp));
+    bc->spclAtk = NativeToBigEndian16(CalcMonStatC(statxp, bc->mon.DVs, TRUE, STAT_SATK));
+    // PUSH_HL;
+    // PUSH_BC;
+    // LD_HL(MON_STAT_EXP - 1);
+    // ADD_HL_BC;
+    // LD_C(STAT_SDEF);
+    // LD_B(TRUE);
+    // PREDEF(pCalcMonStatC);
+    // POP_BC;
+    // POP_HL;
+    // LDH_A_addr(hQuotient + 2);
+    // LD_hli_A;
+    // LDH_A_addr(hQuotient + 3);
+    // LD_hli_A;
+    bc->spclDef = NativeToBigEndian16(CalcMonStatC(statxp, bc->mon.DVs, TRUE, STAT_SDEF));
+    // PUSH_HL;
+    // LD_HL(0x1b);
+    // ADD_HL_BC;
+    // LD_A(0x46);
+    // LD_hli_A;
+    bc->mon.happiness = 0x46;
+    // XOR_A_A;
+    // LD_hli_A;
+    bc->mon.pokerusStatus = 0x0;
+    // LD_hli_A;
+    bc->mon.caughtTimeLevel = 0x0;
+    // LD_hl_A;
+    bc->mon.caughtGenderLocation = 0x0;
+    // POP_HL;
+    // INC_DE;
+    // INC_DE;
+    // RET;
+}
 
-loop:
-    PUSH_BC;
-    CALL(aLink_ConvertPartyStruct1to2_ConvertToGen2);
-    POP_BC;
-    DEC_C;
-    IF_NZ goto loop;
-    POP_HL;
-    LD_BC(PARTY_LENGTH * REDMON_STRUCT_LENGTH);
-    ADD_HL_BC;
-    LD_DE(wOTPartyMonOTs);
-    LD_BC(PARTY_LENGTH * NAME_LENGTH);
-    CALL(aCopyBytes);
-    LD_DE(wOTPartyMonNicknames);
-    LD_BC(PARTY_LENGTH * MON_NAME_LENGTH);
-    JP(mCopyBytes);
-
-
-ConvertToGen2:
-    LD_B_H;
-    LD_C_L;
-    LD_A_de;
-    INC_DE;
-    PUSH_BC;
-    PUSH_DE;
-    LD_addr_A(wTempSpecies);
-    CALLFAR(aConvertMon_1to2);
-    POP_DE;
-    POP_BC;
-    LD_A_addr(wTempSpecies);
-    LD_bc_A;
-    LD_addr_A(wCurSpecies);
-    LD_HL(MON_HP);
-    ADD_HL_BC;
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    LD_A_de;
-    INC_DE;
-    LD_hl_A;
-    INC_DE;
-    LD_HL(MON_STATUS);
-    ADD_HL_BC;
-    LD_A_de;
-    INC_DE;
-    LD_hl_A;
-    LD_HL(wCurLinkOTPartyMonTypePointer);
-    LD_A_hli;
-    LD_H_hl;
-    LD_L_A;
-    LD_A_de;
-    LD_hli_A;
-    INC_DE;
-    LD_A_de;
-    LD_hli_A;
-    INC_DE;
-    LD_A_L;
-    LD_addr_A(wCurLinkOTPartyMonTypePointer);
-    LD_A_H;
-    LD_addr_A(wCurLinkOTPartyMonTypePointer + 1);
-    PUSH_BC;
-    LD_HL(MON_ITEM);
-    ADD_HL_BC;
-    PUSH_HL;
-    LD_H_D;
-    LD_L_E;
-    POP_DE;
-    PUSH_BC;
-    LD_A_hli;
-    LD_B_A;
-    CALL(aTimeCapsule_ReplaceTeruSama);
-    LD_A_B;
-    LD_de_A;
-    INC_DE;
-    POP_BC;
-    LD_BC(0x19);
-    CALL(aCopyBytes);
-    POP_BC;
-    LD_D_H;
-    LD_E_L;
-    LD_HL(0x1f);
-    ADD_HL_BC;
-    LD_A_de;
-    INC_DE;
-    LD_hl_A;
-    LD_addr_A(wCurPartyLevel);
-    PUSH_BC;
-    LD_HL(0x24);
-    ADD_HL_BC;
-    PUSH_HL;
-    LD_H_D;
-    LD_L_E;
-    POP_DE;
-    LD_BC(8);
-    CALL(aCopyBytes);
-    POP_BC;
-    CALL(aGetBaseData);
-    PUSH_DE;
-    PUSH_BC;
-    LD_D_H;
-    LD_E_L;
-    LD_HL(MON_STAT_EXP - 1);
-    ADD_HL_BC;
-    LD_C(STAT_SATK);
-    LD_B(TRUE);
-    PREDEF(pCalcMonStatC);
-    POP_BC;
-    POP_HL;
-    LDH_A_addr(hQuotient + 2);
-    LD_hli_A;
-    LDH_A_addr(hQuotient + 3);
-    LD_hli_A;
-    PUSH_HL;
-    PUSH_BC;
-    LD_HL(MON_STAT_EXP - 1);
-    ADD_HL_BC;
-    LD_C(STAT_SDEF);
-    LD_B(TRUE);
-    PREDEF(pCalcMonStatC);
-    POP_BC;
-    POP_HL;
-    LDH_A_addr(hQuotient + 2);
-    LD_hli_A;
-    LDH_A_addr(hQuotient + 3);
-    LD_hli_A;
-    PUSH_HL;
-    LD_HL(0x1b);
-    ADD_HL_BC;
-    LD_A(0x46);
-    LD_hli_A;
-    XOR_A_A;
-    LD_hli_A;
-    LD_hli_A;
-    LD_hl_A;
-    POP_HL;
-    INC_DE;
-    INC_DE;
-    RET;
+void Link_ConvertPartyStruct1to2(struct RedPartyMon* mon){
+    // PUSH_HL;
+    // LD_D_H;
+    // LD_E_L;
+    // LD_BC(wLinkOTPartyMonTypes);
+    // LD_HL(wCurLinkOTPartyMonTypePointer);
+    // LD_A_C;
+    // LD_hli_A;
+    // LD_hl_B;
+    // LD_HL(wOTPartyMon1Species);
+    // LD_C(PARTY_LENGTH);
+    for(uint32_t i = 0; i < PARTY_LENGTH; ++i) {
+    // loop:
+        // PUSH_BC;
+        // CALL(aLink_ConvertPartyStruct1to2_ConvertToGen2);
+        Link_ConvertPartyStruct1to2_ConvertToGen2(wram->wOTPartyMon + i, mon + i, wram->wLinkOTPartyMonType[i]);
+        // POP_BC;
+        // DEC_C;
+        // IF_NZ goto loop;
+    }
+    // POP_HL;
+    // LD_BC(PARTY_LENGTH * REDMON_STRUCT_LENGTH);
+    // ADD_HL_BC;
+    // LD_DE(wOTPartyMonOTs);
+    // LD_BC(PARTY_LENGTH * NAME_LENGTH);
+    // CALL(aCopyBytes);
+    CopyBytes(wram->wOTPartyMonOT, wram->wLinkPlayerPartyMonOT, PARTY_LENGTH * NAME_LENGTH);
+    // LD_DE(wOTPartyMonNicknames);
+    // LD_BC(PARTY_LENGTH * MON_NAME_LENGTH);
+    // JP(mCopyBytes);
+    CopyBytes(wram->wOTPartyMonNickname, wram->wLinkPlayerPartyMonNickname, PARTY_LENGTH * NAME_LENGTH);
 
 }
+#endif // FEATURE_TIME_CAPSULE
 #endif // FEATURE_NETWORKING
 
 item_t TimeCapsule_ReplaceTeruSama(item_t item){
@@ -3374,8 +3522,10 @@ void LinkTrade(void){
         // LD_A_addr(wLinkMode);
         // CP_A(LINK_TIMECAPSULE);
         // JP_Z (mGen2ToGen1LinkComms);
+#if FEATURE_TIME_CAPSULE
         if(wram->wLinkMode == LINK_TIMECAPSULE)
             return Gen2ToGen1LinkComms();
+#endif // FEATURE_TIME_CAPSULE
         // JP(mGen2ToGen2LinkComms);
         return Gen2ToGen2LinkComms();
     }
@@ -3425,146 +3575,174 @@ void SetTradeRoomBGPals(void){
     // RET;
 }
 
-void PlaceTradeScreenTextbox(void){
 //  //  unreferenced
-    hlcoord(0, 0, wTilemap);
-    LD_B(6);
-    LD_C(18);
-    CALL(aLinkTextboxAtHL);
-    hlcoord(0, 8, wTilemap);
-    LD_B(6);
-    LD_C(18);
-    CALL(aLinkTextboxAtHL);
-    FARCALL(aPlaceTradePartnerNamesAndParty);
-    RET;
+void PlaceTradeScreenTextbox(void){
+    // hlcoord(0, 0, wTilemap);
+    // LD_B(6);
+    // LD_C(18);
+    // CALL(aLinkTextboxAtHL);
+    // hlcoord(0, 8, wTilemap);
+    // LD_B(6);
+    // LD_C(18);
+    // CALL(aLinkTextboxAtHL);
+    // FARCALL(aPlaceTradePartnerNamesAndParty);
+    // RET;
+}
 
 // INCLUDE "engine/movie/trade_animation.asm"
 
-    return CheckTimeCapsuleCompatibility();
-}
-
-void CheckTimeCapsuleCompatibility(void){
+#if FEATURE_TIME_CAPSULE
 //  Checks to see if your party is compatible with the Gen 1 games.
 //  Returns the following in wScriptVar:
 //  0: Party is okay
 //  1: At least one Pokémon was introduced in Gen 2
 //  2: At least one Pokémon has a move that was introduced in Gen 2
 //  3: At least one Pokémon is holding mail
+void CheckTimeCapsuleCompatibility(void){
 
 //  If any party Pokémon was introduced in the Gen 2 games, don't let it in.
-    LD_HL(wPartySpecies);
-    LD_B(PARTY_LENGTH);
-
-loop:
-    LD_A_hli;
-    CP_A(-1);
-    IF_Z goto checkitem;
-    CP_A(JOHTO_POKEMON);
-    IF_NC goto mon_too_new;
-    DEC_B;
-    IF_NZ goto loop;
+    // LD_HL(wPartySpecies);
+    // LD_B(PARTY_LENGTH);
+/// We could probably combine these loops into one loop.
+    for(uint32_t i = 0; i < PARTY_LENGTH && gPokemon.partySpecies[i] != (species_t)-1; ++i) {
+    // loop:
+        // LD_A_hli;
+        // CP_A(-1);
+        // IF_Z goto checkitem;
+        // CP_A(JOHTO_POKEMON);
+        // IF_NC goto mon_too_new;
+        if(gPokemon.partySpecies[i] >= JOHTO_POKEMON) {
+        // mon_too_new:
+            // LD_addr_A(wNamedObjectIndex);
+            // CALL(aGetPokemonName);
+            GetPokemonName(gPokemon.partySpecies[i]);
+            // LD_A(0x1);
+            // goto done;
+            wram->wScriptVar = 0x1;
+            return;
+        }
+        // DEC_B;
+        // IF_NZ goto loop;
+    }
 
 //  If any party Pokémon is holding mail, don't let it in.
 
-checkitem:
-    LD_A_addr(wPartyCount);
-    LD_B_A;
-    LD_HL(wPartyMon1Item);
+// checkitem:
+    // LD_A_addr(wPartyCount);
+    // LD_B_A;
+    // LD_HL(wPartyMon1Item);
+    for(uint32_t i = 0; i < PARTY_LENGTH; ++i) {
+    // itemloop:
+        // PUSH_HL;
+        // PUSH_BC;
+        // LD_D_hl;
+        // FARCALL(aItemIsMail);
+        if(ItemIsMail(gPokemon.partyMon[i].mon.item)) {
+        // mon_has_mail:
+            // CALL(aGetIncompatibleMonName);
+            GetIncompatibleMonName(i);
+            // LD_A(0x3);
 
-itemloop:
-    PUSH_HL;
-    PUSH_BC;
-    LD_D_hl;
-    FARCALL(aItemIsMail);
-    POP_BC;
-    POP_HL;
-    IF_C goto mon_has_mail;
-    LD_DE(PARTYMON_STRUCT_LENGTH);
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto itemloop;
+
+        // done:
+            // LD_addr_A(wScriptVar);
+            wram->wScriptVar = 0x3;
+            // RET;
+            return;
+        }
+        // POP_BC;
+        // POP_HL;
+        // IF_C goto mon_has_mail;
+        // LD_DE(PARTYMON_STRUCT_LENGTH);
+        // ADD_HL_DE;
+        // DEC_B;
+        // IF_NZ goto itemloop;
+    }
 
 //  If any party Pokémon has a move that was introduced in the Gen 2 games, don't let it in.
-    LD_HL(wPartyMon1Moves);
-    LD_A_addr(wPartyCount);
-    LD_B_A;
+    // LD_HL(wPartyMon1Moves);
+    // LD_A_addr(wPartyCount);
+    // LD_B_A;
+    for(uint32_t i = 0; i < PARTY_LENGTH; ++i) {
+    // move_loop:
+        // LD_C(NUM_MOVES);
+        for(uint32_t n = 0; n < NUM_MOVES; ++n) {
+        // move_next:
+            // LD_A_hli;
+            move_t move = gPokemon.partyMon[i].mon.moves[n];
+            // CP_A(STRUGGLE + 1);
+            // IF_NC goto move_too_new;
+            if(move > STRUGGLE) {
+            // move_too_new:
+                // PUSH_BC;
+                // LD_addr_A(wNamedObjectIndex);
+                // CALL(aGetMoveName);
+                // CALL(aCopyName1);
+                CopyName1(GetMoveName(move));
+                // POP_BC;
+                // CALL(aGetIncompatibleMonName);
+                GetIncompatibleMonName(i);
+                // LD_A(0x2);
+                // goto done;
+            
+            // done:
+                // LD_addr_A(wScriptVar);
+                wram->wScriptVar = 0x2;
+                // RET;
+                return;
+            }
+            // DEC_C;
+            // IF_NZ goto move_next;
+        }
+        // LD_DE(PARTYMON_STRUCT_LENGTH - NUM_MOVES);
+        // ADD_HL_DE;
+        // DEC_B;
+        // IF_NZ goto move_loop;
+    }
+    // XOR_A_A;
+    // goto done;
 
-move_loop:
-    LD_C(NUM_MOVES);
-
-move_next:
-    LD_A_hli;
-    CP_A(STRUGGLE + 1);
-    IF_NC goto move_too_new;
-    DEC_C;
-    IF_NZ goto move_next;
-    LD_DE(PARTYMON_STRUCT_LENGTH - NUM_MOVES);
-    ADD_HL_DE;
-    DEC_B;
-    IF_NZ goto move_loop;
-    XOR_A_A;
-    goto done;
-
-
-mon_too_new:
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    LD_A(0x1);
-    goto done;
-
-
-move_too_new:
-    PUSH_BC;
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetMoveName);
-    CALL(aCopyName1);
-    POP_BC;
-    CALL(aGetIncompatibleMonName);
-    LD_A(0x2);
-    goto done;
-
-
-mon_has_mail:
-    CALL(aGetIncompatibleMonName);
-    LD_A(0x3);
-
-
-done:
-    LD_addr_A(wScriptVar);
-    RET;
-
+// done:
+    // LD_addr_A(wScriptVar);
+    wram->wScriptVar = 0x0;
+    // RET;
 }
 
-void GetIncompatibleMonName(void){
 //  Calulate which pokemon is incompatible, and get that pokemon's name
-    LD_A_addr(wPartyCount);
-    SUB_A_B;
-    LD_C_A;
-    INC_C;
-    LD_B(0);
-    LD_HL(wPartyCount);
-    ADD_HL_BC;
-    LD_A_hl;
-    LD_addr_A(wNamedObjectIndex);
-    CALL(aGetPokemonName);
-    RET;
-
+uint8_t* GetIncompatibleMonName(uint32_t index){
+    // LD_A_addr(wPartyCount);
+    // SUB_A_B;
+    // LD_C_A;
+    // INC_C;
+    // LD_B(0);
+    // LD_HL(wPartyCount);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // LD_addr_A(wNamedObjectIndex);
+    // CALL(aGetPokemonName);
+    // RET;
+    return GetPokemonName(gPokemon.partySpecies[index]);
 }
 
 void EnterTimeCapsule(void){
-    LD_C(10);
-    CALL(aDelayFrames);
-    LD_A(0x4);
-    CALL(aLink_EnsureSync);
-    LD_C(40);
-    CALL(aDelayFrames);
-    XOR_A_A;
-    LDH_addr_A(hVBlank);
-    INC_A;  // LINK_TIMECAPSULE
-    LD_addr_A(wLinkMode);
-    RET;
-
+    // LD_C(10);
+    // CALL(aDelayFrames);
+    DelayFrames(10);
+    // LD_A(0x4);
+    // CALL(aLink_EnsureSync);
+    Link_EnsureSync(0x4);
+    // LD_C(40);
+    // CALL(aDelayFrames);
+    DelayFrames(40);
+    // XOR_A_A;
+    // LDH_addr_A(hVBlank);
+    hram.hVBlank = 0;
+    // INC_A;  // LINK_TIMECAPSULE
+    // LD_addr_A(wLinkMode);
+    wram->wLinkMode = LINK_TIMECAPSULE;
+    // RET;
 }
+#endif // FEATURE_TIME_CAPSULE
 
 void WaitForOtherPlayerToExit(void){
     // LD_C(3);
@@ -3661,21 +3839,25 @@ void SetBitsForBattleRequest(void){
 
 }
 
+#if FEATURE_TIME_CAPSULE
 void SetBitsForTimeCapsuleRequest(void){
-    LD_A(USING_INTERNAL_CLOCK);
-    LDH_addr_A(rSB);
-    XOR_A_A;
-    LDH_addr_A(hSerialReceive);
-    LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
-    LDH_addr_A(rSC);
-    XOR_A_A;  // LINK_TIMECAPSULE - 1
-    LD_addr_A(wPlayerLinkAction);
-    LD_addr_A(wChosenCableClubRoom);
-    RET;
-
+    // LD_A(USING_INTERNAL_CLOCK);
+    // LDH_addr_A(rSB);
+    // XOR_A_A;
+    // LDH_addr_A(hSerialReceive);
+    // LD_A((0 << rSC_ON) | (0 << rSC_CLOCK));
+    // LDH_addr_A(rSC);
+    // LD_A((1 << rSC_ON) | (0 << rSC_CLOCK));
+    // LDH_addr_A(rSC);
+    Network_SendByte(USING_INTERNAL_CLOCK);
+    // XOR_A_A;  // LINK_TIMECAPSULE - 1
+    // LD_addr_A(wPlayerLinkAction);
+    wram->wPlayerLinkAction = LINK_TIMECAPSULE - 1;
+    // LD_addr_A(wChosenCableClubRoom);
+    wram->wChosenCableClubRoom = LINK_TIMECAPSULE - 1;
+    // RET;
 }
+#endif // FEATURE_TIME_CAPSULE
 
 void WaitForLinkedFriend(void){
     // LD_A_addr(wPlayerLinkAction);
@@ -4060,17 +4242,23 @@ void CheckBothSelectedSameRoom(void){
     }
 }
 
+#if FEATURE_TIME_CAPSULE
 void TimeCapsule(void){
-    LD_A(LINK_TIMECAPSULE);
-    LD_addr_A(wLinkMode);
-    CALL(aDisableSpriteUpdates);
-    CALLFAR(aLinkCommunications);
-    CALL(aEnableSpriteUpdates);
-    XOR_A_A;
-    LDH_addr_A(hVBlank);
-    RET;
-
+    // LD_A(LINK_TIMECAPSULE);
+    // LD_addr_A(wLinkMode);
+    wram->wLinkMode = LINK_TIMECAPSULE;
+    // CALL(aDisableSpriteUpdates);
+    DisableSpriteUpdates();
+    // CALLFAR(aLinkCommunications);
+    LinkCommunications();
+    // CALL(aEnableSpriteUpdates);
+    EnableSpriteUpdates();
+    // XOR_A_A;
+    // LDH_addr_A(hVBlank);
+    hram.hVBlank = 0;
+    // RET;
 }
+#endif // FEATURE_TIME_CAPSULE
 
 void TradeCenter(void){
     // LD_A(LINK_TRADECENTER);
@@ -4217,19 +4405,18 @@ void GSLinkCommsBorderGFX(void){
     return CheckSRAM0Flag();
 }
 
-void CheckSRAM0Flag(void){
 //  //  unreferenced
 //  input: hl = unknown flag array in "SRAM Bank 0"
-    LD_A(MBANK(asScratch)); // LD_A(BANK("SRAM Bank 0"));
-    CALL(aOpenSRAM);
-    LD_D(0);
-    LD_B(CHECK_FLAG);
-    PREDEF(pSmallFarFlagAction);
-    CALL(aCloseSRAM);
-    LD_A_C;
-    AND_A_A;
-    RET;
-
+void CheckSRAM0Flag(void){
+    // LD_A(MBANK(asScratch)); // LD_A(BANK("SRAM Bank 0"));
+    // CALL(aOpenSRAM);
+    // LD_D(0);
+    // LD_B(CHECK_FLAG);
+    // PREDEF(pSmallFarFlagAction);
+    // CALL(aCloseSRAM);
+    // LD_A_C;
+    // AND_A_A;
+    // RET;
 }
 
 #else

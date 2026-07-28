@@ -358,24 +358,29 @@ void ClearActorHud(void){
 
 void PlaceWindowOverBattleTextbox(void){
 //  //  unreferenced
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    hram.hBGMapMode = BGMAPMODE_NONE;
 // bgcoord hBGMapAddress, 0, 20
-    LD_A(LOW(vBGMap0 + 20 * BG_MAP_WIDTH));
-    LDH_addr_A(hBGMapAddress);
-    LD_A(HIGH(vBGMap0 + 20 * BG_MAP_WIDTH));
-    LDH_addr_A(hBGMapAddress + 1);
-    CALL(aWaitBGMap2);
-    LD_A((SCREEN_HEIGHT - TEXTBOX_HEIGHT) * TILE_WIDTH);
-    LDH_addr_A(hWY);
+    // LD_A(LOW(vBGMap0 + 20 * BG_MAP_WIDTH));
+    // LDH_addr_A(hBGMapAddress);
+    // LD_A(HIGH(vBGMap0 + 20 * BG_MAP_WIDTH));
+    // LDH_addr_A(hBGMapAddress + 1);
+    hram.hBGMapAddress = bgcoord(0, 20, vBGMap0);
+    // CALL(aWaitBGMap2);
+    WaitBGMap2();
+    // LD_A((SCREEN_HEIGHT - TEXTBOX_HEIGHT) * TILE_WIDTH);
+    // LDH_addr_A(hWY);
+    hram.hWY = (SCREEN_HEIGHT - TEXTBOX_HEIGHT) * TILE_WIDTH;
 // bgcoord hBGMapAddress, 0, 0
-    XOR_A_A;  // LOW(vBGMap0)
-    LDH_addr_A(hBGMapAddress);
-    LD_A(HIGH(vBGMap0));
-    LDH_addr_A(hBGMapAddress + 1);
-    CALL(aBattleAnimDelayFrame);
-    RET;
-
+    // XOR_A_A;  // LOW(vBGMap0)
+    // LDH_addr_A(hBGMapAddress);
+    // LD_A(HIGH(vBGMap0));
+    // LDH_addr_A(hBGMapAddress + 1);
+    hram.hBGMapAddress = bgcoord(0, 0, vBGMap0);
+    // CALL(aBattleAnimDelayFrame);
+    BattleAnimDelayFrame();
+    // RET;
 }
 
 void BattleAnim_ClearOAM(void){
@@ -667,8 +672,7 @@ void BattleAnimCmd_EC(void){
 }
 
 void BattleAnimCmd_ED(void){
-    RET;
-
+    // RET;
 }
 
 void BattleAnimCmd_Ret(battleanim_s* anim){
@@ -1045,56 +1049,56 @@ void BattleAnimCmd_ClearObjs(void){
 }
 
 void BattleAnimCmd_1GFX(void){
-    return BattleAnimCmd_2GFX();
+    // return BattleAnimCmd_2GFX();
 }
 
 void BattleAnimCmd_2GFX(void){
-    return BattleAnimCmd_3GFX();
+    // return BattleAnimCmd_3GFX();
 }
 
 void BattleAnimCmd_3GFX(void){
-    return BattleAnimCmd_4GFX();
+    // return BattleAnimCmd_4GFX();
 }
 
 void BattleAnimCmd_4GFX(void){
-    return BattleAnimCmd_5GFX();
+    // return BattleAnimCmd_5GFX();
 }
 
 void BattleAnimCmd_5GFX(void){
-    LD_A_addr(wBattleAnimByte);
-    AND_A(0xf);
-    LD_C_A;
-    LD_HL(wBattleAnimTileDict);
-    XOR_A_A;
-    LD_addr_A(wBattleAnimGFXTempTileID);
+    // LD_A_addr(wBattleAnimByte);
+    // AND_A(0xf);
+    // LD_C_A;
+    // LD_HL(wBattleAnimTileDict);
+    // XOR_A_A;
+    // LD_addr_A(wBattleAnimGFXTempTileID);
 
-loop:
-    LD_A_addr(wBattleAnimGFXTempTileID);
-    CP_A((vTiles1 - vTiles0) / LEN_2BPP_TILE - BATTLEANIM_BASE_TILE);
-    RET_NC ;
-    CALL(aGetBattleAnimByte);
-    LD_hli_A;
-    LD_A_addr(wBattleAnimGFXTempTileID);
-    LD_hli_A;
-    PUSH_BC;
-    PUSH_HL;
-    LD_L_A;
-    LD_H(0);
-    for(int rept = 0; rept < 4; rept++){
-    ADD_HL_HL;
-    }
-    LD_DE(vTiles0 + LEN_2BPP_TILE * BATTLEANIM_BASE_TILE);
-    ADD_HL_DE;
-    LD_A_addr(wBattleAnimByte);
-    CALL(aLoadBattleAnimGFX);
-    LD_A_addr(wBattleAnimGFXTempTileID);
-    ADD_A_C;
-    LD_addr_A(wBattleAnimGFXTempTileID);
-    POP_HL;
-    POP_BC;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
+// loop:
+    // LD_A_addr(wBattleAnimGFXTempTileID);
+    // CP_A((vTiles1 - vTiles0) / LEN_2BPP_TILE - BATTLEANIM_BASE_TILE);
+    // RET_NC ;
+    // CALL(aGetBattleAnimByte);
+    // LD_hli_A;
+    // LD_A_addr(wBattleAnimGFXTempTileID);
+    // LD_hli_A;
+    // PUSH_BC;
+    // PUSH_HL;
+    // LD_L_A;
+    // LD_H(0);
+    // for(int rept = 0; rept < 4; rept++){
+    // ADD_HL_HL;
+    // }
+    // LD_DE(vTiles0 + LEN_2BPP_TILE * BATTLEANIM_BASE_TILE);
+    // ADD_HL_DE;
+    // LD_A_addr(wBattleAnimByte);
+    // CALL(aLoadBattleAnimGFX);
+    // LD_A_addr(wBattleAnimGFXTempTileID);
+    // ADD_A_C;
+    // LD_addr_A(wBattleAnimGFXTempTileID);
+    // POP_HL;
+    // POP_BC;
+    // DEC_C;
+    // IF_NZ goto loop;
+    // RET;
 
 }
 
@@ -1426,8 +1430,7 @@ void BattleAnimCmd_CheckPokeball(void){
 }
 
 void BattleAnimCmd_E7(void){
-    RET;
-
+    // RET;
 }
 
 void BattleAnimCmd_Transform(void){
@@ -1811,18 +1814,15 @@ void BattleAnimCmd_KeepSprites(void){
 }
 
 void BattleAnimCmd_F5(void){
-    RET;
-
+    // RET;
 }
 
 void BattleAnimCmd_F6(void){
-    RET;
-
+    // RET;
 }
 
 void BattleAnimCmd_F7(void){
-    RET;
-
+    // RET;
 }
 
 void BattleAnimCmd_Sound(uint8_t duration, uint8_t tracks, uint16_t sfx){

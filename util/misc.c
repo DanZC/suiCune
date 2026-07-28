@@ -103,3 +103,22 @@ void MemSwap(void* a_, void* b_, size_t size) {
         b++;
     }
 }
+
+// Replicates the algorithm for adjusting a number to BCD.
+uint16_t GB_DecimalAdjust_Impl(uint8_t a, uint8_t h, uint8_t n, uint8_t c) {
+    uint16_t value = a;
+    if(n) {
+        if(h) value = (value - 0x6) & 0xff;
+        if(c) value -= 0x60;
+    }
+    else {
+        if(h || (value & 0xf) > 0x9) value += 0x6;
+        if(c || value > 0x9f) value += 0x60;
+    }
+    return value & 0x1ff;
+}
+
+// Replicates the algorithm for adjusting a number to BCD.
+uint8_t GB_DecimalAdjust(uint8_t a) {
+    return GB_DecimalAdjust_Impl(a, 0, 0, 0) & 0xff;
+}

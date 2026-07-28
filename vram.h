@@ -1,11 +1,7 @@
 #pragma once
 
-#if defined(__cplusplus) || defined(_MSC_VER)
-struct vram_s
-#else
 // A struct representing VRAM.
-struct __attribute__((packed)) vram_s
-#endif
+struct vram_s
 {
     // Bank 0
     union {

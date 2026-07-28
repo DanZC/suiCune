@@ -6,6 +6,7 @@
 #include "../home/text.h"
 #include "../home/sram.h"
 #include "../home/audio.h"
+#include "../home/map.h"
 #include "../home/menu.h"
 #include "../home/scrolling_menu.h"
 #include "../home/delay.h"
@@ -16,45 +17,45 @@
 #include "../data/text/common.h"
 
 #if FEATURE_MOBILE
-void Function8b342(void){
 //  Loads the map data pointer, then runs through a
 //  dw with three dummy functions. Spends a lot of energy
 //  doing pretty much nothing.
-    CALL(aGetMapAttributesPointer);
-    LD_D_H;
-    LD_E_L;
+const struct MapAttr* Function8b342(void){
+    // CALL(aGetMapAttributesPointer);
+    // LD_D_H;
+    // LD_E_L;
+    const struct MapAttr* de = GetMapAttributesPointer();
 
 //  Everything between here and "ret" is useless.
-    XOR_A_A;
+    // XOR_A_A;
 
-loop:
-    PUSH_AF;
-    LD_HL(mFunction8b342_dw);
-    RST(aJumpTable);
-    POP_AF;
-    INC_A;
-    CP_A(3);
-    IF_NZ goto loop;
-    RET;
+// loop:
+    // PUSH_AF;
+    // LD_HL(mFunction8b342_dw);
+    // RST(aJumpTable);
+    // POP_AF;
+    // INC_A;
+    // CP_A(3);
+    // IF_NZ goto loop;
+    // RET;
 
-
-dw:
+// dw:
     //dw ['.zero'];
     //dw ['.one'];
     //dw ['.two'];
 
 
-zero:
-    RET;
+// zero:
+    // RET;
 
 
-one:
-    RET;
+// one:
+    // RET;
 
 
-two:
-    RET;
-
+// two:
+    // RET;
+    return de;
 }
 
 void Function8b35d(void){

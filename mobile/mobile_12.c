@@ -522,39 +522,40 @@ void RetrieveZipcodeInfo(uint8_t prefecture){
     // ret
 }
 
+// Inlined elsewhere
 void Function48157(void){
-    CALL(aScrollingMenuJoypad);
-    LD_HL(wMenuCursorY);
-    LD_B_hl;
-    PUSH_BC;
-    return asm_4815f();
+    // CALL(aScrollingMenuJoypad);
+    // LD_HL(wMenuCursorY);
+    // LD_B_hl;
+    // PUSH_BC;
+    // return asm_4815f();
 }
 
+// Inlined elsewhere
 void asm_4815f(void){
-    BIT_A(A_BUTTON_F);
-    JP_NZ (mFunction4820d);
-    LD_B_A;
-    LD_A_addr(wd002);
-    BIT_A(6);
-    IF_Z goto dont_check_b_button;
-    LD_HL(wd479);
-    BIT_hl(1);
-    IF_Z goto dont_check_b_button;
-    BIT_B(B_BUTTON_F);
-    IF_NZ goto b_button;
+    // BIT_A(A_BUTTON_F);
+    // JP_NZ (mFunction4820d);
+    // LD_B_A;
+    // LD_A_addr(wd002);
+    // BIT_A(6);
+    // IF_Z goto dont_check_b_button;
+    // LD_HL(wd479);
+    // BIT_hl(1);
+    // IF_Z goto dont_check_b_button;
+    // BIT_B(B_BUTTON_F);
+    // IF_NZ goto b_button;
 
-dont_check_b_button:
-    JP(mFunction48272);
+// dont_check_b_button:
+    // JP(mFunction48272);
 
 
-b_button:
-    CALL(aClearBGPalettes);
-    CALL(aFunction48d30);
-    POP_BC;
-    CALL(aClearTilemap);
-    LD_A(0xff);
-    RET;
-
+// b_button:
+    // CALL(aClearBGPalettes);
+    // CALL(aFunction48d30);
+    // POP_BC;
+    // CALL(aClearTilemap);
+    // LD_A(0xff);
+    // RET;
 }
 
 // Mobile12_ClearBlankUserParameters

@@ -387,74 +387,77 @@ bool Script_TimeCapsuleClosed(script_s* s) {
 }
 bool LinkReceptionistScript_TimeCapsule(script_s* s) {
     SCRIPT_BEGIN
-// Time capsule does nothing in PC port (for now...)
-    sjump(Script_TimeCapsuleClosed) 
-    // checkevent(EVENT_MET_BILL)
-    // iftrue_jump(Script_TimeCapsuleClosed)
-    // checkflag(ENGINE_TIME_CAPSULE)
-    // iftrue_jump(Script_TimeCapsuleClosed)
-    // special(SetBitsForTimeCapsuleRequest)
-    // faceplayer
-    // opentext
-    // writetext(Text_TimeCapsuleReceptionistIntro)
-    // yesorno
-    // iffalse(Cancel)
-    // special(CheckTimeCapsuleCompatibility)
-    // ifequal(0x1, MonTooNew)
-    // ifequal(0x2, MonMoveTooNew)
-    // ifequal(0x3, MonHasMail)
-    // writetext(Text_PleaseWait)
-    // special(WaitForLinkedFriend)
-    // iffalse(FriendNotReady)
+#if FEATURE_TIME_CAPSULE
+    checkevent(EVENT_MET_BILL)
+    iftrue_jump(Script_TimeCapsuleClosed)
+    checkflag(ENGINE_TIME_CAPSULE)
+    iftrue_jump(Script_TimeCapsuleClosed)
+    special(SetBitsForTimeCapsuleRequest)
+    faceplayer
+    opentext
+    writetext(Text_TimeCapsuleReceptionistIntro)
+    yesorno
+    iffalse(Cancel)
+    special(CheckTimeCapsuleCompatibility)
+    ifequal(0x1, MonTooNew)
+    ifequal(0x2, MonMoveTooNew)
+    ifequal(0x3, MonHasMail)
+    writetext(Text_PleaseWait)
+    special(WaitForLinkedFriend)
+    iffalse(FriendNotReady)
     // writetext(Text_MustSaveGame)
     // yesorno
     // iffalse(DidNotSave)
     // special(TryQuickSave)
     // iffalse(DidNotSave)
-    // writetext(Text_PleaseWait)
-    // special(CheckLinkTimeout_Receptionist)
-    // iffalse(LinkTimedOut)
-    // readmem(&wram->wOtherPlayerLinkMode)
-    // iffalse(OK)
-    // special(CheckBothSelectedSameRoom)
-    // writetext(Text_IncompatibleRooms)
-    // special(CloseLink)
-    // closetext
-    // s_end
-// OK:
-    // special(EnterTimeCapsule)
-    // writetext(Text_PleaseComeIn)
-    // waitbutton
-    // closetext
-    // scall(TimeCapsuleScript_CheckPlayerGender)
-    // warpcheck
-    // s_end
-// FriendNotReady:
-    // special(WaitForOtherPlayerToExit)
-    // writetext(YourFriendIsNotReadyText)
-    // closetext
-    // s_end
-// LinkTimedOut:
-    // writetext(Text_LinkTimedOut)
-    // goto Cancel;
+    writetext(Text_PleaseWait)
+    special(CheckLinkTimeout_Receptionist)
+    iffalse(LinkTimedOut)
+    readmem(&wram->wOtherPlayerLinkMode)
+    iffalse(OK)
+    special(CheckBothSelectedSameRoom)
+    writetext(Text_IncompatibleRooms)
+    special(CloseLink)
+    closetext
+    s_end
+OK:
+    special(EnterTimeCapsule)
+    writetext(Text_PleaseComeIn)
+    waitbutton
+    closetext
+    scall(TimeCapsuleScript_CheckPlayerGender)
+    warpcheck
+    s_end
+FriendNotReady:
+    special(WaitForOtherPlayerToExit)
+    writetext(YourFriendIsNotReadyText)
+    closetext
+    s_end
+LinkTimedOut:
+    writetext(Text_LinkTimedOut)
+    goto Cancel;
 // DidNotSave:
     // writetext(Text_PleaseComeAgain)
-// Cancel:
-    // special(WaitForOtherPlayerToExit)
-    // closetext
-    // s_end
-// MonTooNew:
-    // writetext(Text_RejectNewMon)
-    // closetext
-    // s_end
-// MonMoveTooNew:
-    // writetext(Text_RejectMonWithNewMove)
-    // closetext
-    // s_end
-// MonHasMail:
-    // writetext(Text_RejectMonWithMail)
-    // closetext
-    // s_end
+Cancel:
+    special(WaitForOtherPlayerToExit)
+    closetext
+    s_end
+MonTooNew:
+    writetext(Text_RejectNewMon)
+    closetext
+    s_end
+MonMoveTooNew:
+    writetext(Text_RejectMonWithNewMove)
+    closetext
+    s_end
+MonHasMail:
+    writetext(Text_RejectMonWithMail)
+    closetext
+    s_end
+#else
+// Time capsule does nothing in PC port (for now...)
+    sjump(Script_TimeCapsuleClosed)
+#endif // FEATURE_TIMECAPSULE
     SCRIPT_END
 }
 bool Script_LeftCableTradeCenter(script_s* s) {

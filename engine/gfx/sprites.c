@@ -693,27 +693,27 @@ static const struct OAMData* GetFrameOAMPointer(uint8_t a){
     return SpriteAnimOAMData + a;
 }
 
-void UnusedLoadSpriteAnimGFX(void){
 //  //  unreferenced
-    PUSH_HL;
-    LD_L_A;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_DE(mUnusedSpriteAnimGFX);
-    ADD_HL_DE;
-    LD_C_hl;
-    INC_HL;
-    LD_B_hl;
-    INC_HL;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    POP_HL;
-    PUSH_BC;
-    CALL(aRequest2bpp);
-    POP_BC;
-    RET;
+void UnusedLoadSpriteAnimGFX(void){
+    // PUSH_HL;
+    // LD_L_A;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_DE(mUnusedSpriteAnimGFX);
+    // ADD_HL_DE;
+    // LD_C_hl;
+    // INC_HL;
+    // LD_B_hl;
+    // INC_HL;
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    // POP_HL;
+    // PUSH_BC;
+    // CALL(aRequest2bpp);
+    // POP_BC;
+    // RET;
 
 // INCLUDE "data/sprite_anims/sequences.asm"
 

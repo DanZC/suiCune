@@ -251,7 +251,6 @@ void CrystalIntro(void){
     // PUSH_AF;
     // LD_A(MBANK(awGBCPalettes));
     // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awGBCPalettes));
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
     uint8_t in_menu = hram.hInMenu;
@@ -323,7 +322,6 @@ void CrystalIntro(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
-    wbank_pop;
 }
 
 static void CrystalIntro_InitRAMAddrs(void){
@@ -1193,8 +1191,8 @@ static void IntroScene12_PlayUnownSound(void) {
             // LD_E_A;
             // PUSH_DE;
             uint16_t sound = UnownSounds[i].word;
-            CALL(aSFXChannelsOff);
-            // SFXChannelsOff();
+            // CALL(aSFXChannelsOff);
+            SFXChannelsOff();
             // POP_DE;
             // CALL(aPlaySFX);
             PlaySFX(sound);

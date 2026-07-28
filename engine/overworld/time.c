@@ -499,19 +499,21 @@ bool UpdateTimeRemaining(uint8_t* hl, uint8_t a){
     // RET;
 }
 
-void GetSecondsSinceIfLessThan60(void){
 //  //  unreferenced
-    LD_A_addr(wDaysSince);
-    AND_A_A;
-    JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
-    LD_A_addr(wHoursSince);
-    AND_A_A;
-    JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
-    LD_A_addr(wMinutesSince);
-    JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
-    LD_A_addr(wSecondsSince);
-    RET;
-
+uint8_t GetSecondsSinceIfLessThan60(const struct TimeElapsed *elapsed){
+    // LD_A_addr(wDaysSince);
+    // AND_A_A;
+    // JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
+    // LD_A_addr(wHoursSince);
+    // AND_A_A;
+    // JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
+    // LD_A_addr(wMinutesSince);
+    // JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
+    if(elapsed->daysSince != 0 || elapsed->hoursSince != 0 || elapsed->minutesSince != 0)
+        return 0xff;
+    // LD_A_addr(wSecondsSince);
+    // RET;
+    return elapsed->secondsSince;
 }
 
 static uint8_t GetMinutesSinceIfLessThan60(const struct TimeElapsed *elapsed){
@@ -529,14 +531,16 @@ static uint8_t GetMinutesSinceIfLessThan60(const struct TimeElapsed *elapsed){
     return elapsed->minutesSince;
 }
 
-void GetHoursSinceIfLessThan24(void){
 //  //  unreferenced
-    LD_A_addr(wDaysSince);
-    AND_A_A;
-    JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
-    LD_A_addr(wHoursSince);
-    RET;
-
+uint8_t GetHoursSinceIfLessThan24(const struct TimeElapsed *elapsed){
+    // LD_A_addr(wDaysSince);
+    // AND_A_A;
+    // JR_NZ (mGetTimeElapsed_ExceedsUnitLimit);
+    if(elapsed->daysSince != 0)
+        return 0xff;
+    // LD_A_addr(wHoursSince);
+    // RET;
+    return elapsed->hoursSince;
 }
 
 // uint8_t GetDaysSince(void){

@@ -1684,19 +1684,18 @@ static bool RunTitleScreen(void){
     return false;
 }
 
-void UnusedTitlePerspectiveScroll(void){
 //  //  unreferenced
 //  Similar behavior to Intro_PerspectiveScrollBG.
-    LDH_A_addr(hVBlankCounter);
-    AND_A(0x7);
-    RET_NZ ;
-    LD_HL(wLYOverrides + 0x5f);
-    LD_A_hl;
-    DEC_A;
-    LD_BC(2 * SCREEN_WIDTH);
-    CALL(aByteFill);
-    RET;
-
+void UnusedTitlePerspectiveScroll(void){
+    // LDH_A_addr(hVBlankCounter);
+    // AND_A(0x7);
+    // RET_NZ ;
+    // LD_HL(wLYOverrides + 0x5f);
+    // LD_A_hl;
+    // DEC_A;
+    // LD_BC(2 * SCREEN_WIDTH);
+    // CALL(aByteFill);
+    // RET;
 }
 
 void TitleScreenScene(uint8_t a){
@@ -1985,38 +1984,39 @@ static void ResetClock(void) {
 //}
 //#endif
 
+//  //  unreferenced
+// TODO: Maybe reimplement this as a build option?
 void UpdateTitleTrailSprite(void) {
-    //  //  unreferenced
     // If bit 0 or 1 of [wTitleScreenTimer] is set, we don't need to be here.
-    LD_A_addr(wTitleScreenTimer);
-    AND_A(0b00000011);
-    RET_NZ;
-    LD_BC(wSpriteAnim10);
-    LD_HL(SPRITEANIMSTRUCT_FRAME);
-    ADD_HL_BC;
-    LD_L_hl;
-    LD_H(0);
-    ADD_HL_HL;
-    ADD_HL_HL;
-    LD_DE(mUpdateTitleTrailSprite_TitleTrailCoords);
-    ADD_HL_DE;
+    // LD_A_addr(wTitleScreenTimer);
+    // AND_A(0b00000011);
+    // RET_NZ;
+    // LD_BC(wSpriteAnim10);
+    // LD_HL(SPRITEANIMSTRUCT_FRAME);
+    // ADD_HL_BC;
+    // LD_L_hl;
+    // LD_H(0);
+    // ADD_HL_HL;
+    // ADD_HL_HL;
+    // LD_DE(mUpdateTitleTrailSprite_TitleTrailCoords);
+    // ADD_HL_DE;
     // If bit 2 of [wTitleScreenTimer] is set, get the second coords// else, get the first coords
-    LD_A_addr(wTitleScreenTimer);
-    AND_A(0b00000100);
-    SRL_A;
-    SRL_A;
-    LD_E_A;
-    LD_D(0);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_A_hli;
-    AND_A_A;
-    RET_Z;
-    LD_E_A;
-    LD_D_hl;
-    LD_A(SPRITE_ANIM_INDEX_GS_TITLE_TRAIL);
-    CALL(aInitSpriteAnimStruct);
-    RET;
+    // LD_A_addr(wTitleScreenTimer);
+    // AND_A(0b00000100);
+    // SRL_A;
+    // SRL_A;
+    // LD_E_A;
+    // LD_D(0);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_A_hli;
+    // AND_A_A;
+    // RET_Z;
+    // LD_E_A;
+    // LD_D_hl;
+    // LD_A(SPRITE_ANIM_INDEX_GS_TITLE_TRAIL);
+    // CALL(aInitSpriteAnimStruct);
+    // RET;
 
 
 // TitleTrailCoords:

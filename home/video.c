@@ -322,11 +322,11 @@ void UpdateBGMap(void) {
     // DEC_A;  // 1
     // IF_Z goto Tiles;
     if(hram.hBGMapMode == BGMAPMODE_UPDATE_TILES)
-        return UpdateBGMap_Tiles(GBToRAMAddr(hram.hBGMapAddress));
+        return UpdateBGMap_Tiles(gb.vram + (hram.hBGMapAddress & 0x1ff0));
     // DEC_A;  // 2
     // IF_Z goto Attr;
     if(hram.hBGMapMode == BGMAPMODE_UPDATE_ATTRS)
-        return UpdateBGMap_Attr((uint8_t*)GBToRAMAddr(hram.hBGMapAddress) + VRAM_BANK_SIZE);
+        return UpdateBGMap_Attr(gb.vram + (hram.hBGMapAddress & 0x1ff0) + VRAM_BANK_SIZE);
 
     //  BG Map 1
     // DEC_A;  // useless

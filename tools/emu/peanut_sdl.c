@@ -3553,7 +3553,7 @@ void cleanup(void) {
     SDL_Quit();
     /* Record save file. */
     write_cart_ram_file(save_file_name, save_file2_name, &priv.cart_ram, gb_get_save_size());
-    free(priv.rom);
+    if(priv.rom) free(priv.rom);
     free(priv.cart_ram);
     /* If the save file name was automatically generated (which required memory
      * allocated on the help), then free it here. */
@@ -3964,6 +3964,8 @@ int main(int argc, char* argv[]) {
         // gb_run_frame();
         Intro_Jumptable();
     }
+
+    ret = EXIT_SUCCESS;
 
 quit:
     MobileQuit();

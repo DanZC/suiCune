@@ -2135,14 +2135,13 @@ void Pack_GetItemName(item_t item){
     // RET;
 }
 
-void Pack_ClearTilemap(void){
 //  //  unreferenced
-    hlcoord(0, 0, wTilemap);
-    LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
-    LD_A(0x7f);
-    CALL(aByteFill);
-    RET;
-
+void Pack_ClearTilemap(void){
+    // hlcoord(0, 0, wTilemap);
+    // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
+    // LD_A(0x7f);
+    // CALL(aByteFill);
+    // RET;
 }
 
 void ClearPocketList(void){

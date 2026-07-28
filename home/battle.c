@@ -306,28 +306,6 @@ void MobileTextBorder(void){
 }
 
 //  Open a textbox and print text at hl.
-//  Unused
-void BattleTextbox_GB(uint16_t hl){
-    // PUSH_HL;
-    // CALL(aSpeechTextbox);
-    SpeechTextbox();
-
-    // CALL(aMobileTextBorder);
-    MobileTextBorder();
-
-    // CALL(aUpdateSprites);
-    UpdateSprites();
-
-    // CALL(aApplyTilemap);
-    ApplyTilemap();
-
-    // POP_HL;
-    // CALL(aPrintTextboxText);
-    PrintTextboxText_GB(GBToRAMAddr(hl));
-    // RET;
-}
-
-//  Open a textbox and print text at hl.
 void BattleTextbox(const struct TextCmd* hl){
     // PUSH_HL;
     // CALL(aSpeechTextbox);
@@ -346,25 +324,6 @@ void BattleTextbox(const struct TextCmd* hl){
     // CALL(aPrintTextboxText);
     PrintTextboxText(hl);
     // RET;
-}
-
-//  Open a textbox and print battle text at 20:hl.
-//  Unused
-void StdBattleTextbox_GB(uint16_t hl){
-    // LDH_A_addr(hROMBank);
-    // PUSH_AF;
-
-    // LD_A(BANK(aBattleText));
-    // RST(aBankswitch);
-    bank_push(BANK(aBattleText));
-
-    // CALL(aBattleTextbox);
-    BattleTextbox_GB(hl);
-
-    // POP_AF;
-    // RST(aBankswitch);
-    // RET;
-    bank_pop;
 }
 
 //  Open a textbox and print battle text at 20:hl.

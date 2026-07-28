@@ -66,16 +66,22 @@ void (*const SpecialsPointers[])(void) = {
     add_special(TryQuickSave),
 #if FEATURE_NETWORKING
     add_special(CheckBothSelectedSameRoom),
-    // add_special(FailedLinkToPast),
+#if FEATURE_TIME_CAPSULE
+    add_special(FailedLinkToPast),
+#endif // FEATURE_TIME_CAPSULE
     add_special(CloseLink),
     add_special(WaitForOtherPlayerToExit),
     add_special(SetBitsForBattleRequest),
-    // add_special(SetBitsForTimeCapsuleRequest),
-    // add_special(CheckTimeCapsuleCompatibility),
-    // add_special(EnterTimeCapsule),
+#if FEATURE_TIME_CAPSULE
+    add_special(SetBitsForTimeCapsuleRequest),
+    add_special(CheckTimeCapsuleCompatibility),
+    add_special(EnterTimeCapsule),
+#endif // FEATURE_TIME_CAPSULE
     add_special(TradeCenter),
     add_special(Colosseum),
-    // add_special(TimeCapsule),
+#if FEATURE_TIME_CAPSULE
+    add_special(TimeCapsule),
+#endif // FEATURE_TIME_CAPSULE
     add_special(CableClubCheckWhichChris),
 #endif // FEATURE_NETWORKING
     add_special(CheckMysteryGift),

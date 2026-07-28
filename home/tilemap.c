@@ -117,11 +117,8 @@ void v_CopyTilemapAtOnce(void) {
     // CP_A(0x80 - 1);
     // IF_C goto wait;
 
-    gb_write(rVBK, MBANK(avBGMap2));
-    v_CopyTilemapAtOnce_CopyBGMapViaStack(coord(0, 0, wram->wAttrmap));
-
-    gb_write(rVBK, MBANK(avBGMap0));
-    v_CopyTilemapAtOnce_CopyBGMapViaStack(coord(0, 0, wram->wTilemap));
+    v_CopyTilemapAtOnce_CopyBGMapViaStack(gb.vram + VRAM_BANK_SIZE + (hram.hBGMapAddress & 0x1ff0), coord(0, 0, wram->wAttrmap));
+    v_CopyTilemapAtOnce_CopyBGMapViaStack(gb.vram + (hram.hBGMapAddress & 0x1ff0), coord(0, 0, wram->wTilemap));
 
     // wait2:
     // LDH_A_addr(rLY);
@@ -134,8 +131,7 @@ void v_CopyTilemapAtOnce(void) {
 }
 
 //  Copy all tiles to vBGMap
-void v_CopyTilemapAtOnce_CopyBGMapViaStack(const tile_t* sp) {
-    tile_t* hl = GBToRAMAddr(hram.hBGMapAddress & 0xff00);
+void v_CopyTilemapAtOnce_CopyBGMapViaStack(tile_t* hl, const tile_t* sp) {
     hram.hTilesPerCycle = SCREEN_HEIGHT;
     // uint8_t b = 1 << 1;
     // uint8_t c = LOW(rSTAT);

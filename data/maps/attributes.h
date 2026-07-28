@@ -313,7 +313,7 @@ decl_map_attr(Route28SteelWingHouse);
 decl_map_attr(Pokecenter2F);
 decl_map_attr(TradeCenter);
 decl_map_attr(Colosseum);
-// decl_map_attr(TimeCapsule);
+decl_map_attr(TimeCapsule);
 decl_map_attr(MobileTradeRoom);
 decl_map_attr(MobileBattleRoom);
 decl_map_attr(CeladonDeptStore1F);

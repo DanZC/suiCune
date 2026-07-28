@@ -15,3 +15,4 @@ uint16_t ReverseEndian16(uint16_t x);
 void NativeToBigEndianN(uint8_t* dest, const uint8_t* src, size_t n);
 #define BigEndianToNativeN NativeToBigEndianN
 void MemSwap(void* a_, void* b_, size_t size);
+uint8_t GB_DecimalAdjust(uint8_t a);

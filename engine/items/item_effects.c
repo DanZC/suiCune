@@ -2925,76 +2925,70 @@ bool IsMonAtFullHealth(struct PartyMon* bc){
 }
 
 void LoadCurHPIntoBuffer3(void){
-    LD_A(MON_HP);
-    CALL(aGetPartyParamLocation);
-    LD_A_hli;
-    LD_addr_A(wHPBuffer3 + 1);
-    LD_A_hl;
-    LD_addr_A(wHPBuffer3);
-    RET;
-
+    // LD_A(MON_HP);
+    // CALL(aGetPartyParamLocation);
+    // LD_A_hli;
+    // LD_addr_A(wHPBuffer3 + 1);
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer3);
+    // RET;
 }
 
+//  //  unreferenced
 void LoadHPIntoBuffer3(void){
-//  //  unreferenced
-    LD_A_D;
-    LD_addr_A(wHPBuffer3 + 1);
-    LD_A_E;
-    LD_addr_A(wHPBuffer3);
-    RET;
+    // LD_A_D;
+    // LD_addr_A(wHPBuffer3 + 1);
+    // LD_A_E;
+    // LD_addr_A(wHPBuffer3);
+    // RET;
 
 }
 
-void LoadHPFromBuffer3(void){
 //  //  unreferenced
-    LD_A_addr(wHPBuffer3 + 1);
-    LD_D_A;
-    LD_A_addr(wHPBuffer3);
-    LD_E_A;
-    RET;
-
+void LoadHPFromBuffer3(void){
+    // LD_A_addr(wHPBuffer3 + 1);
+    // LD_D_A;
+    // LD_A_addr(wHPBuffer3);
+    // LD_E_A;
+    // RET;
 }
 
 void LoadCurHPIntoBuffer2(void){
-    LD_A(MON_HP);
-    CALL(aGetPartyParamLocation);
-    LD_A_hli;
-    LD_addr_A(wHPBuffer2 + 1);
-    LD_A_hl;
-    LD_addr_A(wHPBuffer2);
-    RET;
-
+    // LD_A(MON_HP);
+    // CALL(aGetPartyParamLocation);
+    // LD_A_hli;
+    // LD_addr_A(wHPBuffer2 + 1);
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer2);
+    // RET;
 }
 
 void LoadHPFromBuffer2(void){
-    LD_A_addr(wHPBuffer2 + 1);
-    LD_D_A;
-    LD_A_addr(wHPBuffer2);
-    LD_E_A;
-    RET;
-
+    // LD_A_addr(wHPBuffer2 + 1);
+    // LD_D_A;
+    // LD_A_addr(wHPBuffer2);
+    // LD_E_A;
+    // RET;
 }
 
 void LoadMaxHPIntoBuffer1(void){
-    PUSH_HL;
-    LD_A(MON_MAXHP);
-    CALL(aGetPartyParamLocation);
-    LD_A_hli;
-    LD_addr_A(wHPBuffer1 + 1);
-    LD_A_hl;
-    LD_addr_A(wHPBuffer1);
-    POP_HL;
-    RET;
-
+    // PUSH_HL;
+    // LD_A(MON_MAXHP);
+    // CALL(aGetPartyParamLocation);
+    // LD_A_hli;
+    // LD_addr_A(wHPBuffer1 + 1);
+    // LD_A_hl;
+    // LD_addr_A(wHPBuffer1);
+    // POP_HL;
+    // RET;
 }
 
 void LoadHPFromBuffer1(void){
-    LD_A_addr(wHPBuffer1 + 1);
-    LD_D_A;
-    LD_A_addr(wHPBuffer1);
-    LD_E_A;
-    RET;
-
+    // LD_A_addr(wHPBuffer1 + 1);
+    // LD_D_A;
+    // LD_A_addr(wHPBuffer1);
+    // LD_E_A;
+    // RET;
 }
 
 uint16_t GetOneFifthMaxHP(struct PartyMon* bc){

@@ -1120,7 +1120,7 @@ void init_function_pointers(void) {
     // engine/gfx/dma_transfer.c
     // REDIRECTED(HDMATransferAttrmapToWRAMBank3);
     // CONVERTED(v_continue_HDMATransfer);
-    REDIRECTED(HDMATransfer_NoDI);
+    // REDIRECTED(HDMATransfer_NoDI);
     // REDIRECTED(HDMATransfer_OnlyTopFourRows);
     // REDIRECTED(HDMATransfer1bpp);
     // REDIRECTED(Mobile_OpenAndCloseMenu_HDMATransferTilemapAndAttrmap);
@@ -11704,4 +11704,8 @@ CONVERTED(v_AnimateTileset);
     // REDIRECTED(DebugColor_UpdateRGBColor);
     // REDIRECTED(DebugColor_AreYouFinishedString);
     // REDIRECTED(DebugColor_CalculateRGB);
+
+    // engine/link/time_capsule_2.c
+    // CONVERTED(ConvertMon_1to2);
+    // CONVERTED(ConvertMon_2to1);
 }

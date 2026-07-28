@@ -221,6 +221,8 @@ static void DoBattleBGEffectFunction(struct BattleBGEffect* bc) {
     // LD_H_hl;
     // LD_L_A;
     // JP_hl;
+    if(bc->function >= lengthof(BattleBGEffects))
+        return BattleBGEffect_End(bc);
     BattleBGEffects[bc->function](bc);
 }
 

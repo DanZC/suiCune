@@ -345,7 +345,7 @@
 #include "../../maps/Pokecenter2F.h"
 #include "../../maps/TradeCenter.h"
 #include "../../maps/Colosseum.h"
-// #include "../../maps/TimeCapsule.h"
+#include "../../maps/TimeCapsule.h"
 #include "../../maps/MobileTradeRoom.h"
 #include "../../maps/MobileBattleRoom.h"
 

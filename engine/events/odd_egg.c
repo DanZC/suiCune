@@ -98,13 +98,11 @@ void v_GiveOddEgg(void){
     // LD_addr_A(wMobileMonSpeciesPointer);
     // LD_A(HIGH(wMobileMonSpecies - 1));
     // LD_addr_A(wMobileMonSpeciesPointer + 1);
-    wram->wMobileMonSpeciesPointer = wMobileMonSpecies - 1;
 // load pointer to wOddEgg in wMobileMonStructPointer
     // LD_A(LOW(wOddEgg));
     // LD_addr_A(wMobileMonStructPointer);
     // LD_A(HIGH(wOddEgg));
     // LD_addr_A(wMobileMonStructPointer + 1);
-    wram->wMobileMonStructPointer = wOddEgg;
 
 // load Odd Egg Name in wTempOddEggNickname
     // LD_HL(mv_GiveOddEgg_Odd);
@@ -119,13 +117,11 @@ static const char Odd[] = "ODD@@@@@@@@@";
     // LD_addr_A(wMobileMonOTPointer);
     // LD_A(HIGH(wTempOddEggNickname));
     // LD_addr_A(wMobileMonOTPointer + 1);
-    wram->wMobileMonOTPointer = wTempOddEggNickname;
 // load pointer to wOddEggName in wMobileMonNicknamePointer
     // LD_A(LOW(wOddEggName));
     // LD_addr_A(wMobileMonNicknamePointer);
     // LD_A(HIGH(wOddEggName));
     // LD_addr_A(wMobileMonNicknamePointer + 1);
-    wram->wMobileMonNicknamePointer = wOddEggName;
     // FARCALL(aAddMobileMonToParty);
     AddMobileMonToParty(&wram->wMobileMonSpecies, &wram->wOddEgg, wram->wTempOddEggNickname, wram->wOddEggName, NULL);
     // RET;

@@ -7,7 +7,7 @@ void CGBOnly_CopyTilemapAtOnce(void);
 void CopyTilemapAtOnce(void);
 void CopyAttrmapAndTilemapToWRAMBank3(void);
 void v_CopyTilemapAtOnce(void);
-void v_CopyTilemapAtOnce_CopyBGMapViaStack(const tile_t* sp);
+void v_CopyTilemapAtOnce_CopyBGMapViaStack(tile_t* hl, const tile_t* sp);
 void SetPalettes(void);
 void ClearPalettes(void);
 void GetMemSGBLayout(void);

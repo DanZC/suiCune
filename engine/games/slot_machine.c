@@ -17,6 +17,8 @@
 #include "../gfx/sprites.h"
 #include "../../mobile/mobile_41.h"
 #include "../../data/text/common.h"
+#include "../../util/misc.h"
+#include "../../charmap.h"
 
 //  wSlotMatched values
 //  + 4 for each entry
@@ -432,46 +434,51 @@ bool SlotsLoop(void){
 
 void DebugPrintSlotBias(void){
 //  //  unreferenced
-    LD_A_addr(wSlotBias);
-    ADD_A(0);
-    DAA;
-    LD_E_A;
-    AND_A(0xf);
-    ADD_A(0xf6);
-    hlcoord(1, 0, wTilemap);
-    LD_hl_A;
-    LD_A_E;
-    SWAP_A;
-    AND_A(0xf);
-    ADD_A(0xf6);
-    hlcoord(0, 0, wTilemap);
-    LD_hl_A;
-    RET;
-
+    // LD_A_addr(wSlotBias);
+    // ADD_A(0);
+    // DAA;
+    // LD_E_A;
+    uint8_t e = GB_DecimalAdjust(gSlotData.slotBias);
+    // AND_A(0xf);
+    // ADD_A(0xf6);
+    // hlcoord(1, 0, wTilemap);
+    // LD_hl_A;
+    *coord(1, 0, wram->wTilemap) = CHAR_0 + (e & 0xf);
+    // LD_A_E;
+    // SWAP_A;
+    // AND_A(0xf);
+    // ADD_A(0xf6);
+    // hlcoord(0, 0, wTilemap);
+    *coord(0, 0, wram->wTilemap) = CHAR_0 + ((e & 0xf0) >> 4);
+    // LD_hl_A;
+    // RET;
 }
 
 void AnimateSlotReelIcons(void){
 //  //  unreferenced
 //  This animation was present in pokegold-spaceworld.
-    LD_HL(wUnusedSlotReelIconDelay);
-    LD_A_hl;
-    INC_hl;
-    AND_A(0x7);
-    RET_NZ ;
-    LD_HL(wVirtualOAMSprite16TileID);
-    LD_C(NUM_SPRITE_OAM_STRUCTS - 16);
-
-loop:
-    LD_A_hl;
-    XOR_A(0x20);  // alternate between $00-$1f and $20-$3f
-    LD_hli_A;  // tile id
-    for(int rept = 0; rept < SPRITEOAMSTRUCT_LENGTH - 1; rept++){
-    INC_HL;
+    // LD_HL(wUnusedSlotReelIconDelay);
+    // LD_A_hl;
+    // INC_hl;
+    // AND_A(0x7);
+    // RET_NZ ;
+    if((wram->wUnusedSlotReelIconDelay++ & 0x7) != 0)
+        return;
+    // LD_HL(wVirtualOAMSprite16TileID);
+    // LD_C(NUM_SPRITE_OAM_STRUCTS - 16);
+    for(uint32_t i = 16; i < NUM_SPRITE_OAM_STRUCTS; ++i) {
+    // loop:
+        // LD_A_hl;
+        // XOR_A(0x20);  // alternate between $00-$1f and $20-$3f
+        // LD_hli_A;  // tile id
+        wram->wVirtualOAMSprite[i].tileID ^= 0x20; // alternate between $00-$1f and $20-$3f
+        // for(int rept = 0; rept < SPRITEOAMSTRUCT_LENGTH - 1; rept++){
+        // INC_HL;
+        // }
+        // DEC_C;
+        // IF_NZ goto loop;
     }
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
-
+    // RET;
 }
 
 void SlotsJumptable(void){

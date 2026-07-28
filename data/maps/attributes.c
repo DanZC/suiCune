@@ -592,7 +592,7 @@ map_attributes(Route28SteelWingHouse, ROUTE_28_STEEL_WING_HOUSE, 0x00, 0);
 map_attributes(Pokecenter2F, POKECENTER_2F, 0x00, 0);
 map_attributes(TradeCenter, TRADE_CENTER, 0x00, 0);
 map_attributes(Colosseum, COLOSSEUM, 0x00, 0);
-// map_attributes(TimeCapsule, TIME_CAPSULE, 0x00, 0);
+map_attributes(TimeCapsule, TIME_CAPSULE, 0x00, 0);
 map_attributes(MobileTradeRoom, MOBILE_TRADE_ROOM, 0x00, 0);
 map_attributes(MobileBattleRoom, MOBILE_BATTLE_ROOM, 0x00, 0);
 map_attributes(CeladonDeptStore1F, CELADON_DEPT_STORE_1F, 0x00, 0);

@@ -72,13 +72,13 @@ bool ValidateOTTrademon(uint8_t mon){
     // LD_A_addr(wBaseType1);
     // CP_A_hl;
     // IF_NZ goto abnormal;
-    if(wram->wBaseType1 != LOW(wram->wLinkOTPartyMonType[mon]))
+    if(wram->wBaseType1 != wram->wLinkOTPartyMonType[mon][0])
         return false;
     // INC_HL;
     // LD_A_addr(wBaseType2);
     // CP_A_hl;
     // IF_NZ goto abnormal;
-    if(wram->wBaseType2 != HIGH(wram->wLinkOTPartyMonType[mon]))
+    if(wram->wBaseType2 != wram->wLinkOTPartyMonType[mon][1])
         return false;
 
 

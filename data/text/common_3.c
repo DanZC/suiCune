@@ -1726,7 +1726,7 @@ const txt_cmd_s v_BlueCardBalanceText[] = {
     text_start("You now have"
         t_line "@"
         )
-    text_decimal(wram_ptr(wBlueCardBalance), 1, 2)
+    text_decimal(&gPlayer.blueCardBalance, 1, 2)
     text_start(" points."
         t_done )
 
@@ -1736,7 +1736,7 @@ const txt_cmd_s v_CoinCaseCountText[] = {
     text_start("Coins:"
         t_line "@"
         )
-    text_decimal(wram_ptr(wCoins), 2, 4)
+    text_decimal((uint8_t*)&gPlayer.coins, 2, 4)
     text_end
 
     text_end

@@ -1770,11 +1770,11 @@ static bool HasPlayerFainted(void){
     return wram->wBattleMon.hp == 0;
 }
 
+// DEPRECATED: Just use wram->wBattleMon.hp == 0
 void CheckIfHPIsZero(void){
-    LD_A_hli;
-    OR_A_hl;
-    RET;
-
+    // LD_A_hli;
+    // OR_A_hl;
+    // RET;
 }
 
 //  Return true (z) if the user fainted before
@@ -8085,189 +8085,191 @@ bool LoadBattleMenu2(void){
     return true;
 }
 
-void BattleMenu_Pack(void){
-    LD_A_addr(wLinkMode);
-    AND_A_A;
-    JP_NZ (mBattleMenu_Pack_ItemsCantBeUsed);
+/// These functions were inlined into the main BattleMenu function.
+// void BattleMenu_Pack(void){
+//     LD_A_addr(wLinkMode);
+//     AND_A_A;
+//     JP_NZ (mBattleMenu_Pack_ItemsCantBeUsed);
 
-    LD_A_addr(wInBattleTowerBattle);
-    AND_A_A;
-    JP_NZ (mBattleMenu_Pack_ItemsCantBeUsed);
+//     LD_A_addr(wInBattleTowerBattle);
+//     AND_A_A;
+//     JP_NZ (mBattleMenu_Pack_ItemsCantBeUsed);
 
-    CALL(aLoadStandardMenuHeader);
+//     CALL(aLoadStandardMenuHeader);
 
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_TUTORIAL);
-    IF_Z goto tutorial;
-    CP_A(BATTLETYPE_CONTEST);
-    IF_Z goto contest;
+//     LD_A_addr(wBattleType);
+//     CP_A(BATTLETYPE_TUTORIAL);
+//     IF_Z goto tutorial;
+//     CP_A(BATTLETYPE_CONTEST);
+//     IF_Z goto contest;
 
-    FARCALL(aBattlePack);
-    LD_A_addr(wBattlePlayerAction);
-    AND_A_A;  // BATTLEPLAYERACTION_USEMOVE?
-    IF_Z goto didnt_use_item;
-    goto got_item;
-
-
-tutorial:
-    FARCALL(aTutorialPack);
-    LD_A(POKE_BALL);
-    LD_addr_A(wCurItem);
-    CALL(aDoItemEffect);
-    goto got_item;
+//     FARCALL(aBattlePack);
+//     LD_A_addr(wBattlePlayerAction);
+//     AND_A_A;  // BATTLEPLAYERACTION_USEMOVE?
+//     IF_Z goto didnt_use_item;
+//     goto got_item;
 
 
-contest:
-    LD_A(PARK_BALL);
-    LD_addr_A(wCurItem);
-    CALL(aDoItemEffect);
+// tutorial:
+//     FARCALL(aTutorialPack);
+//     LD_A(POKE_BALL);
+//     LD_addr_A(wCurItem);
+//     CALL(aDoItemEffect);
+//     goto got_item;
 
 
-got_item:
-    CALL(aBattleMenu_Pack_UseItem);
-    RET;
+// contest:
+//     LD_A(PARK_BALL);
+//     LD_addr_A(wCurItem);
+//     CALL(aDoItemEffect);
 
 
-didnt_use_item:
-    CALL(aClearPalettes);
-    CALL(aDelayFrame);
-    CALL(av_LoadBattleFontsHPBar);
-    CALL(aGetBattleMonBackpic);
-    CALL(aGetEnemyMonFrontpic);
-    CALL(aExitMenu);
-    CALL(aWaitBGMap);
-    CALL(aFinishBattleAnim);
-    CALL(aLoadTilemapToTempTilemap);
-    JP(mBattleMenu);
+// got_item:
+//     CALL(aBattleMenu_Pack_UseItem);
+//     RET;
 
 
-ItemsCantBeUsed:
-    LD_HL(mBattleText_ItemsCantBeUsedHere);
-    CALL(aStdBattleTextbox);
-    JP(mBattleMenu);
+// didnt_use_item:
+//     CALL(aClearPalettes);
+//     CALL(aDelayFrame);
+//     CALL(av_LoadBattleFontsHPBar);
+//     CALL(aGetBattleMonBackpic);
+//     CALL(aGetEnemyMonFrontpic);
+//     CALL(aExitMenu);
+//     CALL(aWaitBGMap);
+//     CALL(aFinishBattleAnim);
+//     CALL(aLoadTilemapToTempTilemap);
+//     JP(mBattleMenu);
 
 
-UseItem:
-    LD_A_addr(wWildMon);
-    AND_A_A;
-    IF_NZ goto run;
-    CALLFAR(aCheckItemPocket);
-    LD_A_addr(wItemAttributeValue);
-    CP_A(BALL);
-    IF_Z goto ball;
-    CALL(aClearBGPalettes);
+// ItemsCantBeUsed:
+//     LD_HL(mBattleText_ItemsCantBeUsedHere);
+//     CALL(aStdBattleTextbox);
+//     JP(mBattleMenu);
 
 
-ball:
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    CALL(av_LoadBattleFontsHPBar);
-    CALL(aClearSprites);
-    LD_A_addr(wBattleType);
-    CP_A(BATTLETYPE_TUTORIAL);
-    IF_Z goto tutorial2;
-    CALL(aGetBattleMonBackpic);
+// UseItem:
+//     LD_A_addr(wWildMon);
+//     AND_A_A;
+//     IF_NZ goto run;
+//     CALLFAR(aCheckItemPocket);
+//     LD_A_addr(wItemAttributeValue);
+//     CP_A(BALL);
+//     IF_Z goto ball;
+//     CALL(aClearBGPalettes);
 
 
-tutorial2:
-    CALL(aGetEnemyMonFrontpic);
-    LD_A(0x1);
-    LD_addr_A(wMenuCursorY);
-    CALL(aExitMenu);
-    CALL(aUpdateBattleHUDs);
-    CALL(aWaitBGMap);
-    CALL(aLoadTilemapToTempTilemap);
-    CALL(aClearWindowData);
-    CALL(aFinishBattleAnim);
-    AND_A_A;
-    RET;
+// ball:
+//     XOR_A_A;
+//     LDH_addr_A(hBGMapMode);
+//     CALL(av_LoadBattleFontsHPBar);
+//     CALL(aClearSprites);
+//     LD_A_addr(wBattleType);
+//     CP_A(BATTLETYPE_TUTORIAL);
+//     IF_Z goto tutorial2;
+//     CALL(aGetBattleMonBackpic);
 
 
-run:
-    XOR_A_A;
-    LD_addr_A(wWildMon);
-    LD_A_addr(wBattleResult);
-    AND_A(BATTLERESULT_BITMASK);
-    LD_addr_A(wBattleResult);  // WIN
-    CALL(aClearWindowData);
-    CALL(aSetPalettes);
-    SCF;
-    RET;
-
-}
-
-void BattleMenu_PKMN(void){
-    CALL(aLoadStandardMenuHeader);
-    return BattleMenuPKMN_ReturnFromStats();
-}
-
-void BattleMenuPKMN_ReturnFromStats(void){
-    CALL(aExitMenu);
-    CALL(aLoadStandardMenuHeader);
-    CALL(aClearBGPalettes);
-    return BattleMenuPKMN_Loop();
-}
-
-void BattleMenuPKMN_Loop(void){
-    CALL(aSetUpBattlePartyMenu_Loop);
-    XOR_A_A;
-    LD_addr_A(wPartyMenuActionText);
-    CALL(aJumpToPartyMenuAndPrintText);
-    CALL(aSelectBattleMon);
-    IF_C goto Cancel;
-
-loop:
-    FARCALL(aFreezeMonIcons);
-    CALL(aBattleMenuPKMN_Loop_GetMenu);
-    IF_C goto PressedB;
-    CALL(aPlaceHollowCursor);
-    LD_A_addr(wMenuCursorY);
-    CP_A(0x1);  // SWITCH
-    JP_Z (mTryPlayerSwitch);
-    CP_A(0x2);  // STATS
-    IF_Z goto Stats;
-    CP_A(0x3);  // CANCEL
-    IF_Z goto Cancel;
-    goto loop;
+// tutorial2:
+//     CALL(aGetEnemyMonFrontpic);
+//     LD_A(0x1);
+//     LD_addr_A(wMenuCursorY);
+//     CALL(aExitMenu);
+//     CALL(aUpdateBattleHUDs);
+//     CALL(aWaitBGMap);
+//     CALL(aLoadTilemapToTempTilemap);
+//     CALL(aClearWindowData);
+//     CALL(aFinishBattleAnim);
+//     AND_A_A;
+//     RET;
 
 
-PressedB:
-    CALL(aCheckMobileBattleError);
-    IF_C goto Cancel;
-    JR(mBattleMenuPKMN_Loop);
+// run:
+//     XOR_A_A;
+//     LD_addr_A(wWildMon);
+//     LD_A_addr(wBattleResult);
+//     AND_A(BATTLERESULT_BITMASK);
+//     LD_addr_A(wBattleResult);  // WIN
+//     CALL(aClearWindowData);
+//     CALL(aSetPalettes);
+//     SCF;
+//     RET;
+
+// }
+
+// void BattleMenu_PKMN(void){
+//     CALL(aLoadStandardMenuHeader);
+//     return BattleMenuPKMN_ReturnFromStats();
+// }
+
+// void BattleMenuPKMN_ReturnFromStats(void){
+//     CALL(aExitMenu);
+//     CALL(aLoadStandardMenuHeader);
+//     CALL(aClearBGPalettes);
+//     return BattleMenuPKMN_Loop();
+// }
+
+// void BattleMenuPKMN_Loop(void){
+//     CALL(aSetUpBattlePartyMenu_Loop);
+//     XOR_A_A;
+//     LD_addr_A(wPartyMenuActionText);
+//     CALL(aJumpToPartyMenuAndPrintText);
+//     CALL(aSelectBattleMon);
+//     IF_C goto Cancel;
+
+// loop:
+//     FARCALL(aFreezeMonIcons);
+//     CALL(aBattleMenuPKMN_Loop_GetMenu);
+//     IF_C goto PressedB;
+//     CALL(aPlaceHollowCursor);
+//     LD_A_addr(wMenuCursorY);
+//     CP_A(0x1);  // SWITCH
+//     JP_Z (mTryPlayerSwitch);
+//     CP_A(0x2);  // STATS
+//     IF_Z goto Stats;
+//     CP_A(0x3);  // CANCEL
+//     IF_Z goto Cancel;
+//     goto loop;
 
 
-Stats:
-    CALL(aBattle_StatsScreen);
-    CALL(aCheckMobileBattleError);
-    IF_C goto Cancel;
-    JP(mBattleMenuPKMN_ReturnFromStats);
+// PressedB:
+//     CALL(aCheckMobileBattleError);
+//     IF_C goto Cancel;
+//     JR(mBattleMenuPKMN_Loop);
 
 
-Cancel:
-    CALL(aClearSprites);
-    CALL(aClearPalettes);
-    CALL(aDelayFrame);
-    CALL(av_LoadHPBar);
-    CALL(aCloseWindow);
-    CALL(aLoadTilemapToTempTilemap);
-    CALL(aGetMemSGBLayout);
-    CALL(aSetPalettes);
-    JP(mBattleMenu);
+// Stats:
+//     CALL(aBattle_StatsScreen);
+//     CALL(aCheckMobileBattleError);
+//     IF_C goto Cancel;
+//     JP(mBattleMenuPKMN_ReturnFromStats);
 
 
-GetMenu:
-    CALL(aIsMobileBattle);
-    IF_Z goto mobile;
-    FARCALL(aBattleMonMenu);
-    RET;
+// Cancel:
+//     CALL(aClearSprites);
+//     CALL(aClearPalettes);
+//     CALL(aDelayFrame);
+//     CALL(av_LoadHPBar);
+//     CALL(aCloseWindow);
+//     CALL(aLoadTilemapToTempTilemap);
+//     CALL(aGetMemSGBLayout);
+//     CALL(aSetPalettes);
+//     JP(mBattleMenu);
 
 
-mobile:
-    FARCALL(aMobileBattleMonMenu);
-    RET;
+// GetMenu:
+//     CALL(aIsMobileBattle);
+//     IF_Z goto mobile;
+//     FARCALL(aBattleMonMenu);
+//     RET;
 
-}
+
+// mobile:
+//     FARCALL(aMobileBattleMonMenu);
+//     RET;
+
+// }
+///
 
 void Battle_StatsScreen(void){
     // CALL(aDisableLCD);
@@ -12354,9 +12356,8 @@ bool StartBattle(void){
 
 void CallDoBattle(void){
 //  //  unreferenced
-    CALL(aDoBattle);
-    RET;
-
+    // CALL(aDoBattle);
+    // RET;
 }
 
 void BattleIntro(void){
@@ -12463,7 +12464,6 @@ void BackUpBGMap2(void){
     // PUSH_AF;
     // LD_A(MBANK(awDecompressScratch));
     // LDH_addr_A(rSVBK);
-    wbank_push(MBANK(awDecompressScratch));
     // LD_HL(wDecompressScratch);
     // LD_BC(0x40 * LEN_2BPP_TILE);  // vBGMap3 - vBGMap2
     // LD_A(0x2);
@@ -12483,7 +12483,6 @@ void BackUpBGMap2(void){
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
-    wbank_pop;
 }
 
 static void InitEnemyTrainer(uint8_t tclass){
@@ -12621,61 +12620,58 @@ static void InitEnemyWildmon(void){
     // RET;
 }
 
-void FillEnemyMovesFromMoveIndicesBuffer(void){
 //  //  unreferenced
-    LD_HL(wEnemyMonMoves);
-    LD_DE(wListMoves_MoveIndicesBuffer);
-    LD_B(NUM_MOVES);
+void FillEnemyMovesFromMoveIndicesBuffer(void){
+    // LD_HL(wEnemyMonMoves);
+    // LD_DE(wListMoves_MoveIndicesBuffer);
+    // LD_B(NUM_MOVES);
 
-loop:
-    LD_A_de;
-    INC_DE;
-    LD_hli_A;
-    AND_A_A;
-    IF_Z goto clearpp;
+// loop:
+    // LD_A_de;
+    // INC_DE;
+    // LD_hli_A;
+    // AND_A_A;
+    // IF_Z goto clearpp;
 
-    PUSH_BC;
-    PUSH_HL;
+    // PUSH_BC;
+    // PUSH_HL;
 
-    PUSH_HL;
-    DEC_A;
-    LD_HL(mMoves + MOVE_PP);
-    LD_BC(MOVE_LENGTH);
-    CALL(aAddNTimes);
-    LD_A(BANK(aMoves));
-    CALL(aGetFarByte);
-    POP_HL;
+    // PUSH_HL;
+    // DEC_A;
+    // LD_HL(mMoves + MOVE_PP);
+    // LD_BC(MOVE_LENGTH);
+    // CALL(aAddNTimes);
+    // LD_A(BANK(aMoves));
+    // CALL(aGetFarByte);
+    // POP_HL;
 
-    LD_BC(wEnemyMonPP - (wEnemyMonMoves + 1));
-    ADD_HL_BC;
-    LD_hl_A;
+    // LD_BC(wEnemyMonPP - (wEnemyMonMoves + 1));
+    // ADD_HL_BC;
+    // LD_hl_A;
 
-    POP_HL;
-    POP_BC;
+    // POP_HL;
+    // POP_BC;
 
-    DEC_B;
-    IF_NZ goto loop;
-    RET;
+    // DEC_B;
+    // IF_NZ goto loop;
+    // RET;
 
+// clear:
+    // XOR_A_A;
+    // LD_hli_A;
 
-clear:
-    XOR_A_A;
-    LD_hli_A;
-
-
-clearpp:
-    PUSH_BC;
-    PUSH_HL;
-    LD_BC(wEnemyMonPP - (wEnemyMonMoves + 1));
-    ADD_HL_BC;
-    XOR_A_A;
-    LD_hl_A;
-    POP_HL;
-    POP_BC;
-    DEC_B;
-    IF_NZ goto clear;
-    RET;
-
+// clearpp:
+    // PUSH_BC;
+    // PUSH_HL;
+    // LD_BC(wEnemyMonPP - (wEnemyMonMoves + 1));
+    // ADD_HL_BC;
+    // XOR_A_A;
+    // LD_hl_A;
+    // POP_HL;
+    // POP_BC;
+    // DEC_B;
+    // IF_NZ goto clear;
+    // RET;
 }
 
 static void ExitBattle_HandleEndOfBattle(void){

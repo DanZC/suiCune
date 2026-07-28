@@ -18,3 +18,13 @@
 #endif
 #endif // FEATURE_MOBILE
 
+// Controls whether the time capsule feature is enabled.
+#ifndef FEATURE_TIME_CAPSULE
+#if !FEATURE_NETWORKING
+#define FEATURE_TIME_CAPSULE 0
+#endif // FEATURE_NETWORKING
+#else
+#if !FEATURE_NETWORKING && FEATURE_TIME_CAPSULE
+#error "Time capsule cannot be enabled without networking."
+#endif
+#endif // FEATURE_TIME_CAPSULE

@@ -2,7 +2,7 @@ typedef struct {
     uint16_t offset;
     uint8_t bytes[6];
 } Unknown_8b529_s;
-void Function8b342(void);
+const struct MapAttr* Function8b342(void);
 void Function8b35d(void);
 void Function8b363(void);
 void Function8b36c(uint8_t* bc);

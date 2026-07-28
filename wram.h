@@ -939,7 +939,7 @@ struct wram_s
                         // wLinkOTPartyMon1Type - wLinkOTPartyMon6Type
                         //union wLinkOTPartyMonTypes
                         // for n, 1, PARTY_LENGTH + 1
-                        uint16_t wLinkOTPartyMonType[PARTY_LENGTH];
+                        uint8_t wLinkOTPartyMonType[PARTY_LENGTH][2];
                     };
                     struct {
                         // WRAM0

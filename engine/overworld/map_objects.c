@@ -1151,14 +1151,15 @@ void ObjectMovementByte_DecAnonJumptableIndex(struct Object* bc) {
     // RET;
 }
 
+// UNUSED
 void ObjectMovementByte_AnonJumptable(void) {
-    SET_PC(aObjectMovementByte_AnonJumptable);
-    LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
-    ADD_HL_BC;
-    LD_A_hl;
-    POP_HL;
-    RST(aJumpTable);
-    RET;
+    // SET_PC(aObjectMovementByte_AnonJumptable);
+    // LD_HL(OBJECT_MOVEMENT_BYTE_INDEX);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // POP_HL;
+    // RST(aJumpTable);
+    // RET;
 }
 
 void Field1c_ZeroAnonJumptableIndex(struct Object* bc) {
@@ -1189,22 +1190,22 @@ void Field1c_AnonJumptable(void) {
     RET;*/
 }
 
+//  //  unreferenced
 void Field1c_GetAnonJumptableIndex(void) {
-    SET_PC(aField1c_GetAnonJumptableIndex);
-    //  //  unreferenced
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_A_hl;
-    RET;
+    // SET_PC(aField1c_GetAnonJumptableIndex);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_A_hl;
+    // RET;
 }
 
+//  //  unreferenced
 void Field1c_SetAnonJumptableIndex(void) {
-    SET_PC(aField1c_SetAnonJumptableIndex);
-    //  //  unreferenced
-    LD_HL(OBJECT_1C);
-    ADD_HL_BC;
-    LD_hl_A;
-    RET;
+    // SET_PC(aField1c_SetAnonJumptableIndex);
+    // LD_HL(OBJECT_1C);
+    // ADD_HL_BC;
+    // LD_hl_A;
+    // RET;
 }
 
 static void StepFunction_Reset(struct Object* bc) {

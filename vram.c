@@ -3,7 +3,7 @@
 #include <stddef.h>
 
 struct vram_s* vram;
-
+static_assert(sizeof(*vram) == sizeof(gb.vram));
 
 #define check_field_bank0(_fld) static_assert(offsetof(struct vram_s, _fld) == (_fld - 0x8000), "");
 #define check_field_bank1(_fld) static_assert(offsetof(struct vram_s, _fld) == (_fld - 0x8000 + 0x2000), "");

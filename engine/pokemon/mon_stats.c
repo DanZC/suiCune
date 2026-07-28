@@ -449,54 +449,51 @@ void ListMovePP(tile_t* hl){
     // RET;
 }
 
-void BrokenPlacePPUnits(void){
 //  //  unreferenced
 //  Probably would have these parameters:
 //  hl = starting coordinate
 //  de = SCREEN_WIDTH or SCREEN_WIDTH * 2
 //  c = the number of moves (1-4)
-
-loop:
-    LD_hl(0x32);  // typo for P?
-    INC_HL;
-    LD_hl(0x3e);  // P
-    DEC_HL;
-    ADD_HL_DE;
-    DEC_C;
-    IF_NZ goto loop;
-    RET;
+void BrokenPlacePPUnits(void){
+// loop:
+    // LD_hl(0x32);  // typo for P?
+    // INC_HL;
+    // LD_hl(0x3e);  // P
+    // DEC_HL;
+    // ADD_HL_DE;
+    // DEC_C;
+    // IF_NZ goto loop;
+    // RET;
 
 }
 
 void Unused_PlaceEnemyHPLevel(void){
-    PUSH_HL;
-    PUSH_HL;
-    LD_HL(wPartyMonNicknames);
-    LD_A_addr(wCurPartyMon);
-    CALL(aGetNickname);
-    POP_HL;
-    CALL(aPlaceString);
-    CALL(aCopyMonToTempMon);
-    POP_HL;
-    LD_A_addr(wCurPartySpecies);
-    CP_A(EGG);
-    IF_Z goto egg;
-    PUSH_HL;
-    LD_BC(-12);
-    ADD_HL_BC;
-    LD_B(0);
-    CALL(aDrawEnemyHP);
-    POP_HL;
-    LD_BC(5);
-    ADD_HL_BC;
-    PUSH_DE;
-    CALL(aPrintLevel);
-    POP_DE;
+    // PUSH_HL;
+    // PUSH_HL;
+    // LD_HL(wPartyMonNicknames);
+    // LD_A_addr(wCurPartyMon);
+    // CALL(aGetNickname);
+    // POP_HL;
+    // CALL(aPlaceString);
+    // CALL(aCopyMonToTempMon);
+    // POP_HL;
+    // LD_A_addr(wCurPartySpecies);
+    // CP_A(EGG);
+    // IF_Z goto egg;
+    // PUSH_HL;
+    // LD_BC(-12);
+    // ADD_HL_BC;
+    // LD_B(0);
+    // CALL(aDrawEnemyHP);
+    // POP_HL;
+    // LD_BC(5);
+    // ADD_HL_BC;
+    // PUSH_DE;
+    // CALL(aPrintLevel);
+    // POP_DE;
 
-
-egg:
-    RET;
-
+// egg:
+    // RET;
 }
 
 //  Return nz if the status is not OK
