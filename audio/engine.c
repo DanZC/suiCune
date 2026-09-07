@@ -461,7 +461,7 @@ void GetNoiseSample(void) {                                //  load ptr to sampl
             if (chan[CHAN8]->channelOn) return;     // is ch8 on? (noise)
             sample = wram->wMusicNoiseSampleSet;
         } else {
-            sample = wram->wMusicNoiseSampleSet;
+            sample = wram->wSFXNoiseSampleSet;
         }
         uint8_t note = wram->wCurMusicByte >> 4;
         if (note) {
