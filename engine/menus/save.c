@@ -1462,45 +1462,44 @@ void SaveBoxAddress(uint32_t de){
 //  Save box via wBoxPartialData.
 //  We do this in three steps because the size of wBoxPartialData is less than
 //  the size of sBox.
+    struct Box box;
+    OpenSRAM(MBANK(asBox));
+    Deserialize_Box(&box, GBToRAMAddr(sBox));
+    CloseSRAM();
+    OpenSRAM(MBANK(de));
+    Serialize_Box(GBToRAMAddr(de & 0xffff), &box);
+    CloseSRAM();
+    return;
     // PUSH_HL;
 //  Load the first part of the active box.
     // PUSH_AF;
     // PUSH_DE;
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(asBox));
     // LD_HL(sBox);
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_GB(wBoxPartialData, sBox, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM();
     // POP_DE;
     // POP_AF;
 //  Save it to the target box.
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(de));
     // LD_HL(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_GB(de & 0xffff, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM();
 
 //  Load the second part of the active box.
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(asBox));
     // LD_HL(sBox + (wBoxPartialDataEnd - wBoxPartialData));
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_GB(wBoxPartialData, sBox + (wBoxPartialDataEnd - wBoxPartialData), (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM();
     // POP_DE;
     // POP_AF;
 
@@ -1508,30 +1507,23 @@ void SaveBoxAddress(uint32_t de){
     // ADD_HL_DE;
     // LD_E_L;
     // LD_D_H;
-    de += (wBoxPartialDataEnd - wBoxPartialData);
 //  Save it to the next part of the target box.
     // PUSH_AF;
     // PUSH_DE;
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(de));
     // LD_HL(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_GB(de & 0xffff, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM();
 
 //  Load the third and final part of the active box.
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(asBox));
     // LD_HL(sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2);
     // LD_DE(wBoxPartialData);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
-    CopyBytes_GB(wBoxPartialData, sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
-    CloseSRAM();
     // POP_DE;
     // POP_AF;
 
@@ -1539,16 +1531,12 @@ void SaveBoxAddress(uint32_t de){
     // ADD_HL_DE;
     // LD_E_L;
     // LD_D_H;
-    de += (wBoxPartialDataEnd - wBoxPartialData);
 //  Save it to the final part of the target box.
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(de));
     // LD_HL(wBoxPartialData);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
-    CopyBytes_GB(de & 0xffff, wBoxPartialData, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
-    CloseSRAM();
 
     // POP_HL;
     // RET;
@@ -1558,6 +1546,14 @@ void LoadBoxAddress(uint32_t de){
 //  Load box via wBoxPartialData.
 //  We do this in three steps because the size of wBoxPartialData is less than
 //  the size of sBox.
+    struct Box box;
+    OpenSRAM(MBANK(de));
+    Deserialize_Box(&box, GBToRAMAddr(de & 0xffff));
+    CloseSRAM();
+    OpenSRAM(MBANK(asBox));
+    Serialize_Box(GBToRAMAddr(sBox), &box);
+    CloseSRAM();
+    return;
     // PUSH_HL;
     // LD_L_E;
     // LD_H_D;
@@ -1565,73 +1561,54 @@ void LoadBoxAddress(uint32_t de){
     // PUSH_AF;
     // PUSH_HL;
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(de));
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_GB(wBoxPartialData, de & 0xffff, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM();
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(asBox));
     // LD_HL(wBoxPartialData);
     // LD_DE(sBox);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_GB(sBox, wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM();
     // POP_HL;
     // POP_AF;
 
     // LD_DE((wBoxPartialDataEnd - wBoxPartialData));
     // ADD_HL_DE;
-    de += (wBoxPartialDataEnd - wBoxPartialData);
 //  Load part 2
     // PUSH_AF;
     // PUSH_HL;
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(de));
     // LD_DE(wBoxPartialData);
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_GB(wBoxPartialData, de & 0xffff, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM();
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
     // LD_HL(wBoxPartialData);
     // LD_DE(sBox + (wBoxPartialDataEnd - wBoxPartialData));
     // LD_BC((wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCopyBytes);
-    CopyBytes_GB(sBox + (wBoxPartialDataEnd - wBoxPartialData), wBoxPartialData, (wBoxPartialDataEnd - wBoxPartialData));
     // CALL(aCloseSRAM);
-    CloseSRAM();
     // POP_HL;
     // POP_AF;
 //  Load part 3
     // LD_DE((wBoxPartialDataEnd - wBoxPartialData));
     // ADD_HL_DE;
-    de += (wBoxPartialDataEnd - wBoxPartialData);
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(de));
     // LD_DE(wBoxPartialData);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
-    CopyBytes_GB(wBoxPartialData, de & 0xffff, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
-    CloseSRAM();
     // LD_A(BANK(sBox));
     // CALL(aOpenSRAM);
-    OpenSRAM(MBANK(asBox));
     // LD_HL(wBoxPartialData);
     // LD_DE(sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2);
     // LD_BC(sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));  // $8e
     // CALL(aCopyBytes);
-    CopyBytes_GB(sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2, wBoxPartialData, sBoxEnd - (sBox + (wBoxPartialDataEnd - wBoxPartialData) * 2));
     // CALL(aCloseSRAM);
-    CloseSRAM();
 
     // POP_HL;
     // RET;
