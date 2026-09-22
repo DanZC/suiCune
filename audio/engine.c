@@ -803,8 +803,6 @@ void Music_RestartChannel(void) {
     gAudio.musicID = curChan->musicId;         // update music id
     gAudio.musicBank = curChan->musicBank;     // update music bank
     uint16_t pointer = GetMusicByte() | (GetMusicByte() << 8);
-    uint16_t channel_ptr = GetAudioDataByte(gAudio.musicBank, pointer);
-    channel_ptr |= (uint16_t)GetAudioDataByte(gAudio.musicBank, pointer + 1) << 8;
     LoadChannel(pointer);
     StartChannel();
 }
