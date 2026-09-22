@@ -416,12 +416,12 @@ void ParseCredits(void){
                 bit_set(wram->wJumptableIndex, 7);
                 // LD_A(32);
                 // LD_addr_A(wMusicFade);
-                wram->wMusicFade = 32;
+                gAudio.musicFade = 32;
                 // LD_A(LOW(MUSIC_POST_CREDITS));
                 // LD_addr_A(wMusicFadeID);
                 // LD_A(HIGH(MUSIC_POST_CREDITS));
                 // LD_addr_A(wMusicFadeID + 1);
-                wram->wMusicFadeID = MUSIC_POST_CREDITS;
+                gAudio.musicFadeID = MUSIC_POST_CREDITS;
                 // RET;
                 return;
             // CP_A(CREDITS_WAIT);

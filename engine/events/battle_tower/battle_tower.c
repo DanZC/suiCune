@@ -1867,7 +1867,7 @@ void BattleTower_CheckSaveFileExistsAndIsYours(void){
 void Function1708b1(void){
     // XOR_A_A;
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x0;
+    gAudio.musicFade = 0x0;
     // CALL(aMaxVolume);
     MaxVolume();
     // RET;

@@ -514,7 +514,7 @@ void SnorlaxAwake(void){
     // LD_A_addr(wMapMusic);
     // CP_A(MUSIC_POKE_FLUTE_CHANNEL);
     // IF_NZ goto nope;
-    if(wram->wMapMusic == MUSIC_POKE_FLUTE_CHANNEL){
+    if(gAudio.mapMusic == MUSIC_POKE_FLUTE_CHANNEL){
         // LD_A_addr(wXCoord);
         // LD_B_A;
         uint8_t b = gCurMapData.xCoord;
@@ -600,10 +600,10 @@ void FadeOutMusic(void){
     // LD_addr_A(wMusicFadeID);
     // LD_A(HIGH(MUSIC_NONE));
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_NONE;
+    gAudio.musicFadeID = MUSIC_NONE;
     // LD_A(0x2);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x2;
+    gAudio.musicFade = 0x2;
     // RET;
 }
 

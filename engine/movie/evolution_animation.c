@@ -341,7 +341,7 @@ static void EvolutionAnimation_EvolutionAnimation(void){
 
     // XOR_A_A;
     // LD_addr_A(wLowHealthAlarm);
-    wram->wLowHealthAlarm = 0x0;
+    gAudio.lowHealthAlarm = 0x0;
     // CALL(aWaitBGMap);
     WaitBGMap();
     // XOR_A_A;

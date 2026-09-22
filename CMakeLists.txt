@@ -1026,6 +1026,7 @@ add_executable(${PROJECT_NAME}
   mobile/mobile_menu.c
   mobile/print_opp_message.c
   util/assets.c
+  util/apu.c
   util/debug.c
   util/gb_ptr.c
   util/hrc.c

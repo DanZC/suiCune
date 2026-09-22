@@ -639,6 +639,87 @@ Channel_
     uint8_t field30[2];
 };
 
+struct Channel {
+    uint16_t musicId;
+    uint8_t musicBank;
+
+    union {
+        struct {
+            uint8_t channelOn : 1;
+            uint8_t subroutine : 1;
+            uint8_t looping : 1;
+            uint8_t sfx : 1;
+            uint8_t noise : 1;
+            uint8_t cry : 1;
+            uint8_t unused1 : 2;
+
+            uint8_t vibrato : 1;
+            uint8_t pitchSlide : 1;
+            uint8_t dutyLoop : 1;
+            uint8_t unused2 : 1;
+            uint8_t pitchOffsetEnabled : 1;
+            uint8_t unkn0D : 1;  // unused
+            uint8_t unkn0E : 1;  // unused
+            uint8_t unkn0F : 1;
+
+            uint8_t vibratoDir : 1;
+            uint8_t pitchSlideDir : 1;
+            uint8_t unused3 : 6;
+        };
+        uint8_t flags[3];
+    };
+
+    uint16_t musicAddress;
+    uint16_t lastMusicAddress;
+    uint16_t unused;
+
+    union {
+        struct {
+            uint8_t dutyOverride : 1;
+            uint8_t freqOverride : 1;
+            uint8_t unused4 : 1;
+            uint8_t pitchSweep : 1;
+            uint8_t noiseSampling : 1;
+            uint8_t rest : 1;
+            uint8_t vibratoOverride : 1;
+            uint8_t unused5 : 1;
+        };
+        uint8_t noteFlags;
+    };
+
+    uint8_t condition;
+    uint8_t dutyCycle;
+    uint8_t volumeEnvelope;
+    uint16_t frequency;
+    uint8_t pitch;
+    uint8_t octave;
+    uint8_t transposition;
+    uint8_t noteDuration;
+    uint16_t field16;  // noteDurationFraction
+
+    uint8_t loopCount;
+    uint16_t tempo;
+    uint8_t tracks;
+    uint8_t dutyCyclePattern;
+    uint8_t vibratoDelayCount;
+    uint8_t vibratoDelay;
+    uint8_t vibratoExtent;
+    uint8_t vibratoRate;
+    uint16_t pitchSlideTarget;
+    uint8_t pitchSlideAmount;
+    uint8_t pitchSlideAmountFraction;
+    uint16_t field25;
+
+    uint16_t pitchOffset;
+    uint8_t field29;   // unused
+    uint16_t field2a;  // unused
+    uint8_t field2c;   // unused
+    uint8_t noteLength;
+    uint8_t field2e;
+    uint8_t field2f;
+    uint16_t field30;
+};
+
 /*
 
 channel_struct: MACRO
@@ -2256,4 +2337,69 @@ struct CrystalData {
         };
         uint8_t zipCode[4];
     };
+};
+
+struct Audio {
+    struct Channel channel[(NUM_CHANNELS + 1) - 1];
+    uint8_t curTrackDuty;
+    uint8_t curTrackVolumeEnvelope;
+    uint16_t curTrackFrequency;
+    uint8_t unusedBCDNumber;
+    // BCD value, dummied out
+    uint8_t curNoteDuration;
+    // used in MusicE0 and LoadNote
+    uint8_t curMusicByte;
+    uint8_t curChannel;
+    // corresponds to rNR50
+    // Channel control / ON-OFF / Volume (R/W)
+    //   bit 7 - Vin->SO2 ON/OFF
+    //   bit 6-4 - SO2 output level (volume) (# 0-7)
+    //   bit 3 - Vin->SO1 ON/OFF
+    //   bit 2-0 - SO1 output level (volume) (# 0-7)
+    uint8_t volume;
+    // corresponds to rNR51
+    // bit 4-7: ch1-4 so2 on/off
+    // bit 0-3: ch1-4 so1 on/off
+    uint8_t soundOutput;
+    // corresponds to rNR10
+    // bit 7:   unused
+    // bit 4-6: sweep time
+    // bit 3:   sweep direction
+    // but 0-2: sweep shift
+    uint8_t pitchSweep;
+    uint16_t musicID;
+    uint8_t musicBank;
+    uint8_t* noiseSampleAddress;
+    uint8_t noiseSampleDelay;
+    uint8_t musicNoiseSampleSet;
+    uint8_t SFXNoiseSampleSet;
+    // bit 7: on/off
+    // bit 4: pitch
+    // bit 0-3: counter
+    uint8_t lowHealthAlarm;
+    // fades volume over x frames
+    // bit 7: fade in/out
+    // bit 0-5: number of frames for each volume level
+    // $00 = none (default)
+    uint8_t musicFade;
+    uint8_t musicFadeCount;
+    uint16_t musicFadeID;
+    uint16_t cryPitch;
+    uint16_t cryLength;
+    uint8_t lastVolume;
+    uint8_t unusedMusicF9Flag;
+    // if nonzero, turn off music when playing sfx
+    uint8_t SFXPriority;
+    uint8_t channelJumpCondition[4];
+    uint8_t stereoPanningMask;
+    // plays only in left or right track depending on what side the monster is on
+    // both tracks active outside of battle
+    uint8_t cryTracks;
+    uint8_t SFXDuration;
+    // id of sfx currently playing
+    uint8_t curSFX;
+
+    uint16_t musicPlaying;
+    uint16_t mapMusic;
+    uint8_t dontPlayMapMusicOnReload;
 };

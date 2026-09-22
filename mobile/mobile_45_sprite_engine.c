@@ -604,13 +604,13 @@ void Function1161d5(void){
     ReloadMapPart();
     // LD_A(0x8);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x8;
+    gAudio.musicFade = 0x8;
     // LD_DE(MUSIC_MOBILE_ADAPTER);
     // LD_A_E;
     // LD_addr_A(wMusicFadeID);
     // LD_A_D;
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_MOBILE_ADAPTER;
+    gAudio.musicFadeID = MUSIC_MOBILE_ADAPTER;
     // LD_A_addr(wc319);
     // INC_A;
     // LD_addr_A(wc319);
@@ -836,12 +836,12 @@ void Function11636e(void){
     ReloadMapPart();
     // LD_A(0x8);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x8;
+    gAudio.musicFade = 0x8;
     // LD_A_addr(wMapMusic);
     // LD_addr_A(wMusicFadeID);
     // XOR_A_A;
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = wram->wMapMusic;
+    gAudio.musicFadeID = gAudio.mapMusic;
     // XOR_A_A;
     // LD_addr_A(wc319);
     wram->wc319 = 0x0;
@@ -899,24 +899,24 @@ void Function1163c0(void){
     if(wram->wLinkMode != LINK_MOBILE) {
         // LD_A(0x8);
         // LD_addr_A(wMusicFade);
-        wram->wMusicFade = 0x8;
+        gAudio.musicFade = 0x8;
         // LD_A_addr(wMapMusic);
         // LD_addr_A(wMusicFadeID);
         // XOR_A_A;
         // LD_addr_A(wMusicFadeID + 1);
-        wram->wMusicFadeID = wram->wMapMusic;
+        gAudio.musicFadeID = gAudio.mapMusic;
         // goto asm_116439;
     }
     else {
     // asm_11642a:
         // LD_A(0x8);
         // LD_addr_A(wMusicFade);
-        wram->wMusicFade = 0x8;
+        gAudio.musicFade = 0x8;
         // LD_A(LOW(MUSIC_NONE));
         // LD_addr_A(wMusicFadeID);
         // LD_A(HIGH(MUSIC_NONE));
         // LD_addr_A(wMusicFadeID + 1);
-        wram->wMusicFadeID = MUSIC_NONE;
+        gAudio.musicFadeID = MUSIC_NONE;
     }
 
 // asm_116439:
@@ -938,12 +938,12 @@ void Function116441(void){
     ReloadMapPart();
     // LD_A(0x8);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x8;
+    gAudio.musicFade = 0x8;
     // LD_A_addr(wMapMusic);
     // LD_addr_A(wMusicFadeID);
     // XOR_A_A;
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = wram->wMapMusic;
+    gAudio.musicFadeID = gAudio.mapMusic;
     // XOR_A_A;
     // LD_addr_A(wc319);
     wram->wc319 = 0x0;

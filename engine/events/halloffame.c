@@ -84,10 +84,10 @@ void RedCredits(void){
     // LD_addr_A(wMusicFadeID);
     // LD_A(HIGH(MUSIC_NONE));
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_NONE;
+    gAudio.musicFadeID = MUSIC_NONE;
     // LD_A(10);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 10;
+    gAudio.musicFade = 10;
     // FARCALL(aFadeOutPalettes);
     // XOR_A_A;
     // LD_addr_A(wVramState);
@@ -116,10 +116,10 @@ void HallOfFame_FadeOutMusic(void){
     // LD_addr_A(wMusicFadeID);
     // LD_A(HIGH(MUSIC_NONE));
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_NONE;
+    gAudio.musicFadeID = MUSIC_NONE;
     // LD_A(10);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 10;
+    gAudio.musicFade = 10;
     // FARCALL(aFadeOutPalettes);
     FadeOutPalettes();
     // XOR_A_A;
@@ -218,7 +218,7 @@ void AnimateHallOfFame(void){
     HOF_AnimatePlayerPic();
     // LD_A(0x4);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x4;
+    gAudio.musicFade = 0x4;
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight();
     // LD_C(8);

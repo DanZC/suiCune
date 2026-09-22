@@ -243,7 +243,7 @@ void Init(void) {
     InitSound();
     // XOR_A_A;
     // LD_addr_A(wMapMusic);
-    wram->wMapMusic = 0;
+    gAudio.mapMusic = 0;
     // JP(mGameInit);
 }
 

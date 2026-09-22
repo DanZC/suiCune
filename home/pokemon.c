@@ -151,7 +151,7 @@ void PlayStereoCry(species_t species){
     // PUSH_AF;
     // LD_A(1);
     // LD_addr_A(wStereoPanningMask);
-    wram->wStereoPanningMask = 1;
+    gAudio.stereoPanningMask = 1;
     // POP_AF;
     // CALL(av_PlayMonCry);
     v_PlayMonCry(species);
@@ -166,7 +166,7 @@ void PlayStereoCry2(species_t species){
     // PUSH_AF;
     // LD_A(1);
     // LD_addr_A(wStereoPanningMask);
-    wram->wStereoPanningMask = 1;
+    gAudio.stereoPanningMask = 1;
     // POP_AF;
     // JP(mv_PlayMonCry);
     return v_PlayMonCry(species);
@@ -185,9 +185,9 @@ void PlayMonCry2(species_t species){
     // PUSH_AF;
     // XOR_A_A;
     // LD_addr_A(wStereoPanningMask);
-    wram->wStereoPanningMask = 0;
+    gAudio.stereoPanningMask = 0;
     // LD_addr_A(wCryTracks);
-    wram->wCryTracks = 0;
+    gAudio.cryTracks = 0;
     // POP_AF;
     // CALL(av_PlayMonCry);
     v_PlayMonCry(species);
@@ -232,8 +232,8 @@ const struct PokemonCry* LoadCry(species_t a){
 
     const struct PokemonCry* hl = PokemonCries + i;
 
-    wram->wCryPitch = hl->pitch;
-    wram->wCryLength = hl->length;
+    gAudio.cryPitch = hl->pitch;
+    gAudio.cryLength = hl->length;
 
     return hl;
 }

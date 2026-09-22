@@ -102,12 +102,12 @@ void InitGender(void){
 void InitGenderScreen(void){
     // LD_A(0x10);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x10;
+    gAudio.musicFade = 0x10;
     // LD_A(LOW(MUSIC_NONE));
     // LD_addr_A(wMusicFadeID);
     // LD_A(HIGH(MUSIC_NONE));
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_NONE;
+    gAudio.musicFadeID = MUSIC_NONE;
     // LD_C(8);
     // CALL(aDelayFrames);
     DelayFrames(8);

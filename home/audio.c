@@ -5,6 +5,7 @@
 #include "map.h"
 #include "vblank.h"
 #include "../data/pokemon/cries.h"
+#include "../util/apu.h"
 
 extern struct Channel *chan[8];
 
@@ -51,12 +52,9 @@ void PlayMusic(uint16_t music) {
 
     // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
     // PUSH_AF;                   // push af
-    uint8_t oldbank = hram.hROMBank;
     // LD_A(BANK(av_PlayMusic));  // ld a, BANK(_PlayMusic) ; aka BANK(_InitSound)
     // LDH_addr_A(hROMBank);      // ldh [hROMBank], a
-    hram.hROMBank = BANK(av_PlayMusic);
     // LD_addr_A(MBC3RomBank);    // ld [MBC3RomBank], a
-    gb_write(MBC3RomBank, BANK(av_PlayMusic));
 
     // LD_A_E;             // ld a, e
     // AND_A_A;            // and a
@@ -72,9 +70,7 @@ void PlayMusic(uint16_t music) {
 // end:
     // POP_AF;                  // pop af
     // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
-    hram.hROMBank = oldbank;
     // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
-    gb_write(MBC3RomBank, oldbank);
     // POP_AF;                  // pop af
     // POP_BC;                  // pop bc
     // POP_DE;                  // pop de
@@ -92,12 +88,9 @@ void PlayMusic2(uint16_t de) {
 
     // LDH_A_addr(hROMBank);      // ldh a, [hROMBank]
     // PUSH_AF;                   // push af
-    uint8_t oldbank = hram.hROMBank;
     // LD_A(BANK(av_PlayMusic));  // ld a, BANK(_PlayMusic)
     // LDH_addr_A(hROMBank);      // ldh [hROMBank], a
-    hram.hROMBank = BANK(av_PlayMusic);
     // LD_addr_A(MBC3RomBank);    // ld [MBC3RomBank], a
-    gb_write(MBC3RomBank, BANK(av_PlayMusic));
 
     // PUSH_DE;  // push de
     v_PlayMusic(MUSIC_NONE);
@@ -108,9 +101,7 @@ void PlayMusic2(uint16_t de) {
 
     // POP_AF;                  // pop af
     // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
-    hram.hROMBank = oldbank;
     // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
-    gb_write(MBC3RomBank, oldbank);
 
     // POP_AF;  // pop af
     // POP_BC;  // pop bc
@@ -150,12 +141,12 @@ void PlayCry(uint16_t de) {
     // LD_addr_A(wCryPitch);       // ld [wCryPitch], a
     // LD_A_hli;                   // ld a, [hli]
     // LD_addr_A(wCryPitch + 1);   // ld [wCryPitch + 1], a
-    wram->wCryPitch = cry->pitch;
+    gAudio.cryPitch = cry->pitch;
     // LD_A_hli;                   // ld a, [hli]
     // LD_addr_A(wCryLength);      // ld [wCryLength], a
     // LD_A_hl;                    // ld a, [hl]
     // LD_addr_A(wCryLength + 1);  // ld [wCryLength + 1], a
-    wram->wCryLength = cry->length;
+    gAudio.cryLength = cry->length;
 
     // LD_A(BANK(av_PlayCry));  // ld a, BANK(_PlayCry)
     // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
@@ -189,27 +180,22 @@ void PlaySFX(uint16_t de) {
         // LD_A_addr(wCurSFX);  // ld a, [wCurSFX]
         // CP_A_E;              // cp e
         // IF_C goto done;      // jr c, .done
-    if(!CheckSFX() || (wram->wCurSFX >= LOW(de))) {
+    if(!CheckSFX() || (gAudio.curSFX >= LOW(de))) {
         // LDH_A_addr(hROMBank);    // ldh a, [hROMBank]
         // PUSH_AF;                 // push af
         // LD_A(BANK(av_PlaySFX));  // ld a, BANK(_PlaySFX)
         // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
         // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
-        uint8_t oldbank = hram.hROMBank;
-        hram.hROMBank = BANK(av_PlaySFX);
-        gb_write(MBC3RomBank, hram.hROMBank);
 
         // LD_A_E;              // ld a, e
         // LD_addr_A(wCurSFX);  // ld [wCurSFX], a
-        wram->wCurSFX = LOW(de);
+        gAudio.curSFX = LOW(de);
         // REG_DE = de;
         v_PlaySFX(de);         // call _PlaySFX
 
         // POP_AF;                  // pop af
         // LDH_addr_A(hROMBank);    // ldh [hROMBank], a
         // LD_addr_A(MBC3RomBank);  // ld [MBC3RomBank], a
-        hram.hROMBank = oldbank;
-        gb_write(MBC3RomBank, oldbank);
     }
 
     // POP_AF;  // pop af
@@ -254,13 +240,13 @@ void MaxVolume(void) {
     // LD_A(MAX_VOLUME);    // ld a, MAX_VOLUME
     // LD_addr_A(wVolume);  // ld [wVolume], a
     // RET;                 // ret
-    wram->wVolume = MAX_VOLUME;
+    gAudio.volume = MAX_VOLUME;
 }
 
 void LowVolume(void) {
     // LD_A(0x33);          // ld a, $33 ; 50%
     // LD_addr_A(wVolume);  // ld [wVolume], a
-    wram->wVolume = 0x33;
+    gAudio.volume = 0x33;
     // RET;                 // ret
 }
 
@@ -268,7 +254,7 @@ void MinVolume(void) {
     // XOR_A_A;             // xor a
     // LD_addr_A(wVolume);  // ld [wVolume], a
     // RET;                 // ret
-    wram->wVolume = 0;
+    gAudio.volume = 0;
 }
 
 void FadeOutToMusic(void) {
@@ -282,7 +268,7 @@ void FadeInToMusic(void) {
     // LD_A(4 | (1 << MUSIC_FADE_IN_F));  // ld a, 4 | (1 << MUSIC_FADE_IN_F)
     // LD_addr_A(wMusicFade);             // ld [wMusicFade], a
     // RET;                               // ret
-    wram->wMusicFade = 4 | (1 << MUSIC_FADE_IN_F);
+    gAudio.musicFade = 4 | (1 << MUSIC_FADE_IN_F);
 }
 
 //  Skip a frames of music.
@@ -310,20 +296,20 @@ void FadeToMapMusic(void) {
     // CP_A_E;                           // cp e
     // IF_Z goto done;                   // jr z, .done
     uint16_t music = GetMapMusic_MaybeSpecial();
-    if(music == wram->wMapMusic)
+    if(music == gAudio.mapMusic)
         return;
 
     // LD_A(8);                      // ld a, 8
     // LD_addr_A(wMusicFade);        // ld [wMusicFade], a
-    wram->wMusicFade = 8;
+    gAudio.musicFade = 8;
     // LD_A_E;                       // ld a, e
     // LD_addr_A(wMusicFadeID);      // ld [wMusicFadeID], a
     // LD_A_D;                       // ld a, d
     // LD_addr_A(wMusicFadeID + 1);  // ld [wMusicFadeID + 1], a
-    wram->wMusicFadeID = music;
+    gAudio.musicFadeID = music;
     // LD_A_E;                       // ld a, e
     // LD_addr_A(wMapMusic);         // ld [wMapMusic], a
-    wram->wMapMusic = (uint8_t)music;
+    gAudio.mapMusic = (uint8_t)music;
 
 // done:
     // POP_AF;  // pop af
@@ -345,7 +331,7 @@ void PlayMapMusic(void) {
     // CP_A_E;                           // cp e
     // IF_Z goto done;                   // jr z, .done
     uint16_t music = GetMapMusic_MaybeSpecial();
-    if(music == wram->wMapMusic)
+    if(music == gAudio.mapMusic)
         return;
 
     // PUSH_DE;               // push de
@@ -357,7 +343,7 @@ void PlayMapMusic(void) {
     // POP_DE;                // pop de
     // LD_A_E;                // ld a, e
     // LD_addr_A(wMapMusic);  // ld [wMapMusic], a
-    wram->wMapMusic = (uint8_t)(music & 0xff);
+    gAudio.mapMusic = (uint8_t)(music & 0xff);
     // CALL(aPlayMusic);      // call PlayMusic
     PlayMusic(music);
 
@@ -380,7 +366,7 @@ void PlayMapMusicBike(void) {
 
     // XOR_A_A;                               // xor a
     // LD_addr_A(wDontPlayMapMusicOnReload);  // ld [wDontPlayMapMusicOnReload], a
-    wram->wDontPlayMapMusicOnReload = FALSE;
+    gAudio.dontPlayMapMusicOnReload = FALSE;
     // LD_DE(MUSIC_BICYCLE);                  // ld de, MUSIC_BICYCLE
     // LD_A_addr(wPlayerState);               // ld a, [wPlayerState]
     // CP_A(PLAYER_BIKE);                     // cp PLAYER_BIKE
@@ -404,7 +390,7 @@ void PlayMapMusicBike(void) {
 
     // LD_A_E;                // ld a, e
     // LD_addr_A(wMapMusic);  // ld [wMapMusic], a
-    wram->wMapMusic = (uint8_t)(music & 0xff);
+    gAudio.mapMusic = (uint8_t)(music & 0xff);
     // CALL(aPlayMusic);      // call PlayMusic
     PlayMusic(music);
 
@@ -420,11 +406,11 @@ void TryRestartMapMusic(void) {
     // LD_A_addr(wDontPlayMapMusicOnReload);  // ld a, [wDontPlayMapMusicOnReload]
     // AND_A_A;                               // and a
     // JR_Z(mRestartMapMusic);                // jr z, RestartMapMusic
-    if(!wram->wDontPlayMapMusicOnReload)
+    if(!gAudio.dontPlayMapMusicOnReload)
         return RestartMapMusic();
     // XOR_A_A;                               // xor a
     // LD_addr_A(wMapMusic);                  // ld [wMapMusic], a
-    wram->wMapMusic = 0;
+    gAudio.mapMusic = 0;
     // LD_DE(MUSIC_NONE);                     // ld de, MUSIC_NONE
     // CALL(aPlayMusic);                      // call PlayMusic
     PlayMusic(MUSIC_NONE);
@@ -432,7 +418,7 @@ void TryRestartMapMusic(void) {
     DelayFrame();
     // XOR_A_A;                               // xor a
     // LD_addr_A(wDontPlayMapMusicOnReload);  // ld [wDontPlayMapMusicOnReload], a
-    wram->wDontPlayMapMusicOnReload = FALSE;
+    gAudio.dontPlayMapMusicOnReload = FALSE;
     // RET;                                   // ret
 }
 
@@ -451,7 +437,7 @@ void RestartMapMusic(void) {
     // LD_E_A;                // ld e, a
     // LD_D(0);               // ld d, 0
     // CALL(aPlayMusic);      // call PlayMusic
-    PlayMusic(wram->wMapMusic);
+    PlayMusic(gAudio.mapMusic);
     // POP_AF;                // pop af
     // POP_BC;                // pop bc
     // POP_DE;                // pop de
@@ -569,17 +555,17 @@ void TerminateExpBarSound(void) {
     // XOR_A_A;  // xor a
     chan[CHAN5]->flags[0] = 0;
     // LD_addr_A(wPitchSweep);  // ld [wPitchSweep], a
-    wram->wPitchSweep = 0;
+    gAudio.pitchSweep = 0;
     // LDH_addr_A(rNR10);       // ldh [rNR10], a
-    gb_write(rNR10, 0x0);
+    apu_write(rNR10, 0x0);
     // LDH_addr_A(rNR11);       // ldh [rNR11], a
-    gb_write(rNR11, 0x0);
+    apu_write(rNR11, 0x0);
     // LDH_addr_A(rNR12);       // ldh [rNR12], a
-    gb_write(rNR12, 0x0);
+    apu_write(rNR12, 0x0);
     // LDH_addr_A(rNR13);       // ldh [rNR13], a
-    gb_write(rNR13, 0x0);
+    apu_write(rNR13, 0x0);
     // LDH_addr_A(rNR14);       // ldh [rNR14], a
-    gb_write(rNR14, 0x0);
+    apu_write(rNR14, 0x0);
     // RET;                     // ret
 }
 
@@ -589,7 +575,7 @@ void ChannelsOff(void) {
     chan[CHAN2]->channelOn = 0;
     chan[CHAN3]->channelOn = 0;
     chan[CHAN4]->channelOn = 0;
-    wram->wPitchSweep = 0;
+    gAudio.pitchSweep = 0;
 }
 
 // Quickly turn off sound effect channels
@@ -598,5 +584,5 @@ void SFXChannelsOff(void) {
     chan[CHAN6]->channelOn = 0;
     chan[CHAN7]->channelOn = 0;
     chan[CHAN8]->channelOn = 0;
-    wram->wPitchSweep = 0;
+    gAudio.pitchSweep = 0;
 }

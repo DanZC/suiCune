@@ -3623,7 +3623,7 @@ static void StopDangerSound(void){
     // XOR_A_A;
     // LD_addr_A(wLowHealthAlarm);
     // RET;
-    wram->wLowHealthAlarm = 0;
+    gAudio.lowHealthAlarm = 0;
 }
 
 static void FaintYourPokemon(void){
@@ -3632,7 +3632,7 @@ static void FaintYourPokemon(void){
     WaitSFX();
     // LD_A(0xf0);
     // LD_addr_A(wCryTracks);
-    wram->wCryTracks = 0xf0;
+    gAudio.cryTracks = 0xf0;
     // LD_A_addr(wBattleMonSpecies);
     // CALL(aPlayStereoCry);
     PlayStereoCry(wram->wBattleMon.species);
@@ -4255,7 +4255,7 @@ static void UpdateFaintedPlayerMon(void){
     bit_reset(wram->wEnemySubStatus3, SUBSTATUS_IN_LOOP);
     // XOR_A_A;
     // LD_addr_A(wLowHealthAlarm);
-    wram->wLowHealthAlarm = 0;
+    gAudio.lowHealthAlarm = 0;
     // LD_HL(wPlayerDamageTaken);
     // LD_hli_A;
     // LD_hl_A;
@@ -5685,7 +5685,7 @@ void ShowSetEnemyMonAndSendOutAnimation(void){
         // cry_no_anim:
             // LD_A(0xf);
             // LD_addr_A(wCryTracks);
-            wram->wCryTracks = 0xf;
+            gAudio.cryTracks = 0xf;
             // LD_A_addr(wTempEnemyMonSpecies);
             // CALL(aPlayStereoCry);
             PlayStereoCry(wram->wTempEnemyMonSpecies);
@@ -6414,7 +6414,7 @@ void SendOutPlayerMon(void){
     if(!CheckFaintedFrzSlp(bc)) {
         // LD_A(0xf0);
         // LD_addr_A(wCryTracks);
-        wram->wCryTracks = 0xf0;
+        gAudio.cryTracks = 0xf0;
         // LD_A_addr(wCurPartySpecies);
         // CALL(aPlayStereoCry);
         PlayStereoCry(wram->wCurPartySpecies);
@@ -6615,7 +6615,7 @@ bool PursuitSwitch(void){
 
         // LD_A(0xf0);
         // LD_addr_A(wCryTracks);
-        wram->wCryTracks = 0xf0;
+        gAudio.cryTracks = 0xf0;
         // LD_A_addr(wBattleMonSpecies);
         // CALL(aPlayStereoCry);
         // LD_A_addr(wLastPlayerMon);
@@ -7261,7 +7261,7 @@ void CheckDanger(void){
     // OR_A_hl;
     // IF_Z goto no_danger;
     if(wram->wBattleMon.hp == 0) {
-        bit_reset(wram->wLowHealthAlarm, DANGER_ON_F);
+        bit_reset(gAudio.lowHealthAlarm, DANGER_ON_F);
         return;
     }
     // LD_A_addr(wBattleLowHealthAlarm);
@@ -7273,7 +7273,7 @@ void CheckDanger(void){
     // CP_A(HP_RED);
     // IF_Z goto danger;
     else if(wram->wPlayerHPPal == HP_RED) {
-        bit_set(wram->wLowHealthAlarm, DANGER_ON_F);
+        bit_set(gAudio.lowHealthAlarm, DANGER_ON_F);
         return;
     }
     else {
@@ -7281,7 +7281,7 @@ void CheckDanger(void){
         // LD_HL(wLowHealthAlarm);
         // RES_hl(DANGER_ON_F);
         // goto done;
-        bit_reset(wram->wLowHealthAlarm, DANGER_ON_F);
+        bit_reset(gAudio.lowHealthAlarm, DANGER_ON_F);
         return;
     }
 
@@ -12734,7 +12734,7 @@ void CleanUpBattleRAM(void){
     BattleEnd_HandleRoamMons();
     // XOR_A_A;
     // LD_addr_A(wLowHealthAlarm);
-    wram->wLowHealthAlarm = 0x0;
+    gAudio.lowHealthAlarm = 0x0;
     // LD_addr_A(wBattleMode);
     wram->wBattleMode = 0;
     // LD_addr_A(wBattleType);
@@ -13921,7 +13921,7 @@ static void BattleStartMessage(void){
             // cry_no_anim:
                 // LD_A(0xf);
                 // LD_addr_A(wCryTracks);
-                wram->wCryTracks = 0xf;
+                gAudio.cryTracks = 0xf;
                 // LD_A_addr(wTempEnemyMonSpecies);
                 // CALL(aPlayStereoCry);
                 PlayStereoCry(wram->wTempEnemyMonSpecies);

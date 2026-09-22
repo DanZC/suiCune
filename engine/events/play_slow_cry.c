@@ -22,7 +22,7 @@ void PlaySlowCry(void){
     // LD_addr_A(wCryPitch);
     // LD_A_H;
     // LD_addr_A(wCryPitch + 1);
-    wram->wCryPitch -= 0x140;
+    gAudio.cryPitch -= 0x140;
     // LD_HL(wCryLength);
     // LD_A_hli;
     // LD_H_hl;
@@ -33,7 +33,7 @@ void PlaySlowCry(void){
     // LD_addr_A(wCryLength);
     // LD_A_H;
     // LD_addr_A(wCryLength + 1);
-    wram->wCryLength += 0x60;
+    gAudio.cryLength += 0x60;
     // FARCALL(av_PlayCry);
     // SafeCallGBAuto(av_PlayCry);
     v_PlayCry(cry->index);

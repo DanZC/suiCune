@@ -26,7 +26,7 @@ bool MainMenu_Mobile(void){
     ClearBGPalettes();
     // LD_A(MUSIC_MOBILE_ADAPTER_MENU);
     // LD_addr_A(wMapMusic);
-    wram->wMapMusic = MUSIC_MOBILE_ADAPTER_MENU;
+    gAudio.mapMusic = MUSIC_MOBILE_ADAPTER_MENU;
     // LD_DE(MUSIC_MOBILE_ADAPTER_MENU);
     // CALL(aFunction4a6c5);
     Function4a6c5(MUSIC_MOBILE_ADAPTER_MENU);
@@ -128,7 +128,7 @@ entry:
             ClearTilemap();
             // LD_A(MUSIC_MAIN_MENU);
             // LD_addr_A(wMapMusic);
-            wram->wMapMusic = MUSIC_MAIN_MENU;
+            gAudio.mapMusic = MUSIC_MAIN_MENU;
             // LD_DE(MUSIC_MAIN_MENU);
             // CALL(aFunction4a6c5);
             Function4a6c5(MUSIC_MAIN_MENU);
@@ -1389,12 +1389,12 @@ void Function4a6ab(void){
 void Function4a6c5(uint16_t de){
     // LD_A(0x5);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x5;
+    gAudio.musicFade = 0x5;
     // LD_A_E;
     // LD_addr_A(wMusicFadeID);
     // LD_A_D;
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = de;
+    gAudio.musicFadeID = de;
     // LD_C(22);
     // CALL(aDelayFrames);
     DelayFrames(22);

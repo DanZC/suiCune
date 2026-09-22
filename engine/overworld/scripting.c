@@ -1265,7 +1265,7 @@ void Script_playmusic(script_s* s, uint16_t music){
     PlayMusic(MUSIC_NONE);
     // XOR_A_A;
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0;
+    gAudio.musicFade = 0;
     // CALL(aMaxVolume);
     MaxVolume();
     // CALL(aGetScriptByte);
@@ -1283,11 +1283,11 @@ void Script_musicfadeout(script_s* s, uint16_t id, uint8_t fade){
     // LD_addr_A(wMusicFadeID);
     // CALL(aGetScriptByte);
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = id;
+    gAudio.musicFadeID = id;
     // CALL(aGetScriptByte);
     // AND_A(~(1 << MUSIC_FADE_IN_F));
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = fade;
+    gAudio.musicFade = fade;
     // RET;
 }
 
@@ -3247,7 +3247,7 @@ void Script_dontrestartmapmusic(script_s* s){
     (void)s;
     // LD_A(TRUE);
     // LD_addr_A(wDontPlayMapMusicOnReload);
-    wram->wDontPlayMapMusicOnReload = TRUE;
+    gAudio.dontPlayMapMusicOnReload = TRUE;
     // RET;
 }
 

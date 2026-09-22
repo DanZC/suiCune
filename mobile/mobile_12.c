@@ -272,12 +272,12 @@ uint8_t InitMobileProfile(uint8_t c){
     // asm_4808a:
         // LD_A(0x5);
         // LD_addr_A(wMusicFade);
-        wram->wMusicFade = 0x5;
+        gAudio.musicFade = 0x5;
         // LD_A(LOW(MUSIC_MOBILE_ADAPTER_MENU));
         // LD_addr_A(wMusicFadeID);
         // LD_A(HIGH(MUSIC_MOBILE_ADAPTER_MENU));
         // LD_addr_A(wMusicFadeID + 1);
-        wram->wMusicFadeID = MUSIC_MOBILE_ADAPTER_MENU;
+        gAudio.musicFadeID = MUSIC_MOBILE_ADAPTER_MENU;
         // LD_C(20);
         // CALL(aDelayFrames);
         DelayFrames(20);

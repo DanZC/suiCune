@@ -279,10 +279,10 @@ void FadeMapMusicAndPalettes(void){
     // LD_A_addr(wMusicFadeID);
     // LD_D(HIGH(MUSIC_NONE));
     // LD_A_addr(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_NONE;
+    gAudio.musicFadeID = MUSIC_NONE;
     // LD_A(0x4);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x4;
+    gAudio.musicFade = 0x4;
     // CALL(aRotateThreePalettesRight);
     RotateThreePalettesRight();
     // RET;
@@ -298,7 +298,7 @@ void ForceMapMusic(void){
         MinVolume();
         // LD_A(0x88);
         // LD_addr_A(wMusicFade);
-        wram->wMusicFade = 0x88;
+        gAudio.musicFade = 0x88;
     }
 // notbiking:
     // CALL(aTryRestartMapMusic);

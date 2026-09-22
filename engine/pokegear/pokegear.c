@@ -2664,7 +2664,7 @@ void DummyLoadStation(void){
 void RadioMusicRestartDE(uint16_t de){
     wram->wPokegearRadioMusicPlaying = (uint8_t)(de & 0xFF);
     PlayMusic(MUSIC_NONE);
-    wram->wMapMusic = (uint8_t)(de & 0xFF);
+    gAudio.mapMusic = (uint8_t)(de & 0xFF);
     PlayMusic(de);
 }
 

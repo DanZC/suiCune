@@ -2428,7 +2428,7 @@ uint8_t RevivePokemon(void){
 // skip_to_revive:
     // XOR_A_A;
     // LD_addr_A(wLowHealthAlarm);
-    wram->wLowHealthAlarm = 0x0;
+    gAudio.lowHealthAlarm = 0x0;
     // LD_A_addr(wCurItem);
     // CP_A(REVIVE);
     // IF_Z goto revive_half_hp;
@@ -2462,7 +2462,7 @@ static uint8_t FullRestoreEffect_FullRestore(void){
     struct PartyMon* curMon = gPokemon.partyMon + wram->wCurPartyMon;
     // XOR_A_A;
     // LD_addr_A(wLowHealthAlarm);
-    wram->wLowHealthAlarm = 0x0;
+    gAudio.lowHealthAlarm = 0x0;
     // CALL(aReviveFullHP);
     uint16_t hp = ReviveFullHP(curMon);
     // LD_A(MON_STATUS);
@@ -2601,7 +2601,7 @@ uint8_t ItemRestoreHP(void){
 
     // XOR_A_A;
     // LD_addr_A(wLowHealthAlarm);
-    wram->wLowHealthAlarm = 0x0;
+    gAudio.lowHealthAlarm = 0x0;
     // CALL(aGetHealingItemAmount);
     uint16_t amount = GetHealingItemAmount(wram->wCurItem);
     // CALL(aRestoreHealth);

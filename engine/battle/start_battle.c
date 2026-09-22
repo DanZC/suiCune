@@ -94,7 +94,7 @@ void PlayBattleMusic(void){
 
     // XOR_A_A;
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0;
+    gAudio.musicFade = 0;
     // LD_DE(MUSIC_NONE);
     // CALL(aPlayMusic);
     PlayMusic(MUSIC_NONE);

@@ -34,6 +34,7 @@
 #include "../../util/intro_jumptable.h"
 #include "../../audio/load.h"
 #include "../../util/input.h"
+#include "../../util/apu.h"
 #include <stdbool.h>
 #include "../../home/serial.h"
 #include <setjmp.h>
@@ -192,7 +193,7 @@ uint8_t gb_read(const uint_fast16_t addr) {
                 return gb.hram[addr - IO_ADDR];
 
             if ((addr >= 0xFF10) && (addr <= 0xFF3F)) {
-                return audio_read(addr);
+                return apu_read(addr);
             }
 
             /* IO and Interrupts. */
@@ -440,7 +441,7 @@ void gb_write(const uint_fast16_t addr, const uint8_t val) {
             }
 
             if ((addr >= 0xFF10) && (addr <= 0xFF3F)) {
-                audio_write(addr, val);
+                apu_write(addr, val);
                 return;
             }
             uint16_t fixPaletteTemp;
@@ -3830,7 +3831,7 @@ int main(int argc, char* argv[]) {
         want.format = AUDIO_S16SYS,
         want.channels = 2;
         want.samples = AUDIO_SAMPLES;
-        want.callback = audio_callback;
+        want.callback = apu_callback;
         want.userdata = NULL;
 
         log_info("Audio device: %s\n", SDL_GetAudioDeviceName(0, 0));
@@ -3841,7 +3842,7 @@ int main(int argc, char* argv[]) {
             exit(EXIT_FAILURE);
         }
 
-        audio_init();
+        apu_init();
         SDL_PauseAudioDevice(dev, 0);
     }
     gb_init_lcd(&lcd_draw_line);

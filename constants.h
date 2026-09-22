@@ -84,10 +84,15 @@ extern struct gb_s gb;
 extern struct hram_s hram;
 extern struct vram_s *vram;
 extern struct wram_s *wram;
+
+// SRAM structs
 extern struct OptionsData gOptions;
 extern struct CurMapData gCurMapData;
 extern struct PokemonData gPokemon;
 extern struct PlayerData gPlayer;
 extern struct CrystalData gCrystal;
+
+// Runtime structs
+extern struct Audio gAudio;
 extern script_s gCurScript;
 #endif

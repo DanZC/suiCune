@@ -17,7 +17,7 @@ struct wram_s
                 uint8_t wStackTop[1];
             };
             // Audio RAM
-            struct {
+            struct { // DEPRECATED, moved data to gAudio struct.
                 // WRAM0
                 // nonzero if playing
                 uint8_t wMusicPlaying;
@@ -93,7 +93,7 @@ struct wram_s
                 //union wAudioEnd
                 uint8_t wMapMusic;
                 uint8_t wDontPlayMapMusicOnReload;
-            };
+            } _;
             // WRAM
             struct {
                 // WRAM0

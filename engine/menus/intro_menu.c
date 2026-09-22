@@ -110,7 +110,7 @@ void Intro_MainMenu(void) {
     DelayFrame();
     // LD_A_E;
     // LD_addr_A(wMapMusic);
-    wram->wMapMusic = MUSIC_NONE;
+    gAudio.mapMusic = MUSIC_NONE;
     PlayMusic(MUSIC_MAIN_MENU);
     // FARCALL(aMainMenu);
     MainMenu();
@@ -643,12 +643,12 @@ bool Continue(void) {
         // Check2Pass:
             // LD_A(0x8);
             // LD_addr_A(wMusicFade);
-            wram->wMusicFade = 0x8;
+            gAudio.musicFade = 0x8;
             // LD_A(LOW(MUSIC_NONE));
             // LD_addr_A(wMusicFadeID);
             // LD_A(HIGH(MUSIC_NONE));
             // LD_addr_A(wMusicFadeID + 1);
-            wram->wMusicFadeID = MUSIC_NONE;
+            gAudio.musicFadeID = MUSIC_NONE;
             // CALL(aClearBGPalettes);
             ClearBGPalettes();
             // CALL(aContinue_MobileAdapterMenu);
@@ -735,12 +735,12 @@ static void Continue_MobileAdapterMenu(void) {
         return;
     // LD_A(5);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 5;
+    gAudio.musicFade = 5;
     // LD_A(LOW(MUSIC_MOBILE_ADAPTER_MENU));
     // LD_addr_A(wMusicFadeID);
     // LD_A(HIGH(MUSIC_MOBILE_ADAPTER_MENU));
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_MOBILE_ADAPTER_MENU;
+    gAudio.musicFadeID = MUSIC_MOBILE_ADAPTER_MENU;
     // LD_C(20);
     // CALL(aDelayFrames);
     DelayFrames(20);
@@ -751,12 +751,12 @@ static void Continue_MobileAdapterMenu(void) {
     v_SaveData();
     // LD_A(8);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 8;
+    gAudio.musicFade = 8;
     // LD_A(LOW(MUSIC_NONE));
     // LD_addr_A(wMusicFadeID);
     // LD_A(HIGH(MUSIC_NONE));
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_NONE;
+    gAudio.musicFadeID = MUSIC_NONE;
     // LD_C(35);
     // CALL(aDelayFrames);
     DelayFrames(35);
@@ -818,7 +818,7 @@ void FinishContinueFunction(void) {
     // loop:
         // XOR_A_A;
         // LD_addr_A(wDontPlayMapMusicOnReload);
-        wram->wDontPlayMapMusicOnReload = 0x0;
+        gAudio.dontPlayMapMusicOnReload = 0x0;
         // LD_addr_A(wLinkMode);
         wram->wLinkMode = LINK_NULL;
         // LD_HL(wGameTimerPaused);
@@ -1346,13 +1346,13 @@ static void ShrinkPlayer(void) {
 
     // LD_A(32);  // fade time
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 32;
+    gAudio.musicFade = 32;
     // LD_DE(MUSIC_NONE);
     // LD_A_E;
     // LD_addr_A(wMusicFadeID);
     // LD_A_D;
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_NONE;
+    gAudio.musicFadeID = MUSIC_NONE;
 
     // LD_DE(SFX_ESCAPE_ROPE);
     // CALL(aPlaySFX);
@@ -1928,10 +1928,10 @@ static void TitleScreenMain(void) {
     // XOR_A_A;  // MUSIC_NONE
     // LD_addr_A(wMusicFadeID);
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_NONE;
+    gAudio.musicFadeID = MUSIC_NONE;
     // LD_HL(wMusicFade);
     // LD_hl(8);  // 1 second
-    wram->wMusicFade = 8;
+    gAudio.musicFade = 8;
 
     // LD_HL(wTitleScreenTimer);
     // INC_hl;
@@ -1949,7 +1949,7 @@ static void TitleScreenEnd(void) {
     // LD_A_addr(wMusicFade);
     // AND_A_A;
     // RET_NZ;
-    if(wram->wMusicFade != 0)
+    if(gAudio.musicFade != 0)
         return;
 
     //LD_A(TITLESCREENOPTION_RESTART);

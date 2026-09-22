@@ -11,6 +11,8 @@
 #include "../home/delay.h"
 #include "../home/copy.h"
 #include "../data/trainers/encounter_music.h"
+#include "../util/apu.h"
+#include <stddef.h>
 
 //  The entire sound engine. Uses section "audio" in WRAM.
 
@@ -23,50 +25,39 @@
 struct Channel *chan[8];
 struct Channel *curChan;
 int curChannel;
-uint16_t channelPointers[8] = {wChannel1,
-                               wChannel2,
-                               wChannel3,
-                               wChannel4,
-                               wChannel5,
-                               wChannel6,
-                               wChannel7,
-                               wChannel8};
 
-uint8_t *noiseSampleAddress;
-uint8_t channelJumpCondition[4];
+struct Audio gAudio;
 
 void v_InitSound(void) {  //  restart sound operation, clear all relevant hardware registers & wram
     for (int i = 0; i < NUM_CHANNELS; i++)
-        chan[i] = gb_pointer(channelPointers[i]);
+        chan[i] = gAudio.channel + i;
     MusicOff();
     ClearChannels();
-    for (int i = wAudio; i < wAudioEnd; i++)
-        gb_write(i, 0);
-    wram->wVolume = MAX_VOLUME;
-    noiseSampleAddress = NULL;
+    ByteFill(&gAudio, sizeof(gAudio) - (sizeof(gAudio) - offsetof(struct Audio, musicPlaying)), 0x0);
+    gAudio.volume = MAX_VOLUME;
     MusicOn();
 }
 
 void MusicFadeRestart(void) {  //  restart but keep the music id to fade in to
-    uint16_t musicId = wram->wMusicFadeID;
+    uint16_t musicId = gAudio.musicFadeID;
     v_InitSound();
-    wram->wMusicFadeID = musicId;
+    gAudio.musicFadeID = musicId;
 }
 
 void MusicOn(void) {
-    wram->wMusicPlaying = TRUE;
+    gAudio.musicPlaying = TRUE;
 }
 
 void MusicOff(void) {
-    wram->wMusicPlaying = FALSE;
+    gAudio.musicPlaying = FALSE;
 }
 
 void v_UpdateSound(void) {  // called once per frame
-    if (!wram->wMusicPlaying)
+    if (!gAudio.musicPlaying)
         return;  // no use updating audio if it's not playing
-    wram->wSoundOutput = 0;
+    gAudio.soundOutput = 0;
     for (curChannel = 0; curChannel < NUM_CHANNELS; curChannel++) {
-        wram->wCurChannel = curChannel;
+        gAudio.curChannel = curChannel;
         curChan = chan[curChannel];
         if (curChan->channelOn) {                                    // is the channel active?
             if (curChan->noteDuration < 2) {                         // check time left in the current note
@@ -76,12 +67,12 @@ void v_UpdateSound(void) {  // called once per frame
             } else
                 curChan->noteDuration--;
             ApplyPitchSlide();
-            wram->wCurTrackDuty = curChan->dutyCycle;                    // duty cycle
-            wram->wCurTrackVolumeEnvelope = curChan->volumeEnvelope;     // volume envelope
-            wram->wCurTrackFrequency = curChan->frequency;               // frequency
+            gAudio.curTrackDuty = curChan->dutyCycle;                    // duty cycle
+            gAudio.curTrackVolumeEnvelope = curChan->volumeEnvelope;     // volume envelope
+            gAudio.curTrackFrequency = curChan->frequency;               // frequency
             HandleTrackVibrato();                                        // handle vibrato and other things
             HandleNoise();
-            if ((wram->wSFXPriority)                                 // turn off music when playing sfx?
+            if ((gAudio.SFXPriority)                                 // turn off music when playing sfx?
                 && (curChannel < NUM_MUSIC_CHANS)) {                    // are we in a sfx channel right now?
                 for (int i = NUM_MUSIC_CHANS; i < NUM_CHANNELS; i++) {  // are any sfx channels active?
                     if (chan[i]->channelOn) {                           // if so, mute
@@ -92,15 +83,15 @@ void v_UpdateSound(void) {  // called once per frame
             }
             if ((curChannel >= NUM_MUSIC_CHANS) || (!chan[curChannel + NUM_MUSIC_CHANS]->channelOn)) {  // are we in a sfx channel right now?
                 UpdateChannels();
-                wram->wSoundOutput |= curChan->tracks;
+                gAudio.soundOutput |= curChan->tracks;
             }
             curChan->noteFlags = 0;  // clear note flags
         }
     }
     PlayDanger();
     FadeMusic();                             // fade music in/out
-    gb_write(rNR50, wram->wVolume);          // write volume to hardware register
-    gb_write(rNR51, wram->wSoundOutput);     // write SO on/off to hardware register
+    apu_write(rNR50, gAudio.volume);          // write volume to hardware register
+    apu_write(rNR51, gAudio.soundOutput);     // write SO on/off to hardware register
 }
 
 void UpdateChannels(void) {
@@ -116,79 +107,79 @@ void UpdateChannels(void) {
 }
 
 void UpdateChannels_Channel1_LowHealth(void) {
-    if (!(wram->wLowHealthAlarm & (1 << DANGER_ON_F)))
+    if (!(gAudio.lowHealthAlarm & (1 << DANGER_ON_F)))
         UpdateChannels_Channel1();
 }
 
 void UpdateChannels_Channel1(void) {
     if (curChan->pitchSweep)
-        gb_write(rNR10, wram->wPitchSweep);
+        apu_write(rNR10, gAudio.pitchSweep);
     if (curChan->rest) {
-        gb_write(rNR52, gb_read(rNR52) & 0b10001110);
+        apu_write(rNR52, apu_read(rNR52) & 0b10001110);
         ClearChannel(rNR10);
     } else if (curChan->noiseSampling) {
-        gb_write(rNR11, (gb_read(rNR11) & 0x3F) | wram->wCurTrackDuty);
-        gb_write(rNR12, wram->wCurTrackVolumeEnvelope);
-        gb_write16(rNR13, wram->wCurTrackFrequency | 0x8000);
+        apu_write(rNR11, (apu_read(rNR11) & 0x3F) | gAudio.curTrackDuty);
+        apu_write(rNR12, gAudio.curTrackVolumeEnvelope);
+        apu_write16(rNR13, gAudio.curTrackFrequency | 0x8000);
     } else if (curChan->freqOverride) {
-        gb_write16(rNR13, wram->wCurTrackFrequency);
+        apu_write16(rNR13, gAudio.curTrackFrequency);
         if (curChan->dutyOverride)
-            gb_write(rNR11, (gb_read(rNR11) & 0x3F) | wram->wCurTrackDuty);
+            apu_write(rNR11, (apu_read(rNR11) & 0x3F) | gAudio.curTrackDuty);
     } else if (curChan->vibratoOverride) {
-        gb_write(rNR11, (gb_read(rNR11) & 0x3F) | wram->wCurTrackDuty);
-        gb_write(rNR13, wram->wCurTrackFrequency);
+        apu_write(rNR11, (apu_read(rNR11) & 0x3F) | gAudio.curTrackDuty);
+        apu_write(rNR13, gAudio.curTrackFrequency);
     } else if (curChan->dutyOverride)
-        gb_write(rNR11, (gb_read(rNR11) & 0x3F) | wram->wCurTrackDuty);
+        apu_write(rNR11, (apu_read(rNR11) & 0x3F) | gAudio.curTrackDuty);
 }
 
 void UpdateChannels_Channel2(void) {
     if (curChan->rest) {
-        gb_write(rNR52, gb_read(rNR52) & 0b10001101);
+        apu_write(rNR52, apu_read(rNR52) & 0b10001101);
         ClearChannel(rNR20);
     } else if (curChan->noiseSampling) {
-        gb_write(rNR21, (gb_read(rNR21) & 0x3F) | wram->wCurTrackDuty);
-        gb_write(rNR22, wram->wCurTrackVolumeEnvelope);
-        gb_write16(rNR23, wram->wCurTrackFrequency | 0x8000);
+        apu_write(rNR21, (apu_read(rNR21) & 0x3F) | gAudio.curTrackDuty);
+        apu_write(rNR22, gAudio.curTrackVolumeEnvelope);
+        apu_write16(rNR23, gAudio.curTrackFrequency | 0x8000);
     } else if (curChan->freqOverride) {
-        gb_write16(rNR23, wram->wCurTrackFrequency);
+        apu_write16(rNR23, gAudio.curTrackFrequency);
     } else if (curChan->vibratoOverride) {
-        gb_write(rNR21, (gb_read(rNR21) & 0x3F) | wram->wCurTrackDuty);
-        gb_write(rNR23, wram->wCurTrackFrequency);
+        apu_write(rNR21, (apu_read(rNR21) & 0x3F) | gAudio.curTrackDuty);
+        apu_write(rNR23, gAudio.curTrackFrequency);
     } else if (curChan->dutyOverride)
-        gb_write(rNR21, (gb_read(rNR21) & 0x3F) | wram->wCurTrackDuty);
+        apu_write(rNR21, (apu_read(rNR21) & 0x3F) | gAudio.curTrackDuty);
 }
 
 void UpdateChannels_Channel3(void) {
     if (curChan->rest) {
-        gb_write(rNR52, gb_read(rNR52) & 0b10001011);
+        apu_write(rNR52, apu_read(rNR52) & 0b10001011);
         ClearChannel(rNR30);
     } else if (curChan->noiseSampling) {
-        gb_write(rNR31, 0x3F);
-        UpdateChannels_load_wave_pattern(wram->wCurTrackVolumeEnvelope & 0xF);
-        gb_write16(rNR33, wram->wCurTrackFrequency | 0x8000);
+        apu_write(rNR31, 0x3F);
+        UpdateChannels_load_wave_pattern(gAudio.curTrackVolumeEnvelope & 0xF);
+        apu_write16(rNR33, gAudio.curTrackFrequency | 0x8000);
     } else if (curChan->vibratoOverride) {
-        gb_write(rNR33, wram->wCurTrackFrequency);
+        apu_write(rNR33, gAudio.curTrackFrequency);
     }
 }
 
 void UpdateChannels_load_wave_pattern(uint8_t sampleId) {
     int samplePointer = sampleId << 5;
-    gb_write(rNR30, 0);
+    apu_write(rNR30, 0);
     for (int i = 0; i < 16; i++, samplePointer += 2)
-        gb_write(rWave_0 + i, (WaveSamples[samplePointer] << 4) | WaveSamples[samplePointer + 1]);
-    gb_write(rNR32, (wram->wCurTrackVolumeEnvelope & 0x30) << 1);
-    gb_write(rNR30, 0x80);
+        apu_write(rWave_0 + i, (WaveSamples[samplePointer] << 4) | WaveSamples[samplePointer + 1]);
+    apu_write(rNR32, (gAudio.curTrackVolumeEnvelope & 0x30) << 1);
+    apu_write(rNR30, 0x80);
 }
 
 void UpdateChannels_Channel4(void) {
     if (curChan->rest) {
-        gb_write(rNR52, gb_read(rNR52) & 0b10000111);
+        apu_write(rNR52, apu_read(rNR52) & 0b10000111);
         ClearChannel(rNR40);
     } else if (curChan->noiseSampling) {
-        gb_write(rNR41, 0x3F);
-        gb_write(rNR42, wram->wCurTrackVolumeEnvelope);
-        gb_write(rNR43, wram->wCurTrackFrequency);
-        gb_write(rNR44, 0x80);
+        apu_write(rNR41, 0x3F);
+        apu_write(rNR42, gAudio.curTrackVolumeEnvelope);
+        apu_write(rNR43, gAudio.curTrackFrequency);
+        apu_write(rNR44, 0x80);
     }
 }
 
@@ -201,8 +192,8 @@ int v_CheckSFX(void) {                                      // check if any sfx 
 }
 
 void PlayDanger(void) {
-    if ((wram->wLowHealthAlarm & (1 << DANGER_ON_F))) {
-        uint8_t lowHealthTimer = wram->wLowHealthAlarm ^ (1 << DANGER_ON_F);
+    if ((gAudio.lowHealthAlarm & (1 << DANGER_ON_F))) {
+        uint8_t lowHealthTimer = gAudio.lowHealthAlarm ^ (1 << DANGER_ON_F);
         uint16_t lowHealthPitch;
         if (!v_CheckSFX()) {                 // Don't do anything if SFX is being played
             if (!(lowHealthTimer & 0x0F)) {  // switch pitch
@@ -211,16 +202,16 @@ void PlayDanger(void) {
                 } else {  // Play the low tone (timer = 16)
                     lowHealthPitch = 0x6EE;
                 }
-                gb_write(rNR10, 0);
-                gb_write(rNR11, 0x80);  // duty 50%
-                gb_write(rNR12, 0xE2);  // volume 14, envelope decrease sweep 2
-                gb_write16(rNR13, lowHealthPitch | 0x8000);
+                apu_write(rNR10, 0);
+                apu_write(rNR11, 0x80);  // duty 50%
+                apu_write(rNR12, 0xE2);  // volume 14, envelope decrease sweep 2
+                apu_write16(rNR13, lowHealthPitch | 0x8000);
             }
         }
         if (++lowHealthTimer == 30)
             lowHealthTimer = 0;
-        wram->wLowHealthAlarm = lowHealthTimer | (1 << DANGER_ON_F);     // Make sure the danger sound is kept on
-        wram->wSoundOutput = wram->wSoundOutput | 0x11;                  // Enable channel 1 if it's off
+        gAudio.lowHealthAlarm = lowHealthTimer | (1 << DANGER_ON_F);     // Make sure the danger sound is kept on
+        gAudio.soundOutput = gAudio.soundOutput | 0x11;                  // Enable channel 1 if it's off
     }
 }
 
@@ -233,49 +224,49 @@ void FadeMusic(void) {
     //     fade new song in
     //  notes:
     //     max # frames per volume level is $3f
-    if (wram->wMusicFade) {           // fading?
-        if (wram->wMusicFadeCount) {  // has the count ended?
-            wram->wMusicFadeCount--;
+    if (gAudio.musicFade) {           // fading?
+        if (gAudio.musicFadeCount) {  // has the count ended?
+            gAudio.musicFadeCount--;
         } else {
-            wram->wMusicFadeCount = wram->wMusicFade & 0x3F;        // get new count
-            uint8_t curVol = wram->wVolume & VOLUME_SO1_LEVEL;      // get SO1 volume
-            if (wram->wMusicFade & (1 << MUSIC_FADE_IN_F)) {        // fading in?
-                if ((wram->wVolume & (MAX_VOLUME & 0xF)) == (MAX_VOLUME & 0xF)) {        // are we done?
-                    wram->wMusicFade = 0;                           // we're done
+            gAudio.musicFadeCount = gAudio.musicFade & 0x3F;        // get new count
+            uint8_t curVol = gAudio.volume & VOLUME_SO1_LEVEL;      // get SO1 volume
+            if (gAudio.musicFade & (1 << MUSIC_FADE_IN_F)) {        // fading in?
+                if ((gAudio.volume & (MAX_VOLUME & 0xF)) == (MAX_VOLUME & 0xF)) {        // are we done?
+                    gAudio.musicFade = 0;                           // we're done
                     return;
                 }
                 curVol++;  // inc volume
             } else {       // fading out
-                if (!(wram->wVolume & VOLUME_SO1_LEVEL)) {
-                    wram->wVolume = 0;                           // make sure volume is off
+                if (!(gAudio.volume & VOLUME_SO1_LEVEL)) {
+                    gAudio.volume = 0;                           // make sure volume is off
                     if (gPlayer.playerState == PLAYER_BIKE) {  // did we just get on a bike?
                         MusicFadeRestart();                      // restart sound
-                        wram->wVolume = 0;
-                        v_PlayMusic(wram->wMusicFadeID);                                // load new song
-                        wram->wMusicFade |= (1 << MUSIC_FADE_IN_F);  // fade in
+                        gAudio.volume = 0;
+                        v_PlayMusic(gAudio.musicFadeID);                                // load new song
+                        gAudio.musicFade |= (1 << MUSIC_FADE_IN_F);  // fade in
                         return;
                     }
                     MusicFadeRestart();  // restart sound
-                    if (wram->wMusicFadeID != 0) {
-                        v_PlayMusic(wram->wMusicFadeID);  // load new song
+                    if (gAudio.musicFadeID != 0) {
+                        v_PlayMusic(gAudio.musicFadeID);  // load new song
                     }
-                    wram->wMusicFade = 0;  // stop fading
+                    gAudio.musicFade = 0;  // stop fading
                     return;
                 }
                 curVol--;  // dec volume
             }
             curVol |= curVol << 4;  // hi = lo
-            wram->wVolume = curVol;
+            gAudio.volume = curVol;
         }
     }
 }
 
 void LoadNote(void) {
     if (curChan->pitchSlide) {                                                     // wait for pitch slide to finish
-        int16_t noteDuration = curChan->noteDuration - wram->wCurNoteDuration;     // get note duration
+        int16_t noteDuration = curChan->noteDuration - gAudio.curNoteDuration;     // get note duration
         if (noteDuration < 0)
             noteDuration = 1;  // Oversight? This could allow a division by 0
-        wram->wCurNoteDuration = noteDuration;
+        gAudio.curNoteDuration = noteDuration;
         uint16_t freqDiff;
         if (curChan->frequency > curChan->pitchSlideTarget) {  // get direction of pitch slide
             curChan->pitchSlideDir = 0;
@@ -294,12 +285,12 @@ void HandleTrackVibrato(void) {  // handle duty, cry pitch, and vibrato
     uint16_t freq;
     if (curChan->dutyLoop) {  // duty cycle looping
         curChan->dutyCyclePattern = (curChan->dutyCyclePattern << 2) | (curChan->dutyCyclePattern >> 6);
-        wram->wCurTrackDuty = (curChan->dutyCyclePattern & 0xC0);
+        gAudio.curTrackDuty = (curChan->dutyCyclePattern & 0xC0);
         curChan->dutyOverride = 1;
     }
     if (curChan->pitchOffsetEnabled) {
-        freq = wram->wCurTrackFrequency;
-        wram->wCurTrackFrequency = freq + curChan->pitchOffset;
+        freq = gAudio.curTrackFrequency;
+        gAudio.curTrackFrequency = freq + curChan->pitchOffset;
     }
     if (curChan->vibrato) {                // is vibrato on?
         if (curChan->vibratoDelayCount) {  // is vibrato active for this note yet?
@@ -314,7 +305,7 @@ void HandleTrackVibrato(void) {  // handle duty, cry pitch, and vibrato
         }
         curChan->vibratoRate |= curChan->vibratoRate >> 4;  // refresh count
         uint8_t vibExt = curChan->vibratoExtent;
-        freq = wram->wCurTrackFrequency & 0xFF;  // Only the lower 8-bits are needed (which seems odd)
+        freq = gAudio.curTrackFrequency & 0xFF;  // Only the lower 8-bits are needed (which seems odd)
         curChan->vibratoDir ^= 1;
         if (curChan->vibratoDir) {  // toggle vibrato up/down
             vibExt &= 0xF0;
@@ -330,8 +321,8 @@ void HandleTrackVibrato(void) {  // handle duty, cry pitch, and vibrato
             else
                 freq -= vibExt;
         }
-        freq |= wram->wCurTrackFrequency & 0xFF00;  // get the upper byte back (since the math dealt with the lower byte)
-        wram->wCurTrackFrequency = freq;
+        freq |= gAudio.curTrackFrequency & 0xFF00;  // get the upper byte back (since the math dealt with the lower byte)
+        gAudio.curTrackFrequency = freq;
         curChan->vibratoOverride = 1;
     }
 }
@@ -371,21 +362,21 @@ void ApplyPitchSlide(void) {
 
 void HandleNoise(void) {
     if (curChan->noise) {  // is noise sampling on?
-        if ((wram->wCurChannel & (1 << NOISE_CHAN_F)) || (!chan[CHAN8]->channelOn) || (!chan[CHAN8]->noise)) {
-            if (!wram->wNoiseSampleDelay)
+        if ((gAudio.curChannel & (1 << NOISE_CHAN_F)) || (!chan[CHAN8]->channelOn) || (!chan[CHAN8]->noise)) {
+            if (!gAudio.noiseSampleDelay)
                 ReadNoiseSample();
             else
-                wram->wNoiseSampleDelay = wram->wNoiseSampleDelay - 1;
+                gAudio.noiseSampleDelay -= 1;
         }
     }
 }
 
 void ReadNoiseSample(void) {  // samples in drumkits.h
-    if (noiseSampleAddress) {
-        if (*(noiseSampleAddress) != sound_ret_cmd) {
-            wram->wNoiseSampleDelay = (*(noiseSampleAddress++) & 0xF) + 1;
-            wram->wCurTrackVolumeEnvelope = *(noiseSampleAddress++);
-            wram->wCurTrackFrequency = *(noiseSampleAddress++);
+    if (gAudio.noiseSampleAddress) {
+        if (*(gAudio.noiseSampleAddress) != sound_ret_cmd) {
+            gAudio.noiseSampleDelay = (*(gAudio.noiseSampleAddress++) & 0xF) + 1;
+            gAudio.curTrackVolumeEnvelope = *(gAudio.noiseSampleAddress++);
+            gAudio.curTrackFrequency = *(gAudio.noiseSampleAddress++);
             curChan->noiseSampling = 1;
         }
     }
@@ -400,7 +391,7 @@ void ParseMusic(void) {
                 if (curChan->cry)
                     RestoreVolume();
                 if (curChannel == CHAN5)
-                    gb_write(rNR10, 0);
+                    apu_write(rNR10, 0);
             }
             curChan->channelOn = 0;  // turn channel off
             curChan->rest = 1;       // note = rest
@@ -415,8 +406,8 @@ void ParseMusic(void) {
             } else if (curChan->noise) {
                 GetNoiseSample();
             } else {
-                SetNoteDuration(wram->wCurMusicByte & 0xF);  // set note duration (bottom nybble)
-                uint8_t note = wram->wCurMusicByte >> 4;     // get note pitch (top nybble)
+                SetNoteDuration(gAudio.curMusicByte & 0xF);  // set note duration (bottom nybble)
+                uint8_t note = gAudio.curMusicByte >> 4;     // get note pitch (top nybble)
                 if (note) {
                     curChan->pitch = note;                                     // update pitch
                     curChan->frequency = GetFrequency(note, curChan->octave);  // update frequency
@@ -437,15 +428,15 @@ void RestoreVolume(void) {
     if (curChannel == CHAN5) {  // ch5 only
         chan[CHAN6]->pitchOffset = 0;
         chan[CHAN8]->pitchOffset = 0;
-        wram->wVolume = wram->wLastVolume;
-        wram->wLastVolume = 0;
-        wram->wSFXPriority = 0;
+        gAudio.volume = gAudio.lastVolume;
+        gAudio.lastVolume = 0;
+        gAudio.SFXPriority = 0;
     }
 }
 
 void ParseSFXOrCry(void) {
     curChan->noiseSampling = 1;                          // turn noise sampling on
-    SetNoteDuration(wram->wCurMusicByte);                // update note duration
+    SetNoteDuration(gAudio.curMusicByte);                // update note duration
     curChan->volumeEnvelope = GetMusicByte();            // update volume envelope from next param
     uint16_t freq = GetMusicByte();                      // update frequency from next param(s)
     if ((curChannel != CHAN4) && (curChannel != CHAN8))  // are we on the last channel? (noise sampling)
@@ -455,18 +446,18 @@ void ParseSFXOrCry(void) {
 
 void GetNoiseSample(void) {                                //  load ptr to sample header in noiseSampleAddress
     if ((curChannel == CHAN4) || (curChannel == CHAN8)) {  // are we on the last channel?
-        SetNoteDuration(wram->wCurMusicByte & 0xF);     // update note duration
+        SetNoteDuration(gAudio.curMusicByte & 0xF);     // update note duration
         uint8_t sample;
         if (!(curChannel & (1 << NOISE_CHAN_F))) {  // check current channel
             if (chan[CHAN8]->channelOn) return;     // is ch8 on? (noise)
-            sample = wram->wMusicNoiseSampleSet;
+            sample = gAudio.musicNoiseSampleSet;
         } else {
-            sample = wram->wSFXNoiseSampleSet;
+            sample = gAudio.SFXNoiseSampleSet;
         }
-        uint8_t note = wram->wCurMusicByte >> 4;
+        uint8_t note = gAudio.curMusicByte >> 4;
         if (note) {
-            noiseSampleAddress = Drumkits[sample][note];
-            wram->wNoiseSampleDelay = 0;
+            gAudio.noiseSampleAddress = Drumkits[sample][note];
+            gAudio.noiseSampleDelay = 0;
         }
     }
 }
@@ -521,7 +512,7 @@ void ParseMusicCommand(void) {
                                               Music_Call,
                                               Music_Ret};
 
-    return MusicCommands[wram->wCurMusicByte - FIRST_MUSIC_CMD]();
+    return MusicCommands[gAudio.curMusicByte - FIRST_MUSIC_CMD]();
 }
 
 void MusicNone(void) {
@@ -609,8 +600,8 @@ void MusicEE(void) {
 
     //  if ????, jump
     // get channel
-    if (channelJumpCondition[curChannel & 3]) {
-        channelJumpCondition[curChannel & 3] = 0;  // reset jump flag
+    if (gAudio.channelJumpCondition[curChannel & 3]) {
+        gAudio.channelJumpCondition[curChannel & 3] = 0;  // reset jump flag
         curChan->musicAddress = (GetMusicByte() | (GetMusicByte() << 8));
     } else
         curChan->musicAddress += 2;  // skip pointer
@@ -647,7 +638,7 @@ void Music_PitchSlide(void) {
     //  params: 2
     //  note duration
     //  target note
-    wram->wCurNoteDuration = GetMusicByte();
+    gAudio.curNoteDuration = GetMusicByte();
     uint8_t note = GetMusicByte();  // upper nibble is octave, lower is the note
     curChan->pitchSlideTarget = GetFrequency(note & 0xF, note >> 4);
     curChan->pitchSlide = 1;
@@ -695,7 +686,7 @@ void Music_ToggleNoise(void) {
     //      noise on: 1
     //      noise off: 0
     curChan->noise ^= 1;
-    if (curChan->noise) wram->wMusicNoiseSampleSet = GetMusicByte();
+    if (curChan->noise) gAudio.musicNoiseSampleSet = GetMusicByte();
 }
 
 void Music_SFXToggleNoise(void) {
@@ -704,7 +695,7 @@ void Music_SFXToggleNoise(void) {
     //     on: 1
     //      off: 0
     curChan->noise ^= 1;
-    if (curChan->noise) wram->wSFXNoiseSampleSet = GetMusicByte();
+    if (curChan->noise) gAudio.SFXNoiseSampleSet = GetMusicByte();
 }
 
 void Music_NoteType(void) {
@@ -719,7 +710,7 @@ void Music_NoteType(void) {
 void Music_PitchSweep(void) {
     //  update pitch sweep
     //  params: 1
-    wram->wPitchSweep = GetMusicByte();
+    gAudio.pitchSweep = GetMusicByte();
     curChan->pitchSweep = 1;
 }
 
@@ -746,7 +737,7 @@ void Music_Tempo(void) {
 
 void Music_Octave(void) {
     //  set octave based on lo nybble of the command
-    curChan->octave = wram->wCurMusicByte & 7;
+    curChan->octave = gAudio.curMusicByte & 7;
 }
 
 void Music_Transpose(void) {
@@ -777,7 +768,7 @@ void Music_Volume(void) {
     //  params: 1
     //     see Volume
     uint8_t param = GetMusicByte();
-    if (!wram->wMusicFade) wram->wVolume = param;  // is the song fading?
+    if (!gAudio.musicFade) gAudio.volume = param;  // is the song fading?
 }
 
 void Music_TempoRelative(void) {
@@ -793,13 +784,13 @@ void Music_TempoRelative(void) {
 void Music_SFXPriorityOn(void) {
     //  turn sfx priority on
     //  params: none
-    wram->wSFXPriority = 1;
+    gAudio.SFXPriority = 1;
 }
 
 void Music_SFXPriorityOff(void) {
     //  turn sfx priority off
     //  params: none
-    wram->wSFXPriority = 0;
+    gAudio.SFXPriority = 0;
 }
 
 void Music_RestartChannel(void) {
@@ -809,10 +800,12 @@ void Music_RestartChannel(void) {
     //     header format: 0x yy zz
     //         x: channel # (0-3)
     //         zzyy: pointer to new music data
-    wram->wMusicID = curChan->musicId;         // update music id
-    wram->wMusicBank = curChan->musicBank;     // update music bank
+    gAudio.musicID = curChan->musicId;         // update music id
+    gAudio.musicBank = curChan->musicBank;     // update music bank
     uint16_t pointer = GetMusicByte() | (GetMusicByte() << 8);
-    LoadChannel(gb_read16(pointer));
+    uint16_t channel_ptr = GetAudioDataByte(gAudio.musicBank, pointer);
+    channel_ptr |= (uint16_t)GetAudioDataByte(gAudio.musicBank, pointer + 1) << 8;
+    LoadChannel(pointer);
     StartChannel();
 }
 
@@ -827,14 +820,14 @@ uint8_t GetMusicByte(void) {
     //  returns byte from current address in a
     //  advances to next byte in music data
     if(curChan->musicBank < NUM_AUDIO_BANKS) {
-        wram->wCurMusicByte = GetAudioDataByte(curChan->musicBank, curChan->musicAddress);
+        gAudio.curMusicByte = GetAudioDataByte(curChan->musicBank, curChan->musicAddress);
     }
     else {
         uint32_t address = (curChan->musicBank << 14) | (curChan->musicAddress & 0x3FFF);
-        wram->wCurMusicByte = gb.gb_rom_read(address);
+        gAudio.curMusicByte = gb.gb_rom_read(address);
     }
     curChan->musicAddress++;
-    return wram->wCurMusicByte;
+    return gAudio.curMusicByte;
 }
 
 uint16_t GetFrequency(uint8_t note, uint8_t octave) {
@@ -884,13 +877,13 @@ void SetLRTracks(void) {
 void v_PlayMusic(uint16_t songId) {
     //  load music
     MusicOff();
-    wram->wMusicID = songId;
+    gAudio.musicID = songId;
     // LD_HL(mMusic);                  // ld hl, Music
     // REG_HL += songId * 3;           // 3-byte pointer
     struct BankAddr mus = Music[songId];
     // LD_A_hli;                       // ld a, [hli]
     // LD_addr_A(wMusicBank);          // ld [wMusicBank], a
-    wram->wMusicBank = mus.bank;
+    gAudio.musicBank = mus.bank;
     // LD_E_hl;                        // ld e, [hl]
     // INC_HL;                         // inc hl
     // LD_D_hl;                        // ld d, [hl] ; music header address
@@ -912,10 +905,10 @@ void v_PlayMusic(uint16_t songId) {
         // DEC_A;            // dec a
         // IF_NZ goto loop;  // jr nz, .loop
     } while(--a != 0);
-    for (int i = 0; i < NUM_MUSIC_CHANS; i++) channelJumpCondition[i] = 0;
-    noiseSampleAddress = NULL;
-    wram->wNoiseSampleDelay = 0;
-    wram->wMusicNoiseSampleSet = 0;
+    for (int i = 0; i < NUM_MUSIC_CHANS; i++) gAudio.channelJumpCondition[i] = 0;
+    gAudio.noiseSampleAddress = NULL;
+    gAudio.noiseSampleDelay = 0;
+    gAudio.musicNoiseSampleSet = 0;
     MusicOn();
 }
 
@@ -931,7 +924,7 @@ void v_PlayCry(uint16_t cryId) {
     // LD_hl_E;          // ld [hl], e
     // INC_HL;           // inc hl
     // LD_hl_D;          // ld [hl], d
-    wram->wMusicID = cryId;
+    gAudio.musicID = cryId;
 
     //  3-byte pointers (bank, address)
     // LD_HL(mCries);  // ld hl, Cries
@@ -941,12 +934,12 @@ void v_PlayCry(uint16_t cryId) {
 
     // LD_A_hli;               // ld a, [hli]
     // LD_addr_A(wMusicBank);  // ld [wMusicBank], a
-    wram->wMusicBank = Cries[wram->wMusicID].bank;
+    gAudio.musicBank = Cries[gAudio.musicID].bank;
 
     // LD_E_hl;  // ld e, [hl]
     // INC_HL;   // inc hl
     // LD_D_hl;  // ld d, [hl]
-    uint16_t addr = Cries[wram->wMusicID].addr;
+    uint16_t addr = Cries[gAudio.musicID].addr;
 
     //  Read the cry's sound header
     // REG_A = LoadMusicByte(REG_DE);
@@ -981,7 +974,7 @@ void v_PlayCry(uint16_t cryId) {
         // LD_hli_A;                     // ld [hli], a
         // LD_A_addr(wCryPitch + 1);     // ld a, [wCryPitch + 1]
         // LD_hl_A;                      // ld [hl], a
-        bc->pitchOffset = wram->wCryPitch;
+        bc->pitchOffset = gAudio.cryPitch;
 
         //  No tempo for channel 4
         // LD_A_addr(wCurChannel);        // ld a, [wCurChannel]
@@ -997,7 +990,7 @@ void v_PlayCry(uint16_t cryId) {
             // LD_hli_A;                   // ld [hli], a
             // LD_A_addr(wCryLength + 1);  // ld a, [wCryLength + 1]
             // LD_hl_A;                    // ld [hl], a
-            bc->tempo = wram->wCryLength;
+            bc->tempo = gAudio.cryLength;
         }
 
     // start:
@@ -1013,7 +1006,7 @@ void v_PlayCry(uint16_t cryId) {
         // BIT_A(STEREO);        // bit STEREO, a
         // IF_Z goto next;       // jr z, .next
 
-        if(wram->wStereoPanningMask != 0 && bit_test(gOptions.options, STEREO)) {
+        if(gAudio.stereoPanningMask != 0 && bit_test(gOptions.options, STEREO)) {
             //  [CHANNEL_TRACKS] &= [wCryTracks]
             // LD_HL(CHANNEL_TRACKS);  // ld hl, CHANNEL_TRACKS
             // ADD_HL_BC;              // add hl, bc
@@ -1023,7 +1016,7 @@ void v_PlayCry(uint16_t cryId) {
             // LD_HL(CHANNEL_TRACKS);  // ld hl, CHANNEL_TRACKS
             // ADD_HL_BC;              // add hl, bc
             // LD_hl_A;                // ld [hl], a
-            bc->tracks &= wram->wCryTracks;
+            bc->tracks &= gAudio.cryTracks;
         }
 
     // next:
@@ -1036,19 +1029,19 @@ void v_PlayCry(uint16_t cryId) {
     // LD_A_addr(wLastVolume);  // ld a, [wLastVolume]
     // AND_A_A;                 // and a
     // IF_NZ goto end;          // jr nz, .end
-    if(wram->wLastVolume == 0) {
+    if(gAudio.lastVolume == 0) {
         // LD_A_addr(wVolume);      // ld a, [wVolume]
         // LD_addr_A(wLastVolume);  // ld [wLastVolume], a
-        wram->wLastVolume = wram->wVolume;
+        gAudio.lastVolume = gAudio.volume;
         // LD_A(MAX_VOLUME);        // ld a, MAX_VOLUME
         // LD_addr_A(wVolume);      // ld [wVolume], a
-        wram->wVolume = MAX_VOLUME;
+        gAudio.volume = MAX_VOLUME;
     }
 
 // end:
     // LD_A(1);                  // ld a, 1 ; stop playing music
     // LD_addr_A(wSFXPriority);  // ld [wSFXPriority], a
-    wram->wSFXPriority = 1;
+    gAudio.SFXPriority = 1;
     MusicOn();
     return;
 }
@@ -1059,26 +1052,26 @@ void v_PlaySFX(uint16_t sfxId) {
     // LD_HL(wChannel5Flags1);    // ld hl, wChannel5Flags1
     // BIT_hl(SOUND_CHANNEL_ON);  // bit SOUND_CHANNEL_ON, [hl] ; ch5 on?
     // IF_Z goto ch6;             // jr z, .ch6
-    if(bit_test(chan[4]->flags[0], SOUND_CHANNEL_ON)) {
+    if(chan[4]->channelOn) {
         // RES_hl(SOUND_CHANNEL_ON);  // res SOUND_CHANNEL_ON, [hl] ; turn it off
-        bit_reset(chan[4]->flags[0], SOUND_CHANNEL_ON);
+        chan[4]->channelOn = 0;
         // XOR_A_A;                   // xor a
         // LDH_addr_A(rNR11);         // ldh [rNR11], a ; length/wavepattern = 0
-        gb_write(rNR11, 0x0);
+        apu_write(rNR11, 0x0);
         // LD_A(0x8);                 // ld a, $8
         // LDH_addr_A(rNR12);         // ldh [rNR12], a ; envelope = 0
-        gb_write(rNR12, 0x8);
+        apu_write(rNR12, 0x8);
         // XOR_A_A;                   // xor a
         // LDH_addr_A(rNR13);         // ldh [rNR13], a ; frequency lo = 0
-        gb_write(rNR13, 0x0);
+        apu_write(rNR13, 0x0);
         // LD_A(0x80);                // ld a, $80
         // LDH_addr_A(rNR14);         // ldh [rNR14], a ; restart sound (freq hi = 0)
-        gb_write(rNR14, 0x80);
+        apu_write(rNR14, 0x80);
         // XOR_A_A;                   // xor a
         // LD_addr_A(wPitchSweep);    // ld [wPitchSweep], a ; pitch sweep off
-        wram->wPitchSweep = 0x0;
+        gAudio.pitchSweep = 0x0;
         // LDH_addr_A(rNR10);         // ldh [rNR10], a ; pitch sweep off
-        gb_write(rNR10, 0x0);
+        apu_write(rNR10, 0x0);
     }
 
 // ch6:
@@ -1090,16 +1083,16 @@ void v_PlaySFX(uint16_t sfxId) {
         bit_reset(chan[5]->flags[0], SOUND_CHANNEL_ON);
         // XOR_A_A;                   // xor a
         // LDH_addr_A(rNR21);         // ldh [rNR21], a ; length/wavepattern = 0
-        gb_write(rNR21, 0x0);
+        apu_write(rNR21, 0x0);
         // LD_A(0x8);                 // ld a, $8
         // LDH_addr_A(rNR22);         // ldh [rNR22], a ; envelope = 0
-        gb_write(rNR22, 0x8);
+        apu_write(rNR22, 0x8);
         // XOR_A_A;                   // xor a
         // LDH_addr_A(rNR23);         // ldh [rNR23], a ; frequency lo = 0
-        gb_write(rNR23, 0x0);
+        apu_write(rNR23, 0x0);
         // LD_A(0x80);                // ld a, $80
         // LDH_addr_A(rNR24);         // ldh [rNR24], a ; restart sound (freq hi = 0)
-        gb_write(rNR24, 0x80);
+        apu_write(rNR24, 0x80);
     }
 
 // ch7:
@@ -1111,18 +1104,18 @@ void v_PlaySFX(uint16_t sfxId) {
         bit_reset(chan[6]->flags[0], SOUND_CHANNEL_ON);
         // XOR_A_A;                   // xor a
         // LDH_addr_A(rNR30);         // ldh [rNR30], a ; sound mode #3 off
-        gb_write(rNR30, 0x0);
+        apu_write(rNR30, 0x0);
         // LDH_addr_A(rNR31);         // ldh [rNR31], a ; length/wavepattern = 0
-        gb_write(rNR31, 0x0);
+        apu_write(rNR31, 0x0);
         // LD_A(0x8);                 // ld a, $8
         // LDH_addr_A(rNR32);         // ldh [rNR32], a ; envelope = 0
-        gb_write(rNR32, 0x8);
+        apu_write(rNR32, 0x8);
         // XOR_A_A;                   // xor a
         // LDH_addr_A(rNR33);         // ldh [rNR33], a ; frequency lo = 0
-        gb_write(rNR33, 0x0);
+        apu_write(rNR33, 0x0);
         // LD_A(0x80);                // ld a, $80
         // LDH_addr_A(rNR34);         // ldh [rNR34], a ; restart sound (freq hi = 0)
-        gb_write(rNR34, 0x80);
+        apu_write(rNR34, 0x80);
     }
 
 // ch8:
@@ -1134,18 +1127,18 @@ void v_PlaySFX(uint16_t sfxId) {
         bit_reset(chan[7]->flags[0], SOUND_CHANNEL_ON);
         // XOR_A_A;                   // xor a
         // LDH_addr_A(rNR41);         // ldh [rNR41], a ; length/wavepattern = 0
-        gb_write(rNR41, 0x0);
+        apu_write(rNR41, 0x0);
         // LD_A(0x8);                 // ld a, $8
         // LDH_addr_A(rNR42);         // ldh [rNR42], a ; envelope = 0
-        gb_write(rNR42, 0x8);
+        apu_write(rNR42, 0x8);
         // XOR_A_A;                   // xor a
         // LDH_addr_A(rNR43);         // ldh [rNR43], a ; frequency lo = 0
-        gb_write(rNR43, 0x0);
+        apu_write(rNR43, 0x0);
         // LD_A(0x80);                // ld a, $80
         // LDH_addr_A(rNR44);         // ldh [rNR44], a ; restart sound (freq hi = 0)
-        gb_write(rNR44, 0x80);
+        apu_write(rNR44, 0x80);
         // XOR_A_A;                   // xor a
-        noiseSampleAddress = NULL;
+        gAudio.noiseSampleAddress = NULL;
     }
 
 // chscleared:
@@ -1154,7 +1147,7 @@ void v_PlaySFX(uint16_t sfxId) {
     // LD_hl_E;                // ld [hl], e
     // INC_HL;                 // inc hl
     // LD_hl_D;                // ld [hl], d
-    wram->wMusicID = sfxId;
+    gAudio.musicID = sfxId;
     // LD_HL(mSFX);            // ld hl, SFX
     // ADD_HL_DE;              // add hl, de ; three
     // ADD_HL_DE;              // add hl, de ; byte
@@ -1166,8 +1159,8 @@ void v_PlaySFX(uint16_t sfxId) {
     // LD_E_hl;                // ld e, [hl]
     // INC_HL;                 // inc hl
     // LD_D_hl;                // ld d, [hl]
-    wram->wMusicBank = SFX[wram->wMusicID].bank;
-    uint16_t addr = SFX[wram->wMusicID].addr;
+    gAudio.musicBank = SFX[gAudio.musicID].bank;
+    uint16_t addr = SFX[gAudio.musicID].addr;
                             // get # channels
     // REG_A = LoadMusicByte(addr);
     // RLCA;                          // rlca ; top 2
@@ -1193,7 +1186,7 @@ void v_PlaySFX(uint16_t sfxId) {
     MusicOn();
     // XOR_A_A;                  // xor a
     // LD_addr_A(wSFXPriority);  // ld [wSFXPriority], a
-    wram->wSFXPriority = 0;
+    gAudio.SFXPriority = 0;
     return;
 }
 
@@ -1214,7 +1207,7 @@ void PlayStereoSFX(uint16_t sfxId) {
     // LD_hl_E;          // ld [hl], e
     // INC_HL;           // inc hl
     // LD_hl_D;          // ld [hl], d
-    wram->wMusicID = sfxId;
+    gAudio.musicID = sfxId;
 
     //  get sfx ptr
     // LD_HL(mSFX);  // ld hl, SFX
@@ -1225,12 +1218,12 @@ void PlayStereoSFX(uint16_t sfxId) {
     //  bank
     // LD_A_hli;               // ld a, [hli]
     // LD_addr_A(wMusicBank);  // ld [wMusicBank], a
-    wram->wMusicBank = SFX[wram->wMusicID].bank;
+    gAudio.musicBank = SFX[gAudio.musicID].bank;
                             //  address
     // LD_E_hl;                // ld e, [hl]
     // INC_HL;                 // inc hl
     // LD_D_hl;                // ld d, [hl]
-    uint16_t de = SFX[wram->wMusicID].addr;
+    uint16_t de = SFX[gAudio.musicID].addr;
 
     //  bit 2-3
     // REG_A = LoadMusicByte(REG_DE);
@@ -1261,7 +1254,7 @@ void PlayStereoSFX(uint16_t sfxId) {
         // LD_A_hl;                    // ld a, [hl]
         // LD_HL(wStereoPanningMask);  // ld hl, wStereoPanningMask
         // AND_A_hl;                   // and [hl]
-        uint8_t panning = lr_tracks[wram->wCurChannel & 3] & wram->wStereoPanningMask;
+        uint8_t panning = lr_tracks[gAudio.curChannel & 3] & gAudio.stereoPanningMask;
 
         // LD_HL(CHANNEL_TRACKS);  // ld hl, CHANNEL_TRACKS
         // ADD_HL_BC;              // add hl, bc
@@ -1276,19 +1269,19 @@ void PlayStereoSFX(uint16_t sfxId) {
         // LD_A_addr(wCryTracks);  // ld a, [wCryTracks]
         // CP_A(2);                // cp 2 ; ch 1-2
         // IF_C goto skip;         // jr c, .skip
-        if(wram->wCryTracks >= 2) {
+        if(gAudio.cryTracks >= 2) {
             //  ch3-4
             // LD_A_addr(wSFXDuration);  // ld a, [wSFXDuration]
 
             // LD_HL(CHANNEL_FIELD2E);  // ld hl, CHANNEL_FIELD2E
             // ADD_HL_BC;               // add hl, bc
             // LD_hl_A;                 // ld [hl], a
-            chan[curChannel]->field2e = wram->wSFXDuration;
+            chan[curChannel]->field2e = gAudio.SFXDuration;
 
             // LD_HL(CHANNEL_FIELD2F);  // ld hl, CHANNEL_FIELD2F
             // ADD_HL_BC;               // add hl, bc
             // LD_hl_A;                 // ld [hl], a
-            chan[curChannel]->field2f = wram->wSFXDuration;
+            chan[curChannel]->field2f = gAudio.SFXDuration;
 
             // LD_HL(CHANNEL_FLAGS2);  // ld hl, CHANNEL_FLAGS2
             // ADD_HL_BC;              // add hl, bc
@@ -1320,13 +1313,13 @@ uint16_t LoadChannel(uint16_t pointer) {
     //  input: audio pointer
     //  sets bc to current channel pointer
     curChannel = LoadMusicByte(pointer++) & 7;
-    wram->wCurChannel = curChannel;
+    gAudio.curChannel = curChannel;
     chan[curChannel]->channelOn = 0;  // channel off
     ChannelInit(curChannel);
     chan[curChannel]->musicAddress = LoadMusicByte(pointer) | (LoadMusicByte(pointer + 1) << 8);  // load music pointer
     pointer += 2;
-    chan[curChannel]->musicId = wram->wMusicID;           // load music id
-    chan[curChannel]->musicBank = wram->wMusicBank;       // load music bank
+    chan[curChannel]->musicId = gAudio.musicID;           // load music id
+    chan[curChannel]->musicBank = gAudio.musicBank;       // load music bank
     return pointer;
 }
 
@@ -1361,14 +1354,14 @@ uint8_t LoadMusicByte(uint16_t pointer) {
     //    a = wCurMusicByte
     // uint32_t address = (gb_read(wMusicBank) << 14) | (pointer & 0x3FFF);
     // gb_write(wCurMusicByte, gb.gb_rom_read(address));
-    if(wram->wMusicBank < NUM_AUDIO_BANKS) {
-        wram->wCurMusicByte = GetAudioDataByte(wram->wMusicBank, pointer);
-        return wram->wCurMusicByte;
+    if(gAudio.musicBank < NUM_AUDIO_BANKS) {
+        gAudio.curMusicByte = GetAudioDataByte(gAudio.musicBank, pointer);
+        return gAudio.curMusicByte;
     }
     else {
-        uint32_t address = (wram->wMusicBank << 14) | (pointer & 0x3FFF);
-        wram->wCurMusicByte = gb.gb_rom_read(address);
-        return wram->wCurMusicByte;
+        uint32_t address = (gAudio.musicBank << 14) | (pointer & 0x3FFF);
+        gAudio.curMusicByte = gb.gb_rom_read(address);
+        return gAudio.curMusicByte;
     }
 }
 
@@ -1407,9 +1400,9 @@ void ClearChannels(void) {
                                    rNR20,
                                    rNR30,
                                    rNR40};
-    gb_write(rNR50, 0);
-    gb_write(rNR51, 0);
-    gb_write(rNR52, 0x80);
+    apu_write(rNR50, 0);
+    apu_write(rNR51, 0);
+    apu_write(rNR52, 0x80);
     for (int i = 0; i < NUM_MUSIC_CHANS; i++)
         ClearChannel(noiseReg[i]);
 }
@@ -1419,11 +1412,11 @@ void ClearChannel(uint16_t nReg) {
     //  output: 00 00 80 00 80
 
     //    sound channel            1      2      3      4
-    gb_write(nReg++, 0);     // rNR10, rNR20, rNR30, rNR40 ; sweep = 0
-    gb_write(nReg++, 0);     // rNR11, rNR21, rNR31, rNR41 ; length/wavepattern = 0
-    gb_write(nReg++, 8);     // rNR12, rNR22, rNR32, rNR42 ; envelope = 0
-    gb_write(nReg++, 0);     // rNR13, rNR23, rNR33, rNR43 ; frequency lo = 0
-    gb_write(nReg++, 0x80);  // rNR14, rNR24, rNR34, rNR44 ; restart sound (freq hi = 0)
+    apu_write(nReg++, 0);     // rNR10, rNR20, rNR30, rNR40 ; sweep = 0
+    apu_write(nReg++, 0);     // rNR11, rNR21, rNR31, rNR41 ; length/wavepattern = 0
+    apu_write(nReg++, 8);     // rNR12, rNR22, rNR32, rNR42 ; envelope = 0
+    apu_write(nReg++, 0);     // rNR13, rNR23, rNR33, rNR43 ; frequency lo = 0
+    apu_write(nReg++, 0x80);  // rNR14, rNR24, rNR34, rNR44 ; restart sound (freq hi = 0)
 }
 
 void PlayTrainerEncounterMusic(uint8_t e) {
@@ -1432,7 +1425,7 @@ void PlayTrainerEncounterMusic(uint8_t e) {
     // turn fade off
     // XOR_A_A;                        // xor a
     // LD_addr_A(wMusicFade);          // ld [wMusicFade], a
-    wram->wMusicFade = 0;
+    gAudio.musicFade = 0;
                                     // play nothing for one frame
     // PUSH_DE;                        // push de
     // LD_DE(MUSIC_NONE);              // ld de, MUSIC_NONE

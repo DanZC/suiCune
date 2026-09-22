@@ -589,10 +589,10 @@ void Pokedex_UpdateDexEntryScreen(void){
         // LD_A_addr(wLastVolume);
         // AND_A_A;
         // IF_Z goto max_volume;
-        if(wram->wLastVolume != 0) {
+        if(gAudio.lastVolume != 0) {
             // LD_A(MAX_VOLUME);
             // LD_addr_A(wLastVolume);
-            wram->wLastVolume = MAX_VOLUME;
+            gAudio.lastVolume = MAX_VOLUME;
         }
 
     // max_volume:

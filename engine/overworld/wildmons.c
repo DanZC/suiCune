@@ -371,7 +371,7 @@ bool TryWildEncounter(void){
 //  Pokemon Lullaby halves encounter rate.
 uint8_t ApplyMusicEffectOnEncounterRate(uint8_t b){
     // LD_A_addr(wMapMusic);
-    uint8_t mus = wram->wMapMusic;
+    uint8_t mus = gAudio.mapMusic;
     // CP_A(MUSIC_POKEMON_MARCH);
     // IF_Z goto double_;
     // CP_A(MUSIC_RUINS_OF_ALPH_RADIO);

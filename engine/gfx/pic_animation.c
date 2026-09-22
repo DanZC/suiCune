@@ -469,7 +469,7 @@ static void PokeAnim_CryNoWait(void){
 static void PokeAnim_StereoCry(void){
     // LD_A(0xf);
     // LD_addr_A(wCryTracks);
-    wram->wCryTracks = 0xf;
+    gAudio.cryTracks = 0xf;
     // LD_A_addr(wPokeAnimSpecies);
     // CALL(aPlayStereoCry2);
     PlayStereoCry2(pokeAnim->species);

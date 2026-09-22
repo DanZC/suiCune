@@ -1833,11 +1833,11 @@ void BattleAnimCmd_Sound(uint8_t duration, uint8_t tracks, uint16_t sfx){
     // SRL_A;
     // SRL_A;
     // LD_addr_A(wSFXDuration);
-    wram->wSFXDuration = duration;
+    gAudio.SFXDuration = duration;
     // CALL(aBattleAnimCmd_Sound_GetCryTrack);
     // maskbits(NUM_NOISE_CHANS, 0);
     // LD_addr_A(wCryTracks);
-    wram->wCryTracks = (tracks ^ ((hram.hBattleTurn == TURN_PLAYER)? 0: 1)) & 3;
+    gAudio.cryTracks = (tracks ^ ((hram.hBattleTurn == TURN_PLAYER)? 0: 1)) & 3;
 
     // LD_E_A;
     // LD_D(0);
@@ -1845,7 +1845,7 @@ void BattleAnimCmd_Sound(uint8_t duration, uint8_t tracks, uint16_t sfx){
     // ADD_HL_DE;
     // LD_A_hl;
     // LD_addr_A(wStereoPanningMask);
-    wram->wStereoPanningMask = GetPanning[wram->wCryTracks];
+    gAudio.stereoPanningMask = GetPanning[gAudio.cryTracks];
 
     // CALL(aGetBattleAnimByte);
     // LD_E_A;
@@ -1902,7 +1902,7 @@ void BattleAnimCmd_Cry(uint8_t cry){
     if(hram.hBattleTurn == TURN_PLAYER) {
         // LD_A(0xf0);
         // LD_addr_A(wCryTracks);
-        wram->wCryTracks = 0xf0;
+        gAudio.cryTracks = 0xf0;
         // LD_A_addr(wBattleMonSpecies);
         species = wram->wBattleMon.species;
         // goto done_cry_tracks;
@@ -1911,7 +1911,7 @@ void BattleAnimCmd_Cry(uint8_t cry){
     // enemy:
         // LD_A(0x0f);
         // LD_addr_A(wCryTracks);
-        wram->wCryTracks = 0x0f;
+        gAudio.cryTracks = 0x0f;
         // LD_A_addr(wEnemyMonSpecies);
         species = wram->wEnemyMon.species;
     }
@@ -1938,7 +1938,7 @@ void BattleAnimCmd_Cry(uint8_t cry){
         // LD_addr_A(wCryPitch);
         // LD_A_H;
         // LD_addr_A(wCryPitch + 1);
-        wram->wCryPitch += de[0];
+        gAudio.cryPitch += de[0];
         // POP_HL;
 
         // LD_A_hli;
@@ -1954,10 +1954,10 @@ void BattleAnimCmd_Cry(uint8_t cry){
         // LD_addr_A(wCryLength);
         // LD_A_H;
         // LD_addr_A(wCryLength + 1);
-        wram->wCryLength += de[1];
+        gAudio.cryLength += de[1];
         // LD_A(1);
         // LD_addr_A(wStereoPanningMask);
-        wram->wStereoPanningMask = 1;
+        gAudio.stereoPanningMask = 1;
 
         // CALLFAR(av_PlayCry);
         // struct cpu_registers_s reg = {.de = cryData->index};

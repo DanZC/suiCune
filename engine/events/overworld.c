@@ -2385,7 +2385,7 @@ static uint8_t BikeFunction_TryBike(void) {
         QueueScript(BikeFunction_CheckIfRegistered(Script_GetOnBike, Script_GetOnBike_Register));
         // XOR_A_A;
         // LD_addr_A(wMusicFade);
-        wram->wMusicFade = 0x0;
+        gAudio.musicFade = 0x0;
         // LD_DE(MUSIC_NONE);
         // CALL(aPlayMusic);
         PlayMusic(MUSIC_NONE);
@@ -2396,7 +2396,7 @@ static uint8_t BikeFunction_TryBike(void) {
         // LD_DE(MUSIC_BICYCLE);
         // LD_A_E;
         // LD_addr_A(wMapMusic);
-        wram->wMapMusic = MUSIC_BICYCLE;
+        gAudio.mapMusic = MUSIC_BICYCLE;
         // CALL(aPlayMusic);
         PlayMusic(MUSIC_BICYCLE);
         // LD_A(0x1);

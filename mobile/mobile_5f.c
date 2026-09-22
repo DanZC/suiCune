@@ -830,11 +830,11 @@ void Function17d2ce(void){
     // LD_DE(MUSIC_MOBILE_CENTER);
     // LD_A_E;
     // LD_addr_A(wMapMusic);
-    wram->wMapMusic = MUSIC_MOBILE_CENTER;
+    gAudio.mapMusic = MUSIC_MOBILE_CENTER;
     // LD_addr_A(wMusicFadeID);
     // LD_A_D;
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_MOBILE_CENTER;
+    gAudio.musicFadeID = MUSIC_MOBILE_CENTER;
     // CALL(aPlayMusic);
     PlayMusic(MUSIC_MOBILE_CENTER);
     // CALL(aReturnToMapFromSubmenu);
@@ -1171,7 +1171,7 @@ void Function17d48d(void){
         // LD_addr_A(wcd6c);
         wram->wcd6c = e;
         // LD_addr_A(wMapMusic);
-        wram->wMapMusic = e;
+        gAudio.mapMusic = e;
         // LD_D(0x0);
         // CALL(aPlayMusic2);
         PlayMusic2(e);
@@ -6248,13 +6248,13 @@ void Function17f5d2(void){
 void Function17f5e4(void){
     // LD_A(0x8);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x8;
+    gAudio.musicFade = 0x8;
     // LD_DE(MUSIC_NONE);
     // LD_A_E;
     // LD_addr_A(wMusicFadeID);
     // LD_A_D;
     // LD_addr_A(wMusicFadeID + 1);
-    wram->wMusicFadeID = MUSIC_NONE;
+    gAudio.musicFadeID = MUSIC_NONE;
     // LD_A(0x7f);
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
@@ -7067,10 +7067,10 @@ void Function17ff23(void){
         return;
     // LD_A(0x8);
     // LD_addr_A(wMusicFade);
-    wram->wMusicFade = 0x8;
+    gAudio.musicFade = 0x8;
     // LD_A_addr(wMapMusic);
     // LD_addr_A(wMusicFadeID);
-    wram->wMusicFadeID = wram->wMapMusic;
+    gAudio.musicFadeID = gAudio.mapMusic;
     // XOR_A_A;
     // LD_addr_A(wMusicFadeID + 1);
     // LD_HL(wc303);
