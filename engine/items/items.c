@@ -442,7 +442,7 @@ bool CheckTheItem(item_quantity_pocket_s* pocket, item_t item){
         hl++;
         // CP_A(-1);
         // IF_Z goto done;
-        if(a == (item_t)-1)
+        if(a == ITEM_NULL)
             return false;
         // CP_A_C;
         // IF_NZ goto loop;
@@ -472,7 +472,7 @@ bool ReceiveKeyItem(item_t item){
     // LD_hli_A;
     gPlayer.keyItems[gPlayer.numKeyItems++] = item;
     // LD_hl(-1);
-    gPlayer.keyItems[gPlayer.numKeyItems] = (item_t)-1;
+    gPlayer.keyItems[gPlayer.numKeyItems] = ITEM_NULL;
     // LD_HL(wNumKeyItems);
     // INC_hl;
     // SCF;
@@ -511,7 +511,7 @@ static item_t* TossKeyItem_Toss(item_t item){
         }
         // CP_A(-1);
         // IF_NZ goto loop3;
-    } while(a != (item_t)-1);
+    } while(a != ITEM_NULL);
     // XOR_A_A;
     // RET;
     return NULL;
@@ -560,7 +560,7 @@ bool TossKeyItem(item_t item, uint8_t index){
         *(de++) = a;
         // CP_A(-1);
         // IF_NZ goto loop;
-    } while(a != (item_t)-1);
+    } while(a != ITEM_NULL);
     // SCF;
     // RET;
     return true;

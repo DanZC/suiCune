@@ -17,7 +17,6 @@ bool IsHMMove(move_t a){
         FLASH,
         WATERFALL,
         WHIRLPOOL,
-        (move_t)-1,
     };
-    return IsInMoveArray(HMMoves, a);
+    return IsInMoveArray(HMMoves, lengthof(HMMoves), a);
 }

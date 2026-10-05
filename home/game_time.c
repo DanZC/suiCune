@@ -14,18 +14,15 @@ static void GameTimer_Function(void);
 void GameTimer(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
-    uint16_t vbk_temp = gb_read(rSVBK);
 
     // LD_A(BANK(wGameTime));
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, MBANK(awGameTime));
 
     // CALL(aGameTimer_Function);
     GameTimer_Function();
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, vbk_temp);
 }
 
 //  Increment the game timer by one frame.

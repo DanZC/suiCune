@@ -152,7 +152,7 @@ MasterLoop:
             item_t trade_item = evos->trade.heldItem;
             // INC_A;
             // IF_Z goto proceed;
-            if(trade_item != (item_t)-1) {
+            if(trade_item != ITEM_NULL) {
                 // LD_A_addr(wLinkMode);
                 // CP_A(LINK_TIMECAPSULE);
                 // JP_Z (mEvolveAfterBattle_MasterLoop_dont_evolve_3);

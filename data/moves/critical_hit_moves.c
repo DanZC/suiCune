@@ -8,5 +8,6 @@ const move_t CriticalHitMoves[] = {
     SLASH,
     AEROBLAST,
     CROSS_CHOP,
-    (move_t)-1,
 };
+
+const size_t CriticalHitMoves_Size = lengthof(CriticalHitMoves);

@@ -121,7 +121,7 @@ static void InsertSpeciesIntoBoxOrParty(uint8_t* count, species_t* party){
         // LD_C_A;
         c = a;
         // IF_NZ goto loop;
-    } while(c != (species_t)-1);
+    } while(c != SPECIES_NULL);
     // RET;
 
 }

@@ -196,7 +196,7 @@ void AnimateHallOfFame(void){
             // LD_A_hl;
             // CP_A(-1);
             // IF_Z goto done;
-            if(wram->wHallOfFameTemp.mon[counter].species == (species_t)-1)
+            if(wram->wHallOfFameTemp.mon[counter].species == SPECIES_NULL)
                 break;
             // PUSH_HL;
             // CALL(aAnimateHOFMonEntrance);
@@ -251,11 +251,11 @@ void GetHallOfFameParty(void){
         species_t a = *(hl++);
         // CP_A(-1);
         // IF_Z goto done;
-        if(a == (species_t)-1) {
+        if(a == SPECIES_NULL) {
         // done:
             // LD_A(-1);
             // LD_de_A;
-            de->species = (species_t)-1;
+            de->species = SPECIES_NULL;
             // RET;
             return;
         }

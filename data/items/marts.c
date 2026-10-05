@@ -334,6 +334,7 @@ const item_t DefaultMart[] = {
     POKE_BALL,
     POTION,
 };
+const size_t DefaultMart_Size = lengthof(DefaultMart);
 
 // const item_t* const Marts[] = {
 //     [MART_CHERRYGROVE]     = MartCherrygrove,

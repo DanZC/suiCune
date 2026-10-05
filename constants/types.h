@@ -81,6 +81,11 @@ typedef uint8_t tile_t;
 typedef uint16_t sfx_t;
 typedef uint16_t color_t;
 
+// Type constants
+#define SPECIES_NULL ((species_t)-1)
+#define ITEM_NULL ((item_t)-1)
+#define MOVE_NULL ((move_t)-1)
+
 // ROM structs
 
 #if defined(__cplusplus) || defined(_MSC_VER)

@@ -1725,7 +1725,7 @@ void BattleCommand_Critical(void){
         // POP_BC;
         // IF_NC goto ScopeLens;
 
-        if(IsInMoveArray(CriticalHitMoves, GetBattleVar(BATTLE_VARS_MOVE_ANIM))) {
+        if(IsInMoveArray(CriticalHitMoves, CriticalHitMoves_Size, GetBattleVar(BATTLE_VARS_MOVE_ANIM))) {
         //  +2 critical level
             // INC_C;
             // INC_C;

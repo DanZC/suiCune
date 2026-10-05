@@ -89,7 +89,7 @@ static void AI_Smart_RapidSpin(uint8_t* hl);
 static void AI_Smart_HiddenPower(uint8_t* hl);
 static void AI_Smart_RainDance(uint8_t* hl);
 static void AI_Smart_SunnyDay(uint8_t* hl);
-static void AI_Smart_WeatherMove(uint8_t* hl, const move_t* moves);
+static void AI_Smart_WeatherMove(uint8_t* hl, const move_t* moves, size_t moves_count);
 static void AIBadWeatherType(uint8_t* hl);
 static void AIGoodWeatherType(uint8_t* hl);
 static void AI_Smart_BellyDrum(uint8_t* hl);
@@ -1256,7 +1256,7 @@ static void AI_Smart_MirrorMove(uint8_t* hl){
 
 //  ...do nothing if he didn't use a useful move.
     // RET_NC ;
-    if(!IsInMoveArray(UsefulMoves, wram->wLastPlayerCounterMove))
+    if(!IsInMoveArray(UsefulMoves, UsefulMoves_Size, wram->wLastPlayerCounterMove))
         return;
 
 //  If he did, 50% chance to encourage this move...
@@ -2089,7 +2089,7 @@ static void AI_Smart_Mimic(uint8_t* hl){
 
     // POP_HL;
     // RET_NC ;
-    if(IsInMoveArray(UsefulMoves, wram->wLastPlayerCounterMove) && AI_50_50()) {
+    if(IsInMoveArray(UsefulMoves, UsefulMoves_Size, wram->wLastPlayerCounterMove) && AI_50_50()) {
         // CALL(aAI_50_50);
         // RET_C ;
         // DEC_hl;
@@ -2242,7 +2242,7 @@ static void AI_Smart_Encore(uint8_t* hl){
         // CALL(aIsInArray);
         // POP_HL;
         // IF_NC goto discourage;
-        if(!IsInMoveArray(EncoreMoves, wram->wLastPlayerCounterMove)) {
+        if(!IsInMoveArray(EncoreMoves, EncoreMoves_Size, wram->wLastPlayerCounterMove)) {
         // discourage:
             // INC_hl;
             // INC_hl;
@@ -2682,7 +2682,7 @@ static void AI_Smart_Disable(uint8_t* hl){
 
         // POP_HL;
         // IF_NC goto notencourage;
-        if(IsInMoveArray(UsefulMoves, wram->wLastPlayerCounterMove)) {
+        if(IsInMoveArray(UsefulMoves, UsefulMoves_Size, wram->wLastPlayerCounterMove)) {
             // CALL(aRandom);
             // CP_A(39 percent + 1);
             // RET_C ;
@@ -3617,7 +3617,7 @@ static void AI_Smart_RainDance(uint8_t* hl){
     // JR(mAI_Smart_WeatherMove);
 
 // INCLUDE "data/battle/ai/rain_dance_moves.asm"
-    return AI_Smart_WeatherMove(hl, RainDanceMoves);
+    return AI_Smart_WeatherMove(hl, RainDanceMoves, RainDanceMoves_Size);
 }
 
 //  Greatly discourage this move if it would favour the player type-wise.
@@ -3648,10 +3648,10 @@ static void AI_Smart_SunnyDay(uint8_t* hl){
 
 // fallthrough
 
-    return AI_Smart_WeatherMove(hl, SunnyDayMoves);
+    return AI_Smart_WeatherMove(hl, SunnyDayMoves, SunnyDayMoves_Size);
 }
 
-static void AI_Smart_WeatherMove(uint8_t* hl, const move_t* moves){
+static void AI_Smart_WeatherMove(uint8_t* hl, const move_t* moves, size_t moves_count){
 //  Rain Dance, Sunny Day
 
 //  Greatly discourage this move if the enemy doesn't have
@@ -3659,7 +3659,7 @@ static void AI_Smart_WeatherMove(uint8_t* hl, const move_t* moves){
     // CALL(aAIHasMoveInArray);
     // POP_HL;
     // JR_NC (mAIBadWeatherType);
-    if(!AIHasMoveInArray(moves))
+    if(!AIHasMoveInArray(moves, moves_count))
         return AIBadWeatherType(hl);
 
 //  Greatly discourage this move if player's HP is below 50%.
@@ -4236,38 +4236,34 @@ bool AIHasMoveEffect(uint8_t b){
 }
 
 //  Return carry if the enemy has a move in array hl.
-bool AIHasMoveInArray(const move_t* hl){
+bool AIHasMoveInArray(const move_t* hl, size_t count){
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;
-    move_t a;
-    while(a = *(hl++), a != (move_t)-1) {
+    for(size_t i = 0; i < count; ++i) {
     // next:
         // LD_A_hli;
         // CP_A(-1);
         // IF_Z goto done;
-
+        move_t a = hl[i];
         // LD_B_A;
         // LD_C(NUM_MOVES + 1);
-        uint8_t c = NUM_MOVES + 1;
         // LD_DE(wEnemyMonMoves);
         const move_t* de = wram->wEnemyMon.moves;
 
-    check:
-        // DEC_C;
-        // IF_Z goto next;
-        if(--c != 0)
-            continue;
-
-        // LD_A_de;
-        // INC_DE;
-        // CP_A_B;
-        // IF_NZ goto check;
-        if(*(de++) != a)
-            goto check;
-
-        // SCF;
-        return true;
+        for(size_t j = 0; j < NUM_MOVES; ++j) {
+        // check:
+            // DEC_C;
+            // IF_Z goto next;
+            // LD_A_de;
+            // INC_DE;
+            // CP_A_B;
+            // IF_NZ goto check;
+            if(de[j] == a) {
+                // SCF;
+                return true;
+            }
+        }
     }
 
 // done:
@@ -4333,7 +4329,7 @@ void AI_Opportunist(void){
         // POP_DE;
         // POP_HL;
         // IF_NC goto checkmove;
-        if(IsInMoveArray(StallMoves, m)) {
+        if(IsInMoveArray(StallMoves, StallMoves_Size, m)) {
             (*hl)++;
             // INC_hl;
         }
@@ -4562,7 +4558,7 @@ void AI_Cautious(void){
         // CP_A(90 percent + 1);
         // RET_NC ;
         
-        if(IsInMoveArray(ResidualMoves, a) && Random() < 90 percent + 1) {
+        if(IsInMoveArray(ResidualMoves, ResidualMoves_Size, a) && Random() < 90 percent + 1) {
             // INC_hl;
             hl[i]++;
         }

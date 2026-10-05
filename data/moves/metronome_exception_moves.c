@@ -15,5 +15,5 @@ const move_t MetronomeExcepts[] = {
     DESTINY_BOND,
     SLEEP_TALK,
     THIEF,
-    (move_t)-1,
 };
+const size_t MetronomeExcepts_Size = lengthof(MetronomeExcepts);

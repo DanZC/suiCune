@@ -77,12 +77,10 @@ void GetMonFrontpic(uint8_t* de){
         return;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
-    uint8_t svbk = gb_read(rSVBK);
     // CALL(av_GetFrontpic);
     v_GetFrontpic(de, 0);
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, svbk);
     // RET;
 }
 
@@ -96,7 +94,6 @@ void GetAnimatedFrontpic(uint8_t* de, uint8_t frame){
         return;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
-    uint8_t svbk = gb_read(rSVBK);
     // XOR_A_A;
     // LDH_addr_A(hBGMapMode);
     hram.hBGMapMode = BGMAPMODE_NONE;
@@ -106,7 +103,6 @@ void GetAnimatedFrontpic(uint8_t* de, uint8_t frame){
     GetAnimatedEnemyFrontpic(de);
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, svbk);
     // RET;
 }
 

@@ -15,5 +15,5 @@ const move_t ResidualMoves[] = {
     CONVERSION,
     SUBSTITUTE,
     SPIKES,
-    (move_t)-1 // end
 };
+const size_t ResidualMoves_Size = lengthof(ResidualMoves);

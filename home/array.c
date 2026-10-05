@@ -24,7 +24,7 @@ uint16_t IsInArray_Item(const item_t* hl, item_t a) {
     uint16_t b = 0;
     while(1)
     {
-        if(*hl == (item_t)-1)
+        if(*hl == ITEM_NULL)
             return 0xFFFF;
         if(*hl == a)
             return b;
@@ -49,8 +49,8 @@ const struct BlockPointer* ArrayFindStructBlockPointer(const struct BlockPointer
     return NULL;
 }
 
-bool IsInMoveArray(const move_t* hl, uint8_t a) {
-    for(uint32_t i = 0; hl[i] != (move_t)-1; ++i) {
+bool IsInMoveArray(const move_t* hl, size_t count, move_t a) {
+    for(uint32_t i = 0; i < count; ++i) {
         if(hl[i] == a)
             return true;
     }
@@ -60,16 +60,6 @@ bool IsInMoveArray(const move_t* hl, uint8_t a) {
 //  Skip a names.
 const uint8_t* SkipNames(const uint8_t* hl, uint8_t a) {
     return hl + (NAME_LENGTH * a);
-}
-
-//  Skip a names.
-uint16_t SkipNames_GB(uint16_t hl, uint8_t a)
-{
-    if(a == 0) return hl;
-    do {
-        hl += NAME_LENGTH;
-    } while(--a != 0);
-    return hl;
 }
 
 // hl = hl + (bc * a)

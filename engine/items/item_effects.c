@@ -475,7 +475,7 @@ static const struct MultiplierFunc {
     {MOON_BALL,     MoonBallMultiplier},
     {LOVE_BALL,     LoveBallMultiplier},
     {PARK_BALL,     ParkBallMultiplier},
-    {(item_t)-1,    NULL},  // end
+    {ITEM_NULL,    NULL},  // end
 };
 
 void PokeBallEffect(void){
@@ -534,7 +534,7 @@ void PokeBallEffect(void){
         // LD_HL(mBallMultiplierFunctionTable);
         const struct MultiplierFunc* ball_mul = BallMultiplierFunctionTable;
 
-        while(ball_mul->item != (item_t)-1) {
+        while(ball_mul->item != ITEM_NULL) {
         // get_multiplier_loop:
             // LD_A_hli;
             // CP_A(0xff);
@@ -3019,7 +3019,7 @@ uint16_t GetHealingItemAmount(item_t item){
     const struct HealingHPEntry* hl = HealingHPAmounts;
     // LD_D_A;
 
-    while(hl->item != (item_t)-1) {
+    while(hl->item != ITEM_NULL) {
     // next:
         // LD_A_hli;
         // CP_A(-1);

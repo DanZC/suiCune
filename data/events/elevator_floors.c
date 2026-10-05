@@ -1,6 +1,6 @@
 #include "../../constants.h"
 
-const char* ElevatorFloorNames[] = {
+const char* const ElevatorFloorNames[] = {
 // entries correspond to FLOOR_* constants
 // table_width 2, ElevatorFloorNames
     [FLOOR_B4F] = "B4F@",

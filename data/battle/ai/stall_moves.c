@@ -36,5 +36,5 @@ const move_t StallMoves[] = {
     CONVERSION,
     SUBSTITUTE,
     FLAME_WHEEL,
-    (move_t)-1, // end
 };
+const size_t StallMoves_Size = lengthof(StallMoves);

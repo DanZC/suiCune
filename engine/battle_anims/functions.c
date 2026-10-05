@@ -625,7 +625,7 @@ void GetBallAnimPal(struct BattleAnim* bc, item_t item) {
 
 // IsInArray:
     uint32_t i = 0;
-    for(; BallColors[i].item != (item_t)-1 && BallColors[i].item != item; ++i) {
+    for(; BallColors[i].item != ITEM_NULL && BallColors[i].item != item; ++i) {
         // LD_A_hli;
         // CP_A(-1);
         // IF_Z goto load;

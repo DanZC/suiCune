@@ -10,5 +10,5 @@ const move_t SunnyDayMoves[] = {
     SACRED_FIRE,
     MORNING_SUN,
     SYNTHESIS,
-    (move_t)-1, // end
 };
+const size_t SunnyDayMoves_Size = lengthof(SunnyDayMoves);

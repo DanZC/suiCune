@@ -13,5 +13,5 @@ const move_t RainDanceMoves[] = {
     CRABHAMMER,
     OCTAZOOKA,
     WHIRLPOOL,
-    (move_t)-1 // end
 };
+const size_t RainDanceMoves_Size = lengthof(RainDanceMoves);

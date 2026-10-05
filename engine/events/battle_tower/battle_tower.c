@@ -629,7 +629,7 @@ void ReadBTTrainerParty(void){
     } while(--count != 0);
     // LD_A(-1);
     // LD_bc_A;
-    *bc = (species_t)-1;
+    *bc = SPECIES_NULL;
     // RET;
 }
 

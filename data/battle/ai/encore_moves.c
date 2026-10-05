@@ -1,7 +1,6 @@
 #include "../../../constants.h"
 
 // AI_SMART encourages these moves with Encore.
-
 const move_t EncoreMoves[] = {
     SWORDS_DANCE,
     WHIRLWIND,
@@ -33,5 +32,5 @@ const move_t EncoreMoves[] = {
     AEROBLAST,
     COTTON_SPORE,
     POWDER_SNOW,
-    (move_t)-1, // end
 };
+const size_t EncoreMoves_Size = lengthof(EncoreMoves);

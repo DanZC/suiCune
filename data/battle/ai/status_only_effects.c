@@ -9,3 +9,4 @@ const uint8_t StatusOnlyEffects[] = {
     EFFECT_PARALYZE,
     (uint8_t)-1 // end
 };
+const size_t StatusOnlyEffects_Size = lengthof(StatusOnlyEffects) - 1;

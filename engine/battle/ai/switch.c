@@ -805,7 +805,7 @@ static uint8_t FindEnemyMonsThatResistPlayer(uint8_t c){
     // LD_C(0);
     uint8_t c2 = 0;
 
-    while(*hl != (species_t)-1) {
+    while(*hl != SPECIES_NULL) {
     // loop:
         // LD_A_hli;
         // CP_A(0xff);
@@ -887,7 +887,7 @@ static uint8_t FindEnemyMonsWithAtLeastQuarterMaxHP(uint8_t c){
     // LD_HL(wOTPartyMon1HP);
     const struct PartyMon* hl = wram->wOTPartyMon;
 
-    while(*de != (species_t)-1) {
+    while(*de != SPECIES_NULL) {
     // loop:
         // LD_A_de;
         // INC_DE;

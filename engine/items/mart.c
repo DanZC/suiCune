@@ -65,7 +65,7 @@ const struct MartDialogGroup* GetMartDialogGroup(uint8_t type);
 
 uint32_t GetMartSize(uint16_t de) {
     if(de > NUM_MARTS)
-        return 2;
+        return DefaultMart_Size;
     return MartsSizes[de];
 }
 
@@ -205,7 +205,6 @@ void LoadMartPointer(const item_t* ptr, uint32_t size){
     // LD_addr_A(wMartPointer + 1);
     sMartPointer = ptr;
     // LD_HL(wCurMartCount);
-    wram->wCurMartCount = size;
     //assert ['wCurMartCount + 1 == wCurMartItems'];
     // XOR_A_A;
     // LD_BC(16);
@@ -375,7 +374,7 @@ void FarReadMart(void){
     item_t* de = sCurMart.items;
 
     uint32_t i = 0;
-    for(i = 0; i < wram->wCurMartCount; ++i) {
+    for(i = 0; i < sCurMart.count; ++i) {
     // CopyMart:
         // LD_A_addr(wMartPointerBank);
         // CALL(aGetFarByte);
@@ -387,13 +386,13 @@ void FarReadMart(void){
         // IF_NZ goto CopyMart;
     }
 
-    de[i] = (item_t)-1;
+    de[i] = ITEM_NULL;
     // LD_HL(wMartItem1BCD);
     // LD_DE(wCurMartItems);
     de = sCurMart.items;
     item_price_s* bcd = sMartItems;
 
-    for(i = 0; i < wram->wCurMartCount; ++i) {
+    for(i = 0; i < sCurMart.count; ++i) {
     // ReadMartItem:
         // LD_A_de;
         // INC_DE;
@@ -493,7 +492,7 @@ void ReadMart(void){
     item_t* de = sCurMart.items;
 
     uint32_t i = 0;
-    while(i < wram->wCurMartCount) {
+    for(; i < sCurMart.count; ++i) {
     // loop:
     //  copy the items to wCurMartItems
         // LD_A_hli;
@@ -522,10 +521,9 @@ void ReadMart(void){
 
         // POP_DE;
         // goto loop;
-        i++;
     }
 
-    de[i] = (item_t)-1;
+    de[i] = ITEM_NULL;
 // done:
     // POP_HL;
     // LD_A_hl;

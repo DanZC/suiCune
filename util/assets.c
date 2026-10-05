@@ -726,6 +726,7 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
         return (asset_s){NULL, 0};
     }
     if(segment_size * start > (size_t)size) {
+        PHYSFS_close(file);
         return (asset_s){NULL, 0};
     }
     PHYSFS_seek(file, segment_size * start);
@@ -749,6 +750,7 @@ asset_s LoadAssetSegmentsToBuffer(void* buffer, size_t buf_size, const char* fil
         return (asset_s){NULL, 0};
     }
     if(segment_size * start > (size_t)size) {
+        fclose(file);
         return (asset_s){NULL, 0};
     }
     fseek(file, segment_size * start, SEEK_SET);
@@ -777,6 +779,7 @@ void* LoadPixelsFromPNG(const char* filename, int* w, int* h) {
     int n;
     uint8_t* pix = stbi_load_from_memory(a.ptr, (int)a.size, w, h, &n, 0);
     if(!pix) {
+        FreeAsset(a);
         log_err("Load error on image %s. Reason: %s\n", filename, stbi_failure_reason());
         return NULL;
     }

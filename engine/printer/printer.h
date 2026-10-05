@@ -20,7 +20,7 @@ void CheckPrinterStatus(void);
 void PlacePrinterStatusString(void);
 void PlacePrinterStatusStringBorderless(void);
 extern const char String_PressBToCancel[];
-extern const char* PrinterStatusStringPointers[];
+extern const char* const PrinterStatusStringPointers[];
 void PrintPCBox_Page1(void);
 void PrintPCBox_Page2(void);
 void PrintPCBox_Page3(void);

@@ -680,7 +680,7 @@ bool DayCare_GiveEgg(void){
     wram->wCurPartySpecies = gPokemon.eggMon.species;
     // LD_A(-1);
     // LD_hl_A;
-    gPokemon.partySpecies[c + 1] = (species_t)-1;
+    gPokemon.partySpecies[c + 1] = SPECIES_NULL;
 
     // LD_HL(wPartyMonNicknames);
     // LD_BC(MON_NAME_LENGTH);

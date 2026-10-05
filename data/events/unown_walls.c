@@ -18,7 +18,7 @@
 // 	db -1 ; end
 // ENDM
 
-const uint8_t* UnownWalls[] = {
+const uint8_t* const UnownWalls[] = {
 // UNOWNWORDS_ESCAPE
     // unownwall "ESCAPE"
     [UNOWNWORDS_ESCAPE] = (uint8_t[]){0x08, 0x44, 0x04, 0x00, 0x2e, 0x08, (uint8_t)-1},

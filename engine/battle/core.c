@@ -1412,7 +1412,7 @@ static bool TryEnemyFlee(void){
     // LD_HL(mAlwaysFleeMons);
     // CALL(aIsInArray);
     // IF_C goto Flee;
-    for(uint32_t i = 0; AlwaysFleeMons[i] != (species_t)-1; ++i) {
+    for(uint32_t i = 0; AlwaysFleeMons[i] != SPECIES_NULL; ++i) {
         if(AlwaysFleeMons[i] == wram->wTempEnemyMonSpecies)
             return true;
     }
@@ -1432,7 +1432,7 @@ static bool TryEnemyFlee(void){
     // CALL(aIsInArray);
     // POP_BC;
     // IF_C goto Flee;
-    for(uint32_t i = 0; OftenFleeMons[i] != (species_t)-1; ++i) {
+    for(uint32_t i = 0; OftenFleeMons[i] != SPECIES_NULL; ++i) {
         if(OftenFleeMons[i] == wram->wTempEnemyMonSpecies)
             return true;
     }
@@ -1448,7 +1448,7 @@ static bool TryEnemyFlee(void){
     // LD_HL(mSometimesFleeMons);
     // CALL(aIsInArray);
     // IF_C goto Flee;
-    for(uint32_t i = 0; SometimesFleeMons[i] != (species_t)-1; ++i) {
+    for(uint32_t i = 0; SometimesFleeMons[i] != SPECIES_NULL; ++i) {
         if(SometimesFleeMons[i] == wram->wTempEnemyMonSpecies)
             return true;
     }
@@ -9267,7 +9267,7 @@ void ParseEnemyAction(void){
         // CP_A(BATTLEACTION_SKIPTURN);
         // JP_Z (mParseEnemyAction_skip_turn);
         if(wram->wBattleAction == BATTLEACTION_SKIPTURN) {
-            curMove = (move_t)-1;
+            curMove = MOVE_NULL;
             goto finish;
         }
         // CP_A(BATTLEACTION_SWITCH1);
@@ -10151,7 +10151,7 @@ bool CheckSleepingTreeMon(species_t species){
     // CALL(aIsInArray);
 //  If it's a match, the opponent is asleep
     // RET_C ;
-    for(size_t i = 0; hl[i] != (species_t)-1; ++i) {
+    for(size_t i = 0; hl[i] != SPECIES_NULL; ++i) {
         if(hl[i] == species) {
             return true;
         }

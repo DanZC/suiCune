@@ -755,47 +755,57 @@ void Printer_RestartMapMusic(void){
 void CheckPrinterStatus(void){
 //  Check for printer errors
 //  If [wPrinterHandshake] == -1, we're disconnected
-    LD_A_addr(wPrinterHandshake);
-    CP_A(-1);
-    IF_NZ goto printer_connected;
-    LD_A_addr(wPrinterStatusFlags);
-    CP_A(-1);
-    IF_Z goto error_2;
+    // LD_A_addr(wPrinterHandshake);
+    // CP_A(-1);
+    // IF_NZ goto printer_connected;
+    // LD_A_addr(wPrinterStatusFlags);
+    // CP_A(-1);
+    // IF_Z goto error_2;
+    if(wram->wPrinterHandshake == 0xff && wram->wPrinterStatusFlags == 0xff) {
+    // error_2:
+    // connection error
+        // LD_A(PRINTER_ERROR_2);
 
-printer_connected:
-    LD_A_addr(wPrinterStatusFlags);
-    AND_A(0b11100000);
-    RET_Z ;  // no error
+    // load_text_index:
+        // LD_addr_A(wPrinterStatus);
+        wram->wPrinterStatus = PRINTER_ERROR_2;
+        // RET;
+        return;
+    }
 
-    BIT_A(7);
-    IF_NZ goto error_1;
-    BIT_A(6);
-    IF_NZ goto error_4;
+// printer_connected:
+    // LD_A_addr(wPrinterStatusFlags);
+    // AND_A(0b11100000);
+    uint8_t status = wram->wPrinterStatusFlags & 0b11100000;
+    // RET_Z ;  // no error
+    if(status == 0)
+        return;
+
+    // BIT_A(7);
+    // IF_NZ goto error_1;
+    if(bit_test(status, 7)) {
+    // error_1:
+    // printer battery low
+        // LD_A(PRINTER_ERROR_1);
+        // goto load_text_index;
+        wram->wPrinterStatus = PRINTER_ERROR_1;
+        return;
+    }
+    // BIT_A(6);
+    // IF_NZ goto error_4;
+    if(bit_test(status, 6)) {
+    // error_4:
+    // temperature error
+        // LD_A(PRINTER_ERROR_4);
+        // goto load_text_index;
+        wram->wPrinterStatus = PRINTER_ERROR_4;
+        return;
+    }
 // paper error
-    LD_A(PRINTER_ERROR_3);
-    goto load_text_index;
-
-
-error_4:
-// temperature error
-    LD_A(PRINTER_ERROR_4);
-    goto load_text_index;
-
-
-error_1:
-// printer battery low
-    LD_A(PRINTER_ERROR_1);
-    goto load_text_index;
-
-
-error_2:
-// connection error
-    LD_A(PRINTER_ERROR_2);
-
-load_text_index:
-    LD_addr_A(wPrinterStatus);
-    RET;
-
+    // LD_A(PRINTER_ERROR_3);
+    // goto load_text_index;
+    wram->wPrinterStatus = PRINTER_ERROR_3;
+    return;
 }
 
 void PlacePrinterStatusString(void){
@@ -844,41 +854,40 @@ void PlacePrinterStatusStringBorderless(void){
 //  //  unreferenced
 //  Similar to PlacePrinterStatusString, but with different hlcoords
 //  and ClearBox instead of TextBox.
-    LD_A_addr(wPrinterStatus);
-    AND_A_A;
-    RET_Z ;
-    PUSH_AF;
-    XOR_A_A;
-    LDH_addr_A(hBGMapMode);
-    hlcoord(2, 4, wTilemap);
-    LD_BC((13 << 8) | 16);
-    CALL(aClearBox);
-    POP_AF;
-    LD_E_A;
-    LD_D(0);
-    LD_HL(mPrinterStatusStringPointers);
-    ADD_HL_DE;
-    ADD_HL_DE;
-    LD_E_hl;
-    INC_HL;
-    LD_D_hl;
-    hlcoord(4, 7, wTilemap);
-    LD_A(BANK(aGBPrinterStrings));
-    CALL(aPlaceFarString);
-    hlcoord(4, 15, wTilemap);
-    LD_DE(mString_PressBToCancel);
-    CALL(aPlaceString);
-    LD_A(0x1);
-    LDH_addr_A(hBGMapMode);
-    XOR_A_A;
-    LD_addr_A(wPrinterStatus);
-    RET;
-
+    // LD_A_addr(wPrinterStatus);
+    // AND_A_A;
+    // RET_Z ;
+    // PUSH_AF;
+    // XOR_A_A;
+    // LDH_addr_A(hBGMapMode);
+    // hlcoord(2, 4, wTilemap);
+    // LD_BC((13 << 8) | 16);
+    // CALL(aClearBox);
+    // POP_AF;
+    // LD_E_A;
+    // LD_D(0);
+    // LD_HL(mPrinterStatusStringPointers);
+    // ADD_HL_DE;
+    // ADD_HL_DE;
+    // LD_E_hl;
+    // INC_HL;
+    // LD_D_hl;
+    // hlcoord(4, 7, wTilemap);
+    // LD_A(BANK(aGBPrinterStrings));
+    // CALL(aPlaceFarString);
+    // hlcoord(4, 15, wTilemap);
+    // LD_DE(mString_PressBToCancel);
+    // CALL(aPlaceString);
+    // LD_A(0x1);
+    // LDH_addr_A(hBGMapMode);
+    // XOR_A_A;
+    // LD_addr_A(wPrinterStatus);
+    // RET;
 }
 
 const char String_PressBToCancel[] = "Press B to Cancel";
 
-const char* PrinterStatusStringPointers[] = {
+const char* const PrinterStatusStringPointers[] = {
     GBPrinterString_Null,  // @
     GBPrinterString_CheckingLink,  // CHECKING LINK
     GBPrinterString_Transmitting,  // TRANSMITTING

@@ -92,7 +92,7 @@ static uint16_t v_AnimateHPBar_ComputePixels(void){
         // LD_D_A;
         de = -(de - bc);
         // LD_BC(-1);
-        bc = -1;
+        bc = (uint16_t)-1;
     }
     else {
         // LD_A_addr(wCurHPAnimOldHP);

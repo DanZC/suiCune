@@ -702,7 +702,7 @@ bool SendGetMonIntoFromBox(uint8_t param){
     // LD_hli_A;
     species[c-1] = (param == DAY_CARE_WITHDRAW)? gPokemon.breedMon1.species: wram->wCurPartySpecies;
     // LD_hl(0xff);
-    species[c] = (species_t)-1;
+    species[c] = SPECIES_NULL;
 
     // LD_A_addr(wPokemonWithdrawDepositParameter);
     // DEC_A;

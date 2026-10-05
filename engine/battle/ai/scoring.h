@@ -98,7 +98,7 @@ bool AICheckEnemyHalfHP(void);
 bool AICheckEnemyQuarterHP(void);
 bool AICheckPlayerQuarterHP(void);
 bool AIHasMoveEffect(uint8_t b);
-bool AIHasMoveInArray(const move_t* hl);
+bool AIHasMoveInArray(const move_t* hl, size_t count);
 void AI_Opportunist(void);
 void AI_Aggressive(void);
 void AIDamageCalc(void);

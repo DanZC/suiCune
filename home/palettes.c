@@ -36,11 +36,9 @@ bool UpdateCGBPals(void){
 bool ForceUpdateCGBPals(void){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
-    uint8_t svbk = gb_read(rSVBK);
 
     // LD_A(MBANK(awBGPals2));
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, MBANK(awBGPals2));
 
     // LD_HL(wBGPals2);
     uint8_t* hl = wram->wBGPals2;
@@ -89,7 +87,6 @@ bool ForceUpdateCGBPals(void){
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
-    gb_write(rSVBK, svbk);
 
 //  clear pal update queue
     // XOR_A_A;

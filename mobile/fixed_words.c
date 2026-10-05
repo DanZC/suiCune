@@ -6229,7 +6229,7 @@ void EZChat_GetSeenPokemonByKana(void){
         // LD_C(0x0);
         uint8_t c = 0x0;
 
-        while(*sp != (species_t)-1) {
+        while(*sp != SPECIES_NULL) {
         // loop2:
         //  Have you seen this Pokemon?
             // LD_A_hl;

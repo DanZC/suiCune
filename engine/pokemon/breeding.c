@@ -637,7 +637,7 @@ static bool GetEggMove(const move_t* de){
     // CALL(aGetFarWord);
     const move_t* hl2 = EggMovePointers[gPokemon.eggMon.species - 1];
 
-    while(*hl2 != (move_t)-1) {
+    while(*hl2 != MOVE_NULL) {
     // loop:
         // LD_A(BANK(aBulbasaurEggMoves)); // LD_A(BANK("Egg Moves"));
         // CALL(aGetFarByte);

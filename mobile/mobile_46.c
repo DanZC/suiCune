@@ -11330,7 +11330,7 @@ void Function11b6b4(void){
     // LD_A_addr(0xc60e);
     // CP_A(-1);
     // IF_NZ goto item_okay;
-    if(wram->wMobileMon.mon.item == (item_t)-1) {
+    if(wram->wMobileMon.mon.item == ITEM_NULL) {
         // XOR_A_A;
         // LD_addr_A(0xc60e);
         wram->wMobileMon.mon.item = NO_ITEM;

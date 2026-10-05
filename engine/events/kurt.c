@@ -290,7 +290,7 @@ uint8_t Kurt_GetQuantityOfApricorn(item_t apricorn){
     // LD_B(0);
     uint8_t b = 0;
 
-    for(uint32_t i = 0; hl->pocket[i].item != (item_t)-1; ++i) {
+    for(uint32_t i = 0; hl->pocket[i].item != ITEM_NULL; ++i) {
     // loop:
         // INC_HL;
         // LD_A_hli;
@@ -372,7 +372,7 @@ void Kurt_GiveUpSelectedQuantityOfSelectedApricorn(void){
         //  If we've reached the end of the pocket, break.
             // CP_A(-1);
             // IF_Z goto okay1;
-            if(a == (item_t)-1)
+            if(a == ITEM_NULL)
                 goto okay1;
         //  If we haven't found what we're looking for, continue.
             // CP_A_C;

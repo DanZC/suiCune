@@ -5,14 +5,6 @@
 #include "../../../home/battle_vars.h"
 #include "../../../data/moves/metronome_exception_moves.h"
 
-// static inline bool IsInMoveArray(const move_t* array, move_t a) {
-//     for(int i = 0; array[i] != (move_t)-1; ++i) {
-//         if(array[i] == a)
-//             return true;
-//     }
-//     return false;
-// }
-
 void BattleCommand_Metronome(void){
 //  metronome
 
@@ -60,7 +52,7 @@ void BattleCommand_Metronome(void){
         // LD_A_B;
         // CALL(aCheckUserMove);
         // IF_Z goto GetMove;
-    } while(b >= NUM_ATTACKS + 1 || IsInMoveArray(MetronomeExcepts, b) || CheckUserMove(b));
+    } while(b >= NUM_ATTACKS + 1 || IsInMoveArray(MetronomeExcepts, MetronomeExcepts_Size, b) || CheckUserMove(b));
 
     // LD_A(BATTLE_VARS_MOVE);
     // CALL(aGetBattleVarAddr);

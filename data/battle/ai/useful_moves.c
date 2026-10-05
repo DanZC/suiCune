@@ -21,5 +21,5 @@ const move_t UsefulMoves[] = {
     FIRE_BLAST,
     SOFTBOILED,
     SUPER_FANG,
-    (move_t)-1, // end
 };
+const size_t UsefulMoves_Size = lengthof(UsefulMoves);

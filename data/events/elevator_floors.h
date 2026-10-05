@@ -1,3 +1,3 @@
 #pragma once
 
-extern const char* ElevatorFloorNames[];
+extern const char* const ElevatorFloorNames[];

@@ -134,7 +134,7 @@ bool CheckRegisteredItem(void){
                 // LD_DE(1);
                 // CALL(aIsInArray);
                 // IF_NC goto NoRegisteredItem;
-                for(uint32_t i = 0; gPlayer.keyItems[i] != (item_t)-1; ++i) {
+                for(uint32_t i = 0; gPlayer.keyItems[i] != ITEM_NULL; ++i) {
                     if(gPlayer.keyItems[i] == gPlayer.registeredItem) {
                         // LD_A_addr(wRegisteredItem);
                         // LD_addr_A(wCurItem);

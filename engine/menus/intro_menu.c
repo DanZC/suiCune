@@ -275,7 +275,7 @@ static void v_ResetWRAM_InitItemList(item_pocket_u* hl){
     hl->pocket.count = 0;
     // DEC_A;
     // LD_hl_A;
-    hl->pocket.pocket[0].item = (item_t)-1;
+    hl->pocket.pocket[0].item = ITEM_NULL;
     // RET;
 }
 

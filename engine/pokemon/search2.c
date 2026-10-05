@@ -152,7 +152,7 @@ u8_flag_s FindThatSpecies(species_t b){
         a = *(hl++);
         // CP_A(-1);
         // RET_Z ;
-        if(a == (uint8_t)-1)
+        if(a == SPECIES_NULL)
             return u8_flag(c, false);
         // INC_C;
         c++;
