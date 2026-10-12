@@ -1,3 +1,5 @@
+![suiCune logo by LJ](./logo.png)
+
 # suiCune
 
 suiCune is an in development PC port of Pokemon Crystal. The game's code is rewritten in C99 and uses SDL2 to emulate the graphics and sound of the Gameboy Color. It currently runs, but is not recommended to be used for any projects until completed. Additionally, it may be prone to crashes/buggy behavior. The maintainer is not to be held liable for any mishaps.
@@ -101,6 +103,9 @@ Then run suiCune to launch
     - Some maps from the original game have changed. If you saved in the Goldenrod center or Goldenrod City, you may be stuck in a wall and have incorrectly loaded NPCs. Save elsewhere and recopy the file.
     - Saves made with suiCune may not work when loaded back in the original game. Due to how the game stores script pointers, NPCs will not have their scripts properly loaded. If you reload the area, it should fix itself. Also, the time of day may be wrong and may need to be reset.
 
+## AI Notice
+
+This project was created before the advent of LLMs and no AI was used in its development. To maintain code quality, we will not be accepting code contributions or pull requests written by AI.
 
 ## Closing
 

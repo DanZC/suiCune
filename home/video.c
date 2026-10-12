@@ -55,7 +55,7 @@ bool UpdateBGMapBuffer(void) {
     // LD_HL(wBGMapPalBuffer);
     // LD_DE(wBGMapBuffer);
     uint8_t* hl = wram->wBGMapPalBuffer;
-    uint8_t* de = wram->wBGMapBuffer;
+    tile_t* de = wram->wBGMapBuffer;
     uint16_t bc = 0;
 
     do {

@@ -4,7 +4,7 @@
 
 void v_SwapTextboxPalettes(void){
     // hlcoord(0, 0, wTilemap);
-    uint8_t* hl = coord(0, 0, wram->wTilemap);
+    tile_t* hl = coord(0, 0, wram->wTilemap);
     // decoord(0, 0, wAttrmap);
     uint8_t* de = coord(0, 0, wram->wAttrmap);
     // LD_B(SCREEN_HEIGHT);
@@ -19,7 +19,7 @@ void v_SwapTextboxPalettes(void){
         do {
         // innerloop:
             // LD_A_hl;
-            uint8_t a = *hl;
+            tile_t a = *hl;
             // PUSH_HL;
             // SRL_A;
             // IF_C goto UpperNybble;
@@ -73,12 +73,12 @@ void v_ScrollBGMapPalettes(uint8_t c){
     // LD_HL(wBGMapBuffer);
     tile_t* hl = wram->wBGMapBuffer;
     // LD_DE(wBGMapPalBuffer);
-    tile_t* de = wram->wBGMapPalBuffer;
+    uint8_t* de = wram->wBGMapPalBuffer;
 
     do {
     // loop:
         // LD_A_hl;
-        uint8_t a = (uint8_t)*hl;
+        tile_t a = *hl;
         // PUSH_HL;
         // SRL_A;
         // IF_C goto UpperNybble;

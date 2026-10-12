@@ -1281,7 +1281,7 @@ struct wram_s
                 union {
                     struct {
                         // bg map
-                        uint8_t wBGMapBuffer[40];
+                        tile_t wBGMapBuffer[40];
                         uint8_t wBGMapPalBuffer[40];
                         uint8_t wBGMapBufferPointers[20 * 2];
                         //void wBGMapBufferEnd
