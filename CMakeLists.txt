@@ -1029,6 +1029,7 @@ add_executable(${PROJECT_NAME}
   util/apu.c
   util/debug.c
   util/gb_ptr.c
+  util/gfx.c
   util/hrc.c
   util/input.c
   util/intro_jumptable.c
