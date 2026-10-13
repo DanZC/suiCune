@@ -137,7 +137,7 @@ static void BattleIntroSlidingPics_subfunction5(uint8_t d, uint8_t e);
 static void BattleIntroSlidingPics_subfunction1(void) {
     // CALL(aBattleIntroSlidingPics_subfunction4);
     // BattleIntroSlidingPics_subfunction4();
-    ByteFill(wram->wLYOverrides, SCREEN_HEIGHT_PX, 0x90);
+    ByteFill(gGFX.LYOverrides, SCREEN_HEIGHT_PX, 0x90);
     // LD_A(0x90);
     // LDH_addr_A(hSCX);
     hram.hSCX = 0x90;
@@ -155,17 +155,15 @@ static void BattleIntroSlidingPics_subfunction3(void) {
     // LD_C(0x12);  // 18
     // LD_DE(SPRITEOAMSTRUCT_LENGTH);
     struct SpriteOAM* hl = wram->wVirtualOAMSprite;
-    uint8_t i = 0x12;
 
-    do {
+    for(uint32_t i = 0; i < 0x12; ++i) {
         // DEC_hl;
         // DEC_hl;
-        hl->xCoord -= 2;
+        hl[i].xCoord -= 2;
         // ADD_HL_DE;
-        hl++;
         // DEC_C;
         // IF_NZ goto loop3;
-    } while(--i != 0);
+    }
     // RET;
 }
 
@@ -173,7 +171,7 @@ static void BattleIntroSlidingPics_subfunction5(uint8_t d, uint8_t e) {
     // LD_HL(wLYOverrides);
     // LD_A_D;
     // LD_C(0x3e);  // 62
-    uint8_t* hl = wram->wLYOverrides;
+    uint8_t* hl = gGFX.LYOverrides;
     uint8_t c = 0x3e; // 62
 
     do {

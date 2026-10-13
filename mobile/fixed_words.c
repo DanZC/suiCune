@@ -613,7 +613,7 @@ static void EZChat_EditMenu_InitKanaMode(void){
     // LD_DE(wLYOverrides);
     // LD_BC(0x100);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wLYOverrides, wram->wc6d0, 0x100);
+    CopyBytes(gGFX.LYOverrides, wram->wc6d0, 0x100);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aEZChat_GetCategoryWordsByKana);

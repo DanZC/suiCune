@@ -13,13 +13,13 @@ void Function547(void) {
     // LD_C_A;
     // LD_A_addr(wLYOverrides);
     // LDH_c_A;
-    gb_write(0xFF00 | LOW(rSCX), wram->wLYOverrides[gb.gb_reg.LY]);
+    gb_write(0xFF00 | LOW(rSCX), gGFX.LYOverrides[gb.gb_reg.LY]);
     // RET;
 }
 
 void LCD(void) {  // called from the rendering function, once per line
     if (hram.hLCDCPointer) {
-        gb_write(0xFF00 | hram.hLCDCPointer, wram->wLYOverrides[gb.gb_reg.LY]);
+        gb_write(0xFF00 | hram.hLCDCPointer, gGFX.LYOverrides[gb.gb_reg.LY]);
     }
 }
 

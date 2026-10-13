@@ -13,6 +13,27 @@
 #include "../gfx/sprites.h"
 #include "../gfx/player_gfx.h"
 
+struct magnet_train_s {
+    int8_t direction;
+    int8_t initPosition;
+    int8_t holdPosition;
+    int8_t finalPosition;
+    uint8_t playerSpriteInitX;
+    uint8_t offset;
+    uint8_t position;
+    uint8_t waitCounter;
+    uint8_t jumptableIndex;
+};
+
+static void MagnetTrain_LoadGFX_PlayMusic(struct magnet_train_s*);
+static void MagnetTrain_InitLYOverrides(struct magnet_train_s* magnetTrain);
+static void MagnetTrain_UpdateLYOverrides(struct magnet_train_s* magnetTrain);
+static void MagnetTrain_Jumptable(struct magnet_train_s* magnetTrain);
+static void MagnetTrain_Jumptable_FirstRunThrough(struct magnet_train_s* magnetTrain);
+
+static void SetMagnetTrainPals(void);
+static void DrawMagnetTrain(void);
+
 void MagnetTrain(void){
     // LD_A_addr(wScriptVar);
     // AND_A_A;
@@ -45,6 +66,7 @@ void MagnetTrain(void){
         player_sprite_init_x = (11 * TILE_WIDTH) + (11 * TILE_WIDTH + 4);
     }
 
+    struct magnet_train_s magnetTrain = {0};
 // continue_:
     // LD_H_A;
     // LDH_A_addr(rSVBK);
@@ -54,19 +76,19 @@ void MagnetTrain(void){
 
     // LD_A_H;
     // LD_addr_A(wMagnetTrainDirection);
-    wram->wMagnetTrainDirection = dir;
+    magnetTrain.direction = dir;
     // LD_A_C;
     // LD_addr_A(wMagnetTrainInitPosition);
-    wram->wMagnetTrainInitPosition = init_pos;
+    magnetTrain.initPosition = init_pos;
     // LD_A_B;
     // LD_addr_A(wMagnetTrainHoldPosition);
-    wram->wMagnetTrainHoldPosition = hold_pos;
+    magnetTrain.holdPosition = hold_pos;
     // LD_A_E;
     // LD_addr_A(wMagnetTrainFinalPosition);
-    wram->wMagnetTrainFinalPosition = final_pos;
+    magnetTrain.finalPosition = final_pos;
     // LD_A_D;
     // LD_addr_A(wMagnetTrainPlayerSpriteInitX);
-    wram->wMagnetTrainPlayerSpriteInitX = player_sprite_init_x;
+    magnetTrain.playerSpriteInitX = player_sprite_init_x;
 
     // LDH_A_addr(hSCX);
     // PUSH_AF;
@@ -75,7 +97,7 @@ void MagnetTrain(void){
     // PUSH_AF;
     uint8_t scy = hram.hSCX;
     // CALL(aMagnetTrain_LoadGFX_PlayMusic);
-    MagnetTrain_LoadGFX_PlayMusic();
+    MagnetTrain_LoadGFX_PlayMusic(&magnetTrain);
     // LD_HL(hVBlank);
     // LD_A_hl;
     uint8_t vblank = hram.hVBlank;
@@ -83,15 +105,15 @@ void MagnetTrain(void){
     // LD_hl(1);
     hram.hVBlank = 1;
 
-    while(!bit_test(wram->wJumptableIndex, 7)) {
+    while(!bit_test(magnetTrain.jumptableIndex, 7)) {
     // loop:
         // LD_A_addr(wJumptableIndex);
         // AND_A_A;
         // IF_Z goto initialize;
-        if(wram->wJumptableIndex == 0){
+        if(magnetTrain.jumptableIndex == 0){
         // initialize:
             // CALL(aMagnetTrain_Jumptable_FirstRunThrough);
-            MagnetTrain_Jumptable_FirstRunThrough();
+            MagnetTrain_Jumptable_FirstRunThrough(&magnetTrain);
             // goto loop;
             continue;
         }
@@ -100,9 +122,9 @@ void MagnetTrain(void){
         // CALLFAR(aPlaySpriteAnimations);
         PlaySpriteAnimations();
         // CALL(aMagnetTrain_Jumptable);
-        MagnetTrain_Jumptable();
+        MagnetTrain_Jumptable(&magnetTrain);
         // CALL(aMagnetTrain_UpdateLYOverrides);
-        MagnetTrain_UpdateLYOverrides();
+        MagnetTrain_UpdateLYOverrides(&magnetTrain);
         // CALL(aPushLYOverrides);
         PushLYOverrides();
         // CALL(aDelayFrame);
@@ -159,25 +181,25 @@ static uint8_t* MagnetTrain_UpdateLYOverrides_loadloop(uint8_t* hl, uint8_t c, u
     return hl;
 }
 
-void MagnetTrain_UpdateLYOverrides(void){
+static void MagnetTrain_UpdateLYOverrides(struct magnet_train_s* magnetTrain){
     // LD_HL(wLYOverridesBackup);
-    uint8_t* hl = wram->wLYOverridesBackup;
+    uint8_t* hl = gGFX.LYOverridesBackup;
     // LD_C(6 * TILE_WIDTH - 1);
     // LD_A_addr(wMagnetTrainOffset);
     // ADD_A_A;
     // LDH_addr_A(hSCX);
-    hram.hSCX = wram->wMagnetTrainOffset << 1;
+    hram.hSCX = magnetTrain->offset << 1;
     // CALL(aMagnetTrain_UpdateLYOverrides_loadloop);
-    hl = MagnetTrain_UpdateLYOverrides_loadloop(hl, 6 * TILE_WIDTH - 1, wram->wMagnetTrainOffset << 1);
+    hl = MagnetTrain_UpdateLYOverrides_loadloop(hl, 6 * TILE_WIDTH - 1, magnetTrain->offset << 1);
     // LD_C(6 * TILE_WIDTH);
     // LD_A_addr(wMagnetTrainPosition);
     // CALL(aMagnetTrain_UpdateLYOverrides_loadloop);
-    hl = MagnetTrain_UpdateLYOverrides_loadloop(hl, 6 * TILE_WIDTH, wram->wMagnetTrainPosition);
+    hl = MagnetTrain_UpdateLYOverrides_loadloop(hl, 6 * TILE_WIDTH, magnetTrain->position);
     // LD_C(6 * TILE_WIDTH + 1);
     // LD_A_addr(wMagnetTrainOffset);
     // ADD_A_A;
     // CALL(aMagnetTrain_UpdateLYOverrides_loadloop);
-    hl = MagnetTrain_UpdateLYOverrides_loadloop(hl, 6 * TILE_WIDTH + 1, wram->wMagnetTrainOffset << 1);
+    hl = MagnetTrain_UpdateLYOverrides_loadloop(hl, 6 * TILE_WIDTH + 1, magnetTrain->offset << 1);
 
     // LD_A_addr(wMagnetTrainDirection);
     // LD_D_A;
@@ -186,11 +208,11 @@ void MagnetTrain_UpdateLYOverrides(void){
     // ADD_A_D;
     // ADD_A_D;
     // LD_hl_A;
-    wram->wMagnetTrainOffset += 2 * wram->wMagnetTrainDirection;
+    magnetTrain->offset += 2 * magnetTrain->direction;
     // RET;
 }
 
-void MagnetTrain_LoadGFX_PlayMusic(void){
+static void MagnetTrain_LoadGFX_PlayMusic(struct magnet_train_s* magnetTrain){
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     // CALL(aClearSprites);
@@ -241,19 +263,19 @@ void MagnetTrain_LoadGFX_PlayMusic(void){
     LoadPNG2bppAssetSectionToVRAM(vram->vTiles0 + LEN_2BPP_TILE * 0x04, icon_path, 12, 4);
 
     // CALL(aMagnetTrain_InitLYOverrides);
-    MagnetTrain_InitLYOverrides();
+    MagnetTrain_InitLYOverrides(magnetTrain);
 
     // LD_HL(wJumptableIndex);
     // XOR_A_A;
     // LD_hli_A;  // wJumptableIndex
-    wram->wJumptableIndex = 0x0;
+    magnetTrain->jumptableIndex = 0x0;
     // LD_A_addr(wMagnetTrainInitPosition);
     // LD_hli_A;  // wMagnetTrainOffset
-    wram->wMagnetTrainOffset = wram->wMagnetTrainInitPosition;
+    magnetTrain->offset = magnetTrain->initPosition;
     // LD_hli_A;  // wMagnetTrainPosition
-    wram->wMagnetTrainPosition = wram->wMagnetTrainInitPosition;
+    magnetTrain->position = magnetTrain->initPosition;
     // LD_hli_A;  // wMagnetTrainWaitCounter
-    wram->wMagnetTrainWaitCounter = wram->wMagnetTrainInitPosition;
+    magnetTrain->waitCounter = magnetTrain->initPosition;
 
     // LD_DE(MUSIC_MAGNET_TRAIN);
     // CALL(aPlayMusic2);
@@ -289,7 +311,7 @@ static tile_t* DrawMagnetTrain_FillAlt(tile_t* hl, tile_t e, tile_t d, uint8_t b
     return hl;
 }
 
-void DrawMagnetTrain(void){
+static void DrawMagnetTrain(void){
     // hlbgcoord(0, 0, vBGMap0);
     tile_t* hl = bgcoord(0, 0, vram->vBGMap0);
     // XOR_A_A;
@@ -362,17 +384,17 @@ void FreeMagnetTrainBGTiles(void) {
 //  2x18 tilemap, repeated in vertical strips for the background.
 const char MagnetTrainBGTiles[] = "gfx/overworld/magnet_train_bg.tilemap";
 
-void MagnetTrain_InitLYOverrides(void){
+static void MagnetTrain_InitLYOverrides(struct magnet_train_s* magnetTrain){
     // LD_HL(wLYOverrides);
     // LD_BC(wLYOverridesEnd - wLYOverrides);
     // LD_A_addr(wMagnetTrainInitPosition);
     // CALL(aByteFill);
-    ByteFill(wram->wLYOverrides, sizeof(wram->wLYOverrides), wram->wMagnetTrainInitPosition);
+    ByteFill(gGFX.LYOverrides, SCREEN_HEIGHT_PX, magnetTrain->initPosition);
     // LD_HL(wLYOverridesBackup);
     // LD_BC(wLYOverridesBackupEnd - wLYOverridesBackup);
     // LD_A_addr(wMagnetTrainInitPosition);
     // CALL(aByteFill);
-    ByteFill(wram->wLYOverridesBackup, sizeof(wram->wLYOverridesBackup), wram->wMagnetTrainInitPosition);
+    ByteFill(gGFX.LYOverridesBackup, SCREEN_HEIGHT_PX, magnetTrain->initPosition);
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
     hram.hLCDCPointer = LOW(rSCX);
@@ -380,7 +402,7 @@ void MagnetTrain_InitLYOverrides(void){
 
 }
 
-void SetMagnetTrainPals(void){
+static void SetMagnetTrainPals(void){
     // LD_A(1);
     // LDH_addr_A(rVBK);
 
@@ -418,18 +440,18 @@ void SetMagnetTrainPals(void){
 
 }
 
-static void MagnetTrain_Jumptable_Next(void){
+static void MagnetTrain_Jumptable_Next(struct magnet_train_s* magnetTrain){
     // LD_HL(wJumptableIndex);
     // INC_hl;
-    wram->wJumptableIndex++;
+    magnetTrain->jumptableIndex++;
     // RET;
 }
 
-void MagnetTrain_Jumptable(void){
+static void MagnetTrain_Jumptable(struct magnet_train_s* magnetTrain){
     //jumptable ['.Jumptable', 'wJumptableIndex']
 
 // Jumptable:
-    switch(wram->wJumptableIndex) {
+    switch(magnetTrain->jumptableIndex) {
     //dw ['.InitPlayerSpriteAnim'];
     case 0: {
     // InitPlayerSpriteAnim:
@@ -454,16 +476,16 @@ void MagnetTrain_Jumptable(void){
         // LDH_addr_A(rSVBK);
         // LD_A_B;
         // CALL(aInitSpriteAnimStruct);
-        struct SpriteAnim* bc = InitSpriteAnimStruct(b, wram->wMagnetTrainPlayerSpriteInitX | (((8 + 2) * TILE_WIDTH + 5) << 8));
+        struct SpriteAnim* bc = InitSpriteAnimStruct(b, magnetTrain->playerSpriteInitX | (((8 + 2) * TILE_WIDTH + 5) << 8));
         // LD_HL(SPRITEANIMSTRUCT_TILE_ID);
         // ADD_HL_BC;
         // LD_hl(0);
         bc->tileID = 0;
         // CALL(aMagnetTrain_Jumptable_Next);
-        MagnetTrain_Jumptable_Next();
+        MagnetTrain_Jumptable_Next(magnetTrain);
         // LD_A(128);
         // LD_addr_A(wMagnetTrainWaitCounter);
-        wram->wMagnetTrainWaitCounter = 128;
+        magnetTrain->waitCounter = 128;
         // RET;
     } return;
     //dw ['.WaitScene'];
@@ -474,13 +496,13 @@ void MagnetTrain_Jumptable(void){
         // LD_A_addr(wMagnetTrainPosition);
         // CP_A_hl;
         // IF_Z goto PrepareToHoldTrain;
-        if(wram->wMagnetTrainPosition == wram->wMagnetTrainHoldPosition) {
+        if(magnetTrain->position == magnetTrain->holdPosition) {
         // PrepareToHoldTrain:
             // CALL(aMagnetTrain_Jumptable_Next);
-            MagnetTrain_Jumptable_Next();
+            MagnetTrain_Jumptable_Next(magnetTrain);
             // LD_A(128);
             // LD_addr_A(wMagnetTrainWaitCounter);
-            wram->wMagnetTrainWaitCounter = 128;
+            magnetTrain->waitCounter = 128;
             // RET;
             return;
         }
@@ -490,12 +512,12 @@ void MagnetTrain_Jumptable(void){
         // INC_A;
         // ADD_A_E;
         // LD_addr_A(wMagnetTrainPosition);
-        wram->wMagnetTrainPosition = wram->wMagnetTrainPosition - wram->wMagnetTrainDirection;
+        magnetTrain->position = magnetTrain->position - magnetTrain->direction;
         // LD_HL(wGlobalAnimXOffset);
         // LD_A_addr(wMagnetTrainDirection);
         // ADD_A_hl;
         // LD_hl_A;
-        wram->wGlobalAnimXOffset += wram->wMagnetTrainDirection;
+        wram->wGlobalAnimXOffset += magnetTrain->direction;
         // RET;
     } return;
     //dw ['.WaitScene'];
@@ -506,10 +528,10 @@ void MagnetTrain_Jumptable(void){
         // LD_A_addr(wMagnetTrainPosition);
         // CP_A_hl;
         // IF_Z goto PrepareToFinishAnim;
-        if(wram->wMagnetTrainPosition == wram->wMagnetTrainFinalPosition) {
+        if(magnetTrain->position == magnetTrain->finalPosition) {
         // PrepareToFinishAnim:
             // CALL(aMagnetTrain_Jumptable_Next);
-            MagnetTrain_Jumptable_Next();
+            MagnetTrain_Jumptable_Next(magnetTrain);
             // RET;
             return;
         }
@@ -522,7 +544,7 @@ void MagnetTrain_Jumptable(void){
         // ADD_A_D;
         // ADD_A_D;
         // LD_addr_A(wMagnetTrainPosition);
-        wram->wMagnetTrainPosition -= wram->wMagnetTrainDirection * 2;
+        magnetTrain->position -= magnetTrain->direction * 2;
         // LD_HL(wGlobalAnimXOffset);
         // LD_A_addr(wMagnetTrainDirection);
         // LD_D_A;
@@ -530,7 +552,7 @@ void MagnetTrain_Jumptable(void){
         // ADD_A_D;
         // ADD_A_D;
         // LD_hl_A;
-        wram->wGlobalAnimXOffset += wram->wMagnetTrainDirection * 2;
+        wram->wGlobalAnimXOffset += magnetTrain->direction * 2;
         // RET;
 
         // RET; // Stubbed code?
@@ -544,15 +566,15 @@ void MagnetTrain_Jumptable(void){
         // LD_A_hl;
         // AND_A_A;
         // IF_Z goto DoneWaiting;
-        if(wram->wMagnetTrainWaitCounter == 0) {
+        if(magnetTrain->waitCounter == 0) {
         // DoneWaiting:
             // CALL(aMagnetTrain_Jumptable_Next);
-            MagnetTrain_Jumptable_Next();
+            MagnetTrain_Jumptable_Next(magnetTrain);
             // RET;
             return;
         }
         // DEC_hl;
-        wram->wMagnetTrainWaitCounter--;
+        magnetTrain->waitCounter--;
         // RET;
     } return;
     //dw ['.TrainArrived'];
@@ -560,7 +582,7 @@ void MagnetTrain_Jumptable(void){
     // TrainArrived:
         // LD_A(0x80);
         // LD_addr_A(wJumptableIndex);
-        wram->wJumptableIndex = 0x80;
+        magnetTrain->jumptableIndex = 0x80;
         // LD_DE(SFX_TRAIN_ARRIVED);
         // CALL(aPlaySFX);
         PlaySFX(SFX_TRAIN_ARRIVED);
@@ -569,13 +591,13 @@ void MagnetTrain_Jumptable(void){
     }
 }
 
-void MagnetTrain_Jumptable_FirstRunThrough(void){
+static void MagnetTrain_Jumptable_FirstRunThrough(struct magnet_train_s* magnetTrain){
     // FARCALL(aPlaySpriteAnimations);
     PlaySpriteAnimations();
     // CALL(aMagnetTrain_Jumptable);
-    MagnetTrain_Jumptable();
+    MagnetTrain_Jumptable(magnetTrain);
     // CALL(aMagnetTrain_UpdateLYOverrides);
-    MagnetTrain_UpdateLYOverrides();
+    MagnetTrain_UpdateLYOverrides(magnetTrain);
     // CALL(aPushLYOverrides);
     PushLYOverrides();
     // CALL(aDelayFrame);

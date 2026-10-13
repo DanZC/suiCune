@@ -79,6 +79,7 @@ extern void (*convertedFunc[])(void);
 #include "util/assets.h"
 #include "util/rtc.h"
 #include "util/misc.h"
+#include "util/gfx.h"
 
 extern struct gb_s gb;
 extern struct hram_s hram;
@@ -94,5 +95,6 @@ extern struct CrystalData gCrystal;
 
 // Runtime structs
 extern struct Audio gAudio;
+extern gfx_s gGFX;
 extern script_s gCurScript;
 #endif

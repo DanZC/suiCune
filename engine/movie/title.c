@@ -290,10 +290,10 @@ void v_TitleScreen(void){
     //  $00 is the middle position
         // LD_hl(+112);  // coming from the left
         // INC_HL;
-        wram->wLYOverrides[b] = +112;
+        gGFX.LYOverrides[b] = +112;
         // LD_hl(-112);  // coming from the right
         // INC_HL;
-        wram->wLYOverrides[b + 1] = -112;
+        gGFX.LYOverrides[b + 1] = (uint8_t)-112;
         // DEC_B;
         // IF_NZ goto loop;
     }
@@ -303,7 +303,7 @@ void v_TitleScreen(void){
     // XOR_A_A;
     // LD_BC(wLYOverridesEnd - (wLYOverrides + 80));
     // CALL(aByteFill);
-    ByteFill(wram->wLYOverrides + 80, sizeof(wram->wLYOverrides) - 80, 0);
+    ByteFill(gGFX.LYOverrides + 80, SCREEN_HEIGHT_PX - 80, 0);
 
 //  Let LCD Stat know we're messing around with SCX
     // LD_A(LOW(rSCX));

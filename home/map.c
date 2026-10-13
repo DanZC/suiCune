@@ -1808,7 +1808,7 @@ void ScrollMapUp(void){
     tile_t* hl = coord(0, 0, wram->wTilemap);
     // LD_DE(wBGMapBuffer);
     // CALL(aBackupBGMapRow);
-    BackupBGMapRow(wram->wBGMapBuffer, hl);
+    BackupBGMapRow(gGFX.BGMapBuffer, hl);
     // LD_C(2 * SCREEN_WIDTH);
     // CALL(aScrollBGMapPalettes);
     ScrollBGMapPalettes(2 * SCREEN_WIDTH);
@@ -1829,7 +1829,7 @@ void ScrollMapDown(void){
     tile_t* hl = coord(0, SCREEN_HEIGHT - 2, wram->wTilemap);
     // LD_DE(wBGMapBuffer);
     // CALL(aBackupBGMapRow);
-    BackupBGMapRow(wram->wBGMapBuffer, hl);
+    BackupBGMapRow(gGFX.BGMapBuffer, hl);
     // LD_C(2 * SCREEN_WIDTH);
     // CALL(aScrollBGMapPalettes);
     ScrollBGMapPalettes(2 * SCREEN_WIDTH);
@@ -1859,7 +1859,7 @@ void ScrollMapLeft(void){
     // hlcoord(0, 0, wTilemap);
     // LD_DE(wBGMapBuffer);
     // CALL(aBackupBGMapColumn);
-    BackupBGMapColumn(wram->wBGMapBuffer, coord(0, 0, wram->wTilemap));
+    BackupBGMapColumn(gGFX.BGMapBuffer, coord(0, 0, wram->wTilemap));
     // LD_C(2 * SCREEN_HEIGHT);
     // CALL(aScrollBGMapPalettes);
     ScrollBGMapPalettes(2 * SCREEN_HEIGHT);
@@ -1879,7 +1879,7 @@ void ScrollMapRight(void){
     // hlcoord(SCREEN_WIDTH - 2, 0, wTilemap);
     // LD_DE(wBGMapBuffer);
     // CALL(aBackupBGMapColumn);
-    BackupBGMapColumn(wram->wBGMapBuffer, coord(SCREEN_WIDTH - 2, 0, wram->wTilemap));
+    BackupBGMapColumn(gGFX.BGMapBuffer, coord(SCREEN_WIDTH - 2, 0, wram->wTilemap));
     // LD_C(2 * SCREEN_HEIGHT);
     // CALL(aScrollBGMapPalettes);
     ScrollBGMapPalettes(2 * SCREEN_HEIGHT);
@@ -1948,7 +1948,7 @@ void BackupBGMapColumn(tile_t* de, const tile_t* hl){
     // RET;
 }
 
-static uint8_t* UpdateBGMapRow_iteration(uint8_t* hl, uint16_t de) {
+static uint16_t* UpdateBGMapRow_iteration(uint16_t* hl, uint16_t de) {
     // LD_C(10);
     uint8_t c = 10;
 
@@ -1956,10 +1956,9 @@ static uint8_t* UpdateBGMapRow_iteration(uint8_t* hl, uint16_t de) {
     // loop:
         // LD_A_E;
         // LD_hli_A;
-        *(hl++) = LOW(de);
         // LD_A_D;
         // LD_hli_A;
-        *(hl++) = HIGH(de);
+        *(hl++) = de;
         // LD_A_E;
         // INC_A;
         // INC_A;
@@ -1983,7 +1982,7 @@ static uint8_t* UpdateBGMapRow_iteration(uint8_t* hl, uint16_t de) {
 
 void UpdateBGMapRow(uint16_t de){
     // LD_HL(wBGMapBufferPointers);
-    uint8_t* hl = wram->wBGMapBufferPointers;
+    uint16_t* hl = gGFX.BGMapBufferPointers;
     // PUSH_DE;
     // CALL(aUpdateBGMapRow_iteration);
     hl = UpdateBGMapRow_iteration(hl, de);
@@ -1997,7 +1996,7 @@ void UpdateBGMapRow(uint16_t de){
 
 void UpdateBGMapColumn(uint16_t de){
     // LD_HL(wBGMapBufferPointers);
-    uint8_t* hl = wram->wBGMapBufferPointers;
+    uint16_t* hl = gGFX.BGMapBufferPointers;
     // LD_C(SCREEN_HEIGHT);
     uint8_t c = SCREEN_HEIGHT;
 
@@ -2005,10 +2004,9 @@ void UpdateBGMapColumn(uint16_t de){
     // loop:
         // LD_A_E;
         // LD_hli_A;
-        *(hl++) = LOW(de);
         // LD_A_D;
         // LD_hli_A;
-        *(hl++) = HIGH(de);
+        *(hl++) = de;
         // LD_A(BG_MAP_WIDTH);
         // ADD_A_E;
         // LD_E_A;
@@ -2039,7 +2037,9 @@ void ClearBGMapBuffer(void){
     // LD_BC(wBGMapBufferEnd - wBGMapBuffer);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wBGMapBuffer, wBGMapBufferEnd - wBGMapBuffer, 0);
+    ByteFill(gGFX.BGMapBuffer, sizeof(gGFX.BGMapBuffer), 0);
+    ByteFill(gGFX.BGMapPalBuffer, sizeof(gGFX.BGMapPalBuffer), 0);
+    ByteFill(gGFX.BGMapBufferPointers, sizeof(gGFX.BGMapBufferPointers), 0);
     // RET;
 }
 

@@ -2049,6 +2049,8 @@ void BattleAnimAssignPals(void){
 void ClearBattleAnims(void){
 //  Clear animation block
     // LD_HL(wLYOverrides);
+    ByteFill(gGFX.LYOverrides, sizeof(gGFX.LYOverrides), 0);
+    ByteFill(gGFX.LYOverridesBackup, sizeof(gGFX.LYOverridesBackup), 0);
     uint8_t* hl = wram->wLYOverrides;
     // LD_BC(wBattleAnimEnd - wLYOverrides);
     uint16_t bc = wBattleAnimEnd - wLYOverrides;

@@ -502,7 +502,7 @@ static void StartTrainerBattle_DoSineWave(void) {
     // LD_E(0);
     uint8_t e = 0;
 
-    for(uint32_t a = 0; a < lengthof(wram->wLYOverrides); ++a) {
+    for(uint32_t a = 0; a < SCREEN_HEIGHT_PX; ++a) {
     // loop:
         // PUSH_AF;
         // PUSH_DE;
@@ -510,7 +510,7 @@ static void StartTrainerBattle_DoSineWave(void) {
         // CALL(aStartTrainerBattle_DrawSineWave);
         // LD_bc_A;
         // INC_BC;
-        wram->wLYOverrides[a] = Sine(e, d);
+        gGFX.LYOverrides[a] = Sine(e, d);
         // POP_DE;
         // LD_A_E;
         // ADD_A(2);
@@ -1115,8 +1115,8 @@ void WipeLYOverrides(void){
 
     // loop:
         // LD_hli_A;
-        wram->wLYOverrides[c] = 0;
-        wram->wLYOverridesBackup[c] = 0;
+        gGFX.LYOverrides[c] = 0;
+        gGFX.LYOverridesBackup[c] = 0;
         // DEC_C;
         // IF_NZ goto loop;
         // RET;

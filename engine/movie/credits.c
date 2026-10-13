@@ -99,7 +99,7 @@ void Credits(uint8_t b){
     // LD_BC(0x100);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wLYOverrides, 0x100, 0x0);
+    ByteFill(gGFX.LYOverrides, 0x100, 0x0);
 
     // LD_A(LOW(rSCX));
     // LDH_addr_A(hLCDCPointer);
@@ -334,10 +334,10 @@ void Credits_LYOverride(void){
     wram->wCreditsLYOverride = override;
     // LD_HL(wLYOverrides + 0x1f);
     // CALL(aCredits_LYOverride_Fill);
-    Credits_LYOverride_Fill(wram->wLYOverrides + 0x20, override);
+    Credits_LYOverride_Fill(gGFX.LYOverrides + 0x20, override);
     // LD_HL(wLYOverrides + 0x87);
     // CALL(aCredits_LYOverride_Fill);
-    Credits_LYOverride_Fill(wram->wLYOverrides + 0x88, override);
+    Credits_LYOverride_Fill(gGFX.LYOverrides + 0x88, override);
     // JP(mCredits_Next);
     return Credits_Next();
 }

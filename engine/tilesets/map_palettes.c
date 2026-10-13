@@ -71,9 +71,9 @@ void v_SwapTextboxPalettes(void){
 
 void v_ScrollBGMapPalettes(uint8_t c){
     // LD_HL(wBGMapBuffer);
-    tile_t* hl = wram->wBGMapBuffer;
+    tile_t* hl = gGFX.BGMapBuffer;
     // LD_DE(wBGMapPalBuffer);
-    uint8_t* de = wram->wBGMapPalBuffer;
+    uint8_t* de = gGFX.BGMapPalBuffer;
 
     do {
     // loop:

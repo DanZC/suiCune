@@ -416,6 +416,6 @@ void PushLYOverrides(void){
 
     // LD_A((wLYOverridesEnd - wLYOverrides) / LEN_2BPP_TILE);
     // LD_addr_A(wRequested2bppSize);
-    CopyBytes(wram->wLYOverrides, wram->wLYOverridesBackup, wLYOverridesEnd - wLYOverrides);
+    CopyBytes(gGFX.LYOverrides, gGFX.LYOverridesBackup, SCREEN_HEIGHT_PX);
     // RET;
 }

@@ -1498,7 +1498,7 @@ static void BattleBGEffect_Surf_RotatewSurfWaveBGEffect(void){
     // LD_hl_A;
     *hl = temp;
     // LD_DE(wLYOverridesBackup);
-    de = wram->wLYOverridesBackup;
+    de = gGFX.LYOverridesBackup;
     // LD_HL(wSurfWaveBGEffect);
     hl = wram->wSurfWaveBGEffect;
     // LD_BC(0x0);
@@ -1854,10 +1854,10 @@ static void BattleBGEffect_DoubleTeam_UpdateLYOverrides(uint8_t a){
     // loop:
         // LD_hl_E;
         // INC_HL;
-        wram->wLYOverridesBackup[l++] = e;
+        gGFX.LYOverridesBackup[l++] = e;
         // LD_hl_D;
         // INC_HL;
-        wram->wLYOverridesBackup[l++] = d;
+        gGFX.LYOverridesBackup[l++] = d;
         // DEC_A;
         // IF_NZ goto loop;
     } while(--a2 != 0);
@@ -1865,7 +1865,7 @@ static void BattleBGEffect_DoubleTeam_UpdateLYOverrides(uint8_t a){
     // RET_NC;
     if(carry){
         // LD_hl_E;
-        wram->wLYOverridesBackup[l] = e;
+        gGFX.LYOverridesBackup[l] = e;
         // RET;
     }
 }
@@ -1994,10 +1994,10 @@ static void BattleBGEffect_AcidArmor(struct BattleBGEffect* bc) {
             // LDH_A_addr(hLYOverrideEnd);
             // LD_L_A;
             // LD_hl(0x0);
-            wram->wLYOverridesBackup[hram.hLYOverrideEnd] = 0x0;
+            gGFX.LYOverridesBackup[hram.hLYOverrideEnd] = 0x0;
             // DEC_L;
             // LD_hl(0x0);
-            wram->wLYOverridesBackup[hram.hLYOverrideEnd - 1] = 0x0;
+            gGFX.LYOverridesBackup[hram.hLYOverrideEnd - 1] = 0x0;
             // RET;
             return;
         // if (index == 1) goto one;
@@ -2010,47 +2010,47 @@ static void BattleBGEffect_AcidArmor(struct BattleBGEffect* bc) {
             // LD_E_L;
             // LD_D_H;
             // DEC_DE;
-            uint8_t* de = wram->wLYOverridesBackup + (l - 1);
+            uint8_t* de = gGFX.LYOverridesBackup + (l - 1);
 
             do {
             // loop:
                 // LD_A_de;
                 // DEC_DE;
                 // LD_hld_A;
-                wram->wLYOverridesBackup[l--] = *de;
+                gGFX.LYOverridesBackup[l--] = *de;
                 --de;
                 // LDH_A_addr(hLYOverrideStart);
                 // CP_A_L;
                 // IF_NZ goto loop;
             } while(hram.hLYOverrideStart != l);
             // LD_hl(0x90);
-            wram->wLYOverridesBackup[l] = 0x90;
+            gGFX.LYOverridesBackup[l] = 0x90;
             // LDH_A_addr(hLYOverrideEnd);
             // LD_L_A;
             l = hram.hLYOverrideEnd;
             // LD_A_hl;
-            uint8_t a = wram->wLYOverridesBackup[l];
+            uint8_t a = gGFX.LYOverridesBackup[l];
             // CP_A(0x1);
             // IF_C goto okay;
             // CP_A(0x90);
             // IF_Z goto okay;
             if(a >= 0x1 && a != 0x90){
                 // LD_hl(0x0);
-                wram->wLYOverridesBackup[l] = 0x0;
+                gGFX.LYOverridesBackup[l] = 0x0;
             }
 
         // okay:
             // DEC_L;
             --l;
             // LD_A_hl;
-            a = wram->wLYOverridesBackup[l];
+            a = gGFX.LYOverridesBackup[l];
             // CP_A(0x2);
             // RET_C;
             // CP_A(0x90);
             // RET_Z;
             if(a >= 0x1 && a != 0x90){
                 // LD_hl(0x0);
-                wram->wLYOverridesBackup[l] = 0x0;
+                gGFX.LYOverridesBackup[l] = 0x0;
                 // RET;
             }
         } return;
@@ -2437,7 +2437,7 @@ static void Rollout_FillLYOverridesBackup(uint8_t a) {
         // LDH_A_addr(hLYOverrideEnd);
         // DEC_A;
         // LD_L_A;
-        hl = wram->wLYOverridesBackup + (hram.hLYOverrideEnd - 1);
+        hl = gGFX.LYOverridesBackup + (hram.hLYOverrideEnd - 1);
         // LD_hl(0x0);
         *hl = 0x0;
     }
@@ -2447,7 +2447,7 @@ static void Rollout_FillLYOverridesBackup(uint8_t a) {
     else if(hram.hLYOverrideStart != 0) {
         // DEC_A;
         // LD_L_A;
-        hl = wram->wLYOverridesBackup + (hram.hLYOverrideStart - 1);
+        hl = gGFX.LYOverridesBackup + (hram.hLYOverrideStart - 1);
         // LD_hl(0x0);
         *hl = 0x0;
         // goto skip2;
@@ -2461,12 +2461,12 @@ static void Rollout_FillLYOverridesBackup(uint8_t a) {
     // IF_NC goto skip3;
     if(hram.hLYOverrideStart < hram.hSCY){
         // XOR_A_A;
-        hl = wram->wLYOverridesBackup;
+        hl = gGFX.LYOverridesBackup;
         // DEC_D;
         --d;
     }
     else {
-        hl = wram->wLYOverridesBackup + (hram.hLYOverrideStart - hram.hSCY);
+        hl = gGFX.LYOverridesBackup + (hram.hLYOverrideStart - hram.hSCY);
     }
 
 // skip3:
@@ -3924,29 +3924,29 @@ static void BattleBGEffects_ClearLYOverrides(void) {
 static void BattleBGEffects_SetLYOverrides(uint8_t a) {
     // SET_PC(aBattleBGEffects_SetLYOverrides);
     // LD_HL(wLYOverrides);
-    uint8_t* hl = wram->wLYOverrides;
+    uint8_t* hl = gGFX.LYOverrides;
     // LD_E(0x99);
-    uint8_t e = 0x99;
+    // uint8_t e = 0x99;
 
-    do {
+    for(uint32_t i = 0; i < SCREEN_HEIGHT_PX; ++i) {
     // loop1:
         // LD_hli_A;
-        *(hl++) = a;
+        hl[i] = a;
         // DEC_E;
         // IF_NZ goto loop1;
-    } while(--e != 0);
+    }
     // LD_HL(wLYOverridesBackup);
-    hl = wram->wLYOverridesBackup;
+    hl = gGFX.LYOverridesBackup;
     // LD_E(0x91);
-    e = 0x91;
+    // e = 0x91;
 
-    do {
+    for(uint32_t i = 0; i < SCREEN_HEIGHT_PX; ++i) {
     // loop2:
         // LD_hli_A;
-        *(hl++) = a;
+        hl[i] = a;
         // DEC_E;
         // IF_NZ goto loop2;
-    } while(--e != 0);
+    }
     // RET;
 }
 
@@ -4050,7 +4050,7 @@ static void DeformScreen(uint8_t d, uint8_t e) {
     // LD_addr_A(wBattleSineWaveTempTimer);
     wram->wBattleSineWaveTempTimer = 0x80;
     // LD_BC(wLYOverridesBackup);
-    uint8_t* hl = wram->wLYOverridesBackup;
+    uint8_t* hl = gGFX.LYOverridesBackup;
     uint8_t c = 0;
 
     do {
@@ -4155,7 +4155,7 @@ static void DeformWater(uint8_t d, uint8_t e, uint8_t a) {
     uint8_t c2 = c;
     // LD_C_L;
     // LD_B_H;
-    uint8_t* hl = wram->wLYOverridesBackup;
+    uint8_t* hl = gGFX.LYOverridesBackup;
 
     while(wram->wBattleSineWaveTempTimer != 0){
     // loop:
@@ -4232,20 +4232,20 @@ static void BattleBGEffect_WavyScreenFX(void) {
     uint8_t c = hram.hLYOverrideEnd - l;
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t a = wram->wLYOverridesBackup[l];
+    uint8_t a = gGFX.LYOverridesBackup[l];
 
     do {
     // loop:
         // LD_A_de;
         // INC_DE;
         // LD_hli_A;
-        wram->wLYOverridesBackup[l++] = wram->wLYOverridesBackup[e++];
+        gGFX.LYOverridesBackup[l++] = gGFX.LYOverridesBackup[e++];
         // DEC_C;
         // IF_NZ goto loop;
     } while(--c != 0);
     // POP_AF;
     // LD_hl_A;
-    wram->wLYOverridesBackup[l] = a;
+    gGFX.LYOverridesBackup[l] = a;
 
 // done:
     // POP_BC;
@@ -4263,7 +4263,7 @@ static void BGEffect_FillLYOverridesBackup(uint8_t a) {
     // LD_D_A;
     // POP_AF;
     uint8_t d = hram.hLYOverrideEnd - hram.hLYOverrideStart;
-    uint8_t* hl = wram->wLYOverridesBackup + hram.hLYOverrideStart;
+    uint8_t* hl = gGFX.LYOverridesBackup + hram.hLYOverrideStart;
 
     do {
     // loop:
@@ -4298,7 +4298,7 @@ static void BGEffect_DisplaceLYOverridesBackup(uint8_t a) {
     do {
     // loop:
         // LD_hli_A;
-        wram->wLYOverridesBackup[l++] = 0x90;
+        gGFX.LYOverridesBackup[l++] = 0x90;
         // DEC_E;
         // IF_NZ goto loop;
     } while(--e != 0);
@@ -4308,7 +4308,7 @@ static void BGEffect_DisplaceLYOverridesBackup(uint8_t a) {
     do {
     // loop2:
         // LD_hli_A;
-        wram->wLYOverridesBackup[l++] = a ^ 0xff;
+        gGFX.LYOverridesBackup[l++] = a ^ 0xff;
         // DEC_D;
         // IF_NZ goto loop2;
     } while(--d != 0);

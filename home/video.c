@@ -42,21 +42,20 @@ bool UpdateBGMapBuffer(void) {
 
     // LDH_A_addr(rVBK);
     // PUSH_AF;
-    uint8_t VBK = gb_read(rVBK);
 
     //  Relocate the stack pointer to wBGMapBufferPointers
     // LD_addr_SP(hSPBuffer);
     // LD_HL(wBGMapBufferPointers);
     // LD_SP_HL;
-    uint8_t* sp = wram->wBGMapBufferPointers;
+    uint16_t* sp = gGFX.BGMapBufferPointers;
 
     //  We can now pop the addresses of affected spots on the BG Map
 
     // LD_HL(wBGMapPalBuffer);
     // LD_DE(wBGMapBuffer);
-    uint8_t* hl = wram->wBGMapPalBuffer;
-    tile_t* de = wram->wBGMapBuffer;
-    uint16_t bc = 0;
+    uint8_t* hl = gGFX.BGMapPalBuffer;
+    tile_t* de = gGFX.BGMapBuffer;
+    uint8_t* bc = 0;
 
     do {
         //  Copy a pair of 16x8 blocks (one 16x16 block)
@@ -64,45 +63,39 @@ bool UpdateBGMapBuffer(void) {
         for (int rept = 0; rept < 2; rept++) {
             //  Get our BG Map address
             // POP_BC;
-            bc = sp[0] | (sp[1] << 8);
-            sp += 2;
+            bc = gb.vram + (*(sp++) & 0x1fff);
 
             //  Palettes
             // LD_A(1);
             // LDH_addr_A(rVBK);
-            gb_write(rVBK, 1);
 
             // LD_A_hli;
             // LD_bc_A;
-            gb_write(bc, *(hl++));
+            bc[VRAM_BANK_SIZE+0] = *(hl++);
 
             // INC_C;
-            bc++;
 
             // LD_A_hli;
             // LD_bc_A;
-            gb_write(bc, *(hl++));
+            bc[VRAM_BANK_SIZE+1] = *(hl++);
 
             // DEC_C;
-            bc--;
 
             //  Tiles
             // LD_A(0);
             // LDH_addr_A(rVBK);
-            gb_write(rVBK, 0);
 
             // LD_A_de;
             // INC_DE;
             // LD_bc_A;
-            gb_write(bc, *(de++));
+            bc[0] = *(de++);
 
             // INC_C;
-            bc++;
 
             // LD_A_de;
             // INC_DE;
             // LD_bc_A;
-            gb_write(bc, *(de++));
+            bc[1] = *(de++);
         }
 
         //  We've done 2 16x8 blocks
@@ -123,7 +116,6 @@ bool UpdateBGMapBuffer(void) {
 
     // POP_AF;
     // LDH_addr_A(rVBK);
-    gb_write(rVBK, VBK);
 
     // XOR_A_A;
     // LDH_addr_A(hBGMapUpdate);

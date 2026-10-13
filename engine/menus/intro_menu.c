@@ -1747,7 +1747,7 @@ static void TitleScreenEntrance(void){
         // LD_HL(wLYOverrides);
         // LD_BC(8 * 10);  // logo height
         // CALL(aByteFill);
-        ByteFill(wram->wLYOverrides, 8 * 10, hram.hSCX);
+        ByteFill(gGFX.LYOverrides, 8 * 10, hram.hSCX);
 
     //  Reversed signage for every other line's position.
     //  This is responsible for the interlaced effect.
@@ -1758,7 +1758,7 @@ static void TitleScreenEntrance(void){
 
         // LD_B(8 * 10 / 2);  // logo height / 2
         // LD_HL(wLYOverrides + 1);
-        uint8_t* hl = wram->wLYOverrides + 1;
+        uint8_t* hl = gGFX.LYOverrides + 1;
 
         for(uint8_t b = 0; b < 8 * 10; b += 2) {
         // loop:

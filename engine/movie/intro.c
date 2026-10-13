@@ -2820,7 +2820,7 @@ static void Intro_ResetLYOverrides(void){
     // LD_BC(wLYOverridesEnd - wLYOverrides);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wLYOverrides, sizeof(wram->wLYOverrides), 0);
+    ByteFill(gGFX.LYOverrides, SCREEN_HEIGHT_PX, 0);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -2846,10 +2846,10 @@ static void Intro_PerspectiveScrollBG(void){
         // LD_HL(wLYOverrides);
         // LD_A_hl;
         // INC_A;
-        uint8_t a = wram->wLYOverrides[0] + 1;
+        uint8_t a = gGFX.LYOverrides[0] + 1;
         // LD_BC(0x5f);
         // CALL(aByteFill);
-        ByteFill(wram->wLYOverrides, 0x5f, a);
+        ByteFill(gGFX.LYOverrides, 0x5f, a);
     }
 
 // grass in the front
@@ -2859,10 +2859,10 @@ static void Intro_PerspectiveScrollBG(void){
     // INC_A;
     // LD_BC(0x31);
     // CALL(aByteFill);
-    ByteFill(&wram->wLYOverrides[0x5f], 0x31, wram->wLYOverrides[0x5f] + 2);
+    ByteFill(&gGFX.LYOverrides[0x5f], 0x31, gGFX.LYOverrides[0x5f] + 2);
     // LD_A_addr(wLYOverrides + 0);
     // LDH_addr_A(hSCX);
-    hram.hSCX = wram->wLYOverrides[0];
+    hram.hSCX = gGFX.LYOverrides[0];
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;

@@ -20,28 +20,25 @@ static void CelebiShrineEvent_RestorePlayerSprite_DespawnLeaves(void){
     // LD_HL(wVirtualOAMSprite00TileID);
     struct SpriteOAM* hl = wram->wVirtualOAMSprite;
     // XOR_A_A;
-    uint8_t a = 0;
     // LD_C(4);
-    uint8_t c = 4;
 
-    do {
+    for(uint8_t i = 0; i < 4; ++i) {
     // OAMloop:
         // LD_hli_A;  // tile id
-        hl->tileID = a;
+        hl->tileID = i;
         // for(int rept = 0; rept < SPRITEOAMSTRUCT_LENGTH - 1; rept++){
         // INC_HL;
         // }
         hl++;
         // INC_A;
-        a++;
         // DEC_C;
         // IF_NZ goto OAMloop;
-    } while(--c != 0);
+    }
     // LD_HL(wVirtualOAMSprite04);
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite04);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite) - 4 * sizeof(wram->wVirtualOAMSprite[0]), 0x0);
+    ByteFill(wram->wVirtualOAMSprite + 0x4, sizeof(wram->wVirtualOAMSprite) - 4 * sizeof(wram->wVirtualOAMSprite[0]), 0x0);
     // RET;
 }
 
