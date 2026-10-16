@@ -1123,26 +1123,26 @@ void Function17abcf(void){
     // LD_DE(wBGPals1);
     // LD_BC(6 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, Palette_17ac55, 6 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, Palette_17ac55, 6 * PALETTE_SIZE);
 
     // LD_HL(mPalette_17ac95);
     // LD_DE(wOBPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOBPals1, Palette_17ac95, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1, Palette_17ac95, 8 * PALETTE_SIZE);
 
     // LD_HL(mPalette_17b4b5);
     // LD_DE(wOBPals1 + PALETTE_SIZE * 1);
     // LD_BC(2 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * 1, Palette_17b4b5, 2 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1 + NUM_PAL_COLORS * 1, Palette_17b4b5, 2 * PALETTE_SIZE);
 
     // LD_HL(mMapObjectPals + PALETTE_SIZE * 1);
     // LD_DE(wOBPals1 + PALETTE_SIZE * 3);
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(aMapObjectPals));
     // CALL(aFarCopyBytes);
-    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * 3, MapObjectPals + PALETTE_SIZE * 1, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1 + NUM_PAL_COLORS * 3, MapObjectPals + NUM_PAL_COLORS * 1, 1 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -1215,7 +1215,7 @@ void Function17ac46(tile_t* hl, uint8_t b, uint8_t c){
     }
 }
 
-const uint16_t Palette_17ac55[] = {
+const color_t Palette_17ac55[] = {
     rgb(0, 0, 0),
     rgb(9, 10, 25),
     rgb(16, 19, 31),
@@ -1257,7 +1257,7 @@ const uint16_t Palette_17ac55[] = {
     rgb(0, 0, 0),
 };
 
-const uint16_t Palette_17ac95[] = {
+const color_t Palette_17ac95[] = {
     rgb(31, 31, 31),
     rgb(4, 3, 3),
     rgb(31, 13, 0),
@@ -1304,7 +1304,7 @@ const char DialpadAttrmap[] = "gfx/mobile/dialpad.attrmap";
 const char DialpadGFX[] = "gfx/mobile/dialpad.png";
 const char DialpadCursorGFX[] = "gfx/mobile/dialpad_cursor.png";
 
-const uint16_t Palette_17b4b5[] = {
+const color_t Palette_17b4b5[] = {
     rgb(2, 6, 10),
     rgb(24, 30, 29),
 };

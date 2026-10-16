@@ -110,7 +110,7 @@ void Function11cfce(const uint8_t* de);
 void Function11d035(const uint8_t* de);
 void AnimateEZChatCursor(struct SpriteAnim* bc);
 void Function11d323(void);
-extern const uint16_t Palette_11d33a[];
+extern const color_t Palette_11d33a[];
 void EZChat_GetSeenPokemonByKana(void);
 void EZChat_GetCategoryWordsByKana(void);
 extern const char SelectStartGFX[];

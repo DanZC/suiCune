@@ -114,7 +114,7 @@ void Function17c000(void){
     // LD_DE(wBGPals1);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, HaveWantPals, 16 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, HaveWantPals, 16 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -155,7 +155,7 @@ const char MobileSelectGFX[] = "gfx/mobile/select.png";
 const char HaveWantMap[] = "gfx/mobile/havewant_map.bin"; //  Interleaved tile/palette map.
 
 //  BG and OBJ palettes.
-const uint16_t HaveWantPals[] = {
+const color_t HaveWantPals[] = {
     rgb( 0,  0,  0),
     rgb(21, 21, 21),
     rgb( 0,  0,  0),
@@ -1049,7 +1049,7 @@ void Function17d405(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    LoadPaletteAssetColorsToBuffer(wram->wBGPals1, 8 * PALETTE_SIZE, PokemonNewsPalettes, 0, 8 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToBuffer(gGFX.bgPals1, 8 * PALETTE_SIZE, PokemonNewsPalettes, 0, 8 * NUM_PAL_COLORS);
     // CALL(aSetPalettes);
     SetPalettes();
     // POP_AF;
@@ -1447,7 +1447,7 @@ void Function17d5f6(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, wram->wc608, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, wram->wc608, 8 * PALETTE_SIZE);
     // LD_A(0x4);
     // LDH_addr_A(rSVBK);
     // RET;
@@ -2746,7 +2746,7 @@ void Function17dcaf(void){
     // LD_A(0x5);
     // LDH_addr_A(rSVBK);
     // LD_HL(wBGPals1);
-    uint8_t* hl = wram->wBGPals1;
+    color_t* hl = gGFX.bgPals1;
     // LD_DE(1 * PALETTE_SIZE);
     // LD_C(8);
     uint8_t c = 8;
@@ -2756,13 +2756,12 @@ void Function17dcaf(void){
         // PUSH_HL;
         // LD_A(0xff);
         // LD_hli_A;
-        hl[0] = 0xff;
         // LD_A(0x7f);
         // LD_hl_A;
-        hl[1] = 0xff;
+        *hl = PALRGB_WHITE;
         // POP_HL;
         // ADD_HL_DE;
-        hl += PALETTE_SIZE;
+        hl += NUM_PAL_COLORS;
         // DEC_C;
         // IF_NZ goto asm_17dcbb;
     } while(--c != 0);

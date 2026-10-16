@@ -86,7 +86,7 @@ void LoadSGBLayoutCGB(uint8_t b){
 void v_CGB_BattleGrayscale(void){
     // LD_HL(mPalPacket_BattleGrayscale + 1);
     // LD_DE(wBGPals1);
-    uint16_t* de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wBGPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
+    color_t* de = gGFX.bgPals1;
     // LD_C(4);
     // CALL(aCopyPalettes);
     CopyPalettes(de, (const uint8_t*)PalPacket_BattleGrayscale.colors, 4);
@@ -99,27 +99,26 @@ void v_CGB_BattleGrayscale(void){
     // LD_DE(wOBPals1);
     // LD_C(2);
     // CALL(aCopyPalettes);
-    uint16_t* de2 = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wOBPals1)); // Won't let me take pointer of packed wOBPals1, so I'm doing this ugly shit instead.
+    color_t* de2 = gGFX.obPals1;
     CopyPalettes(de2, (const uint8_t*)PalPacket_BattleGrayscale.colors, 4);
     // JR(mv_CGB_FinishBattleScreenLayout);
     return v_CGB_FinishBattleScreenLayout();
 }
 
 void v_CGB_BattleColors(void){
-    uint16_t palbuf[6 * NUM_PAL_COLORS];
-    uint16_t palbuf2[6 * NUM_PAL_COLORS];
-    uint16_t palbuf3[6 * NUM_PAL_COLORS];
+    color_t palbuf[6 * NUM_PAL_COLORS];
+    color_t palbuf2[6 * NUM_PAL_COLORS];
+    color_t palbuf3[6 * NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
     // CALL(aGetBattlemonBackpicPalettePointer);
-    uint16_t* de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wBGPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
-                                                                                    // Look what you made me do clang... Shame on you.
-    uint16_t* hl = GetBattlemonBackpicPalettePointer(palbuf);
+    color_t* de = gGFX.bgPals1;
+    color_t* hl = GetBattlemonBackpicPalettePointer(palbuf);
     // PUSH_HL;
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_BG_PLAYER
     de = LoadPalette_White_Col1_Col2_Black(de, hl);
     // CALL(aGetEnemyFrontpicPalettePointer);
     // PUSH_HL;
-    uint16_t* hl2 = GetEnemyFrontpicPalettePointer(palbuf2);
+    color_t* hl2 = GetEnemyFrontpicPalettePointer(palbuf2);
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_BG_ENEMY
     de = LoadPalette_White_Col1_Col2_Black(de, hl2);
     // LD_A_addr(wEnemyHPPal);
@@ -147,8 +146,7 @@ void v_CGB_BattleColors(void){
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_BG_EXP
     de = LoadPalette_White_Col1_Col2_Black(de, palbuf3);
     // LD_DE(wOBPals1);
-    de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wOBPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
-                                                                          // Look what you made me do clang... Shame on you.
+    de = gGFX.obPals1;
     // POP_HL;
     // CALL(aLoadPalette_White_Col1_Col2_Black);  // PAL_BATTLE_OB_ENEMY
     de = LoadPalette_White_Col1_Col2_Black(de, hl2);
@@ -206,7 +204,7 @@ void v_CGB_FinishBattleScreenLayout(void){
     // LD_BC(6 * PALETTE_SIZE);
     // LD_A(MBANK(awOBPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, BattleObjectPals, 6 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1 + NUM_PAL_COLORS * PAL_BATTLE_OB_GRAY, BattleObjectPals, 6 * PALETTE_SIZE);
     // CALL(aApplyAttrmap);
     ApplyAttrmap();
     // RET;
@@ -234,7 +232,7 @@ void Mobile_InitPartyMenuBGPal7(bool isMobile){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(((uint8_t*)wram + offsetof(struct wram_s, wBGPals1) + PALETTE_SIZE * 7), palbuf, 1 * PALETTE_SIZE);
+    CopyBytes((gGFX.bgPals1 + NUM_PAL_COLORS * 7), palbuf, 1 * PALETTE_SIZE);
     // RET;
 }
 
@@ -256,7 +254,7 @@ void InitPartyMenuBGPal0(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 0, palbuf, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * 0, palbuf, 1 * PALETTE_SIZE);
     // RET;
 }
 
@@ -280,7 +278,7 @@ void v_CGB_PokegearPals(void){
     // LD_BC(6 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, palbuf, 6 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, palbuf, 6 * PALETTE_SIZE);
     // CALL(aApplyPals);
     ApplyPals();
     // LD_A(TRUE);
@@ -292,8 +290,7 @@ void v_CGB_PokegearPals(void){
 void v_CGB_StatsScreenHPPals(void){
     uint16_t palbuf[3 * NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
-    uint16_t* de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wBGPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
-                                                                                    // Look what you made me do clang... Shame on you.
+    color_t* de = gGFX.bgPals1;
     // LD_A_addr(wCurHPPal);
     // LD_L_A;
     // LD_H(0);
@@ -320,7 +317,7 @@ void v_CGB_StatsScreenHPPals(void){
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
     LoadPaletteAssetColorsToArray(palbuf, StatsScreenPagePals, 0, 3 * NUM_PAL_COLORS);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 3, palbuf, 3 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * 3, palbuf, 3 * PALETTE_SIZE);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
 
@@ -381,9 +378,9 @@ const char StatsScreenPagePals[] = "gfx/stats/pages.pal";
 const char StatsScreenPals[] = "gfx/stats/stats.pal";
 
 void v_CGB_Pokedex(void){
-    uint16_t palbuf[4 * NUM_PAL_COLORS];
+    color_t palbuf[4 * NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
-    uint16_t* de = (uint16_t*)wram->wBGPals1;
+    color_t* de = gGFX.bgPals1;
     // LD_A(PREDEFPAL_POKEDEX);
     // CALL(aGetPredefPal);
     // CALL(aLoadHLPaletteIntoDE);  // dex interface palette
@@ -426,7 +423,7 @@ void v_CGB_Pokedex(void){
     // LD_A(MBANK(awOBPals1));
     // CALL(aFarCopyWRAM);
     LoadPaletteAssetColorsToArray(palbuf, PokedexCursorPalette, 0, NUM_PAL_COLORS);
-    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * 7, palbuf, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1 + NUM_PAL_COLORS * 7, palbuf, 1 * PALETTE_SIZE);
     // CALL(aApplyAttrmap);
     ApplyAttrmap();
     // CALL(aApplyPals);
@@ -454,9 +451,9 @@ const char PokedexQuestionMarkPalette[] = "gfx/pokedex/question_mark.pal";
 const char PokedexCursorPalette[] = "gfx/pokedex/cursor.pal";
 
 void v_CGB_BillsPC(void){
-    uint16_t buffer[NUM_PAL_COLORS];
+    color_t buffer[NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
-    uint16_t* de = (uint16_t*)wram_ptr(wBGPals1);
+    color_t* de = gGFX.bgPals1;
     // LD_A(PREDEFPAL_POKEDEX);
     // CALL(aGetPredefPal);
     // CALL(aLoadHLPaletteIntoDE);
@@ -529,7 +526,7 @@ GotPalette:
 
 }
 
-const uint16_t BillsPCOrangePalette[] = {
+const color_t BillsPCOrangePalette[] = {
 // INCLUDE "gfx/pc/orange.pal"
     rgb(31, 15,  0),
     rgb(23, 12,  0),
@@ -538,9 +535,9 @@ const uint16_t BillsPCOrangePalette[] = {
 };
 
 void v_CGB_PokedexUnownMode(void){
-    uint16_t buffer[NUM_PAL_COLORS];
+    color_t buffer[NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
-    uint16_t* de = (uint16_t*)wram_ptr(wBGPals1);
+    color_t* de = gGFX.bgPals1;
     // LD_A(PREDEFPAL_POKEDEX);
     // CALL(aGetPredefPal);
     // CALL(aLoadHLPaletteIntoDE);
@@ -577,7 +574,7 @@ void v_CGB_SlotMachine(void){
     // LD_BC(16 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    LoadPaletteAssetColorsToArray(wram->wBGPals1, SlotMachinePals, 0, 16 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToArray(gGFX.bgPals1, SlotMachinePals, 0, 16 * NUM_PAL_COLORS);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // hlcoord(0, 2, wAttrmap);
@@ -730,7 +727,7 @@ void v_CGB_BetaPoker(void){
     // LD_BC(5 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    LoadPaletteAssetColorsToArray(wram->wBGPals1, BetaPokerPals, 0, 5 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToArray(gGFX.bgPals1, BetaPokerPals, 0, 5 * NUM_PAL_COLORS);
     // CALL(aApplyPals);
     ApplyPals();
     // CALL(aWipeAttrmap);
@@ -747,8 +744,8 @@ void v_CGB_Diploma(void){
     // LD_BC(16 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    LoadPaletteAssetColorsToArray(wram->wBGPals1, DiplomaPalettes, 0, 8 * NUM_PAL_COLORS);
-    LoadPaletteAssetColorsToArray(wram->wOBPals1, PartyMenuOBPals, 0, 8 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToArray(gGFX.bgPals1, DiplomaPalettes, 0, 8 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToArray(gGFX.obPals1, PartyMenuOBPals, 0, 8 * NUM_PAL_COLORS);
 
     // LD_HL(mPalPacket_Diploma + 1);
     // CALL(aCopyFourPalettes);
@@ -785,7 +782,7 @@ void v_CGB_PartyMenu(void){
 }
 
 void v_CGB_Evolution(void){
-    uint16_t dest[NUM_PAL_COLORS];
+    color_t dest[NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
     uint8_t c = 0;
     // LD_A_C;
@@ -796,12 +793,12 @@ void v_CGB_Evolution(void){
         // LD_A(PREDEFPAL_BLACKOUT);
         // CALL(aGetPredefPal);
         // CALL(aLoadHLPaletteIntoDE);
-        LoadHLPaletteIntoDE(wram->wBGPals1, GetPredefPal(PREDEFPAL_BLACKOUT));
+        LoadHLPaletteIntoDE(gGFX.bgPals1, GetPredefPal(PREDEFPAL_BLACKOUT));
         // goto got_palette;
     }
     else {
     // pokemon:
-        uint16_t* de = (uint16_t*)wram_ptr(wBGPals1);
+        color_t* de = gGFX.bgPals1;
         // LD_HL(wPartyMon1DVs);
         // LD_BC(PARTYMON_STRUCT_LENGTH);
         // LD_A_addr(wCurPartyMon);
@@ -817,7 +814,7 @@ void v_CGB_Evolution(void){
         // LD_BC(6 * PALETTE_SIZE);
         // LD_A(MBANK(awOBPals1));
         // CALL(aFarCopyWRAM);
-        CopyBytes(wram->wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, BattleObjectPals, 6 * PALETTE_SIZE);
+        CopyBytes(gGFX.obPals1 + NUM_PAL_COLORS * PAL_BATTLE_OB_GRAY, BattleObjectPals, 6 * PALETTE_SIZE);
     }
 
 // got_palette:
@@ -842,7 +839,7 @@ void v_CGB_Evolution2(void){
     // LD_A(PREDEFPAL_BLACKOUT);
     // CALL(aGetPredefPal);
     // CALL(aLoadHLPaletteIntoDE);
-    LoadHLPaletteIntoDE(wram->wBGPals1, GetPredefPal(PREDEFPAL_BLACKOUT));
+    LoadHLPaletteIntoDE(gGFX.bgPals1, GetPredefPal(PREDEFPAL_BLACKOUT));
     // goto got_palette;
 
 // got_palette:
@@ -896,7 +893,7 @@ void v_CGB_UnownPuzzle(void){
     // LD_A(PREDEFPAL_UNOWN_PUZZLE);
     // CALL(aGetPredefPal);
     // CALL(aLoadHLPaletteIntoDE);
-    LoadHLPaletteIntoDE(wram->wOBPals1, GetPredefPal(PREDEFPAL_UNOWN_PUZZLE));
+    LoadHLPaletteIntoDE(gGFX.obPals1, GetPredefPal(PREDEFPAL_UNOWN_PUZZLE));
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awOBPals1));
@@ -904,10 +901,9 @@ void v_CGB_UnownPuzzle(void){
     // LD_HL(wOBPals1);
     // LD_A(LOW((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0));  // (1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0
     // LD_hli_A;
-    wram->wOBPals1[0] = LOW((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0);
+    gGFX.obPals1[0] = rgb(31, 0, 0);
     // LD_A(HIGH((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0));  // (1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0
     // LD_hl_A;
-    wram->wOBPals1[1] = LOW((1 << 0) * 31 + (1 << 5) * 0 + (1 << 10) * 0);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aWipeAttrmap);
@@ -918,9 +914,9 @@ void v_CGB_UnownPuzzle(void){
 }
 
 void v_CGB_TrainerCard(void){
-    uint16_t palbuf[6 * NUM_PAL_COLORS];
+    color_t palbuf[6 * NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
-    uint16_t* de = (uint16_t*)((uint8_t*)wram + offsetof(struct wram_s, wBGPals1)); // Won't let me take pointer of packed wBGPals1, so I'm doing this ugly shit instead.
+    color_t* de = gGFX.bgPals1;
     // XOR_A_A;  // CHRIS
     // CALL(aGetTrainerPalettePointer);
     // CALL(aLoadPalette_White_Col1_Col2_Black);
@@ -1057,7 +1053,7 @@ void v_CGB_TrainerCard(void){
 
 void v_CGB_MoveList(void){
     // LD_DE(wBGPals1);
-    uint16_t* de = (uint16_t*)wram_ptr(wBGPals1);
+    color_t* de = gGFX.bgPals1;
     // LD_A(PREDEFPAL_GOLDENROD);
     // CALL(aGetPredefPal);
     // CALL(aLoadHLPaletteIntoDE);
@@ -1108,7 +1104,7 @@ void v_CGB_PokedexSearchOption(void){
     // CALL(aGetPredefPal);
     const uint16_t* hl = GetPredefPal(PREDEFPAL_POKEDEX);
     // CALL(aLoadHLPaletteIntoDE);
-    LoadHLPaletteIntoDE(wram->wBGPals1, hl);
+    LoadHLPaletteIntoDE(gGFX.bgPals1, hl);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // CALL(aApplyAttrmap);
@@ -1216,7 +1212,7 @@ static const uint16_t KrisPackPals[] = {
     // LD_BC(8 * PALETTE_SIZE);  // 6 palettes?
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, pals, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, pals, 8 * PALETTE_SIZE);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // hlcoord(0, 0, wAttrmap);
@@ -1314,21 +1310,21 @@ void v_CGB_MagnetTrain(void){
 
 void v_CGB_GamefreakLogo(void){
     static const char GamefreakDittoPalette[] = "gfx/splash/ditto.pal";
-    uint16_t palBuf[NUM_PAL_COLORS];
+    color_t palBuf[NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
     // LD_A(PREDEFPAL_GAMEFREAK_LOGO_BG);
     // CALL(aGetPredefPal);
     // CALL(aLoadHLPaletteIntoDE);
-    LoadHLPaletteIntoDE(wram->wBGPals1, GetPredefPal(PREDEFPAL_GAMEFREAK_LOGO_BG));
+    LoadHLPaletteIntoDE(gGFX.bgPals1, GetPredefPal(PREDEFPAL_GAMEFREAK_LOGO_BG));
     // LD_HL(mv_CGB_GamefreakLogo_GamefreakDittoPalette);
     // LD_DE(wOBPals1);
     // CALL(aLoadHLPaletteIntoDE);
     LoadPaletteAssetToArray(palBuf, GamefreakDittoPalette, 1);
-    LoadHLPaletteIntoDE(wram->wOBPals1, palBuf);
+    LoadHLPaletteIntoDE(gGFX.obPals1, palBuf);
     // LD_HL(mv_CGB_GamefreakLogo_GamefreakDittoPalette);
     // LD_DE(wOBPals1 + PALETTE_SIZE * 1);
     // CALL(aLoadHLPaletteIntoDE);
-    LoadHLPaletteIntoDE(wram->wOBPals1 + PALETTE_SIZE * 1, palBuf);
+    LoadHLPaletteIntoDE(gGFX.obPals1 + NUM_PAL_COLORS * 1, palBuf);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // CALL(aApplyAttrmap);
@@ -1339,14 +1335,14 @@ void v_CGB_GamefreakLogo(void){
 }
 
 void v_CGB_PlayerOrMonFrontpicPals(void){
-    uint16_t buffer[NUM_PAL_COLORS];
+    color_t buffer[NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
     // LD_A_addr(wCurPartySpecies);
     // LD_BC(wTempMonDVs);
     // CALL(aGetPlayerOrMonPalettePointer);
-    uint16_t* pal = GetPlayerOrMonPalettePointer(buffer, wram->wCurPartySpecies, wram->wTempMon.mon.DVs);
+    color_t* pal = GetPlayerOrMonPalettePointer(buffer, wram->wCurPartySpecies, wram->wTempMon.mon.DVs);
     // CALL(aLoadPalette_White_Col1_Col2_Black);
-    LoadPalette_White_Col1_Col2_Black((uint16_t*)wram_ptr(wBGPals1), pal);
+    LoadPalette_White_Col1_Col2_Black(gGFX.bgPals1, pal);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // CALL(aApplyAttrmap);
@@ -1358,12 +1354,12 @@ void v_CGB_PlayerOrMonFrontpicPals(void){
 }
 
 void v_CGB_Unused1E(void){
-    static const uint16_t grayscalePal[] = { rgb(31,31,31), rgb(25,25,25), rgb(11,11,11), rgb( 0, 0, 0)};
+    static const color_t grayscalePal[] = { rgb(31,31,31), rgb(25,25,25), rgb(11,11,11), rgb( 0, 0, 0)};
     // LD_DE(wBGPals1);
     // LD_A_addr(wCurPartySpecies);
     // CALL(aGetMonPalettePointer);
     // CALL(aLoadPalette_White_Col1_Col2_Black);
-    LoadHLPaletteIntoDE(wram->wBGPals1, grayscalePal);
+    LoadHLPaletteIntoDE(gGFX.bgPals1, grayscalePal);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // CALL(aApplyAttrmap);
@@ -1373,7 +1369,7 @@ void v_CGB_Unused1E(void){
 }
 
 void v_CGB_TradeTube(void){
-    uint16_t buffer[NUM_PAL_COLORS];
+    color_t buffer[NUM_PAL_COLORS];
     // LD_HL(mPalPacket_TradeTube + 1);
     // CALL(aCopyFourPalettes);
     CopyFourPalettes((const uint8_t*)PalPacket_TradeTube.colors);
@@ -1383,27 +1379,27 @@ void v_CGB_TradeTube(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(MBANK(awOBPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wOBPals1, buffer, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1, buffer, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals1 + PALETTE_SIZE * 7);
     // LD_A(PREDEFPAL_TRADE_TUBE);
     // CALL(aGetPredefPal);
-    const uint16_t* hl = GetPredefPal(PREDEFPAL_TRADE_TUBE);
+    const color_t* hl = GetPredefPal(PREDEFPAL_TRADE_TUBE);
     // CALL(aLoadHLPaletteIntoDE);
-    LoadHLPaletteIntoDE(wram->wOBPals1 + PALETTE_SIZE * 7, hl);
+    LoadHLPaletteIntoDE(gGFX.obPals1 + NUM_PAL_COLORS * 7, hl);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // RET;
 }
 
 void v_CGB_TrainerOrMonFrontpicPals(void){
-    uint16_t buffer[NUM_PAL_COLORS];
+    color_t buffer[NUM_PAL_COLORS];
     // LD_DE(wBGPals1);
     // LD_A_addr(wCurPartySpecies);
     // LD_BC(wTempMonDVs);
     // CALL(aGetFrontpicPalettePointer);
-    uint16_t* pal = GetFrontpicPalettePointer(buffer, wram->wCurPartySpecies, wram->wTempMon.mon.DVs);
+    color_t* pal = GetFrontpicPalettePointer(buffer, wram->wCurPartySpecies, wram->wTempMon.mon.DVs);
     // CALL(aLoadPalette_White_Col1_Col2_Black);
-    LoadPalette_White_Col1_Col2_Black((uint16_t*)wram_ptr(wBGPals1), pal);
+    LoadPalette_White_Col1_Col2_Black(gGFX.bgPals1, pal);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // CALL(aApplyAttrmap);
@@ -1430,7 +1426,7 @@ void v_CGB_MysteryGift(void){
     // LD_BC(2 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, MysteryGiftPalettes, 2 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, MysteryGiftPalettes, 2 * PALETTE_SIZE);
     // CALL(aApplyPals);
     ApplyPals();
     // CALL(aWipeAttrmap);

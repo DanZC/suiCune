@@ -1,17 +1,17 @@
 bool LoadSpecialMapPalette(void);
 void LoadPokeComPalette(void);
-extern const uint16_t PokeComPalette[];
+extern const color_t PokeComPalette[];
 void LoadBattleTowerInsidePalette(void);
-extern const uint16_t BattleTowerInsidePalette[];
+extern const color_t BattleTowerInsidePalette[];
 void LoadIcePathPalette(void);
-extern const uint16_t IcePathPalette[];
+extern const color_t IcePathPalette[];
 void LoadHousePalette(void);
-extern const uint16_t HousePalette[];
+extern const color_t HousePalette[];
 void LoadRadioTowerPalette(void);
-extern const uint16_t RadioTowerPalette[];
-extern const uint16_t MansionPalette1[];
+extern const color_t RadioTowerPalette[];
+extern const color_t MansionPalette1[];
 void LoadMansionPalette(void);
-extern const uint16_t MansionPalette2[];
+extern const color_t MansionPalette2[];
 //#include "gfx/tilesets/pokecom_center.pal"
 //#include "gfx/tilesets/battle_tower_inside.pal"
 //#include "gfx/tilesets/ice_path.pal"

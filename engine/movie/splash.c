@@ -20,7 +20,7 @@
 // Ditto's color as it turns into the Game Freak logo.
 // Fade from pink to orange.
 // One color per step.
-const uint16_t GameFreakDittoPaletteFade[] = {
+const color_t GameFreakDittoPaletteFade[] = {
     rgb(23, 12, 28),
     rgb(23, 12, 27),
     rgb(23, 13, 26),
@@ -492,7 +492,7 @@ void GameFreakLogo_Transform(struct SpriteAnim* bc){
     // LD_E_A;
     // LD_D(0);
     // LD_HL(mGameFreakDittoPaletteFade);
-    uint16_t color = GameFreakDittoPaletteFade[(a >> 2) & 0xf];
+    color_t color = GameFreakDittoPaletteFade[(a >> 2) & 0xf];
     // ADD_HL_DE;
     // ADD_HL_DE;
     // LDH_A_addr(rSVBK);
@@ -503,7 +503,7 @@ void GameFreakLogo_Transform(struct SpriteAnim* bc){
     // LD_addr_A(wOBPals2 + 12);
     // LD_A_hli;
     // LD_addr_A(wOBPals2 + 13);
-    *(uint16_t*)(wram->wOBPals2 + 12) = color;
+    gGFX.obPals2[6] = color;
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);

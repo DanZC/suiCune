@@ -80,11 +80,11 @@ void LoadPokeComPalette(void){
     // LD_HL(mPokeComPalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, PokeComPalette, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, PokeComPalette, 8 * PALETTE_SIZE);
     // RET;
 }
 
-const uint16_t PokeComPalette[] = {
+const color_t PokeComPalette[] = {
 // INCLUDE "gfx/tilesets/pokecom_center.pal"
 // gray
 	rgb(30, 28, 26),
@@ -134,12 +134,12 @@ void LoadBattleTowerInsidePalette(void){
     // LD_HL(mBattleTowerInsidePalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, BattleTowerInsidePalette, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, BattleTowerInsidePalette, 8 * PALETTE_SIZE);
     // RET;
 
 }
 
-const uint16_t BattleTowerInsidePalette[] = {
+const color_t BattleTowerInsidePalette[] = {
 // INCLUDE "gfx/tilesets/battle_tower_inside.pal"
 // gray
     rgb(30, 28, 26),
@@ -189,12 +189,12 @@ void LoadIcePathPalette(void){
     // LD_HL(mIcePathPalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, IcePathPalette, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, IcePathPalette, 8 * PALETTE_SIZE);
     // RET;
 
 }
 
-const uint16_t IcePathPalette[] = {
+const color_t IcePathPalette[] = {
 // INCLUDE "gfx/tilesets/ice_path.pal"
 // gray
 	rgb(15, 14, 24),
@@ -244,12 +244,12 @@ void LoadHousePalette(void){
     // LD_HL(mHousePalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, HousePalette, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, HousePalette, 8 * PALETTE_SIZE);
     // RET;
 
 }
 
-const uint16_t HousePalette[] = {
+const color_t HousePalette[] = {
 // INCLUDE "gfx/tilesets/house.pal"
 // gray
     rgb(30, 28, 26),
@@ -299,12 +299,12 @@ void LoadRadioTowerPalette(void){
     // LD_HL(mRadioTowerPalette);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, RadioTowerPalette, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, RadioTowerPalette, 8 * PALETTE_SIZE);
     // RET;
 
 }
 
-const uint16_t RadioTowerPalette[] = {
+const color_t RadioTowerPalette[] = {
 // INCLUDE "gfx/tilesets/radio_tower.pal"
     rgb(27, 31, 27),
     rgb(21, 21, 21),
@@ -347,7 +347,7 @@ const uint16_t RadioTowerPalette[] = {
     rgb( 0,  0,  0),
 };
 
-const uint16_t MansionPalette1[] = {
+const color_t MansionPalette1[] = {
 // INCLUDE "gfx/tilesets/mansion_1.pal"
     rgb(30, 28, 26),
     rgb(19, 19, 19),
@@ -401,30 +401,30 @@ void LoadMansionPalette(void){
     // LD_HL(mMansionPalette1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, MansionPalette1, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, MansionPalette1, 8 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_YELLOW);
     // LD_HL(mMansionPalette2);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_YELLOW, MansionPalette2, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_YELLOW, MansionPalette2, 1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_WATER);
     // LD_HL(mMansionPalette1 + PALETTE_SIZE * 6);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_WATER, MansionPalette1 + NUM_PAL_COLORS * 6, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_WATER, MansionPalette1 + NUM_PAL_COLORS * 6, 1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF);
     // LD_HL(mMansionPalette1 + PALETTE_SIZE * 8);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF, MansionPalette1 + NUM_PAL_COLORS * 8, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_ROOF, MansionPalette1 + NUM_PAL_COLORS * 8, 1 * PALETTE_SIZE);
     // RET;
 
 }
 
-const uint16_t MansionPalette2[] = {
+const color_t MansionPalette2[] = {
 // INCLUDE "gfx/tilesets/mansion_2.pal"
     rgb(25, 24, 23),
     rgb(20, 19, 19),

@@ -1843,18 +1843,18 @@ check_wramx_field(w3_de00, 3);
 // bank 4
 // bank 5
 // section GBC Video
-check_wramx_field(wBGPals1, 5);
-check_wramx_field(wOBPals1, 5);
-check_wramx_field(wBGPals2, 5);
-check_wramx_field(wOBPals2, 5);
-check_wramx_field(wLYOverrides, 5);
-check_wramx_field(wLYOverridesEnd, 5);
-check_wramx_field(wMagnetTrainDirection, 5);
-check_wramx_field(wMagnetTrainInitPosition, 5);
-check_wramx_field(wMagnetTrainHoldPosition, 5);
-check_wramx_field(wMagnetTrainFinalPosition, 5);
-check_wramx_field(wMagnetTrainPlayerSpriteInitX, 5);
-check_wramx_field(wLYOverridesBackup, 5);
+// check_wramx_field(wBGPals1, 5);
+// check_wramx_field(wOBPals1, 5);
+// check_wramx_field(wBGPals2, 5);
+// check_wramx_field(wOBPals2, 5);
+// check_wramx_field(wLYOverrides, 5);
+// check_wramx_field(wLYOverridesEnd, 5);
+// check_wramx_field(wMagnetTrainDirection, 5);
+// check_wramx_field(wMagnetTrainInitPosition, 5);
+// check_wramx_field(wMagnetTrainHoldPosition, 5);
+// check_wramx_field(wMagnetTrainFinalPosition, 5);
+// check_wramx_field(wMagnetTrainPlayerSpriteInitX, 5);
+// check_wramx_field(wLYOverridesBackup, 5);
 // section Battle Animations
 check_wramx_field(wBattleAnimTileDict, 5);
 check_wramx_field_mapped(wAnimObject, 5, wAnimObject1);

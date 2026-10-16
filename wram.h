@@ -3481,7 +3481,7 @@ struct wram_s
                 uint8_t skip_144[106];
                 uint8_t wLYOverridesBackup[SCREEN_HEIGHT_PX];
                 //void wLYOverridesBackupEnd
-            };
+            } _gbc_video;
             uint8_t section_pad_2[112]; // Padding for GBC Video
             // Battle Animations
             struct {

@@ -15,7 +15,7 @@ static void LoadPoisonBGPals_LoadPals(void) {
         // LD_A(BANK(wBGPals2));
         // LDH_addr_A(rSVBK);
         // LD_HL(wBGPals2);
-        uint16_t* hl = (uint16_t*)wram_ptr(wBGPals2);
+        color_t* hl = gGFX.bgPals2;
         // LD_C(4 * PALETTE_SIZE);
         uint8_t c = 4 * NUM_PAL_COLORS;
 
@@ -25,7 +25,7 @@ static void LoadPoisonBGPals_LoadPals(void) {
             // LD_hli_A;
             // LD_A(HIGH((1 << 0) * 28 + (1 << 5) * 21 + (1 << 10) * 31));
             // LD_hli_A;
-            *(hl++) = (1 << 0) * 28 + (1 << 5) * 21 + (1 << 10) * 31;
+            *(hl++) = rgb(28, 21, 31);
             // DEC_C;
             // IF_NZ goto loop;
         } while(--c != 0);

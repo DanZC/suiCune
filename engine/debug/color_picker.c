@@ -355,7 +355,7 @@ static void DebugColor_InitPalettes(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     LoadPaletteAssetColorsToArray(
-        wram->wBGPals2,
+        gGFX.bgPals2,
         Palette_DebugBG,
         0, 16 * NUM_PAL_COLORS
     );
@@ -742,7 +742,7 @@ static void DebugColor_UpdatePalettes(void){
         // LD_DE(wDebugMiddleColors);
         // LD_C(1);
         // CALL(aDebugColor_LoadPalettes_White_Col1_Col2_Black);
-        DebugColor_LoadPalettes_White_Col1_Col2_Black(wram->wBGPals2, wram->wDebugMiddleColors, 1);
+        DebugColor_LoadPalettes_White_Col1_Col2_Black(gGFX.bgPals2, wram->wDebugMiddleColors, 1);
 
         // hlcoord(10, 2, wTilemap);
         // LD_DE(wDebugLightColor);
@@ -1697,7 +1697,7 @@ static void DebugTileset_LoadPalettes(void){
     // LD_DE(wDebugPalette);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wDebugPalette, wram->wBGPals1 + (wram->wDebugTilesetCurPalette * PALETTE_SIZE), PALETTE_SIZE);
+    CopyBytes(wram->wDebugPalette, gGFX.bgPals1 + (wram->wDebugTilesetCurPalette * NUM_PAL_COLORS), PALETTE_SIZE);
     // LD_DE(wDebugPalette);
     // CALL(aDebugColor_CalculateRGB);
     DebugColor_CalculateRGB(wram->wDebugPalette);
@@ -1755,7 +1755,7 @@ static void DebugColorMain2(void){
         // LD_DE(wDebugPalette);
         // LD_BC(1 * PALETTE_SIZE);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wDebugPalette, wram->wBGPals2 + (wram->wDebugTilesetCurPalette * PALETTE_SIZE), PALETTE_SIZE);
+        CopyBytes(wram->wDebugPalette, gGFX.bgPals2 + (wram->wDebugTilesetCurPalette * NUM_PAL_COLORS), PALETTE_SIZE);
 
         // POP_AF;
         // LDH_addr_A(rSVBK);
@@ -1811,7 +1811,7 @@ static void DebugTileset_UpdatePalettes(void){
     // LD_HL(wDebugPalette);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals2 + (wram->wDebugTilesetCurPalette * PALETTE_SIZE), wram->wDebugPalette, PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals2 + (wram->wDebugTilesetCurPalette * NUM_PAL_COLORS), wram->wDebugPalette, PALETTE_SIZE);
 
     // hlcoord(1, 0, wTilemap);
     // LD_DE(wDebugWhiteTileColor);

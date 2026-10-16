@@ -5999,13 +5999,13 @@ void Function11d323(void){
     // LD_DE(wBGPals1);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, Palette_11d33a, 16 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, Palette_11d33a, 16 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
 }
 
-const uint16_t Palette_11d33a[] = {
+const color_t Palette_11d33a[] = {
     rgb(31, 31, 31),
     rgb(00, 00, 00),
     rgb(00, 00, 00),

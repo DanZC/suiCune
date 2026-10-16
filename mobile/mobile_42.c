@@ -651,7 +651,7 @@ void Function1082db(void){
     // RET;
 }
 
-void Function1082f0(uint16_t* hl, uint8_t c){
+void Function1082f0(color_t* hl, uint8_t c){
     do {
     // loop:
         // CALL(aFunction108b78);
@@ -664,7 +664,7 @@ void Function1082f0(uint16_t* hl, uint8_t c){
     // RET;
 }
 
-void Function1082fa(uint16_t* hl, uint8_t c){
+void Function1082fa(color_t* hl, uint8_t c){
     do {
     // loop:
         // CALL(aFunction108b78);
@@ -1233,7 +1233,7 @@ void MobileTradeAnim_02(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    LoadPaletteAssetColorsToBuffer(wram->wBGPals1, 8 * PALETTE_SIZE, MobileTradeBGPalettes, 0, 8 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToBuffer(gGFX.bgPals1, 8 * PALETTE_SIZE, MobileTradeBGPalettes, 0, 8 * NUM_PAL_COLORS);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aLoadMobileAdapterPalette);
@@ -1299,7 +1299,7 @@ void MobileTradeAnim_10(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    LoadPaletteAssetColorsToBuffer(wram->wBGPals1, 8 * PALETTE_SIZE, MobileTradeBGPalettes, 0, 8 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToBuffer(gGFX.bgPals1, 8 * PALETTE_SIZE, MobileTradeBGPalettes, 0, 8 * NUM_PAL_COLORS);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aLoadMobileAdapterPalette);
@@ -1361,7 +1361,7 @@ void MobileTradeAnim_11(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    LoadPaletteAssetColorsToBuffer(wram->wBGPals1, 8 * PALETTE_SIZE, MobileTradeBGPalettes, 0, 8 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToBuffer(gGFX.bgPals1, 8 * PALETTE_SIZE, MobileTradeBGPalettes, 0, 8 * NUM_PAL_COLORS);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aLoadMobileAdapterPalette);
@@ -1388,7 +1388,7 @@ void MobileTradeAnim_GiveTrademon1(void){
     // LD_C(40);
     // LD_HL(wBGPals2 + PALETTE_SIZE * 6);
     // CALL(aFunction1082f0);
-    Function1082f0((uint16_t*)(wram->wBGPals2 + PALETTE_SIZE * 6), 40);
+    Function1082f0(gGFX.bgPals2 + NUM_PAL_COLORS * 6, 40);
     // CALL(aFunction108af4);
     Function108af4();
 
@@ -1476,7 +1476,7 @@ void MobileTradeAnim_GiveTrademon2(void){
     // LD_C(40);
     // LD_HL(wBGPals2 + 1 * PALETTE_SIZE);
     // CALL(aFunction1082f0);
-    Function1082f0((uint16_t*)(wram->wBGPals2 + PALETTE_SIZE * 1), 40);
+    Function1082f0(gGFX.bgPals2 + NUM_PAL_COLORS * 1, 40);
     // CALL(aFunction108af4);
     Function108af4();
     // CALL(aFunction108b5a);
@@ -1615,14 +1615,14 @@ void MobileTradeAnim_GetTrademon2(void){
     // LD_C(20);
     // LD_HL(wBGPals2 + 1 * PALETTE_SIZE);
     // CALL(aFunction1082fa);
-    Function1082fa((uint16_t*)(wram->wBGPals2 + 1 * PALETTE_SIZE), 20);
+    Function1082fa(gGFX.bgPals2 + 1 * NUM_PAL_COLORS, 20);
     // LD_DE(SFX_GIVE_TRADEMON);
     // CALL(aPlaySFX);
     PlaySFX(SFX_GIVE_TRADEMON);
     // LD_C(20);
     // LD_HL(wBGPals2 + 1 * PALETTE_SIZE);
     // CALL(aFunction1082fa);
-    Function1082fa((uint16_t*)(wram->wBGPals2 + 1 * PALETTE_SIZE), 20);
+    Function1082fa(gGFX.bgPals2 + 1 * NUM_PAL_COLORS, 20);
     // CALL(aFunction108af4);
     Function108af4();
 
@@ -1708,7 +1708,7 @@ void MobileTradeAnim_GetTrademon2(void){
 void MobileTradeAnim_GetTrademon3(void){
     // LD_C(40);
     // LD_HL(wBGPals2 + PALETTE_SIZE * 6);
-    uint16_t* hl = (uint16_t*)(wram->wBGPals2 + PALETTE_SIZE * 6);
+    color_t* hl = gGFX.bgPals2 + NUM_PAL_COLORS * 6;
     // CALL(aFunction1082f0);
     Function1082f0(hl, 40);
     // CALL(aFunction108af4);
@@ -2073,12 +2073,12 @@ void Function108af4(void){
         // LD_DE(wOBPals1);
         // LD_BC(8 * PALETTE_SIZE);
         // CALL(aCopyBytes);
-        LoadPaletteAssetColorsToBuffer(wram->wOBPals1, 8 * PALETTE_SIZE, MobileTradeOB2Palettes, 0, 8 * NUM_PAL_COLORS);
+        LoadPaletteAssetColorsToBuffer(gGFX.obPals1, 8 * PALETTE_SIZE, MobileTradeOB2Palettes, 0, 8 * NUM_PAL_COLORS);
         // LD_HL(mMobileTradeOB2Palettes);
         // LD_DE(wOBPals2);
         // LD_BC(8 * PALETTE_SIZE);
         // CALL(aCopyBytes);
-        LoadPaletteAssetColorsToBuffer(wram->wOBPals2, 8 * PALETTE_SIZE, MobileTradeOB2Palettes, 0, 8 * NUM_PAL_COLORS);
+        LoadPaletteAssetColorsToBuffer(gGFX.obPals2, 8 * PALETTE_SIZE, MobileTradeOB2Palettes, 0, 8 * NUM_PAL_COLORS);
         // goto done_copy;
     }
     else {
@@ -2087,12 +2087,12 @@ void Function108af4(void){
         // LD_DE(wOBPals1);
         // LD_BC(8 * PALETTE_SIZE);
         // CALL(aCopyBytes);
-        LoadPaletteAssetColorsToBuffer(wram->wOBPals1, 8 * PALETTE_SIZE, MobileTradeOB1Palettes, 0, 8 * NUM_PAL_COLORS);
+        LoadPaletteAssetColorsToBuffer(gGFX.obPals1, 8 * PALETTE_SIZE, MobileTradeOB1Palettes, 0, 8 * NUM_PAL_COLORS);
         // LD_HL(mMobileTradeOB1Palettes);
         // LD_DE(wOBPals2);
         // LD_BC(8 * PALETTE_SIZE);
         // CALL(aCopyBytes);
-        LoadPaletteAssetColorsToBuffer(wram->wOBPals2, 8 * PALETTE_SIZE, MobileTradeOB1Palettes, 0, 8 * NUM_PAL_COLORS);
+        LoadPaletteAssetColorsToBuffer(gGFX.obPals2, 8 * PALETTE_SIZE, MobileTradeOB1Palettes, 0, 8 * NUM_PAL_COLORS);
     }
 
 // done_copy:
@@ -2118,10 +2118,9 @@ void Function108b45(void){
     // LD_HL(wBGPals1);
     // LD_A_E;
     // LD_hli_A;
-    wram->wBGPals1[0] = LOW(PALRGB_WHITE);
     // LD_D_A; // Shouldn't this be ld a, d
     // LD_hli_A;
-    wram->wBGPals1[1] = HIGH(PALRGB_WHITE);
+    gGFX.bgPals1[0] = PALRGB_WHITE;
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -2133,9 +2132,9 @@ void Function108b5a(void){
     // LD_A(0x5);
     // LDH_addr_A(rSVBK);
     // LD_DE((1 << 0) * 18 + (1 << 5) * 31 + (1 << 10) * 15);
-    uint16_t de = (1 << 0) * 18 + (1 << 5) * 31 + (1 << 10) * 15;
+    color_t de = rgb(18, 31, 15);
     // LD_HL(wBGPals2 + 4 * PALETTE_SIZE);
-    uint8_t* hl = wram->wBGPals2 + 4 * PALETTE_SIZE;
+    color_t* hl = gGFX.bgPals2 + 4 * NUM_PAL_COLORS;
     // LD_C(0x10);
     uint8_t c = 0x10;
 
@@ -2143,10 +2142,9 @@ void Function108b5a(void){
     // loop:
         // LD_A_E;
         // LD_hli_A;
-        *(hl++) = LOW(de);
         // LD_A_D;
         // LD_hli_A;
-        *(hl++) = HIGH(de);
+        *(hl++) = de;
         // DEC_C;
         // IF_NZ goto loop;
     } while(--c != 0);
@@ -2158,7 +2156,7 @@ void Function108b5a(void){
     // RET;
 }
 
-void Function108b78(uint16_t* hl, uint8_t c){
+void Function108b78(color_t* hl, uint8_t c){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x5);
@@ -2166,11 +2164,11 @@ void Function108b78(uint16_t* hl, uint8_t c){
     // LD_A_C;
     // AND_A(0x2);
     // IF_Z goto Orange;
-    uint16_t de;
+    color_t de;
     if((c & 0x2) == 0) {
     // Orange:
         // LD_DE((1 << 0) * 31 + (1 << 5) * 15 + (1 << 10) * 1);
-        de = (1 << 0) * 31 + (1 << 5) * 15 + (1 << 10) * 1;
+        de = rgb(31, 15, 1);
     }
     else {
         // LD_DE(PALRGB_WHITE);
@@ -2509,7 +2507,7 @@ void LoadMobileAdapterPalette(void){
     // LD_DE(wBGPals1 + 4 * PALETTE_SIZE);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1 + 4 * PALETTE_SIZE,
+    CopyBytes(gGFX.bgPals1 + 4 * NUM_PAL_COLORS,
         MobileAdapterPalettes + a * PALETTE_SIZE,
         1 * PALETTE_SIZE);
     // RET;
@@ -2530,7 +2528,7 @@ const char MobileTradeOB1Palettes[] = "gfx/mobile/mobile_trade_ob1.pal";
 const char MobileTradeOB2Palettes[] = "gfx/mobile/mobile_trade_ob2.pal";
 const char MobileCable1GFX[] = "gfx/mobile/mobile_cable_1.png";
 const char MobileCable2GFX[] = "gfx/mobile/mobile_cable_2.png";
-const uint16_t MobileAdapterPalettes[] = {
+const color_t MobileAdapterPalettes[] = {
     rgb(18,31,15), rgb( 4,13,31), rgb( 0, 0,31), rgb( 0, 0, 0), // blue
 	rgb(18,31,15), rgb(31,31, 0), rgb(31,15, 0), rgb( 0, 0, 0), // yellow
 	rgb(18,31,15), rgb( 9,24, 0), rgb( 2,16, 0), rgb( 0, 0, 0), // green

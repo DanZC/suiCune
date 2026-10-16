@@ -641,12 +641,12 @@ void Function116294(void){
     // LD_DE(wc320);
     // LD_BC(2 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wc320, wram->wBGPals1 + PALETTE_SIZE * 6, 2 * PALETTE_SIZE);
+    CopyBytes(wram->wc320, gGFX.bgPals1 + NUM_PAL_COLORS * 6, 2 * PALETTE_SIZE);
     // LD_HL(mPichuBorderMobileBGPalettes);
     // LD_DE(wBGPals1 + PALETTE_SIZE * 7);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    LoadPaletteAssetToBuffer(wram->wBGPals1 + PALETTE_SIZE * 7, 1 * PALETTE_SIZE, PichuBorderMobileBGPalettes, 1 * NUM_PAL_COLORS);
+    LoadPaletteAssetToBuffer(gGFX.bgPals1 + NUM_PAL_COLORS * 7, 1 * PALETTE_SIZE, PichuBorderMobileBGPalettes, 1 * NUM_PAL_COLORS);
     // CALL(aSetPalettes);
     SetPalettes();
     // POP_AF;
@@ -672,7 +672,7 @@ void Function1162cb(void){
     // LD_DE(wOBPals1 + 2 * PALETTE_SIZE);
     // LD_BC(6 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    LoadPaletteAssetToBuffer(wram->wOBPals1 + 2 * PALETTE_SIZE, 6 * PALETTE_SIZE, PichuBorderMobileOBPalettes, 6 * NUM_PAL_COLORS);
+    LoadPaletteAssetToBuffer(gGFX.obPals1 + 2 * NUM_PAL_COLORS, 6 * PALETTE_SIZE, PichuBorderMobileOBPalettes, 6 * NUM_PAL_COLORS);
     // CALL(aSetPalettes);
     SetPalettes();
     // POP_AF;
@@ -811,7 +811,7 @@ void Function11636e(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, wram->wBGPals2, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, gGFX.bgPals2, 8 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aSetPalettes);
@@ -875,7 +875,7 @@ void Function1163c0(void){
     // LD_DE(wd030);
     // LD_BC(0x0010);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1 + 6 * PALETTE_SIZE, wram->wc320, 2 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + 6 * NUM_PAL_COLORS, wram->wc320, 2 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aSetPalettes);

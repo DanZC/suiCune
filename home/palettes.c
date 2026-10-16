@@ -41,7 +41,7 @@ bool ForceUpdateCGBPals(void){
     // LDH_addr_A(rSVBK);
 
     // LD_HL(wBGPals2);
-    uint8_t* hl = wram->wBGPals2;
+    color_t* hl = gGFX.bgPals2;
 
 //  copy 8 pals to bgpd
     // LD_A(1 << rBGPI_AUTO_INCREMENT);
@@ -53,10 +53,12 @@ bool ForceUpdateCGBPals(void){
     uint8_t b = 8 / 2;
 
     do {
-        for(int rept = 0; rept < (1 * PALETTE_SIZE) * 2; rept++){
+        for(int rept = 0; rept < (1 * PALETTE_SIZE); rept++){
+            color_t c = *(hl++);
             // LD_A_hli;
             // LDH_c_A;
-            gb_write(rBGPD, *(hl++));
+            gb_write(rBGPD, LOW(c));
+            gb_write(rBGPD, HIGH(c));
         }
 
         // DEC_B;
@@ -64,7 +66,7 @@ bool ForceUpdateCGBPals(void){
     } while(--b != 0);
 
 //  hl is now wOBPals2
-    hl = wram->wOBPals2;
+    hl = gGFX.obPals2;
 
 //  copy 8 pals to obpd
     // LD_A(1 << rOBPI_AUTO_INCREMENT);
@@ -75,10 +77,12 @@ bool ForceUpdateCGBPals(void){
     b = 8 / 2;
 
     do {
-        for(int rept = 0; rept < (1 * PALETTE_SIZE) * 2; rept++){
+        for(int rept = 0; rept < (1 * PALETTE_SIZE); rept++){
+            color_t c = *(hl++);
             // LD_A_hli;
             // LDH_c_A;
-            gb_write(rOBPD, *(hl++));
+            gb_write(rOBPD, LOW(c));
+            gb_write(rOBPD, HIGH(c));
         }
 
     // DEC_B;
@@ -124,7 +128,7 @@ void DmgToCgbBGPals(uint8_t a){
 //  all pals
     // LD_C(8);
     // CALL(aCopyPals);
-    CopyPals(wram->wBGPals2, wram->wBGPals1, gb_read(rBGP), 8);
+    CopyPals(gGFX.bgPals2, gGFX.bgPals1, gb_read(rBGP), 8);
 //  request pal update
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
@@ -169,7 +173,7 @@ void DmgToCgbObjPals(uint8_t d, uint8_t e){
 //  all pals
     // LD_C(8);
     // CALL(aCopyPals);
-    CopyPals(wram->wOBPals2, wram->wOBPals1, gb_read(rOBP0), 8);
+    CopyPals(gGFX.obPals2, gGFX.obPals1, gb_read(rOBP0), 8);
 //  request pal update
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
@@ -210,7 +214,7 @@ void DmgToCgbObjPal0(uint8_t a){
     // LD_B_A;
     // LD_C(1);
     // CALL(aCopyPals);
-    CopyPals(wram->wOBPals2 + PALETTE_SIZE * 0, wram->wOBPals1 + PALETTE_SIZE * 0, gb_read(rOBP0), 1);
+    CopyPals(gGFX.obPals2 + NUM_PAL_COLORS * 0, gGFX.obPals1 + NUM_PAL_COLORS * 0, gb_read(rOBP0), 1);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram.hCGBPalUpdate = TRUE;
@@ -253,7 +257,7 @@ void DmgToCgbObjPal1(uint8_t a){
     // LD_B_A;
     // LD_C(1);
     // CALL(aCopyPals);
-    CopyPals(wram->wOBPals2 + PALETTE_SIZE * 1, wram->wOBPals1 + PALETTE_SIZE * 1, gb_read(rOBP1), 1);
+    CopyPals(gGFX.obPals2 + NUM_PAL_COLORS * 1, gGFX.obPals1 + NUM_PAL_COLORS * 1, gb_read(rOBP1), 1);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram.hCGBPalUpdate = TRUE;
@@ -435,7 +439,7 @@ void ReloadSpritesNoPalettes(void){
     // LD_BC((8 * PALETTE_SIZE) + (2 * PALETTE_SIZE));
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wBGPals2, (8 * PALETTE_SIZE) + (2 * PALETTE_SIZE), 0);
+    ByteFill(gGFX.bgPals2, (8 * PALETTE_SIZE) + (2 * PALETTE_SIZE), 0);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);

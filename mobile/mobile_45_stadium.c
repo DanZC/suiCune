@@ -1130,7 +1130,7 @@ void Function117c4a(void){
     // LD_A(0x5);
     // LDH_addr_A(rSVBK);
     // LD_HL(wBGPals1);
-    uint8_t* hl = wram->wBGPals1;
+    color_t* hl = gGFX.bgPals1;
     // LD_DE(1 * PALETTE_SIZE);
     // LD_C(8);
     uint8_t c = 8;
@@ -1140,13 +1140,12 @@ void Function117c4a(void){
         // PUSH_HL;
         // LD_A(LOW(PALRGB_WHITE));
         // LD_hli_A;
-        hl[0] = LOW(PALRGB_WHITE);
         // LD_A(HIGH(PALRGB_WHITE));
         // LD_hl_A;
-        hl[1] = HIGH(PALRGB_WHITE);
+        *hl = PALRGB_WHITE;
         // POP_HL;
         // ADD_HL_DE;
-        hl += PALETTE_SIZE;
+        hl += NUM_PAL_COLORS;
         // DEC_C;
         // IF_NZ goto loop;
     } while(--c != 0);

@@ -711,7 +711,7 @@ static void DebugMenu_Pics_DoAnim(species_t sp) {
     GetAnimatedFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00, 0);
     LoadMonAnimation(coord(2, 4, wram->wTilemap), 0x0, ANIM_MON_MENU);
     GetPlayerOrMonPalettePointer(palbuf, wram->wCurSpecies, wram->wTempMon.mon.DVs);
-    LoadPalette_White_Col1_Col2_Black((uint16_t*)wram->wBGPals1 + 4, palbuf);
+    LoadPalette_White_Col1_Col2_Black(gGFX.bgPals1 + NUM_PAL_COLORS, palbuf);
     SetPalettes();
 
     while(!SetUpPokeAnim()) {

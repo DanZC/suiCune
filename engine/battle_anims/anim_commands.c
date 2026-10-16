@@ -2051,9 +2051,9 @@ void ClearBattleAnims(void){
     // LD_HL(wLYOverrides);
     ByteFill(gGFX.LYOverrides, sizeof(gGFX.LYOverrides), 0);
     ByteFill(gGFX.LYOverridesBackup, sizeof(gGFX.LYOverridesBackup), 0);
-    uint8_t* hl = wram->wLYOverrides;
+    uint8_t* hl = wram->wBattleAnimTileDict;
     // LD_BC(wBattleAnimEnd - wLYOverrides);
-    uint16_t bc = wBattleAnimEnd - wLYOverrides;
+    uint16_t bc = wBattleAnimEnd - wBattleAnimTileDict;
 
     do {
     // loop:
@@ -2129,14 +2129,14 @@ void BattleAnim_SetBGPals(uint8_t bgp){
     // LD_B_A;
     // LD_C(7);
     // CALL(aCopyPals);
-    CopyPals(wram->wBGPals2, wram->wBGPals1, gb_read(rBGP), 7);
+    CopyPals(gGFX.bgPals2, gGFX.bgPals1, gb_read(rBGP), 7);
     // LD_HL(wOBPals2);
     // LD_DE(wOBPals1);
     // LDH_A_addr(rBGP);
     // LD_B_A;
     // LD_C(2);
     // CALL(aCopyPals);
-    CopyPals(wram->wOBPals2, wram->wOBPals1, gb_read(rBGP), 2);
+    CopyPals(gGFX.obPals2, gGFX.obPals1, gb_read(rBGP), 2);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);
@@ -2163,7 +2163,7 @@ void BattleAnim_SetOBPals(uint8_t obp0){
     // LD_B_A;
     // LD_C(2);
     // CALL(aCopyPals);
-    CopyPals(wram->wOBPals2 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, wram->wOBPals1 + PALETTE_SIZE * PAL_BATTLE_OB_GRAY, gb_read(rOBP0), 2);
+    CopyPals(gGFX.obPals2 + NUM_PAL_COLORS * PAL_BATTLE_OB_GRAY, gGFX.obPals1 + NUM_PAL_COLORS * PAL_BATTLE_OB_GRAY, gb_read(rOBP0), 2);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A(TRUE);

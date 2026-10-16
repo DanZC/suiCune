@@ -511,7 +511,7 @@ void Function1030cd(struct SpriteOAM *);
 extern const uint8_t Unknown_103112[];
 extern const struct SpriteOAM Unknown_10327a[];
 extern const char MobileTradeLightsGFX[];
-extern const uint16_t MobileTradeLightsPalettes[];
+extern const color_t MobileTradeLightsPalettes[];
 bool Function103302(void);
 void Function103309(void);
 bool Function103362(void);

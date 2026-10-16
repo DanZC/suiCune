@@ -12,7 +12,7 @@ void ParseCredits(void);
 void ConstructCreditsTilemap(void);
 void DrawCreditsBorder(tile_t* hl, uint8_t a);
 void GetCreditsPalette(void);
-extern const uint16_t CreditsPalettes[];
+extern const color_t CreditsPalettes[];
 uint8_t* Credits_LoadBorderGFX(void);
 void Credits_TheEnd(void);
 extern const char CreditsBorderGFX[];

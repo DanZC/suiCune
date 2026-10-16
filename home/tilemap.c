@@ -205,7 +205,7 @@ void ClearPalettes(void) {
         // LD_BC(16 * PALETTE_SIZE);
         // LD_A(0xff);
         // CALL(aByteFill);
-        ByteFill(wram->wBGPals2, (16 * PALETTE_SIZE), 0xff);
+        ByteFill(gGFX.bgPals2, (16 * PALETTE_SIZE), 0xff);
 
         // POP_AF;
         // LDH_addr_A(rSVBK);

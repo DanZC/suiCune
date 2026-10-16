@@ -131,7 +131,7 @@ void InitGenderScreen(void){
 }
 
 void LoadGenderScreenPal(void){
-    static const uint16_t Palette[] = {
+    static const color_t Palette[] = {
         rgb(31, 31, 31),
         rgb( 9, 30, 31),
         rgb( 1, 11, 31),
@@ -142,7 +142,7 @@ void LoadGenderScreenPal(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, Palette, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, Palette, 1 * PALETTE_SIZE);
     // FARCALL(aApplyPals);
     ApplyPals();
     // RET;

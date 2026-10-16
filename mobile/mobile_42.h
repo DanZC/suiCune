@@ -24,8 +24,8 @@ void GetMobileTradeAnimByte(void);
 void EndMobileTradeAnim(void);
 void WaitMobileTradeSpriteAnims(uint8_t c);
 void Function1082db(void);
-void Function1082f0(uint16_t* hl, uint8_t c);
-void Function1082fa(uint16_t* hl, uint8_t c);
+void Function1082f0(color_t* hl, uint8_t c);
+void Function1082fa(color_t* hl, uint8_t c);
 void MobileTradeAnim_ShowPlayerMonToBeSent(void);
 void MobileTradeAnim_ShowOTMonFromTrade(void);
 void MobileTradeAnim_ShowPlayerMonForGTS(void);
@@ -63,7 +63,7 @@ void Function108ad4(uint8_t a);
 void Function108af4(void);
 void Function108b45(void);
 void Function108b5a(void);
-void Function108b78(uint16_t* hl, uint8_t c);
+void Function108b78(color_t* hl, uint8_t c);
 void Palette_108b98(void);
 void Function108b98(void);
 void MobileTradeAnim_DeleteSprites(void);
@@ -87,7 +87,7 @@ extern const char MobileTradeOB1Palettes[];
 extern const char MobileTradeOB2Palettes[];
 extern const char MobileCable1GFX[];
 extern const char MobileCable2GFX[];
-extern const uint16_t MobileAdapterPalettes[];
+extern const color_t MobileAdapterPalettes[];
 //#include "gfx/mobile/mobile_trade_sprites.2bpp.lz"
 //#include "gfx/mobile/mobile_trade.2bpp.lz"
 //#include "gfx/mobile/mobile_trade.tilemap.lz"

@@ -2177,7 +2177,7 @@ void CardFlip_InitAttrPals(void){
     // LD_DE(wBGPals1);
     // LD_BC(9 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    LoadPaletteAssetColorsToArray(wram->wBGPals1, palettes, 0, 9 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToArray(gGFX.bgPals1, palettes, 0, 9 * NUM_PAL_COLORS);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;

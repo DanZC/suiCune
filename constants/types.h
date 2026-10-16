@@ -1748,7 +1748,7 @@ struct SpriteSeqData
 struct PalSet 
 {
     uint8_t set;
-    uint16_t colors[4];
+    color_t colors[4];
 };
 
 struct TileAnimFrame {

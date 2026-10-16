@@ -214,7 +214,7 @@ static void HealMachineAnim_LoadPalettes(void) {
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wOBPals2));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_TREE, buf, PALETTE_SIZE);
+    CopyBytes(gGFX.obPals2 + NUM_PAL_COLORS * PAL_OW_TREE, buf, PALETTE_SIZE);
     // LD_A(TRUE);
     // LDH_addr_A(hCGBPalUpdate);
     hram.hCGBPalUpdate = TRUE;
@@ -310,14 +310,13 @@ static void HealMachineAnim_FlashPalettes(void){
     // LDH_addr_A(rSVBK);
 
     // LD_HL(wOBPals2 + PALETTE_SIZE * PAL_OW_TREE);
-    uint8_t* hl = wram->wOBPals2 + PALETTE_SIZE * PAL_OW_TREE;
+    color_t* hl = gGFX.obPals2 + NUM_PAL_COLORS * PAL_OW_TREE;
     // LD_A_hli;
     // LD_E_A;
     // LD_A_hli;
     // LD_D_A;
     // PUSH_DE;
-    uint16_t de = (hl[0]) | (hl[1] << 8);
-    hl += 2;
+    color_t de = *(hl++);
     // LD_C(0x3);
     uint8_t c = 0x3;
 
@@ -325,21 +324,19 @@ static void HealMachineAnim_FlashPalettes(void){
     // palette_loop_2:
         // LD_A_hli;
         // LD_E_A;
-        uint8_t e = hl[0];
         // LD_A_hld;
         // LD_D_A;
-        uint8_t d = hl[1];
+        color_t temp = *(hl--);
         // DEC_HL;
         // LD_A_D;
         // LD_hld_A;
-        hl[-1] = d;
         // LD_A_E;
         // LD_hli_A;
-        hl[-2] = e;
+        *(hl++) = temp;
         // INC_HL;
         // INC_HL;
         // INC_HL;
-        hl += 2;
+        hl++;
         // DEC_C;
         // IF_NZ goto palette_loop_2;
     } while(--c != 0);
@@ -347,10 +344,9 @@ static void HealMachineAnim_FlashPalettes(void){
     // DEC_HL;
     // LD_A_D;
     // LD_hld_A;
-    hl[-1] = HIGH(de);
     // LD_A_E;
     // LD_hl_A;
-    hl[-2] = LOW(de);
+    *(--hl) = de;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

@@ -1032,14 +1032,13 @@ void Function171ccd(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, MobilePasswordPalettes, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, MobilePasswordPalettes, 8 * PALETTE_SIZE);
     // LD_HL(wOBPals1 + PALETTE_SIZE * 0 + PAL_COLOR_SIZE * 1);
     // LD_A(LOW(PALRGB_WHITE));
     // LD_hli_A;
-    wram->wOBPals1[PALETTE_SIZE * 0 + PAL_COLOR_SIZE * 1 + 0] = LOW(PALRGB_WHITE);
     // LD_A(HIGH(PALRGB_WHITE));
     // LD_hl_A;
-    wram->wOBPals1[PALETTE_SIZE * 0 + PAL_COLOR_SIZE * 1 + 1] = LOW(PALRGB_WHITE);
+    gGFX.obPals1[1] = PALRGB_WHITE;
     // CALL(aSetPalettes);
     SetPalettes();
     // POP_AF;
@@ -1227,12 +1226,12 @@ void Function172eb9(void){
     // LD_DE(wBGPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, Palette_172edf, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, Palette_172edf, 8 * PALETTE_SIZE);
     // LD_HL(mPalette_172edf);
     // LD_DE(wBGPals2);
     // LD_BC(8 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals2, Palette_172edf, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals2, Palette_172edf, 8 * PALETTE_SIZE);
     // CALL(aSetPalettes);
     SetPalettes();
     // POP_AF;
@@ -1240,7 +1239,7 @@ void Function172eb9(void){
     // RET;
 }
 
-const uint16_t Palette_172edf[] = {
+const color_t Palette_172edf[] = {
     rgb(5, 12, 17),
     rgb(31, 31, 31),
     rgb(18, 25, 28),

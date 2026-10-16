@@ -3356,7 +3356,7 @@ void Pokedex_BlackOutBG(void){
     // LD_BC(8 * PALETTE_SIZE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wBGPals1, 8 * PALETTE_SIZE, 0);
+    ByteFill(gGFX.bgPals1, 8 * PALETTE_SIZE, 0);
     // POP_AF;
     // LDH_addr_A(rSVBK);
 

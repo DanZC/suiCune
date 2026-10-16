@@ -121,7 +121,7 @@ void DoBattleTransition(void){
     // LD_BC(8 * PALETTE_SIZE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wBGPals1, 0, 8 * PALETTE_SIZE);
+    ByteFill(gGFX.bgPals1, 0, 8 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -876,24 +876,24 @@ static const uint8_t PokeBallTransition[] = {
 //popo
 };
 
-static void StartTrainerBattle_LoadPokeballGraphics_copypals(const uint16_t* hl) {
+static void StartTrainerBattle_LoadPokeballGraphics_copypals(const color_t* hl) {
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
     // LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals2 + NUM_PAL_COLORS * PAL_BG_TEXT, hl, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals1 + PALETTE_SIZE * PAL_OW_TREE);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1 + NUM_PAL_COLORS * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals2 + PALETTE_SIZE * PAL_OW_TREE);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals2 + NUM_PAL_COLORS * PAL_OW_TREE, hl, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals1 + PALETTE_SIZE * PAL_OW_ROCK);
     // CALL(aStartTrainerBattle_LoadPokeBallGraphics_copy);
-    CopyBytes(wram->wOBPals1 + PALETTE_SIZE * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1 + NUM_PAL_COLORS * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
     // LD_DE(wOBPals2 + PALETTE_SIZE * PAL_OW_ROCK);
-    CopyBytes(wram->wOBPals2 + PALETTE_SIZE * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals2 + NUM_PAL_COLORS * PAL_OW_ROCK, hl, 1 * PALETTE_SIZE);
 
 // copy:
     // PUSH_HL;
@@ -905,14 +905,14 @@ static void StartTrainerBattle_LoadPokeballGraphics_copypals(const uint16_t* hl)
 
 void StartTrainerBattle_LoadPokeBallGraphics(void){
     // INCLUDE "gfx/overworld/trainer_battle.pal"
-    static const uint16_t pals[] = {
+    static const color_t pals[] = {
         rgb(31, 18, 29),
         rgb(31, 11, 15),
         rgb(31, 05, 05),
         rgb(07, 07, 07),
     };
     // INCLUDE "gfx/overworld/trainer_battle_dark.pal"
-    static const uint16_t darkpals[] = {
+    static const color_t darkpals[] = {
         rgb(31, 18, 29),
         rgb(31, 05, 05),
         rgb(31, 05, 05),
@@ -1045,14 +1045,14 @@ void StartTrainerBattle_LoadPokeBallGraphics(void){
         if((gPlayer.timeOfDayPal & (NUM_DAYTIMES - 1)) == DARKNESS_F) {
             // LD_HL(mStartTrainerBattle_LoadPokeBallGraphics_darkpals);
             StartTrainerBattle_LoadPokeballGraphics_copypals(darkpals);
-            CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
-            CopyBytes(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
+            CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
+            CopyBytes(gGFX.bgPals2 + NUM_PAL_COLORS * PAL_BG_TEXT, darkpals, 1 * PALETTE_SIZE);
         }
     // not_dark:
         else {
             StartTrainerBattle_LoadPokeballGraphics_copypals(pals);
-            CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
-            CopyBytes(wram->wBGPals2 + PALETTE_SIZE * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
+            CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
+            CopyBytes(gGFX.bgPals2 + NUM_PAL_COLORS * PAL_BG_TEXT, pals, 1 * PALETTE_SIZE);
         }
         // LDH_A_addr(rSVBK);
         // PUSH_AF;

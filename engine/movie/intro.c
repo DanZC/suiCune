@@ -493,13 +493,13 @@ static void IntroScene1(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroUnownsPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToBuffer(wram->wBGPals1, sizeof(wram->wBGPals1), IntroUnownsPalette, 16);
+    LoadPaletteAssetToBuffer(gGFX.bgPals1, sizeof(gGFX.bgPals1), IntroUnownsPalette, 16);
     // LD_HL(mIntroUnownsPalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroUnownsPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToBuffer(wram->wBGPals2, sizeof(wram->wBGPals2), IntroUnownsPalette, 16);
+    LoadPaletteAssetToBuffer(gGFX.bgPals2, sizeof(gGFX.bgPals2), IntroUnownsPalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
 
@@ -608,13 +608,13 @@ static void IntroScene3(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals1, IntroBackgroundPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals1, IntroBackgroundPalette, 16);
     // LD_HL(mIntroBackgroundPalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals2, IntroBackgroundPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals2, IntroBackgroundPalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
 
@@ -716,13 +716,13 @@ static void IntroScene5(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroUnownsPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals1, IntroUnownsPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals1, IntroUnownsPalette, 16);
     // LD_HL(mIntroUnownsPalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroUnownsPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals2, IntroUnownsPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals2, IntroUnownsPalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // wbank_pop;
@@ -874,14 +874,14 @@ static void IntroScene7(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals1, IntroBackgroundPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals1, IntroBackgroundPalette, 16);
 
     // LD_HL(mIntroBackgroundPalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals2, IntroBackgroundPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals2, IntroBackgroundPalette, 16);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -1114,13 +1114,13 @@ static void IntroScene11(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroUnownsPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals1, IntroUnownsPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals1, IntroUnownsPalette, 16);
     // LD_HL(mIntroUnownsPalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroUnownsPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals2, IntroUnownsPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals2, IntroUnownsPalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // wbank_pop;
@@ -1311,13 +1311,13 @@ static void IntroScene13(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals1, IntroBackgroundPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals1, IntroBackgroundPalette, 16);
     // LD_HL(mIntroBackgroundPalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroBackgroundPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals2, IntroBackgroundPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals2, IntroBackgroundPalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // XOR_A_A;
@@ -1474,13 +1474,13 @@ static void IntroScene15(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroSuicunePalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals1, IntroSuicunePalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals1, IntroSuicunePalette, 16);
     // LD_HL(mIntroSuicunePalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroSuicunePalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals2, IntroSuicunePalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals2, IntroSuicunePalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // wbank_pop;
@@ -1594,13 +1594,13 @@ static void IntroScene17(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroSuicuneClosePalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals1, IntroSuicuneClosePalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals1, IntroSuicuneClosePalette, 16);
     // LD_HL(mIntroSuicuneClosePalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroSuicuneClosePalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals2, IntroSuicuneClosePalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals2, IntroSuicuneClosePalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // wbank_pop;
@@ -1712,13 +1712,13 @@ static void IntroScene19(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroSuicunePalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals1, IntroSuicunePalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals1, IntroSuicunePalette, 16);
     // LD_HL(mIntroSuicunePalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroSuicunePalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals2, IntroSuicunePalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals2, IntroSuicunePalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // wbank_pop;
@@ -1786,7 +1786,7 @@ static void Intro_Scene20_AppearUnown(uint8_t pal){
     // ADD_A_A;
     // ADD_A_A;
     // LD_C_A;
-    uint8_t c = (wram->wIntroSceneTimer & 0x7) << 3;
+    uint8_t c = (wram->wIntroSceneTimer & 0x7) << 2;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awBGPals2));
@@ -1805,7 +1805,7 @@ static void Intro_Scene20_AppearUnown(uint8_t pal){
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2 + c, hl, 1 * PALETTE_SIZE);
-    LoadPaletteAssetColorsToBuffer(wram->wBGPals2 + c, sizeof(wram->wBGPals2) - c, hl, 0, NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToBuffer(gGFX.bgPals2 + c, sizeof(gGFX.bgPals2) - (c * 2), hl, 0, NUM_PAL_COLORS);
     // POP_BC;
 
     // LD_DE(wBGPals1);
@@ -1819,7 +1819,7 @@ static void Intro_Scene20_AppearUnown(uint8_t pal){
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1 + c, hl, 1 * PALETTE_SIZE);
-    LoadPaletteAssetColorsToBuffer(wram->wBGPals1 + c, sizeof(wram->wBGPals2) - c, hl, 1 * NUM_PAL_COLORS, NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToBuffer(gGFX.bgPals1 + c, sizeof(gGFX.bgPals2) - (c * 2), hl, 1 * NUM_PAL_COLORS, NUM_PAL_COLORS);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -1998,14 +1998,14 @@ static void Intro_Scene24_ApplyPaletteFade(uint8_t a){
     // ADC_A_H;
     // LD_H_A;
     // uint16_t hl = mIntro_Scene24_ApplyPaletteFade_FadePals + a;
-    const uint16_t* hl = FadePals + (a >> 1);
+    const color_t* hl = FadePals + (a >> 1);
 
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(MBANK(awBGPals2));
     // LDH_addr_A(rSVBK);
     // LD_DE(wBGPals2);
-    uint16_t* de = (uint16_t*)wram_ptr(wBGPals2);
+    color_t* de = gGFX.bgPals2;
     // LD_B(8);  // number of BG pals
     uint8_t b = 8;  // number of BG pals
 
@@ -2134,13 +2134,13 @@ static void IntroScene26(void){
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals1, mIntroCrystalUnownsPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals1, IntroCrystalUnownsPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals1, IntroCrystalUnownsPalette, 16);
     // LD_HL(mIntroCrystalUnownsPalette);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
     // CopyBytes_GB(wBGPals2, mIntroCrystalUnownsPalette, 16 * PALETTE_SIZE);
-    LoadPaletteAssetToArray(wram->wBGPals2, IntroCrystalUnownsPalette, 16);
+    LoadPaletteAssetToArray(gGFX.bgPals2, IntroCrystalUnownsPalette, 16);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // wbank_pop;
@@ -2298,7 +2298,7 @@ static void CrystalIntro_UnownFade(uint8_t a){
     // for(int hue = 0; hue < 32; hue++){
     // //rgb ['hue', 'hue', 'hue']
     // }
-    static const uint16_t BWFade[] = { 
+    static const color_t BWFade[] = { 
         rgb(0x00,0x00,0x00), rgb(0x01,0x01,0x01), rgb(0x02,0x02,0x02), rgb(0x03,0x03,0x03),
         rgb(0x04,0x04,0x04), rgb(0x05,0x05,0x05), rgb(0x06,0x06,0x06), rgb(0x07,0x07,0x07),
         rgb(0x08,0x08,0x08), rgb(0x09,0x09,0x09), rgb(0x0a,0x0a,0x0a), rgb(0x0b,0x0b,0x0b),
@@ -2313,7 +2313,7 @@ static void CrystalIntro_UnownFade(uint8_t a){
     // for(int hue = 0; hue < 32; hue++){
     // //rgb ['0', 'hue / 2', 'hue']
     // }
-    static const uint16_t BlackLBlueFade[] = { 
+    static const color_t BlackLBlueFade[] = { 
         rgb(0x00,0x00,0x00), rgb(0x00,0x00,0x01), rgb(0x00,0x01,0x02), rgb(0x00,0x01,0x03),
         rgb(0x00,0x02,0x04), rgb(0x00,0x02,0x05), rgb(0x00,0x03,0x06), rgb(0x00,0x03,0x07),
         rgb(0x00,0x04,0x08), rgb(0x00,0x04,0x09), rgb(0x00,0x05,0x0a), rgb(0x00,0x05,0x0b),
@@ -2328,7 +2328,7 @@ static void CrystalIntro_UnownFade(uint8_t a){
     // for(int hue = 0; hue < 32; hue++){
     // //rgb ['0', '0', 'hue']
     // }
-    static const uint16_t BlackBlueFade[] = { 
+    static const color_t BlackBlueFade[] = { 
         rgb(0x00,0x00,0x00), rgb(0x00,0x00,0x01), rgb(0x00,0x00,0x02), rgb(0x00,0x00,0x03),
         rgb(0x00,0x00,0x04), rgb(0x00,0x00,0x05), rgb(0x00,0x00,0x06), rgb(0x00,0x00,0x07),
         rgb(0x00,0x00,0x08), rgb(0x00,0x00,0x09), rgb(0x00,0x00,0x0a), rgb(0x00,0x00,0x0b),
@@ -2348,7 +2348,7 @@ static void CrystalIntro_UnownFade(uint8_t a){
     // ADD_HL_DE;
     // INC_HL;
     // INC_HL;
-    uint8_t* hl = wram->wBGPals2 + (a << 3) + 2;
+    color_t* hl = gGFX.bgPals2 + (a << 2) + 1;
     // LD_A_addr(wIntroSceneTimer);
     // AND_A(0b111111);
     // CP_A(0b011111);
@@ -2378,11 +2378,11 @@ static void CrystalIntro_UnownFade(uint8_t a){
     // LD_BC(8 * PALETTE_SIZE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wBGPals2, 8 * PALETTE_SIZE, 0);
+    ByteFill(gGFX.bgPals2, 8 * PALETTE_SIZE, 0);
     // POP_BC;
     // POP_HL;
 
-    uint16_t de;
+    color_t de;
     // PUSH_HL;
     // LD_HL(mCrystalIntro_UnownFade_BWFade);
     // ADD_HL_BC;
@@ -2394,10 +2394,9 @@ static void CrystalIntro_UnownFade(uint8_t a){
     // POP_HL;
     // LD_A_E;
     // LD_hli_A;
-    *(hl++) = LOW(de);
     // LD_A_D;
     // LD_hli_A;
-    *(hl++) = HIGH(de);
+    *(hl++) = de;
 
     // PUSH_HL;
     // LD_HL(mCrystalIntro_UnownFade_BlackLBlueFade);
@@ -2411,10 +2410,9 @@ static void CrystalIntro_UnownFade(uint8_t a){
     // POP_HL;
     // LD_A_E;
     // LD_hli_A;
-    *(hl++) = LOW(de);
     // LD_A_D;
     // LD_hli_A;
-    *(hl++) = HIGH(de);
+    *(hl++) = de;
 
     // PUSH_HL;
     // LD_HL(mCrystalIntro_UnownFade_BlackBlueFade);
@@ -2428,10 +2426,9 @@ static void CrystalIntro_UnownFade(uint8_t a){
     // POP_HL;
     // LD_A_E;
     // LD_hli_A;
-    *(hl++) = LOW(de);
     // LD_A_D;
     // LD_hli_A;
-    *(hl++) = HIGH(de);
+    *(hl++) = de;
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -2451,7 +2448,7 @@ static void Intro_FadeUnownWordPals(uint8_t a){
 //     //rgb ['hue', 'hue', 'hue']
 // hue -= 2
 //     }
-    static const uint16_t FastFadePalettes[] = {
+    static const color_t FastFadePalettes[] = {
         rgb(31,31,31),rgb(30,30,30),
         rgb(28,28,28),rgb(27,27,27),
         rgb(25,25,25),rgb(24,24,24),
@@ -2467,7 +2464,7 @@ static void Intro_FadeUnownWordPals(uint8_t a){
 //     //rgb ['hue', 'hue', 'hue']
 // hue -= 1
 //     }
-    static const uint16_t SlowFadePalettes[] = {
+    static const color_t SlowFadePalettes[] = {
         rgb(31,31,31),rgb(30,30,30),
         rgb(29,29,29),rgb(28,28,28),
         rgb(27,27,27),rgb(26,26,26),
@@ -2487,7 +2484,7 @@ static void Intro_FadeUnownWordPals(uint8_t a){
     // for(int rept = 0; rept < 4; rept++){
     // INC_HL;
     // }
-    uint8_t* hl = wram->wBGPals2 + (a << 3) + 4;
+    color_t* hl = gGFX.bgPals2 + (a << 2) + 2;
     // uint16_t hl = wBGPals2 + (a << 3) + 4;
     // LD_A_addr(wIntroSceneTimer);
     // ADD_A_A;
@@ -2512,8 +2509,7 @@ static void Intro_FadeUnownWordPals(uint8_t a){
     // LD_hli_A;
     // LD_A_D;
     // LD_hli_A;
-    *(hl++) = LOW(FastFadePalettes[bc]);
-    *(hl++) = HIGH(FastFadePalettes[bc]);
+    *(hl++) = FastFadePalettes[bc];
     // gb_write16(hl, FastFadePalettes[bc]);
     // hl += 2;
 
@@ -2529,8 +2525,7 @@ static void Intro_FadeUnownWordPals(uint8_t a){
     // LD_A_D;
     // LD_hli_A;
     // gb_write16(hl, SlowFadePalettes[bc]);
-    *(hl++) = LOW(SlowFadePalettes[bc]);
-    *hl = HIGH(SlowFadePalettes[bc]);
+    *hl = SlowFadePalettes[bc];
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -2690,7 +2685,7 @@ static void Intro_ClearBGPals(void){
     // LD_BC(16 * PALETTE_SIZE);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wBGPals2, 16 * PALETTE_SIZE, 0);
+    ByteFill(gGFX.bgPals2, 16 * PALETTE_SIZE, 0);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

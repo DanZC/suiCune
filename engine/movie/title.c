@@ -11,7 +11,7 @@ static const char TitleSuicuneGFX[] = "gfx/title/suicune.png";
 static const char TitleLogoGFX[] = "gfx/title/logo.png";
 static const char TitleCrystalGFX[] = "gfx/title/crystal.png";
 
-static const uint16_t TitleScreenPalettes[] = {
+static const color_t TitleScreenPalettes[] = {
 // INCLUDE "gfx/title/title.pal"
 // BG
 	rgb( 0,  0,  0),
@@ -259,13 +259,13 @@ void v_TitleScreen(void){
     // LD_DE(wBGPals1);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, TitleScreenPalettes, 16 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, TitleScreenPalettes, 16 * PALETTE_SIZE);
 
     // LD_HL(mTitleScreenPalettes);
     // LD_DE(wBGPals2);
     // LD_BC(16 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals2, TitleScreenPalettes, 16 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals2, TitleScreenPalettes, 16 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);

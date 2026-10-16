@@ -249,7 +249,7 @@ static void MobileSystemSplashScreen_InitGFX_LoadPals(void) {
     // LD_HL(mMobileSplashScreenPalettes);
     // LD_BC(8);
     // LD_A(0x5);
-    LoadPaletteAssetToBuffer(wram->wBGPals1, sizeof(wram->wBGPals1) / sizeof(uint16_t), MobileSplashScreenPalettes, 2);
+    LoadPaletteAssetToBuffer(gGFX.bgPals1, lengthof(gGFX.bgPals1), MobileSplashScreenPalettes, 2);
     // CALL(aFarCopyWRAM);
     // FARCALL(aApplyPals);
     ApplyPals();
@@ -324,7 +324,7 @@ void MobileSystemSplashScreen_InitGFX(void){
 const char MobileSplashScreenPalettes[] = "gfx/mobile/mobile_splash.pal";
 
 bool Function16c943(void){
-    uint8_t buffer[128];
+    color_t buffer[128 / 2];
     // LD_A_addr(wd003);
     // AND_A_A;
     // IF_NZ goto asm_16c95e;
@@ -337,7 +337,7 @@ bool Function16c943(void){
         // LD_BC(1 * PALETTE_SIZE);
         // LD_HL(wBGPals1);
         // CALL(aByteFill);
-        ByteFill(wram->wBGPals1, 1 * PALETTE_SIZE, 0xff);
+        ByteFill(gGFX.bgPals1, 1 * PALETTE_SIZE, 0xff);
         // POP_AF;
         // LDH_addr_A(rSVBK);
     }
@@ -363,7 +363,7 @@ bool Function16c943(void){
         // LD_HL(wBGPals1);
         // CALL(aFunction16cab6);
         // CALL(aFunction16cabb);
-        a = Function16cabb(Function16cab6(wram->wBGPals1, e));
+        a = Function16cabb(Function16cab6(gGFX.bgPals1, e));
         // CP_A_D;
         // IF_Z goto asm_16c991;
         if(a != d) {
@@ -385,7 +385,7 @@ bool Function16c943(void){
             // LD_HL(wBGPals1);
             // CALL(aFunction16cab6);
             // CALL(aFunction16cadc);
-            Function16cadc(wram->wBGPals1 + e, a);
+            Function16cadc(gGFX.bgPals1 + e, a);
         }
 
     // asm_16c991:
@@ -397,7 +397,7 @@ bool Function16c943(void){
         // LD_HL(wBGPals1);
         // CALL(aFunction16cab6);
         // CALL(aFunction16cad8);
-        a = Function16cad8(Function16cab6(wram->wBGPals1, e));
+        a = Function16cad8(Function16cab6(gGFX.bgPals1, e));
         // CP_A_D;
         // IF_Z goto asm_16c9b9;
         if(a != d) {
@@ -419,7 +419,7 @@ bool Function16c943(void){
             // LD_HL(wBGPals1);
             // CALL(aFunction16cab6);
             // CALL(aFunction16cb08);
-            Function16cb08(wram->wBGPals1 + e, a);
+            Function16cb08(gGFX.bgPals1 + e, a);
         }
 
     // asm_16c9b9:
@@ -431,7 +431,7 @@ bool Function16c943(void){
         // LD_HL(wBGPals1);
         // CALL(aFunction16cab6);
         // CALL(aFunction16cac4);
-        a = Function16cac4(Function16cab6(wram->wBGPals1, e));
+        a = Function16cac4(Function16cab6(gGFX.bgPals1, e));
         // CP_A_D;
         // IF_Z goto asm_16c9e1;
         if(a != d) {
@@ -453,17 +453,17 @@ bool Function16c943(void){
             // LD_HL(wBGPals1);
             // CALL(aFunction16cab6);
             // CALL(aFunction16cae8);
-            Function16cae8(wram->wBGPals1 + e, a);
+            Function16cae8(gGFX.bgPals1 + e, a);
         }
 
     // asm_16c9e1:
         // INC_E;
         // INC_E;
-        e += 2;
+        e += 1;
         // LD_A_E;
         // CP_A(0x8);
         // IF_NZ goto asm_16c969;
-    } while(e != 0x8);
+    } while(e != NUM_PAL_COLORS);
     // FARCALL(aApplyPals);
     ApplyPals();
     // CALL(aSetPalettes);
@@ -520,7 +520,7 @@ bool Function16ca11(void){
         // LD_HL(wBGPals1);
         // CALL(aFunction16cab6);
         // CALL(aFunction16cabb);
-        a = Function16cabb(Function16cab6(wram->wBGPals1, e));
+        a = Function16cabb(Function16cab6(gGFX.bgPals1, e));
         // CP_A(0x1f);
         // IF_Z goto asm_16ca48;
         if(a != 0x1f) {
@@ -542,14 +542,14 @@ bool Function16ca11(void){
             // LD_HL(wBGPals1);
             // CALL(aFunction16cab6);
             // CALL(aFunction16cadc);
-            Function16cadc(wram->wBGPals1 + e, a);
+            Function16cadc(gGFX.bgPals1 + e, a);
         }
 
     // asm_16ca48:
         // LD_HL(wBGPals1);
         // CALL(aFunction16cab6);
         // CALL(aFunction16cad8);
-        a = Function16cad8(Function16cab6(wram->wBGPals1, e));
+        a = Function16cad8(Function16cab6(gGFX.bgPals1, e));
         // CP_A(0x1f);
         // IF_Z goto asm_16ca68;
         if(a != 0x1f) {
@@ -571,14 +571,14 @@ bool Function16ca11(void){
             // LD_HL(wBGPals1);
             // CALL(aFunction16cab6);
             // CALL(aFunction16cb08);
-            Function16cb08(wram->wBGPals1 + e, a);
+            Function16cb08(gGFX.bgPals1 + e, a);
         }
 
     // asm_16ca68:
         // LD_HL(wBGPals1);
         // CALL(aFunction16cab6);
         // CALL(aFunction16cac4);
-        a = Function16cac4(Function16cab6(wram->wBGPals1, e));
+        a = Function16cac4(Function16cab6(gGFX.bgPals1, e));
         // CP_A(0x1f);
         // IF_Z goto asm_16ca88;
         if(a != 0x1f) {
@@ -600,17 +600,17 @@ bool Function16ca11(void){
             // LD_HL(wBGPals1);
             // CALL(aFunction16cab6);
             // CALL(aFunction16cae8);
-            Function16cae8(wram->wBGPals1 + e, a);
+            Function16cae8(gGFX.bgPals1 + e, a);
         }
 
     // asm_16ca88:
         // INC_E;
         // INC_E;
-        e += 2;
+        e++;
         // LD_A_E;
         // CP_A(0x8);
         // IF_NZ goto asm_16ca28;
-    } while(e != 0x8);
+    } while(e != NUM_PAL_COLORS);
     // FARCALL(aApplyPals);
     ApplyPals();
     // CALL(aSetPalettes);
@@ -642,7 +642,7 @@ bool Function16ca11(void){
     return true;
 }
 
-const uint8_t* Function16cab6(const uint8_t* hl, uint8_t e){
+const color_t* Function16cab6(const color_t* hl, uint8_t e){
     // LD_B(0x0);
     // LD_C_E;
     // ADD_HL_BC;
@@ -650,22 +650,22 @@ const uint8_t* Function16cab6(const uint8_t* hl, uint8_t e){
     return hl + e;
 }
 
-uint8_t Function16cabb(const uint8_t* hl){
+uint8_t Function16cabb(const color_t* hl){
     // INC_HL;
     // LD_A_hl;
     // SRL_A;
     // SRL_A;
     // AND_A(0x1f);
     // RET;
-    return (hl[1] >> 2) & 0x1f;
+    return (HIGH(*hl) >> 2) & 0x1f;
 }
 
-uint8_t Function16cac4(const uint8_t* hl){
+uint8_t Function16cac4(const color_t* hl){
     // INC_HL;
     // LD_A_hld;
     // AND_A(0x3);
     // LD_B_A;
-    uint8_t b = hl[1] & 0x3;
+    uint8_t b = HIGH(*hl) & 0x3;
     // LD_A_hl;
     // SLA_A;
     // RL_B;
@@ -675,17 +675,17 @@ uint8_t Function16cac4(const uint8_t* hl){
     // RL_B;
     // LD_A_B;
     // RET;
-    return (b << 3) | (hl[0] >> 5);
+    return (b << 3) | (LOW(*hl) >> 5);
 }
 
-uint8_t Function16cad8(const uint8_t* hl){
+uint8_t Function16cad8(const color_t* hl){
     // LD_A_hl;
     // AND_A(0x1f);
     // RET;
     return *hl & 0x1f;
 }
 
-void Function16cadc(uint8_t* hl, uint8_t a){
+void Function16cadc(color_t* hl, uint8_t a){
     // SLA_A;
     // SLA_A;
     // LD_B_A;
@@ -694,11 +694,11 @@ void Function16cadc(uint8_t* hl, uint8_t a){
     // AND_A(0x83);
     // OR_A_B;
     // LD_hl_A;
-    hl[1] = (hl[1] & 0x83) | (a << 2);
+    *hl = (((HIGH(*hl) & 0x83) | (a << 2)) << 8) | LOW(*hl);
     // RET;
 }
 
-void Function16cae8(uint8_t* hl, uint8_t a){
+void Function16cae8(color_t* hl, uint8_t a){
     // LD_C_A;
     // SRL_A;
     // SRL_A;
@@ -709,7 +709,7 @@ void Function16cae8(uint8_t* hl, uint8_t a){
     // AND_A(0xfc);
     // OR_A_B;
     // LD_hld_A;
-    hl[1] = (hl[1] & 0xfc) | (a >> 3);
+    *hl = (((HIGH(*hl) & 0xfc) | (a >> 3)) << 8) | LOW(*hl);
     // LD_A_C;
     // SLA_A;
     // SLA_A;
@@ -721,17 +721,17 @@ void Function16cae8(uint8_t* hl, uint8_t a){
     // AND_A(0x1f);
     // OR_A_B;
     // LD_hl_A;
-    hl[0] = (hl[0] & 0x1f) | (a << 5);
+    *hl = (*hl & 0xff00) | ((*hl & 0x1f) | (a << 5));
     // RET;
 }
 
-void Function16cb08(uint8_t* hl, uint8_t a){
+void Function16cb08(color_t* hl, uint8_t a){
     // LD_B_A;
     // LD_A_hl;
     // AND_A(0xe0);
     // OR_A_B;
     // LD_hl_A;
-    *hl = (*hl & 0xe0) | a;
+    *hl = (*hl & 0xff00) | (*hl & 0xe0) | a;
     // RET;
 }
 
@@ -930,7 +930,7 @@ void Function16cbd1(void){
     // LD_BC(PAL_COLOR_SIZE);
     // LD_A(0x5);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 1 + PAL_COLOR_SIZE * 2, Unknown_16cfa3 + Unknown_16cbfb[wram->wd1f3], PAL_COLOR_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * 1 + 2, Unknown_16cfa3 + Unknown_16cbfb[wram->wd1f3], PAL_COLOR_SIZE);
     // FARCALL(aApplyPals);
     ApplyPals();
     // LD_A(TRUE);
@@ -975,15 +975,15 @@ void Function16cc25(void){
     // LD_HL(mUnknown_16cfa9);
     // LD_DE(wBGPals1 + 1 * PALETTE_SIZE);
     // CALL(aFunction16cc25_CopyPal);
-    CopyBytes(wram->wBGPals1 + 1 * PALETTE_SIZE, Unknown_16cfa9, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + 1 * NUM_PAL_COLORS, Unknown_16cfa9, 1 * PALETTE_SIZE);
     // LD_HL(mUnknown_16cfb1);
     // LD_DE(wOBPals1);
     // CALL(aFunction16cc25_CopyPal);
-    CopyBytes(wram->wOBPals1, Unknown_16cfb1, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1, Unknown_16cfb1, 1 * PALETTE_SIZE);
     // LD_HL(mUnknown_16cfb9);
     // LD_DE(wOBPals1 + 1 * PALETTE_SIZE);
     // CALL(aFunction16cc25_CopyPal);
-    CopyBytes(wram->wOBPals1 + 1 * PALETTE_SIZE, Unknown_16cfb9, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1 + 1 * NUM_PAL_COLORS, Unknown_16cfb9, 1 * PALETTE_SIZE);
     // RET;
 
 
@@ -1091,27 +1091,27 @@ void Function16cc90(uint8_t* hl, const uint8_t* de){
 
 const char MobileAdapterCheckGFX[] = "gfx/mobile/mobile_splash_check.png"; // 2bpp
 
-const uint16_t Unknown_16cfa3[] = {
+const color_t Unknown_16cfa3[] = {
     rgb(31, 31, 31),
     rgb(25, 27, 29),
     rgb(16, 19, 25),
 };
 
-const uint16_t Unknown_16cfa9[] = {
+const color_t Unknown_16cfa9[] = {
     rgb(31, 31, 31),
     rgb(25, 27, 29),
     rgb(31, 31, 31),
     rgb( 7,  7,  7),
 };
 
-const uint16_t Unknown_16cfb1[] = {
+const color_t Unknown_16cfb1[] = {
     rgb(31, 31, 31),
     rgb(13,  9, 18),
     rgb(26, 21, 16),
     rgb( 7,  7,  7),
 };
 
-const uint16_t Unknown_16cfb9[] = {
+const color_t Unknown_16cfb9[] = {
     rgb(31, 31, 31),
     rgb(18,  5,  2),
     rgb(27, 11, 12),

@@ -41,7 +41,7 @@ bool Function8b664(uint8_t* bc);
 void Function8b677(void);
 void Function8b690(void);
 void Function8b6bb(void);
-extern const uint16_t Palette_8b6d5[];
+extern const color_t Palette_8b6d5[];
 void Function8b6ed(void);
 void Function8b703(tile_t* hl, uint8_t b, uint8_t c);
 void Function8b732(tile_t* hl, uint8_t c);

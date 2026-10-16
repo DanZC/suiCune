@@ -905,13 +905,13 @@ void Function8949c(void){
     // LD_DE(wBGPals1 + PALETTE_SIZE * 7);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 7, Palette_894b3, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * 7, Palette_894b3, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
 }
 
-const uint16_t Palette_894b3[] = {
+const color_t Palette_894b3[] = {
     rgb(31, 31, 31),
     rgb(31, 31, 31),
     rgb(31, 31, 31),
@@ -951,7 +951,7 @@ void Function894ca(uint8_t d){
 
 // Mobile_CardMenu_LoadGenderDependentPalettes
 void Function894dc(uint8_t d){
-static const uint16_t Pals012a[] = {
+static const color_t Pals012a[] = {
     rgb(31, 31, 31),
     rgb(10, 17, 13),
     rgb(10,  8, 22),
@@ -968,7 +968,7 @@ static const uint16_t Pals012a[] = {
     rgb( 0,  0,  0),
 };
 
-static const uint16_t Pals012b[] = {
+static const color_t Pals012b[] = {
     rgb(31, 31, 31),
     rgb(30, 22, 11),
     rgb(31,  8, 15),
@@ -986,7 +986,7 @@ static const uint16_t Pals012b[] = {
 };
 
 // Never used?
-static const uint16_t Pals012c[] = {
+static const color_t Pals012c[] = {
     rgb(31, 31, 31),
     rgb(15, 20, 26),
     rgb(25,  7, 20),
@@ -1003,13 +1003,13 @@ static const uint16_t Pals012c[] = {
     rgb( 0,  0,  0),
 };
 
-static const uint16_t *const PalettePointers[] = {
+static const color_t *const PalettePointers[] = {
     Pals012a,
     Pals012b,
     Pals012c, // Never used?
 };
 
-static const uint16_t Pals345[] = {
+static const color_t Pals345[] = {
     rgb(31, 31, 31),
     rgb(31, 31, 31),
     rgb(31, 13,  0),
@@ -1042,12 +1042,12 @@ static const uint16_t Pals345[] = {
     // LD_DE(wBGPals1);
     // LD_BC(3 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, PalettePointers[d], 3 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, PalettePointers[d], 3 * PALETTE_SIZE);
     // LD_HL(mFunction894dc_Pals345);
     // LD_DE(wBGPals1 + 3 * PALETTE_SIZE);
     // LD_BC(3 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1 + 3 * PALETTE_SIZE, Pals345, 3 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + 3 * NUM_PAL_COLORS, Pals345, 3 * PALETTE_SIZE);
 
     // POP_AF;
     // LDH_addr_A(rSVBK);
@@ -1057,7 +1057,7 @@ static const uint16_t Pals345[] = {
 
 // Mobile22_LoadMobileOTTrainerClassPalette
 void Function8956f(uint8_t* bc){
-    uint16_t buffer[8];
+    color_t buffer[8];
     // PUSH_BC;
     // LD_HL(16);
     // ADD_HL_BC;
@@ -1078,10 +1078,9 @@ void Function8956f(uint8_t* bc){
     // LD_HL(wd030);
     // LD_A(-1);
     // LD_hli_A;
-    wram->wBGPals1[0x30] = 0xff;
     // LD_A(0x7f);
     // LD_hl_A;
-    wram->wBGPals1[0x31] = 0x7f;
+    gGFX.bgPals1[0x18] = PALRGB_WHITE;
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // LD_A_addr(wTrainerClass);
@@ -1092,15 +1091,15 @@ void Function8956f(uint8_t* bc){
     // LD_DE(mTrainerPalettes);
     // ADD_HL_DE;
     ExtractPaletteFromPNGAssetToBuffer(buffer, TrainerPalettes[wram->wTrainerClass]);
-    uint8_t* hl = (uint8_t*)buffer;
+    color_t* hl = buffer;
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(0x5);
     // LDH_addr_A(rSVBK);
     // LD_DE(wd032);
-    uint8_t* de = wram->wBGPals1 + 0x32;
+    color_t* de = gGFX.bgPals1 + 0x19;
     // LD_C(4);
-    uint8_t c = 4;
+    uint8_t c = 2;
 
     do {
     // loop:
@@ -1117,9 +1116,8 @@ void Function8956f(uint8_t* bc){
     // LD_HL(wd036);
     // XOR_A_A;
     // LD_hli_A;
-    wram->wd036[0] = 0;
     // LD_hl_A;
-    wram->wd036[1] = 0;
+    gGFX.bgPals1[0x1c] = 0;
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // POP_BC;
@@ -1135,13 +1133,13 @@ void Function895c7(void){
     // LD_DE(wd030);
     // LD_BC(8);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1 + 6 * PALETTE_SIZE, Palette_895de, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + 6 * NUM_PAL_COLORS, Palette_895de, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
 }
 
-const uint16_t Palette_895de[] = {
+const color_t Palette_895de[] = {
     rgb(31, 31, 31),
     rgb( 7,  7,  6),
     rgb( 7,  7,  6),
@@ -2992,13 +2990,13 @@ void Function89cdf(uint8_t b, uint8_t c){
 }
 
 void Function89d0d(void){
-    static const uint16_t Palette1[] = {
+    static const color_t Palette1[] = {
         rgb(31, 31, 31),
         rgb(19, 19, 19),
         rgb(15, 15, 15),
         rgb( 0,  0,  0),
     };
-    static const uint16_t Palette2[] = {
+    static const color_t Palette2[] = {
         rgb(31, 31, 31),
         rgb(19, 19, 19),
         rgb(19, 19, 19),
@@ -3014,7 +3012,7 @@ void Function89d0d(void){
     // LD_C(8);
     uint8_t c = 8;
     // LD_DE(wBGPals1);
-    uint8_t* de = wram->wBGPals1;
+    color_t* de = gGFX.bgPals1;
 
     do {
     // loop:
@@ -3023,7 +3021,7 @@ void Function89d0d(void){
         // LD_BC(1 * PALETTE_SIZE);
         // CALL(aCopyBytes);
         CopyBytes(de, Palette1, 1 * PALETTE_SIZE);
-        de += 1 * PALETTE_SIZE;
+        de += 1 * NUM_PAL_COLORS;
         // POP_BC;
         // DEC_C;
         // IF_NZ goto loop;
@@ -3360,13 +3358,13 @@ void Function89e9a(void){
     // LD_DE(wBGPals1 + PALETTE_SIZE * 5);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * 5, Palette_89eb1, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * 5, Palette_89eb1, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
 }
 
-const uint16_t Palette_89eb1[] = {
+const color_t Palette_89eb1[] = {
     rgb(31, 31, 31),
     rgb(31, 31, 31),
     rgb(27, 19,  0),
@@ -4844,24 +4842,24 @@ void Function8a5b6(void){
     // LD_DE(wBGPals1 + 4 * PALETTE_SIZE);
     // LD_BC(3 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1 + 4 * PALETTE_SIZE, Palette_8a5e5, 3 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + 4 * NUM_PAL_COLORS, Palette_8a5e5, 3 * PALETTE_SIZE);
     // LD_HL(mPalette_8a5fd);
     // LD_DE(wOBPals1);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOBPals1, Palette_8a5fd, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1, Palette_8a5fd, 1 * PALETTE_SIZE);
     // LD_HL(mPalette_8a605);
     // LD_DE(wOBPals1 + 1 * PALETTE_SIZE);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOBPals1 + 1 * PALETTE_SIZE, Palette_8a605, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1 + 1 * NUM_PAL_COLORS, Palette_8a605, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
 
 }
 
-const uint16_t Palette_8a5e5[] = {
+const color_t Palette_8a5e5[] = {
     rgb(31, 31, 31),
     rgb(27, 19,  0),
     rgb( 7, 11, 22),
@@ -4878,14 +4876,14 @@ const uint16_t Palette_8a5e5[] = {
     rgb( 0,  0,  0),
 };
 
-const uint16_t Palette_8a5fd[] = {
+const color_t Palette_8a5fd[] = {
     rgb( 0,  0,  0),
     rgb( 0,  0,  0),
     rgb( 0,  0,  0),
     rgb(31, 31, 31),
 };
 
-const uint16_t Palette_8a605[] = {
+const color_t Palette_8a605[] = {
     rgb( 0,  0,  0),
     rgb(14, 18, 31),
     rgb(16, 16, 31),
@@ -4902,13 +4900,13 @@ void Function8a60d(void){
     // LD_DE(wOBPals1);
     // LD_BC(1 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOBPals1, Palette_8a624, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1, Palette_8a624, 1 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
 }
 
-const uint16_t Palette_8a624[] = {
+const color_t Palette_8a624[] = {
     rgb(31, 31, 31),
     rgb(31, 31, 31),
     rgb(31, 31, 31),

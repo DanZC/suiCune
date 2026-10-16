@@ -55,7 +55,7 @@ extern const char String_172e58[];
 extern const char String_172e5d[];
 void Function172e78(void);
 void Function172eb9(void);
-extern const uint16_t Palette_172edf[];
+extern const color_t Palette_172edf[];
 extern const char Stadium2N64GFX[];
 extern const char Stadium2N64Tilemap[];
 extern const char Stadium2N64Attrmap[];

@@ -9638,7 +9638,7 @@ void Function102dec(void){
     // LD_BC(4 * PALETTE_SIZE);
     // LD_A(0x05);
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wOBPals1, MobileTradeLightsPalettes, 4 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1, MobileTradeLightsPalettes, 4 * PALETTE_SIZE);
     // FARCALL(aFunction49742);
     Function49742();
     // CALL(aSetPalettes);
@@ -10218,7 +10218,7 @@ const struct SpriteOAM Unknown_10327a[] = {
 
 const char MobileTradeLightsGFX[] = "gfx/mobile/mobile_trade_lights.png"; // 2bpp
 
-const uint16_t MobileTradeLightsPalettes[] = {
+const color_t MobileTradeLightsPalettes[] = {
 // INCLUDE "gfx/mobile/mobile_trade_lights.pal"
     rgb( 0,  0,  0),
     rgb(31, 31,  7),

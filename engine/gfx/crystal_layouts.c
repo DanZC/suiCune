@@ -87,13 +87,13 @@ void MG_Mobile_Layout_LoadPals(void){
     // LD_BC(5 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    LoadPaletteAssetColorsToArray(wram->wBGPals1, Palette_MysteryGiftMobile, 0, 5 * NUM_PAL_COLORS);
+    LoadPaletteAssetColorsToArray(gGFX.bgPals1, Palette_MysteryGiftMobile, 0, 5 * NUM_PAL_COLORS);
     // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
     // LD_HL(mPalette_TextBG7);
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(MBANK(awBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, Palette_TextBG7, sizeof(Palette_TextBG7));
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_TEXT, Palette_TextBG7, sizeof(Palette_TextBG7));
     // RET;
 }
 
@@ -167,7 +167,7 @@ void LoadOW_BGPal7(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, Palette_TextBG7, 1 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_TEXT, Palette_TextBG7, 1 * PALETTE_SIZE);
     // RET;
 }
 
@@ -184,7 +184,7 @@ void Function49420(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF, MansionPalette1 + 8 * NUM_PAL_COLORS, PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_ROOF, MansionPalette1 + 8 * NUM_PAL_COLORS, PALETTE_SIZE);
     // RET;
 }
 
@@ -229,7 +229,7 @@ void v_CrystalCGB_MobileLayout1(void){
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    LoadPaletteAssetToBuffer(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT, 1 * PALETTE_SIZE, TextPalette, 1 * PAL_COLOR_SIZE);
+    LoadPaletteAssetToBuffer(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_TEXT, 1 * PALETTE_SIZE, TextPalette, 1 * PAL_COLOR_SIZE);
     // CALL(aCrystal_WipeAttrmap);
     Crystal_WipeAttrmap();
     // hlcoord(0, 0, wAttrmap);
@@ -277,7 +277,7 @@ static const char OBPalette[] = "gfx/mystery_gift/name_card_ob.pal";
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    LoadPaletteAssetToBuffer(wram->wBGPals1, 1 * PALETTE_SIZE, BGPalette, 1 * PAL_COLOR_SIZE);
+    LoadPaletteAssetToBuffer(gGFX.bgPals1, 1 * PALETTE_SIZE, BGPalette, 1 * PAL_COLOR_SIZE);
     // FARCALL(aApplyPals);
     ApplyPals();
     // CALL(aCrystal_WipeAttrmap);
@@ -289,12 +289,12 @@ static const char OBPalette[] = "gfx/mystery_gift/name_card_ob.pal";
     // LD_BC(1 * PALETTE_SIZE);
     // LD_A(BANK(wOBPals1));
     // CALL(aFarCopyWRAM);
-    LoadPaletteAssetToBuffer(wram->wOBPals1, 1 * PALETTE_SIZE, OBPalette, 1 * PAL_COLOR_SIZE);
+    LoadPaletteAssetToBuffer(gGFX.obPals1, 1 * PALETTE_SIZE, OBPalette, 1 * PAL_COLOR_SIZE);
     // RET;
 }
 
 void Function49742(void){
-    static const uint16_t MobileBorderPalettes[] = {
+    static const color_t MobileBorderPalettes[] = {
     // INCLUDE "gfx/trade/mobile_border.pal"
         0xffff, // RGB 31, 31, 63
         rgb( 0,  0,  0),
@@ -341,7 +341,7 @@ void Function49742(void){
     // LD_BC(8 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wBGPals1, MobileBorderPalettes, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, MobileBorderPalettes, 8 * PALETTE_SIZE);
     // FARCALL(aApplyPals);
     ApplyPals();
     // RET;
@@ -422,7 +422,7 @@ void v_LoadTradeRoomBGPals(void){
     // LD_BC(6 * PALETTE_SIZE);
     // LD_A(BANK(wBGPals1));
     // CALL(aFarCopyWRAM);
-    LoadPaletteAssetColorsToBuffer(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_GREEN,
+    LoadPaletteAssetColorsToBuffer(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_GREEN,
         6 * NUM_PAL_COLORS, TradeRoomPalette, 0, 6 * NUM_PAL_COLORS);
     // FARCALL(aApplyPals);
     ApplyPals();

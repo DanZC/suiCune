@@ -1157,37 +1157,40 @@ void AnimateWaterPalette(uint8_t* de){
     // IF_Z goto color0;
     if((l & 0b110) == 0) {
     // color0:
+        color_t c = gGFX.bgPals1[NUM_PAL_COLORS * PAL_BG_WATER + 0];
         // LD_HL(wBGPals1 + PALETTE_SIZE * PAL_BG_WATER + PAL_COLOR_SIZE * 0);
         // LD_A_hli;
         // LDH_addr_A(rBGPD);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_WATER + PAL_COLOR_SIZE * 0]);
+        gb_write(rBGPD, LOW(c));
         // LD_A_hli;
         // LDH_addr_A(rBGPD);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_WATER + PAL_COLOR_SIZE * 0 + 1]);
+        gb_write(rBGPD, HIGH(c));
         // goto end;
     }
     // CP_A(0b100);
     // IF_Z goto color2;
     else if((l & 0b110) == 0b100) {
     // color2:
+        color_t c = gGFX.bgPals1[NUM_PAL_COLORS * PAL_BG_WATER + 2];
         // LD_HL(wBGPals1 + PALETTE_SIZE * PAL_BG_WATER + PAL_COLOR_SIZE * 2);
         // LD_A_hli;
         // LDH_addr_A(rBGPD);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_WATER + PAL_COLOR_SIZE * 2]);
+        gb_write(rBGPD, LOW(c));
         // LD_A_hli;
         // LDH_addr_A(rBGPD);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_WATER + PAL_COLOR_SIZE * 2 + 1]);
+        gb_write(rBGPD, HIGH(c));
     }
 //  Copy one color from hl to rBGPI via rBGPD
     else {
     //  color1
+        color_t c = gGFX.bgPals1[NUM_PAL_COLORS * PAL_BG_WATER + 1];
         // LD_HL(wBGPals1 + PALETTE_SIZE * PAL_BG_WATER + PAL_COLOR_SIZE * 1);
         // LD_A_hli;
         // LDH_addr_A(rBGPD);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_WATER + PAL_COLOR_SIZE * 1]);
+        gb_write(rBGPD, LOW(c));
         // LD_A_hli;
         // LDH_addr_A(rBGPD);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_WATER + PAL_COLOR_SIZE * 1 + 1]);
+        gb_write(rBGPD, HIGH(c));
         // goto end;
     }
 
@@ -1231,22 +1234,24 @@ void FlickeringCaveEntrancePalette(uint8_t* de){
     gb_write(rBGPI, (1 << rBGPI_AUTO_INCREMENT) + PALETTE_SIZE * PAL_BG_YELLOW + PAL_COLOR_SIZE * 0);
 
 //  A cycle of 2 colors (0 2), updating every other vblank
+    color_t col;
     // LDH_A_addr(hVBlankCounter);
     // AND_A(0b10);
     // IF_NZ goto color1;
     if((hram.hVBlankCounter & 0b10)) {
     // color1:
+        col = gGFX.bgPals1[NUM_PAL_COLORS * PAL_BG_YELLOW + 1];
         // LD_HL(wBGPals1 + PALETTE_SIZE * PAL_BG_YELLOW + PAL_COLOR_SIZE * 1);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_YELLOW + PAL_COLOR_SIZE * 1 + 0]);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_YELLOW + PAL_COLOR_SIZE * 1 + 1]);
+        gb_write(rBGPD, LOW(col));
+        gb_write(rBGPD, HIGH(col));
     }
     else {
     //  Copy one color from hl to rBGPI via rBGPD
-
     //  color0
+        col = gGFX.bgPals1[NUM_PAL_COLORS * PAL_BG_YELLOW + 0];
         // LD_HL(wBGPals1 + PALETTE_SIZE * PAL_BG_YELLOW + PAL_COLOR_SIZE * 0);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_YELLOW + PAL_COLOR_SIZE * 0 + 0]);
-        gb_write(rBGPD, wram->wBGPals1[PALETTE_SIZE * PAL_BG_YELLOW + PAL_COLOR_SIZE * 0 + 1]);
+        gb_write(rBGPD, LOW(col));
+        gb_write(rBGPD, HIGH(col));
         // goto okay;
     }
 

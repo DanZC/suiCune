@@ -10,7 +10,7 @@ void Function17c000(void);
 extern const char HaveWantGFX[];
 extern const char MobileSelectGFX[];
 extern const char HaveWantMap[];
-extern const uint16_t HaveWantPals[];
+extern const color_t HaveWantPals[];
 bool CheckStringForErrors(const uint8_t* de, uint8_t c);
 bool CheckStringForErrors_IgnoreTerminator(const uint8_t* de, uint8_t c);
 void Function17d0f3(void);

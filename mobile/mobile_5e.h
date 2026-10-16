@@ -58,13 +58,13 @@ void Function17ac0c(void);
 void Function17ac1d(void);
 void Function17ac2a(void);
 void Function17ac46(tile_t* hl, uint8_t b, uint8_t c);
-extern const uint16_t Palette_17ac55[];
-extern const uint16_t Palette_17ac95[];
+extern const color_t Palette_17ac55[];
+extern const color_t Palette_17ac95[];
 extern const char DialpadTilemap[];
 extern const char DialpadAttrmap[];
 extern const char DialpadGFX[];
 extern const char DialpadCursorGFX[];
-extern const uint16_t Palette_17b4b5[];
+extern const color_t Palette_17b4b5[];
 extern const char MobileCardListGFX[];
 //#include "gfx/mobile/card.2bpp"
 //#include "gfx/mobile/chris_silhouette.2bpp"

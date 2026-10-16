@@ -72,7 +72,7 @@ bool v_TimeOfDayPals(void){
 
 //  save bg palette 7
     // LD_HL(wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
-    uint16_t* bgpal = (uint16_t*)(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_TEXT);
+    color_t* bgpal = gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_TEXT;
 
 //  save wram bank
     // LDH_A_addr(rSVBK);
@@ -80,7 +80,7 @@ bool v_TimeOfDayPals(void){
 
     // LD_A(BANK(wBGPals1));
     // LDH_addr_A(rSVBK);
-    uint16_t palStack[NUM_PAL_COLORS];
+    color_t palStack[NUM_PAL_COLORS];
 
 //  push palette
     // LD_C(NUM_PAL_COLORS);
@@ -108,7 +108,7 @@ bool v_TimeOfDayPals(void){
 
 //  restore bg palette 7
     // LD_HL(wOBPals1 - 1);  // last byte in wBGPals1
-    uint8_t* hl = wram->wOBPals1 - 1;
+    color_t* hl = gGFX.bgPals1 + 31;
 
 //  save wram bank
     // LDH_A_addr(rSVBK);
@@ -123,13 +123,12 @@ bool v_TimeOfDayPals(void){
     for(uint8_t i = NUM_PAL_COLORS; i > 0; --i) {
     // pop:
         // POP_BC;
-        uint16_t bc = palStack[i - 1];
+        color_t bc = palStack[i - 1];
         // LD_hl_C;
         // DEC_HL;
-        *(hl--) = LOW(bc);
+        *(hl--) = bc;
         // LD_hl_B;
         // DEC_HL;
-        *(hl--) = HIGH(bc);
         // DEC_E;
         // IF_NZ goto pop;
     }
@@ -245,7 +244,7 @@ void FillWhiteBGColor(void){
     // LD_A_hli;
     // LD_D_A;
     // LD_HL(wBGPals1 + 1 * PALETTE_SIZE);
-    uint8_t* hl = wram->wBGPals1 + 1 * PALETTE_SIZE;
+    color_t* hl = gGFX.bgPals1 + 1 * NUM_PAL_COLORS;
     // LD_C(6);
     uint8_t c = 6;
 
@@ -253,14 +252,13 @@ void FillWhiteBGColor(void){
     // loop:
         // LD_A_E;
         // LD_hli_A;
-        *(hl++) = wram->wBGPals1[0];
         // LD_A_D;
         // LD_hli_A;
-        *(hl++) = wram->wBGPals1[1];
+        *(hl++) = gGFX.bgPals1[0];
         // for(int rept = 0; rept < 6; rept++){
         // INC_HL;
         // }
-        hl += 6;
+        hl += NUM_PAL_COLORS - 1;
         // DEC_C;
         // IF_NZ goto loop;
     } while(--c != 0);

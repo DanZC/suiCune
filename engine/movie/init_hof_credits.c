@@ -76,7 +76,7 @@ void InitDisplayForRedCredits(void){
     // CALL(aByteFill);
     ByteFill(coord(0, 0, wram->wAttrmap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x0);
     // LD_HL(wBGPals1);
-    uint8_t* hl = wram->wBGPals1;
+    color_t* hl = gGFX.bgPals1;
     // LD_C(4 * LEN_2BPP_TILE);
     uint8_t c = 4 * LEN_2BPP_TILE;
 
@@ -84,10 +84,9 @@ void InitDisplayForRedCredits(void){
     // load_white_palettes:
         // LD_A(LOW(PALRGB_WHITE));
         // LD_hli_A;
-        *(hl++) = LOW(PALRGB_WHITE);
         // LD_A(HIGH(PALRGB_WHITE));
         // LD_hli_A;
-        *(hl++) = HIGH(PALRGB_WHITE);
+        *(hl++) = PALRGB_WHITE;
         // DEC_C;
         // IF_NZ goto load_white_palettes;
     } while(--c != 0);

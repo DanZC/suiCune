@@ -900,7 +900,7 @@ void Function8b6bb(void){
     // LD_DE(wBGPals1);
     // LD_BC(3 * PALETTE_SIZE);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1, Palette_8b6d5, 3 * PALETTE_SIZE);
+    CopyBytes(gGFX.bgPals1, Palette_8b6d5, 3 * PALETTE_SIZE);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aFunction8949c);
@@ -908,7 +908,7 @@ void Function8b6bb(void){
     // RET;
 }
 
-const uint16_t Palette_8b6d5[] = {
+const color_t Palette_8b6d5[] = {
     rgb(31, 31, 31),
     rgb(31, 21,  0),
     rgb(14,  7,  3),

@@ -701,7 +701,7 @@ void DrawCreditsBorder(tile_t* hl, uint8_t a){
 }
 
 //  Each set of palette data is 24 bytes long.
-static const uint16_t* GetCreditsPalette_GetPalAddress(void) {
+static const color_t* GetCreditsPalette_GetPalAddress(void) {
     // LD_A_addr(wCreditsBorderMon);  // scene
     // AND_A(0b11);
     // ADD_A_A;
@@ -728,7 +728,7 @@ static void GetCreditsPalette_UpdatePals(const uint16_t* hl, uint8_t a) {
     // LD_D_A;
     // LD_BC(24);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals1 + a, hl, 24);
+    CopyBytes(gGFX.bgPals1 + a, hl, 24);
 
     // POP_HL;
     // POP_AF;
@@ -739,13 +739,13 @@ static void GetCreditsPalette_UpdatePals(const uint16_t* hl, uint8_t a) {
     // LD_D_A;
     // LD_BC(24);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wBGPals2 + a, hl, 24);
+    CopyBytes(gGFX.bgPals2 + a, hl, 24);
     // RET;
 }
 
 void GetCreditsPalette(void){
     // CALL(aGetCreditsPalette_GetPalAddress);
-    const uint16_t* pal = GetCreditsPalette_GetPalAddress();
+    const color_t* pal = GetCreditsPalette_GetPalAddress();
 
     // PUSH_HL;
     // LD_A(0);
@@ -757,7 +757,7 @@ void GetCreditsPalette(void){
 
 }
 
-const uint16_t CreditsPalettes[] = {
+const color_t CreditsPalettes[] = {
 // INCLUDE "gfx/credits/credits.pal"
 // pichu
     rgb(31, 0,31), rgb(31,25, 0), rgb(11,14,31), rgb( 7, 7, 7),

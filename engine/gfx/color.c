@@ -17,7 +17,7 @@
 #define SHINY_SPD_VAL (10)
 #define SHINY_SPC_VAL (10)
 
-static uint16_t* GetMonPalettePointer(uint16_t* dest, uint8_t a);
+static color_t* GetMonPalettePointer(color_t* dest, uint8_t a);
 
 //  Check if a mon is shiny by DVs at bc.
 //  Return true if shiny.
@@ -71,36 +71,35 @@ void Unused_CheckShininess(void){
 //  Return carry if the DVs at hl are all 10 or higher.
 
 //  Attack
-    LD_A_hl;
-    CP_A(10 << 4);
-    IF_C goto not_shiny;
+    // LD_A_hl;
+    // CP_A(10 << 4);
+    // IF_C goto not_shiny;
 
 //  Defense
-    LD_A_hli;
-    AND_A(0xf);
-    CP_A(10);
-    IF_C goto not_shiny;
+    // LD_A_hli;
+    // AND_A(0xf);
+    // CP_A(10);
+    // IF_C goto not_shiny;
 
 //  Speed
-    LD_A_hl;
-    CP_A(10 << 4);
-    IF_C goto not_shiny;
+    // LD_A_hl;
+    // CP_A(10 << 4);
+    // IF_C goto not_shiny;
 
 //  Special
-    LD_A_hl;
-    AND_A(0xf);
-    CP_A(10);
-    IF_C goto not_shiny;
+    // LD_A_hl;
+    // AND_A(0xf);
+    // CP_A(10);
+    // IF_C goto not_shiny;
 
 //  shiny
-    SCF;
-    RET;
+    // SCF;
+    // RET;
 
 
-not_shiny:
-    AND_A_A;
-    RET;
-
+// not_shiny:
+    // AND_A_A;
+    // RET;
 }
 
 void SGB_ApplyCreditsPals(void){
@@ -321,7 +320,7 @@ void LoadMonPaletteAsNthBGPal(uint8_t e){
     return LoadNthMiddleBGPal(buffer, e);
 }
 
-void LoadNthMiddleBGPal(uint16_t* hl, uint8_t a){
+void LoadNthMiddleBGPal(color_t* hl, uint8_t a){
     // PUSH_HL;
     // LD_HL(wBGPals1);
     // LD_DE(1 * PALETTE_SIZE);
@@ -336,10 +335,10 @@ void LoadNthMiddleBGPal(uint16_t* hl, uint8_t a){
 // got_addr:
     // LD_E_L;
     // LD_D_H;
-    uint8_t* de = wram->wBGPals1 + (PALETTE_SIZE * a);
+    color_t* de = gGFX.bgPals1 + (NUM_PAL_COLORS * a);
     // POP_HL;
     // CALL(aLoadPalette_White_Col1_Col2_Black);
-    LoadPalette_White_Col1_Col2_Black((uint16_t*)de, hl);
+    LoadPalette_White_Col1_Col2_Black(de, hl);
     // RET;
 }
 
@@ -404,7 +403,7 @@ void ApplyMonOrTrainerPals(uint8_t e){
 // load_palettes:
     // LD_DE(wBGPals1);
     // CALL(aLoadPalette_White_Col1_Col2_Black);
-    LoadPalette_White_Col1_Col2_Black((uint16_t*)wram_ptr(wBGPals1), buffer);
+    LoadPalette_White_Col1_Col2_Black(gGFX.bgPals1, buffer);
     // CALL(aWipeAttrmap);
     WipeAttrmap();
     // CALL(aApplyAttrmap);
@@ -423,18 +422,18 @@ void ApplyHPBarPals(uint8_t c){
     // CP_A(0x2);
     // IF_Z goto PartyMenu;
     // RET;
-    uint16_t* de;
+    color_t* de;
     switch(wram->wWhichHPBar) {
     case 0x0:
     // Enemy:
         // LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_ENEMY_HP + PAL_COLOR_SIZE * 1);
-        de = (uint16_t*)(wram->wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_ENEMY_HP + PAL_COLOR_SIZE * 1);
+        de = gGFX.bgPals2 + NUM_PAL_COLORS * PAL_BATTLE_BG_ENEMY_HP + 1;
         goto okay;
 
     case 0x1:
     // Player:
         // LD_DE(wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_PLAYER_HP + PAL_COLOR_SIZE * 1);
-        de = (uint16_t*)(wram->wBGPals2 + PALETTE_SIZE * PAL_BATTLE_BG_PLAYER_HP + PAL_COLOR_SIZE * 1);
+        de = gGFX.bgPals2 + NUM_PAL_COLORS * PAL_BATTLE_BG_PLAYER_HP + 1;
 
     okay:
         // LD_L_C;
@@ -501,14 +500,12 @@ bool LoadStatsScreenPals(uint8_t c){
     // LDH_addr_A(rSVBK);
     // LD_A_hli;
     // LD_addr_A(wBGPals1 + PALETTE_SIZE * 0);
-    wram->wBGPals1[PALETTE_SIZE * 0] = LOW(pal_buf[c-1]);
+    gGFX.bgPals1[NUM_PAL_COLORS * 0] = pal_buf[c-1];
     // LD_addr_A(wBGPals1 + PALETTE_SIZE * 2);
-    wram->wBGPals1[PALETTE_SIZE * 2] = LOW(pal_buf[c-1]);
+    gGFX.bgPals1[NUM_PAL_COLORS * 2] = pal_buf[c-1];
     // LD_A_hl;
     // LD_addr_A(wBGPals1 + PALETTE_SIZE * 0 + 1);
-    wram->wBGPals1[PALETTE_SIZE * 0 + 1] = HIGH(pal_buf[c-1]);
     // LD_addr_A(wBGPals1 + PALETTE_SIZE * 2 + 1);
-    wram->wBGPals1[PALETTE_SIZE * 2 + 1] = HIGH(pal_buf[c-1]);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // CALL(aApplyPals);
@@ -519,7 +516,7 @@ bool LoadStatsScreenPals(uint8_t c){
 }
 
 void LoadMailPalettes(uint8_t e){
-    static const uint16_t MailPals[] = {
+    static const color_t MailPals[] = {
     	rgb(20,31,11), rgb(31,19,00), rgb(31,10, 9), rgb(00,00,00), // FLOWER_MAIL
 	    rgb(15,20,31), rgb(30,26,00), rgb(31,12, 0), rgb(00,00,00), // SURF_MAIL
 	    rgb(24,17,31), rgb(30,26,00), rgb( 8,11,31), rgb(00,00,00), // LITEBLUEMAIL
@@ -538,7 +535,7 @@ void LoadMailPalettes(uint8_t e){
     // ADD_HL_HL;
     // LD_DE(mLoadMailPalettes_MailPals);
     // ADD_HL_DE;
-    const uint16_t* hl = MailPals + (e * 4);
+    const color_t* hl = MailPals + (e * NUM_PAL_COLORS);
     // CALL(aCheckCGB);
     // IF_NZ goto cgb;
     if(CheckCGB()) {
@@ -547,7 +544,7 @@ void LoadMailPalettes(uint8_t e){
         // LD_BC(1 * PALETTE_SIZE);
         // LD_A(BANK(wBGPals1));
         // CALL(aFarCopyWRAM);
-        CopyBytes(wram->wBGPals1, hl, 1 * PALETTE_SIZE);
+        CopyBytes(gGFX.bgPals1, hl, 1 * PALETTE_SIZE);
         // CALL(aApplyPals);
         ApplyPals();
         // CALL(aWipeAttrmap);
@@ -592,10 +589,10 @@ void CopyFourPalettes(const uint8_t* pal){
     // LD_DE(wBGPals1);
     // LD_C(4);
 
-    return CopyPalettes((uint16_t*)wram->wBGPals1, pal, 4);
+    return CopyPalettes(gGFX.bgPals1, pal, 4);
 }
 
-void CopyPalettes(uint16_t* de, const uint8_t* hl, uint8_t c){
+void CopyPalettes(color_t* de, const uint8_t* hl, uint8_t c){
     do {
     // loop:
         // PUSH_BC;
@@ -603,7 +600,7 @@ void CopyPalettes(uint16_t* de, const uint8_t* hl, uint8_t c){
         uint8_t a = *(hl++);
         // PUSH_HL;
         // CALL(aGetPredefPal);
-        const uint16_t* pal = GetPredefPal(a);
+        const color_t* pal = GetPredefPal(a);
         // CALL(aLoadHLPaletteIntoDE);
         LoadHLPaletteIntoDE(de, pal);
         de += NUM_PAL_COLORS;
@@ -617,7 +614,7 @@ void CopyPalettes(uint16_t* de, const uint8_t* hl, uint8_t c){
     // RET;
 }
 
-const uint16_t* GetPredefPal(uint8_t a){
+const color_t* GetPredefPal(uint8_t a){
     // LD_L_A;
     // LD_H(0);
     // ADD_HL_HL;
@@ -629,7 +626,7 @@ const uint16_t* GetPredefPal(uint8_t a){
     return PredefPals[a];
 }
 
-void LoadHLPaletteIntoDE(void* de, const uint16_t* hl){
+void LoadHLPaletteIntoDE(void* de, const color_t* hl){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wOBPals1));
@@ -652,7 +649,7 @@ void LoadHLPaletteIntoDE(void* de, const uint16_t* hl){
     // RET;
 }
 
-uint16_t* LoadPalette_White_Col1_Col2_Black(uint16_t* de, const uint16_t* hl){
+color_t* LoadPalette_White_Col1_Col2_Black(color_t* de, const color_t* hl){
     // LDH_A_addr(rSVBK);
     // PUSH_AF;
     // LD_A(BANK(wBGPals1));
@@ -730,27 +727,23 @@ void ResetBGPals(void){
     // LDH_addr_A(rSVBK);
 
     // LD_HL(wBGPals1);
-    uint8_t* hl = wram->wBGPals1;
+    color_t* hl = gGFX.bgPals1;
     // LD_C(1 * PALETTE_SIZE);
 
 // loop:
     for(int i = 0; i < PALETTE_SIZE; i++) {
         // LD_A(0xff);
         // LD_hli_A;
-        *(hl++) = 0xff;
         // LD_hli_A;
-        *(hl++) = 0xff;
+        *(hl++) = 0xffff;
         // LD_hli_A;
-        *(hl++) = 0xff;
         // LD_hli_A;
-        *(hl++) = 0xff;
+        *(hl++) = 0xffff;
         // XOR_A_A;
         // LD_hli_A;
-        *(hl++) = 0;
         // LD_hli_A;
         *(hl++) = 0;
         // LD_hli_A;
-        *(hl++) = 0;
         // LD_hli_A;
         *(hl++) = 0;
         // DEC_C;
@@ -783,7 +776,7 @@ void ApplyPals(void){
     // LD_A(BANK(wGBCPalettes));
     // CALL(aFarCopyWRAM);
     // RET;
-    return CopyBytes(wram->wBGPals2, wram->wBGPals1, 16 * PALETTE_SIZE);
+    return CopyBytes(gGFX.bgPals2, gGFX.bgPals1, 16 * PALETTE_SIZE);
 }
 
 void ApplyAttrmap(void){
@@ -877,18 +870,18 @@ void CGB_ApplyPartyMenuHPPals(void){
 }
 
 void InitPartyMenuOBPals(void){
-    uint16_t buf[2 * NUM_PAL_COLORS];
+    color_t buf[2 * NUM_PAL_COLORS];
     // LD_HL(mPartyMenuOBPals);
     LoadPaletteAssetColorsToBuffer(buf, sizeof(buf), PartyMenuOBPals, 0, 2 * NUM_PAL_COLORS);
     // LD_DE(wOBPals1);
     // LD_BC(2 * PALETTE_SIZE);
     // LD_A(BANK(wOBPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wOBPals1, buf, 2 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1, buf, 2 * PALETTE_SIZE);
     // RET;
 }
 
-uint16_t* GetBattlemonBackpicPalettePointer(uint16_t* dest){
+color_t* GetBattlemonBackpicPalettePointer(color_t* dest){
     // PUSH_DE;
     // FARCALL(aGetPartyMonDVs);
     // LD_C_L;
@@ -900,7 +893,7 @@ uint16_t* GetBattlemonBackpicPalettePointer(uint16_t* dest){
     return GetPlayerOrMonPalettePointer(dest, wram->wTempBattleMonSpecies, GetPartyMonDVs());
 }
 
-uint16_t* GetEnemyFrontpicPalettePointer(uint16_t* dest){
+color_t* GetEnemyFrontpicPalettePointer(color_t* dest){
     // PUSH_DE;
     // FARCALL(aGetEnemyMonDVs);
     // LD_C_L;
@@ -915,7 +908,7 @@ uint16_t* GetEnemyFrontpicPalettePointer(uint16_t* dest){
 const char PlayerPalette[] = "gfx/trainers/cal.png";
 const char KrisPalette[] = "gfx/trainers/falkner.png";
 
-uint16_t* GetPlayerOrMonPalettePointer(uint16_t* dest, uint8_t a, uint16_t bc){
+color_t* GetPlayerOrMonPalettePointer(color_t* dest, uint8_t a, uint16_t bc){
     // AND_A_A;
     // JP_NZ (mGetMonNormalOrShinyPalettePointer);
     if(a != 0) {
@@ -945,7 +938,7 @@ uint16_t* GetPlayerOrMonPalettePointer(uint16_t* dest, uint8_t a, uint16_t bc){
     // RET;
 }
 
-uint16_t* GetFrontpicPalettePointer(uint16_t* dest, uint8_t a, uint16_t bc){
+color_t* GetFrontpicPalettePointer(color_t* dest, uint8_t a, uint16_t bc){
     // AND_A_A;
     // JP_NZ (mGetMonNormalOrShinyPalettePointer);
     if(a != 0)
@@ -955,7 +948,7 @@ uint16_t* GetFrontpicPalettePointer(uint16_t* dest, uint8_t a, uint16_t bc){
     return GetTrainerPalettePointer(dest, wram->wTrainerClass);
 }
 
-uint16_t* GetTrainerPalettePointer(uint16_t* dest, uint8_t a){
+color_t* GetTrainerPalettePointer(color_t* dest, uint8_t a){
     // LD_L_A;
     // LD_H(0);
     // ADD_HL_HL;
@@ -970,7 +963,7 @@ uint16_t* GetTrainerPalettePointer(uint16_t* dest, uint8_t a){
     return dest;
 }
 
-static uint16_t* GetMonPalettePointer(uint16_t* dest, uint8_t a){
+static color_t* GetMonPalettePointer(color_t* dest, uint8_t a){
     // CALL(av_GetMonPalettePointer);
     // RET;
     ExtractPaletteFromPNGAssetToBuffer(dest, v_GetMonPalettePointer(a));
@@ -1007,7 +1000,7 @@ loop:
 
 }
 
-const uint16_t BattleObjectPals[] = {
+const color_t BattleObjectPals[] = {
 // INCLUDE "gfx/battle_anims/battle_anims.pal"
 // gray
     rgb(31, 31, 31),
@@ -1083,18 +1076,18 @@ const char* v_GetMonPalettePointer(species_t a){
     return PokemonPicPointers[a-1][0];
 }
 
-static uint16_t* GetCustomMonPalette(uint16_t* dest, species_t a, bool shiny) {
+static color_t* GetCustomMonPalette(color_t* dest, species_t a, bool shiny) {
     for(size_t i = 0; i < 4; ++i) {
         if(PokemonCustomPals[i].id == a) {
-            CopyBytes(dest, PokemonCustomPals[i].pals + (shiny * 2), 2 * sizeof(uint16_t));
+            CopyBytes(dest, PokemonCustomPals[i].pals + (shiny * 2), 2 * sizeof(*dest));
             return dest;
         }
     }
-    CopyBytes(dest, PokemonCustomPals[0].pals + (shiny * 2), 2 * sizeof(uint16_t));
+    CopyBytes(dest, PokemonCustomPals[0].pals + (shiny * 2), 2 * sizeof(*dest));
     return dest;
 }
 
-uint16_t* GetMonNormalOrShinyPalettePointer(uint16_t* dest, species_t a, uint16_t bc){
+color_t* GetMonNormalOrShinyPalettePointer(color_t* dest, species_t a, uint16_t bc){
     // PUSH_BC;
     // CALL(av_GetMonPalettePointer);
     // POP_BC;
@@ -1118,12 +1111,12 @@ uint16_t* GetMonNormalOrShinyPalettePointer(uint16_t* dest, species_t a, uint16_
     else {
         if(PokemonShinyPals[a] == NULL)
             return GetCustomMonPalette(dest, a, true);
-        LoadPaletteAssetColorsToBuffer(dest, 4 * sizeof(uint16_t), PokemonShinyPals[a], 0, 2);
+        LoadPaletteAssetColorsToBuffer(dest, 4 * sizeof(*dest), PokemonShinyPals[a], 0, 2);
         return dest;
     }
 }
 
-uint16_t* GetMonNormalOrShinyPalettePointerCustom(uint16_t* dest, species_t a, bool shiny){
+color_t* GetMonNormalOrShinyPalettePointerCustom(color_t* dest, species_t a, bool shiny){
     if(!shiny) {
         if(v_GetMonPalettePointer(a) == NULL)
             return GetCustomMonPalette(dest, a, false);
@@ -1136,7 +1129,7 @@ uint16_t* GetMonNormalOrShinyPalettePointerCustom(uint16_t* dest, species_t a, b
     else {
         if(PokemonShinyPals[a] == NULL)
             return GetCustomMonPalette(dest, a, true);
-        LoadPaletteAssetColorsToBuffer(dest, 4 * sizeof(uint16_t), PokemonShinyPals[a], 0, 2);
+        LoadPaletteAssetColorsToBuffer(dest, 4 * sizeof(*dest), PokemonShinyPals[a], 0, 2);
         return dest;
     }
 }
@@ -1236,9 +1229,9 @@ skip:
 
 }
 
-static void InitCGBPals_LoadWhitePals(uint16_t* hl) {
+static void InitCGBPals_LoadWhitePals(color_t* hl) {
     // LD_C(4 * 16);
-    uint8_t c = 4 * 16;
+    uint8_t c = NUM_PAL_COLORS * 8;
 
     do {
     // loop:
@@ -1309,10 +1302,12 @@ void InitCGBPals(void){
     // LDH_addr_A(rSVBK);
     // LD_HL(wBGPals1);
     // CALL(aInitCGBPals_LoadWhitePals);
-    InitCGBPals_LoadWhitePals((uint16_t*)wram_ptr(wBGPals1));
+    InitCGBPals_LoadWhitePals(gGFX.bgPals1);
+    InitCGBPals_LoadWhitePals(gGFX.obPals1);
     // LD_HL(wBGPals2);
     // CALL(aInitCGBPals_LoadWhitePals);
-    InitCGBPals_LoadWhitePals((uint16_t*)wram_ptr(wBGPals2));
+    InitCGBPals_LoadWhitePals(gGFX.bgPals2);
+    InitCGBPals_LoadWhitePals(gGFX.obPals2);
     // POP_AF;
     // LDH_addr_A(rSVBK);
     // RET;
@@ -1612,7 +1607,7 @@ wait:
 //     return SGBBorderMapAndPalettes();
 // }
 
-const uint16_t PredefPals[][NUM_PAL_COLORS] = {
+const color_t PredefPals[][NUM_PAL_COLORS] = {
 	{rgb(31,31,31), rgb(22,25,19), rgb(16,21,30), rgb(00,00,00)}, // PREDEFPAL_ROUTES
 	{rgb(31,31,31), rgb(27,28,31), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_PALLET
 	{rgb(31,31,31), rgb(24,28,19), rgb(15,20,31), rgb(00,00,00)}, // PREDEFPAL_VIRIDIAN
@@ -1715,7 +1710,7 @@ const uint16_t PredefPals[][NUM_PAL_COLORS] = {
 //     return ExpBarPalette();
 // }
 
-const uint16_t HPBarPals[] = {
+const color_t HPBarPals[] = {
 // green
     rgb(30, 26, 15),
     rgb(00, 23, 00),
@@ -1772,7 +1767,7 @@ void LoadMapPals(void){
         // LD_A(BANK(wBGPals1));
         // LDH_addr_A(rSVBK);
         // LD_HL(wBGPals1);
-        uint8_t* hl = wram->wBGPals1;
+        color_t* hl = gGFX.bgPals1;
         // LD_B(8);
         uint8_t b = 8;
 
@@ -1790,7 +1785,7 @@ void LoadMapPals(void){
             // ADD_HL_DE;
             // LD_E_L;
             // LD_D_H;
-            const uint16_t* colors = &TilesetBGPalette[*de * 4];
+            const color_t* colors = &TilesetBGPalette[*de * NUM_PAL_COLORS];
             // POP_HL;
             // LD_C(1 * PALETTE_SIZE);
 
@@ -1801,7 +1796,7 @@ void LoadMapPals(void){
             // DEC_C;
             // IF_NZ goto inner_loop;
             CopyBytes(hl, colors, 1 * PALETTE_SIZE);
-            hl += 1 * PALETTE_SIZE;
+            hl += 1 * NUM_PAL_COLORS;
             // POP_DE;
             // INC_DE;
             de++;
@@ -1818,12 +1813,12 @@ void LoadMapPals(void){
     // LD_BC(8 * PALETTE_SIZE);
     // LD_HL(mMapObjectPals);
     // CALL(aAddNTimes);
-    const uint16_t* mapObjectPals = MapObjectPals + (gPlayer.timeOfDayPal * (8 * NUM_PAL_COLORS));
+    const color_t* mapObjectPals = MapObjectPals + (gPlayer.timeOfDayPal * (8 * NUM_PAL_COLORS));
     // LD_DE(wOBPals1);
     // LD_BC(8 * PALETTE_SIZE);
     // LD_A(BANK(wOBPals1));
     // CALL(aFarCopyWRAM);
-    CopyBytes(wram->wOBPals1, mapObjectPals, 8 * PALETTE_SIZE);
+    CopyBytes(gGFX.obPals1, mapObjectPals, 8 * PALETTE_SIZE);
 
     // LD_A_addr(wEnvironment);
     // CP_A(TOWN);
@@ -1847,14 +1842,14 @@ void LoadMapPals(void){
         // for(int rept = 0; rept < 4; rept++){
         // INC_HL;
         // }
-        const uint16_t* roof = RoofPals[gCurMapData.mapGroup] + (((gPlayer.timeOfDayPal & 3) >= NITE_F)? 2: 0);
+        const color_t* roof = RoofPals[gCurMapData.mapGroup] + (((gPlayer.timeOfDayPal & 3) >= NITE_F)? 2: 0);
 
     // morn_day:
         // LD_DE(wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF + PAL_COLOR_SIZE * 1);
         // LD_BC(4);
         // LD_A(BANK(wBGPals1));
         // CALL(aFarCopyWRAM);
-        CopyBytes(wram->wBGPals1 + PALETTE_SIZE * PAL_BG_ROOF + PAL_COLOR_SIZE * 1, roof, 4);
+        CopyBytes(gGFX.bgPals1 + NUM_PAL_COLORS * PAL_BG_ROOF + 1, roof, 4);
         // RET;
     }
 // INCLUDE "data/maps/environment_colors.asm"
@@ -1865,7 +1860,7 @@ void LoadMapPals(void){
 const char PartyMenuBGMobilePalette[] = "gfx/stats/party_menu_bg_mobile.pal";
 const char PartyMenuBGPalette[] = "gfx/stats/party_menu_bg.pal";
 // const char TilesetBGPalette[] = "gfx/tilesets/bg_tiles.pal";
-const uint16_t TilesetBGPalette[] = {
+const color_t TilesetBGPalette[] = {
 // morn
     rgb(28,31,16), rgb(21,21,21), rgb(13,13,13), rgb( 7, 7, 7), // gray
     rgb(28,31,16), rgb(31,19,24), rgb(30,10, 6), rgb( 7, 7, 7), // red
@@ -1921,7 +1916,7 @@ const uint16_t TilesetBGPalette[] = {
     rgb(15,13,27), rgb(10, 9,20), rgb(04,03,18), rgb(00,00,00), // nite
 };
 // const char MapObjectPals[] = "gfx/overworld/npc_sprites.pal";
-const uint16_t MapObjectPals[] = {
+const color_t MapObjectPals[] = {
 // morn
     rgb(28,31,16), rgb(31,19,10), rgb(31,07,01), rgb(00,00,00), // red
     rgb(28,31,16), rgb(31,19,10), rgb(10, 9,31), rgb(00,00,00), // blue
@@ -1970,7 +1965,7 @@ const uint16_t MapObjectPals[] = {
 
 //     return DiplomaPalettes();
 // }
-const uint16_t RoofPals[][4] = {
+const color_t RoofPals[][4] = {
 // group 0 (unused)
     [GROUP_NONE] = {
         rgb(21,21,21), rgb(11,11,11), // morn/day
