@@ -54,7 +54,7 @@ void ShowPlayerMonsRemaining(void){
     // LD_addr_A(wPlaceBallsDirection);
     // LD_HL(wVirtualOAMSprite00);
     // JP(mLoadTrainerHudOAM);
-    return LoadTrainerHudOAM(wram->wVirtualOAMSprite, a, a, 8);
+    return LoadTrainerHudOAM(gGFX.virtualOAMSprite, a, a, 8);
 }
 
 void ShowOTTrainerMonsRemaining(void){
@@ -73,7 +73,7 @@ void ShowOTTrainerMonsRemaining(void){
     // LD_addr_A(wPlaceBallsDirection);
     // LD_HL(wVirtualOAMSprite00 + PARTY_LENGTH * SPRITEOAMSTRUCT_LENGTH);
     // JP(mLoadTrainerHudOAM);
-    return LoadTrainerHudOAM(wram->wVirtualOAMSprite + PARTY_LENGTH, 4 * 8, 9 * 8, -8);
+    return LoadTrainerHudOAM(gGFX.virtualOAMSprite + PARTY_LENGTH, 4 * 8, 9 * 8, -8);
 }
 
 static const struct PartyMon* StageBallTilesData_GetHUDTile(tile_t* de, const struct PartyMon* hl) {
@@ -279,7 +279,7 @@ void LinkBattle_TrainerHuds(void){
     // LD_addr_A(wPlaceBallsDirection);
     // LD_HL(wVirtualOAMSprite00);
     // CALL(aLoadTrainerHudOAM);
-    LoadTrainerHudOAM(wram->wVirtualOAMSprite, 8 * 8, 10 * 8, 8);
+    LoadTrainerHudOAM(gGFX.virtualOAMSprite, 8 * 8, 10 * 8, 8);
 
     // LD_HL(wOTPartyMon1HP);
     // LD_DE(wOTPartyCount);
@@ -291,7 +291,7 @@ void LinkBattle_TrainerHuds(void){
     // LD_hl(13 * 8);
     // LD_HL(wVirtualOAMSprite00 + PARTY_LENGTH * SPRITEOAMSTRUCT_LENGTH);
     // JP(mLoadTrainerHudOAM);
-    LoadTrainerHudOAM(wram->wVirtualOAMSprite + PARTY_LENGTH, 13 * 8, 10 * 8, 8);
+    LoadTrainerHudOAM(gGFX.virtualOAMSprite + PARTY_LENGTH, 13 * 8, 10 * 8, 8);
 }
 
 static void LoadTrainerHudOAM(struct SpriteOAM* hl, uint8_t y, uint8_t x, int8_t dir){

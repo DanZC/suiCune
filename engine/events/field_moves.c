@@ -80,7 +80,7 @@ void ShakeHeadbuttTree(void){
     bc->tileID = FIELDMOVE_TREE;
     // LD_A(36 * SPRITEOAMSTRUCT_LENGTH);
     // LD_addr_A(wCurSpriteOAMAddr);
-    wram->wCurSpriteOAMAddr = 36 * SPRITEOAMSTRUCT_LENGTH;
+    wram->wCurSpriteOAMAddr = 36;
     // FARCALL(aDoNextFrameForAllSprites);
     DoNextFrameForAllSprites();
     // CALL(aHideHeadbuttTree);
@@ -104,7 +104,7 @@ void ShakeHeadbuttTree(void){
         --wram->wFrameCounter;
         // LD_A(36 * SPRITEOAMSTRUCT_LENGTH);
         // LD_addr_A(wCurSpriteOAMAddr);
-        wram->wCurSpriteOAMAddr = 36 * SPRITEOAMSTRUCT_LENGTH;
+        wram->wCurSpriteOAMAddr = 36;
         // FARCALL(aDoNextFrameForAllSprites);
         DoNextFrameForAllSprites();
         // CALL(aDelayFrame);
@@ -126,7 +126,7 @@ void ShakeHeadbuttTree(void){
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite36);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite + 36, wVirtualOAMEnd - wVirtualOAMSprite36, 0);
+    ByteFill(gGFX.virtualOAMSprite + 36, sizeof(gGFX.virtualOAMSprite) - 36 * sizeof(gGFX.virtualOAMSprite[0]), 0);
     // LD_DE(mFont);
     // LD_HL(vTiles1);
     // LD_BC((BANK(aFont) << 8) | 12);
@@ -219,7 +219,7 @@ void OWCutAnimation(uint8_t e){
         // IF_NZ goto finish;
         // LD_A(36 * SPRITEOAMSTRUCT_LENGTH);
         // LD_addr_A(wCurSpriteOAMAddr);
-        wram->wCurSpriteOAMAddr = 36 * SPRITEOAMSTRUCT_LENGTH;
+        wram->wCurSpriteOAMAddr = 36;
         // CALLFAR(aDoNextFrameForAllSprites);
         DoNextFrameForAllSprites();
         // CALL(aOWCutJumptable);
@@ -458,7 +458,7 @@ void FlyFromAnim(void){
         // IF_NZ goto exit;
         // LD_A(0 * SPRITEOAMSTRUCT_LENGTH);
         // LD_addr_A(wCurSpriteOAMAddr);
-        wram->wCurSpriteOAMAddr = 0 * SPRITEOAMSTRUCT_LENGTH;
+        wram->wCurSpriteOAMAddr = 0;
         // CALLFAR(aDoNextFrameForAllSprites);
         DoNextFrameForAllSprites();
         // CALL(aFlyFunction_FrameTimer);
@@ -477,7 +477,7 @@ void FlyFromAnim(void){
 
 static void FlyToAnim_RestorePlayerSprite_DespawnLeaves(void) {
     // LD_HL(wVirtualOAMSprite00TileID);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
     // XOR_A_A;
     uint8_t a = 0;
     // LD_C(4);
@@ -498,7 +498,7 @@ static void FlyToAnim_RestorePlayerSprite_DespawnLeaves(void) {
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite04);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite + 4, sizeof(wram->wVirtualOAMSprite) - (4 * sizeof(wram->wVirtualOAMSprite[0])), 0);
+    ByteFill(gGFX.virtualOAMSprite + 4, sizeof(gGFX.virtualOAMSprite) - (4 * sizeof(gGFX.virtualOAMSprite[0])), 0);
     // RET;
 }
 
@@ -540,7 +540,7 @@ void FlyToAnim(void){
         // IF_NZ goto exit;
         // LD_A(0 * SPRITEOAMSTRUCT_LENGTH);
         // LD_addr_A(wCurSpriteOAMAddr);
-        wram->wCurSpriteOAMAddr = 0 * SPRITEOAMSTRUCT_LENGTH;
+        wram->wCurSpriteOAMAddr = 0;
         // CALLFAR(aDoNextFrameForAllSprites);
         DoNextFrameForAllSprites();
         // CALL(aFlyFunction_FrameTimer);

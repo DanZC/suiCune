@@ -4542,7 +4542,7 @@ void v_UpdateSprites(void) {
     uint8_t i = sprite_idx;
     do {
         // LD_hl_C;  // y
-        wram->wVirtualOAMSprite[i].yCoord = SCREEN_HEIGHT_PX + 2 * TILE_WIDTH;
+        gGFX.virtualOAMSprite[i].yCoord = SCREEN_HEIGHT_PX + 2 * TILE_WIDTH;
         // ADD_HL_DE;
         i++;
         // CP_A_L;
@@ -4795,7 +4795,7 @@ static bool InitSprites_InitSprite(struct Object* bc) {
         // LDH_A_addr(hUsedSpriteIndex);
         // LD_C_A;
         // LD_B(HIGH(wVirtualOAM));
-        struct SpriteOAM* bc = wram->wVirtualOAMSprite + (hram.hUsedSpriteIndex >> 2);
+        struct SpriteOAM* bc = gGFX.virtualOAMSprite + (hram.hUsedSpriteIndex >> 2);
         // LD_A_hli;
         a = hl->count;
         // LDH_addr_A(hUsedSpriteTile);

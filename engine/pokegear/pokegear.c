@@ -3610,7 +3610,7 @@ static void Pokedex_GetArea_GetAndPlaceNest(uint8_t a, species_t species){
     // decoord(0, 0, wTilemap);
     tile_t* de = coord(0, 0, wram->wTilemap);
     // LD_HL(wVirtualOAMSprite00);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
 
     while(*de != 0) {
     // nestloop:
@@ -3651,7 +3651,7 @@ static void Pokedex_GetArea_GetAndPlaceNest(uint8_t a, species_t species){
     // decoord(0, 0, wTilemap);
     // LD_BC(wVirtualOAMEnd - wVirtualOAM);
     // CALL(aCopyBytes);
-    CopyBytes(coord(0, 0, wram->wTilemap), wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite)); // ...why?
+    CopyBytes(coord(0, 0, wram->wTilemap), gGFX.virtualOAMSprite, sizeof(gGFX.virtualOAMSprite)); // ...why?
     // RET;
 }
 
@@ -3723,7 +3723,7 @@ static void Pokedex_GetArea_BlinkNestIcons(void) {
         // LD_DE(wVirtualOAM);
         // LD_BC(wVirtualOAMEnd - wVirtualOAM);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wVirtualOAMSprite, coord(0, 0, wram->wTilemap), sizeof(wram->wVirtualOAMSprite));
+        CopyBytes(gGFX.virtualOAMSprite, coord(0, 0, wram->wTilemap), sizeof(gGFX.virtualOAMSprite));
         // RET;
         return;
     }
@@ -3765,7 +3765,7 @@ static bool Pokedex_GetArea_CheckPlayerLocation(void){
         // LD_BC(wVirtualOAMEnd - wVirtualOAM);
         // XOR_A_A;
         // CALL(aByteFill);
-        ByteFill(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite), 0);
+        ByteFill(gGFX.virtualOAMSprite, sizeof(gGFX.virtualOAMSprite), 0);
         // SCF;
         // RET;
         return false;
@@ -3800,7 +3800,7 @@ static void Pokedex_GetArea_HideNestsShowPlayer(void){
     // LD_DE(mPokedex_GetArea_PlayerOAM);
     const uint8_t* de = PlayerOAM;
     // LD_HL(wVirtualOAMSprite00);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
 
     while(*de != 0x80) {
     // ShowPlayerLoop:
@@ -3844,7 +3844,7 @@ static void Pokedex_GetArea_HideNestsShowPlayer(void){
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite04);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite + 4, sizeof(wram->wVirtualOAMSprite) - 4 * sizeof(wram->wVirtualOAMSprite[0]), 0x0);
+    ByteFill(gGFX.virtualOAMSprite + 4, sizeof(gGFX.virtualOAMSprite) - 4 * sizeof(gGFX.virtualOAMSprite[0]), 0x0);
     // RET;
 }
 

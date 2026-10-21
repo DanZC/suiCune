@@ -835,7 +835,7 @@ void CardFlip_CopyToBox(tile_t* hl, const tile_t* de, uint8_t b, uint8_t c){
 
 void CardFlip_CopyOAM(const uint8_t* hl, uint8_t b, uint8_t c){
     // LD_DE(wVirtualOAMSprite00);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
     // LD_A_hli;
     uint8_t count = *(hl++);
 

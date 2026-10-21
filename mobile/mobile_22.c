@@ -833,7 +833,7 @@ void Function89448(void){
     // IF_NZ goto loop;
     // POP_AF;
     // RET;
-    ByteFill(wram->wVirtualOAMSprite, 24 * SPRITEOAMSTRUCT_LENGTH, 0);
+    ByteFill(gGFX.virtualOAMSprite, 24 * SPRITEOAMSTRUCT_LENGTH, 0);
 }
 
 // Mobile22_LoadLargeCardSpriteAndFolderGFX
@@ -2669,7 +2669,7 @@ void Function89b97(void){
     // LD_H_hl;
     // LD_L_A;
     // LD_DE(wVirtualOAMSprite00);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
 
     while(*hl != 0xff) {
     // asm_89bb4:
@@ -2790,7 +2790,7 @@ void Function89c44(uint8_t d, uint8_t e, uint8_t b, uint8_t c){
     // PUSH_DE;
     // LD_A_B;
     // LD_hli_A;  // y
-    wram->wVirtualOAMSprite[0].yCoord = b;
+    gGFX.virtualOAMSprite[0].yCoord = b;
     // LD_D(0x8);
     // LD_A_E;
     // AND_A_A;
@@ -2808,13 +2808,13 @@ void Function89c44(uint8_t d, uint8_t e, uint8_t b, uint8_t c){
 // asm_89c60:
     // POP_DE;
     // LD_hli_A;  // x
-    wram->wVirtualOAMSprite[0].xCoord = x;
+    gGFX.virtualOAMSprite[0].xCoord = x;
     // LD_A_D;
     // LD_hli_A;  // tile id
-    wram->wVirtualOAMSprite[0].tileID = d;
+    gGFX.virtualOAMSprite[0].tileID = d;
     // XOR_A_A;
     // LD_hli_A;  // attributes
-    wram->wVirtualOAMSprite[0].attributes = 0;
+    gGFX.virtualOAMSprite[0].attributes = 0;
     // RET;
 }
 
@@ -2945,7 +2945,7 @@ void Function89cdf(uint8_t b, uint8_t c){
     // LD_A(0x2);
     uint8_t a = 2;
     // LD_HL(wVirtualOAMSprite00);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
 
     do {
     // asm_89cee:
@@ -3598,7 +3598,7 @@ struct SpriteOAM* Function89f9a(uint8_t a, uint16_t de){
     // DEC_A;
     // IF_NZ goto asm_89fa0;
     // RET;
-    return wram->wVirtualOAMSprite + ((a - 1) * (de / sizeof(wram->wVirtualOAMSprite[0])));
+    return gGFX.virtualOAMSprite + ((a - 1) * (de / sizeof(gGFX.virtualOAMSprite[0])));
 }
 
 void Function89fa5(uint8_t a, uint8_t b, uint8_t c){
@@ -4681,7 +4681,7 @@ void asm_8a529(void){
     // XOR_A_A;
     // LD_BC(8 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite, 8 * SPRITEOAMSTRUCT_LENGTH, 0);
+    ByteFill(gGFX.virtualOAMSprite, 8 * SPRITEOAMSTRUCT_LENGTH, 0);
     // RET;
 
 }

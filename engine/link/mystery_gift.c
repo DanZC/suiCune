@@ -2277,7 +2277,7 @@ static void DoNameCardSwap_SlideNameCardUpOffScreen(void){
     while(1) {
     // loop:
         // LD_HL(wVirtualOAMSprite00YCoord);
-        struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+        struct SpriteOAM* hl = gGFX.virtualOAMSprite;
         // LD_B(8);
         uint8_t b = 8;
 
@@ -2294,7 +2294,7 @@ static void DoNameCardSwap_SlideNameCardUpOffScreen(void){
         } while(--b != 0);
 
         // LD_HL(wVirtualOAMSprite08YCoord);
-        hl = wram->wVirtualOAMSprite + 0x8;
+        hl = gGFX.virtualOAMSprite + 0x8;
         // LD_B(8);
         b = 8;
 
@@ -2689,7 +2689,7 @@ void InitNameCardLayout(void){
     // LD_HL(mInitNameCardLayout_NameCardOAMData);
     // LD_BC(16 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wVirtualOAMSprite, NameCardOAMData, 16 * SPRITEOAMSTRUCT_LENGTH);
+    CopyBytes(gGFX.virtualOAMSprite, NameCardOAMData, 16 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aEnableLCD);
     EnableLCD();
     // CALL(aWaitBGMap);

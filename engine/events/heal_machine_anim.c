@@ -118,7 +118,7 @@ static const uint8_t* const Pointers[] = {
             case HEALMACHINESTATE_PCLOADBALLS: {
             // PC_LoadBallsOntoMachine:
                 // LD_HL(wVirtualOAMSprite32);
-                struct SpriteOAM* hl = wram->wVirtualOAMSprite + 32;
+                struct SpriteOAM* hl = gGFX.virtualOAMSprite + 32;
                 // LD_DE(mHealMachineAnim_PC_ElmsLab_OAM);
                 const struct SpriteOAM* de = PC_ElmsLab_OAM;
                 // CALL(aHealMachineAnim_PlaceHealingMachineTile);
@@ -132,7 +132,7 @@ static const uint8_t* const Pointers[] = {
             case HEALMACHINESTATE_HOFLOADBALLS: {
             // HOF_LoadBallsOntoMachine:
                 // LD_HL(wVirtualOAMSprite32);
-                struct SpriteOAM* hl = wram->wVirtualOAMSprite + 32;
+                struct SpriteOAM* hl = gGFX.virtualOAMSprite + 32;
                 // LD_DE(mHealMachineAnim_HOF_OAM);
                 const struct SpriteOAM* de = HOF_OAM;
                 HealMachineAnim_LoadBallsOntoMachine(hl, de);

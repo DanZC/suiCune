@@ -1524,15 +1524,15 @@ static void Intro_PlacePlayerSprite(void){
         // LD_A_de;
         // INC_DE;
         // LD_hli_A;  // y
-        wram->wVirtualOAMSprite[i].yCoord = sprites[i].y;
+        gGFX.virtualOAMSprite[i].yCoord = sprites[i].y;
         // LD_A_de;
         // INC_DE;
         // LD_hli_A;  // x
-        wram->wVirtualOAMSprite[i].xCoord = sprites[i].x;
+        gGFX.virtualOAMSprite[i].xCoord = sprites[i].x;
         // LD_A_de;
         // INC_DE;
         // LD_hli_A;  // tile id
-        wram->wVirtualOAMSprite[i].tileID = sprites[i].tile;
+        gGFX.virtualOAMSprite[i].tileID = sprites[i].tile;
 
         // LD_B(PAL_OW_RED);
         // LD_A_addr(wPlayerGender);
@@ -1544,7 +1544,7 @@ static void Intro_PlacePlayerSprite(void){
         // LD_A_B;
 
         // LD_hli_A;  // attributes
-        wram->wVirtualOAMSprite[i].attributes = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? PAL_OW_BLUE: PAL_OW_RED;
+        gGFX.virtualOAMSprite[i].attributes = (bit_test(gCrystal.playerGender, PLAYERGENDER_FEMALE_F))? PAL_OW_BLUE: PAL_OW_RED;
         // DEC_C;
         // IF_NZ goto loop;
     }

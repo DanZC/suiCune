@@ -4,12 +4,12 @@
 
 //  Erase OAM data
 void ClearSprites(void){
-    ByteFill(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite), 0);
+    ByteFill(gGFX.virtualOAMSprite, sizeof(gGFX.virtualOAMSprite), 0);
 }
 
 //  Set all OAM y-positions to 160 to hide them offscreen
 void HideSprites(void){
     for(uint32_t i = 0; i < NUM_SPRITE_OAM_STRUCTS; ++i) {
-        wram->wVirtualOAMSprite[i].yCoord = SCREEN_WIDTH_PX;  // y
+        gGFX.virtualOAMSprite[i].yCoord = SCREEN_WIDTH_PX;  // y
     }
 }

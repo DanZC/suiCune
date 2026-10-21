@@ -3057,7 +3057,7 @@ void Pokedex_UpdateSearchResultsCursorOAM(void){
 
 struct SpriteOAM* Pokedex_LoadCursorOAM(const uint8_t* hl){
     // LD_DE(wVirtualOAMSprite00);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
 
     while(*hl != 0xff) {
     // loop:

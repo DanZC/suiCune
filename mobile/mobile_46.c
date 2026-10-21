@@ -8934,7 +8934,7 @@ void Function11ac51(void){
         Function11ad6e();
         // LD_A(30 * SPRITEOAMSTRUCT_LENGTH);
         // LD_addr_A(wCurSpriteOAMAddr);
-        wram->wCurSpriteOAMAddr = 30 * SPRITEOAMSTRUCT_LENGTH;
+        wram->wCurSpriteOAMAddr = 30;
         // FARCALL(aDoNextFrameForAllSprites);
         DoNextFrameForAllSprites();
         // FARCALL(aReloadMapPart);
@@ -10545,7 +10545,7 @@ void Function11b31b(void){
 
 void Function11b397(const uint8_t* hl, const uint8_t* bc){
     // LD_DE(wVirtualOAMSprite00);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
 
     while(*hl != 0xff) {
     // loop:
@@ -10617,7 +10617,7 @@ loop:
 void Function11b3d9(void){
     // LD_DE(wVirtualOAMSprite28);
     // PUSH_DE;
-    struct SpriteOAM* de = wram->wVirtualOAMSprite + 28;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite + 28;
     // LD_A_addr(wc7d2);
     // DEC_A;
     // LD_E_A;

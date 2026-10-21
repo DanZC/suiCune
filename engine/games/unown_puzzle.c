@@ -824,7 +824,7 @@ void RedrawUnownPuzzlePieces(void){
 
 // load:
     // LD_DE(wVirtualOAMSprite00);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
 
     while(1) {
     // loop:

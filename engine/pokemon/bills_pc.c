@@ -2307,7 +2307,7 @@ void BillsPC_UpdateSelectionCursor(void){
     // LD_HL(mBillsPC_UpdateSelectionCursor_OAM);
     const uint8_t* hl = OAM;
     // LD_DE(wVirtualOAMSprite00);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
 
     while(*hl != 0xff) {
     // loop:
@@ -2352,7 +2352,7 @@ void BillsPC_UpdateInsertCursor(void){
     // LD_HL(mBillsPC_UpdateInsertCursor_OAM);
     const uint8_t* hl = OAM;
     // LD_DE(wVirtualOAMSprite00);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
 
     while(*hl != (uint8_t)-1){ 
     // loop:

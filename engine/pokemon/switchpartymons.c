@@ -22,7 +22,7 @@ static void v_SwitchPartyMons_ClearSprite(uint8_t a) {
     for(uint32_t i = 0; i < 4; ++i) {
     // gfx_loop:
         // LD_hl(SCREEN_WIDTH_PX);  // y (off-screen)
-        wram->wVirtualOAMSprite[4 * a + i].yCoord = SCREEN_WIDTH_PX;
+        gGFX.virtualOAMSprite[4 * a + i].yCoord = SCREEN_WIDTH_PX;
         // ADD_HL_DE;
         // DEC_C;
         // IF_NZ goto gfx_loop;

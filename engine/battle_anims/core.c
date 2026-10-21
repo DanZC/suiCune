@@ -171,7 +171,7 @@ bool BattleAnimOAMUpdate(struct BattleAnim* bc, uint8_t* oamIndex){
     // LD_A_addr(wBattleAnimOAMPointerLo);
     // LD_E_A;
     // LD_D(HIGH(wVirtualOAM));
-    struct SpriteOAM* de = wram->wVirtualOAMSprite + *oamIndex;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite + *oamIndex;
 
     do {
     // loop:

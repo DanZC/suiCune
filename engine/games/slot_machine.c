@@ -471,7 +471,7 @@ void AnimateSlotReelIcons(void){
         // LD_A_hl;
         // XOR_A(0x20);  // alternate between $00-$1f and $20-$3f
         // LD_hli_A;  // tile id
-        wram->wVirtualOAMSprite[i].tileID ^= 0x20; // alternate between $00-$1f and $20-$3f
+        gGFX.virtualOAMSprite[i].tileID ^= 0x20; // alternate between $00-$1f and $20-$3f
         // for(int rept = 0; rept < SPRITEOAMSTRUCT_LENGTH - 1; rept++){
         // INC_HL;
         // }
@@ -1093,7 +1093,7 @@ void Slots_InitReelTiles(void){
     // LD_hl_E;
     // INC_HL;
     // LD_hl_D;
-    gSlotData.reel1.oamAddr = wram->wVirtualOAMSprite + 16;
+    gSlotData.reel1.oamAddr = gGFX.virtualOAMSprite + 16;
     // LD_HL(REEL_TILEMAP_ADDR);
     // ADD_HL_BC;
     // LD_DE(mReel1Tilemap);
@@ -1115,7 +1115,7 @@ void Slots_InitReelTiles(void){
     // LD_hl_E;
     // INC_HL;
     // LD_hl_D;
-    gSlotData.reel2.oamAddr = wram->wVirtualOAMSprite + 24;
+    gSlotData.reel2.oamAddr = gGFX.virtualOAMSprite + 24;
     // LD_HL(REEL_TILEMAP_ADDR);
     // ADD_HL_BC;
     // LD_DE(mReel2Tilemap);
@@ -1137,7 +1137,7 @@ void Slots_InitReelTiles(void){
     // LD_hl_E;
     // INC_HL;
     // LD_hl_D;
-    gSlotData.reel3.oamAddr = wram->wVirtualOAMSprite + 32;
+    gSlotData.reel3.oamAddr = gGFX.virtualOAMSprite + 32;
     // LD_HL(REEL_TILEMAP_ADDR);
     // ADD_HL_BC;
     // LD_DE(mReel3Tilemap);

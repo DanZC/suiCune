@@ -1503,13 +1503,13 @@ static void DebugColor_PlaceCursor(void){
     // LD_HL(wVirtualOAM);
     // LD_DE(wDebugRedChannel);
     // CALL(aDebugColor_PlaceCursor_placesprite);
-    b = DebugColor_PlaceCursor_placesprite(wram->wVirtualOAMSprite + 0x0, wram->wDebugRedChannel, b, 5);
+    b = DebugColor_PlaceCursor_placesprite(gGFX.virtualOAMSprite + 0x0, wram->wDebugRedChannel, b, 5);
     // LD_DE(wDebugGreenChannel);
     // CALL(aDebugColor_PlaceCursor_placesprite);
-    b = DebugColor_PlaceCursor_placesprite(wram->wVirtualOAMSprite + 0x1, wram->wDebugGreenChannel, b, 6);
+    b = DebugColor_PlaceCursor_placesprite(gGFX.virtualOAMSprite + 0x1, wram->wDebugGreenChannel, b, 6);
     // LD_DE(wDebugBlueChannel);
     // CALL(aDebugColor_PlaceCursor_placesprite);
-    b = DebugColor_PlaceCursor_placesprite(wram->wVirtualOAMSprite + 0x2, wram->wDebugBlueChannel, b, 7);
+    b = DebugColor_PlaceCursor_placesprite(gGFX.virtualOAMSprite + 0x2, wram->wDebugBlueChannel, b, 7);
     // RET;
 }
 

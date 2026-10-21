@@ -390,7 +390,7 @@ void BattleAnim_ClearOAM(void){
     if(bit_test(wram->wBattleAnimFlags, BATTLEANIM_KEEPSPRITES_F)) {
     // Instead of deleting the sprites, make them all use PAL_BATTLE_OB_ENEMY
         // LD_HL(wVirtualOAMSprite00Attributes);
-        struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+        struct SpriteOAM* hl = gGFX.virtualOAMSprite;
         // LD_C(NUM_SPRITE_OAM_STRUCTS);
         uint8_t c = NUM_SPRITE_OAM_STRUCTS;
 
@@ -422,7 +422,7 @@ void BattleAnim_ClearOAM(void){
         // LD_hli_A;
         // DEC_C;
         // IF_NZ goto loop2;
-        ByteFill(wram->wVirtualOAMSprite, sizeof(wram->wVirtualOAMSprite), 0);
+        ByteFill(gGFX.virtualOAMSprite, sizeof(gGFX.virtualOAMSprite), 0);
         // RET;
         return;
     }
@@ -2219,10 +2219,10 @@ void BattleAnim_UpdateOAM_All(void){
         // IF_NC goto done;
         // XOR_A_A;
         // LD_hli_A;
-        wram->wVirtualOAMSprite[oamIndex].yCoord = 0;
-        wram->wVirtualOAMSprite[oamIndex].xCoord = 0;
-        wram->wVirtualOAMSprite[oamIndex].tileID = 0;
-        wram->wVirtualOAMSprite[oamIndex].attributes = 0;
+        gGFX.virtualOAMSprite[oamIndex].yCoord = 0;
+        gGFX.virtualOAMSprite[oamIndex].xCoord = 0;
+        gGFX.virtualOAMSprite[oamIndex].tileID = 0;
+        gGFX.virtualOAMSprite[oamIndex].attributes = 0;
         // goto loop2;
         oamIndex++;
     }

@@ -13782,7 +13782,7 @@ void GetTrainerBackpic(void){
 
 static void CopyBackpic_LoadTrainerBackpicAsOAM(void) {
     // LD_HL(wVirtualOAMSprite00);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
     // XOR_A_A;
     // LDH_addr_A(hMapObjectIndex);
     uint8_t idx = 0;

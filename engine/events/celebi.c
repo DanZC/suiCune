@@ -18,7 +18,7 @@ void UnusedForestTreeFrames(void){
 
 static void CelebiShrineEvent_RestorePlayerSprite_DespawnLeaves(void){
     // LD_HL(wVirtualOAMSprite00TileID);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
     // XOR_A_A;
     // LD_C(4);
 
@@ -38,7 +38,7 @@ static void CelebiShrineEvent_RestorePlayerSprite_DespawnLeaves(void){
     // LD_BC(wVirtualOAMEnd - wVirtualOAMSprite04);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite + 0x4, sizeof(wram->wVirtualOAMSprite) - 4 * sizeof(wram->wVirtualOAMSprite[0]), 0x0);
+    ByteFill(gGFX.virtualOAMSprite + 0x4, sizeof(gGFX.virtualOAMSprite) - 4 * sizeof(gGFX.virtualOAMSprite[0]), 0x0);
     // RET;
 }
 
@@ -88,7 +88,7 @@ void CelebiShrineEvent(void){
         // PUSH_DE;
         // LD_A(36 * SPRITEOAMSTRUCT_LENGTH);
         // LD_addr_A(wCurSpriteOAMAddr);
-        wram->wCurSpriteOAMAddr = 36 * SPRITEOAMSTRUCT_LENGTH;
+        wram->wCurSpriteOAMAddr = 36;
         // FARCALL(aDoNextFrameForAllSprites);
         DoNextFrameForAllSprites();
         // CALL(aCelebiEvent_CountDown);

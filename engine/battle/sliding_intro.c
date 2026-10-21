@@ -154,7 +154,7 @@ static void BattleIntroSlidingPics_subfunction3(void) {
     // LD_HL(wVirtualOAMSprite00XCoord);
     // LD_C(0x12);  // 18
     // LD_DE(SPRITEOAMSTRUCT_LENGTH);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
 
     for(uint32_t i = 0; i < 0x12; ++i) {
         // DEC_hl;

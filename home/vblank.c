@@ -24,7 +24,7 @@ void TransferVirtualOAM(void) {
 // wait:
     // DEC_A;
     // IF_NZ goto wait;
-    CopyBytes(gb.oam, wram->wVirtualOAMSprite, sizeof(gb.oam));
+    CopyBytes(gb.oam, gGFX.virtualOAMSprite, sizeof(gb.oam));
     return;
 }
 

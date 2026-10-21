@@ -516,7 +516,7 @@ static void InitializeBackground_InitColumn(struct SpriteOAM* hl, uint8_t d, uin
 
 void InitializeBackground(void){
     // LD_HL(wVirtualOAMSprite00);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
     // LD_D(-0x22);
     uint8_t d = -0x22;
     // LD_E(0x0);
@@ -544,7 +544,7 @@ void AnimateTitleCrystal(void){
 //  Stop at y=6
 //  y is really from the bottom of the sprite, which is two tiles high
     // LD_HL(wVirtualOAMSprite00YCoord);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
     // LD_A_hl;
     // CP_A(6 + 2 * TILE_WIDTH);
     // RET_Z ;

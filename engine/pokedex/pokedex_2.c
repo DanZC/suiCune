@@ -84,7 +84,7 @@ void DoDexSearchSlowpokeFrame(void){
     // LD_HL(mDoDexSearchSlowpokeFrame_SlowpokeSpriteData);
     const uint8_t* hl = SlowpokeSpriteData;
     // LD_DE(wVirtualOAMSprite00);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
 
     while(*hl != (uint8_t)-1){
     // loop:

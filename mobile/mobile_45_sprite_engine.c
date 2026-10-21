@@ -48,7 +48,7 @@ void Function115dc3(void){
     // LD_HL(wVirtualOAMSprite31);
     // LD_BC(8 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite + 31, 8 * sizeof(wram->wVirtualOAMSprite[0]), 0xa0);
+    ByteFill(gGFX.virtualOAMSprite + 31, 8 * sizeof(gGFX.virtualOAMSprite[0]), 0xa0);
     // RET;
 }
 
@@ -62,7 +62,7 @@ void Function115dd3(void){
     // LD_HL(wVirtualOAMSprite31);
     // LD_BC(8 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite + 31, 8 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
+    ByteFill(gGFX.virtualOAMSprite + 31, 8 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     // CALL(aFunction115e22);
     Function115e22();
     // LD_A_addr(wc309);
@@ -79,7 +79,7 @@ void Function115dd3(void){
     // POP_HL;
     const uint8_t* hl = Unknown_115e86[wram->wc309];
     // LD_DE(wVirtualOAMSprite31);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite + 31;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite + 31;
     // LD_A_addr(wc307);
     // LD_C_A;
     uint8_t c = wram->wc307;
@@ -469,7 +469,7 @@ void Function11619d(void){
         // LD_HL(wVirtualOAM);
         // LD_BC(25 * SPRITEOAMSTRUCT_LENGTH);
         // CALL(aByteFill);
-        ByteFill(wram->wVirtualOAMSprite, 25 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
+        ByteFill(gGFX.virtualOAMSprite, 25 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     }
 
 // asm_1161b4:
@@ -716,7 +716,7 @@ void Function1162f2(void){
     // SUB_A_E;
     uint8_t a = *(list++) - wram->wc314[4];
     // LD_DE(wVirtualOAMSprite09);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite + 0x9;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite + 0x9;
 
     do {
     // asm_116321:
@@ -771,7 +771,7 @@ void Function1162f2(void){
     // SUB_A_E;
     a = *(list++) - wram->wc3f8;
     // LD_DE(wVirtualOAMSprite00);
-    de = wram->wVirtualOAMSprite + 0x0;
+    de = gGFX.virtualOAMSprite + 0x0;
 
     do {
     // asm_11635a:
@@ -824,7 +824,7 @@ void Function11636e(void){
     // LD_HL(wVirtualOAM);
     // LD_BC(16 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite, 16 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
+    ByteFill(gGFX.virtualOAMSprite, 16 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     // LD_A(0x90);
     // LDH_addr_A(hWY);
     hram.hWY = 0x90;
@@ -859,7 +859,7 @@ void Function1163c0(void){
     // LD_HL(wVirtualOAM);
     // LD_BC(16 * SPRITEOAMSTRUCT_LENGTH);
     // CALL(aByteFill);
-    ByteFill(wram->wVirtualOAMSprite, 16 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
+    ByteFill(gGFX.virtualOAMSprite, 16 * SPRITEOAMSTRUCT_LENGTH, 0xa0);
     // CALL(aDelayFrame);
     DelayFrame();
     // FARCALL(av_RefreshSprites);

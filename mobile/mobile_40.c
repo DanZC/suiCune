@@ -9992,7 +9992,7 @@ void Function10306e(void){
     ClearSprites();
     // LD_DE(wVirtualOAM);
     // CALL(aFunction1030cd);
-    Function1030cd(wram->wVirtualOAMSprite);
+    Function1030cd(gGFX.virtualOAMSprite);
     // XOR_A_A;
     // LDH_addr_A(hOAMUpdate);
     hram.hOAMUpdate = 0x0;

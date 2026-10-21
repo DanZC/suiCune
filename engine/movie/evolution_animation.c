@@ -253,7 +253,7 @@ static void EvolutionAnimation_AnimateBallsOfLight(void){
     // LD_B_A;
     uint8_t b = ((hram.hVBlankCounter + 4) / 2) & 7;
     // LD_HL(wVirtualOAMSprite00Attributes);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
     // LD_C(NUM_SPRITE_OAM_STRUCTS);
     uint8_t c = NUM_SPRITE_OAM_STRUCTS;
 

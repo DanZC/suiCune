@@ -1,5 +1,6 @@
 #include "../../constants.h"
 #include "sprites.h"
+#include "../../home/copy.h"
 #include "../../home/sine.h"
 #include "../../home/delay.h"
 #include "../../home/clear_sprites.h"
@@ -42,7 +43,7 @@ void PlaySpriteAnimations(void){
 
     // LD_A(LOW(wVirtualOAM));
     // LD_addr_A(wCurSpriteOAMAddr);
-    wram->wCurSpriteOAMAddr = LOW(wVirtualOAM);
+    wram->wCurSpriteOAMAddr = 0;
     // CALL(aDoNextFrameForAllSprites);
     DoNextFrameForAllSprites();
 
@@ -91,9 +92,9 @@ void DoNextFrameForAllSprites(void){
     // LD_A_addr(wCurSpriteOAMAddr);
     // LD_L_A;
     // LD_H(HIGH(wVirtualOAM));
-    uint16_t hl2 = (wVirtualOAM & 0xff00) | wram->wCurSpriteOAMAddr;
+    uint16_t hl2 = wram->wCurSpriteOAMAddr;
+    ByteFill(gGFX.virtualOAMSprite + hl2, sizeof(gGFX.virtualOAMSprite) - (hl2 * sizeof(gGFX.virtualOAMSprite[0])), 0);
 
-    while(LOW(hl2) < LOW(wVirtualOAMEnd)) {
     // loop2:
     //   //  Clear (wVirtualOAM + [wCurSpriteOAMAddr] --> wVirtualOAMEnd)
         // LD_A_L;
@@ -101,10 +102,7 @@ void DoNextFrameForAllSprites(void){
         // IF_NC goto done;
         // XOR_A_A;
         // LD_hli_A;
-        gb_write(hl2++, 0);
         // goto loop2;
-    }
-
 
 // done:
     // RET;
@@ -146,9 +144,10 @@ void DoNextFrameForFirst16Sprites(void){
     // LD_A_addr(wCurSpriteOAMAddr);
     // LD_L_A;
     // LD_H(HIGH(wVirtualOAMSprite16));
-    uint16_t hl2 = (wVirtualOAMSprite16 & 0xff00) | wram->wCurSpriteOAMAddr;
+// TODO: Double check that this is correct behavior. Should wCurSpriteOAMAddr be <= 16?
+    uint16_t hl2 = wram->wCurSpriteOAMAddr;
+    ByteFill(gGFX.virtualOAMSprite + hl2, (16 * sizeof(gGFX.virtualOAMSprite[0])) - (hl2 * sizeof(gGFX.virtualOAMSprite[0])), 0);
 
-    while(LOW(hl2) < LOW(wVirtualOAMSprite16)) {
     // loop2:
     //   //  Clear (wVirtualOAM + [wCurSpriteOAMAddr] --> Sprites + $40)
         // LD_A_L;
@@ -156,9 +155,7 @@ void DoNextFrameForFirst16Sprites(void){
         // IF_NC goto done;
         // XOR_A_A;
         // LD_hli_A;
-        gb_write(hl2++, 0x0);
         // goto loop2;
-    }
 
 // done:
     // RET;
@@ -357,7 +354,7 @@ bool UpdateAnimFrame(struct SpriteAnim* bc){
     // LD_A_addr(wCurSpriteOAMAddr);
     // LD_E_A;
     // LD_D(HIGH(wVirtualOAM));
-    uint16_t de = (wVirtualOAM & 0xff00) | wram->wCurSpriteOAMAddr;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite + wram->wCurSpriteOAMAddr;
     // LD_A_hli;
     // LD_C_A;  // number of objects
     uint8_t c = *(hl++);
@@ -377,7 +374,7 @@ bool UpdateAnimFrame(struct SpriteAnim* bc){
         // CALL(aAddOrSubtractY);
         // ADD_A_B;
         // LD_de_A;
-        gb_write(de++, wram->wCurAnimYCoord + wram->wCurAnimYOffset + wram->wGlobalAnimYOffset + AddOrSubtractY(hl++));
+        de->yCoord = wram->wCurAnimYCoord + wram->wCurAnimYOffset + wram->wGlobalAnimYOffset + AddOrSubtractY(hl++);
         // INC_HL;
         // INC_DE;
     // second byte: x (px)
@@ -393,7 +390,7 @@ bool UpdateAnimFrame(struct SpriteAnim* bc){
         // CALL(aAddOrSubtractX);
         // ADD_A_B;
         // LD_de_A;
-        gb_write(de++, wram->wCurAnimXCoord + wram->wCurAnimXOffset + wram->wGlobalAnimXOffset + AddOrSubtractX(hl++));
+        de->xCoord = wram->wCurAnimXCoord + wram->wCurAnimXOffset + wram->wGlobalAnimXOffset + AddOrSubtractX(hl++);
         // INC_HL;
         // INC_DE;
     // third byte: vtile
@@ -401,22 +398,22 @@ bool UpdateAnimFrame(struct SpriteAnim* bc){
         // LD_A_addr(wCurAnimVTile);
         // ADD_A_hl;
         // LD_de_A;
-        gb_write(de++, wram->wCurAnimVTile + *(hl++));
+        de->tileID = wram->wCurAnimVTile + *(hl++);
         // INC_HL;
         // INC_DE;
     // fourth byte: attributes
     // [de] = GetSpriteOAMAttr([hl])
         // CALL(aGetSpriteOAMAttr);
         // LD_de_A;
-        gb_write(de++, GetSpriteOAMAttr(hl++));
+        de->attributes = GetSpriteOAMAttr(hl++);
         // INC_HL;
         // INC_DE;
         // LD_A_E;
         // LD_addr_A(wCurSpriteOAMAddr);
-        wram->wCurSpriteOAMAddr = LOW(de);
+        wram->wCurSpriteOAMAddr++;
         // CP_A(LOW(wVirtualOAMEnd));
         // IF_NC goto reached_the_end;
-        if(LOW(de) >= LOW(wVirtualOAMEnd)) {
+        if(wram->wCurSpriteOAMAddr >= NUM_SPRITE_OAM_STRUCTS) {
         // reached_the_end:
             // POP_BC;
             // SCF;
@@ -729,7 +726,7 @@ void UnusedLoadSpriteAnimGFX(void){
 
 static void AnimateEndOfExpBar_AnimateFrame(uint8_t d){
     // LD_HL(wVirtualOAMSprite00);
-    struct SpriteOAM* hl = wram->wVirtualOAMSprite;
+    struct SpriteOAM* hl = gGFX.virtualOAMSprite;
     // LD_C(8);  // number of animated circles
     uint8_t c = 8;
 

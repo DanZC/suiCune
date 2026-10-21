@@ -270,7 +270,7 @@ struct wram_s
                 // wVirtualOAMSprite00 - wVirtualOAMSprite39
                 struct SpriteOAM wVirtualOAMSprite[NUM_SPRITE_OAM_STRUCTS];
                 //void wVirtualOAMEnd
-            };
+            } _oam;
             // Tilemap
             struct {
                 // WRAM0

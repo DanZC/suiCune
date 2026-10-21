@@ -169,7 +169,7 @@ check_wram0_field(wc3fa);
 check_wram0_field(wc3fb);
 check_wram0_field(wc3fc);
 // section Sprites
-check_wram0_field_mapped(wVirtualOAMSprite, wVirtualOAMSprite00);
+// check_wram0_field_mapped(wVirtualOAMSprite, wVirtualOAMSprite00);
 // section Tilemap
 check_wram0_field(wTilemap);
 // section Miscellaneous

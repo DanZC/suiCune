@@ -770,7 +770,7 @@ void Function16cb2e(void){
     // LD_HL(mUnknown_16cb86);
     // LD_DE(wVirtualOAM);
     // CALL(aFunction16cb5d);
-    Function16cb5d(wram->wVirtualOAMSprite, Unknown_16cb86);
+    Function16cb5d(gGFX.virtualOAMSprite, Unknown_16cb86);
     // RET;
 }
 

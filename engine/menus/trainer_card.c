@@ -799,7 +799,7 @@ static void TrainerCard_Page2_3_OAMUpdate(const struct JohtoBadgesOAM* hl){
     // LD_C_A;
     uint8_t c = *hl->badges;
     // LD_DE(wVirtualOAMSprite00);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
     // LD_B(NUM_JOHTO_BADGES);
 
     for(uint8_t i = 0; i < NUM_JOHTO_BADGES; ++i) {

@@ -792,7 +792,7 @@ const char String_17a9b2[] =
 
 void Function17a9cb(void){
     // LD_DE(wVirtualOAM);
-    struct SpriteOAM* de = wram->wVirtualOAMSprite;
+    struct SpriteOAM* de = gGFX.virtualOAMSprite;
     // LD_HL(0xd088);
     // BIT_hl(6);
     // IF_NZ goto bit_6_set;

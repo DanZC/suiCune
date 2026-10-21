@@ -1,7 +1,7 @@
 #pragma once
 
 typedef struct GFX {
-    struct SpriteOAM virtual_oam_sprite[NUM_SPRITE_OAM_STRUCTS];
+    struct SpriteOAM virtualOAMSprite[NUM_SPRITE_OAM_STRUCTS];
     color_t bgPals1[8 * NUM_PAL_COLORS];
     color_t obPals1[8 * NUM_PAL_COLORS];
     color_t bgPals2[8 * NUM_PAL_COLORS];
