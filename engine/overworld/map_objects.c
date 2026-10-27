@@ -4804,7 +4804,7 @@ static bool InitSprites_InitSprite(struct Object* bc) {
         // ADD_A_C;
         a += hram.hUsedSpriteIndex;
         // CP_A(LOW(wVirtualOAMEnd));
-        if(a >= LOW(wVirtualOAMEnd)) {
+        if(a >= (NUM_SPRITE_OAM_STRUCTS * sizeof(struct SpriteOAM))) {
 
         // full:
 

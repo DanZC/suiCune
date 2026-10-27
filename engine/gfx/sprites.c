@@ -268,7 +268,6 @@ struct SpriteAnim* v_InitSpriteAnimStruct(uint8_t a, uint16_t de){
             // LD_addr_A(wSpriteAnimAddrBackup);
             // LD_A_B;
             // LD_addr_A(wSpriteAnimAddrBackup + 1);
-            wram->wSpriteAnimAddrBackup = wSpriteAnimationStructs + ((int)(bc - wram->wSpriteAnim) * SPRITEANIMSTRUCT_LENGTH);
             return bc;
             // RET;
         }
@@ -420,6 +419,7 @@ bool UpdateAnimFrame(struct SpriteAnim* bc){
             // RET;
             return true;
         }
+        de++;
         // DEC_C;
         // IF_NZ goto loop;
     } while(--c != 0);
