@@ -5,7 +5,7 @@
 
 const txt_cmd_s AlanGettingStrongerText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s"
         t_line "getting stronger,"
         t_para "exactly as I"
@@ -16,7 +16,7 @@ const txt_cmd_s AlanDefeatedMonText[] = {
     text_start("By the way, we"
         t_line "knocked out a wild"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" just"
         t_line "the other day."
         t_para "Studying up in"
@@ -26,7 +26,7 @@ const txt_cmd_s AlanDefeatedMonText[] = {
 const txt_cmd_s AlanLostAMonText[] = {
     text_start("By the way, a wild"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" escaped"
         t_cont "on me yesterday."
         t_para "A computational"
@@ -40,7 +40,7 @@ const txt_cmd_s AlanBattleRematchText[] = {
         t_line "lot better!"
         t_para "I'm hanging out on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "Can you come down"
         t_line "for a battle?"
@@ -56,7 +56,7 @@ const txt_cmd_s AlanFoundItemText[] = {
         t_para "You can have it!"
         t_line "Why don't you come"
         t_para "to @")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(
         t_line "and pick it up?"
         t_done )
@@ -74,7 +74,7 @@ const txt_cmd_s AlanReminderText[] = {
         t_cont "my strategy!"
         t_para "I'm waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -85,7 +85,7 @@ const txt_cmd_s AlanComePickUpGiftText[] = {
         t_line "gift right away?"
         t_para "I'm waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -96,7 +96,7 @@ const txt_cmd_s AnthonyMonAteSomeBerriesText[] = {
     text_start("The other day, I"
         t_line "was watching my"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" eat"
         t_line "some BERRIES."
         t_para "It looked like it"
@@ -113,7 +113,7 @@ const txt_cmd_s AnthonyDefeatedMonText[] = {
     text_start("Lately, I've been"
         t_line "running across"
         t_para "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_line "quite often."
         t_para "They're easily"
@@ -124,7 +124,7 @@ const txt_cmd_s AnthonyLostAMonText[] = {
     text_start("Oh yeah, I was"
         t_line "battling this"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" the"
         t_line "other day…"
         t_para "It took off when I"
@@ -140,7 +140,7 @@ const txt_cmd_s AnthonyBattleRematchText[] = {
     text_start("Come on--let's"
         t_line "battle right now!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(" is"
         t_line "where I am."
         t_para "Come on down if"
@@ -157,18 +157,18 @@ const txt_cmd_s AnthonySwarmText[] = {
         t_line "mind-blowing!"
         t_para "I took a hike in"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(
         t_cont "yesterday, see?"
         t_para "Well, there were"
         t_line "tons of @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_para "around! You have"
         t_line "to see it!"
         t_para "I get this feeling"
         t_line "that @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_para "may be timid."
         t_line "I didn't see any"
@@ -190,7 +190,7 @@ const txt_cmd_s AnthonyReminderText[] = {
         t_para "our battle, have"
         t_line "you?"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_line "I'm waiting!"
         t_done )
@@ -213,7 +213,7 @@ const txt_cmd_s AnthonyHurryText[] = {
 const txt_cmd_s ArnieMonIsSoCuteText[] = {
     text_start("I'm always with my"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_para "It's so cute!"
         t_line "I just love it!"
@@ -223,7 +223,7 @@ const txt_cmd_s ArnieDefeatedMonText[] = {
     text_start("Changing the topic"
         t_line "here, I saw this"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" for the"
         t_line "first time."
         t_para "It was easy to"
@@ -234,7 +234,7 @@ const txt_cmd_s ArnieLostAMonText[] = {
     text_start("I was wondering,"
         t_line "do you happen to"
         t_cont "have @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("?"
         t_para "I can't seem to"
         t_line "catch one. What is"
@@ -251,7 +251,7 @@ const txt_cmd_s ArnieBattleRematchText[] = {
         t_line "Contest!"
         t_para "I'll be here on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -265,11 +265,11 @@ const txt_cmd_s ArnieSwarmText[] = {
         t_line "caught you!"
         t_para "A whole bunch of"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" have"
         t_para "appeared around"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_para "You have to see"
         t_line "this!"
@@ -289,7 +289,7 @@ const txt_cmd_s ArnieReminderText[] = {
         t_para "Let's battle. I'll"
         t_line "be waiting for you"
         t_cont "on @")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -308,10 +308,10 @@ const txt_cmd_s ArnieHurryText[] = {
 const txt_cmd_s BethExhilaratingRideText[] = {
     text_start("Do you remember my"
         t_line "sweet @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("?"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" runs"
         t_line "very fast."
         t_para "It's exhilarating"
@@ -323,7 +323,7 @@ const txt_cmd_s BethExhilaratingRideText[] = {
 const txt_cmd_s BethDefeatedMonText[] = {
     text_start("Oh, have you ever"
         t_line "seen a @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_cont "before?"
         t_para "I just battled"
@@ -339,7 +339,7 @@ const txt_cmd_s BethDefeatedMonText[] = {
 const txt_cmd_s BethLostAMonText[] = {
     text_start("Oh, I just saw a"
         t_line "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "I was trying to"
         t_line "catch it when I"
@@ -361,7 +361,7 @@ const txt_cmd_s BethBattleRematchText[] = {
         t_para "I'll be waiting"
         t_line "for you around"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_line "Look for me, OK?"
         t_done )
@@ -381,7 +381,7 @@ const txt_cmd_s BethReminderText[] = {
         t_para "Did you forget our"
         t_line "deal?"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "That's where I'm"
         t_line "waiting."
@@ -393,7 +393,7 @@ const txt_cmd_s BethReminderText[] = {
 const txt_cmd_s BeverlyMadeMonEvenCuterText[] = {
     text_start("I fancied up my"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" and"
         t_para "made it even cuter"
         t_line "than before!"
@@ -417,7 +417,7 @@ const txt_cmd_s BeverlyLostAMonText[] = {
         t_para "A closer look"
         t_line "showed it was"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(". I was"
         t_line "quite miffed."
         t_done )
@@ -436,7 +436,7 @@ const txt_cmd_s BeverlyFoundItemText[] = {
         t_line "me out."
         t_para "I'll be at"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "Please come see me"
         t_line "when you can."
@@ -455,7 +455,7 @@ const txt_cmd_s BeverlyComePickUpText[] = {
         t_para "There's no need to"
         t_line "hurry. Come see me"
         t_para "in @")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(
         t_line "when you can."
         t_done )
@@ -478,7 +478,7 @@ const txt_cmd_s BrentDefeatedMonText[] = {
     text_start("Oh yeah, I took"
         t_line "down this wild"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_line "It wasn't rare"
         t_para "enough to bother"
@@ -508,7 +508,7 @@ const txt_cmd_s BrentBattleRematchText[] = {
         t_line "worth your time!"
         t_para "You know where--"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -599,7 +599,7 @@ const txt_cmd_s BrentReminderText[] = {
         t_line "rare #MON."
         t_para "Hurry over to"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -610,7 +610,7 @@ const txt_cmd_s ChadObservingWildText[] = {
     text_start("I recently began"
         t_line "observing wild"
         t_cont "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "I've been learning"
         t_line "all sorts of new"
@@ -626,7 +626,7 @@ const txt_cmd_s ChadDefeatedMonText[] = {
     text_start("Oh yes, I managed"
         t_line "to knock out a"
         t_para "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" a"
         t_line "while back."
         t_para "Well, considering"
@@ -639,14 +639,14 @@ const txt_cmd_s ChadLostAMonText[] = {
     text_start("Oh yes, I came"
         t_line "close to catching"
         t_para "a wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(","
         t_line "but it got away."
         t_para "For the longest"
         t_line "time, I've been"
         t_para "wanting to observe"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(". Rats…"
         t_done )
 };
@@ -657,7 +657,7 @@ const txt_cmd_s ChadBattleRematchText[] = {
         t_line "avoid rusting out."
         t_para "I'll be on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -799,7 +799,7 @@ const txt_cmd_s ChadReminderText[] = {
         t_line "about our battle?"
         t_para "The place is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "Hurry over--I'm"
         t_line "waiting."
@@ -810,7 +810,7 @@ const txt_cmd_s ChadReminderText[] = {
 
 const txt_cmd_s DanaTakingPhotosText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" is"
         t_line "getting prettier!"
         t_para "I've been taking"
@@ -821,7 +821,7 @@ const txt_cmd_s DanaDefeatedMonText[] = {
     text_start("It took only an"
         t_line "instant to KO a"
         t_cont "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "It must be because"
         t_line "you gave me some"
@@ -832,7 +832,7 @@ const txt_cmd_s DanaDefeatedMonText[] = {
 const txt_cmd_s DanaLostAMonText[] = {
     text_start("You know what?"
         t_line "A wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_para "got away from me"
         t_line "again."
@@ -845,7 +845,7 @@ const txt_cmd_s DanaLostAMonText[] = {
 const txt_cmd_s DanaBattleRematchText[] = {
     text_start("Right now, I'm on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "If you're close"
         t_line "by, let's battle!"
@@ -866,7 +866,7 @@ const txt_cmd_s DanaFoundItemText[] = {
         t_line "like it. Come get"
         t_para "it! I'm waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -886,7 +886,7 @@ const txt_cmd_s DanaReminderText[] = {
         t_line "battle me?"
         t_para "I'm waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -898,7 +898,7 @@ const txt_cmd_s DanaComePickUpText[] = {
         t_line "to someone else."
         t_para "I'm waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -908,7 +908,7 @@ const txt_cmd_s DanaComePickUpText[] = {
 const txt_cmd_s DerekCheekPinchingText[] = {
     text_start("Listen to this."
         t_line "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_para "grins happily when"
         t_line "I pinch its cheek."
@@ -921,10 +921,10 @@ const txt_cmd_s DerekDefeatedMonText[] = {
     text_start("Oh, and recently,"
         t_line "my PIKACHU beat a"
         t_cont "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_para "A wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(","
         t_line "I tell you!"
         t_para "Don't you think"
@@ -938,7 +938,7 @@ const txt_cmd_s DerekDefeatedMonText[] = {
 const txt_cmd_s DerekLostAMonText[] = {
     text_start("Oh, and I saw a"
         t_line "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" a"
         t_cont "little while ago."
         t_para "But it wasn't very"
@@ -988,7 +988,7 @@ const txt_cmd_s DerekComePickUpText[] = {
     text_start("What's wrong?"
         t_para "I'm waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "Come pick this up"
         t_line "anytime."
@@ -998,9 +998,9 @@ const txt_cmd_s DerekComePickUpText[] = {
 //// erin_caller.c
 
 const txt_cmd_s ErinMonIsMuchStrongerText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("'s @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_line "is much stronger"
         t_cont "than before!"
@@ -1010,7 +1010,7 @@ const txt_cmd_s ErinDefeatedMonText[] = {
     text_start("And, and…"
         t_line "I just battled and"
         t_cont "beat @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_para "I've raised my"
         t_line "#MON properly!"
@@ -1019,7 +1019,7 @@ const txt_cmd_s ErinDefeatedMonText[] = {
 const txt_cmd_s ErinLostAMonText[] = {
     text_start("But, but…"
         t_para "A wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_line "got away from me"
         t_para "again. It's just"
@@ -1033,7 +1033,7 @@ const txt_cmd_s ErinBattleRematchText[] = {
         t_line "time!"
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -1054,7 +1054,7 @@ const txt_cmd_s ErinComeBattleText[] = {
         t_line "Come battle ERIN!"
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -1063,13 +1063,13 @@ const txt_cmd_s ErinComeBattleText[] = {
 
 const txt_cmd_s GavenMonGreaterThanImaginedText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_line "might be greater"
         t_cont "than I imagined."
         t_para "I doubt I'll see a"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" that's"
         t_cont "better than mine."
         t_done )
@@ -1078,12 +1078,12 @@ const txt_cmd_s GavenDefeatedMonText[] = {
     text_start("Oh, and I managed"
         t_line "to barely defeat"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" the"
         t_line "other day."
         t_para "I've never seen a"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" get"
         t_cont "that strong…"
         t_para "You shouldn't let"
@@ -1097,7 +1097,7 @@ const txt_cmd_s GavenLostAMonText[] = {
     text_start("And a while back,"
         t_line "I tried to catch a"
         t_cont "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "But it managed to"
         t_line "elude me."
@@ -1111,7 +1111,7 @@ const txt_cmd_s GavenBattleRematchText[] = {
     text_start("Let's battle!"
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "Give me a shout"
         t_line "when you're close."
@@ -1132,7 +1132,7 @@ const txt_cmd_s GavenReminderText[] = {
         t_line "aren't you here?"
         t_para "I'll take you down"
         t_line "with @")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -1141,7 +1141,7 @@ const txt_cmd_s GavenReminderText[] = {
 
 const txt_cmd_s GinaGettingInSyncWithMonText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" and"
         t_line "I are getting more"
         t_para "in sync with each"
@@ -1151,7 +1151,7 @@ const txt_cmd_s GinaGettingInSyncWithMonText[] = {
 const txt_cmd_s GinaDefeatedMonText[] = {
     text_start("We battled a wild"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" and"
         t_para "managed to drop it"
         t_line "in a close match."
@@ -1163,7 +1163,7 @@ const txt_cmd_s GinaLostAMonText[] = {
     text_start("But, you know?"
         t_para "I still haven't"
         t_line "caught @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "It's getting past"
         t_line "frustrating…"
@@ -1175,7 +1175,7 @@ const txt_cmd_s GinaBattleRematchText[] = {
         t_cont "again sometime?"
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "…Could you take it"
         t_line "a little easier on"
@@ -1205,7 +1205,7 @@ const txt_cmd_s GinaFoundItemText[] = {
         t_para "You will come for"
         t_line "it, won't you?"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(" is"
         t_line "where I am."
         t_done )
@@ -1226,7 +1226,7 @@ const txt_cmd_s GinaReminderText[] = {
         t_line "for our battle?"
         t_para "Don't forget,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -1237,7 +1237,7 @@ const txt_cmd_s GinaComePickUpText[] = {
         t_line "present!"
         t_para "Hurry over to"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -1250,7 +1250,7 @@ const txt_cmd_s HueyBattleRematchText[] = {
         t_para "It won't be like"
         t_line "last time!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("'s"
         t_line "where I'm waiting"
         t_para "for you. Hustle"
@@ -1275,7 +1275,7 @@ const txt_cmd_s HueyReminderText[] = {
         t_line "not have forgotten"
         t_cont "about our battle!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_para "Hustle over quick!"
         t_line "I'm waiting!"
@@ -1509,7 +1509,7 @@ const txt_cmd_s IrwinSoMuchToChatAboutText[] = {
 
 const txt_cmd_s JackIntelligenceKeepsRisingText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s"
         t_line "intelligence keeps"
         t_para "rising. It might"
@@ -1521,7 +1521,7 @@ const txt_cmd_s JackDefeatedMonText[] = {
     text_start("The other day, I"
         t_line "easily defeated a"
         t_cont "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "I think swapping"
         t_line "tips with you is"
@@ -1532,7 +1532,7 @@ const txt_cmd_s JackLostAMonText[] = {
     text_start("Oh, and listen."
         t_line "I missed catching"
         t_para "a @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" by"
         t_line "just a tiny bit."
         t_para "If I'd been a bit"
@@ -1548,7 +1548,7 @@ const txt_cmd_s JackBattleRematchText[] = {
         t_line "logically."
         t_para "I'll be in"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "Give me a shout if"
         t_line "you're nearby."
@@ -1663,7 +1663,7 @@ const txt_cmd_s JackReminderText[] = {
         t_line "soon!"
         t_para "I'll be at"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -1672,7 +1672,7 @@ const txt_cmd_s JackReminderText[] = {
 
 const txt_cmd_s JoeyMonLookingSharperText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s"
         t_line "looking sharper"
         t_cont "than before!"
@@ -1685,7 +1685,7 @@ const txt_cmd_s JoeyMonLookingSharperText[] = {
 const txt_cmd_s JoeyDefeatedMonText[] = {
     text_start("Oh yeah, I took"
         t_line "down a @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_para "in the wild the"
         t_line "other day."
@@ -1698,7 +1698,7 @@ const txt_cmd_s JoeyDefeatedMonText[] = {
 const txt_cmd_s JoeyLostAMonText[] = {
     text_start("Oh yeah, I saw a"
         t_line "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_para "I thought about"
         t_line "going for it, but"
@@ -1714,7 +1714,7 @@ const txt_cmd_s JoeyBattleRematchText[] = {
         t_para "I promise things"
         t_line "will be different!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("'s"
         t_line "where I'll be."
         t_para "Give me a shout"
@@ -1728,7 +1728,7 @@ const txt_cmd_s JoeyHangUpText[] = {
 const txt_cmd_s JoeyDevisingStrategiesText[] = {
     text_start("I'm checking out"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s moves"
         t_para "and devising some"
         t_line "strategies."
@@ -1744,7 +1744,7 @@ const txt_cmd_s JoeyReminderText[] = {
         t_line "battle already!"
         t_para "I'm waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -1754,7 +1754,7 @@ const txt_cmd_s JoeyReminderText[] = {
 const txt_cmd_s JoseMonsStickHasADeliciousAromaText[] = {
     text_start("Hey listen, my"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s stick"
         t_para "has this really"
         t_line "delicious aroma."
@@ -1766,7 +1766,7 @@ const txt_cmd_s JoseDefeatedMonText[] = {
     text_start("A while ago, my"
         t_line "FARFETCH'D KO'd"
         t_cont "this @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "You should have"
         t_line "seen FARFETCH'D"
@@ -1777,7 +1777,7 @@ const txt_cmd_s JoseDefeatedMonText[] = {
 const txt_cmd_s JoseLostAMonText[] = {
     text_start("I ran into a wild"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("…"
         t_para "I was trying to"
         t_line "catch it, but it"
@@ -1795,7 +1795,7 @@ const txt_cmd_s JoseBattleRematchText[] = {
         t_para "all worked up and"
         t_line "raring to go."
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("'s"
         t_line "where I'm at."
         t_para "Keep an eye out"
@@ -1814,7 +1814,7 @@ const txt_cmd_s JoseFoundItemText[] = {
         t_line "you can have it."
         t_para "Catch up to me on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(","
         t_para "and I'll let you"
         t_line "have it."
@@ -1840,7 +1840,7 @@ const txt_cmd_s JoseReminderText[] = {
         t_para "smack me with its"
         t_line "stick!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_para "Please come as"
         t_line "soon as you can!"
@@ -1852,7 +1852,7 @@ const txt_cmd_s JoseComePickUpText[] = {
         t_line "this gift?"
         t_para "Catch up to me on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(","
         t_para "and I'll let you"
         t_line "have it."
@@ -1921,7 +1921,7 @@ const txt_cmd_s LizMonAlwaysWantsToNuzzleText[] = {
     text_start("Oh, you have to"
         t_line "hear this."
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" is"
         t_line "so adorable!"
         t_para "It always wants to"
@@ -1932,7 +1932,7 @@ const txt_cmd_s LizDefeatedMonText[] = {
     text_start("And, and! Um…"
         t_para "We beat a wild"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" with"
         t_para "just one hit a"
         t_line "little while ago."
@@ -1945,7 +1945,7 @@ const txt_cmd_s LizLostAMonText[] = {
         t_para "We just saw a"
         t_line "really gorgeous"
         t_cont "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "But I was on the"
         t_line "phone, so it got"
@@ -1962,7 +1962,7 @@ const txt_cmd_s LizBattleRematchText[] = {
         t_line "like to battle?"
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "Let me know when"
         t_line "you get here!"
@@ -2104,12 +2104,12 @@ const txt_cmd_s LizBeautifulTrainerGossipText[] = {
     text_start("Listen, listen!"
         t_para "I saw a beautiful"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_para "I wish I could"
         t_line "become a beautiful"
         t_cont "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" too."
         t_done )
 };
@@ -2123,7 +2123,7 @@ const txt_cmd_s LizForgotGossipText[] = {
 const txt_cmd_s LizFawningOverMonText[] = {
     text_start("Listen, listen!"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("…"
         t_line "it… so pretty…"
         t_para "and… giggle… so"
@@ -2152,7 +2152,7 @@ const txt_cmd_s LizReminderText[] = {
         t_line "away!"
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -2162,14 +2162,14 @@ const txt_cmd_s LizReminderText[] = {
 const txt_cmd_s ParryNothingCanMatchText[] = {
     text_start("Nothing can match"
         t_line "my @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" now."
         t_done )
 };
 const txt_cmd_s ParryDefeatedMonText[] = {
     text_start("Yeah, we KO'd a"
         t_line "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_para "That was OK, but I"
         t_line "wanted to get it…"
@@ -2179,7 +2179,7 @@ const txt_cmd_s ParryLostAMonText[] = {
     text_start("And yesterday, we"
         t_line "spotted a wild"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_line "We were debating"
         t_para "whether to catch"
@@ -2197,7 +2197,7 @@ const txt_cmd_s ParryBattleRematchText[] = {
         t_line "right or what?"
         t_para "Yep! We'll meet on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -2214,7 +2214,7 @@ const txt_cmd_s ParryBattleWithMeText[] = {
 const txt_cmd_s ParryHaventYouGottenToText[] = {
     text_start("Haven't you gotten"
         t_line "to @")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("?"
         t_para "Waiting here isn't"
         t_line "bad, but I'd sure"
@@ -2228,7 +2228,7 @@ const txt_cmd_s RalphNeglectingKidsText[] = {
     text_start("I've been spending"
         t_line "more time with my"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" than I"
         t_line "have with my kids."
         t_para "That's a bit sad,"
@@ -2238,7 +2238,7 @@ const txt_cmd_s RalphNeglectingKidsText[] = {
 const txt_cmd_s RalphDefeatedMonText[] = {
     text_start("I just beat a wild"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "I told my kid, but"
         t_line "he scoffed that he"
@@ -2251,7 +2251,7 @@ const txt_cmd_s RalphDefeatedMonText[] = {
 const txt_cmd_s RalphLostAMonText[] = {
     text_start("Yesterday a wild"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" slipped"
         t_para "away from me, in"
         t_line "front of my kid."
@@ -2271,7 +2271,7 @@ const txt_cmd_s RalphBattleRematchText[] = {
         t_para "For a kid, you're"
         t_line "quite agreeable."
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(" is"
         t_line "the spot!"
         t_done )
@@ -2285,13 +2285,13 @@ const txt_cmd_s RalphItemText[] = {
     text_start("Listen, I… Yowch!"
         t_para "Uh, sorry! See,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" are"
         t_para "biting like there"
         t_line "is no tomorrow"
         t_para "over here on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_para "Aiyee! Ouch!"
         t_line "One jabbed me!"
@@ -2317,7 +2317,7 @@ const txt_cmd_s RalphReminderText[] = {
         t_line "I'm waiting for"
         t_para "you to show up on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "You shouldn't make"
         t_line "your elders wait!"
@@ -2340,11 +2340,11 @@ const txt_cmd_s ReenaMonsIsAPerfectMatchText[] = {
     text_start("Listen, dear…"
         t_para "Do you recall my"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("?"
         t_para "Yes, exactly. That"
         t_line "lovely @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "Wouldn't you agree"
         t_line "it's a perfect"
@@ -2354,11 +2354,11 @@ const txt_cmd_s ReenaMonsIsAPerfectMatchText[] = {
 const txt_cmd_s ReenaDefeatedMonText[] = {
     text_start("Have I ever faced"
         t_line "a wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("?"
         t_para "You need to ask?"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" I've"
         t_line "beaten on numerous"
         t_cont "occasions!"
@@ -2372,7 +2372,7 @@ const txt_cmd_s ReenaLostAMonText[] = {
         t_para "I would never fail"
         t_line "to catch a wild"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("…"
         t_line "Oh! Never mind!"
         t_done )
@@ -2382,7 +2382,7 @@ const txt_cmd_s ReenaBattleRematchText[] = {
         t_line "battle!"
         t_para "The place shall be"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_para "Don't make me"
         t_line "wait! Got it?"
@@ -2406,7 +2406,7 @@ const txt_cmd_s ReenaHurryText[] = {
         t_para "I told you that"
         t_line "the place was"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_line "Don't try to run!"
         t_done )
@@ -2416,7 +2416,7 @@ const txt_cmd_s ReenaHurryText[] = {
 
 const txt_cmd_s TiffanyMonIsAdorableText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s"
         t_line "adorable, don't"
         t_para "you think so?"
@@ -2429,7 +2429,7 @@ const txt_cmd_s TiffanyDefeatedMonText[] = {
     text_start("Oh, and we had to"
         t_line "battle a wild"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" a while"
         t_line "ago…"
         t_para "My CLEFAIRY came"
@@ -2437,7 +2437,7 @@ const txt_cmd_s TiffanyDefeatedMonText[] = {
         t_para "Isn't that awful?"
         t_para "I hate those nasty"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_done )
 };
@@ -2445,7 +2445,7 @@ const txt_cmd_s TiffanyLostAMonText[] = {
     text_start("Oh, and we had to"
         t_line "battle a wild"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" a while"
         t_line "ago…"
         t_para "My CLEFAIRY got"
@@ -2465,12 +2465,12 @@ const txt_cmd_s TiffanyBattleRematchText[] = {
         t_para "I'll be waiting"
         t_line "with CLEFAIRY on"
         t_cont "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
 const txt_cmd_s TiffanyItsAwfulText[] = {
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_para "It's awful."
         t_line "My CLEFAIRY…"
@@ -2494,7 +2494,7 @@ const txt_cmd_s TiffanyFoundItemText[] = {
         t_line "I'll give you one!"
         t_para "Come collect it on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -2512,7 +2512,7 @@ const txt_cmd_s TiffanyAsleepText[] = {
         t_line "can wake it up…"
         t_para "Please hurry to"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -2524,7 +2524,7 @@ const txt_cmd_s TiffanyHurryText[] = {
         t_cont "CLEFAIRY."
         t_para "Please hurry to"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_done )
 };
@@ -2533,7 +2533,7 @@ const txt_cmd_s TiffanyHurryText[] = {
 
 const txt_cmd_s ToddLooksCuteLikeMeText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" is"
         t_line "looking more and"
         t_para "more like me. It's"
@@ -2544,7 +2544,7 @@ const txt_cmd_s ToddDefeatedMonText[] = {
     text_start("And, you know?"
         t_para "Now we can KO"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" easily."
         t_para "I should challenge"
         t_line "the GOLDENROD GYM."
@@ -2554,7 +2554,7 @@ const txt_cmd_s ToddLostAMonText[] = {
     text_start("And, you know?"
         t_line "We just failed to"
         t_para "beat @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" by"
         t_line "a tiny margin."
         t_para "I'm guessing my"
@@ -2572,7 +2572,7 @@ const txt_cmd_s ToddBattleRematchText[] = {
         t_line "with me?"
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -2613,7 +2613,7 @@ const txt_cmd_s ToddLookingForwardToBattleText[] = {
         t_line "battle soon!"
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -2633,7 +2633,7 @@ const txt_cmd_s ToddHaveYouGoneToDepartmentStoreText[] = {
 
 const txt_cmd_s TullyMonHasGrownText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" has"
         t_line "grown again."
         t_para "It was only about"
@@ -2645,7 +2645,7 @@ const txt_cmd_s TullyMonHasGrownText[] = {
 const txt_cmd_s TullyDefeatedMonText[] = {
     text_start("Oh yeah, I KO'd a"
         t_line "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "It was huge, like"
         t_line "this big even."
@@ -2657,7 +2657,7 @@ const txt_cmd_s TullyDefeatedMonText[] = {
 const txt_cmd_s TullyLostAMonText[] = {
     text_start("Oh yeah, I lost a"
         t_line "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "It was huge, like"
         t_line "this big even."
@@ -2671,7 +2671,7 @@ const txt_cmd_s TullyBattleRematchText[] = {
         t_line "battle going!"
         t_para "I'll be fishing on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "Swing by if you"
         t_line "have the time."
@@ -2690,7 +2690,7 @@ const txt_cmd_s TullyFoundItemText[] = {
         t_line "it's yours."
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -2708,7 +2708,7 @@ const txt_cmd_s TullyForwardText[] = {
         t_line "You're lost?"
         t_para "Our battle will be"
         t_line "on @")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -2717,7 +2717,7 @@ const txt_cmd_s TullyHurryText[] = {
         t_line "good for you."
         t_para "Hustle over to"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -2726,7 +2726,7 @@ const txt_cmd_s TullyHurryText[] = {
 
 const txt_cmd_s VanceMonHasBecomeTougherText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s"
         t_line "become tougher."
         t_para "We've achieved"
@@ -2736,7 +2736,7 @@ const txt_cmd_s VanceMonHasBecomeTougherText[] = {
 const txt_cmd_s VanceDefeatedMonText[] = {
     text_start("We can easily beat"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_para "…Huh? You too?"
         t_line "Isn't that great?"
@@ -2745,7 +2745,7 @@ const txt_cmd_s VanceDefeatedMonText[] = {
 const txt_cmd_s VanceLostAMonText[] = {
     text_start("But get this, a"
         t_line "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_para "just barely eluded"
         t_line "us."
@@ -2756,7 +2756,7 @@ const txt_cmd_s VanceLostAMonText[] = {
 const txt_cmd_s VanceBattleRematchText[] = {
     text_start("Right now, I'm on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_para "You know, where I"
         t_line "first met you?"
@@ -2778,7 +2778,7 @@ const txt_cmd_s VanceHurryHurryText[] = {
     text_start("Oh, <PLAY_G>!"
         t_line "Hurry, hurry!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("!"
         t_line "FLY over now!"
         t_done )
@@ -2794,7 +2794,7 @@ const txt_cmd_s WadeAreYourMonGrowingText[] = {
         t_para "quickly for me."
         t_line "It's overwhelming!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s grow-"
         t_line "ing especially"
         t_para "quickly. I think"
@@ -2804,7 +2804,7 @@ const txt_cmd_s WadeAreYourMonGrowingText[] = {
 const txt_cmd_s WadeDefeatedMonText[] = {
     text_start("Oh yeah, we KO'd a"
         t_line "wild @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_para "with one hit a"
         t_line "while back."
@@ -2817,7 +2817,7 @@ const txt_cmd_s WadeDefeatedMonText[] = {
 const txt_cmd_s WadeLostAMonText[] = {
     text_start("Oh yeah, a wild"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" got"
         t_para "away from me at"
         t_line "the last second."
@@ -2835,7 +2835,7 @@ const txt_cmd_s WadeBattleRematchText[] = {
         t_para "It won't be like"
         t_line "last time!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("'s"
         t_line "where I'll be."
         t_para "Let me know when"
@@ -2864,7 +2864,7 @@ const txt_cmd_s WadeFoundItemText[] = {
         t_line "some with you."
         t_para "I'll be waiting on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -2881,7 +2881,7 @@ const txt_cmd_s WadeQuickBattleText[] = {
     text_start("Let's battle"
         t_line "already!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(" is"
         t_line "where I am."
         t_para "Please get here as"
@@ -2892,7 +2892,7 @@ const txt_cmd_s WadeComeQuickText[] = {
     text_start("How come you're"
         t_line "not here yet?"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(" is"
         t_line "where I am."
         t_para "Please get here as"
@@ -2904,7 +2904,7 @@ const txt_cmd_s WadeComeQuickText[] = {
 
 const txt_cmd_s WiltonMonHasGrownText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s"
         t_line "grown impressive!"
         t_para "My fishing skills"
@@ -2914,7 +2914,7 @@ const txt_cmd_s WiltonMonHasGrownText[] = {
 const txt_cmd_s WiltonDefeatedMonText[] = {
     text_start("We beat a wild"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("…"
         t_para "You know, I have"
         t_line "more fun fishing"
@@ -2927,7 +2927,7 @@ const txt_cmd_s WiltonLostAMonText[] = {
         t_line "we came this close"
         t_para "to landing a wild"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "I tell you, it was"
         t_line "huge. Believe me."
@@ -2936,7 +2936,7 @@ const txt_cmd_s WiltonLostAMonText[] = {
 const txt_cmd_s WiltonBattleRematchText[] = {
     text_start("I'm fishing on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start(","
         t_para "but nothing's"
         t_line "biting today."
@@ -2954,7 +2954,7 @@ const txt_cmd_s WiltonFoundItemText[] = {
         t_line "while fishing."
         t_para "Come pick it up on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("."
         t_done )
 };
@@ -2972,7 +2972,7 @@ const txt_cmd_s WiltonNotBitingText[] = {
         t_line "They're not biting"
         t_para "like before on"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("…"
         t_para "You have to come"
         t_line "for a battle!"
@@ -2984,7 +2984,7 @@ const txt_cmd_s WiltonWantThisText[] = {
         t_para "Hah? You don't"
         t_line "know where?"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer5))
+    text_ram(gMisc.stringBuffer5)
     text_start("…"
         t_line "Just head from"
         t_para "MAHOGANY toward"

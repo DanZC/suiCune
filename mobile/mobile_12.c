@@ -20,6 +20,7 @@
 #include "../data/mobile/postcode_formats.h"
 #include "../data/mobile/postcode_to_country_pairs.h"
 #include "../data/mobile/prefecture_to_postcode_pairs.h"
+#include "../charmap.h"
 #include "../util/variadic_macros.h"
 
 #if FEATURE_MOBILE
@@ -1715,9 +1716,9 @@ void Function487ff(tile_t* hl, const uint8_t* de){
     // PUSH_HL;
     // LD_A(0x7f);
     // LD_hli_A;
-    hl[0] = 0x7f;
+    hl[0] = CHAR_SPACE;
     // LD_hl_A;
-    hl[1] = 0x7f;
+    hl[1] = CHAR_SPACE;
     // POP_HL;
     // LD_B(PRINTNUM_LEADINGZEROS | 1);
     // LD_C(3);
@@ -3527,7 +3528,7 @@ void Function48c11(tile_t* hl, uint8_t b, uint8_t d){
 
     // asm_48c1e:
         // LD_hl(0x7f);
-        *hl = 0x7f;
+        *hl = CHAR_SPACE;
     }
 
 // asm_48c20:
@@ -3597,7 +3598,7 @@ void BlinkSelectedCharacter(tile_t* hl){
     // jr z, .skip_blinking
     if(bit_test(wram->wd002, 7)) {
         // ld [hl], $7f ; Makes the selected character blink/flash. 7f is the last tile before tile "A".
-        *hl = 0x7f;
+        *hl = CHAR_SPACE;
     }
 
 // .skip_blinking

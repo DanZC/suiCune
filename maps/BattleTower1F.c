@@ -774,7 +774,7 @@ const txt_cmd_s Text_AskRegisterRecord_Mobile[] = {
 const txt_cmd_s Text_PlayerGotFive[] = {
     text_start("<PLAYER> got five"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!@")
     sound_item
     text_promptbutton
@@ -871,7 +871,7 @@ const txt_cmd_s Text_YourMonWillBeHealedToFullHealth[] = {
 const txt_cmd_s Text_NextUpOpponentNo[] = {
     text_start("Next up, opponent"
         t_line "no.@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(". Ready?"
         t_done )
 };

@@ -14,6 +14,7 @@
 #include "../engine/events/odd_egg.h"
 #include "../engine/gfx/dma_transfer.h"
 #include "../engine/gfx/sprites.h"
+#include "../charmap.h"
 #include "../data/text/common.h"
 
 void GiveOddEgg(void){
@@ -529,7 +530,7 @@ void Function1178aa(void){
     // hlcoord(15, 10, wTilemap);
     // LD_A(0xed);
     // LD_hl_A;
-    *coord(15, 10, wram->wTilemap) = 0xed;
+    *coord(15, 10, wram->wTilemap) = CHAR_RIGHT_CURSOR;
     // hlcoord(1, 14, wTilemap);
     // LD_DE(mAskSavePasswordString);
     // CALL(aPlaceString);
@@ -589,11 +590,11 @@ void Function1178e8(void){
         // hlcoord(15, 8, wTilemap);
         // LD_A(0x7f);
         // LD_hl_A;
-        *coord(15, 8, wram->wTilemap) = 0x7f;
+        *coord(15, 8, wram->wTilemap) = CHAR_SPACE;
         // hlcoord(15, 10, wTilemap);
         // LD_A(0xed);
         // LD_hl_A;
-        *coord(15, 10, wram->wTilemap) = 0xed;
+        *coord(15, 10, wram->wTilemap) = CHAR_RIGHT_CURSOR;
         // RET;
         return;
     }
@@ -611,11 +612,11 @@ void Function1178e8(void){
         // hlcoord(15, 8, wTilemap);
         // LD_A(0xed);
         // LD_hl_A;
-        *coord(15, 8, wram->wTilemap) = 0xed;
+        *coord(15, 8, wram->wTilemap) = CHAR_RIGHT_CURSOR;
         // hlcoord(15, 10, wTilemap);
         // LD_A(0x7f);
         // LD_hl_A;
-        *coord(15, 10, wram->wTilemap) = 0x7f;
+        *coord(15, 10, wram->wTilemap) = CHAR_SPACE;
         // RET;
         return;
     }
@@ -913,7 +914,7 @@ void Function117b31(void){
     // hlcoord(15, 8, wTilemap);
     // LD_A(0xed);
     // LD_hl_A;
-    *coord(15, 8, wram->wTilemap) = 0xed;
+    *coord(15, 8, wram->wTilemap) = CHAR_RIGHT_CURSOR;
     // JP(mMobileStudium_JumptableIncrement);
     return MobileStudium_JumptableIncrement();
 }
@@ -971,11 +972,11 @@ void Function117b4f(void){
         // hlcoord(15, 8, wTilemap);
         // LD_A(0x7f);
         // LD_hl_A;
-        *coord(15, 8, wram->wTilemap) = 0x7f;
+        *coord(15, 8, wram->wTilemap) = CHAR_SPACE;
         // hlcoord(15, 10, wTilemap);
         // LD_A(0xed);
         // LD_hl_A;
-        *coord(15, 10, wram->wTilemap) = 0xed;
+        *coord(15, 10, wram->wTilemap) = CHAR_RIGHT_CURSOR;
         // RET;
         return;
     }
@@ -993,11 +994,11 @@ void Function117b4f(void){
         // hlcoord(15, 8, wTilemap);
         // LD_A(0xed);
         // LD_hl_A;
-        *coord(15, 8, wram->wTilemap) = 0xed;
+        *coord(15, 8, wram->wTilemap) = CHAR_RIGHT_CURSOR;
         // hlcoord(15, 10, wTilemap);
         // LD_A(0x7f);
         // LD_hl_A;
-        *coord(15, 10, wram->wTilemap) = 0x7f;
+        *coord(15, 10, wram->wTilemap) = CHAR_SPACE;
         // RET;
     }
 }

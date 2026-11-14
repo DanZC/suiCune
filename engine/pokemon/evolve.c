@@ -20,6 +20,7 @@
 #include "../../data/text/common.h"
 #include "../../data/pokemon/evos_attacks_pointers.h"
 #include "../../data/moves/moves.h"
+#include "../../charmap.h"
 #include <stddef.h>
 
 void EvolvePokemon(void){
@@ -512,9 +513,9 @@ void UpdateSpeciesNameIfNotNicknamed(void){
     // LD_addr_A(wCurSpecies);
     wram->wCurSpecies = curSpecies;
     // LD_HL(wStringBuffer1);
-    uint8_t* hl = wram->wStringBuffer1;
+    uint8_t* hl = gMisc.stringBuffer1;
     // LD_DE(wStringBuffer2);
-    uint8_t* de = wram->wStringBuffer2;
+    uint8_t* de = gMisc.stringBuffer2;
 
     uint8_t a;
     do {
@@ -530,7 +531,7 @@ void UpdateSpeciesNameIfNotNicknamed(void){
         hl++;
         // CP_A(0x50);
         // IF_NZ goto loop;
-    } while(a != 0x50);
+    } while(a != CHAR_TERM);
 
     // LD_A_addr(wCurPartyMon);
     // LD_BC(MON_NAME_LENGTH);

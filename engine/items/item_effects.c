@@ -1058,7 +1058,7 @@ void PokeBallEffect(void){
                     // POP_HL;
                     // LD_DE(wStringBuffer1);
                     // CALL(aInitName);
-                    InitName(nick, wram->wStringBuffer1);
+                    InitName(nick, gMisc.stringBuffer1);
                 }
                 // JP(mPokeBallEffect_return_from_capture);
             }
@@ -1137,7 +1137,7 @@ void PokeBallEffect(void){
                     // LD_HL(sBoxMonNicknames);
                     // LD_DE(wStringBuffer1);
                     // CALL(aInitName);
-                    InitName(GBToRAMAddr(sBoxMonNicknames), wram->wStringBuffer1);
+                    InitName(GBToRAMAddr(sBoxMonNicknames), gMisc.stringBuffer1);
 
                     // CALL(aCloseSRAM);
                     CloseSRAM();
@@ -1906,7 +1906,7 @@ void VitaminEffect(void){
     // LD_DE(wStringBuffer2);
     // LD_BC(ITEM_NAME_LENGTH);
     // CALL(aCopyBytes);
-    U82CB(wram->wStringBuffer2, ITEM_NAME_LENGTH, StatStrings[stat]);
+    U82CB(gMisc.stringBuffer2, ITEM_NAME_LENGTH, StatStrings[stat]);
 
     // CALL(aPlay_SFX_FULL_HEAL);
     Play_SFX_FULL_HEAL();

@@ -536,7 +536,7 @@ uint8_t* GetTrainerName(uint8_t tid, uint8_t tclass){
     // POP_AF;
     // bank_pop;
     // return CopyTrainerName();
-    return wram->wStringBuffer1;
+    return gMisc.stringBuffer1;
 }
 
 uint8_t* CopyTrainerName(const uint8_t* hl){
@@ -544,10 +544,10 @@ uint8_t* CopyTrainerName(const uint8_t* hl){
     // PUSH_DE;
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer1, hl, NAME_LENGTH);
+    CopyBytes(gMisc.stringBuffer1, hl, NAME_LENGTH);
     // POP_DE;
     // RET;
-    return wram->wStringBuffer1;
+    return gMisc.stringBuffer1;
 }
 
 // void IncompleteCopyNameFunction(void){

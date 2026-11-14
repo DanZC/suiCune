@@ -1074,7 +1074,7 @@ const txt_cmd_s Text_PleaseEnter[] = {
 };
 const txt_cmd_s Text_RejectNewMon[] = {
     text_start("Sorry--@")
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(
         t_line "can't be taken."
         t_prompt )
@@ -1082,17 +1082,17 @@ const txt_cmd_s Text_RejectNewMon[] = {
 const txt_cmd_s Text_RejectMonWithNewMove[] = {
     text_start("You can't take the"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" with a"
         t_cont "@")
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_prompt )
 };
 const txt_cmd_s Text_RejectMonWithMail[] = {
     text_start("You can't take the"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" that"
         t_cont "has MAIL with you."
         t_prompt )

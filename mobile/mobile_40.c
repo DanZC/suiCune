@@ -2103,16 +2103,16 @@ void Function100846(void){
 
 // asm_100858:
     // LD_addr_A(wStringBuffer2 + 2);
-    wram->wStringBuffer2[2] = (wram->wcd6e > 0)? 0x3c - wram->wcd6e: 0;
+    gMisc.stringBuffer2[2] = (wram->wcd6e > 0)? 0x3c - wram->wcd6e: 0;
     // LD_A_addr(wcd6d);
     // LD_C_A;
     // LD_A(0x0a);
     // SBC_A_C;
     // LD_addr_A(wStringBuffer2 + 1);
-    wram->wStringBuffer2[1] = 0x0a - wram->wcd6d - (wram->wcd6e > 0);
+    gMisc.stringBuffer2[1] = 0x0a - wram->wcd6d - (wram->wcd6e > 0);
     // XOR_A_A;
     // LD_addr_A(wStringBuffer2);
-    wram->wStringBuffer2[0] = 0;
+    gMisc.stringBuffer2[0] = 0;
     // LD_DE(mString_10088e);
     // hlcoord(1, 14, wTilemap);
     // CALL(aPlaceString);
@@ -2120,7 +2120,7 @@ void Function100846(void){
     // LD_DE(wStringBuffer2);
     // hlcoord(4, 16, wTilemap);
     // CALL(aFunction100697);
-    Function100697(coord(4, 16, wram->wTilemap), wram->wStringBuffer2);
+    Function100697(coord(4, 16, wram->wTilemap), gMisc.stringBuffer2);
     // RET;
 }
 
@@ -2143,12 +2143,12 @@ u8_pair_s MobileBattleGetRemainingTime(void){
     // LD_addr_A(wStringBuffer2 + 1);
     // LD_A_hli;
     // LD_addr_A(wStringBuffer2 + 2);
-    CopyBytes(wram->wStringBuffer2, GBToRAMAddr(sMobileBattleTimer), 3);
+    CopyBytes(gMisc.stringBuffer2, GBToRAMAddr(sMobileBattleTimer), 3);
     // CALL(aCloseSRAM);
     CloseSRAM();
     // LD_A_addr(wStringBuffer2 + 2);
     // LD_B_A;
-    uint8_t b = wram->wStringBuffer2[2];
+    uint8_t b = gMisc.stringBuffer2[2];
     uint8_t carry = 0;
     // LD_A(MOBILE_BATTLE_ALLOWED_SECONDS);
     // SUB_A_B;
@@ -2165,7 +2165,7 @@ u8_pair_s MobileBattleGetRemainingTime(void){
     // LD_B_A;
     // LD_A_addr(wStringBuffer2 + 1);
     // LD_C_A;
-    uint8_t c = wram->wStringBuffer2[1];
+    uint8_t c = gMisc.stringBuffer2[1];
     // LD_A(MOBILE_BATTLE_ALLOWED_MINUTES);
     // SBC_A_C;
     // LD_C_A;
@@ -2175,7 +2175,7 @@ u8_pair_s MobileBattleGetRemainingTime(void){
         // LD_A_addr(wStringBuffer2);
         // AND_A_A;
         // IF_NZ goto fail;
-        if(wram->wStringBuffer2[0] == 0){
+        if(gMisc.stringBuffer2[0] == 0){
             // RET;
             return u8_pair(b, c);
         }
@@ -2234,7 +2234,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
     // LD_A(0x0a);
     // SUB_A_C;
     // LD_addr_A(wStringBuffer2);
-    wram->wStringBuffer2[0] = 0x0a - wram->wcd6d;
+    gMisc.stringBuffer2[0] = 0x0a - wram->wcd6d;
     // IF_Z goto asm_10093f;
     if(0x0a - wram->wcd6d != 0) {
         // LD_DE(mFunction100902_string_100966);
@@ -2245,7 +2245,7 @@ static const char string_100966[] = "   min. remaining!@"; //db ['"のこり\u30
         // LD_BC((1 << 8) | 2);
         // LD_DE(wStringBuffer2);
         // CALL(aPrintNum);
-        PrintNum(coord(4, 11, wram->wTilemap), wram->wStringBuffer2, 1, 2);
+        PrintNum(coord(4, 11, wram->wTilemap), gMisc.stringBuffer2, 1, 2);
         // LD_DE(SFX_TWO_PC_BEEPS);
         // CALL(aPlaySFX);
         PlaySFX(SFX_TWO_PC_BEEPS);
@@ -3910,7 +3910,7 @@ static void LoadSelectedPartiesForColosseum_CopyThreeSpecies(uint8_t* de, const 
 //  Load the 3 choices to the buffer
     // PUSH_DE;
     // LD_BC(wStringBuffer2 + NAME_LENGTH_JAPANESE);
-    uint8_t* bc = wram->wStringBuffer2 + NAME_LENGTH;
+    uint8_t* bc = gMisc.stringBuffer2 + NAME_LENGTH;
     // XOR_A_A;
     uint8_t a = 0;
 
@@ -3935,7 +3935,7 @@ static void LoadSelectedPartiesForColosseum_CopyThreeSpecies(uint8_t* de, const 
     // LD_HL(wStringBuffer2 + NAME_LENGTH_JAPANESE);
     // LD_BC(3);
     // CALL(aCopyBytes);
-    CopyBytes(de, wram->wStringBuffer2 + NAME_LENGTH, 3);
+    CopyBytes(de, gMisc.stringBuffer2 + NAME_LENGTH, 3);
     // LD_A(0xff);
     // LD_de_A;
     de[3] = 0xff;
@@ -4045,7 +4045,7 @@ void LoadSelectedPartiesForColosseum(void){
     // LD_HL(wStringBuffer2);
     // LD_BC(9);
     // CALL(aByteFill);
-    ByteFill(wram->wStringBuffer2, 9, 0);
+    ByteFill(gMisc.stringBuffer2, 9, 0);
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyCount);
     // CALL(aLoadSelectedPartiesForColosseum_CopyThreeSpecies);
@@ -4086,7 +4086,7 @@ void LoadSelectedPartyForBattleTower(void){
     // LD_HL(wStringBuffer2);
     // LD_BC(9);
     // CALL(aByteFill);
-    ByteFill(wram->wStringBuffer2, 9, 0);
+    ByteFill(gMisc.stringBuffer2, 9, 0);
     // LD_HL(wPlayerMonSelection);
     // LD_DE(wPartyCount);
     // CALL(aLoadSelectedPartiesForColosseum_CopyThreeSpecies);
@@ -6994,9 +6994,9 @@ bool Function1020a8(void){
     if(Function17a68f(gPlayer.wdc42, 0x1))
         return true;
     // CALL(aFunction10208e);
-    Function10208e(wram->wStringBuffer1);
+    Function10208e(gMisc.stringBuffer1);
     // CALL(aFunction102068);
-    Function102068(wram->wStringBuffer1);
+    Function102068(gMisc.stringBuffer1);
     // XOR_A_A;
     // RET;
     return false;
@@ -7178,7 +7178,7 @@ void Function102180(void){
     // LD_BC(11);
     // CALL(aCopyBytes);
     // RET;
-    CopyBytes(wram->wStringBuffer2, wram->wc608, NAME_LENGTH);
+    CopyBytes(gMisc.stringBuffer2, wram->wc608, NAME_LENGTH);
 }
 
 void Function10218d(void){
@@ -7219,7 +7219,7 @@ bool Function1021b8(void){
     u8_flag_s res = Function8ac70(wram->wc608 + 7);
     // LD_A_C;
     // LD_addr_A(wStringBuffer1);
-    wram->wStringBuffer1[0] = res.a;
+    gMisc.stringBuffer1[0] = res.a;
     // PUSH_AF;
     // CALL(aFunction1013aa);
     Function1013aa();
@@ -8286,7 +8286,7 @@ void Function1026de(void){
     HideCursor();
     // hlcoord(9, 17, wTilemap);
     // LD_hl(0xed);
-    *coord(9, 17, wram->wTilemap) = 0xed;
+    *coord(9, 17, wram->wTilemap) = CHAR_RIGHT_CURSOR;
     // LD_A_addr(wcd4a);
     // INC_A;
     // LD_addr_A(wcd4a);
@@ -8323,7 +8323,7 @@ void Function1026f3(void){
     // asm_102712:
         // hlcoord(9, 17, wTilemap);
         // LD_hl(0x7f);
-        *coord(9, 17, wram->wTilemap) = 0x7f;
+        *coord(9, 17, wram->wTilemap) = CHAR_SPACE;
         // LD_A_addr(wOTPartyCount);
         // LD_addr_A(wMenuCursorY);
         wram->wMenuCursorY = wram->wOTPartyCount;
@@ -8339,7 +8339,7 @@ void Function1026f3(void){
     // asm_102702:
         // hlcoord(9, 17, wTilemap);
         // LD_hl(0x7f);
-        *coord(9, 17, wram->wTilemap) = 0x7f;
+        *coord(9, 17, wram->wTilemap) = CHAR_SPACE;
         // LD_A(0x01);
         // LD_addr_A(wMenuCursorY);
         wram->wMenuCursorY = 0x1;
@@ -8409,10 +8409,10 @@ void Function102770(void){
 void Function102775(void){
     // hlcoord(1, 16, wTilemap);
     // LD_hl(0xed);
-    *coord(1, 16, wram->wTilemap) = 0xed;
+    *coord(1, 16, wram->wTilemap) = CHAR_RIGHT_CURSOR;
     // hlcoord(11, 16, wTilemap);
     // LD_hl(0x7f);
-    *coord(11, 16, wram->wTilemap) = 0x7f;
+    *coord(11, 16, wram->wTilemap) = CHAR_SPACE;
     // LD_HL(wcd4b);
     // SET_hl(2);
     bit_set(wram->wcd4b, 2);
@@ -8448,10 +8448,10 @@ void Function10278c(void){
 void Function1027a0(void){
     // hlcoord(1, 16, wTilemap);
     // LD_hl(0x7f);
-    *coord(1, 16, wram->wTilemap) = 0x7f;
+    *coord(1, 16, wram->wTilemap) = CHAR_SPACE;
     // hlcoord(11, 16, wTilemap);
     // LD_hl(0xed);
-    *coord(11, 16, wram->wTilemap) = 0xed;
+    *coord(11, 16, wram->wTilemap) = CHAR_RIGHT_CURSOR;
     // LD_HL(wcd4b);
     // SET_hl(2);
     bit_set(wram->wcd4b, 2);
@@ -9774,7 +9774,7 @@ void Function102ea8(void){
     // LD_DE(wStringBuffer2);
     // LD_BC(11);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer2, GetPokemonName(gPokemon.partySpecies[wram->wcd4c - 1]), NAME_LENGTH);
+    CopyBytes(gMisc.stringBuffer2, GetPokemonName(gPokemon.partySpecies[wram->wcd4c - 1]), NAME_LENGTH);
     // LD_A_addr(wcd4d);
     // DEC_A;
     // LD_C_A;
@@ -10568,11 +10568,11 @@ void Function1034a7(void){
     // LD_BC(10);
     // CALL(aFunction1034f7);
     // LD_hl(0x7f);
-    wram->wTilemap[Function1034f7(1)] = 0x7f;
+    wram->wTilemap[Function1034f7(1)] = CHAR_SPACE;
     // LD_BC(10);
     // CALL(aFunction1034f1);
     // LD_hl(0xed);
-    wram->wTilemap[Function1034f1(1)] = 0xed;
+    wram->wTilemap[Function1034f1(1)] = CHAR_RIGHT_CURSOR;
     // RET;
 }
 
@@ -10997,7 +10997,7 @@ bool Function103700(void){
 // asm_10370f:
     // LD_A_C;
     // LD_addr_A(wStringBuffer2);
-    wram->wStringBuffer2[0] = c;
+    gMisc.stringBuffer2[0] = c;
     // LD_A_addr(wStringBuffer2);
     // CP_A(5);
     // IF_NC goto five_or_more_mins;
@@ -11346,7 +11346,7 @@ void Function10387b(void){
     // FARCALL(aMobileBattleGetRemainingTime);
     // LD_A_C;
     // LD_addr_A(wStringBuffer2);
-    wram->wStringBuffer2[0] = MobileBattleGetRemainingTime().b;
+    gMisc.stringBuffer2[0] = MobileBattleGetRemainingTime().b;
     // LD_HL(mMobileBattleRemainingTimeText);
     // CALL(aPrintText);
     PrintText(MobileBattleRemainingTimeText);

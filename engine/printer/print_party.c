@@ -48,9 +48,9 @@ void PrintPage1(void){
     // hlcoord(1, 10, wPrinterTilemapBuffer);
     // LD_A(0x61);
     // LD_hli_A;
-    *coord(1, 10, wram->wPrinterTilemapBuffer) = 0x61;
+    *coord(1, 10, wram->wPrinterTilemapBuffer) = CHAR_UP_ARROW;
     // LD_hl_A;
-    *coord(2, 10, wram->wPrinterTilemapBuffer) = 0x61;
+    *coord(2, 10, wram->wPrinterTilemapBuffer) = CHAR_UP_ARROW;
     // hlcoord(2, 11, wPrinterTilemapBuffer);
     // LD_BC((5 << 8) | 18);
     // CALL(aClearBox);
@@ -442,8 +442,8 @@ void PlaceMoveNameString(tile_t* hl, move_t move){
     else {
     // no_move:
         // LD_DE(mPrintParty_NoMoveString);
-        ByteFill(wram->wStringBuffer1, sizeof(wram->wStringBuffer1), CHAR_TERM);
-        de = U82CA(wram->wStringBuffer1, PrintParty_NoMoveString);
+        ByteFill(gMisc.stringBuffer1, sizeof(gMisc.stringBuffer1), CHAR_TERM);
+        de = U82CA(gMisc.stringBuffer1, PrintParty_NoMoveString);
     }
 
 // got_string:

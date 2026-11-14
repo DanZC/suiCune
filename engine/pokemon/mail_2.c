@@ -13,6 +13,7 @@
 #include "../../home/sram.h"
 #include "../../home/pokemon.h"
 #include "../../home/joypad.h"
+#include "../../charmap.h"
 #include "../../data/items/mail_items.h"
 #include "../../gfx/mail.h"
 #include "../../util/serialize.h"
@@ -685,7 +686,7 @@ void LoadBlueSkyMailGFX(const struct MailMsg* bc){
     a = Mail_Place6TileRow(coord(4, 4, wram->wTilemap), a);
     // DEC_HL;
     // LD_hl(0x7f);
-    coord(4, 4, wram->wTilemap)[5] = 0x7f;
+    coord(4, 4, wram->wTilemap)[5] = CHAR_SPACE;
     // DEC_A;
     --a;
     // hlcoord(15, 14, wTilemap);

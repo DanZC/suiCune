@@ -30,6 +30,7 @@
 #include "../../home/string.h"
 #include "../../home/copy_name.h"
 #include "../../util/serialize.h"
+#include "../../charmap.h"
 
 static void v_DepositPKMN_RunJumptable(void);
 
@@ -1977,13 +1978,13 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
                 // LD_DE(wStringBuffer1);
                 // LD_BC(MON_NAME_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes(wram->wStringBuffer1, nick[e], MON_NAME_LENGTH);
+                CopyBytes(gMisc.stringBuffer1, nick[e], MON_NAME_LENGTH);
                 // CALL(aCloseSRAM);
                 CloseSRAM();
                 // POP_HL;
                 // LD_DE(wStringBuffer1);
                 // CALL(aPlaceString);
-                PlaceStringSimple(wram->wStringBuffer1, hl);
+                PlaceStringSimple(gMisc.stringBuffer1, hl);
                 // RET;
                 return;
             }
@@ -2024,13 +2025,13 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
                 // LD_DE(wStringBuffer1);
                 // LD_BC(MON_NAME_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes(wram->wStringBuffer1, box.monNicknames[e], MON_NAME_LENGTH);
+                CopyBytes(gMisc.stringBuffer1, box.monNicknames[e], MON_NAME_LENGTH);
                 // CALL(aCloseSRAM);
                 CloseSRAM();
                 // POP_HL;
                 // LD_DE(wStringBuffer1);
                 // CALL(aPlaceString);
-                PlaceStringSimple(wram->wStringBuffer1, hl);
+                PlaceStringSimple(gMisc.stringBuffer1, hl);
 
                 // RET;
                 return;
@@ -2061,11 +2062,11 @@ static void BillsPC_RefreshTextboxes_PlaceNickname(const struct BillsPCMonEntry*
             // LD_DE(wStringBuffer1);
             // LD_BC(MON_NAME_LENGTH);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wStringBuffer1, gPokemon.partyMonNickname[e], MON_NAME_LENGTH);
+            CopyBytes(gMisc.stringBuffer1, gPokemon.partyMonNickname[e], MON_NAME_LENGTH);
             // POP_HL;
             // LD_DE(wStringBuffer1);
             // CALL(aPlaceString);
-            PlaceStringSimple(wram->wStringBuffer1, hl);
+            PlaceStringSimple(gMisc.stringBuffer1, hl);
             // RET;
             return;
         }
@@ -2769,12 +2770,12 @@ static bool DepositPokemon(void){
     // LD_H_B;
     st.hl = st.bc;
     // LD_DE(wStringBuffer1);
-    st.de = wram->wStringBuffer1;
+    st.de = gMisc.stringBuffer1;
     // CALL(aPlaceString);
     PlaceString(&st, st.hl);
     // LD_A(0xe7);
     // LD_bc_A;
-    *st.bc = 0xe7;
+    *st.bc = CHAR_EMARK;
     // LD_C(50);
     // CALL(aDelayFrames);
     DelayFrames(50);
@@ -2849,12 +2850,12 @@ bool TryWithdrawPokemon(void){
     // LD_H_B;
     st.hl = st.bc;
     // LD_DE(wStringBuffer1);
-    st.de = wram->wStringBuffer1;
+    st.de = gMisc.stringBuffer1;
     // CALL(aPlaceString);
     PlaceString(&st, st.hl);
     // LD_A(0xe7);
     // LD_bc_A;
-    *st.bc = 0xe7;
+    *st.bc = CHAR_EMARK;
     // LD_C(50);
     // CALL(aDelayFrames);
     DelayFrames(50);
@@ -2917,13 +2918,13 @@ void ReleasePKMN_ByePKMN(void){
     // INC_HL;
     st.hl++;
     // LD_DE(wStringBuffer1);
-    st.de = wram->wStringBuffer1;
+    st.de = gMisc.stringBuffer1;
     // CALL(aPlaceString);
     PlaceString(&st, st.hl);
     // LD_L_C;
     // LD_H_B;
     // LD_hl(0xe7);
-    *st.bc = 0xe7;
+    *st.bc = CHAR_EMARK;
     // LD_C(50);
     // CALL(aDelayFrames);
     DelayFrames(50);

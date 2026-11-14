@@ -319,7 +319,7 @@ const txt_cmd_s CeladonPrizeRoom_AskWhichPrizeText[] = {
 const txt_cmd_s CeladonPrizeRoom_ConfirmPurchaseText[] = {
     text_start("OK, so you wanted"
         t_line "a @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("?"
         t_done )
 };

@@ -450,11 +450,11 @@ void GetMartPrice(item_price_s* hl, uint16_t price){
     // LD_DE(wStringBuffer2);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 6);  // 6 digits
     // CALL(aPrintNum);
-    PrintNum(wram->wStringBuffer1, &value, PRINTNUM_LEADINGZEROS | 2, 6);
+    PrintNum(gMisc.stringBuffer1, &value, PRINTNUM_LEADINGZEROS | 2, 6);
     // POP_HL;
 
     // LD_DE(wStringBuffer1);
-    uint8_t* de = wram->wStringBuffer1;
+    uint8_t* de = gMisc.stringBuffer1;
     // LD_C(6 / 2);  // 6 digits
     uint8_t c = 6 / 2;
 

@@ -296,7 +296,7 @@ const txt_cmd_s RadioTower1FLuckyNumberManAskToPlayText[] = {
 const txt_cmd_s RadioTower1FLuckyNumberManThisWeeksIdIsText[] = {
     text_start("This week's ID"
         t_line "number is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };

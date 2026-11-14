@@ -325,7 +325,7 @@ const uint8_t Route35NationalParkGatePlayerEnterParkMovement[] = {
 };
 const txt_cmd_s Route35NationalParkGateOfficer1AskToParticipateText[] = {
     text_start("Today's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "That means the"
         t_para "Bug-Catching Con-"
@@ -376,7 +376,7 @@ const txt_cmd_s Route35NationalParkGateOfficer1AskToUseFirstMonText[] = {
         t_line "one #MON."
         t_para "You'll have to use"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(", the"
         t_para "first #MON in"
         t_line "your party."
@@ -447,7 +447,7 @@ const txt_cmd_s Route35NationalParkGateOfficer1EggAsFirstMonText[] = {
 };
 const txt_cmd_s Route35NationalParkGateOfficer1WantToFinishText[] = {
     text_start("You still have @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "minute(s) left."
         t_para "Do you want to"

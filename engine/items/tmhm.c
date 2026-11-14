@@ -131,7 +131,7 @@ u8_flag_s ChooseMonToLearnTMHM(void){
     // LD_DE(wTMHMMoveNameBackup);
     // LD_BC(MOVE_NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wTMHMMoveNameBackup, wram->wStringBuffer2, MOVE_NAME_LENGTH - 1);
+    CopyBytes(gMisc.TMHMMoveNameBackup, gMisc.stringBuffer2, MOVE_NAME_LENGTH - 1);
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
     return ChooseMonToLearnTMHM_NoRefresh();
@@ -173,7 +173,7 @@ u8_flag_s ChooseMonToLearnTMHM_NoRefresh(void){
             // LD_DE(wStringBuffer2);
             // LD_BC(MOVE_NAME_LENGTH - 1);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wStringBuffer2, wram->wTMHMMoveNameBackup, MOVE_NAME_LENGTH - 1);
+            CopyBytes(gMisc.stringBuffer2, gMisc.TMHMMoveNameBackup, MOVE_NAME_LENGTH - 1);
             // POP_AF;  // now contains the original contents of af
             // RET;
             return res;

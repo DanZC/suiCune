@@ -1262,7 +1262,7 @@ void RandomUnseenWildMon(void){
 //  Since we haven't seen it, have the caller tell us about it.
     // LD_DE(wStringBuffer1);
     // CALL(aCopyName1);
-    CopyName1(wram->wStringBuffer1);
+    CopyName1(gMisc.stringBuffer1);
     // LD_A_C;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetPokemonName);
@@ -1330,7 +1330,7 @@ void RandomPhoneWildMon(void){
     // LD_DE(wStringBuffer4);
     // LD_BC(MON_NAME_LENGTH);
     // JP(mCopyBytes);
-    return CopyBytes(wram->wStringBuffer4,
+    return CopyBytes(gMisc.stringBuffer4,
         GetPokemonName(s), MON_NAME_LENGTH);
 }
 
@@ -1437,7 +1437,7 @@ void RandomPhoneMon(void){
     // LD_DE(wStringBuffer4);
     // LD_BC(MON_NAME_LENGTH);
     // JP(mCopyBytes);
-    CopyBytes(wram->wStringBuffer4, GetPokemonName(s), MON_NAME_LENGTH);
+    CopyBytes(gMisc.stringBuffer4, GetPokemonName(s), MON_NAME_LENGTH);
 
 // INCLUDE "data/wild/johto_grass.asm"
 // INCLUDE "data/wild/johto_water.asm"

@@ -5,7 +5,7 @@
 
 void TownMap_ConvertLineBreakCharacters(void){
     // LD_HL(wStringBuffer1);
-    uint8_t* hl = wram->wStringBuffer1;
+    uint8_t* hl = gMisc.stringBuffer1;
 
     while(1) {
     // loop:
@@ -34,6 +34,6 @@ void TownMap_ConvertLineBreakCharacters(void){
     // LD_DE(wStringBuffer1);
     // hlcoord(9, 0, wTilemap);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wStringBuffer1, coord(9, 0, wram->wTilemap));
+    PlaceStringSimple(gMisc.stringBuffer1, coord(9, 0, wram->wTilemap));
     // RET;
 }

@@ -17,6 +17,7 @@
 #include "../movie/trade_animation.h"
 #include "../../data/events/npc_trades.h"
 #include "../../data/text/common.h"
+#include "../../charmap.h"
 
 static void NPCTrade_TradeAnimation(void);
 
@@ -430,7 +431,7 @@ uint8_t* GetTradeMonName(species_t a){
     // LD_HL(wStringBuffer1);
     // POP_DE;
     // RET;
-    return wram->wStringBuffer1;
+    return gMisc.stringBuffer1;
 }
 
 void CopyTradeName(uint8_t* de, const uint8_t* hl){
@@ -485,7 +486,7 @@ void GetTradeMonNames(void){
 
     // LD_DE(wStringBuffer2);
     // CALL(aCopyTradeName);
-    CopyTradeName(wram->wStringBuffer2, GetTradeMonName(GetTradeAttr()->offeredMon));
+    CopyTradeName(gMisc.stringBuffer2, GetTradeMonName(GetTradeAttr()->offeredMon));
 
     // LD_E(NPCTRADE_GIVEMON);
     // CALL(aGetTradeAttr);
@@ -497,9 +498,9 @@ void GetTradeMonNames(void){
     CopyTradeName(wram->wMonOrItemNameBuffer, GetTradeMonName(GetTradeAttr()->requestedMon));
 
     // LD_HL(wStringBuffer1);
-    uint8_t* hl = wram->wStringBuffer1;
+    uint8_t* hl = gMisc.stringBuffer1;
 
-    while(*(hl++) != 0x50) {
+    while(*(hl++) != CHAR_TERM) {
     // loop:
         // LD_A_hli;
         // CP_A(0x50);
@@ -522,16 +523,16 @@ void GetTradeMonNames(void){
     // LD_A(0xef);
     // IF_Z goto done;
     if(gender == TRADE_GENDER_MALE)
-        *(hl2++) = 0xef;
+        *(hl2++) = CHAR_MALE_ICON;
 // TRADE_GENDER_FEMALE
     else
-        *(hl2++) = 0xf5;
+        *(hl2++) = CHAR_FEMALE_ICON;
     // LD_A(0xf5);
 
 // done:
     // LD_hli_A;
     // LD_hl(0x50);
-    *hl2 = 0x50;
+    *hl2 = CHAR_TERM;
     // RET;
 
 // INCLUDE "data/events/npc_trades.asm"

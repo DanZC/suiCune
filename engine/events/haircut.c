@@ -125,7 +125,7 @@ void CopyPokemonName_Buffer1_Buffer3(void){
     // LD_DE(wStringBuffer3);
     // LD_BC(MON_NAME_LENGTH);
     // JP(mCopyBytes);
-    return CopyBytes(wram->wStringBuffer3, wram->wStringBuffer1, MON_NAME_LENGTH);
+    return CopyBytes(gMisc.stringBuffer3, gMisc.stringBuffer1, MON_NAME_LENGTH);
 }
 
 void DummyPredef1(void){

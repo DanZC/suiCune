@@ -118,7 +118,7 @@ static void ClockResetPassword_updateIDdisplay(void){
         // LD_A_de;
         // ADD_A(0xf6);
         // LD_hli_A;
-        hl[i] = wram->wStringBuffer2[i] + CHAR_0;
+        hl[i] = gMisc.stringBuffer2[i] + CHAR_0;
         // INC_DE;
         // DEC_C;
         // IF_NZ goto loop3;
@@ -134,7 +134,7 @@ static void ClockResetPassword_updateIDdisplay(void){
     // LD_D(0);
     // ADD_HL_DE;
     // LD_hl(0x61);
-    coord(14, 16, wram->wTilemap)[wram->wStringBuffer2[CLOCK_RESET_CURSOR]] = 0x61;
+    coord(14, 16, wram->wTilemap)[gMisc.stringBuffer2[CLOCK_RESET_CURSOR]] = CHAR_UP_ARROW;
     // RET;
 }
 
@@ -221,18 +221,18 @@ static uint16_t ClockResetPassword_ConvertDecIDToBytes(void){
     // LD_DE(wStringBuffer2 + 4);
     // LD_BC(1);
     // CALL(aClockResetPassword_ConvertToBytes);
-    ClockResetPassword_ConvertToBytes(&hl, 1, wram->wStringBuffer2[4]);
+    ClockResetPassword_ConvertToBytes(&hl, 1, gMisc.stringBuffer2[4]);
     // LD_BC(10);
     // CALL(aClockResetPassword_ConvertToBytes);
-    ClockResetPassword_ConvertToBytes(&hl, 10, wram->wStringBuffer2[3]);
+    ClockResetPassword_ConvertToBytes(&hl, 10, gMisc.stringBuffer2[3]);
     // LD_BC(100);
     // CALL(aClockResetPassword_ConvertToBytes);
-    ClockResetPassword_ConvertToBytes(&hl, 100, wram->wStringBuffer2[2]);
+    ClockResetPassword_ConvertToBytes(&hl, 100, gMisc.stringBuffer2[2]);
     // LD_BC(1000);
     // CALL(aClockResetPassword_ConvertToBytes);
-    ClockResetPassword_ConvertToBytes(&hl, 1000, wram->wStringBuffer2[1]);
+    ClockResetPassword_ConvertToBytes(&hl, 1000, gMisc.stringBuffer2[1]);
     // LD_BC(10000);
-    ClockResetPassword_ConvertToBytes(&hl, 10000, wram->wStringBuffer2[0]);
+    ClockResetPassword_ConvertToBytes(&hl, 10000, gMisc.stringBuffer2[0]);
     return hl;
 }
 
@@ -243,7 +243,7 @@ static inline uint8_t* ClockResetPassword_getcurrentdigit(void){
     // LD_HL(wStringBuffer2);
     // ADD_HL_DE;
     // RET;
-    return wram->wStringBuffer2 + wram->wStringBuffer2[CLOCK_RESET_CURSOR];
+    return gMisc.stringBuffer2 + gMisc.stringBuffer2[CLOCK_RESET_CURSOR];
 }
 static void ClockResetPassword_dpadinput(uint8_t input){
     // LD_A_B;
@@ -254,11 +254,11 @@ static void ClockResetPassword_dpadinput(uint8_t input){
         // LD_A_addr(wStringBuffer2 + 5);
         // AND_A_A;
         // RET_Z ;
-        if(wram->wStringBuffer2[CLOCK_RESET_CURSOR] == 0)
+        if(gMisc.stringBuffer2[CLOCK_RESET_CURSOR] == 0)
             return;
         // DEC_A;
         // LD_addr_A(wStringBuffer2 + 5);
-        wram->wStringBuffer2[CLOCK_RESET_CURSOR]--;
+        gMisc.stringBuffer2[CLOCK_RESET_CURSOR]--;
         // RET;
         return;
     }
@@ -270,11 +270,11 @@ static void ClockResetPassword_dpadinput(uint8_t input){
         // LD_A_addr(wStringBuffer2 + 5);
         // CP_A(4);
         // RET_Z ;
-        if(wram->wStringBuffer2[CLOCK_RESET_CURSOR] == CLOCK_RESET_PASSWORD_LENGTH)
+        if(gMisc.stringBuffer2[CLOCK_RESET_CURSOR] == CLOCK_RESET_PASSWORD_LENGTH)
             return;
         // INC_A;
         // LD_addr_A(wStringBuffer2 + 5);
-        wram->wStringBuffer2[CLOCK_RESET_CURSOR]++;
+        gMisc.stringBuffer2[CLOCK_RESET_CURSOR]++;
         // RET;
     }
     // LD_A_B;
@@ -338,10 +338,10 @@ bool ClockResetPassword(void){
     // LD_BC(5);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wStringBuffer2, CLOCK_RESET_CURSOR, 0);
+    ByteFill(gMisc.stringBuffer2, CLOCK_RESET_CURSOR, 0);
     // LD_A(4);
     // LD_addr_A(wStringBuffer2 + 5);
-    wram->wStringBuffer2[CLOCK_RESET_CURSOR] = CLOCK_RESET_PASSWORD_LENGTH;
+    gMisc.stringBuffer2[CLOCK_RESET_CURSOR] = CLOCK_RESET_PASSWORD_LENGTH;
     // LD_HL(mClockResetPassword_PasswordAskEnterText);
     // CALL(aPrintText);
     PrintText(PasswordAskEnterText);

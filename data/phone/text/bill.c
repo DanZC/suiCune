@@ -37,7 +37,7 @@ const txt_cmd_s BillPhoneNotFullText[] = {
         t_line "waiting!"
         t_para "<PLAY_G>, your BOX"
         t_line "has room for @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_cont "more #MON."
         t_para "Get out there and"
@@ -50,7 +50,7 @@ const txt_cmd_s BillPhoneNearlyFullText[] = {
         t_para "<PLAY_G>, your BOX"
         t_line "has room for only"
         t_cont "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" more #MON."
         t_para "Maybe you should"
         t_line "switch your BOX."

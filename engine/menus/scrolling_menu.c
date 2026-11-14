@@ -332,7 +332,7 @@ void ScrollingMenu_ClearLeftColumn(void){
     do {
     // loop:
         // LD_hl(0x7f);
-        *hl = 0x7f;
+        *hl = CHAR_SPACE;
         // ADD_HL_DE;
         hl += 2 * SCREEN_WIDTH;
         // DEC_A;

@@ -173,7 +173,7 @@ const txt_cmd_s CeladonVendingText[] = {
 const txt_cmd_s CeladonClangText[] = {
     text_start("Clang!"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "popped out."
         t_done )

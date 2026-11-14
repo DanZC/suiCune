@@ -11,6 +11,7 @@
 #include "../../home/joypad.h"
 #include "../../home/audio.h"
 #include "../../data/text/common.h"
+#include "../../charmap.h"
 
 enum {
     BANKOFMOM_CHECK_IF_BANK_INIT,
@@ -216,11 +217,11 @@ void BankOfMom(void){
                 // XOR_A_A;
                 // LD_HL(wStringBuffer2);
                 // LD_hli_A;
-                wram->wStringBuffer2[0] = 0;
+                gMisc.stringBuffer2[0] = 0;
                 // LD_hli_A;
-                wram->wStringBuffer2[1] = 0;
+                gMisc.stringBuffer2[1] = 0;
                 // LD_hl_A;
-                wram->wStringBuffer2[2] = 0;
+                gMisc.stringBuffer2[2] = 0;
                 // LD_A(5);
                 // LD_addr_A(wMomBankDigitCursorPosition);
                 wram->wMomBankDigitCursorPosition = 5;
@@ -241,11 +242,11 @@ void BankOfMom(void){
                 // INC_HL;
                 // OR_A_hl;
                 // IF_Z goto CancelDeposit;
-                if(!cancel && (wram->wStringBuffer2[0] | wram->wStringBuffer2[1] | wram->wStringBuffer2[2]) != 0) {
+                if(!cancel && (gMisc.stringBuffer2[0] | gMisc.stringBuffer2[1] | gMisc.stringBuffer2[2]) != 0) {
                     // LD_DE(wMoney);
                     // LD_BC(wStringBuffer2);
                     // FARCALL(aCompareMoney);
-                    u8_flag_s res = CompareMoney(wram->wStringBuffer2, gPlayer.money);
+                    u8_flag_s res = CompareMoney(gMisc.stringBuffer2, gPlayer.money);
                     // IF_C goto InsufficientFundsInWallet;
                     if(res.flag) {
                     // InsufficientFundsInWallet:
@@ -259,11 +260,11 @@ void BankOfMom(void){
                     // LD_DE(wStringBuffer2 + 3);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes(wram->wStringBuffer2 + 3, wram->wStringBuffer2, 3);
+                    CopyBytes(gMisc.stringBuffer2 + 3, gMisc.stringBuffer2, 3);
                     // LD_BC(wMomsMoney);
                     // LD_DE(wStringBuffer2);
                     // FARCALL(aGiveMoney);
-                    bool noroom = GiveMoney(wram->wStringBuffer2, gPlayer.momsMoney);
+                    bool noroom = GiveMoney(gMisc.stringBuffer2, gPlayer.momsMoney);
                     // IF_C goto NotEnoughRoomInBank;
                     if(noroom) {
                     // NotEnoughRoomInBank:
@@ -276,12 +277,12 @@ void BankOfMom(void){
                     // LD_BC(wStringBuffer2 + 3);
                     // LD_DE(wMoney);
                     // FARCALL(aTakeMoney);
-                    TakeMoney(gPlayer.money, wram->wStringBuffer2 + 3);
+                    TakeMoney(gPlayer.money, gMisc.stringBuffer2 + 3);
                     // LD_HL(wStringBuffer2);
                     // LD_DE(wMomsMoney);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes(gPlayer.momsMoney, wram->wStringBuffer2, 3);
+                    CopyBytes(gPlayer.momsMoney, gMisc.stringBuffer2, 3);
                     // LD_DE(SFX_TRANSACTION);
                     // CALL(aPlaySFX);
                     PlaySFX(SFX_TRANSACTION);
@@ -312,11 +313,11 @@ void BankOfMom(void){
                 // XOR_A_A;
                 // LD_HL(wStringBuffer2);
                 // LD_hli_A;
-                wram->wStringBuffer2[0] = 0;
+                gMisc.stringBuffer2[0] = 0;
                 // LD_hli_A;
-                wram->wStringBuffer2[1] = 0;
+                gMisc.stringBuffer2[1] = 0;
                 // LD_hl_A;
-                wram->wStringBuffer2[2] = 0;
+                gMisc.stringBuffer2[2] = 0;
                 // LD_A(5);
                 // LD_addr_A(wMomBankDigitCursorPosition);
                 wram->wMomBankDigitCursorPosition = 5;
@@ -337,16 +338,16 @@ void BankOfMom(void){
                 // INC_HL;
                 // OR_A_hl;
                 // IF_Z goto CancelWithdraw;
-                if(!cancel && (wram->wStringBuffer2[0] | wram->wStringBuffer2[1] | wram->wStringBuffer2[2]) != 0) {
+                if(!cancel && (gMisc.stringBuffer2[0] | gMisc.stringBuffer2[1] | gMisc.stringBuffer2[2]) != 0) {
                     // LD_HL(wStringBuffer2);
                     // LD_DE(wStringBuffer2 + 3);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes(wram->wStringBuffer2 + 3, wram->wStringBuffer2, 3);
+                    CopyBytes(gMisc.stringBuffer2 + 3, gMisc.stringBuffer2, 3);
                     // LD_DE(wMomsMoney);
                     // LD_BC(wStringBuffer2);
                     // FARCALL(aCompareMoney);
-                    u8_flag_s res = CompareMoney(wram->wStringBuffer2, gPlayer.momsMoney);
+                    u8_flag_s res = CompareMoney(gMisc.stringBuffer2, gPlayer.momsMoney);
                     // IF_C goto InsufficientFundsInBank;
                     if(res.flag) {
                     // InsufficientFundsInBank:
@@ -359,7 +360,7 @@ void BankOfMom(void){
                     // LD_BC(wMoney);
                     // LD_DE(wStringBuffer2);
                     // FARCALL(aGiveMoney);
-                    bool noroom = GiveMoney(wram->wStringBuffer2, gPlayer.money);
+                    bool noroom = GiveMoney(gMisc.stringBuffer2, gPlayer.money);
                     // IF_C goto NotEnoughRoomInWallet;
                     if(noroom) {
                     // NotEnoughRoomInWallet:
@@ -372,12 +373,12 @@ void BankOfMom(void){
                     // LD_BC(wStringBuffer2 + 3);
                     // LD_DE(wMomsMoney);
                     // FARCALL(aTakeMoney);
-                    TakeMoney(gPlayer.momsMoney, wram->wStringBuffer2 + 3);
+                    TakeMoney(gPlayer.momsMoney, gMisc.stringBuffer2 + 3);
                     // LD_HL(wStringBuffer2);
                     // LD_DE(wMoney);
                     // LD_BC(3);
                     // CALL(aCopyBytes);
-                    CopyBytes(gPlayer.money, wram->wStringBuffer2, 3);
+                    CopyBytes(gPlayer.money, gMisc.stringBuffer2, 3);
                     // LD_DE(SFX_TRANSACTION);
                     // CALL(aPlaySFX);
                     PlaySFX(SFX_TRANSACTION);
@@ -694,7 +695,7 @@ void Mom_ContinueMenuSetup(const char* de){
     // LD_DE(wStringBuffer2);
     // LD_BC((PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum(coord(12, 6, wram->wTilemap), wram->wStringBuffer2, PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3, 6);
+    PrintNum(coord(12, 6, wram->wTilemap), gMisc.stringBuffer2, PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3, 6);
     // CALL(aUpdateSprites);
     UpdateSprites();
     // CALL(aCGBOnly_CopyTilemapAtOnce);
@@ -762,7 +763,7 @@ static void Mom_WithdrawDepositMenuJoypad_dpadaction(void) {
         // LD_B_H;
         // LD_DE(wStringBuffer2);
         // FARCALL(aGiveMoney);
-        GiveMoney(wram->wStringBuffer2, temp);
+        GiveMoney(gMisc.stringBuffer2, temp);
         // RET;
         return;
     }
@@ -778,7 +779,7 @@ static void Mom_WithdrawDepositMenuJoypad_dpadaction(void) {
         // LD_B_H;
         // LD_DE(wStringBuffer2);
         // FARCALL(aTakeMoney);
-        TakeMoney(wram->wStringBuffer2, temp);
+        TakeMoney(gMisc.stringBuffer2, temp);
         // RET;
         return;
     }
@@ -858,7 +859,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
         // LD_DE(wStringBuffer2);
         // LD_BC((PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3 << 8) | 6);
         // CALL(aPrintNum);
-        PrintNum(coord(12, 6, wram->wTilemap), wram->wStringBuffer2, PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3, 6);
+        PrintNum(coord(12, 6, wram->wTilemap), gMisc.stringBuffer2, PRINTNUM_MONEY | PRINTNUM_LEADINGZEROS | 3, 6);
         // LDH_A_addr(hVBlankCounter);
         // AND_A(0x10);
         // IF_NZ goto skip;
@@ -869,7 +870,7 @@ bool Mom_WithdrawDepositMenuJoypad(void){
             // LD_B(0);
             // ADD_HL_BC;
             // LD_hl(0x7f);
-            coord(13, 6, wram->wTilemap)[wram->wMomBankDigitCursorPosition] = 0x7f;
+            coord(13, 6, wram->wTilemap)[wram->wMomBankDigitCursorPosition] = CHAR_SPACE;
         }
 
 

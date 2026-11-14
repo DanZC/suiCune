@@ -32,6 +32,7 @@
 #include "../../data/collision/field_move_blocks.h"
 #include "../../util/scripting.h"
 #include "../../mobile/mobile_41.h"
+#include "../../charmap.h"
 
 // field move data
 static struct FieldMoveData {
@@ -106,11 +107,11 @@ void GetPartyNickname(void){
     // CALL(aCopyName1);
     CopyName1(GetCurNickname());
 //  copy text from wStringBuffer2 to wStringBuffer3
-    wram->wStringBuffer2[STRING_BUFFER_LENGTH - 1] = 0x50; // Just in case string doesn't terminate
+    gMisc.stringBuffer2[STRING_BUFFER_LENGTH - 1] = CHAR_TERM; // Just in case string doesn't terminate
     // LD_DE(wStringBuffer2);
     // LD_HL(wStringBuffer3);
     // CALL(aCopyName2);
-    CopyName2(wram->wStringBuffer3, wram->wStringBuffer2);
+    CopyName2(gMisc.stringBuffer3, gMisc.stringBuffer2);
     // RET;
 }
 

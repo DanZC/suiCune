@@ -7,6 +7,7 @@
 #include "../menus/naming_screen.h"
 #include "../pokemon/party_menu.h"
 #include "../../data/text/common.h"
+#include "../../charmap.h"
 
 static const txt_cmd_s NameRaterHelloText[] = {
     text_far(v_NameRaterHelloText)
@@ -119,7 +120,7 @@ void v_NameRater(void){
     // LD_B(NAME_MON);
     // LD_DE(wStringBuffer2);
     // FARCALL(av_NamingScreen);
-    v_NamingScreen(wram->wStringBuffer2, NAME_MON);
+    v_NamingScreen(gMisc.stringBuffer2, NAME_MON);
 //  If the new name is empty, treat it as unchanged.
     // CALL(aIsNewNameEmpty);
     // LD_HL(mNameRaterSameNameText);
@@ -140,7 +141,7 @@ void v_NameRater(void){
         // LD_HL(wStringBuffer2);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(gPokemon.partyMonNickname[wram->wCurPartyMon], wram->wStringBuffer2, MON_NAME_LENGTH);
+        CopyBytes(gPokemon.partyMonNickname[wram->wCurPartyMon], gMisc.stringBuffer2, MON_NAME_LENGTH);
         // LD_HL(mNameRaterFinishedText);
         txt = NameRaterFinishedText;
     }
@@ -219,7 +220,7 @@ static bool CheckIfMonIsYourOT(uint8_t partyMon){
 //  Checks to see if the nickname loaded in wStringBuffer2 is empty.  If so, return carry.
 static bool IsNewNameEmpty(void){
     // LD_HL(wStringBuffer2);
-    uint8_t* hl = wram->wStringBuffer2;
+    uint8_t* hl = gMisc.stringBuffer2;
     // LD_C(MON_NAME_LENGTH - 1);
     uint8_t c = MON_NAME_LENGTH - 1;
 
@@ -230,11 +231,11 @@ static bool IsNewNameEmpty(void){
         a = *(hl++);
         // CP_A(0x50);
         // IF_Z goto terminator;
-        if(a == 0x50) 
+        if(a == CHAR_TERM) 
             break;
         // CP_A(0x7f);
         // IF_NZ goto nonspace;
-        if(a != 0x7f) {
+        if(a != CHAR_SPACE) {
         // nonspace:
             // AND_A_A;
             // RET;
@@ -264,7 +265,7 @@ static bool CompareNewToOld(uint8_t curPartyMon){
     // LD_B_C;
     // LD_HL(wStringBuffer2);
     // CALL(aGetNicknamenameLength);
-    uint8_t c = GetNicknamenameLength(wram->wStringBuffer2);
+    uint8_t c = GetNicknamenameLength(gMisc.stringBuffer2);
     // POP_HL;
     // LD_A_C;
     // CP_A_B;
@@ -273,9 +274,9 @@ static bool CompareNewToOld(uint8_t curPartyMon){
         return false;
     }
     // LD_DE(wStringBuffer2);
-    uint8_t* de = wram->wStringBuffer2;
+    uint8_t* de = gMisc.stringBuffer2;
 
-    for(int i = 0; de[i] != 0x50; ++i) {
+    for(int i = 0; de[i] != CHAR_TERM; ++i) {
     // loop:
         // LD_A_de;
         // CP_A(0x50);
@@ -310,7 +311,7 @@ static uint8_t GetNicknamenameLength(const uint8_t* hl){
         // LD_A_hli;
         // CP_A(0x50);
         // RET_Z ;
-        if(*(hl++) == 0x50)
+        if(*(hl++) == CHAR_TERM)
             return c;
         // INC_C;
         c++;

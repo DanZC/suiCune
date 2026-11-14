@@ -2,23 +2,6 @@
 #include "array.h"
 
 //  Find value a for every de bytes in array hl.
-//  Return index (b, carry) if found, otherwise 0xffff
-uint16_t IsInArray_GB(uint16_t hl, uint16_t de, uint8_t a)
-{
-    uint8_t b = 0;
-    while(1)
-    {
-        uint8_t byte = gb_read(hl);
-        if(byte == 0xFF)
-            return 0xFFFF;
-        if(byte == a)
-            return b;
-        b++;
-        hl += de;
-    }
-}
-
-//  Find value a for every de bytes in array hl.
 //  Return index if found, otherwise 0xffff
 uint16_t IsInArray_Item(const item_t* hl, item_t a) {
     uint16_t b = 0;

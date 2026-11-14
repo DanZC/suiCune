@@ -562,7 +562,7 @@ const txt_cmd_s GavenAskNumber1Text[] = {
         t_para "I'd like to battle"
         t_line "again when I heal"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" and the"
         t_line "rest of my team."
         t_done )
@@ -573,7 +573,7 @@ const txt_cmd_s GavenAskNumber2Text[] = {
         t_para "I'd like to battle"
         t_line "again when I heal"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" and the"
         t_line "rest of my team."
         t_done )
@@ -901,7 +901,7 @@ const txt_cmd_s JoeyRematchGiftText[] = {
 //// jose_overworld.c
 const txt_cmd_s JoseAskNumber1Text[] = {
     text_start("If my @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_line "sees anything"
         t_para "pretty, it goes"

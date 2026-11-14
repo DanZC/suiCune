@@ -27,7 +27,7 @@ static const struct VarAction VarActionTable[] = {
 // RETVAR_STRBUF2: copy [de] to wStringBuffer2
 // RETVAR_ADDR_DE: return address in de
 // RETVAR_EXECUTE: call function
-    [VAR_STRINGBUFFER2]     = {.var=wram_ptr(wStringBuffer2), RETVAR_STRBUF2},
+    [VAR_STRINGBUFFER2]     = {.var=gMisc.stringBuffer2, RETVAR_STRBUF2},
     [VAR_PARTYCOUNT]        = {.var=&gPokemon.partyCount, RETVAR_STRBUF2},
     [VAR_BATTLERESULT]      = {.fun=VarAction_BattleResult, RETVAR_EXECUTE},
     [VAR_BATTLETYPE]        = {.var=wram_ptr(wBattleType), RETVAR_ADDR_DE},
@@ -108,9 +108,9 @@ static uint8_t* VarAction_loadstringbuffer2(uint8_t a) {
 // loadstringbuffer2:
     // LD_DE(wStringBuffer2);
     // LD_de_A;
-    wram->wStringBuffer2[0] = a;
+    gMisc.stringBuffer2[0] = a;
     // RET;
-    return wram->wStringBuffer2;
+    return gMisc.stringBuffer2;
 }
 
 static uint8_t* VarAction_CountCaughtMons(void) {

@@ -547,7 +547,7 @@ void HatchEggs(void){
                 // POP_HL;
                 // LD_DE(wStringBuffer1);
                 // CALL(aInitName);
-                InitName(gPokemon.partyMonNickname[mon], wram->wStringBuffer1);
+                InitName(gPokemon.partyMonNickname[mon], gMisc.stringBuffer1);
                 // goto next;
             }
             else {
@@ -555,7 +555,7 @@ void HatchEggs(void){
                 // LD_HL(wStringBuffer1);
                 // LD_BC(MON_NAME_LENGTH);
                 // CALL(aCopyBytes);
-                CopyBytes(gPokemon.partyMonNickname[mon], wram->wStringBuffer1, MON_NAME_LENGTH);
+                CopyBytes(gPokemon.partyMonNickname[mon], gMisc.stringBuffer1, MON_NAME_LENGTH);
             }
         }
 
@@ -1354,7 +1354,7 @@ static const txt_cmd_s BreedShowsInterestText[] = {
     // LD_DE(wStringBuffer1);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer1, nickname, NAME_LENGTH);
+    CopyBytes(gMisc.stringBuffer1, nickname, NAME_LENGTH);
     // CALL(aCheckBreedmonCompatibility);
     uint8_t compat = CheckBreedmonCompatibility();
     // POP_BC;

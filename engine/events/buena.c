@@ -14,6 +14,7 @@
 #include "../pokegear/radio.h"
 #include "../../data/text/common.h"
 #include "../../data/items/buena_prizes.h"
+#include "../../charmap.h"
 
 static void BuenasPassword_PlacePasswordChoices(const char** items, uint8_t* de, uint8_t selection) {
     (void)items;
@@ -287,9 +288,9 @@ static void PrintBlueCardBalance_DrawBox(const uint8_t* de) {
     st.hl = st.bc + 1;
     // LD_A(0x7f);
     // LD_hli_A;
-    st.hl[0] = 0x7f;
+    st.hl[0] = CHAR_SPACE;
     // LD_hld_A;
-    st.hl[1] = 0x7f;
+    st.hl[1] = CHAR_SPACE;
     // POP_DE;
     // LD_BC((1 << 8) | 2);
     // CALL(aPrintNum);

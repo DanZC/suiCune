@@ -1894,7 +1894,7 @@ void BattleTowerRoomMenu_UpdatePickLevelMenu(void){
     // LD_A(0x1);
     // LDH_addr_A(rSVBK);
     // LD_BC(wStringBuffer3);
-    uint8_t* bc = wram->wStringBuffer3;
+    uint8_t* bc = gMisc.stringBuffer3;
 
     uint8_t a;
     while(1){
@@ -2217,7 +2217,7 @@ void BattleTowerRoomMenu_Mobile_17(void){
         // ld a, $01
         // ldh [rSVBK], a
         // ld de, wStringBuffer4;$d07c
-        uint8_t* de = wram->wStringBuffer4;
+        uint8_t* de = gMisc.stringBuffer4;
         // ld a, $03
         uint8_t a = 0x3;
     // save the current selection to wStringBuffer4 for later display in a textbox
@@ -2235,7 +2235,7 @@ void BattleTowerRoomMenu_Mobile_17(void){
 
         // ld a, $50
         // ld [de], a
-        *de = 0x50;
+        *de = CHAR_TERM;
         // pop af
         // ldh [rSVBK], a
     }
@@ -2482,7 +2482,7 @@ void BattleTowerRoomMenu_Mobile_18(void){
         // ld de, wcd69;$cd5d
         // ld bc, $0016
         // call CopyBytes;$2ff2
-        CopyBytes(wram->wcd69, wram->wStringBuffer3, 0x16);
+        CopyBytes(wram->wcd69, gMisc.stringBuffer3, 0x16);
         // ld a, $03
         // ldh [rSVBK], a
         // ld a, [wcd5f];$cd53
@@ -7403,7 +7403,7 @@ bool BattleTowerRoomMenu2_PlaceYesNoMenu(void){
     // hlcoord(15, 8, wTilemap);
     // LD_A(0xed);
     // LD_hl_A;
-    *coord(15, 8, wram->wTilemap) = 0xed;
+    *coord(15, 8, wram->wTilemap) = CHAR_RIGHT_CURSOR;
     // XOR_A_A;
     // LD_addr_A(wMobileInactivityTimerMinutes);
     wram->wMobileInactivityTimerMinutes = 0x0;
@@ -8045,11 +8045,11 @@ bool Function11a536(void){
             // hlcoord(15, 7, wTilemap);
             // LD_A(0xed);
             // LD_hl_A;
-            *coord(15, 7, wram->wTilemap) = 0xed;
+            *coord(15, 7, wram->wTilemap) = CHAR_RIGHT_CURSOR;
             // hlcoord(15, 9, wTilemap);
             // LD_A(0x7f);
             // LD_hl_A;
-            *coord(15, 9, wram->wTilemap) = 0x7f;
+            *coord(15, 9, wram->wTilemap) = CHAR_SPACE;
         }
         // goto asm_11a54d;
     }
@@ -8073,11 +8073,11 @@ bool Function11a536(void){
             // hlcoord(15, 7, wTilemap);
             // LD_A(0x7f);
             // LD_hl_A;
-            *coord(15, 7, wram->wTilemap) = 0x7f;
+            *coord(15, 7, wram->wTilemap) = CHAR_SPACE;
             // hlcoord(15, 9, wTilemap);
             // LD_A(0xed);
             // LD_hl_A;
-            *coord(15, 9, wram->wTilemap) = 0xed;
+            *coord(15, 9, wram->wTilemap) = CHAR_RIGHT_CURSOR;
         }
         // goto asm_11a54d;
     }
@@ -8184,7 +8184,7 @@ void Function11a5f5(void){
     // hlcoord(15, 7, wTilemap);
     // LD_A(0xed);
     // LD_hl_A;
-    *coord(15, 7, wram->wTilemap) = 0xed;
+    *coord(15, 7, wram->wTilemap) = CHAR_RIGHT_CURSOR;
     // FARCALL(aReloadMapPart);
     ReloadMapPart();
     // RET;
@@ -8852,9 +8852,9 @@ const txt_cmd_s Text_WhichBattleRoom[] = {
 
 const txt_cmd_s Text_ThisBattleRoomPleaseWait[] = {
 //  //  unreferenced
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("\'s ROOM ")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("?"
         t_line "Please wait…"
         t_done )
@@ -9420,7 +9420,7 @@ void Function11ae98(void){
         // hlcoord(2, 14, wTilemap);
         // LD_A(0x7f);
         // LD_hl_A;
-        *coord(6, 4, wram->wTilemap) = 0x7f;
+        *coord(6, 4, wram->wTilemap) = CHAR_SPACE;
         // LD_A(0x1);
         // LD_addr_A(wJumptableIndex);
         wram->wJumptableIndex = 0x1;
@@ -9558,7 +9558,7 @@ void Function11af4e(void){
         // hlcoord(2, 14, wTilemap);
         // LD_A(0x7f);
         // LD_hl_A;
-        *coord(6, 14, wram->wTilemap) = 0x7f;
+        *coord(6, 14, wram->wTilemap) = CHAR_SPACE;
         // LD_A(0x1);
         // LD_addr_A(wJumptableIndex);
         wram->wJumptableIndex = 0x1;
@@ -9678,7 +9678,7 @@ void Function11b022(void){
     if(wram->wcd2e != 0) {
         // LD_HL(wStringBuffer3);
         // CALL(aFunction11b03d);
-        Function11b03d(wram->wStringBuffer3, wram->wcd2e);
+        Function11b03d(gMisc.stringBuffer3, wram->wcd2e);
     }
 
 // asm_11b02e:
@@ -9691,7 +9691,7 @@ void Function11b022(void){
         return;
     // LD_HL(wStringBuffer4);
     // CALL(aFunction11b03d);
-    Function11b03d(wram->wStringBuffer4, wram->wcd30);
+    Function11b03d(gMisc.stringBuffer4, wram->wcd30);
     // RET;
 }
 
@@ -10228,7 +10228,7 @@ void Function11b242(void){
     // hlcoord(3, 4, wTilemap);
     // LD_DE(wStringBuffer3);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wStringBuffer3, coord(8, 2, wram->wTilemap));
+    PlaceStringSimple(gMisc.stringBuffer3, coord(8, 2, wram->wTilemap));
     // XOR_A_A;
     // LD_addr_A(wMonType);
     // FARCALL(aGetGender);
@@ -10257,7 +10257,7 @@ void Function11b242(void){
 
 void Function11b267(tile_t* hl){
     // LD_hl(0xef);
-    *hl = 0xef;
+    *hl = CHAR_MALE_ICON;
     // RET;
 }
 
@@ -10266,7 +10266,7 @@ void asm_11b26a(tile_t* hl, uint8_t* bc){
     // LD_bc_A;
     *bc = 0;
     // LD_hl(0x7f);
-    *hl = 0x7f;
+    *hl = CHAR_SPACE;
     // RET;
 }
 
@@ -10376,7 +10376,7 @@ void Function11b295(void){
     // LD_A(0x6);
     uint8_t a = MON_NAME_LENGTH;
     // LD_BC(wStringBuffer4);
-    uint8_t* bc = wram->wStringBuffer4;
+    uint8_t* bc = gMisc.stringBuffer4;
 
     do {
     // asm_11b2ec:
@@ -10396,7 +10396,7 @@ void Function11b295(void){
     // POP_HL;
     // LD_DE(wStringBuffer4);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wStringBuffer4, hl);
+    PlaceStringSimple(gMisc.stringBuffer4, hl);
     // RET;
 }
 

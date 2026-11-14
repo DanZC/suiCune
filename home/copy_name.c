@@ -4,7 +4,7 @@
 
 //  Copies the name from de to wStringBuffer2
 uint8_t* CopyName1(const uint8_t* de) {
-    return CopyName2(wram->wStringBuffer2, de);
+    return CopyName2(gMisc.stringBuffer2, de);
 }
 
 //  Copies the name from de to hl

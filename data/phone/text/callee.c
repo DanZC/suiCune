@@ -5,7 +5,7 @@
 
 const txt_cmd_s AlanAnswerPhoneText[] = {
     text_start("Yup, it's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_para "Is this <PLAY_G>?"
         t_line "Good morning!"
@@ -13,14 +13,14 @@ const txt_cmd_s AlanAnswerPhoneText[] = {
 };
 const txt_cmd_s AlanAnswerPhoneDayText[] = {
     text_start("Yup, it's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_para "Is that <PLAY_G>?"
         t_done )
 };
 const txt_cmd_s AlanAnswerPhoneNiteText[] = {
     text_start("Yup, it's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_para "Is that <PLAY_G>?"
         t_line "Good evening!"
@@ -29,21 +29,21 @@ const txt_cmd_s AlanAnswerPhoneNiteText[] = {
 const txt_cmd_s AlanGreetText[] = {
     text_start("Hello! It's me,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
 const txt_cmd_s AlanGreetDayText[] = {
     text_start("Hello! It's me,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
 const txt_cmd_s AlanGreetNiteText[] = {
     text_start("Hello! It's me,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -63,7 +63,7 @@ const txt_cmd_s AlanGenericText[] = {
 
 const txt_cmd_s AnthonyAnswerPhoneText[] = {
     text_start("Yeah, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" the"
         t_line "HIKER here."
         t_para "Ah, <PLAYER>!"
@@ -71,7 +71,7 @@ const txt_cmd_s AnthonyAnswerPhoneText[] = {
 };
 const txt_cmd_s AnthonyAnswerPhoneDayText[] = {
     text_start("Yeah, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" the"
         t_line "HIKER here."
         t_para "Ah, <PLAYER>,"
@@ -80,7 +80,7 @@ const txt_cmd_s AnthonyAnswerPhoneDayText[] = {
 };
 const txt_cmd_s AnthonyAnswerPhoneNiteText[] = {
     text_start("Yeah, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" the"
         t_line "HIKER here."
         t_para "Ah, <PLAYER>, isn't"
@@ -90,7 +90,7 @@ const txt_cmd_s AnthonyAnswerPhoneNiteText[] = {
 const txt_cmd_s AnthonyGreetText[] = {
     text_start("Yo, <PLAYER>?"
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "the HIKER!"
         t_done )
@@ -99,7 +99,7 @@ const txt_cmd_s AnthonyGreetDayText[] = {
     text_start("Hey, is this"
         t_line "<PLAYER>?"
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "the HIKER!"
         t_done )
@@ -108,7 +108,7 @@ const txt_cmd_s AnthonyGreetNiteText[] = {
     text_start("<PLAYER>, you still"
         t_line "awake?"
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "the HIKER!"
         t_done )
@@ -117,7 +117,7 @@ const txt_cmd_s AnthonyGenericText[] = {
     text_start("Are your #MON"
         t_line "as feisty as ever?"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" and"
         t_line "me--we have energy"
         t_para "to burn. We hike"
@@ -132,7 +132,7 @@ const txt_cmd_s AnthonyGenericText[] = {
 const txt_cmd_s ArnieAnswerPhoneText[] = {
     text_start("Yeah, hello."
         t_line "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "…Huh, <PLAY_G>? Yo!"
         t_done )
@@ -140,7 +140,7 @@ const txt_cmd_s ArnieAnswerPhoneText[] = {
 const txt_cmd_s ArnieAnswerPhoneDayText[] = {
     text_start("Yeah, hello, you"
         t_line "got @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "…Huh, <PLAY_G>? Yo!"
         t_done )
@@ -148,7 +148,7 @@ const txt_cmd_s ArnieAnswerPhoneDayText[] = {
 const txt_cmd_s ArnieAnswerPhoneNiteText[] = {
     text_start("Yeah, hello, you"
         t_line "got @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "…Huh, <PLAY_G>? Yo!"
         t_done )
@@ -156,7 +156,7 @@ const txt_cmd_s ArnieAnswerPhoneNiteText[] = {
 const txt_cmd_s ArnieGreetText[] = {
     text_start("Yeah, hello?"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" calling."
         t_para "What are you up"
         t_line "to, <PLAY_G>?"
@@ -165,7 +165,7 @@ const txt_cmd_s ArnieGreetText[] = {
 const txt_cmd_s ArnieGreetDayText[] = {
     text_start("Yeah, hello?"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" calling."
         t_para "Where are you now,"
         t_line "<PLAY_G>?"
@@ -174,7 +174,7 @@ const txt_cmd_s ArnieGreetDayText[] = {
 const txt_cmd_s ArnieGreetNiteText[] = {
     text_start("Yeah, hello?"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" calling."
         t_para "Are you awake now,"
         t_line "<PLAY_G>?"
@@ -192,7 +192,7 @@ const txt_cmd_s ArnieGenericText[] = {
 const txt_cmd_s BethAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Oh, <PLAY_G>."
         t_line "Good morning."
@@ -202,7 +202,7 @@ const txt_cmd_s BethAnswerPhoneText[] = {
 const txt_cmd_s BethAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Oh. Hi, <PLAY_G>."
         t_done )
@@ -210,7 +210,7 @@ const txt_cmd_s BethAnswerPhoneDayText[] = {
 const txt_cmd_s BethAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Oh, <PLAY_G>."
         t_line "Good evening."
@@ -220,7 +220,7 @@ const txt_cmd_s BethGreetText[] = {
     text_start("Good morning,"
         t_line "<PLAY_G>!"
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Were you sleeping?"
         t_done )
@@ -228,7 +228,7 @@ const txt_cmd_s BethGreetText[] = {
 const txt_cmd_s BethGreetDayText[] = {
     text_start("<PLAY_G>, hi!"
         t_line "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Do you have some"
         t_line "time?"
@@ -238,7 +238,7 @@ const txt_cmd_s BethGreetNiteText[] = {
     text_start("Hi, <PLAY_G>."
         t_line "Good evening."
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "I hope you were"
         t_line "awake."
@@ -263,7 +263,7 @@ const txt_cmd_s BethGenericText[] = {
 const txt_cmd_s BeverlyAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Oh! Good morning,"
         t_line "<PLAYER>."
@@ -272,7 +272,7 @@ const txt_cmd_s BeverlyAnswerPhoneText[] = {
 const txt_cmd_s BeverlyAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Oh! Good day,"
         t_line "<PLAYER>."
@@ -281,7 +281,7 @@ const txt_cmd_s BeverlyAnswerPhoneDayText[] = {
 const txt_cmd_s BeverlyAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Oh! Good evening,"
         t_line "<PLAYER>."
@@ -291,7 +291,7 @@ const txt_cmd_s BeverlyGreetText[] = {
     text_start("Hello, <PLAYER>."
         t_line "Good morning."
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Were you asleep?"
         t_done )
@@ -299,7 +299,7 @@ const txt_cmd_s BeverlyGreetText[] = {
 const txt_cmd_s BeverlyGreetDayText[] = {
     text_start("Hi, <PLAYER>."
         t_line "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "How are you doing?"
         t_done )
@@ -307,7 +307,7 @@ const txt_cmd_s BeverlyGreetDayText[] = {
 const txt_cmd_s BeverlyGreetNiteText[] = {
     text_start("Hi, <PLAYER>."
         t_line "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Were you awake?"
         t_done )
@@ -316,7 +316,7 @@ const txt_cmd_s BeverlyGenericText[] = {
     text_start("Keeping your"
         t_line "#MON happy?"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" is"
         t_line "healthy. It eats a"
         t_cont "lot every day."
@@ -327,7 +327,7 @@ const txt_cmd_s BeverlyGenericText[] = {
 
 const txt_cmd_s BrentAnswerPhoneText[] = {
     text_start("Yes? @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here…"
         t_para "Ah, <PLAYER>. What"
         t_line "can I do for you?"
@@ -335,7 +335,7 @@ const txt_cmd_s BrentAnswerPhoneText[] = {
 };
 const txt_cmd_s BrentAnswerPhoneDayText[] = {
     text_start("Yes? @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here…"
         t_para "Ah, <PLAYER>. What"
         t_line "can I do for you?"
@@ -343,7 +343,7 @@ const txt_cmd_s BrentAnswerPhoneDayText[] = {
 };
 const txt_cmd_s BrentAnswerPhoneNiteText[] = {
     text_start("Yes? @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here…"
         t_para "Ah, <PLAYER>. What"
         t_line "can I do for you?"
@@ -354,7 +354,7 @@ const txt_cmd_s BrentGreetText[] = {
         t_line "are you doing?"
         t_para "Hey! It's me,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
@@ -363,7 +363,7 @@ const txt_cmd_s BrentGreetDayText[] = {
         t_line "are you doing?"
         t_para "Hey, it's me,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
@@ -372,7 +372,7 @@ const txt_cmd_s BrentGreetNiteText[] = {
         t_line "are you doing?"
         t_para "Hey, it's me,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
@@ -386,7 +386,7 @@ const txt_cmd_s BrentGenericText[] = {
         t_para "don't you?"
         t_line "I'm impressed."
         t_para "Heh, my @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_line "is so tough, it"
         t_para "doesn't need to go"
@@ -400,7 +400,7 @@ const txt_cmd_s BrentGenericText[] = {
 const txt_cmd_s ChadAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Hi, <PLAY_G>!"
         t_line "Good morning!"
@@ -409,7 +409,7 @@ const txt_cmd_s ChadAnswerPhoneText[] = {
 const txt_cmd_s ChadAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Hi, <PLAY_G>, good"
         t_line "day!"
@@ -418,7 +418,7 @@ const txt_cmd_s ChadAnswerPhoneDayText[] = {
 const txt_cmd_s ChadAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Hi, <PLAY_G>, good"
         t_line "evening!"
@@ -428,7 +428,7 @@ const txt_cmd_s ChadGreetText[] = {
     text_start("Hi, <PLAY_G>, good"
         t_line "morning!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "How are you?"
         t_done )
@@ -437,7 +437,7 @@ const txt_cmd_s ChadGreetDayText[] = {
     text_start("Hi, <PLAY_G>, good"
         t_line "day!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "How are you?"
         t_done )
@@ -446,7 +446,7 @@ const txt_cmd_s ChadGreetNiteText[] = {
     text_start("Hi, <PLAY_G>, good"
         t_line "evening!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "How are you?"
         t_done )
@@ -471,7 +471,7 @@ const txt_cmd_s ChadGenericText[] = {
 
 const txt_cmd_s DanaAnswerPhoneText[] = {
     text_start("Hi, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" on the"
         t_line "line."
         t_para "Hey! It's <PLAY_G>!"
@@ -479,7 +479,7 @@ const txt_cmd_s DanaAnswerPhoneText[] = {
 };
 const txt_cmd_s DanaAnswerPhoneDayText[] = {
     text_start("Hi, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" on the"
         t_line "line."
         t_para "I know!"
@@ -488,7 +488,7 @@ const txt_cmd_s DanaAnswerPhoneDayText[] = {
 };
 const txt_cmd_s DanaAnswerPhoneNiteText[] = {
     text_start("Hi, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" on the"
         t_line "line."
         t_para "<PLAY_G>?"
@@ -499,7 +499,7 @@ const txt_cmd_s DanaGreetText[] = {
     text_start("Uh, <PLAY_G>?"
         t_para "It's me!"
         t_line "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -507,7 +507,7 @@ const txt_cmd_s DanaGreetDayText[] = {
     text_start("Uh, <PLAY_G>?"
         t_para "It's me!"
         t_line "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -515,13 +515,13 @@ const txt_cmd_s DanaGreetNiteText[] = {
     text_start("Uh, <PLAY_G>?"
         t_para "It's me!"
         t_line "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
 const txt_cmd_s DanaGenericText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" is"
         t_line "so full of energy,"
         t_para "it's a little"
@@ -555,7 +555,7 @@ const txt_cmd_s DerekGreetText[] = {
     text_start("<PLAY_G> pika, good"
         t_line "morning!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(", how"
         t_line "pika are you?"
         t_done )
@@ -564,7 +564,7 @@ const txt_cmd_s DerekGreetDayText[] = {
     text_start("<PLAY_G> pika, good"
         t_line "pika day!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(", how"
         t_line "pika are you?"
         t_done )
@@ -573,7 +573,7 @@ const txt_cmd_s DerekGreetNiteText[] = {
     text_start("<PLAY_G> pika, good"
         t_line "evening!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(". Were"
         t_line "you pika awake?"
         t_done )
@@ -582,7 +582,7 @@ const txt_cmd_s DerekGenericText[] = {
     text_start("You have to hear"
         t_line "this! My lovable"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" looked"
         t_line "at me and grinned!"
         t_para "It must be because"
@@ -596,7 +596,7 @@ const txt_cmd_s DerekGenericText[] = {
 const txt_cmd_s ErinAnswerPhoneText[] = {
     text_start("Yes, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh. Hi, <PLAY_G>!"
         t_line "Good morning!"
@@ -605,7 +605,7 @@ const txt_cmd_s ErinAnswerPhoneText[] = {
 const txt_cmd_s ErinAnswerPhoneDayText[] = {
     text_start("Yes, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, hi, <PLAY_G>!"
         t_line "Yahoo!"
@@ -614,7 +614,7 @@ const txt_cmd_s ErinAnswerPhoneDayText[] = {
 const txt_cmd_s ErinAnswerPhoneNiteText[] = {
     text_start("Yes, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, hi, <PLAY_G>!"
         t_done )
@@ -622,7 +622,7 @@ const txt_cmd_s ErinAnswerPhoneNiteText[] = {
 const txt_cmd_s ErinGreetText[] = {
     text_start("<PLAY_G>!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_line "Good morning!"
         t_done )
@@ -630,7 +630,7 @@ const txt_cmd_s ErinGreetText[] = {
 const txt_cmd_s ErinGreetDayText[] = {
     text_start("<PLAY_G>!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_line "Working hard?"
         t_done )
@@ -638,7 +638,7 @@ const txt_cmd_s ErinGreetDayText[] = {
 const txt_cmd_s ErinGreetNiteText[] = {
     text_start("<PLAY_G>!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_line "Were you up?"
         t_done )
@@ -647,10 +647,10 @@ const txt_cmd_s ErinGenericText[] = {
     text_start("Are you raising"
         t_line "your #MON?"
         t_para "Hey, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("'s"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" is"
         t_cont "looking good!"
         t_done )
@@ -661,7 +661,7 @@ const txt_cmd_s ErinGenericText[] = {
 const txt_cmd_s GavenAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" speaking…"
         t_para "Hi, <PLAY_G>!"
         t_line "Good morning!"
@@ -670,7 +670,7 @@ const txt_cmd_s GavenAnswerPhoneText[] = {
 const txt_cmd_s GavenAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" speaking…"
         t_para "Hi, <PLAY_G>!"
         t_done )
@@ -678,7 +678,7 @@ const txt_cmd_s GavenAnswerPhoneDayText[] = {
 const txt_cmd_s GavenAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" speaking…"
         t_para "Hi, <PLAY_G>!"
         t_line "Good evening!"
@@ -688,7 +688,7 @@ const txt_cmd_s GavenGreetText[] = {
     text_start("<PLAY_G>, good"
         t_line "morning!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "How are you doing?"
         t_done )
@@ -696,7 +696,7 @@ const txt_cmd_s GavenGreetText[] = {
 const txt_cmd_s GavenGreetDayText[] = {
     text_start("Hi, <PLAY_G>!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "How are you doing?"
         t_done )
@@ -705,7 +705,7 @@ const txt_cmd_s GavenGreetNiteText[] = {
     text_start("<PLAY_G>, good"
         t_line "evening!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "How are you doing?"
         t_done )
@@ -714,7 +714,7 @@ const txt_cmd_s GavenGenericText[] = {
     text_start("How are your"
         t_line "#MON doing?"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s"
         t_line "doing as great as"
         t_cont "ever."
@@ -729,7 +729,7 @@ const txt_cmd_s GavenGenericText[] = {
 const txt_cmd_s GinaAnswerPhoneText[] = {
     text_start("Hello? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, <PLAY_G>!"
         t_line "Good morning!"
@@ -738,7 +738,7 @@ const txt_cmd_s GinaAnswerPhoneText[] = {
 const txt_cmd_s GinaAnswerPhoneDayText[] = {
     text_start("Hello? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, <PLAY_G>!"
         t_line "Hi, how are you?"
@@ -747,7 +747,7 @@ const txt_cmd_s GinaAnswerPhoneDayText[] = {
 const txt_cmd_s GinaAnswerPhoneNiteText[] = {
     text_start("Hello? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, <PLAY_G>!"
         t_line "Good evening!"
@@ -756,7 +756,7 @@ const txt_cmd_s GinaAnswerPhoneNiteText[] = {
 const txt_cmd_s GinaGreetText[] = {
     text_start("<PLAY_G>?"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Good morning!"
         t_done )
@@ -764,7 +764,7 @@ const txt_cmd_s GinaGreetText[] = {
 const txt_cmd_s GinaGreetDayText[] = {
     text_start("<PLAY_G>?"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(". Is"
         t_line "this a bad time?"
         t_done )
@@ -772,7 +772,7 @@ const txt_cmd_s GinaGreetDayText[] = {
 const txt_cmd_s GinaGreetNiteText[] = {
     text_start("<PLAY_G>?"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Got time to chat?"
         t_done )
@@ -782,7 +782,7 @@ const txt_cmd_s GinaGenericText[] = {
         t_line "still tough?"
         t_para "I train every day"
         t_line "with @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_done )
 };
@@ -792,7 +792,7 @@ const txt_cmd_s GinaGenericText[] = {
 const txt_cmd_s HueyAnswerPhoneText[] = {
     text_start("Yeah, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Huh? What's up,"
         t_line "<PLAYER>?"
@@ -801,7 +801,7 @@ const txt_cmd_s HueyAnswerPhoneText[] = {
 const txt_cmd_s HueyAnswerPhoneDayText[] = {
     text_start("Yeah, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Huh? What's up"
         t_line "<PLAYER>?"
@@ -810,7 +810,7 @@ const txt_cmd_s HueyAnswerPhoneDayText[] = {
 const txt_cmd_s HueyAnswerPhoneNiteText[] = {
     text_start("Yeah, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Huh? What's up"
         t_line "<PLAYER>?"
@@ -820,7 +820,7 @@ const txt_cmd_s HueyGreetText[] = {
     text_start("Yo, <PLAYER>!"
         t_line "You awake?"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_line "How's it going?"
         t_done )
@@ -829,7 +829,7 @@ const txt_cmd_s HueyGreetDayText[] = {
     text_start("Yo, <PLAYER>! You"
         t_line "free right now?"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_line "How's it going?"
         t_done )
@@ -838,7 +838,7 @@ const txt_cmd_s HueyGreetNiteText[] = {
     text_start("Yo, <PLAYER>!"
         t_line "Were you asleep?"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_line "How's it going?"
         t_done )
@@ -848,7 +848,7 @@ const txt_cmd_s HueyGreetNiteText[] = {
 
 const txt_cmd_s IrwinAnswerPhoneText[] = {
     text_start("Hello? @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "here…"
         t_para "Hey, <PLAY_G>!"
@@ -856,7 +856,7 @@ const txt_cmd_s IrwinAnswerPhoneText[] = {
 };
 const txt_cmd_s IrwinAnswerPhoneDayText[] = {
     text_start("Hello? @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "here…"
         t_para "Wow, <PLAY_G>!"
@@ -864,7 +864,7 @@ const txt_cmd_s IrwinAnswerPhoneDayText[] = {
 };
 const txt_cmd_s IrwinAnswerPhoneNiteText[] = {
     text_start("Hello? @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "here…"
         t_para "Yippee, <PLAY_G>!"
@@ -875,7 +875,7 @@ const txt_cmd_s IrwinGreetText[] = {
         t_line "<PLAY_G>?"
         t_para "It's your pal,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -884,7 +884,7 @@ const txt_cmd_s IrwinGreetDayText[] = {
         t_line "<PLAY_G>?"
         t_para "It's your buddy"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -893,7 +893,7 @@ const txt_cmd_s IrwinGreetNiteText[] = {
         t_line "<PLAY_G>?"
         t_para "It's your sidekick"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -903,7 +903,7 @@ const txt_cmd_s IrwinGreetNiteText[] = {
 const txt_cmd_s JackAnswerPhoneText[] = {
     text_start("Hello. This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Good morning,"
         t_line "<PLAY_G>!"
@@ -912,7 +912,7 @@ const txt_cmd_s JackAnswerPhoneText[] = {
 const txt_cmd_s JackAnswerPhoneDayText[] = {
     text_start("Hello. This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "How's it going,"
         t_line "<PLAY_G>?"
@@ -921,7 +921,7 @@ const txt_cmd_s JackAnswerPhoneDayText[] = {
 const txt_cmd_s JackAnswerPhoneNiteText[] = {
     text_start("Hello. This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Good evening,"
         t_line "<PLAY_G>!"
@@ -931,7 +931,7 @@ const txt_cmd_s JackGreetText[] = {
     text_start("<PLAY_G>, good"
         t_line "morning!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "How are you doing?"
         t_done )
@@ -939,7 +939,7 @@ const txt_cmd_s JackGreetText[] = {
 const txt_cmd_s JackGreetDayText[] = {
     text_start("<PLAY_G>, howdy!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Isn't it nice out?"
         t_done )
@@ -948,7 +948,7 @@ const txt_cmd_s JackGreetNiteText[] = {
     text_start("<PLAY_G>, good"
         t_line "evening!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Got a minute?"
         t_done )
@@ -957,7 +957,7 @@ const txt_cmd_s JackGenericText[] = {
     text_start("How are your"
         t_line "#MON doing?"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" is"
         t_line "so curious, it's a"
         t_para "problem. Maybe"
@@ -969,7 +969,7 @@ const txt_cmd_s JackGenericText[] = {
 
 const txt_cmd_s JoeyAnswerPhoneText[] = {
     text_start("Hi, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here!"
         t_para "Oh, <PLAYER>? You"
         t_line "doing well?"
@@ -977,7 +977,7 @@ const txt_cmd_s JoeyAnswerPhoneText[] = {
 };
 const txt_cmd_s JoeyAnswerPhoneDayText[] = {
     text_start("Hi, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here!"
         t_para "Oh, <PLAYER>? You"
         t_line "doing well?"
@@ -985,7 +985,7 @@ const txt_cmd_s JoeyAnswerPhoneDayText[] = {
 };
 const txt_cmd_s JoeyAnswerPhoneNiteText[] = {
     text_start("Hi, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here!"
         t_para "Oh, <PLAYER>? You"
         t_line "doing well?"
@@ -995,7 +995,7 @@ const txt_cmd_s JoeyGreetText[] = {
     text_start("Yo, <PLAYER>!"
         t_line "How're you doing?"
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(","
         t_line "got a minute?"
         t_done )
@@ -1004,7 +1004,7 @@ const txt_cmd_s JoeyGreetDayText[] = {
     text_start("Yo, <PLAYER>! How's"
         t_line "it going?"
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Got a minute?"
         t_done )
@@ -1013,7 +1013,7 @@ const txt_cmd_s JoeyGreetNiteText[] = {
     text_start("Yo, <PLAYER>!"
         t_line "How're you doing?"
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(","
         t_line "got a minute?"
         t_done )
@@ -1022,7 +1022,7 @@ const txt_cmd_s JoeyGenericText[] = {
     text_start("How are your"
         t_line "#MON doing?"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s"
         t_line "raring to go, just"
         t_cont "like always."
@@ -1038,7 +1038,7 @@ const txt_cmd_s JoeyGenericText[] = {
 const txt_cmd_s JoseAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, <PLAY_G>?"
         t_line "Good morning!"
@@ -1047,7 +1047,7 @@ const txt_cmd_s JoseAnswerPhoneText[] = {
 const txt_cmd_s JoseAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, <PLAY_G>? Hi!"
         t_done )
@@ -1055,7 +1055,7 @@ const txt_cmd_s JoseAnswerPhoneDayText[] = {
 const txt_cmd_s JoseAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, <PLAY_G>?"
         t_line "Good evening!"
@@ -1065,7 +1065,7 @@ const txt_cmd_s JoseGreetText[] = {
     text_start("Oh, <PLAY_G>?"
         t_para "Tweet! Yeah, it's"
         t_line "me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
@@ -1073,7 +1073,7 @@ const txt_cmd_s JoseGreetDayText[] = {
     text_start("Oh, <PLAY_G>?"
         t_para "Tweet! Yeah, it's"
         t_line "me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
@@ -1081,7 +1081,7 @@ const txt_cmd_s JoseGreetNiteText[] = {
     text_start("Oh, <PLAY_G>?"
         t_para "Tweet! Yeah, it's"
         t_line "me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
@@ -1089,7 +1089,7 @@ const txt_cmd_s JoseGenericText[] = {
     text_start("Are your #MON"
         t_line "still cooking?"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" has"
         t_line "too much energy."
         t_para "Once it takes off,"
@@ -1101,21 +1101,21 @@ const txt_cmd_s JoseGenericText[] = {
 //// kenji_callee.c
 
 const txt_cmd_s KenjiAnswerPhoneText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here…"
         t_para "<PLAYER>! Beautiful"
         t_line "morning, hey?"
         t_done )
 };
 const txt_cmd_s KenjiAnswerPhoneDayText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here…"
         t_para "<PLAYER>! Beautiful"
         t_line "weather, hey?"
         t_done )
 };
 const txt_cmd_s KenjiAnswerPhoneNiteText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here…"
         t_para "<PLAYER>! Beautiful"
         t_line "moonlight, hey?"
@@ -1124,21 +1124,21 @@ const txt_cmd_s KenjiAnswerPhoneNiteText[] = {
 const txt_cmd_s KenjiGreetText[] = {
     text_start("Hey, <PLAYER>!"
         t_line "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
 const txt_cmd_s KenjiGreetDayText[] = {
     text_start("Hey, <PLAYER>!"
         t_line "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
 const txt_cmd_s KenjiGreetNiteText[] = {
     text_start("Hey, <PLAYER>!"
         t_line "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -1147,7 +1147,7 @@ const txt_cmd_s KenjiGreetNiteText[] = {
 
 const txt_cmd_s LizAnswerPhoneText[] = {
     text_start("Hello, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "speaking."
         t_para "Oh, <PLAY_G>."
@@ -1156,7 +1156,7 @@ const txt_cmd_s LizAnswerPhoneText[] = {
 };
 const txt_cmd_s LizAnswerPhoneDayText[] = {
     text_start("Hello, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "speaking."
         t_para "Oh, <PLAY_G>."
@@ -1165,7 +1165,7 @@ const txt_cmd_s LizAnswerPhoneDayText[] = {
 };
 const txt_cmd_s LizAnswerPhoneNiteText[] = {
     text_start("Hello, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "speaking."
         t_para "Oh, <PLAY_G>."
@@ -1176,7 +1176,7 @@ const txt_cmd_s LizGreetText[] = {
     text_start("Good morning,"
         t_line "<PLAY_G>."
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Were you sleeping?"
         t_done )
@@ -1184,7 +1184,7 @@ const txt_cmd_s LizGreetText[] = {
 const txt_cmd_s LizGreetDayText[] = {
     text_start("Hi, <PLAY_G>."
         t_line "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "How are things"
         t_line "going for you?"
@@ -1194,7 +1194,7 @@ const txt_cmd_s LizGreetNiteText[] = {
     text_start("Good evening,"
         t_line "<PLAY_G>."
         t_para "This is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Are you awake?"
         t_done )
@@ -1206,7 +1206,7 @@ const txt_cmd_s LizGenericText[] = {
         t_line "your #MON?"
         t_para "Me, I take my"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" to the"
         t_para "#MON CENTER in"
         t_line "VIOLET every day,"
@@ -1222,7 +1222,7 @@ const txt_cmd_s LizGenericText[] = {
 const txt_cmd_s ParryAnswerPhoneText[] = {
     text_start("Yup, yup!"
         t_line "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_para "Hah, and here's"
         t_line "<PLAY_G>!"
@@ -1231,7 +1231,7 @@ const txt_cmd_s ParryAnswerPhoneText[] = {
 const txt_cmd_s ParryAnswerPhoneDayText[] = {
     text_start("Yup, yup!"
         t_line "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_para "Hah, and here's"
         t_line "<PLAY_G>!"
@@ -1240,7 +1240,7 @@ const txt_cmd_s ParryAnswerPhoneDayText[] = {
 const txt_cmd_s ParryAnswerPhoneNiteText[] = {
     text_start("Yup, yup!"
         t_line "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_para "Hah, and here's"
         t_line "<PLAY_G>!"
@@ -1249,7 +1249,7 @@ const txt_cmd_s ParryAnswerPhoneNiteText[] = {
 const txt_cmd_s ParryGreetText[] = {
     text_start("<PLAY_G>, it's"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_para "Have you had a"
         t_line "proper breakfast?"
@@ -1258,7 +1258,7 @@ const txt_cmd_s ParryGreetText[] = {
 const txt_cmd_s ParryGreetDayText[] = {
     text_start("<PLAY_G>, it's"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_para "Have you had a"
         t_line "proper lunch?"
@@ -1267,7 +1267,7 @@ const txt_cmd_s ParryGreetDayText[] = {
 const txt_cmd_s ParryGreetNiteText[] = {
     text_start("<PLAY_G>, it's"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_para "Have you had a"
         t_line "proper dinner?"
@@ -1277,7 +1277,7 @@ const txt_cmd_s ParryGenericText[] = {
     text_start("Are your #MON"
         t_line "looking good?"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" and"
         t_line "me--we're looking"
         t_para "mighty dandy!"
@@ -1314,21 +1314,21 @@ const txt_cmd_s RalphAnswerPhoneNiteText[] = {
 const txt_cmd_s RalphGreetText[] = {
     text_start("Hiya, it's Uncle"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
 const txt_cmd_s RalphGreetDayText[] = {
     text_start("Hiya, it's Uncle"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
 const txt_cmd_s RalphGreetNiteText[] = {
     text_start("Hiya, it's Uncle"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
@@ -1346,7 +1346,7 @@ const txt_cmd_s RalphGenericText[] = {
 const txt_cmd_s ReenaAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh. Hi, <PLAYER>."
         t_line "What's up?"
@@ -1355,7 +1355,7 @@ const txt_cmd_s ReenaAnswerPhoneText[] = {
 const txt_cmd_s ReenaAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, hi, <PLAYER>,"
         t_line "what's up?"
@@ -1364,7 +1364,7 @@ const txt_cmd_s ReenaAnswerPhoneDayText[] = {
 const txt_cmd_s ReenaAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, hi, <PLAYER>,"
         t_line "what's up?"
@@ -1374,7 +1374,7 @@ const txt_cmd_s ReenaGreetText[] = {
     text_start("You're slow! Hurry"
         t_line "up and answer!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -1382,7 +1382,7 @@ const txt_cmd_s ReenaGreetDayText[] = {
     text_start("You're slow! Hurry"
         t_line "up and answer!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -1390,7 +1390,7 @@ const txt_cmd_s ReenaGreetNiteText[] = {
     text_start("You're slow! Hurry"
         t_line "up and answer!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };
@@ -1412,7 +1412,7 @@ const txt_cmd_s ReenaGenericText[] = {
 const txt_cmd_s TiffanyAnswerPhoneText[] = {
     text_start("Yes? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Oh, <PLAY_G>."
         t_line "Good morning."
@@ -1421,7 +1421,7 @@ const txt_cmd_s TiffanyAnswerPhoneText[] = {
 const txt_cmd_s TiffanyAnswerPhoneDayText[] = {
     text_start("Yes? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Oh, <PLAY_G>."
         t_line "Hello."
@@ -1430,7 +1430,7 @@ const txt_cmd_s TiffanyAnswerPhoneDayText[] = {
 const txt_cmd_s TiffanyAnswerPhoneNiteText[] = {
     text_start("Yes? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Oh, <PLAY_G>, good"
         t_line "evening."
@@ -1440,14 +1440,14 @@ const txt_cmd_s TiffanyGreetText[] = {
     text_start("Is this <PLAY_G>?"
         t_para "Good morning. This"
         t_line "is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
 const txt_cmd_s TiffanyGreetDayText[] = {
     text_start("Is this <PLAY_G>?"
         t_para "Hi, it's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
@@ -1455,7 +1455,7 @@ const txt_cmd_s TiffanyGreetNiteText[] = {
     text_start("Is this <PLAY_G>?"
         t_para "Good evening. This"
         t_line "is @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_done )
 };
@@ -1468,7 +1468,7 @@ const txt_cmd_s TiffanyGenericText[] = {
         t_para "Don't push them"
         t_line "too hard."
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" is"
         t_line "cute and lively"
         t_para "precisely because"
@@ -1483,7 +1483,7 @@ const txt_cmd_s TiffanyGenericText[] = {
 const txt_cmd_s ToddAnswerPhoneText[] = {
     text_start("Yes? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" speaking."
         t_para "Hey, <PLAY_G>!"
         t_done )
@@ -1491,7 +1491,7 @@ const txt_cmd_s ToddAnswerPhoneText[] = {
 const txt_cmd_s ToddAnswerPhoneDayText[] = {
     text_start("Yes? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" speaking."
         t_para "This must be"
         t_line "<PLAY_G>."
@@ -1500,7 +1500,7 @@ const txt_cmd_s ToddAnswerPhoneDayText[] = {
 const txt_cmd_s ToddAnswerPhoneNiteText[] = {
     text_start("Yes? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" speaking."
         t_para "Ah, <PLAY_G>!"
         t_done )
@@ -1508,7 +1508,7 @@ const txt_cmd_s ToddAnswerPhoneNiteText[] = {
 const txt_cmd_s ToddGreetText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "<PLAY_G>, right?"
         t_done )
@@ -1516,7 +1516,7 @@ const txt_cmd_s ToddGreetText[] = {
 const txt_cmd_s ToddGreetDayText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "<PLAY_G>, what are"
         t_line "you doing?"
@@ -1525,7 +1525,7 @@ const txt_cmd_s ToddGreetDayText[] = {
 const txt_cmd_s ToddGreetNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "<PLAY_G>, sorry to"
         t_line "call you so late."
@@ -1548,7 +1548,7 @@ const txt_cmd_s ToddGenericText[] = {
 const txt_cmd_s TullyAnswerPhoneText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Oh, Good morning,"
         t_line "<PLAY_G>."
@@ -1557,7 +1557,7 @@ const txt_cmd_s TullyAnswerPhoneText[] = {
 const txt_cmd_s TullyAnswerPhoneDayText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "That voice…"
         t_line "<PLAY_G>, right?"
@@ -1566,7 +1566,7 @@ const txt_cmd_s TullyAnswerPhoneDayText[] = {
 const txt_cmd_s TullyAnswerPhoneNiteText[] = {
     text_start("Hello, this is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "This must be"
         t_line "<PLAY_G>!"
@@ -1575,7 +1575,7 @@ const txt_cmd_s TullyAnswerPhoneNiteText[] = {
 const txt_cmd_s TullyGreetText[] = {
     text_start("Hello!"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here…"
         t_para "Good morning! The"
         t_line "weather's great!"
@@ -1584,7 +1584,7 @@ const txt_cmd_s TullyGreetText[] = {
 const txt_cmd_s TullyGreetDayText[] = {
     text_start("Hello!"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here…"
         t_para "What a perfect day"
         t_line "for fishing!"
@@ -1593,7 +1593,7 @@ const txt_cmd_s TullyGreetDayText[] = {
 const txt_cmd_s TullyGreetNiteText[] = {
     text_start("Hello!"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here…"
         t_para "It's a great night"
         t_line "for fishing!"
@@ -1615,7 +1615,7 @@ const txt_cmd_s UnknownGenericText[] = {
         t_para "My #MON are a"
         t_line "bit too energetic."
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(","
         t_line "especially."
         t_para "Every time it"
@@ -1627,7 +1627,7 @@ const txt_cmd_s UnknownGenericText[] = {
 };
 const txt_cmd_s UnknownTougherThanEverText[] = {
     text_start("My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("'s"
         t_line "looking tougher"
         t_cont "than ever."
@@ -1641,7 +1641,7 @@ const txt_cmd_s UnknownTougherThanEverText[] = {
 const txt_cmd_s VanceAnswerPhoneText[] = {
     text_start("Yes, hello?"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here!"
         t_para "Morning, <PLAY_G>!"
         t_para "Are you using bird"
@@ -1651,7 +1651,7 @@ const txt_cmd_s VanceAnswerPhoneText[] = {
 const txt_cmd_s VanceAnswerPhoneDayText[] = {
     text_start("Yes, hello?"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here!"
         t_para "Hi, <PLAY_G>!"
         t_para "Are your bird"
@@ -1661,7 +1661,7 @@ const txt_cmd_s VanceAnswerPhoneDayText[] = {
 const txt_cmd_s VanceAnswerPhoneNiteText[] = {
     text_start("Yes, hello?"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" here!"
         t_para "Evening, <PLAY_G>!"
         t_line "Are you letting"
@@ -1673,7 +1673,7 @@ const txt_cmd_s VanceGreetText[] = {
     text_start("Good morning,"
         t_line "<PLAY_G>!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_line "Good morning!"
         t_done )
@@ -1681,7 +1681,7 @@ const txt_cmd_s VanceGreetText[] = {
 const txt_cmd_s VanceGreetDayText[] = {
     text_start("Hi, <PLAY_G>!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_line "Remember me?"
         t_done )
@@ -1690,7 +1690,7 @@ const txt_cmd_s VanceGreetNiteText[] = {
     text_start("Good evening,"
         t_line "<PLAY_G>!"
         t_para "It's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_line "Are you free now?"
         t_done )
@@ -1699,7 +1699,7 @@ const txt_cmd_s VanceGenericText[] = {
     text_start("Are you and your"
         t_line "#MON fine?"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_line "looks like it will"
         t_para "get tough enough"
@@ -1714,7 +1714,7 @@ const txt_cmd_s VanceGenericText[] = {
 const txt_cmd_s WadeAnswerPhoneText[] = {
     text_start("Hello? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" speaking."
         t_para "Oh. Hi, <PLAY_G>!"
         t_line "Good morning!"
@@ -1723,7 +1723,7 @@ const txt_cmd_s WadeAnswerPhoneText[] = {
 const txt_cmd_s WadeAnswerPhoneDayText[] = {
     text_start("Hello? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" speaking."
         t_para "Oh, hi, <PLAY_G>!"
         t_done )
@@ -1731,7 +1731,7 @@ const txt_cmd_s WadeAnswerPhoneDayText[] = {
 const txt_cmd_s WadeAnswerPhoneNiteText[] = {
     text_start("Hello? This is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" speaking."
         t_para "Oh, hi, <PLAY_G>!"
         t_line "Good evening!"
@@ -1741,7 +1741,7 @@ const txt_cmd_s WadeGreetText[] = {
     text_start("<PLAY_G>, good"
         t_line "morning!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Isn't it nice out?"
         t_done )
@@ -1749,7 +1749,7 @@ const txt_cmd_s WadeGreetText[] = {
 const txt_cmd_s WadeGreetDayText[] = {
     text_start("<PLAY_G>, howdy!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Isn't it nice out?"
         t_done )
@@ -1758,7 +1758,7 @@ const txt_cmd_s WadeGreetNiteText[] = {
     text_start("Good evening,"
         t_line "<PLAY_G>!"
         t_para "It's me, @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Were you awake?"
         t_done )
@@ -1772,7 +1772,7 @@ const txt_cmd_s WadeGenericText[] = {
         t_line "be a problem."
         t_para "Of all my #MON,"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" is the"
         t_cont "hardest to handle."
         t_para "Working with it is"
@@ -1785,7 +1785,7 @@ const txt_cmd_s WadeGenericText[] = {
 const txt_cmd_s WiltonAnswerPhoneText[] = {
     text_start("Hello, you have"
         t_line "reached @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Ah, <PLAY_G>."
         t_done )
@@ -1793,7 +1793,7 @@ const txt_cmd_s WiltonAnswerPhoneText[] = {
 const txt_cmd_s WiltonAnswerPhoneDayText[] = {
     text_start("Hello, you have"
         t_line "reached @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Ah, <PLAY_G>, is"
         t_line "it?"
@@ -1802,7 +1802,7 @@ const txt_cmd_s WiltonAnswerPhoneDayText[] = {
 const txt_cmd_s WiltonAnswerPhoneNiteText[] = {
     text_start("Hello, you have"
         t_line "reached @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Ah, if it isn't"
         t_line "<PLAY_G>."
@@ -1810,7 +1810,7 @@ const txt_cmd_s WiltonAnswerPhoneNiteText[] = {
 };
 const txt_cmd_s WiltonGreetText[] = {
     text_start("Ah, it's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Have you got a"
         t_line "moment?"
@@ -1818,14 +1818,14 @@ const txt_cmd_s WiltonGreetText[] = {
 };
 const txt_cmd_s WiltonGreetDayText[] = {
     text_start("Ah, it's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Can you talk now?"
         t_done )
 };
 const txt_cmd_s WiltonGreetNiteText[] = {
     text_start("Ah, it's @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Sorry for calling"
         t_line "so late."
@@ -1835,7 +1835,7 @@ const txt_cmd_s WiltonGenericText[] = {
     text_start("Have your #MON"
         t_line "grown any?"
         t_para "My @")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" has"
         t_line "grown quite a bit."
         t_done )

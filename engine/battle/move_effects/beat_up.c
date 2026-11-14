@@ -195,7 +195,7 @@ void BattleCommand_BeatUp(void){
             // CALL(aAddNTimes);
             // LD_DE(wStringBuffer1);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wStringBuffer1, wram->wOTPartyMonNickname[wram->wCurBeatUpPartyMon], NAME_LENGTH);
+            CopyBytes(gMisc.stringBuffer1, wram->wOTPartyMonNickname[wram->wCurBeatUpPartyMon], NAME_LENGTH);
         }
         else {
             // LD_A_addr(wCurBeatUpPartyMon);

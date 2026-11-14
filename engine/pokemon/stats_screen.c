@@ -1830,7 +1830,7 @@ static uint8_t* CopyNickname(uint8_t* hl){
         // POP_DE;
         // CALL(aCloseSRAM);
         // RET;
-        return wram->wStringBuffer1;
+        return gMisc.stringBuffer1;
     }
     else {
     // partymon:
@@ -1838,8 +1838,8 @@ static uint8_t* CopyNickname(uint8_t* hl){
         // CALL(aCopyBytes);
         // POP_DE;
         // RET;
-        CopyBytes(wram->wStringBuffer1, hl, MON_NAME_LENGTH);
-        return wram->wStringBuffer1;
+        CopyBytes(gMisc.stringBuffer1, hl, MON_NAME_LENGTH);
+        return gMisc.stringBuffer1;
     }
 
 }
@@ -1860,9 +1860,9 @@ static uint8_t* GetNicknamenamePointer(void){
             return wram->wOTPartyMonOT[wram->wCurPartyMon];
         case BOXMON: {
             OpenSRAM(MBANK(asBoxMonOTs));
-            CopyBytes(wram->wStringBuffer1, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
+            CopyBytes(gMisc.stringBuffer1, GBToRAMAddr(sBoxMonOTs + (wram->wCurPartyMon * NAME_LENGTH)), NAME_LENGTH);
             CloseSRAM();
-            return wram->wStringBuffer1;
+            return gMisc.stringBuffer1;
         }
         case TEMPMON:
             return wram->wBufferMonOT;
@@ -1892,9 +1892,9 @@ static uint8_t* GetNicknamenamePointer2(void){
             return wram->wOTPartyMonNickname[wram->wCurPartyMon];
         case BOXMON: {
             OpenSRAM(MBANK(asBoxMonNicknames));
-            CopyBytes(wram->wStringBuffer1, GBToRAMAddr(sBoxMonNicknames), MON_NAME_LENGTH);
+            CopyBytes(gMisc.stringBuffer1, GBToRAMAddr(sBoxMonNicknames), MON_NAME_LENGTH);
             CloseSRAM();
-            return wram->wStringBuffer1;
+            return gMisc.stringBuffer1;
         }
         case TEMPMON:
             return wram->wBufferMonNickname;

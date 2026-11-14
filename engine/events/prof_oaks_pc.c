@@ -120,11 +120,11 @@ static void Rate_UpdateRatingBuffers(uint8_t seen, uint8_t caught) {
     // LD_HL(wStringBuffer3);
     // LD_DE(wTempPokedexSeenCount);
     // CALL(aRate_UpdateRatingBuffer);
-    Rate_UpdateRatingBuffer(wram->wStringBuffer3, &seen);
+    Rate_UpdateRatingBuffer(gMisc.stringBuffer3, &seen);
     // LD_HL(wStringBuffer4);
     // LD_DE(wTempPokedexCaughtCount);
     // CALL(aRate_UpdateRatingBuffer);
-    Rate_UpdateRatingBuffer(wram->wStringBuffer4, &caught);
+    Rate_UpdateRatingBuffer(gMisc.stringBuffer4, &caught);
     // RET;
 }
 

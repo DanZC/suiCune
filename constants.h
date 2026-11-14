@@ -96,5 +96,6 @@ extern struct CrystalData gCrystal;
 // Runtime structs
 extern struct Audio gAudio;
 extern gfx_s gGFX;
+extern struct Misc gMisc;
 extern script_s gCurScript;
 #endif

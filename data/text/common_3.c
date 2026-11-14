@@ -87,7 +87,7 @@ const txt_cmd_s v_LinkAbnormalMonText[] = {
     text_start("Your friend's"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" appears"
         t_cont "to be abnormal!"
         t_prompt )
@@ -101,7 +101,7 @@ const txt_cmd_s v_LinkAskTradeForText[] = {
     text_start(
         t_line "for @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("?"
         t_done )
 
@@ -159,7 +159,7 @@ const txt_cmd_s v_WouldYouLikeToMobileBattleText[] = {
     text_start("Today's remaining"
         t_line "time is @"
         )
-    text_decimal(wram_ptr(wStringBuffer2), 1, 2)
+    text_decimal(gMisc.stringBuffer2, 1, 2)
     text_start(" min."
 
         t_para "Would you like to"
@@ -171,7 +171,7 @@ const txt_cmd_s v_WouldYouLikeToMobileBattleText[] = {
 const txt_cmd_s v_WantAQuickMobileBattleText[] = {
     text_start("There are only @"
         )
-    text_decimal(wram_ptr(wStringBuffer2), 1, 2)
+    text_decimal(gMisc.stringBuffer2, 1, 2)
     text_start(
         t_line "min. left today."
 
@@ -233,7 +233,7 @@ const txt_cmd_s v_MobileBattleRemainingTimeText[] = {
     text_start("Today's remaining"
         t_line "time is @"
         )
-    text_decimal(wram_ptr(wStringBuffer2), 1, 2)
+    text_decimal(gMisc.stringBuffer2, 1, 2)
     text_start(" min."
         t_done )
 
@@ -341,7 +341,7 @@ const txt_cmd_s v_ReceivedItemText[] = {
     text_start("<PLAYER> received"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_done )
 
@@ -351,11 +351,11 @@ const txt_cmd_s v_PutItemInPocketText[] = {
     text_start("<PLAYER> put the"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" in"
         t_cont "the @"
         )
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_prompt )
 
@@ -364,7 +364,7 @@ const txt_cmd_s v_PutItemInPocketText[] = {
 const txt_cmd_s v_PocketIsFullText[] = {
     text_start("The @"
         )
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "is full…"
         t_prompt )
@@ -582,7 +582,7 @@ const txt_cmd_s v_CongratulationsYourPokemonText[] = {
     text_start("Congratulations!"
         t_line "Your @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_end
 
     text_end
@@ -595,7 +595,7 @@ const txt_cmd_s v_EvolvedIntoText[] = {
         t_para "evolved into"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_done )
 
@@ -604,7 +604,7 @@ const txt_cmd_s v_EvolvedIntoText[] = {
 const txt_cmd_s v_StoppedEvolvingText[] = {
     text_start("Huh? @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(
         t_line "stopped evolving!"
         t_prompt )
@@ -614,7 +614,7 @@ const txt_cmd_s v_StoppedEvolvingText[] = {
 const txt_cmd_s v_EvolvingText[] = {
     text_start("What? @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(
         t_line "is evolving!"
         t_done )
@@ -631,7 +631,7 @@ const txt_cmd_s v_MartFinalPriceText[] = {
     text_decimal(wram_ptr(wItemQuantityChange), 1, 2)
     text_start(" @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)"
         t_line "will be ¥@"
         )
@@ -668,7 +668,7 @@ const txt_cmd_s v_HerbalLadyFinalPriceText[] = {
     text_decimal(wram_ptr(wItemQuantityChange), 1, 2)
     text_start(" @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)"
         t_line "will be ¥@"
         )
@@ -720,7 +720,7 @@ const txt_cmd_s v_BargainShopIntroText[] = {
 };
 
 const txt_cmd_s v_BargainShopFinalPriceText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" costs"
         t_line "¥@"
         )
@@ -782,7 +782,7 @@ const txt_cmd_s v_PharmacyFinalPriceText[] = {
     text_decimal(wram_ptr(wItemQuantityChange), 1, 2)
     text_start(" @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)"
         t_line "will cost ¥@"
         )
@@ -899,7 +899,7 @@ const txt_cmd_s v_MartBoughtText[] = {
     text_start(" for"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)."
         t_done )
 
@@ -942,7 +942,7 @@ const txt_cmd_s v_SlotsLinedUpText[] = {
     text_start("lined up!"
         t_line "Won @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" coins!"
         t_done )
 
@@ -1239,7 +1239,7 @@ const txt_cmd_s v_LearnedMoveText[] = {
     text_start(" learned"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("!@"
         )
     sound_dex_fanfare_50_79
@@ -1261,7 +1261,7 @@ const txt_cmd_s v_StopLearningMoveText[] = {
     text_start("Stop learning"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("?"
         t_done )
 
@@ -1273,7 +1273,7 @@ const txt_cmd_s v_DidNotLearnMoveText[] = {
         t_line "did not learn"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_prompt )
 
@@ -1285,7 +1285,7 @@ const txt_cmd_s v_AskForgetMoveText[] = {
         t_line "trying to learn"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
 
         t_para "But @"
@@ -1299,7 +1299,7 @@ const txt_cmd_s v_AskForgetMoveText[] = {
         t_line "move to make room"
         t_cont "for @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("?"
         t_done )
 
@@ -1327,7 +1327,7 @@ const txt_cmd_s v_MoveForgotText[] = {
     text_start(" forgot"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
 
         t_para "And…"
@@ -1443,7 +1443,7 @@ const txt_cmd_s v_BuenaAskWhichPrizeText[] = {
 };
 
 const txt_cmd_s v_BuenaIsThatRightText[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("?"
         t_line "Is that right?"
         t_done )
@@ -1537,7 +1537,7 @@ const txt_cmd_s v_OnlyThreeMonMayBeEnteredText[] = {
 const txt_cmd_s v_TheMonMustAllBeDifferentKindsText[] = {
     text_start("The @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" #MON"
         t_line "must all be"
         t_cont "different kinds."
@@ -1550,7 +1550,7 @@ const txt_cmd_s v_TheMonMustAllBeDifferentKindsText[] = {
 const txt_cmd_s v_TheMonMustNotHoldTheSameItemsText[] = {
     text_start("The @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" #MON"
         t_line "must not hold the"
         t_cont "same items."
@@ -1662,18 +1662,18 @@ const txt_cmd_s v_AskGiveNicknameText[] = {
     text_start("Give a nickname to"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("?"
         t_done )
 
 };
 
 const txt_cmd_s v_ItemStatRoseText[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" rose."
         t_prompt )
 
@@ -1758,7 +1758,7 @@ const txt_cmd_s v_RestoreThePPOfWhichMoveText[] = {
 };
 
 const txt_cmd_s v_PPIsMaxedOutText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("'s PP"
         t_line "is maxed out."
         t_prompt )
@@ -1766,7 +1766,7 @@ const txt_cmd_s v_PPIsMaxedOutText[] = {
 };
 
 const txt_cmd_s v_PPsIncreasedText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("'s PP"
         t_line "increased."
         t_prompt )
@@ -1854,7 +1854,7 @@ const txt_cmd_s v_ItemCantGetOnText[] = {
     text_start("Can't get on your"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" now."
         t_prompt )
 
@@ -1872,7 +1872,7 @@ const txt_cmd_s v_ItemUsedText[] = {
     text_start("<PLAYER> used the@"
         )
     text_low
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_done )
 
@@ -1882,7 +1882,7 @@ const txt_cmd_s v_ItemGotOnText[] = {
     text_start("<PLAYER> got on the@"
         )
     text_low
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_prompt )
 
@@ -1894,18 +1894,18 @@ const txt_cmd_s v_ItemGotOffText[] = {
     text_low
     text_start("the @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_prompt )
 
 };
 
 const txt_cmd_s v_KnowsMoveText[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" knows"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_prompt )
 
@@ -1922,7 +1922,7 @@ const txt_cmd_s v_AskDeleteMoveText[] = {
     text_start("Oh, make it forget"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("?"
         t_done )
 

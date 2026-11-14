@@ -9,6 +9,7 @@
 #include "../../home/lcd.h"
 #include "../../home/print_text.h"
 #include "../../home/pokedex_flags.h"
+#include "../../charmap.h"
 #include "../gfx/place_graphic.h"
 #include "../gfx/player_gfx.h"
 
@@ -553,7 +554,7 @@ void TrainerCard_InitBorder(tile_t* hl, uint8_t d){
     do {
     // loop2:
         // LD_hli_A;
-        *(hl++) = 0x7f;
+        *(hl++) = CHAR_SPACE;
         // DEC_E;
         // IF_NZ goto loop2;
     } while(--e != 0);
@@ -578,7 +579,7 @@ void TrainerCard_InitBorder(tile_t* hl, uint8_t d){
         do {
         // loop4:
             // LD_hli_A;
-            *(hl++) = 0x7f;
+            *(hl++) = CHAR_SPACE;
             // DEC_E;
             // IF_NZ goto loop4;
         } while(--e != 0);
@@ -605,7 +606,7 @@ void TrainerCard_InitBorder(tile_t* hl, uint8_t d){
     do {
     // loop5:
         // LD_hli_A;
-        *(hl++) = 0x7f;
+        *(hl++) = CHAR_SPACE;
         // DEC_E;
         // IF_NZ goto loop5;
     } while(--e != 0);
@@ -695,7 +696,7 @@ void TrainerCard_Page1_PrintGameTime(void){
     // LD_A_hl;
     // XOR_A(0x7f ^ 0x2e);  // alternate between space and small colon ($2e) tiles
     // LD_hl_A;
-    *coord(15, 12, wram->wTilemap) ^= 0x7f ^ 0x2e;
+    *coord(15, 12, wram->wTilemap) ^= CHAR_SPACE ^ 0x2e;
     // RET;
 }
 

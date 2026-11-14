@@ -530,15 +530,15 @@ uint8_t* MailboxPC_GetMailAuthor(uint8_t a){
     // PUSH_DE;
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer1, hl.author, NAME_LENGTH - 1);
+    CopyBytes(gMisc.stringBuffer1, hl.author, NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_de_A;
-    wram->wStringBuffer1[NAME_LENGTH - 1] = 0x50;
+    gMisc.stringBuffer1[NAME_LENGTH - 1] = 0x50;
     // CALL(aCloseSRAM);
     CloseSRAM();
     // POP_DE;
     // RET;
-    return wram->wStringBuffer1;
+    return gMisc.stringBuffer1;
 }
 
 void MailboxPC_PrintMailAuthor(const struct MenuData* data, tile_t* tile){

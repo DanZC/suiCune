@@ -167,7 +167,7 @@ const txt_cmd_s TrainerHouseB1FIntroText[] = {
         t_done )
 };
 const txt_cmd_s TrainerHouseB1FYourOpponentIsText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" is your"
         t_line "opponent today."
         t_done )

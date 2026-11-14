@@ -2130,11 +2130,11 @@ void TextCommand_STRINGBUFFER_GB(struct TextPrintState* state) {
     //     mStringBufferPointers + (2 * stringId));
     uint8_t* de;
     switch(stringId) {
-        case 0: de = wram->wStringBuffer3; break;
-        case 1: de = wram->wStringBuffer4; break;
-        case 2: de = wram->wStringBuffer5; break;
-        case 3: de = wram->wStringBuffer2; break;
-        case 4: de = wram->wStringBuffer1; break;
+        case 0: de = gMisc.stringBuffer3; break;
+        case 1: de = gMisc.stringBuffer4; break;
+        case 2: de = gMisc.stringBuffer5; break;
+        case 3: de = gMisc.stringBuffer2; break;
+        case 4: de = gMisc.stringBuffer1; break;
         case 5: de = wram->wEnemyMonNickname; break;
         case 6: de = wram->wBattleMonNickname; break;
         default: de = NULL; break;
@@ -2178,11 +2178,11 @@ void TextCommand_STRINGBUFFER(struct TextCmdState* state, const struct TextCmd* 
     //     mStringBufferPointers + (2 * stringId));
     uint8_t* de;
     switch(stringId) {
-        case 0: de = wram->wStringBuffer3; break;
-        case 1: de = wram->wStringBuffer4; break;
-        case 2: de = wram->wStringBuffer5; break;
-        case 3: de = wram->wStringBuffer2; break;
-        case 4: de = wram->wStringBuffer1; break;
+        case 0: de = gMisc.stringBuffer3; break;
+        case 1: de = gMisc.stringBuffer4; break;
+        case 2: de = gMisc.stringBuffer5; break;
+        case 3: de = gMisc.stringBuffer2; break;
+        case 4: de = gMisc.stringBuffer1; break;
         case 5: de = wram->wEnemyMonNickname; break;
         case 6: de = wram->wBattleMonNickname; break;
         default: de = NULL; break;

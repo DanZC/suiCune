@@ -680,10 +680,10 @@ const txt_cmd_s GoldenrodPokecomCenterWeWillTradeYourMonForMonText[] = {
     text_start("Fine. We will try"
         t_line "to trade your"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" for"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_para "We'll have to hold"
         t_line "your #MON"
@@ -697,7 +697,7 @@ const txt_cmd_s GoldenrodPokecomCenterWeWillTradeYourMonForNewText[] = {
     text_start("Fine. We will try"
         t_line "to trade your"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" for a"
         t_line "#MON that you"
         t_cont "have never seen."

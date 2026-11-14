@@ -54,6 +54,7 @@
 #include "../phone/phone.h"
 #include "../gfx/dma_transfer.h"
 #include "../../mobile/mobile_41.h"
+#include "../../charmap.h"
 #include <assert.h>
 
 static const struct TextCmd* lScriptText = NULL;
@@ -844,7 +845,7 @@ void Script_verbosegiveitem(script_s* s, item_t item, uint8_t quantity){
     // LD_DE(wStringBuffer1);
     // LD_A(STRING_BUFFER_4);
     // CALL(aCopyConvertedText);
-    CopyConvertedText(STRING_BUFFER_4, wram->wStringBuffer1);
+    CopyConvertedText(STRING_BUFFER_4, gMisc.stringBuffer1);
     // LD_B(BANK(aGiveItemScript));
     // LD_DE(mGiveItemScript);
     // JP(mScriptCall);
@@ -984,7 +985,7 @@ uint8_t* GetPocketName(void){
     // LD_E_A;
     // LD_HL(wStringBuffer3);
     // CALL(aCopyName2);
-    return Utf8ToCrystalBuffer(wram->wStringBuffer3, sizeof(wram->wStringBuffer3), ItemPocketNames[CheckItemPocket(wram->wCurItem) - 1]);
+    return U82CA(gMisc.stringBuffer3, ItemPocketNames[CheckItemPocket(wram->wCurItem) - 1]);
     // RET;
 
 // INCLUDE "data/items/pocket_names.asm"
@@ -2446,7 +2447,7 @@ void Script_getmonname(script_s* s, uint8_t buf, species_t species){
     GetPokemonName(species);
     // LD_DE(wStringBuffer1);
 
-    return GetStringBuffer(buf, wram->wStringBuffer1);
+    return GetStringBuffer(buf, gMisc.stringBuffer1);
 }
 
 static void GetStringBuffer(uint8_t a, const uint8_t* de){
@@ -2465,7 +2466,7 @@ static void CopyConvertedText(uint8_t a, const uint8_t* de){
     // LD_HL(wStringBuffer3);
     // LD_BC(STRING_BUFFER_LENGTH);
     // CALL(aAddNTimes);
-    uint8_t* hl = wram->wStringBuffer3 + (a * STRING_BUFFER_LENGTH);
+    uint8_t* hl = gMisc.stringBuffer3 + (a * STRING_BUFFER_LENGTH);
     // CALL(aCopyName2);
     // RET;
     CopyName2(hl, de);
@@ -2562,10 +2563,10 @@ void Script_getmoney(script_s* s, uint8_t buffer, uint8_t which){
     // LD_HL(wStringBuffer1);
     // LD_BC((PRINTNUM_LEFTALIGN | 3 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum(wram->wStringBuffer1, de, PRINTNUM_LEFTALIGN | 3, 6);
+    PrintNum(gMisc.stringBuffer1, de, PRINTNUM_LEFTALIGN | 3, 6);
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
-    return GetStringBuffer(buffer, wram->wStringBuffer1);
+    return GetStringBuffer(buffer, gMisc.stringBuffer1);
 }
 
 void Script_getcoins(script_s* s, uint8_t a){
@@ -2576,10 +2577,10 @@ void Script_getcoins(script_s* s, uint8_t a){
     // LD_DE(wCoins);
     // LD_BC((PRINTNUM_LEFTALIGN | 2 << 8) | 6);
     // CALL(aPrintNum);
-    PrintNum(wram->wStringBuffer1, (uint8_t*)&gPlayer.coins, (PRINTNUM_LEFTALIGN | 2), 6);
+    PrintNum(gMisc.stringBuffer1, (uint8_t*)&gPlayer.coins, (PRINTNUM_LEFTALIGN | 2), 6);
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
-    return GetStringBuffer(a, wram->wStringBuffer1);
+    return GetStringBuffer(a, gMisc.stringBuffer1);
 }
 
 void Script_getnum(script_s* s, uint8_t a){
@@ -2590,10 +2591,10 @@ void Script_getnum(script_s* s, uint8_t a){
     // LD_HL(wStringBuffer1);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum(wram->wStringBuffer1, &wram->wScriptVar, (PRINTNUM_LEFTALIGN | 1), 3);
+    PrintNum(gMisc.stringBuffer1, &wram->wScriptVar, (PRINTNUM_LEFTALIGN | 1), 3);
     // LD_DE(wStringBuffer1);
     // JP(mGetStringBuffer);
-    return GetStringBuffer(a, wram->wStringBuffer1);
+    return GetStringBuffer(a, gMisc.stringBuffer1);
 }
 
 void ResetStringBuffer1(void){
@@ -2602,7 +2603,7 @@ void ResetStringBuffer1(void){
     // LD_A(0x50);
     // CALL(aByteFill);
     // RET;
-    return ByteFill(wram->wStringBuffer1, NAME_LENGTH, 0x50);
+    return ByteFill(gMisc.stringBuffer1, NAME_LENGTH, CHAR_TERM);
 }
 
 void Script_getstring(script_s* s, uint8_t a, const char* hl){
@@ -2617,7 +2618,7 @@ void Script_getstring(script_s* s, uint8_t a, const char* hl){
     CopyName1(U82C(hl));
     // LD_DE(wStringBuffer2);
     // JP(mGetStringBuffer);
-    return GetStringBuffer(a, wram->wStringBuffer2);
+    return GetStringBuffer(a, gMisc.stringBuffer2);
 }
 
 void Script_givepokemail(script_s* s, const struct Pokemail* mail){

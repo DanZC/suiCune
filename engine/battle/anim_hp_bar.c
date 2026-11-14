@@ -5,6 +5,7 @@
 #include "../../home/pokemon.h"
 #include "../../home/tilemap.h"
 #include "../pokemon/health.h"
+#include "../../charmap.h"
 #include "../gfx/color.h"
 
 static bool v_AnimateHPBar_IsMaximumMoreThan48Pixels(void){
@@ -373,22 +374,22 @@ void HPBarAnim_UpdateHPRemaining(tile_t* hl){
     hl += de;
     // LD_A(0x7f);
     // LD_hli_A;
-    hl[0] = 0x7f;
+    hl[0] = CHAR_SPACE;
     // LD_hli_A;
-    hl[1] = 0x7f;
+    hl[1] = CHAR_SPACE;
     // LD_hld_A;
-    hl[2] = 0x7f;
+    hl[2] = CHAR_SPACE;
     // DEC_HL;
     // LD_A_addr(wCurHPAnimOldHP);
     // LD_addr_A(wStringBuffer2 + 1);
-    wram->wStringBuffer2[1] = LOW(wram->wCurHPAnimOldHP);
+    gMisc.stringBuffer2[1] = LOW(wram->wCurHPAnimOldHP);
     // LD_A_addr(wCurHPAnimOldHP + 1);
     // LD_addr_A(wStringBuffer2);
-    wram->wStringBuffer2[0] = HIGH(wram->wCurHPAnimOldHP);
+    gMisc.stringBuffer2[0] = HIGH(wram->wCurHPAnimOldHP);
     // LD_DE(wStringBuffer2);
     // LD_BC((2 << 8) | 3);
     // CALL(aPrintNum);
-    PrintNum(hl, wram->wStringBuffer2, 2, 3);
+    PrintNum(hl, gMisc.stringBuffer2, 2, 3);
     // POP_HL;
     // RET;
 }

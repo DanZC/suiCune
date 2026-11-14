@@ -133,7 +133,7 @@ const txt_cmd_s BattleText_TargetRecoveredWithItem[] = {
         t_line "recovered with"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
@@ -144,7 +144,7 @@ const txt_cmd_s BattleText_UserRecoveredPPUsing[] = {
         t_line "recovered PP using"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
@@ -166,7 +166,7 @@ const txt_cmd_s BattleText_SafeguardFaded[] = {
 };
 
 const txt_cmd_s BattleText_MonsLightScreenFell[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" #MON's"
         t_line "LIGHT SCREEN fell!"
         t_prompt )
@@ -174,7 +174,7 @@ const txt_cmd_s BattleText_MonsLightScreenFell[] = {
 };
 
 const txt_cmd_s BattleText_MonsReflectFaded[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" #MON's"
         t_line "REFLECT faded!"
         t_prompt )
@@ -380,7 +380,7 @@ const txt_cmd_s BattleText_UserFledUsingAStringBuffer1[] = {
         t_line "fled using a"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -404,7 +404,7 @@ const txt_cmd_s RecoveredUsingText[] = {
         t_line "recovered using a"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -414,7 +414,7 @@ const txt_cmd_s BattleText_UsersStringBuffer1Activated[] = {
     text_start("<USER>'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(
         t_cont "activated!"
         t_prompt )
@@ -474,7 +474,7 @@ const txt_cmd_s BattleText_TargetsEncoreEnded[] = {
 };
 
 const txt_cmd_s BattleText_StringBuffer1GrewToLevel[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" grew to"
         t_line "level @"
         )
@@ -581,7 +581,7 @@ const txt_cmd_s BecameConfusedText[] = {
 const txt_cmd_s BattleText_ItemHealedConfusion[] = {
     text_start("A @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" rid"
         t_line "<TARGET>"
         t_cont "of its confusion."
@@ -601,7 +601,7 @@ const txt_cmd_s BattleText_UsersHurtByStringBuffer1[] = {
         t_line "hurt by"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -612,7 +612,7 @@ const txt_cmd_s BattleText_UserWasReleasedFromStringBuffer1[] = {
         t_line "was released from"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -675,7 +675,7 @@ const txt_cmd_s HungOnText[] = {
         t_line "hung on with"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -708,7 +708,7 @@ const txt_cmd_s DisabledMoveText[] = {
     text_start("<USER>'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" is"
         t_cont "DISABLED!"
         t_prompt )
@@ -775,7 +775,7 @@ const txt_cmd_s HasNoPPLeftText[] = {
         t_line "has no PP left for"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("!"
         t_prompt )
 
@@ -906,7 +906,7 @@ const txt_cmd_s SketchedText[] = {
         t_line "SKETCHED"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -924,7 +924,7 @@ const txt_cmd_s SpiteEffectText[] = {
     text_start("<TARGET>'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" was"
         t_cont "reduced by @"
         )
@@ -1015,7 +1015,7 @@ const txt_cmd_s WontRiseAnymoreText[] = {
     text_start("<USER>'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" won't"
         t_cont "rise anymore!"
         t_prompt )
@@ -1026,7 +1026,7 @@ const txt_cmd_s WontDropAnymoreText[] = {
     text_start("<TARGET>'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" won't"
         t_cont "drop anymore!"
         t_prompt )
@@ -1142,7 +1142,7 @@ const txt_cmd_s MimicLearnedMoveText[] = {
         t_line "learned"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -1166,7 +1166,7 @@ const txt_cmd_s WasDisabledText[] = {
     text_start("<TARGET>'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" was"
         t_cont "DISABLED!"
         t_prompt )
@@ -1185,7 +1185,7 @@ const txt_cmd_s TransformedTypeText[] = {
         t_line "transformed into"
         t_cont "the @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("-type!"
         t_prompt )
 
@@ -1203,7 +1203,7 @@ const txt_cmd_s TransformedText[] = {
         t_line "TRANSFORMED into"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -1297,7 +1297,7 @@ const txt_cmd_s ProtectedByText[] = {
         t_line "protected by"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -1314,7 +1314,7 @@ const txt_cmd_s StoleText[] = {
     text_start("<USER>"
         t_line "stole @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(
         t_cont "from its foe!"
         t_prompt )
@@ -1497,7 +1497,7 @@ const txt_cmd_s ForesawAttackText[] = {
 };
 
 const txt_cmd_s BeatUpAttackText[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("'s"
         t_line "attack!"
         t_done )

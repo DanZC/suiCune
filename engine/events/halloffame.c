@@ -24,6 +24,7 @@
 #include "../movie/credits.h"
 #include "../menus/save.h"
 #include "../../gfx/font.h"
+#include "../../charmap.h"
 
 #define HALLOFFAME_COLON (0x63)
 
@@ -673,10 +674,10 @@ void DisplayHOFMon(const struct HOFMon* mon){
     // LD_DE(wStringBuffer2);
     // LD_BC(MON_NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer2, mon->nickname, MON_NAME_LENGTH - 1);
+    CopyBytes(gMisc.stringBuffer2, mon->nickname, MON_NAME_LENGTH - 1);
     // LD_A(0x50);
     // LD_addr_A(wStringBuffer2 + MON_NAME_LENGTH - 1);
-    wram->wStringBuffer2[MON_NAME_LENGTH - 1] = 0x50;
+    gMisc.stringBuffer2[MON_NAME_LENGTH - 1] = 0x50;
     // hlcoord(0, 0, wTilemap);
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
@@ -731,14 +732,14 @@ void DisplayHOFMon(const struct HOFMon* mon){
         // LD_A(0x7f);
         // IF_C goto got_gender;
         if(res.flag)
-            *coord(18, 13, wram->wTilemap) = 0x7f;
+            *coord(18, 13, wram->wTilemap) = CHAR_SPACE;
         // LD_A(0xef);
         // IF_NZ goto got_gender;
         else if(res.a != 0)
-            *coord(18, 13, wram->wTilemap) = 0xef;
+            *coord(18, 13, wram->wTilemap) = CHAR_MALE_ICON;
         // LD_A(0xf5);
         else
-            *coord(18, 13, wram->wTilemap) = 0xf5;
+            *coord(18, 13, wram->wTilemap) = CHAR_FEMALE_ICON;
 
     // got_gender:
         // hlcoord(18, 13, wTilemap);
@@ -746,10 +747,10 @@ void DisplayHOFMon(const struct HOFMon* mon){
         // hlcoord(8, 14, wTilemap);
         // LD_A(0xf3);
         // LD_hli_A;
-        *coord(8, 14, wram->wTilemap) = 0xf3;
+        *coord(8, 14, wram->wTilemap) = CHAR_FWD_SLASH;
         // LD_DE(wStringBuffer2);
         // CALL(aPlaceString);
-        PlaceStringSimple(wram->wStringBuffer2, coord(8, 15, wram->wTilemap));
+        PlaceStringSimple(gMisc.stringBuffer2, coord(8, 15, wram->wTilemap));
         // hlcoord(1, 16, wTilemap);
         // CALL(aPrintLevel);
         PrintLevel(coord(1, 16, wram->wTilemap), wram->wTempMon.mon.level);
@@ -758,13 +759,13 @@ void DisplayHOFMon(const struct HOFMon* mon){
 // print_id_no:
     // hlcoord(7, 16, wTilemap);
     // LD_A(0x73);
-    *coord(7, 16, wram->wTilemap) = 0x73;
+    *coord(7, 16, wram->wTilemap) = CHAR_ID;
     // LD_hli_A;
     // LD_A(0x74);
-    *coord(8, 16, wram->wTilemap) = 0x74;
+    *coord(8, 16, wram->wTilemap) = CHAR_NO;
     // LD_hli_A;
     // LD_hl(0xf3);
-    *coord(9, 16, wram->wTilemap) = 0xf3;
+    *coord(9, 16, wram->wTilemap) = CHAR_FWD_SLASH;
     // hlcoord(10, 16, wTilemap);
     // LD_DE(wTempMonID);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
@@ -786,7 +787,7 @@ void HOF_AnimatePlayerPic(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, CHAR_SPACE);
     // FARCALL(aGetPlayerBackpic);
     GetPlayerBackpic();
     // LD_A(0x31);
@@ -823,7 +824,7 @@ void HOF_AnimatePlayerPic(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, CHAR_SPACE);
     // FARCALL(aHOF_LoadTrainerFrontpic);
     HOF_LoadTrainerFrontpic();
     // XOR_A_A;

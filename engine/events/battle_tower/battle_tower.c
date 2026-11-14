@@ -31,6 +31,7 @@
 #include "../../../mobile/mobile_5f.h"
 #include "../../../data/trainers/sprites.h"
 #include "../../../data/battle_tower/unknown_levels.h"
+#include "../../../charmap.h"
 #include "../../../util/serialize.h"
 
 uint8_t gBattleTowerType = BATTLE_TOWER_LOCAL;
@@ -451,10 +452,10 @@ void RunBattleTowerTrainer(void){
         // LD_A_addr(wNrOfBeatenBattleTowerTrainers);
         // ADD_A(0xf7);
         // LD_hli_A;
-        wram->wStringBuffer3[0] = wram->wNrOfBeatenBattleTowerTrainers + 0xf7; // CHAR_0
+        gMisc.stringBuffer3[0] = wram->wNrOfBeatenBattleTowerTrainers + CHAR_0; // CHAR_0
         // LD_A(0x50);
         // LD_hl_A;
-        wram->wStringBuffer3[1] = 0x50;
+        gMisc.stringBuffer3[1] = CHAR_TERM;
         log_debug("Number of beaten trainers: %d\n", wram->wNrOfBeatenBattleTowerTrainers);
     }
 
@@ -1061,7 +1062,7 @@ static void Function1704e1_PlaceUpDownArrows(void) {
         // hlcoord(18, 5, wTilemap);
         // LD_A(0x61);
         // LD_hl_A;
-        *coord(18, 5, wram->wTilemap) = 0x61;
+        *coord(18, 5, wram->wTilemap) = CHAR_UP_ARROW;
     }
 
 // nope:
@@ -1074,7 +1075,7 @@ static void Function1704e1_PlaceUpDownArrows(void) {
     // hlcoord(18, 16, wTilemap);
     // LD_A(0xee);
     // LD_hl_A;
-    *coord(18, 16, wram->wTilemap) = 0xee;
+    *coord(18, 16, wram->wTilemap) = CHAR_DOWN_CURSOR;
     // RET;
 }
 
@@ -1223,8 +1224,8 @@ void Function1704e1_JumptableLoop(void){
             // LD_DE(wStringBuffer3);
             // LD_BC(22);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wStringBuffer3, GBToRAMAddr(s5_a89c), 22);
-            wram->wStringBuffer4[22-STRING_BUFFER_LENGTH] = 0x50;
+            CopyBytes(gMisc.stringBuffer3, GBToRAMAddr(s5_a89c), 22);
+            gMisc.stringBuffer4[22-STRING_BUFFER_LENGTH] = 0x50;
 
             // LD_HL(s5_a8b2);
             // LD_DE(wc608);
@@ -1237,7 +1238,7 @@ void Function1704e1_JumptableLoop(void){
             // hlcoord(1, 1, wTilemap);
             // LD_DE(wStringBuffer3);
             // CALL(aPlaceString);
-            PlaceStringSimple(wram->wStringBuffer3, coord(1, 1, wram->wTilemap));
+            PlaceStringSimple(gMisc.stringBuffer3, coord(1, 1, wram->wTilemap));
             // hlcoord(1, 3, wTilemap);
             // LD_DE(mFunction1704e1_String_Mail);
             // CALL(aPlaceString);
@@ -1245,7 +1246,7 @@ void Function1704e1_JumptableLoop(void){
             // hlcoord(4, 3, wTilemap);
             // LD_DE(wStringBuffer4);
             // CALL(aPlaceString);
-            PlaceStringSimple(wram->wStringBuffer4, coord(16, 1, wram->wTilemap));
+            PlaceStringSimple(gMisc.stringBuffer4, coord(16, 1, wram->wTilemap));
             // hlcoord(8, 3, wTilemap);
             // LD_DE(mFunction1704e1_String_PastReaders);
             // CALL(aPlaceString);

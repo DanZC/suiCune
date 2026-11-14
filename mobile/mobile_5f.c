@@ -4362,7 +4362,7 @@ void Function17e4dd(void){
     if(wram->wcd2f != 0) {
         // LD_A(0x61);
         // LD_hl_A;
-        *hl = 0x61;
+        *hl = CHAR_UP_ARROW;
     }
 
 // asm_17e4ff:
@@ -4383,7 +4383,7 @@ void Function17e4dd(void){
         return;
     // LD_A(0xee);
     // LD_hl_A;
-    *hl = 0xee;
+    *hl = CHAR_DOWN_CURSOR;
     // RET;
 }
 
@@ -4666,7 +4666,7 @@ void Function17e613(const uint8_t* de){
 
             // asm_17e660:
                 // LD_hli_A;
-                *(hl2++) = 0x7f;
+                *(hl2++) = CHAR_SPACE;
                 // DEC_C;
                 --a;
                 // IF_NZ goto asm_17e660;

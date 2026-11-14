@@ -1,4 +1,3 @@
-uint16_t IsInArray_GB(uint16_t hl, uint16_t de, uint8_t a);
 uint16_t IsInArray_Item(const item_t* hl, item_t a);
 bool IsInU8Array(const uint8_t* hl, uint8_t a);
 const struct BlockPointer* ArrayFindStructBlockPointer(const struct BlockPointer* hl, uint8_t a);

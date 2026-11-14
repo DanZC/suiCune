@@ -253,7 +253,7 @@ const txt_cmd_s EatathonContestPosterText[] = {
 const txt_cmd_s FoundLeftoversText[] = {
     text_start("<PLAYER> found"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };

@@ -70,7 +70,7 @@ void CheckPartyFullAfterContest(void){
             GetPokemonName(gPokemon.contestMon.mon.species);
             // CALL(aGiveANickname_YesNo);
             // LD_HL(wStringBuffer1);
-            uint8_t* hl = wram->wStringBuffer1;
+            uint8_t* hl = gMisc.stringBuffer1;
             // IF_C goto Box_SkipNickname;
             if(GiveANickname_YesNo()) {
                 // LD_A(BOXMON);

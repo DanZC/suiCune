@@ -88,23 +88,23 @@ static void v_PlayerDecorationMenu_ClearStringBuffer2(void){
     // LD_HL(wStringBuffer2);
     // XOR_A_A;
     // LD_hli_A;
-    wram->wStringBuffer2[0] = 0;
+    gMisc.stringBuffer2[0] = 0;
     // LD_BC(ITEM_NAME_LENGTH - 1);
     // LD_A(-1);
     // CALL(aByteFill);
-    ByteFill(wram->wStringBuffer2 + 1, ITEM_NAME_LENGTH - 1, 0xff);
+    ByteFill(gMisc.stringBuffer2 + 1, ITEM_NAME_LENGTH - 1, 0xff);
     // RET;
 }
 
 static void v_PlayerDecorationMenu_AppendToStringBuffer2(uint8_t a){
     // LD_HL(wStringBuffer2);
     // INC_hl;
-    uint8_t l = ++wram->wStringBuffer2[0];
+    uint8_t l = ++gMisc.stringBuffer2[0];
     // LD_E_hl;
     // LD_D(0);
     // ADD_HL_DE;
     // LD_hl_A;
-    wram->wStringBuffer2[l] = a;
+    gMisc.stringBuffer2[l] = a;
     // RET;
 }
 
@@ -170,7 +170,7 @@ static void v_PlayerDecorationMenu_FindCategoriesWithOwnedDecos(void){
     // LD_DE(wDecoNameBuffer);
     // LD_BC(ITEM_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wDecoNameBuffer, wram->wStringBuffer2, ITEM_NAME_LENGTH);
+    CopyBytes(wram->wDecoNameBuffer, gMisc.stringBuffer2, ITEM_NAME_LENGTH);
     // RET;
 }
 
@@ -773,30 +773,30 @@ static const uint8_t* GetDecoName(const struct Decoration* hl){
         //table_width ['2', 'GetDecoName.NameFunctions']
         //dw ['.invalid'];
         default:
-        case 0: return wram->wStringBuffer2;
+        case 0: return gMisc.stringBuffer2;
         //dw ['.plant'];
         case DECO_PLANT:
         // plant:
             // LD_A_E;
             // goto getdeconame;
-            GetDecoName_getdeconame(wram->wStringBuffer2, e);
-            return wram->wStringBuffer2;
+            GetDecoName_getdeconame(gMisc.stringBuffer2, e);
+            return gMisc.stringBuffer2;
         //dw ['.bed'];
         case DECO_BED:
         // bed:
             // CALL(aGetDecoName_plant);
             // LD_A(_BED);
             // goto getdeconame;
-            GetDecoName_getdeconame(GetDecoName_getdeconame(wram->wStringBuffer2, e), _BED);
-            return wram->wStringBuffer2;
+            GetDecoName_getdeconame(GetDecoName_getdeconame(gMisc.stringBuffer2, e), _BED);
+            return gMisc.stringBuffer2;
         //dw ['.carpet'];
         case DECO_CARPET:
         // carpet:
             // CALL(aGetDecoName_plant);
             // LD_A(_CARPET);
             // goto getdeconame;
-            GetDecoName_getdeconame(GetDecoName_getdeconame(wram->wStringBuffer2, e), _CARPET);
-            return wram->wStringBuffer2;
+            GetDecoName_getdeconame(GetDecoName_getdeconame(gMisc.stringBuffer2, e), _CARPET);
+            return gMisc.stringBuffer2;
         //dw ['.poster'];
         case DECO_POSTER:
         // poster:
@@ -804,8 +804,8 @@ static const uint8_t* GetDecoName(const struct Decoration* hl){
             // CALL(aGetDecoName_getpokename);
             // LD_A(_POSTER);
             // goto getdeconame;
-            GetDecoName_getdeconame(GetDecoName_getpokename(wram->wStringBuffer2, e), _POSTER);
-            return wram->wStringBuffer2;
+            GetDecoName_getdeconame(GetDecoName_getpokename(gMisc.stringBuffer2, e), _POSTER);
+            return gMisc.stringBuffer2;
         //dw ['.doll'];
         case DECO_DOLL:
         // doll:
@@ -813,8 +813,8 @@ static const uint8_t* GetDecoName(const struct Decoration* hl){
             // CALL(aGetDecoName_getpokename);
             // LD_A(_DOLL);
             // goto getdeconame;
-            GetDecoName_getdeconame(GetDecoName_getpokename(wram->wStringBuffer2, e), _DOLL);
-            return wram->wStringBuffer2;
+            GetDecoName_getdeconame(GetDecoName_getpokename(gMisc.stringBuffer2, e), _DOLL);
+            return gMisc.stringBuffer2;
         //dw ['.bigdoll'];
         case DECO_BIGDOLL:
         // bigdoll:
@@ -824,8 +824,8 @@ static const uint8_t* GetDecoName(const struct Decoration* hl){
             // POP_DE;
             // LD_A_E;
             // goto getpokename;
-            GetDecoName_getpokename(GetDecoName_getdeconame(wram->wStringBuffer2, BIG_), e);
-            return wram->wStringBuffer2;
+            GetDecoName_getpokename(GetDecoName_getdeconame(gMisc.stringBuffer2, BIG_), e);
+            return gMisc.stringBuffer2;
     }
     //assert_table_length ['NUM_DECO_TYPES + 1']
 
@@ -980,7 +980,7 @@ bool DecoAction_SetItUp(void){
         // LD_A_addr(wMenuSelection);
         // LD_HL(wStringBuffer3);
         // CALL(aGetDecorationName);
-        GetDecorationName(wram->wStringBuffer3, wram->wMenuSelection);
+        GetDecorationName(gMisc.stringBuffer3, wram->wMenuSelection);
         // LD_HL(mSetUpTheDecoText);
         // CALL(aMenuTextboxBackup);
         MenuTextboxBackup(SetUpTheDecoText);
@@ -1006,11 +1006,11 @@ bool DecoAction_SetItUp(void){
     // LD_A_addr(wMenuSelection);
     // LD_HL(wStringBuffer4);
     // CALL(aGetDecorationName);
-    GetDecorationName(wram->wStringBuffer4, wram->wMenuSelection);
+    GetDecorationName(gMisc.stringBuffer4, wram->wMenuSelection);
     // LD_A_addr(wCurDecoration);
     // LD_HL(wStringBuffer3);
     // CALL(aGetDecorationName);
-    GetDecorationName(wram->wStringBuffer3, wram->wCurDecoration);
+    GetDecorationName(gMisc.stringBuffer3, wram->wCurDecoration);
     // LD_HL(mPutAwayAndSetUpText);
     // CALL(aMenuTextboxBackup);
     MenuTextboxBackup(PutAwayAndSetUpText);
@@ -1048,7 +1048,7 @@ bool DecoAction_TryPutItAway(uint8_t* hl){
     wram->wMenuSelection = wram->wCurDecoration;
     // LD_HL(wStringBuffer3);
     // CALL(aGetDecorationName);
-    GetDecorationName(wram->wStringBuffer3, wram->wCurDecoration);
+    GetDecorationName(gMisc.stringBuffer3, wram->wCurDecoration);
     // LD_HL(mPutAwayTheDecoText);
     // CALL(aMenuTextboxBackup);
     MenuTextboxBackup(PutAwayTheDecoText);
@@ -1135,7 +1135,7 @@ bool DecoAction_SetItUp_Ornament(void){
         // LD_A_addr(wMenuSelection);
         // LD_HL(wStringBuffer3);
         // CALL(aGetDecorationName);
-        GetDecorationName(wram->wStringBuffer3, wram->wMenuSelection);
+        GetDecorationName(gMisc.stringBuffer3, wram->wMenuSelection);
         // LD_HL(mSetUpTheDecoText);
         // CALL(aMenuTextboxBackup);
         MenuTextboxBackup(SetUpTheDecoText);
@@ -1159,11 +1159,11 @@ bool DecoAction_SetItUp_Ornament(void){
     // LD_A_B;
     // LD_HL(wStringBuffer3);
     // CALL(aGetDecorationName);
-    GetDecorationName(wram->wStringBuffer3, wram->wSelectedDecoration);
+    GetDecorationName(gMisc.stringBuffer3, wram->wSelectedDecoration);
     // LD_A_addr(wMenuSelection);
     // LD_HL(wStringBuffer4);
     // CALL(aGetDecorationName);
-    GetDecorationName(wram->wStringBuffer4, wram->wMenuSelection);
+    GetDecorationName(gMisc.stringBuffer4, wram->wMenuSelection);
     // LD_A_addr(wMenuSelection);
     // LD_addr_A(wSelectedDecoration);
     wram->wSelectedDecoration = wram->wMenuSelection;
@@ -1197,7 +1197,7 @@ bool DecoAction_PutItAway_Ornament(void){
     }
     // LD_HL(wStringBuffer3);
     // CALL(aGetDecorationName);
-    GetDecorationName(wram->wStringBuffer3, wram->wSelectedDecoration);
+    GetDecorationName(gMisc.stringBuffer3, wram->wSelectedDecoration);
     // LD_A(TRUE);
     // LD_addr_A(wChangedDecorations);
     wram->wChangedDecorations = TRUE;
@@ -1337,8 +1337,8 @@ uint8_t* GetDecorationName_c(uint8_t c){
     // CALL(aGetDecorationName);
     // POP_DE;
     // RET;
-    GetDecorationName(wram->wStringBuffer1, GetDecorationID(c));
-    return wram->wStringBuffer1;
+    GetDecorationName(gMisc.stringBuffer1, GetDecorationID(c));
+    return gMisc.stringBuffer1;
 }
 
 void SetSpecificDecorationFlag(uint8_t c){
@@ -1539,7 +1539,7 @@ static Script_fn_t DecorationDesc_OrnamentOrConsole(uint8_t c){
     // LD_C_A;
     // LD_DE(wStringBuffer3);
     // CALL(aGetDecorationName_c_de);
-    GetDecorationName_c_de(wram->wStringBuffer3, c);
+    GetDecorationName_c_de(gMisc.stringBuffer3, c);
     // LD_B(BANK(aDecorationDesc_OrnamentOrConsole_OrnamentConsoleScript));
     // LD_DE(mDecorationDesc_OrnamentOrConsole_OrnamentConsoleScript);
     // RET;

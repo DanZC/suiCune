@@ -136,7 +136,7 @@ const txt_cmd_s GoldenrodHappinessRaterTeacherText[] = {
         t_line "in return."
         t_para "Oh? Let me see"
         t_line "your @")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_done )
 };

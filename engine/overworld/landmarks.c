@@ -39,7 +39,7 @@ uint8_t* GetLandmarkName(uint8_t e){
 
     // LD_DE(wStringBuffer1);
     // LD_C(18);
-    U82CA(wram->wStringBuffer1, name);
+    U82CA(gMisc.stringBuffer1, name);
 
 
 // copy:
@@ -57,7 +57,7 @@ uint8_t* GetLandmarkName(uint8_t e){
 // INCLUDE "data/maps/landmarks.asm"
 
     // return RegionCheck();
-    return wram->wStringBuffer1;
+    return gMisc.stringBuffer1;
 }
 
 //  Checks if the player is in Kanto or Johto.

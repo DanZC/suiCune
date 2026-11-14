@@ -2,6 +2,7 @@
 #include "rules.h"
 #include "../../../data/text/common.h"
 #include "../../../home/text.h"
+#include "../../../charmap.h"
 
 struct BattleTowerCheckText {
     bool (*func)(void);
@@ -65,10 +66,10 @@ bool v_CheckForBattleTowerRules(void){
 
     // LD_HL(wStringBuffer2);
     // LD_hl(0xf9);
-    wram->wStringBuffer2[0] = 0xf9;
+    gMisc.stringBuffer2[0] = CHAR_0 + 3;
     // INC_HL;
     // LD_hl(0x50);
-    wram->wStringBuffer2[1] = 0x50;
+    gMisc.stringBuffer2[1] = CHAR_TERM;
     // LD_DE(mv_CheckForBattleTowerRules_PointerTables);
     // CALL(aBattleTower_ExecuteJumptable);
     // RET_Z ;

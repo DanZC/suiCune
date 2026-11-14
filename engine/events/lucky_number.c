@@ -7,6 +7,7 @@
 #include "../../mobile/mobile_41.h"
 #include "../../util/serialize.h"
 #include "../../data/text/common.h"
+#include "../../charmap.h"
 
 static bool CheckForLuckyNumberWinners_CompareLuckyNumberToMonID(struct BoxMon* mon){
     // PUSH_BC;
@@ -328,10 +329,10 @@ void PrintTodaysLuckyNumber(void){
     // LD_DE(wLuckyIDNumber);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum(wram->wStringBuffer3, &gPlayer.luckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(gMisc.stringBuffer3, &gPlayer.luckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_A(0x50);
     // LD_addr_A(wStringBuffer3 + 5);
-    wram->wStringBuffer3[5] = 0x50;
+    gMisc.stringBuffer3[5] = CHAR_TERM;
     // RET;
 
 }

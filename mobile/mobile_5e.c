@@ -41,7 +41,7 @@ bool Function17a68f(uint8_t* de, uint8_t c){
         // LD_DE(wStringBuffer1);
         // PUSH_DE;
         // CALL(aFunction17a721);
-        Function17a721(wram->wStringBuffer1);
+        Function17a721(gMisc.stringBuffer1);
         // POP_DE;
         // XOR_A_A;
         // RET;
@@ -62,7 +62,7 @@ void Function17a6a8(uint8_t* de, uint8_t c){
     // LD_BC(0xa);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(wram->wStringBuffer2, 0xa, 0);
+    ByteFill(&wram->wd086, 0xa, 0);
     // LD_HL(wd1ea);
     // LD_BC(0x10);
     // LD_A(0xff);
@@ -133,7 +133,7 @@ void Function17a6f5(uint8_t* de){
 // asm_17a70e:
     // LD_A_C;
     // LD_addr_A(0xd08c);
-    wram->wStringBuffer2[6] = c;
+    wram->wd08c = c;
     // RET;
 }
 

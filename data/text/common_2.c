@@ -37,7 +37,7 @@ const txt_cmd_s v_NameRaterWhichMonText[] = {
 const txt_cmd_s v_NameRaterBetterNameText[] = {
     text_start("Hm… @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("…"
         t_line "That's a fairly"
         t_cont "decent name."
@@ -79,14 +79,14 @@ const txt_cmd_s v_NameRaterComeAgainText[] = {
 const txt_cmd_s v_NameRaterPerfectNameText[] = {
     text_start("Hm… @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("?"
         t_line "What a great name!"
         t_cont "It's perfect."
 
         t_para "Treat @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(
         t_line "with loving care."
         t_done )
@@ -117,14 +117,14 @@ const txt_cmd_s v_NameRaterNamedText[] = {
         t_line "#MON is now"
         t_cont "named @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
 };
 
 const txt_cmd_s v_Text_Gained[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" gained@"
         )
     text_end
@@ -136,7 +136,7 @@ const txt_cmd_s v_BoostedExpPointsText[] = {
         t_line "a boosted"
         t_cont "@"
         )
-    text_decimal(wram_ptr(wStringBuffer2), 2, 4)
+    text_decimal(gMisc.stringBuffer2, 2, 4)
     text_start(" EXP. Points!"
         t_prompt )
 
@@ -146,7 +146,7 @@ const txt_cmd_s v_ExpPointsText[] = {
     text_start(
         t_line "@"
         )
-    text_decimal(wram_ptr(wStringBuffer2), 2, 4)
+    text_decimal(gMisc.stringBuffer2, 2, 4)
     text_start(" EXP. Points!"
         t_prompt )
 
@@ -244,12 +244,12 @@ const txt_cmd_s v_ContainedMoveText[] = {
     text_start("It contained"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
 
         t_para "Teach @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(
         t_line "to a #MON?"
         t_done )
@@ -257,18 +257,18 @@ const txt_cmd_s v_ContainedMoveText[] = {
 };
 
 const txt_cmd_s v_TMHMNotCompatibleText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" is"
         t_line "not compatible"
         t_cont "with @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
 
         t_para "It can't learn"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_prompt )
 
@@ -279,7 +279,7 @@ const txt_cmd_s v_NoRoomTMHMText[] = {
         t_line "for any more"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("S."
         t_prompt )
 
@@ -289,7 +289,7 @@ const txt_cmd_s v_ReceivedTMHMText[] = {
     text_start("You received"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -342,7 +342,7 @@ const txt_cmd_s v_MysteryGiftSentText[] = {
     text_start(" sent"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
@@ -353,7 +353,7 @@ const txt_cmd_s v_MysteryGiftSentHomeText[] = {
     text_start(" sent"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(
         t_cont "to @"
         )
@@ -420,7 +420,7 @@ const txt_cmd_s v_CantUseItemText[] = {
 };
 
 const txt_cmd_s v_UseCutText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" used"
         t_line "CUT!"
         t_prompt )
@@ -446,7 +446,7 @@ const txt_cmd_s v_BlindingFlashText[] = {
 };
 
 const txt_cmd_s v_UsedSurfText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" used"
         t_line "SURF!"
         t_done )
@@ -475,7 +475,7 @@ const txt_cmd_s v_AskSurfText[] = {
 };
 
 const txt_cmd_s v_UseWaterfallText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" used"
         t_line "WATERFALL!"
         t_done )
@@ -497,7 +497,7 @@ const txt_cmd_s v_AskWaterfallText[] = {
 };
 
 const txt_cmd_s v_UseDigText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" used"
         t_line "DIG!"
         t_done )
@@ -542,7 +542,7 @@ const txt_cmd_s v_AlreadyUsingStrengthText[] = {
 };
 
 const txt_cmd_s v_UseStrengthText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" used"
         t_line "STRENGTH!"
         t_done )
@@ -550,7 +550,7 @@ const txt_cmd_s v_UseStrengthText[] = {
 };
 
 const txt_cmd_s v_MoveBoulderText[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" can"
         t_line "move boulders."
         t_prompt )
@@ -582,7 +582,7 @@ const txt_cmd_s v_BouldersMayMoveText[] = {
 };
 
 const txt_cmd_s v_UseWhirlpoolText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" used"
         t_line "WHIRLPOOL!"
         t_prompt )
@@ -610,7 +610,7 @@ const txt_cmd_s v_AskWhirlpoolText[] = {
 };
 
 const txt_cmd_s v_UseHeadbuttText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" did a"
         t_line "HEADBUTT!"
         t_prompt )
@@ -634,7 +634,7 @@ const txt_cmd_s v_AskHeadbuttText[] = {
 };
 
 const txt_cmd_s v_UseRockSmashText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start(" used"
         t_line "ROCK SMASH!"
         t_prompt )
@@ -689,7 +689,7 @@ const txt_cmd_s v_GotOnBikeText[] = {
     text_start("<PLAYER> got on the"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_done )
 
@@ -699,7 +699,7 @@ const txt_cmd_s v_GotOffBikeText[] = {
     text_start("<PLAYER> got off"
         t_line "the @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_done )
 
@@ -725,7 +725,7 @@ const txt_cmd_s v_FoundItemText[] = {
     text_start("<PLAYER> found"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 
@@ -765,7 +765,7 @@ const txt_cmd_s v_ItemfinderNopeText[] = {
 };
 
 const txt_cmd_s v_PoisonFaintText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "fainted!"
         t_prompt )
@@ -783,7 +783,7 @@ const txt_cmd_s v_PoisonWhiteoutText[] = {
 };
 
 const txt_cmd_s v_UseSweetScentText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" used"
         t_line "SWEET SCENT!"
         t_done )
@@ -841,7 +841,7 @@ const txt_cmd_s v_AskQuantityThrowAwayText[] = {
     text_start(
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)?"
         t_done )
 
@@ -851,7 +851,7 @@ const txt_cmd_s v_ThrewAwayText[] = {
     text_start("Threw away"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)."
         t_prompt )
 
@@ -876,7 +876,7 @@ const txt_cmd_s v_RegisteredItemText[] = {
     text_start("Registered the"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_prompt )
 
@@ -920,7 +920,7 @@ const txt_cmd_s v_Text_BattleEffectActivate[] = {
     text_start("<USER>'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_end
 
     text_end
@@ -944,7 +944,7 @@ const txt_cmd_s v_Text_BattleFoeEffectActivate[] = {
     text_start("<TARGET>'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_end
 
     text_end
@@ -1045,7 +1045,7 @@ const txt_cmd_s v_UsedInsteadText[] = {
 };
 
 const txt_cmd_s v_MoveNameText[] = {
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_end
 
     // text_end
@@ -1098,7 +1098,7 @@ const txt_cmd_s v_BreedClearboxText[] = {
 };
 
 const txt_cmd_s v_BreedEggHatchText[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" came"
         t_line "out of its EGG!@"
         )
@@ -1114,7 +1114,7 @@ const txt_cmd_s v_BreedAskNicknameText[] = {
     text_start("Give a nickname to"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("?"
         t_done )
 
@@ -1153,7 +1153,7 @@ const txt_cmd_s v_BreedNoInterestText[] = {
     text_start("It has no interest"
         t_line "in @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
@@ -1163,7 +1163,7 @@ const txt_cmd_s v_BreedAppearsToCareForText[] = {
     text_start("It appears to care"
         t_line "for @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
@@ -1173,7 +1173,7 @@ const txt_cmd_s v_BreedFriendlyText[] = {
     text_start("It's friendly with"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
@@ -1183,7 +1183,7 @@ const txt_cmd_s v_BreedShowsInterestText[] = {
     text_start("It shows interest"
         t_line "in @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
@@ -1253,11 +1253,11 @@ const txt_cmd_s v_AnimationTypeText[] = {
     text_decimal(wram_ptr(wcf64), 1, 3)
     text_start(" @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(
         t_line "Animation type @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_end
 
     text_end
@@ -1271,7 +1271,7 @@ const txt_cmd_s v_MonNumberText[] = {
 };
 
 const txt_cmd_s v_WasSentToBillsPCText[] = {
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" was"
         t_line "sent to BILL's PC."
         t_prompt )
@@ -1325,7 +1325,7 @@ const txt_cmd_s v_PCCantTakeText[] = {
 const txt_cmd_s v_ContestCaughtMonText[] = {
     text_start("Caught @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!"
         t_prompt )
 
@@ -1341,7 +1341,7 @@ const txt_cmd_s v_ContestAlreadyCaughtText[] = {
     text_start("You already caught"
         t_line "a @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
@@ -1361,7 +1361,7 @@ const txt_cmd_s v_ContestJudging_FirstPlaceText[] = {
         t_line "who caught a"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!@"
         )
     text_end
@@ -1390,7 +1390,7 @@ const txt_cmd_s v_ContestJudging_SecondPlaceText[] = {
         t_para "who caught a"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!@"
         )
     text_end
@@ -1419,7 +1419,7 @@ const txt_cmd_s v_ContestJudging_ThirdPlaceText[] = {
         t_para "who caught a"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("!@"
         )
     text_end
@@ -1445,7 +1445,7 @@ const txt_cmd_s v_MagikarpGuruMeasureText[] = {
         t_para "…Hm, it measures"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 
@@ -1456,7 +1456,7 @@ const txt_cmd_s v_KarpGuruRecordText[] = {
 
         t_para "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" caught by"
         t_line "@"
         )
@@ -1476,7 +1476,7 @@ const txt_cmd_s v_LuckyNumberMatchPartyText[] = {
 
         t_para "of @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" in"
         t_line "your party."
         t_prompt )
@@ -1491,7 +1491,7 @@ const txt_cmd_s v_LuckyNumberMatchPCText[] = {
 
         t_para "of @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" in"
         t_line "your PC BOX."
         t_prompt )
@@ -1502,7 +1502,7 @@ const txt_cmd_s v_CaughtAskNicknameText[] = {
     text_start("Give a nickname to"
         t_line "the @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" you"
         t_cont "received?"
         t_done )
@@ -1545,7 +1545,7 @@ const txt_cmd_s v_PlayersPCWithdrewItemsText[] = {
     text_start(
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)."
         t_prompt )
 
@@ -1578,7 +1578,7 @@ const txt_cmd_s v_PlayersPCDepositItemsText[] = {
     text_start(
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)."
         t_prompt )
 
@@ -1655,11 +1655,11 @@ const txt_cmd_s v_OakPCText2[] = {
 };
 
 const txt_cmd_s v_OakPCText3[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" #MON seen"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(" #MON owned"
 
         t_para "PROF.OAK's"
@@ -1900,7 +1900,7 @@ const txt_cmd_s v_ItemsTossOutHowManyText[] = {
     text_start("Toss out how many"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)?"
         t_done )
 
@@ -1913,7 +1913,7 @@ const txt_cmd_s v_ItemsThrowAwayText[] = {
     text_start(
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("(S)?"
         t_done )
 
@@ -1923,7 +1923,7 @@ const txt_cmd_s v_ItemsDiscardedText[] = {
     text_start("Discarded"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("(S)."
         t_prompt )
 
@@ -1951,13 +1951,13 @@ const txt_cmd_s v_PokemonSwapItemText[] = {
     text_start("'s"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(" and"
 
         t_para "made it hold"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_prompt )
 
@@ -1970,7 +1970,7 @@ const txt_cmd_s v_PokemonHoldItemText[] = {
     text_start(
         t_line "hold @"
         )
-    text_ram(wram_ptr(wStringBuffer2))
+    text_ram(gMisc.stringBuffer2)
     text_start("."
         t_prompt )
 
@@ -2001,7 +2001,7 @@ const txt_cmd_s v_ItemStorageFullText[] = {
 const txt_cmd_s v_PokemonTookItemText[] = {
     text_start("Took @"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start(
         t_line "from @"
         )
@@ -2018,7 +2018,7 @@ const txt_cmd_s v_PokemonAskSwapItemText[] = {
 
         t_para "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_line "Switch items?"
         t_done )
@@ -2043,7 +2043,7 @@ const txt_cmd_s v_MailDetachedText[] = {
     text_start("MAIL detached from"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("."
         t_prompt )
 

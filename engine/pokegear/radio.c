@@ -912,7 +912,7 @@ static void OaksPKMNTalk11(void){
     // LD_DE(mOaksPKMNTalk11_pokemon_string);
     // LD_A(OAKS_POKEMON_TALK_12);
     // JP(mPlaceRadioString);
-    return PlaceRadioString(coord(9, 14, wram->wTilemap), U82CA(wram->wStringBuffer2, pokemon_string), OAKS_POKEMON_TALK_12);
+    return PlaceRadioString(coord(9, 14, wram->wTilemap), U82CA(gMisc.stringBuffer2, pokemon_string), OAKS_POKEMON_TALK_12);
 }
 
 static void OaksPKMNTalk12(void){
@@ -926,7 +926,7 @@ static void OaksPKMNTalk12(void){
     // LD_DE(mOaksPKMNTalk12_pokemon_channel_string);
     // LD_A(OAKS_POKEMON_TALK_13);
     // JP(mPlaceRadioString);
-    return PlaceRadioString(coord(1, 16, wram->wTilemap), U82CA(wram->wStringBuffer2, pokemon_channel_string), OAKS_POKEMON_TALK_13);
+    return PlaceRadioString(coord(1, 16, wram->wTilemap), U82CA(gMisc.stringBuffer2, pokemon_channel_string), OAKS_POKEMON_TALK_13);
 }
 
 static void OaksPKMNTalk13(void){
@@ -1535,10 +1535,10 @@ static void LuckyNumberShow8(void){
     // LD_DE(wLuckyIDNumber);
     // LD_BC((PRINTNUM_LEADINGZEROS | 2 << 8) | 5);
     // CALL(aPrintNum);
-    PrintNum(wram->wStringBuffer1, &gPlayer.luckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
+    PrintNum(gMisc.stringBuffer1, &gPlayer.luckyIDNumber, PRINTNUM_LEADINGZEROS | 2, 5);
     // LD_A(0x50);
     // LD_addr_A(wStringBuffer1 + 5);
-    wram->wStringBuffer1[5] = CHAR_TERM;
+    gMisc.stringBuffer1[5] = CHAR_TERM;
     // LD_HL(mLC_Text8);
     // LD_A(LUCKY_NUMBER_SHOW_9);
     // JP(mNextRadioLine);
@@ -1781,7 +1781,7 @@ static void PeoplePlaces4(void){
     GetTrainerClassName(a);
     // LD_DE(wStringBuffer1);
     // CALL(aCopyName1);
-    CopyName1(wram->wStringBuffer1);
+    CopyName1(gMisc.stringBuffer1);
     // POP_BC;
     // LD_B(1);
     // CALLFAR(aGetTrainerName);
@@ -2354,7 +2354,7 @@ uint8_t* GetBuenasPassword(uint8_t* c_){
         //dw ['.RawString'];  // BUENA_STRING
         case BUENA_STRING:
         // RawString:
-            str = U82CA(wram->wStringBuffer1, pass->str.options[c]);
+            str = U82CA(gMisc.stringBuffer1, pass->str.options[c]);
             break;
         //  Get the string from the table...
             // LD_A_C;
@@ -2383,7 +2383,7 @@ uint8_t* GetBuenasPassword(uint8_t* c_){
             // RET;
         //assert_table_length ['NUM_BUENA_FUNCTIONS']
         default:
-            str = U82CA(wram->wStringBuffer1, "ERROR@");
+            str = U82CA(gMisc.stringBuffer1, "ERROR@");
             break;
     }
     // POP_HL;

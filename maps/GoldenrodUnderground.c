@@ -662,19 +662,19 @@ const txt_cmd_s GoldenrodUndergroundYoungerHaircutBrotherOneHaircutADayText[] = 
         t_done )
 };
 const txt_cmd_s HaircutBrosText_SlightlyHappier[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" looks a"
         t_line "little happier."
         t_done )
 };
 const txt_cmd_s HaircutBrosText_Happier[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" looks"
         t_line "happy."
         t_done )
 };
 const txt_cmd_s HaircutBrosText_MuchHappier[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" looks"
         t_line "delighted!"
         t_done )

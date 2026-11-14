@@ -20,7 +20,7 @@ static const txt_cmd_s Text_AskHostOrJoin[] = {
 static const txt_cmd_s Text_WillYouConnect[] = {
     text_start("Will you connect"
         t_line "to @")
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("?" 
         t_done )
 };
@@ -28,7 +28,7 @@ static const txt_cmd_s Text_WillYouConnect[] = {
 static const txt_cmd_s Text_WillYouAccept[] = {
     text_start("Will you accept"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer1))
+    text_ram(gMisc.stringBuffer1)
     text_start("'s connection?"
         t_done )
 };
@@ -161,8 +161,7 @@ void LANConnection_Host(void) {
 
         if(NetworkCheckLAN()) {
             const LANClient* candidate = NetworkGetLANCandidate(0);
-            CopyBytes(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
-            wram->wStringBuffer1[11] = CHAR_TERM;
+            CrystalStrncpy(gMisc.stringBuffer1, sizeof(gMisc.stringBuffer1), candidate->name, sizeof(candidate->name));
             PrintText(Text_WillYouAccept);
             bool yes = YesNoBox();
             if(yes) {
@@ -281,8 +280,7 @@ void LANConnection_Join(void) {
             }
 
             const LANClient* candidate = NetworkGetLANCandidate(selection);
-            CopyBytes(wram->wStringBuffer1, candidate->name, sizeof(candidate->name) - 1);
-            wram->wStringBuffer1[11] = CHAR_TERM;
+            CrystalStrncpy(gMisc.stringBuffer1, sizeof(gMisc.stringBuffer1), candidate->name, sizeof(candidate->name));
             PrintText(Text_WillYouConnect);
             bool yes = YesNoBox();
             if(yes) {

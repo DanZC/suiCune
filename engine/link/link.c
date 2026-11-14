@@ -38,6 +38,7 @@
 #include "../../mobile/mobile_41.h"
 #include "../../data/text/common.h"
 #include "../../data/items/catch_rate_items.h"
+#include "../../charmap.h"
 #if FEATURE_NETWORKING
 #if FEATURE_TIME_CAPSULE
 #include "../../data/pokemon/gen1_base_special.h"
@@ -1991,7 +1992,7 @@ LinkTrade_TradeStatsMenu:
 joy_loop:
     // LD_A(0x7f);
     // ldcoord_a(11, 16, wTilemap);
-    *coord(11, 16, wram->wTilemap) = 0x7f;
+    *coord(11, 16, wram->wTilemap) = CHAR_SPACE;
     // LD_A(A_BUTTON | B_BUTTON | D_RIGHT);
     // LD_addr_A(wMenuJoypadFilter);
     wram->wMenuJoypadFilter = (A_BUTTON | B_BUTTON | D_RIGHT);
@@ -2028,7 +2029,7 @@ joy_loop:
     // d_right:
         // LD_A(0x7f);
         // ldcoord_a(1, 16, wTilemap);
-        *coord(1, 16, wram->wTilemap) = 0x7f;
+        *coord(1, 16, wram->wTilemap) = CHAR_SPACE;
         // LD_A(A_BUTTON | B_BUTTON | D_LEFT);
         // LD_addr_A(wMenuJoypadFilter);
         wram->wMenuJoypadFilter = (A_BUTTON | B_BUTTON | D_LEFT);
@@ -2255,7 +2256,7 @@ LinkTradeOTPartymonMenuLoop:
     // LD_BC(NAME_LENGTH);
     // ADD_HL_BC;
     // LD_hl(0x7f);
-    hl[NAME_LENGTH] = 0x7f;
+    hl[NAME_LENGTH] = CHAR_SPACE;
     // POP_BC;
     // POP_HL;
     // LD_A_addr(wPartyCount);
@@ -2301,7 +2302,7 @@ LinkTradePartymonMenuLoop:
         // LD_BC(NAME_LENGTH);
         // ADD_HL_BC;
         // LD_hl(0x7f);
-        hl[NAME_LENGTH] = 0x7f;
+        hl[NAME_LENGTH] = CHAR_SPACE;
         // POP_BC;
         // POP_HL;
         // LD_A(1);
@@ -2330,7 +2331,7 @@ LinkTradePartymonMenuLoop:
     // LD_BC(NAME_LENGTH);
     // ADD_HL_BC;
     // LD_hl(0x7f);
-    hl[NAME_LENGTH] = 0x7f;
+    hl[NAME_LENGTH] = CHAR_SPACE;
     // POP_BC;
     // POP_HL;
     // JP(mLinkTradePartymonMenuCheckCancel);
@@ -2350,7 +2351,7 @@ LinkTradeOTPartymonMenuCheckCancel:
     // LD_BC(NAME_LENGTH);
     // ADD_HL_BC;
     // LD_hl(0x7f);
-    hl[NAME_LENGTH] = 0x7f;
+    hl[NAME_LENGTH] = CHAR_SPACE;
     // POP_BC;
     // POP_HL;
 // fallthrough
@@ -2361,7 +2362,7 @@ LinkTradePartymonMenuCheckCancel:
     // loop1:
         // LD_A(0xed);
         // ldcoord_a(9, 17, wTilemap);
-        *coord(9, 17, wram->wTilemap) = 0xed;
+        *coord(9, 17, wram->wTilemap) = CHAR_RIGHT_CURSOR;
 
         do {
         // loop2:
@@ -2378,7 +2379,7 @@ LinkTradePartymonMenuCheckCancel:
             // PUSH_AF;
             // LD_A(0x7f);
             // ldcoord_a(9, 17, wTilemap);
-            *coord(9, 17, wram->wTilemap) = 0x7f;
+            *coord(9, 17, wram->wTilemap) = CHAR_SPACE;
             // POP_AF;
             // BIT_A(D_UP_F);
             // IF_Z goto d_up;
@@ -2502,7 +2503,7 @@ void LinkTradeOTPartymonMenuLoop(void){
     // LD_BC(NAME_LENGTH);
     // ADD_HL_BC;
     // LD_hl(0x7f);
-    hl[NAME_LENGTH] = 0x7f;
+    hl[NAME_LENGTH] = CHAR_SPACE;
     // POP_BC;
     // POP_HL;
     // LD_A_addr(wPartyCount);
@@ -2588,7 +2589,7 @@ void LinkTradePartymonMenuLoop(void){
         // LD_BC(NAME_LENGTH);
         // ADD_HL_BC;
         // LD_hl(0x7f);
-        hl[NAME_LENGTH] = 0x7f;
+        hl[NAME_LENGTH] = CHAR_SPACE;
         // POP_BC;
         // POP_HL;
         // LD_A(1);
@@ -2617,7 +2618,7 @@ void LinkTradePartymonMenuLoop(void){
     // LD_BC(NAME_LENGTH);
     // ADD_HL_BC;
     // LD_hl(0x7f);
-    hl[NAME_LENGTH] = 0x7f;
+    hl[NAME_LENGTH] = CHAR_SPACE;
     // POP_BC;
     // POP_HL;
     // JP(mLinkTradePartymonMenuCheckCancel);
@@ -2668,7 +2669,7 @@ void LinkTrade_TradeStatsMenu(void){
 joy_loop:
     // LD_A(0x7f);
     // ldcoord_a(11, 16, wTilemap);
-    *coord(11, 16, wram->wTilemap) = 0x7f;
+    *coord(11, 16, wram->wTilemap) = CHAR_SPACE;
     // LD_A(A_BUTTON | B_BUTTON | D_RIGHT);
     // LD_addr_A(wMenuJoypadFilter);
     wram->wMenuJoypadFilter = (A_BUTTON | B_BUTTON | D_RIGHT);
@@ -2705,7 +2706,7 @@ joy_loop:
     // d_right:
         // LD_A(0x7f);
         // ldcoord_a(1, 16, wTilemap);
-        *coord(1, 16, wram->wTilemap) = 0x7f;
+        *coord(1, 16, wram->wTilemap) = CHAR_SPACE;
         // LD_A(A_BUTTON | B_BUTTON | D_LEFT);
         // LD_addr_A(wMenuJoypadFilter);
         wram->wMenuJoypadFilter = (A_BUTTON | B_BUTTON | D_LEFT);
@@ -2897,7 +2898,7 @@ void LinkTradeOTPartymonMenuCheckCancel(void){
     // LD_BC(NAME_LENGTH);
     // ADD_HL_BC;
     // LD_hl(0x7f);
-    hl[NAME_LENGTH] = 0x7f;
+    hl[NAME_LENGTH] = CHAR_SPACE;
     // POP_BC;
     // POP_HL;
 // fallthrough
@@ -2911,7 +2912,7 @@ void LinkTradePartymonMenuCheckCancel(void){
     // loop1:
         // LD_A(0xed);
         // ldcoord_a(9, 17, wTilemap);
-        *coord(9, 17, wram->wTilemap) = 0xed;
+        *coord(9, 17, wram->wTilemap) = CHAR_RIGHT_CURSOR;
 
         do {
         // loop2:
@@ -2927,7 +2928,7 @@ void LinkTradePartymonMenuCheckCancel(void){
             // PUSH_AF;
             // LD_A(0x7f);
             // ldcoord_a(9, 17, wTilemap);
-            *coord(9, 17, wram->wTilemap) = 0x7f;
+            *coord(9, 17, wram->wTilemap) = CHAR_SPACE;
             // POP_AF;
             // BIT_A(D_UP_F);
             // IF_Z goto d_up;

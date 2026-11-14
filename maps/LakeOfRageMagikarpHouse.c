@@ -226,10 +226,10 @@ const txt_cmd_s MagikarpLengthRaterText_Refused[] = {
 const txt_cmd_s LakeOfRageMagikarpHouseUnusedRecordText[] = {
     text_start("CURRENT RECORD"
         t_para "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" caught by"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_done )
 };

@@ -5,6 +5,7 @@
 #include "../home/mobile.h"
 #include "../engine/gfx/load_font.h"
 #include "../gfx/font.h"
+#include "../charmap.h"
 
 //  These functions deal with miscellaneous statistics
 //  which were used for Trainer Rankings in Pokémon News.
@@ -1569,18 +1570,18 @@ void Function106464(void){
     // LD_HL(vTiles2 + LEN_2BPP_TILE * "■");  // $60
     // LD_BC((BANK(aFontsExtra_SolidBlackGFX) << 8) | 1);
     // CALL(aGet2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x60, FontsExtra_SolidBlackGFX, 0, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * CHAR_BLACK_SQUARE, FontsExtra_SolidBlackGFX, 0, 1);
     // LD_DE(mFontsExtra2_UpArrowGFX);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * "▲");  // $61
     // LD_BC((BANK(aFontsExtra2_UpArrowGFX) << 8) | 1);
     // CALL(aGet2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x61, FontsExtra2_UpArrowGFX, 0, 1);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * CHAR_UP_ARROW, FontsExtra2_UpArrowGFX, 0, 1);
     // LD_DE(mMobileDialingFrameGFX);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * "☎");  // $62
     // LD_C(9);
     // LD_B(BANK(aMobileDialingFrameGFX));
     // CALL(aGet2bpp);
-    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x62, MobileDialingFrameGFX, 0, 9);
+    LoadPNG2bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * CHAR_PHONE_ICON, MobileDialingFrameGFX, 0, 9);
     // LD_DE(0x40b0);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * 0x6b);
     // LD_B(0x0f);  // no graphics at 0f:40b0// JP leftover???
@@ -1614,16 +1615,16 @@ void Function10649b(void){
     // LD_HL(vTiles2 + LEN_2BPP_TILE * "┌");  // $79
     // LD_C(6);  // "┌" to "┘"
     // LD_B(BANK(aFrames));
-    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x79, FramePaths[a], 0, 6);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * CHAR_FRAME_TOP_LEFT, FramePaths[a], 0, 6);
     // CALL(aFunction1064c3);
-    Function1064c3(vram->vTiles2 + LEN_2BPP_TILE * 0x79, 6);
+    Function1064c3(vram->vTiles2 + LEN_2BPP_TILE * CHAR_FRAME_TOP_LEFT, 6);
     // LD_HL(vTiles2 + LEN_2BPP_TILE * " ");  // $7f
     // LD_DE(mTextboxSpaceGFX);
     // LD_C(1);
     // LD_B(BANK(aTextboxSpaceGFX));
-    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * 0x7f, TextboxSpaceGFX, 0, 1);
+    LoadPNG1bppAssetSectionToVRAM(vram->vTiles2 + LEN_2BPP_TILE * CHAR_SPACE, TextboxSpaceGFX, 0, 1);
     // CALL(aFunction1064c3);
-    Function1064c3(vram->vTiles2 + LEN_2BPP_TILE * 0x7f, 1);
+    Function1064c3(vram->vTiles2 + LEN_2BPP_TILE * CHAR_SPACE, 1);
     // RET;
 }
 

@@ -8,6 +8,8 @@ struct PokemonData gPokemon;
 struct PlayerData gPlayer;
 struct CrystalData gCrystal;
 
+struct Misc gMisc;
+
 #include <stddef.h>
 
 #define check_wram0_field(_fld)                         static_assert(offsetof(struct wram_s, _fld) == (_fld - WRAM_0_ADDR), "")

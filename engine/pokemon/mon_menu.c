@@ -37,6 +37,7 @@
 #include "../../data/text/common.h"
 #include "../../data/moves/moves.h"
 #include "../../mobile/mobile_41.h"
+#include "../../charmap.h"
 #include "../../util/serialize.h"
 
 bool HasNoItems(void){
@@ -1905,7 +1906,7 @@ void PlaceMoveScreenRightArrow(void){
         // legal:
             // hlcoord(18, 0, wTilemap);
             // LD_hl(0xed);
-            *coord(18, 0, wram->wTilemap) = 0xed;
+            *coord(18, 0, wram->wTilemap) = CHAR_RIGHT_CURSOR;
             // RET;
             return;
         }

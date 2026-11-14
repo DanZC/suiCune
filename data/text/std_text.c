@@ -285,12 +285,12 @@ const txt_cmd_s ContestResults_ReadyToJudgeText[] = {
 const txt_cmd_s ContestResults_PlayerWonAPrizeText[] = {
     text_start("<PLAYER>, the No.@"
         )
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "finisher, wins"
         t_cont "@"
         )
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("!"
         t_done )
 
@@ -300,7 +300,7 @@ const txt_cmd_s ReceivedItemText[] = {
     text_start("<PLAYER> received"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start("."
         t_done )
 
@@ -349,7 +349,7 @@ const txt_cmd_s ContestResults_PartyFullText[] = {
 };
 
 const txt_cmd_s GymStatue_CityGymText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_line "#MON GYM"
         t_done )
@@ -359,7 +359,7 @@ const txt_cmd_s GymStatue_CityGymText[] = {
 const txt_cmd_s GymStatue_WinningTrainersText[] = {
     text_start("LEADER: @"
         )
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_para "WINNING TRAINERS:"
         t_line "<PLAYER>"
@@ -476,7 +476,7 @@ const txt_cmd_s RegisteredNumber1Text[] = {
     text_start("<PLAYER> registered"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("'s number."
         t_done )
 
@@ -486,7 +486,7 @@ const txt_cmd_s RegisteredNumber2Text[] = {
     text_start("<PLAYER> registered"
         t_line "@"
         )
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("'s number."
         t_done )
 };

@@ -9,11 +9,11 @@ const txt_cmd_s MomPhoneGreetingText[] = {
 const txt_cmd_s MomPhoneLandmarkText[] = {
     text_start("Oh, so you're in"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("…"
         t_para "Isn't that where"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer4))
+    text_ram(gMisc.stringBuffer4)
     text_start(
         t_para "is? Did you go"
         t_line "take a look?"
@@ -22,7 +22,7 @@ const txt_cmd_s MomPhoneLandmarkText[] = {
 const txt_cmd_s MomPhoneGenericAreaText[] = {
     text_start("Really, you're in"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("?"
         t_para "I've never gone"
         t_line "there. That's kind"
@@ -32,7 +32,7 @@ const txt_cmd_s MomPhoneGenericAreaText[] = {
 const txt_cmd_s MomPhoneNewBarkText[] = {
     text_start("What? You're in"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("?"
         t_para "Come see your MOM"
         t_line "sometime!"
@@ -41,7 +41,7 @@ const txt_cmd_s MomPhoneNewBarkText[] = {
 const txt_cmd_s MomPhoneCherrygroveText[] = {
     text_start("You're visiting"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("?"
         t_para "How about coming"
         t_line "home for a bit?"
@@ -50,7 +50,7 @@ const txt_cmd_s MomPhoneCherrygroveText[] = {
 const txt_cmd_s MomOtherAreaText[] = {
     text_start("Wow, you're in"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("?"
         t_para "Good luck on your"
         t_line "#MON quest!"
@@ -68,7 +68,7 @@ const txt_cmd_s MomDeterminedText[] = {
 const txt_cmd_s MomCheckBalanceText[] = {
     text_start("By the way, you've"
         t_line "saved up ¥@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Do you want to"
         t_line "keep on saving?"
@@ -89,7 +89,7 @@ const txt_cmd_s MomYoureNotSavingText[] = {
 const txt_cmd_s MomYouveSavedText[] = {
     text_start("By the way, you've"
         t_line "saved up ¥@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_para "Want to start"
         t_line "saving again?"

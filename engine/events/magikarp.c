@@ -129,7 +129,7 @@ void PrintMagikarpLength(void){
     // LD_DE(wMagikarpLength);
     // LD_BC((PRINTNUM_LEFTALIGN | 1 << 8) | 2);
     // CALL(aPrintNum);
-    uint8_t* hl = PrintNum(wram->wStringBuffer1, &e, PRINTNUM_LEFTALIGN | 1, 2);
+    uint8_t* hl = PrintNum(gMisc.stringBuffer1, &e, PRINTNUM_LEFTALIGN | 1, 2);
     // LD_hl(0x6e);
     // INC_HL;
     *(hl++) = CHAR_FEET;

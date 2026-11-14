@@ -6915,13 +6915,13 @@ uint8_t* GetStatName(uint8_t b){
     // LD_DE(wStringBuffer2);
     // LD_BC(STRING_BUFFER_LENGTH);
     // JP(mCopyBytes);
-    U82CA(wram->wStringBuffer2, StatNames[b]);
+    U82CA(gMisc.stringBuffer2, StatNames[b]);
 
 // INCLUDE "data/battle/stat_names.asm"
 
 // INCLUDE "data/battle/stat_multipliers.asm"
 
-    return wram->wStringBuffer2;
+    return gMisc.stringBuffer2;
 }
 
 void BattleCommand_AllStatsUp(void){

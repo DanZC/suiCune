@@ -10,7 +10,7 @@ void BattleCommand_PayDay(void){
     // XOR_A_A;
     // LD_HL(wStringBuffer1);
     // LD_hli_A;
-    wram->wStringBuffer1[0] = 0;
+    gMisc.stringBuffer1[0] = 0;
 
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;

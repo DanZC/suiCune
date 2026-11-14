@@ -270,7 +270,7 @@ const txt_cmd_s BillsGrandpaYouDontHaveItTextText[] = {
 const txt_cmd_s BillsGrandpaShownPokemonText[] = {
     text_start("Ah, so that is"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("?"
         t_para "Isn't it cute!"
         t_line "That's so kind of"

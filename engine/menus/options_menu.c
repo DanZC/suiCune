@@ -6,6 +6,7 @@
 #include "../../home/text.h"
 #include "../../home/gfx.h"
 #include "../../home/joypad.h"
+#include "../../charmap.h"
 
 //  GetOptionPointer.Pointers indexes
 enum {
@@ -775,7 +776,7 @@ void Options_UpdateCursorPosition(void){
     for(uint32_t c = 0; c < SCREEN_HEIGHT - 2; ++c) {
     // loop:
         // LD_hl(0x7f);
-        *coord(1, 1 + c, wram->wTilemap) = 0x7f;
+        *coord(1, 1 + c, wram->wTilemap) = CHAR_SPACE;
         // ADD_HL_DE;
         // DEC_C;
         // IF_NZ goto loop;
@@ -785,6 +786,6 @@ void Options_UpdateCursorPosition(void){
     // LD_A_addr(wJumptableIndex);
     // CALL(aAddNTimes);
     // LD_hl(0xed);
-    *coord(1, 2 + (2 * wram->wJumptableIndex), wram->wTilemap) = 0xed;
+    *coord(1, 2 + (2 * wram->wJumptableIndex), wram->wTilemap) = CHAR_RIGHT_CURSOR;
     // RET;
 }

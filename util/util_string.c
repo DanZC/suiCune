@@ -218,6 +218,21 @@ uint8_t* Utf8ToCrystalBuffer(uint8_t* dest, size_t dest_size, const char* src)
     return dest;
 }
 
+uint8_t* CrystalStrncpy(uint8_t* dest, size_t dest_size, const uint8_t* src, size_t src_size) {
+    if(dest_size == 0) {
+        return dest;
+    }
+    size_t size = (dest_size - 1 < src_size) ? dest_size - 1: src_size;
+    size_t i = 0;
+    for(; i < size; ++i) {
+        dest[i] = src[i];
+        if(dest[i] == CHAR_TERM)
+            return dest;
+    }
+    dest[i] = CHAR_TERM;
+    return dest;
+}
+
 // Copies Crystal string from buffer to GB address.
 void CopyStringToGB(uint16_t dest, const char* src) 
 {

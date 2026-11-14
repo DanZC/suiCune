@@ -1489,7 +1489,7 @@ void TrademonStats_PrintSpeciesNumber(species_t species){
     // CALL(aPrintNum);
     uint8_t* hl = PrintNum(coord(10, 0, wram->wTilemap), &species, PRINTNUM_LEADINGZEROS | sizeof(species), 3);
     // LD_hl(0x7f);
-    *hl = 0x7f;
+    *hl = CHAR_SPACE;
     // RET;
 }
 
@@ -1840,7 +1840,7 @@ void TradeAnim_TakeCareOfText(void){
     // LD_BC(8 * SCREEN_WIDTH);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill(coord(0, 10, wram->wTilemap), 8 * SCREEN_WIDTH, 0x7f);
+    ByteFill(coord(0, 10, wram->wTilemap), 8 * SCREEN_WIDTH, CHAR_SPACE);
     // CALL(aWaitBGMap);
     WaitBGMap();
     // LD_HL(mTradeAnim_TakeCareOfText_TakeGoodCareOfMonText);
@@ -1919,7 +1919,7 @@ void TradeAnim_BlankTilemap(void){
     // LD_BC(SCREEN_WIDTH * SCREEN_HEIGHT);
     // LD_A(0x7f);
     // CALL(aByteFill);
-    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, 0x7f);
+    ByteFill(coord(0, 0, wram->wTilemap), SCREEN_WIDTH * SCREEN_HEIGHT, CHAR_SPACE);
     // RET;
 }
 

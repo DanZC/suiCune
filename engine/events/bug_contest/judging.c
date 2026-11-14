@@ -12,6 +12,7 @@
 #include "../../../home/random.h"
 #include "../../../data/text/common.h"
 #include "../../../data/events/bug_contest_winners.h"
+#include "../../../charmap.h"
 
 uint8_t v_BugContestJudging(void){
     // CALL(aContestScore);
@@ -162,7 +163,7 @@ void LoadContestantName(uint8_t a){
     uint8_t* hl = wram->wBugContestWinnerName;
 //  Delete the trailing terminator and replace it with a space.
 
-    while(*hl != 0x50) {
+    while(*hl != CHAR_TERM) {
     // next:
         // LD_A_hli;
         // CP_A(0x50);
@@ -171,7 +172,7 @@ void LoadContestantName(uint8_t a){
     }
     // DEC_HL;
     // LD_hl(0x7f);
-    *hl = 0x7f;
+    *hl = CHAR_SPACE;
     // INC_HL;
     hl++;
     // LD_D_H;

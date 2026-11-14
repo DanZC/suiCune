@@ -49,7 +49,7 @@ uint8_t* GetName(uint8_t type, uint16_t index){
 
         // LD_E_L;
         // LD_D_H;
-        return wram->wStringBuffer1;
+        return gMisc.stringBuffer1;
     } 
     else 
     {    
@@ -71,11 +71,11 @@ uint8_t* GetName(uint8_t type, uint16_t index){
         // LD_H_hl;
         // LD_L_A;
 
-        ByteFill(wram->wStringBuffer1, sizeof(wram->wStringBuffer1), CHAR_TERM);
+        ByteFill(gMisc.stringBuffer1, sizeof(gMisc.stringBuffer1), CHAR_TERM);
         // LD_A_addr(wCurSpecies);
         // DEC_A;
         // CALL(aGetNthString);
-        uint8_t* hl = U82CA(wram->wStringBuffer1, NamesPointers[type][index - 1]);
+        uint8_t* hl = U82CA(gMisc.stringBuffer1, NamesPointers[type][index - 1]);
 
         // LD_DE(wStringBuffer1);
         // LD_BC(ITEM_NAME_LENGTH);
@@ -234,17 +234,17 @@ uint8_t* GetBasePokemonName(species_t a){
 
         // CP_A(0x50);
         // IF_Z goto quit;
-        if(x == 0x50) 
+        if(x == CHAR_TERM) 
             break;
         
         // CP_A(0xef);
         // IF_Z goto end;
         // CP_A(0xf5);
         // IF_Z goto end;
-        if(x == 0xef || x == 0xf5)
+        if(x == CHAR_MALE_ICON || x == CHAR_FEMALE_ICON)
         {
             // LD_hl(0x50);
-            *hl = 0x50;
+            *hl = CHAR_TERM;
             break;
         }
 
@@ -257,52 +257,12 @@ uint8_t* GetBasePokemonName(species_t a){
     return hl2;
 }
 
-//  Discards gender (Nidoran).
-void GetBasePokemonName_GB(void){
-    // PUSH_HL;
-    // CALL(aGetPokemonName);
-    GetPokemonName_GB();
-
-    // LD_HL(wStringBuffer1);
-    uint16_t hl = wStringBuffer1;
-    uint8_t a;
-
-    for(;;hl++) 
-    {
-        // LD_A_hl;
-        a = gb_read(hl);
-
-        // CP_A(0x50);
-        // IF_Z goto quit;
-        if(a == 0x50) 
-            break;
-        
-        // CP_A(0xef);
-        // IF_Z goto end;
-        // CP_A(0xf5);
-        // IF_Z goto end;
-        if(a == 0xef || a == 0xf5)
-        {
-            // LD_hl(0x50);
-            gb_write(hl, 0x50);
-            break;
-        }
-
-        // INC_HL;
-        // goto loop;
-    }
-
-    // POP_HL;
-    // RET;
-    return;
-}
-
 //  Get Pokemon name for wNamedObjectIndex.
 uint8_t* GetPokemonName(species_t index){
     if(index == 0 || index > NUM_POKEMON) {
         // Just in case...
-        U82CB(wram->wStringBuffer1, MON_NAME_LENGTH, "?@");
-        return wram->wStringBuffer1;
+        U82CB(gMisc.stringBuffer1, MON_NAME_LENGTH, "?@");
+        return gMisc.stringBuffer1;
     }
     // LDH_A_addr(hROMBank);
     // PUSH_AF;
@@ -335,7 +295,7 @@ uint8_t* GetPokemonName(species_t index){
     // PUSH_DE;
     // LD_BC(MON_NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    U82CB(wram->wStringBuffer1, MON_NAME_LENGTH, PokemonNames[index - 1]);
+    U82CB(gMisc.stringBuffer1, MON_NAME_LENGTH, PokemonNames[index - 1]);
 
     // LD_HL(wStringBuffer1 + MON_NAME_LENGTH - 1);
     // LD_hl(0x50);
@@ -346,7 +306,7 @@ uint8_t* GetPokemonName(species_t index){
     // POP_AF;
     // RST(aBankswitch);
     // RET;
-    return wram->wStringBuffer1;
+    return gMisc.stringBuffer1;
 }
 
 //  Get Pokemon name for wNamedObjectIndex.
@@ -435,7 +395,7 @@ uint8_t* GetItemName(item_t a){
     // POP_BC;
     // POP_HL;
     // RET;
-    return wram->wStringBuffer1;
+    return gMisc.stringBuffer1;
 }
 
 //  Get TM/HM name for item a.
@@ -456,7 +416,7 @@ uint8_t* GetTMHMName(item_t a){
         // LD_BC(mGetTMHMName_TMTextEnd - mGetTMHMName_TMText);
         // LD_DE(wStringBuffer1);
         // CALL(aCopyBytes);
-        U82CA(wram->wStringBuffer1, "TM");
+        U82CA(gMisc.stringBuffer1, "TM");
     }
     else 
     {
@@ -464,7 +424,7 @@ uint8_t* GetTMHMName(item_t a){
         // LD_BC(mGetTMHMName_HMTextEnd - mGetTMHMName_HMText);
         // LD_DE(wStringBuffer1);
         // CALL(aCopyBytes);
-        U82CA(wram->wStringBuffer1, "HM");
+        U82CA(gMisc.stringBuffer1, "HM");
     }
 
 // copy:
@@ -502,19 +462,19 @@ uint8_t* GetTMHMName(item_t a){
     // LD_A_B;
     // LD_de_A;
     // INC_DE;
-    wram->wStringBuffer1[2] = CHAR_0 + (c / 10);
+    gMisc.stringBuffer1[2] = CHAR_0 + (c / 10);
     // POP_AF;
 
     // LD_B(0xf6);
     // ADD_A_B;
     // LD_de_A;
-    wram->wStringBuffer1[3] = CHAR_0 + (c % 10);
+    gMisc.stringBuffer1[3] = CHAR_0 + (c % 10);
 
 //  End the string
     // INC_DE;
     // LD_A(0x50);
     // LD_de_A;
-    wram->wStringBuffer1[4] = CHAR_TERM;
+    gMisc.stringBuffer1[4] = CHAR_TERM;
 
     // POP_AF;
     // LD_addr_A(wNamedObjectIndex);
@@ -522,7 +482,7 @@ uint8_t* GetTMHMName(item_t a){
     // POP_DE;
     // POP_HL;
     // RET;
-    return wram->wStringBuffer1;
+    return gMisc.stringBuffer1;
 
 
 // TMText:
@@ -551,11 +511,11 @@ uint8_t* GetMoveName(move_t move){
     // LD_addr_A(wCurSpecies);
 
     // CALL(aGetName);
-    ByteFill(wram->wStringBuffer1, sizeof(wram->wStringBuffer1), CHAR_TERM);
+    ByteFill(gMisc.stringBuffer1, sizeof(gMisc.stringBuffer1), CHAR_TERM);
     if(move >= 1)
-        return U82CA(wram->wStringBuffer1, MoveNames[move - 1]);
+        return U82CA(gMisc.stringBuffer1, MoveNames[move - 1]);
     // LD_DE(wStringBuffer1);
-    return wram->wStringBuffer1;
+    return gMisc.stringBuffer1;
     // POP_HL;
     // RET;
 }

@@ -423,7 +423,7 @@ const txt_cmd_s TwinsLeaandpia2AfterBattleText[] = {
 const txt_cmd_s Text_FoundDragonFang[] = {
     text_start("<PLAYER> found"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("!"
         t_done )
 };

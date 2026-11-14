@@ -105,7 +105,7 @@ void GetTypeName(uint8_t idx){
     // LD_DE(wStringBuffer1);
     // LD_BC(MOVE_NAME_LENGTH);
     // JP(mCopyBytes);
-    Utf8ToCrystalBuffer(wram->wStringBuffer1, MOVE_NAME_LENGTH, TypeNames[idx]);
+    Utf8ToCrystalBuffer(gMisc.stringBuffer1, MOVE_NAME_LENGTH, TypeNames[idx]);
 
 // INCLUDE "data/types/names.asm"
 

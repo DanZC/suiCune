@@ -297,7 +297,7 @@ u8_flag_s DayCare_AskWithdrawBreedMon(void){
     // LD_A_addr(wStringBuffer2 + 1);
     // AND_A_A;
     // IF_NZ goto grew_at_least_one_level;
-    if(wram->wStringBuffer2[1] != 0) {
+    if(gMisc.stringBuffer2[1] != 0) {
     // grew_at_least_one_level:
         // LD_A(DAYCARETEXT_GENIUSES);
         // CALL(aPrintDayCareText);
@@ -344,7 +344,7 @@ u8_flag_s DayCare_AskWithdrawBreedMon(void){
     // LD_DE(wMoney);
     // LD_BC(wStringBuffer2 + 2);
     // FARCALL(aCompareMoney);
-    u8_flag_s res = CompareMoney(wram->wStringBuffer2 + 2, gPlayer.money);
+    u8_flag_s res = CompareMoney(gMisc.stringBuffer2 + 2, gPlayer.money);
     // IF_C goto not_enough_money;
     if(res.flag) {
     // not_enough_money:
@@ -372,7 +372,7 @@ void DayCare_GetBackMonForMoney(void){
     // LD_BC(wStringBuffer2 + 2);
     // LD_DE(wMoney);
     // FARCALL(aTakeMoney);
-    TakeMoney(gPlayer.money, wram->wStringBuffer2 + 2);
+    TakeMoney(gPlayer.money, gMisc.stringBuffer2 + 2);
     // LD_A(DAYCARETEXT_WITHDRAW);
     // CALL(aPrintDayCareText);
     PrintDayCareText(DAYCARETEXT_WITHDRAW);
@@ -388,14 +388,14 @@ void DayCare_GetBackMonForMoney(void){
 void GetPriceToRetrieveBreedmon(const uint8_t* hl, u8_pair_s lvlGrowth){
     // LD_A_B;
     // LD_addr_A(wStringBuffer2);
-    wram->wStringBuffer2[0] = lvlGrowth.a;
+    gMisc.stringBuffer2[0] = lvlGrowth.a;
     // LD_A_D;
     // LD_addr_A(wStringBuffer2 + 1);
-    wram->wStringBuffer2[1] = lvlGrowth.b;
+    gMisc.stringBuffer2[1] = lvlGrowth.b;
     // LD_DE(wStringBuffer1);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer1, hl, NAME_LENGTH);
+    CopyBytes(gMisc.stringBuffer1, hl, NAME_LENGTH);
     // LD_HL(0);
     // LD_BC(100);
     // LD_A_addr(wStringBuffer2 + 1);
@@ -405,13 +405,13 @@ void GetPriceToRetrieveBreedmon(const uint8_t* hl, u8_pair_s lvlGrowth){
     uint16_t money = 100 + (lvlGrowth.b * 100);
     // XOR_A_A;
     // LD_addr_A(wStringBuffer2 + 2);
-    wram->wStringBuffer2[2] = 0;
+    gMisc.stringBuffer2[2] = 0;
     // LD_A_H;
     // LD_addr_A(wStringBuffer2 + 3);
-    wram->wStringBuffer2[3] = HIGH(money);
+    gMisc.stringBuffer2[3] = HIGH(money);
     // LD_A_L;
     // LD_addr_A(wStringBuffer2 + 4);
-    wram->wStringBuffer2[4] = LOW(money);
+    gMisc.stringBuffer2[4] = LOW(money);
     // RET;
 }
 
@@ -993,7 +993,7 @@ SkipDVs:
     // LD_DE(wMonOrItemNameBuffer);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wMonOrItemNameBuffer, wram->wStringBuffer1, NAME_LENGTH);
+    CopyBytes(wram->wMonOrItemNameBuffer, gMisc.stringBuffer1, NAME_LENGTH);
     // LD_HL(wEggMonMoves);
     // LD_DE(wEggMonPP);
     // PREDEF(pFillPP);
@@ -1002,7 +1002,7 @@ SkipDVs:
     // LD_DE(wStringBuffer1);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer1, wram->wMonOrItemNameBuffer, NAME_LENGTH);
+    CopyBytes(gMisc.stringBuffer1, wram->wMonOrItemNameBuffer, NAME_LENGTH);
     // LD_A_addr(wBaseEggSteps);
     // LD_HL(wEggMonHappiness);
     // LD_hli_A;

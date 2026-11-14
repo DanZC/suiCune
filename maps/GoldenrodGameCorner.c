@@ -485,7 +485,7 @@ const txt_cmd_s GoldenrodGameCornerPrizeVendorWhichPrizeText[] = {
         t_done )
 };
 const txt_cmd_s GoldenrodGameCornerPrizeVendorConfirmPrizeText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start("."
         t_line "Is that right?"
         t_done )

@@ -2730,7 +2730,7 @@ void HandleSafeguard(void){
 static void HandleScreens_Copy(uint8_t* de){
     // LD_HL(wStringBuffer1);
     // JP(mCopyName2);
-    CopyName2(wram->wStringBuffer1, de);
+    CopyName2(gMisc.stringBuffer1, de);
 }
 
 static void HandleScreens_ReflectTick(uint8_t* hl, uint8_t* de){
@@ -10096,7 +10096,7 @@ Happiness:
     // LD_DE(wEnemyMonNickname);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wEnemyMonNickname, wram->wStringBuffer1, MON_NAME_LENGTH);
+    CopyBytes(wram->wEnemyMonNickname, gMisc.stringBuffer1, MON_NAME_LENGTH);
 
 //  Saw this mon
     // LD_A_addr(wTempEnemyMonSpecies);
@@ -11101,7 +11101,7 @@ void GiveExperiencePoints(void){
     // no_boost:
     //  Boost experience for a Trainer Battle
         // LD_addr_A(wStringBuffer2 + 2);
-        wram->wStringBuffer2[2] = a;
+        gMisc.stringBuffer2[2] = a;
         // LD_A_addr(wBattleMode);
         // DEC_A;
         // CALL_NZ (aBoostExp);
@@ -11118,10 +11118,10 @@ void GiveExperiencePoints(void){
             bExp = BoostExp(bExp);
         // LDH_A_addr(hQuotient + 3);
         // LD_addr_A(wStringBuffer2 + 1);
-        wram->wStringBuffer2[1] = LOW(bExp);
+        gMisc.stringBuffer2[1] = LOW(bExp);
         // LDH_A_addr(hQuotient + 2);
         // LD_addr_A(wStringBuffer2);
-        wram->wStringBuffer2[0] = HIGH(bExp);
+        gMisc.stringBuffer2[0] = HIGH(bExp);
         // LD_A_addr(wCurPartyMon);
         // LD_HL(wPartyMonNicknames);
         // CALL(aGetNickname);
@@ -11488,7 +11488,7 @@ static void Text_MonGainedExpPoint_Func(struct TextCmdState* state){
 
     // LD_HL(mBoostedExpPointsText);
     // RET;
-    state->hl = (wram->wStringBuffer2[2] == 0)? ExpPointsText: BoostedExpPointsText;
+    state->hl = (gMisc.stringBuffer2[2] == 0)? ExpPointsText: BoostedExpPointsText;
 }
 
 const txt_cmd_s Text_MonGainedExpPoint[] = {
@@ -11725,7 +11725,7 @@ void AnimateExpBar(uint16_t exp){
         // LD_DE(wStringBuffer1);
         // LD_BC(MON_NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wStringBuffer1, wram->wBattleMonNickname, MON_NAME_LENGTH);
+        CopyBytes(gMisc.stringBuffer1, wram->wBattleMonNickname, MON_NAME_LENGTH);
         // CALL(aTerminateExpBarSound);
         TerminateExpBarSound();
         // LD_DE(SFX_HIT_END_OF_EXP_BAR);
@@ -13121,7 +13121,7 @@ void ReadAndPrintLinkBattleRecord(void){
             CopyBytes(wram->wLinkBattleRecordName, de->name, NAME_LENGTH - 1);
             // LD_A(0x50);
             // LD_de_A;
-            wram->wLinkBattleRecordName[NAME_LENGTH - 1] = 0x50;
+            wram->wLinkBattleRecordName[NAME_LENGTH - 1] = CHAR_TERM;
             // INC_DE;  // wLinkBattleRecordWins
             // LD_BC(6);
             // CALL(aCopyBytes);
@@ -13552,11 +13552,11 @@ void AddLastLinkBattleToLinkRecord(void){
     // LD_DE(wStringBuffer1);
     // LD_BC(2);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer1, &wram->wOTPlayerID, 2);
+    CopyBytes(gMisc.stringBuffer1, &wram->wOTPlayerID, 2);
     // LD_HL(wOTPlayerName);
     // LD_BC(NAME_LENGTH - 1);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wStringBuffer1 + 2, wram->wOTPlayerName, NAME_LENGTH - 1);
+    CopyBytes(gMisc.stringBuffer1 + 2, wram->wOTPlayerName, NAME_LENGTH - 1);
     // LD_HL(sLinkBattleStats - (LINK_BATTLE_RECORD_LENGTH - 6));
     // CALL(aAddLastLinkBattleToLinkRecord_StoreResult);
     AddLastLinkBattleToLinkRecord_StoreResult(GBToRAMAddr(sLinkBattleStats - (LINK_BATTLE_RECORD_LENGTH - 6)));
@@ -13582,7 +13582,7 @@ void AddLastLinkBattleToLinkRecord(void){
         // LD_BC(LINK_BATTLE_RECORD_LENGTH - 6);
         // LD_DE(wStringBuffer1);
         // CALL(aCompareBytesLong);
-        int cmp = CompareBytes(wram->wStringBuffer1, hl, LINK_BATTLE_RECORD_LENGTH - 6);
+        int cmp = CompareBytes(gMisc.stringBuffer1, hl, LINK_BATTLE_RECORD_LENGTH - 6);
         // POP_DE;
         // POP_HL;
         // IF_C goto done;
@@ -13607,7 +13607,7 @@ copy:
     // LD_HL(wStringBuffer1);
     // LD_BC(LINK_BATTLE_RECORD_LENGTH - 6);
     // CALL(aCopyBytes);
-    CopyBytes(de, wram->wStringBuffer1, LINK_BATTLE_RECORD_LENGTH - 6);
+    CopyBytes(de, gMisc.stringBuffer1, LINK_BATTLE_RECORD_LENGTH - 6);
     // LD_B(6);
     uint8_t b = 6;
     // XOR_A_A;

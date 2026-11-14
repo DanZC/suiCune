@@ -2408,3 +2408,13 @@ struct Audio {
     uint16_t mapMusic;
     uint8_t dontPlayMapMusicOnReload;
 };
+
+struct Misc {
+    uint8_t TMHMMoveNameBackup[MOVE_NAME_LENGTH];
+    uint8_t stringBuffer1[STRING_BUFFER_LENGTH];
+    uint8_t stringBuffer2[STRING_BUFFER_LENGTH];
+    uint8_t stringBuffer3[STRING_BUFFER_LENGTH];
+    uint8_t stringBuffer4[STRING_BUFFER_LENGTH];
+    uint8_t stringBuffer5[STRING_BUFFER_LENGTH];
+};
+

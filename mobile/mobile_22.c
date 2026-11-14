@@ -31,6 +31,7 @@
 #include "../engine/link/mystery_gift.h"
 #include "../engine/printer/printer.h"
 #include "../engine/events/battle_tower/get_trainer_class.h"
+#include "../charmap.h"
 #include "../data/trainers/palettes.h"
 #include "../data/text/common.h"
 
@@ -285,7 +286,7 @@ void Function8921f(tile_t* hl, uint8_t b, uint8_t c){
         do {
         // asm_89229:
             // LD_hli_A;
-            *(hl2++) = 0x7f;
+            *(hl2++) = CHAR_SPACE;
             // DEC_C;
             // IF_NZ goto asm_89229;
         } while(--c2 != 0);
@@ -1473,7 +1474,7 @@ void Function896ff(tile_t* hl, uint8_t b, uint8_t c){
         do {
         // col_loop:
             // LD_hli_A;
-            *(hl2++) = 0x7f;
+            *(hl2++) = CHAR_SPACE;
             // DEC_C;
             // IF_NZ goto col_loop;
         } while(--c2 != 0);
@@ -2142,12 +2143,12 @@ void Function8998b(tile_t* hl, uint8_t a){
     if((a & 0xf) >= 0xa) {
     // asm_89997:
         // LD_A(0x7f);
-        a = 0x7f;
+        a = CHAR_SPACE;
     }
     else {
         // LD_C(0xf6);
         // ADD_A_C;
-        a = (a & 0xf) + 0xf6;
+        a = (a & 0xf) + CHAR_0;
         // goto asm_89999;
     }
 // asm_89999:
@@ -2628,7 +2629,7 @@ void Function89b78(tile_t* hl, uint8_t e){
     // asm_89b89:
         // LD_A(0x7f);
         // LD_hl_A;
-        *hl = 0x7f;
+        *hl = CHAR_SPACE;
     }
 
 // asm_89b8c:
@@ -5287,7 +5288,7 @@ bool Function8a7cb(void){
         // LD_DE(wd008);
         // LD_C(0x8);
         // CALL(aFunction89193);
-        Function89193(wram->wCardPhoneNumber, wram->wStringBuffer1, PHONE_NUMBER_LENGTH);
+        Function89193(wram->wCardPhoneNumber, gMisc.stringBuffer1, PHONE_NUMBER_LENGTH);
     }
 
 // asm_8a7f4:
@@ -5804,7 +5805,7 @@ bool Function8aa73(void){
         // LD_DE(wd008);
         // LD_C(0x8);
         // CALL(aFunction89193);
-        Function89193(wram->wCardPhoneNumber, wram->wStringBuffer1, PHONE_NUMBER_LENGTH);
+        Function89193(wram->wCardPhoneNumber, gMisc.stringBuffer1, PHONE_NUMBER_LENGTH);
     }
 
 // asm_8aa9d:

@@ -366,7 +366,7 @@ void GetNickname(const uint8_t* hl, uint8_t a){
 
     // LD_DE(wStringBuffer1);
 
-    CopyBytes(wram->wStringBuffer1, hl, MON_NAME_LENGTH);
+    CopyBytes(gMisc.stringBuffer1, hl, MON_NAME_LENGTH);
 
     //PUSH_DE;
     //LD_BC(MON_NAME_LENGTH);
@@ -374,7 +374,7 @@ void GetNickname(const uint8_t* hl, uint8_t a){
     //POP_DE;
 
     // CALLFAR(aCorrectNickErrors);
-    CorrectNickErrors(wram->wStringBuffer1);
+    CorrectNickErrors(gMisc.stringBuffer1);
 
     // POP_BC;
     // POP_HL;
@@ -382,7 +382,7 @@ void GetNickname(const uint8_t* hl, uint8_t a){
 }
 
 uint8_t* GetCurNickname(void){
-    CopyBytes(wram->wStringBuffer1, gPokemon.partyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
-    CorrectNickErrors(wram->wStringBuffer1);
-    return wram->wStringBuffer1;
+    CopyBytes(gMisc.stringBuffer1, gPokemon.partyMonNickname[wram->wCurPartyMon], MON_NAME_LENGTH);
+    CorrectNickErrors(gMisc.stringBuffer1);
+    return gMisc.stringBuffer1;
 }

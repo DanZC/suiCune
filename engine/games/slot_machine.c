@@ -2767,7 +2767,7 @@ static void Text_PrintLayout_Function(struct TextCmdState* state) {
     *coord(3, 14, wram->wTilemap) = a;
     // hlcoord(18, 17, wTilemap);
     // LD_hl(0xee);
-    *coord(18, 17, wram->wTilemap) = 0xee;
+    *coord(18, 17, wram->wTilemap) = CHAR_DOWN_CURSOR;
     // LD_HL(mSlots_PayoutText_SlotsLinedUpText);
     state->hl = Slots_PayoutText_SlotsLinedUpText;
     // for(int rept = 0; rept < 4; rept++){
@@ -2877,7 +2877,7 @@ void Slots_PayoutText(void){
     // LD_DE(wStringBuffer2);
     // LD_BC(4);
     // CALL(aCopyBytes);
-    U82CB(wram->wStringBuffer2, 4, PayoutStrings[gSlotData.slotMatched / 4].string);
+    U82CB(gMisc.stringBuffer2, 4, PayoutStrings[gSlotData.slotMatched / 4].string);
     // LD_A_hli;
     // LD_H_hl;
     // LD_L_A;

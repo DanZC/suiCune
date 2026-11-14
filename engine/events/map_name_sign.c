@@ -230,7 +230,7 @@ uint8_t PlaceMapNameCenterAlign_GetNameLength(void) {
     uint8_t c = 0;
     // PUSH_HL;
     // LD_HL(wStringBuffer1);
-    uint8_t* hl = wram->wStringBuffer1;
+    uint8_t* hl = gMisc.stringBuffer1;
 
     do {
     // loop:
@@ -271,7 +271,7 @@ static void PlaceMapNameCenterAlign(void){
     // ADD_HL_BC;
     // LD_DE(wStringBuffer1);
     // CALL(aPlaceString);
-    PlaceStringSimple(wram->wStringBuffer1, coord(0, 2, wram->wTilemap) + a);
+    PlaceStringSimple(gMisc.stringBuffer1, coord(0, 2, wram->wTilemap) + a);
     // RET;
 }
 

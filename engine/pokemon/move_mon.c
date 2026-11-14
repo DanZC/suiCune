@@ -1369,7 +1369,7 @@ bool SendMonIntoBox(void){
     // LD_HL(wStringBuffer1);
     // LD_BC(MON_NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(box.monNicknames[0], wram->wStringBuffer1, MON_NAME_LENGTH);
+    CopyBytes(box.monNicknames[0], gMisc.stringBuffer1, MON_NAME_LENGTH);
 
     // LD_HL(wEnemyMon);
     // LD_DE(sBoxMon1);
@@ -2660,7 +2660,7 @@ void InitNickname(uint8_t* hl){
     // POP_HL;
     // LD_DE(wStringBuffer1);
     // CALL(aInitName);
-    InitName(hl, wram->wStringBuffer1);
+    InitName(hl, gMisc.stringBuffer1);
     // LD_A(0x4);  // ExitAllMenus is in bank 0// maybe it used to be in bank 4
     // LD_HL(mExitAllMenus);
     ExitAllMenus();

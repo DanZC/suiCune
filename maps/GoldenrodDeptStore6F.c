@@ -172,7 +172,7 @@ const txt_cmd_s GoldenrodVendingText[] = {
 const txt_cmd_s GoldenrodClangText[] = {
     text_start("Clang! A can of"
         t_line "@")
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(
         t_cont "popped out!"
         t_done )

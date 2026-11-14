@@ -3257,7 +3257,7 @@ move_right_or_down:
 update_cursor_pos:
     // CALL(aPokedex_GetArrowCursorPos);
     // LD_hl(0xed);
-    *Pokedex_GetArrowCursorPos(de) = 0xed;
+    *Pokedex_GetArrowCursorPos(de) = CHAR_RIGHT_CURSOR;
     // LD_A(12);
     // LD_addr_A(wDexArrowCursorDelayCounter);
     wram->wDexArrowCursorDelayCounter = 12;
@@ -3313,14 +3313,14 @@ void Pokedex_BlinkArrowCursor(const struct ArrowCursorData* de){
     if(wram->wDexArrowCursorBlinkCounter++ & 0x8) {
         // CALL(aPokedex_GetArrowCursorPos);
         // LD_hl(0x7f);
-        *Pokedex_GetArrowCursorPos(de) = 0x7f;
+        *Pokedex_GetArrowCursorPos(de) = CHAR_SPACE;
         // RET;
     }
     else {
     // blink_on:
         // CALL(aPokedex_GetArrowCursorPos);
         // LD_hl(0xed);
-        *Pokedex_GetArrowCursorPos(de) = 0xed;
+        *Pokedex_GetArrowCursorPos(de) = CHAR_RIGHT_CURSOR;
         // RET;
     }
 }

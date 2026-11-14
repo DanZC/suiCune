@@ -1331,11 +1331,11 @@ static void StorePlayerName(void) {
     // LD_BC(NAME_LENGTH);
     // LD_HL(wPlayerName);
     // CALL(aByteFill);
-    ByteFill(gPlayer.playerName, NAME_LENGTH, 0x50);
+    ByteFill(gPlayer.playerName, NAME_LENGTH, CHAR_TERM);
     // LD_HL(wPlayerName);
     // LD_DE(wStringBuffer2);
     // CALL(aCopyName2);
-    CopyName2(gPlayer.playerName, wram->wStringBuffer2);
+    CopyName2(gPlayer.playerName, gMisc.stringBuffer2);
     // RET;
 }
 

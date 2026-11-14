@@ -484,7 +484,7 @@ uint8_t* CopyMobileEZChatToC608(uint8_t d, uint8_t e){
         // CALL(aGetPokemonName);
         GetPokemonName(e);
         // LD_HL(wStringBuffer1);
-        hl = wram->wStringBuffer1;
+        hl = gMisc.stringBuffer1;
         // LD_BC(MON_NAME_LENGTH - 1);
         bc = MON_NAME_LENGTH - 1;
         // goto copy_string;
@@ -513,8 +513,8 @@ uint8_t* CopyMobileEZChatToC608(uint8_t d, uint8_t e){
         const char* word = MobileEZChatCategoryPointers[d - 1][e].word;
         // ADD_HL_BC;
         // LD_BC(NAME_LENGTH_JAPANESE - 1);
-        ByteFill(wram->wStringBuffer1, NAME_LENGTH, CHAR_TERM);
-        hl = U82CA(wram->wStringBuffer1, word);
+        ByteFill(gMisc.stringBuffer1, NAME_LENGTH, CHAR_TERM);
+        hl = U82CA(gMisc.stringBuffer1, word);
         bc = NAME_LENGTH - 1;
     }
 
@@ -2917,7 +2917,7 @@ void Function11c86e(void){
         do {
         // asm_11c891:
             // LD_hli_A;
-            *(hl++) = 0x7f;
+            *(hl++) = CHAR_SPACE;
             // DEC_C;
             // IF_NZ goto asm_11c891;
         } while(--c != 0);
@@ -2958,7 +2958,7 @@ void Function11c86e(void){
         // hlcoord(17, 16, wTilemap);
         // LD_A(0x7f);
         // LD_hl_A;
-        *coord(17, 16, wram->wTilemap) = 0x7f;
+        *coord(17, 16, wram->wTilemap) = CHAR_SPACE;
         // hlcoord(11, 17, wTilemap);
         uint8_t* hl = coord(11, 17, wram->wTilemap);
         // LD_C(0x7);
@@ -2967,7 +2967,7 @@ void Function11c86e(void){
         do {
         // asm_11c8c2:
             // LD_hli_A;
-            *(hl++) = 0x7f;
+            *(hl++) = CHAR_SPACE;
             // DEC_C;
             // IF_NZ goto asm_11c8c2;
         } while(--c != 0);
@@ -3462,7 +3462,7 @@ static void EZChat_ClearAllWords_clear_line(tile_t* hl) {
     // ld c, EZCHAT_CHARS_PER_LINE
     uint8_t c = EZCHAT_CHARS_PER_LINE;
     // ld a, " "
-    tile_t a = 0x7f;
+    tile_t a = CHAR_SPACE;
     do {
     // .clear_word
         // ld [hli], a
@@ -4791,7 +4791,7 @@ void Function11cfce(const uint8_t* de){
     tile_t* hl2 = hl;
     // LD_A(0x79);
     // LD_hli_A;
-    *(hl2++) = 0x79;
+    *(hl2++) = CHAR_FRAME_TOP_LEFT;
     // LD_A_de;
     // INC_DE;
     uint8_t a = *(de++);
@@ -4806,7 +4806,7 @@ void Function11cfce(const uint8_t* de){
         do {
         // fill_loop:
             // LD_hli_A;
-            *(hl2++) = 0x7a;
+            *(hl2++) = CHAR_FRAME_TOP;
             // DEC_C;
             // IF_NZ goto fill_loop;
         } while(--c != 0);
@@ -4815,7 +4815,7 @@ void Function11cfce(const uint8_t* de){
 // skip_fill:
     // LD_A(0x7b);
     // LD_hl_A;
-    *hl2 = 0x7b;
+    *hl2 = CHAR_FRAME_TOP_RIGHT;
     // POP_HL;
     // LD_BC(SCREEN_WIDTH);
     // ADD_HL_BC;
@@ -4836,7 +4836,7 @@ void Function11cfce(const uint8_t* de){
             hl2 = hl;
             // LD_A(0x7c);
             // LD_hli_A;
-            *(hl2++) = 0x7c;
+            *(hl2++) = CHAR_FRAME_SIDE;
             // LD_A_de;
             a = *de;
             // DEC_A;
@@ -4850,7 +4850,7 @@ void Function11cfce(const uint8_t* de){
                 do {
                 // row_loop:
                     // LD_hli_A;
-                    *(hl2++) = 0x7f;
+                    *(hl2++) = CHAR_SPACE;
                     // DEC_C;
                     // IF_NZ goto row_loop;
                 } while(--c != 0);
@@ -4859,7 +4859,7 @@ void Function11cfce(const uint8_t* de){
         // skip_row:
             // LD_A(0x7c);
             // LD_hl_A;
-            *hl2 = 0x7c;
+            *hl2 = CHAR_FRAME_SIDE;
             // POP_HL;
             // PUSH_BC;
             // LD_BC(SCREEN_WIDTH);
@@ -4874,7 +4874,7 @@ void Function11cfce(const uint8_t* de){
 // skip_section:
     // LD_A(0x7d);
     // LD_hli_A;
-    *(hl++) = 0x7d;
+    *(hl++) = CHAR_FRAME_BOTTOM_LEFT;
     // LD_A_de;
     a = *de;
     // DEC_A;
@@ -4888,7 +4888,7 @@ void Function11cfce(const uint8_t* de){
         do {
         // final_loop:
             // LD_hli_A;
-            *(hl++) = 0x7a;
+            *(hl++) = CHAR_FRAME_TOP;
             // DEC_C;
             // IF_NZ goto final_loop;
         } while(--c != 0);
@@ -4897,7 +4897,7 @@ void Function11cfce(const uint8_t* de){
 // skip_remainder:
     // LD_A(0x7e);
     // LD_hl_A;
-    *hl = 0x7e;
+    *hl = CHAR_FRAME_BOTTOM_RIGHT;
     // RET;
 }
 
@@ -4945,7 +4945,7 @@ void Function11d035(const uint8_t* de){
     tile_t* hl2 = hl;
     // LD_A(0x79);
     // LD_hl_A;
-    *hl2 = 0x79;
+    *hl2 = CHAR_FRAME_TOP_LEFT;
     // POP_HL;
     // PUSH_HL;
     // LD_A_de;
@@ -4958,12 +4958,12 @@ void Function11d035(const uint8_t* de){
     hl2 += x2;
     // LD_A(0x7b);
     // LD_hl_A;
-    *hl2 = 0x7b;
+    *hl2 = CHAR_FRAME_TOP_RIGHT;
     // CALL(aFunction11d035_AddNMinusOneTimes);
     hl2 += y2 * SCREEN_WIDTH;
     // LD_A(0x7e);
     // LD_hl_A;
-    *hl2 = 0x7e;
+    *hl2 = CHAR_FRAME_BOTTOM_RIGHT;
     // POP_HL;
     // PUSH_HL;
     hl2 = hl;
@@ -4971,7 +4971,7 @@ void Function11d035(const uint8_t* de){
     hl2 += y2 * SCREEN_WIDTH;
     // LD_A(0x7d);
     // LD_hl_A;
-    *hl2 = 0x7d;
+    *hl2 = CHAR_FRAME_BOTTOM_LEFT;
     // POP_HL;
     // PUSH_HL;
     // INC_HL;
@@ -4997,9 +4997,9 @@ void Function11d035(const uint8_t* de){
             // PUSH_AF;
             // LD_A(0x7a);
             // LD_hli_A;
-            *(hl2++) = 0x7a;
+            *(hl2++) = CHAR_FRAME_TOP;
             // LD_bc_A;
-            *(bc++) = 0x7a;
+            *(bc++) = CHAR_FRAME_TOP;
             // INC_BC;
             // POP_AF;
             // DEC_A;
@@ -5042,7 +5042,7 @@ void Function11d035(const uint8_t* de){
     // loop2:
         // LD_A(0x7c);
         // LD_hl_A;
-        *hl2 = 0x7c;
+        *hl2 = CHAR_FRAME_SIDE;
         // ADD_HL_DE;
         hl2 += SCREEN_WIDTH;
         // DEC_C;
@@ -5053,7 +5053,7 @@ void Function11d035(const uint8_t* de){
     // loop3:
         // LD_A(0x7c);
         // LD_hl_A;
-        *bc = 0x7c;
+        *bc = CHAR_FRAME_SIDE;
         // ADD_HL_DE;
         bc += SCREEN_WIDTH;
         // DEC_B;

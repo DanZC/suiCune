@@ -145,7 +145,7 @@ const txt_cmd_s DaisyAlrightText[] = {
         t_done )
 };
 const txt_cmd_s GroomedMonLooksContentText[] = {
-    text_ram(wram_ptr(wStringBuffer3))
+    text_ram(gMisc.stringBuffer3)
     text_start(" looks"
         t_line "content."
         t_done )
