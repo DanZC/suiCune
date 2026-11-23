@@ -1,14 +1,14 @@
 #pragma once
 
-uint8_t* Utf8ToCrystal(const char* src);
-uint8_t* Utf8ToCrystalBuffer(uint8_t* dest, size_t dest_size, const char* src);
-uint8_t* CrystalStrncpy(uint8_t* dest, size_t dest_size, const uint8_t* src, size_t src_size);
+xchar_t* Utf8ToCrystal(const char* src);
+xchar_t* Utf8ToCrystalBuffer(xchar_t* dest, size_t dest_size, const char* src);
+xchar_t* CrystalStrncpy(xchar_t* dest, size_t dest_size, const xchar_t* src, size_t src_size);
 void CopyStringToGB(uint16_t dest, const char* src);
 void CopyUTF8StringToGB(uint16_t dest, const char* src);
 void CopyUTF8NStringToGB(uint16_t dest, uint16_t n, const char* src);
-void CopyStringFromGB(uint8_t* dest, size_t dest_size, uint16_t src);
+void CopyStringFromGB(xchar_t* dest, size_t dest_size, uint16_t src);
 uint16_t PrintCrystalStringFromGB(uint16_t ptr);
-uint8_t* PrintCrystalStringFromRAM(uint8_t* ptr);
+xchar_t* PrintCrystalStringFromRAM(xchar_t* ptr);
 
 /// Convenience macros
 

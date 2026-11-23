@@ -5,7 +5,7 @@
 #include "../charmap.h"
 #include "../constants.h"
 
-uint8_t lCrystalTextConvBuffer[1024];
+xchar_t lCrystalTextConvBuffer[1024];
 
 #define KEY_AND_SIZE(_key) _key, sizeof(_key) - 1
 #define CHARMAP_ENTRY(_key, _value) {KEY_AND_SIZE(_key), _value}
@@ -14,7 +14,7 @@ uint8_t lCrystalTextConvBuffer[1024];
 static const struct {
     const char* const key;
     unsigned int key_size;
-    uint8_t value;
+    xchar_t value;
 } charmp[] = {
     CHARMAP_ENTRY("<NULL>", CHAR_NULL),
     CHARMAP_ENTRY("<PLAY_G>", CHAR_PLAY_G),
@@ -175,7 +175,7 @@ uint8_t* Utf8ToCrystal(const char* src)
 
 // Converts UTF-8 encoded string to Crystal encoding.
 // Returns address to passed buffer containing encoded string.
-uint8_t* Utf8ToCrystalBuffer(uint8_t* dest, size_t dest_size, const char* src)
+xchar_t* Utf8ToCrystalBuffer(xchar_t* dest, size_t dest_size, const char* src)
 {
     size_t i = 0;
     while(i < dest_size - 1 && *src)
@@ -218,7 +218,7 @@ uint8_t* Utf8ToCrystalBuffer(uint8_t* dest, size_t dest_size, const char* src)
     return dest;
 }
 
-uint8_t* CrystalStrncpy(uint8_t* dest, size_t dest_size, const uint8_t* src, size_t src_size) {
+xchar_t* CrystalStrncpy(xchar_t* dest, size_t dest_size, const xchar_t* src, size_t src_size) {
     if(dest_size == 0) {
         return dest;
     }
@@ -281,7 +281,7 @@ void CopyStringFromGB(uint8_t* dest, size_t dest_size, uint16_t src)
 
 // Prints Crystal encoded string from GB address to standard output as UTF-8 text.
 uint16_t PrintCrystalStringFromGB(uint16_t ptr) {
-    uint8_t c = gb_read(ptr);
+    xchar_t c = gb_read(ptr);
     char buf[2];
     buf[1] = '\0';
     while(c != CHAR_TERM && c != CHAR_DONE && c != CHAR_PROMPT) {
@@ -342,8 +342,8 @@ uint16_t PrintCrystalStringFromGB(uint16_t ptr) {
 }
 
 // Prints Crystal encoded string from RAM address to standard output as UTF-8 text.
-uint8_t* PrintCrystalStringFromRAM(uint8_t* ptr) {
-    uint8_t c = *(ptr);
+xchar_t* PrintCrystalStringFromRAM(xchar_t* ptr) {
+    xchar_t c = *(ptr);
     char buf[2];
     buf[1] = '\0';
     while(c != CHAR_TERM && c != CHAR_DONE && c != CHAR_PROMPT) {

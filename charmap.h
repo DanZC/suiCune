@@ -169,8 +169,8 @@
 	charmap "Y",         $98
 	charmap "Z",         $99
 */
-#define CHAR_A          ((uint8_t)'\x80') // "A"
-#define CHAR_Z          ((uint8_t)'\x99') // "Z"
+#define CHAR_A          ((xchar_t)'\x80') // "A"
+#define CHAR_Z          ((xchar_t)'\x99') // "Z"
 
 /*
 	charmap "a",         $a0
@@ -200,8 +200,8 @@
 	charmap "y",         $b8
 	charmap "z",         $b9
 */
-#define CHAR_a          ((uint8_t)'\xa0') // "a"
-#define CHAR_z          ((uint8_t)'\xb9') // "z"
+#define CHAR_a          ((xchar_t)'\xa0') // "a"
+#define CHAR_z          ((xchar_t)'\xb9') // "z"
 
 /*
 	charmap "?",         $e6
@@ -209,10 +209,10 @@
 	charmap ".",         $e8
 	charmap "&",         $e9
 */
-#define CHAR_QMARK      ((uint8_t)'\xe6') // "?"
-#define CHAR_EMARK      ((uint8_t)'\xe7') // "!"
-#define CHAR_PERIOD     ((uint8_t)'\xe8') // "."
-#define CHAR_AMPERSAND  ((uint8_t)'\xe9') // "&"
+#define CHAR_QMARK      ((xchar_t)'\xe6') // "?"
+#define CHAR_EMARK      ((xchar_t)'\xe7') // "!"
+#define CHAR_PERIOD     ((xchar_t)'\xe8') // "."
+#define CHAR_AMPERSAND  ((xchar_t)'\xe9') // "&"
 
 /*
 	charmap "(",         $9a
@@ -222,12 +222,12 @@
 	charmap "[",         $9e
 	charmap "]",         $9f
 */
-#define CHAR_LPAREN     ((uint8_t)'\x9a') // "("
-#define CHAR_RPAREN     ((uint8_t)'\x9b') // ")"
-#define CHAR_COLON2     ((uint8_t)'\x9c') // ":"
-#define CHAR_SEMICOLON  ((uint8_t)'\x9d') // ";"
-#define CHAR_LBRACKET   ((uint8_t)'\x9e') // "["
-#define CHAR_RBRACKET   ((uint8_t)'\x9f') // "]"
+#define CHAR_LPAREN     ((xchar_t)'\x9a') // "("
+#define CHAR_RPAREN     ((xchar_t)'\x9b') // ")"
+#define CHAR_COLON2     ((xchar_t)'\x9c') // ":"
+#define CHAR_SEMICOLON  ((xchar_t)'\x9d') // ";"
+#define CHAR_LBRACKET   ((xchar_t)'\x9e') // "["
+#define CHAR_RBRACKET   ((xchar_t)'\x9f') // "]"
 
 /*
 	charmap "'d",        $d0
@@ -238,13 +238,13 @@
 	charmap "'t",        $d5
 	charmap "'v",        $d6
 */
-#define CHAR_APOS_D     ((uint8_t)'\xd0') // "'d"
-#define CHAR_APOS_L     ((uint8_t)'\xd1') // "'l"
-#define CHAR_APOS_M     ((uint8_t)'\xd2') // "'m"
-#define CHAR_APOS_R     ((uint8_t)'\xd3') // "'r"
-#define CHAR_APOS_S     ((uint8_t)'\xd4') // "'s"
-#define CHAR_APOS_T     ((uint8_t)'\xd5') // "'t"
-#define CHAR_APOS_V     ((uint8_t)'\xd6') // "'v"
+#define CHAR_APOS_D     ((xchar_t)'\xd0') // "'d"
+#define CHAR_APOS_L     ((xchar_t)'\xd1') // "'l"
+#define CHAR_APOS_M     ((xchar_t)'\xd2') // "'m"
+#define CHAR_APOS_R     ((xchar_t)'\xd3') // "'r"
+#define CHAR_APOS_S     ((xchar_t)'\xd4') // "'s"
+#define CHAR_APOS_T     ((xchar_t)'\xd5') // "'t"
+#define CHAR_APOS_V     ((xchar_t)'\xd6') // "'v"
 
 /*
 	charmap "←",         $df
@@ -253,11 +253,11 @@
 	charmap "<MN>",      $e2
 	charmap "-",         $e3
 */
-#define CHAR_LEFT_ARROW    ((uint8_t)'\xdf') // "←"
-#define CHAR_SINGLE_QUOTE  ((uint8_t)'\xe0') // "'"
-#define CHAR_PK            ((uint8_t)'\xe1') // "<PK>"
-#define CHAR_MN            ((uint8_t)'\xe2') // "<MN>"
-#define CHAR_DASH          ((uint8_t)'\xe3') // "-"
+#define CHAR_LEFT_ARROW    ((xchar_t)'\xdf') // "←"
+#define CHAR_SINGLE_QUOTE  ((xchar_t)'\xe0') // "'"
+#define CHAR_PK            ((xchar_t)'\xe1') // "<PK>"
+#define CHAR_MN            ((xchar_t)'\xe2') // "<MN>"
+#define CHAR_DASH          ((xchar_t)'\xe3') // "-"
 
 /*
 	charmap "0",         $f6
@@ -271,8 +271,8 @@
 	charmap "8",         $fe
 	charmap "9",         $ff
 */
-#define CHAR_0       ((uint8_t)'\xf6')
-#define CHAR_9       ((uint8_t)'\xff')
+#define CHAR_0       ((xchar_t)'\xf6')
+#define CHAR_9       ((xchar_t)'\xff')
 
 /*
 	charmap "┌",         $79
@@ -320,18 +320,18 @@
 	charmap ",",         $f4
 	charmap "♀",         $f5
 */
-#define CHAR_ACCENT_E         ((uint8_t)'\xea') // "é"
-#define CHAR_RIGHT_ARROW      ((uint8_t)'\xeb') // "→"
-#define CHAR_RIGHT_CURSOR_SEL ((uint8_t)'\xec') // "▷"
-#define CHAR_RIGHT_CURSOR     ((uint8_t)'\xed') // "▶"
-#define CHAR_DOWN_CURSOR      ((uint8_t)'\xee') // "▼"
-#define CHAR_MALE_ICON        ((uint8_t)'\xef') // "♂"
-#define CHAR_MONEY_ICON       ((uint8_t)'\xf0') // "¥"
-#define CHAR_TIMES            ((uint8_t)'\xf1') // "×"
-#define CHAR_DOT              ((uint8_t)'\xf2') // "<DOT>", decimal point; same as "." in English
-#define CHAR_FWD_SLASH        ((uint8_t)'\xf3') // "/"
-#define CHAR_COMMA            ((uint8_t)'\xf4') // ","
-#define CHAR_FEMALE_ICON      ((uint8_t)'\xf5') // "♀"
+#define CHAR_ACCENT_E         ((xchar_t)'\xea') // "é"
+#define CHAR_RIGHT_ARROW      ((xchar_t)'\xeb') // "→"
+#define CHAR_RIGHT_CURSOR_SEL ((xchar_t)'\xec') // "▷"
+#define CHAR_RIGHT_CURSOR     ((xchar_t)'\xed') // "▶"
+#define CHAR_DOWN_CURSOR      ((xchar_t)'\xee') // "▼"
+#define CHAR_MALE_ICON        ((xchar_t)'\xef') // "♂"
+#define CHAR_MONEY_ICON       ((xchar_t)'\xf0') // "¥"
+#define CHAR_TIMES            ((xchar_t)'\xf1') // "×"
+#define CHAR_DOT              ((xchar_t)'\xf2') // "<DOT>", decimal point; same as "." in English
+#define CHAR_FWD_SLASH        ((xchar_t)'\xf3') // "/"
+#define CHAR_COMMA            ((xchar_t)'\xf4') // ","
+#define CHAR_FEMALE_ICON      ((xchar_t)'\xf5') // "♀"
 
 // Japanese control characters (see home/text.asm)
 #define CHAR_KOUGEKI 	('\x23') // "こうげき"

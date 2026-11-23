@@ -81,6 +81,8 @@ typedef uint8_t tile_t;
 typedef uint16_t sfx_t;
 typedef uint16_t color_t;
 
+typedef uint8_t xchar_t;        // Crystal format string character type
+
 // Type constants
 #define SPECIES_NULL ((species_t)-1)
 #define ITEM_NULL ((item_t)-1)
@@ -2410,11 +2412,10 @@ struct Audio {
 };
 
 struct Misc {
-    uint8_t TMHMMoveNameBackup[MOVE_NAME_LENGTH];
-    uint8_t stringBuffer1[STRING_BUFFER_LENGTH];
-    uint8_t stringBuffer2[STRING_BUFFER_LENGTH];
-    uint8_t stringBuffer3[STRING_BUFFER_LENGTH];
-    uint8_t stringBuffer4[STRING_BUFFER_LENGTH];
-    uint8_t stringBuffer5[STRING_BUFFER_LENGTH];
+    xchar_t TMHMMoveNameBackup[MOVE_NAME_LENGTH];
+    xchar_t stringBuffer1[STRING_BUFFER_LENGTH];
+    xchar_t stringBuffer2[STRING_BUFFER_LENGTH];
+    xchar_t stringBuffer3[STRING_BUFFER_LENGTH];
+    xchar_t stringBuffer4[STRING_BUFFER_LENGTH];
+    xchar_t stringBuffer5[STRING_BUFFER_LENGTH];
 };
-
