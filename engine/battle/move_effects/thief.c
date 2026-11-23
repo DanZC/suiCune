@@ -25,7 +25,7 @@ static void BattleCommand_Thief_enemyitem(item_t** de, item_t** hl) {
     // LD_D_H;
     // LD_E_L;
     if(de)
-        *de = &wram->wOTPartyMon[wram->wCurOTMon].mon.item;
+        *de = &wram->wOTPartyMon[gBattle.curOTMon].mon.item;
     // LD_HL(wEnemyMonItem);
     if(hl)
         *hl = &wram->wEnemyMon.item;
@@ -76,7 +76,7 @@ void BattleCommand_Thief(void){
         // LD_A_addr(wEffectFailed);
         // AND_A_A;
         // RET_NZ ;
-        if(wram->wEffectFailed)
+        if(gBattle.effectFailed)
             return;
 
         // LD_A_addr(wLinkMode);
@@ -146,7 +146,7 @@ void BattleCommand_Thief(void){
         // LD_A_addr(wEffectFailed);
         // AND_A_A;
         // RET_NZ ;
-        if(wram->wEffectFailed)
+        if(gBattle.effectFailed)
             return;
 
     //  If the enemy steals your item,

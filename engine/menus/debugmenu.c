@@ -943,7 +943,7 @@ void DebugMenu_BattleAnim(void) {
     //     wbank_pop;
     // }
     TryAddMonToParty(PIKACHU, 50);
-    U82CA(wram->wBattleMonNickname, "PIKACHU@");
+    U82CA(gBattle.battleMonNickname, "PIKACHU@");
 
     wram->wCurPartySpecies = CHARIZARD;
     wram->wCurPartyLevel = 50;
@@ -955,10 +955,10 @@ void DebugMenu_BattleAnim(void) {
     //     wbank_pop;
     // }
     TryAddMonToParty(CHARIZARD, 50);
-    U82CA(wram->wEnemyMonNickname, "CHARIZARD@");
+    U82CA(gBattle.enemyMonNickname, "CHARIZARD@");
 
     wram->wCurPartyMon = 0;
-    wram->wCurOTMon = 0;
+    gBattle.curOTMon = 0;
 
     LoadEnemyMonToSwitchTo(0);
     UpdateEnemyHUD();
@@ -1021,15 +1021,15 @@ void DebugMenu_BattleAnim(void) {
         if(hram.hJoyPressed & (A_BUTTON)) {
             if(anim == NUM_BATTLE_ANIMS + 1) {
                 wram->wFXAnimID = ANIM_THROW_POKE_BALL;
-                wram->wBattleAnimParam = POKE_BALL;
+                gBattle.battleAnimParam = POKE_BALL;
             }
             else if(anim == GROWL || anim == ROAR) {
                 wram->wFXAnimID = anim;
-                wram->wBattleAnimParam = (hram.hBattleTurn == TURN_PLAYER)? wram->wBattleMon.species: wram->wEnemyMon.species;
+                gBattle.battleAnimParam = (hram.hBattleTurn == TURN_PLAYER)? gBattle.battleMon.species: wram->wEnemyMon.species;
             }
             else {
                 wram->wFXAnimID = anim;
-                wram->wBattleAnimParam = 0;
+                gBattle.battleAnimParam = 0;
             }
             wram->wNumHits = 1;
             WaitBGMap();

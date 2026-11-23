@@ -62,11 +62,10 @@ uint8_t* GetOTName(uint8_t c){
     // LD_DE(wOTClassName);
     // PUSH_DE;
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOTClassName, hl, TRAINER_CLASS_NAME_LENGTH);
-    wram->wOTClassName[TRAINER_CLASS_NAME_LENGTH - 1] = CHAR_TERM;
+    CrystalStrncpy(gBattle.OTClassName, sizeof(gBattle.OTClassName), hl, TRAINER_CLASS_NAME_LENGTH);
     // POP_DE;
     // RET;
-    return wram->wOTClassName;
+    return gBattle.OTClassName;
 }
 
 void GetTrainerAttributes(uint8_t tclass){
@@ -83,13 +82,13 @@ void GetTrainerAttributes(uint8_t tclass){
     // LD_DE(wEnemyTrainerItem1);
     // LD_A_hli;
     // LD_de_A;
-    wram->wEnemyTrainerItem1 = hl->items[0];
+    gBattle.enemyTrainerItems[0] = hl->items[0];
     // INC_DE;
     // LD_A_hli;
     // LD_de_A;
-    wram->wEnemyTrainerItem2 = hl->items[1];
+    gBattle.enemyTrainerItems[1] = hl->items[1];
     // LD_A_hl;
     // LD_addr_A(wEnemyTrainerBaseReward);
-    wram->wEnemyTrainerBaseReward = hl->baseMoney;
+    gBattle.enemyTrainerBaseReward = hl->baseMoney;
     // RET;
 }

@@ -4339,12 +4339,12 @@ static bool BGEffect_CheckFlyDigStatus(struct BattleBGEffect* bc) {
         // LD_A_addr(wPlayerSubStatus3);  // PlayerSubStatus3
         // AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
         // RET;
-        return (wram->wPlayerSubStatus3 & (1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND)) != 0;
+        return (gBattle.player.subStatus3 & (1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND)) != 0;
     }
     // LD_A_addr(wEnemySubStatus3);  // EnemySubStatus3
     // AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
     // RET;
-    return (wram->wEnemySubStatus3 & (1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND)) != 0;
+    return (gBattle.enemy.subStatus3 & (1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND)) != 0;
 }
 
 static bool BattleBGEffects_CheckSGB(void) {

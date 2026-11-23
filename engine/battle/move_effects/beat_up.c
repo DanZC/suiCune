@@ -25,14 +25,14 @@ void BattleCommand_BeatUp(void){
         // BIT_A(SUBSTATUS_IN_LOOP);
         // IF_NZ goto next_mon;
 
-        if(bit_test(wram->wPlayerSubStatus3, SUBSTATUS_IN_LOOP)) {
+        if(bit_test(gBattle.player.subStatus3, SUBSTATUS_IN_LOOP)) {
         // next_mon:
             // LD_A_addr(wPlayerRolloutCount);
             // LD_B_A;
             // LD_A_addr(wPartyCount);
             // SUB_A_B;
             // LD_addr_A(wCurBeatUpPartyMon);
-            wram->wCurBeatUpPartyMon = (gPokemon.partyCount - wram->wPlayerRolloutCount);
+            wram->wCurBeatUpPartyMon = (gPokemon.partyCount - gBattle.player.rolloutCount);
         }
         else {
             // LD_C(20);
@@ -40,11 +40,11 @@ void BattleCommand_BeatUp(void){
             DelayFrames(20);
             // XOR_A_A;
             // LD_addr_A(wPlayerRolloutCount);
-            wram->wPlayerRolloutCount = 0;
+            gBattle.player.rolloutCount = 0;
             // LD_addr_A(wCurBeatUpPartyMon);
             wram->wCurBeatUpPartyMon = 0;
             // LD_addr_A(wBeatUpHitAtLeastOnce);
-            wram->wBeatUpHitAtLeastOnce = 0;
+            gBattle.beatUpHitAtLeastOnce = 0;
             // goto got_mon;
         }
 
@@ -76,7 +76,7 @@ void BattleCommand_BeatUp(void){
         if(wram->wCurBattleMon == HIGH(mon->HP))
     #endif
         {
-            status = wram->wBattleMon.status[0];
+            status = gBattle.battleMon.status[0];
         }
         else 
         {
@@ -96,7 +96,7 @@ void BattleCommand_BeatUp(void){
 
         // LD_A(0x1);
         // LD_addr_A(wBeatUpHitAtLeastOnce);
-        wram->wBeatUpHitAtLeastOnce = 0x1;
+        gBattle.beatUpHitAtLeastOnce = 0x1;
         // LD_HL(mBeatUpAttackText);
         // CALL(aStdBattleTextbox);
         StdBattleTextbox(BeatUpAttackText);
@@ -133,7 +133,7 @@ void BattleCommand_BeatUp(void){
 
         // LD_A_addr(wPlayerMoveStructPower);
         // LD_D_A;
-        gBattleCmdState.d = wram->wPlayerMoveStruct.power;
+        gBattleCmdState.d = gBattle.playerMoveStruct.power;
         // RET;
         return;
     }
@@ -143,23 +143,23 @@ void BattleCommand_BeatUp(void){
         // BIT_A(SUBSTATUS_IN_LOOP);
         // IF_NZ goto enemy_next_mon;
 
-        if(bit_test(wram->wEnemySubStatus3, SUBSTATUS_IN_LOOP)) {
+        if(bit_test(gBattle.enemy.subStatus3, SUBSTATUS_IN_LOOP)) {
         // enemy_next_mon:
             // LD_A_addr(wEnemyRolloutCount);
             // LD_B_A;
             // LD_A_addr(wOTPartyCount);
             // SUB_A_B;
             // LD_addr_A(wCurBeatUpPartyMon);
-            wram->wCurBeatUpPartyMon = wram->wOTPartyCount - wram->wEnemyRolloutCount;
+            wram->wCurBeatUpPartyMon = wram->wOTPartyCount - gBattle.enemy.rolloutCount;
         }
         else {
             // XOR_A_A;
             // LD_addr_A(wEnemyRolloutCount);
-            wram->wEnemyRolloutCount = 0;
+            gBattle.enemy.rolloutCount = 0;
             // LD_addr_A(wCurBeatUpPartyMon);
             wram->wCurBeatUpPartyMon = 0;
             // LD_addr_A(wBeatUpHitAtLeastOnce);
-            wram->wBeatUpHitAtLeastOnce = 0;
+            gBattle.beatUpHitAtLeastOnce = 0;
             // goto enemy_got_mon;
         }
 
@@ -227,7 +227,7 @@ void BattleCommand_BeatUp(void){
         // LD_HL(wEnemyMonStatus);
         // IF_Z goto active_enemy;
         uint8_t status;
-        if(wram->wCurBeatUpPartyMon == wram->wCurOTMon) {
+        if(wram->wCurBeatUpPartyMon == gBattle.curOTMon) {
             status = wram->wEnemyMon.status[0];
         }
         else {
@@ -245,7 +245,7 @@ void BattleCommand_BeatUp(void){
 
         // LD_A(0x1);
         // LD_addr_A(wBeatUpHitAtLeastOnce);
-        wram->wBeatUpHitAtLeastOnce = 0x1;
+        gBattle.beatUpHitAtLeastOnce = 0x1;
         // goto finish_beatup;
 
     // finish_beatup:
@@ -255,9 +255,9 @@ void BattleCommand_BeatUp(void){
 
         // LD_A_addr(wBattleMonSpecies);
         // LD_addr_A(wCurSpecies);
-        wram->wCurSpecies = wram->wBattleMon.species;
+        wram->wCurSpecies = gBattle.battleMon.species;
         // CALL(aGetBaseData);
-        GetBaseData(wram->wBattleMon.species);
+        GetBaseData(gBattle.battleMon.species);
         // LD_A_addr(wBaseDefense);
         // LD_C_A;
         gBattleCmdState.c = wram->wBaseDefense;
@@ -285,7 +285,7 @@ void BattleCommand_BeatUp(void){
 
         // LD_A_addr(wEnemyMoveStructPower);
         // LD_D_A;
-        gBattleCmdState.d = wram->wEnemyMoveStruct.power;
+        gBattleCmdState.d = gBattle.enemyMoveStruct.power;
         // RET;
         return;
     }
@@ -304,11 +304,11 @@ void BattleCommand_BeatUpFailText(void){
     // LD_A_addr(wBeatUpHitAtLeastOnce);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wBeatUpHitAtLeastOnce)
+    if(gBattle.beatUpHitAtLeastOnce)
         return;
 
 #if BUGFIX_BEAT_UP_FAIL_TEXT
-    wram->wAttackMissed = TRUE;
+    gBattle.attackMissed = TRUE;
 #endif
 
     // JP(mPrintButItFailed);

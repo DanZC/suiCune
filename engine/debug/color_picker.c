@@ -557,7 +557,7 @@ static void DebugColor_InitScreen(void){
         // LD_DE(wStringBuffer1);
         // hlcoord(4, 1, wTilemap);
         // CALL(aPlaceString);
-        PlaceStringSimple(wram->wOTClassName, coord(4, 1, wram->wTilemap));
+        PlaceStringSimple(gBattle.OTClassName, coord(4, 1, wram->wTilemap));
         // LD_DE(vTiles2);
         // CALLFAR(aGetTrainerPic);
         GetTrainerPic(vram->vTiles2, wram->wTrainerClass);

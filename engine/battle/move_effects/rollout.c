@@ -14,7 +14,7 @@ void BattleCommand_CheckCurl(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_DE(wEnemyRolloutCount);
-    uint8_t* de = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    uint8_t* de = &UserBattleStatus()->rolloutCount;
 
 // ok:
     // LD_A(BATTLE_VARS_SUBSTATUS1);
@@ -50,16 +50,16 @@ void BattleCommand_RolloutPower(void){
     // AND_A_A;
     // IF_Z goto got_rollout_count;
     // LD_HL(wEnemyRolloutCount);
-    uint8_t* hl = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    struct BattleStatus* status = UserBattleStatus();
 
 // got_rollout_count:
     // LD_A_hl;
     // AND_A_A;
     // IF_NZ goto skip_set_rampage;
-    if(*hl == 0) {
+    if(status->rolloutCount == 0) {
         // LD_A(1);
         // LD_addr_A(wSomeoneIsRampaging);
-        wram->wSomeoneIsRampaging = TRUE;
+        gBattle.someoneIsRampaging = TRUE;
     }
 
 // skip_set_rampage:
@@ -67,7 +67,7 @@ void BattleCommand_RolloutPower(void){
     // AND_A_A;
     // IF_Z goto hit;
 
-    if(wram->wAttackMissed) {
+    if(gBattle.attackMissed) {
         // LD_A(BATTLE_VARS_SUBSTATUS1);
         // CALL(aGetBattleVarAddr);
         // RES_hl(6);
@@ -80,7 +80,7 @@ void BattleCommand_RolloutPower(void){
     // INC_hl;
     // LD_A_hl;
     // LD_B_A;
-    uint8_t b = ++*hl;
+    uint8_t b = ++status->rolloutCount;
     // CP_A(MAX_ROLLOUT_COUNT);
     // IF_C goto not_done_with_rollout;
 

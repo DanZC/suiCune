@@ -31,14 +31,14 @@ uint8_t GetPokeBallWobble(void){
         // LD_C(1);  // caught
         // IF_NZ goto done;
         // LD_C(2);  // escaped
-        c = (wram->wWildMon == 0)? 2: 1;
+        c = (gBattle.wildMon == 0)? 2: 1;
     }
 
     // LD_A_addr(wWildMon);
     // AND_A_A;
     // LD_C(0);  // next
     // IF_NZ goto done;
-    else if(wram->wWildMon != 0) {
+    else if(gBattle.wildMon != 0) {
         c = 0;
     }
 

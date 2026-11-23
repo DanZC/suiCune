@@ -78,7 +78,7 @@ void DisplayCaughtContestMonStats(void){
     PrintLevel(st.bc, gPokemon.contestMon.mon.level);
 
     // LD_DE(wEnemyMonNickname);
-    st.de = wram->wEnemyMonNickname;
+    st.de = gBattle.enemyMonNickname;
     // hlcoord(1, 8, wTilemap);
     st.hl = coord(1, 8, wram->wTilemap);
     // CALL(aPlaceString);

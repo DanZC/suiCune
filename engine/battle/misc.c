@@ -175,7 +175,7 @@ void DoWeatherModifiers(void){
     const uint8_t* de = WeatherTypeModifiers;
     // LD_A_addr(wBattleWeather);
     // LD_B_A;
-    uint8_t b = wram->wBattleWeather;
+    uint8_t b = gBattle.battleWeather;
     // LD_A_addr(wCurType);
     // LD_C_A;
     uint8_t c = wram->wCurType;

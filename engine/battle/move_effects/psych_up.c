@@ -17,8 +17,8 @@ void BattleCommand_PsychUp(void){
     // LD_H_D;
     // LD_L_E;
     // POP_DE;
-    uint8_t* hl = (hram.hBattleTurn == TURN_PLAYER)? wram->wEnemyStatLevels: wram->wPlayerStatLevels;
-    uint8_t* de = (hram.hBattleTurn == TURN_PLAYER)? wram->wPlayerStatLevels: wram->wEnemyStatLevels;
+    uint8_t* hl = OpponentBattleStatus()->statLevels;
+    uint8_t* de = UserBattleStatus()->statLevels;
 
 // pointers_correct:
     // PUSH_HL;

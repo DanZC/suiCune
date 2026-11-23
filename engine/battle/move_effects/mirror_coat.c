@@ -9,7 +9,7 @@ void BattleCommand_MirrorCoat(void){
 
     // LD_A(1);
     // LD_addr_A(wAttackMissed);
-    wram->wAttackMissed = TRUE;
+    gBattle.attackMissed = TRUE;
 
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
@@ -89,7 +89,7 @@ void BattleCommand_MirrorCoat(void){
 
     // XOR_A_A;
     // LD_addr_A(wAttackMissed);
-    wram->wAttackMissed = FALSE;
+    gBattle.attackMissed = FALSE;
     // RET;
 
 }

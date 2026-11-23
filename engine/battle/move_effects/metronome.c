@@ -16,12 +16,12 @@ void BattleCommand_Metronome(void){
     if(!CheckUserIsCharging()) {
         // LD_A_addr(wBattleAnimParam);
         // PUSH_AF;
-        uint8_t param = wram->wBattleAnimParam;
+        uint8_t param = gBattle.battleAnimParam;
         // CALL(aBattleCommand_LowerSub);
         BattleCommand_LowerSub();
         // POP_AF;
         // LD_addr_A(wBattleAnimParam);
-        wram->wBattleAnimParam = param;
+        gBattle.battleAnimParam = param;
     }
 
 // charging:

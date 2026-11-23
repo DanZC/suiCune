@@ -57,9 +57,9 @@
 #define anim_call(_f)               ANIM_CMD1(BattleAnimCmd_Call, _f)
 #define anim_ret                    ANIM_RET
 
-#define anim_if_param_and(_n, _f)   if(wram->wBattleAnimParam & (_n)) goto _f;
-#define anim_if_param_equal(_n, _f) if(wram->wBattleAnimParam == (_n)) goto _f;
+#define anim_if_param_and(_n, _f)   if(gBattle.battleAnimParam & (_n)) goto _f;
+#define anim_if_param_equal(_n, _f) if(gBattle.battleAnimParam == (_n)) goto _f;
 #define anim_if_var_equal(_n, _f)   if(wram->wBattleAnimVar == (_n)) goto _f;
 #define anim_jump(_dest)            goto _dest;
 #define anim_loop(_c, _d)           if(BattleAnimCmd_LoopInline(_c)) goto _d;
-#define anim_jumpuntil(_d)          if(wram->wBattleAnimParam-- != 0) goto _d; wram->wBattleAnimParam = 0;
+#define anim_jumpuntil(_d)          if(gBattle.battleAnimParam-- != 0) goto _d; gBattle.battleAnimParam = 0;

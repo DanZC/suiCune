@@ -458,7 +458,7 @@ void PlaceBattlersName(struct TextPrintState* state, bool is_enemy) {
 
         // LD_DE(wBattleMonNickname);
         // JR(mPlaceCommandCharacter);
-        return PlaceCommandCharacter(state, wram->wBattleMonNickname);
+        return PlaceCommandCharacter(state, gBattle.battleMonNickname);
     }
 
 // enemy:
@@ -471,7 +471,7 @@ void PlaceBattlersName(struct TextPrintState* state, bool is_enemy) {
     state->hl = temp.bc;
     // LD_DE(wEnemyMonNickname);
     // JR(mPlaceCommandCharacter);
-    return PlaceCommandCharacter(state, wram->wEnemyMonNickname);
+    return PlaceCommandCharacter(state, gBattle.enemyMonNickname);
 }
 
 void PlaceEnemysName(struct TextPrintState* state) {
@@ -486,7 +486,7 @@ void PlaceEnemysName(struct TextPrintState* state) {
     // linkbattle:
         // LD_DE(wOTClassName);
         // JR(mPlaceCommandCharacter);
-        return PlaceCommandCharacter(state, wram->wOTClassName);
+        return PlaceCommandCharacter(state, gBattle.OTClassName);
     }
 
     // LD_A_addr(wTrainerClass);
@@ -503,7 +503,7 @@ void PlaceEnemysName(struct TextPrintState* state) {
 
     // LD_DE(wOTClassName);
     // CALL(aPlaceString);
-    struct TextPrintState temp = {.hl = state->hl, .de = wram->wOTClassName, .bc = state->bc};
+    struct TextPrintState temp = {.hl = state->hl, .de = gBattle.OTClassName, .bc = state->bc};
     PlaceString(&temp, state->hl);
     // LD_H_B;
     // LD_L_C;
@@ -515,7 +515,7 @@ void PlaceEnemysName(struct TextPrintState* state) {
     PlaceString(&temp, state->hl);
     // PUSH_BC;
     // CALLFAR(aBattle_GetTrainerName);
-    uint8_t* s = Battle_GetTrainerName();
+    xchar_t* s = Battle_GetTrainerName();
     // POP_HL;
     // LD_DE(wStringBuffer1);
     // JR(mPlaceCommandCharacter);
@@ -546,7 +546,7 @@ void PlaceGenderedPlayerName(struct TextPrintState* state) {
     return PlaceCommandCharacter(state, U82CA(buffer, "@")); // Kun suffix (empty string in English)
 }
 
-void PlaceCommandCharacter(struct TextPrintState* state, uint8_t* de) {
+void PlaceCommandCharacter(struct TextPrintState* state, xchar_t* de) {
     struct TextPrintState tempstate = {.hl = state->hl, .de = de, .bc = state->bc};
     // CALL(aPlaceString);
     PlaceString(&tempstate, state->hl);
@@ -2135,8 +2135,8 @@ void TextCommand_STRINGBUFFER_GB(struct TextPrintState* state) {
         case 2: de = gMisc.stringBuffer5; break;
         case 3: de = gMisc.stringBuffer2; break;
         case 4: de = gMisc.stringBuffer1; break;
-        case 5: de = wram->wEnemyMonNickname; break;
-        case 6: de = wram->wBattleMonNickname; break;
+        case 5: de = gBattle.enemyMonNickname; break;
+        case 6: de = gBattle.battleMonNickname; break;
         default: de = NULL; break;
     }
 
@@ -2183,8 +2183,8 @@ void TextCommand_STRINGBUFFER(struct TextCmdState* state, const struct TextCmd* 
         case 2: de = gMisc.stringBuffer5; break;
         case 3: de = gMisc.stringBuffer2; break;
         case 4: de = gMisc.stringBuffer1; break;
-        case 5: de = wram->wEnemyMonNickname; break;
-        case 6: de = wram->wBattleMonNickname; break;
+        case 5: de = gBattle.enemyMonNickname; break;
+        case 6: de = gBattle.battleMonNickname; break;
         default: de = NULL; break;
     }
 

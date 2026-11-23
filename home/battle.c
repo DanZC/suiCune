@@ -82,7 +82,7 @@ struct PartyMon* UserPartyMon(void){
     if(hram.hBattleTurn != TURN_PLAYER)
     {
         // JR(mOTPartyAttr);
-        return wram->wOTPartyMon + wram->wCurOTMon;
+        return wram->wOTPartyMon + gBattle.curOTMon;
     }
 
     // JR(mBattlePartyAttr);
@@ -111,7 +111,7 @@ struct PartyMon* OpponentPartyMon(void){
     if(hram.hBattleTurn == TURN_PLAYER)
     {
         // JR(mOTPartyAttr);
-        return wram->wOTPartyMon + wram->wCurOTMon;
+        return wram->wOTPartyMon + gBattle.curOTMon;
     }
 
     // JR(mBattlePartyAttr);
@@ -149,7 +149,33 @@ uint16_t OTPartyAttr(uint8_t a){
     // CALL(aGetPartyLocation);
     // POP_BC;
     // RET;
-    return GetPartyLocation_GB(hl, wram->wCurOTMon);
+    return GetPartyLocation_GB(hl, gBattle.curOTMon);
+}
+
+// turn == TURN_PLAYER ? BattleMon : EnemyMon
+struct BattleMon* UserBattleMon(void) {
+    return (hram.hBattleTurn == TURN_PLAYER)? &gBattle.battleMon: &wram->wEnemyMon;
+}
+
+// turn == TURN_PLAYER ? EnemyMon : BattleMon
+struct BattleMon* OpponentBattleMon(void) {
+    return (hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon: &gBattle.battleMon;
+}
+
+struct Move* UserMoveStruct(void) {
+    return (hram.hBattleTurn == TURN_PLAYER)? &gBattle.playerMoveStruct: &gBattle.enemyMoveStruct;
+}
+
+struct Move* OpponentMoveStruct(void) {
+    return (hram.hBattleTurn == TURN_PLAYER)? &gBattle.enemyMoveStruct: &gBattle.playerMoveStruct;
+}
+
+struct BattleStatus* UserBattleStatus(void) {
+    return (hram.hBattleTurn == TURN_PLAYER)? &gBattle.player: &gBattle.enemy;
+}
+
+struct BattleStatus* OpponentBattleStatus(void) {
+    return (hram.hBattleTurn == TURN_PLAYER)? &gBattle.enemy: &gBattle.player;
 }
 
 void ResetDamage(void){
@@ -210,10 +236,10 @@ void UpdateBattleMon(uint8_t a){
     // LD_HL(wBattleMonLevel);
     // LD_BC(wBattleMonMaxHP - wBattleMonLevel);
     // JP(mCopyBytes);
-    de->mon.level = wram->wBattleMon.level;
-    de->status = wram->wBattleMon.status[0];
-    de->unused = wram->wBattleMon.status[1];
-    de->HP = wram->wBattleMon.hp;
+    de->mon.level = gBattle.battleMon.level;
+    de->status = gBattle.battleMon.status[0];
+    de->unused = gBattle.battleMon.status[1];
+    de->HP = gBattle.battleMon.hp;
 }
 
 //  Update level, status, current HP
@@ -230,7 +256,7 @@ void UpdateEnemyMonInParty(void){
     // CALL(aGetPartyLocation);
     // LD_D_H;
     // LD_E_L;
-    struct PartyMon* de = wram->wOTPartyMon + wram->wCurOTMon;
+    struct PartyMon* de = wram->wOTPartyMon + gBattle.curOTMon;
 
     // LD_HL(wEnemyMonLevel);
     // LD_BC(wEnemyMonMaxHP - wEnemyMonLevel);

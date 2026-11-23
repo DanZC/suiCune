@@ -329,7 +329,7 @@ void StartTrainerBattle_DetermineWhichAnimation(void){
     // LD_HL(wEnemyMonLevel);
     // CP_A_hl;
     // IF_NC goto not_stronger;
-    if(wram->wBattleMon.level + 3 < wram->wEnemyMon.level) {
+    if(gBattle.battleMon.level + 3 < wram->wEnemyMon.level) {
         // SET_E(TRANS_STRONGER_F);
         bit_set(e, TRANS_STRONGER_F);
     }

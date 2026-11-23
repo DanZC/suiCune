@@ -115,7 +115,7 @@ void BattleCommand_BatonPass(void){
     //  Passed enemy PartyMon entrance
         // XOR_A_A;
         // LD_addr_A(wEnemySwitchMonIndex);
-        wram->wEnemySwitchMonIndex = 0;
+        gBattle.enemySwitchMonIndex = 0;
         // LD_HL(mEnemySwitch_SetMode);
         // CALL(aCallBattleCore);
         EnemySwitch_SetMode();
@@ -190,7 +190,7 @@ static void BatonPass_LinkEnemySwitch(void){
         // LD_A_addr(wCurOTMon);
         // ADD_A(BATTLEACTION_SWITCH1);
         // LD_addr_A(wBattleAction);
-        wram->wBattleAction = wram->wCurOTMon + BATTLEACTION_SWITCH1;
+        wram->wBattleAction = gBattle.curOTMon + BATTLEACTION_SWITCH1;
     }
 
 // switch_:
@@ -229,10 +229,10 @@ static void ResetBatonPassStatus(void){
 // Attraction isn't passed.
     // LD_HL(wPlayerSubStatus1);
     // RES_hl(SUBSTATUS_IN_LOVE);
-    bit_reset(wram->wPlayerSubStatus1, SUBSTATUS_IN_LOVE);
+    bit_reset(gBattle.player.subStatus1, SUBSTATUS_IN_LOVE);
     // LD_HL(wEnemySubStatus1);
     // RES_hl(SUBSTATUS_IN_LOVE);
-    bit_reset(wram->wEnemySubStatus1, SUBSTATUS_IN_LOVE);
+    bit_reset(gBattle.enemy.subStatus1, SUBSTATUS_IN_LOVE);
     // LD_HL(wPlayerSubStatus5);
 
     // LD_A(BATTLE_VARS_SUBSTATUS5);
@@ -251,9 +251,9 @@ static void ResetBatonPassStatus(void){
 
     // XOR_A_A;
     // LD_addr_A(wPlayerWrapCount);
-    wram->wPlayerWrapCount = 0;
+    gBattle.player.wrapCount = 0;
     // LD_addr_A(wEnemyWrapCount);
-    wram->wEnemyWrapCount = 0;
+    gBattle.enemy.wrapCount = 0;
     // RET;
 
 }
@@ -277,7 +277,7 @@ static bool CheckAnyOtherAliveEnemyMons(void){
 
 // fallthrough
 
-    return CheckAnyOtherAliveMons(wram->wOTPartyMon, wram->wOTPartyCount, wram->wCurOTMon);
+    return CheckAnyOtherAliveMons(wram->wOTPartyMon, wram->wOTPartyCount, gBattle.curOTMon);
 }
 
 static bool CheckAnyOtherAliveMons(struct PartyMon* party, uint8_t count, uint8_t curMon){

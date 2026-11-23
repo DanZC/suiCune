@@ -13,7 +13,7 @@ void BattleCommand_Spite(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // JP_NZ (mBattleCommand_Spite_failed);
-    if(wram->wAttackMissed)
+    if(gBattle.attackMissed)
         goto failed;
     // LD_BC(PARTYMON_STRUCT_LENGTH);  // unused
     // LD_HL(wEnemyMonMoves);
@@ -21,7 +21,7 @@ void BattleCommand_Spite(void){
     // AND_A_A;
     // IF_Z goto got_moves;
     // LD_HL(wBattleMonMoves);
-    struct BattleMon* mon = (hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon: &wram->wBattleMon;
+    struct BattleMon* mon = OpponentBattleMon();
 
 // got_moves:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
@@ -105,7 +105,7 @@ void BattleCommand_Spite(void){
         if(hram.hBattleTurn == TURN_PLAYER && wram->wBattleMode == WILD_BATTLE) {
             // LD_HL(wWildMonPP);
             // ADD_HL_BC;
-            pp = wram->wWildMonPP;
+            pp = gBattle.wildMonPP;
         }
 
     // not_wildmon:

@@ -31,7 +31,7 @@ void BattleCommand_Selfdestruct(void){
     hl[3] = 0;
     // LD_A(0x1);
     // LD_addr_A(wBattleAnimParam);
-    wram->wBattleAnimParam = 0x1;
+    gBattle.battleAnimParam = 0x1;
     // CALL(aBattleCommand_LowerSub);
     BattleCommand_LowerSub();
     // CALL(aLoadMoveAnim);

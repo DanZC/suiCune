@@ -74,12 +74,12 @@ uint8_t LearnMove(move_t toLearn){
         // LD_A_addr(wDisabledMove);
         // CP_A_B;
         // IF_NZ goto not_disabled;
-        if(wram->wBattleMode != 0 && wram->wDisabledMove == moves[idx]) {
+        if(wram->wBattleMode != 0 && gBattle.player.disabledMove == moves[idx]) {
             // XOR_A_A;
             // LD_addr_A(wDisabledMove);
-            wram->wDisabledMove = NO_MOVE;
+            gBattle.player.disabledMove = NO_MOVE;
             // LD_addr_A(wPlayerDisableCount);
-            wram->wPlayerDisableCount = 0;
+            gBattle.player.disableCount = 0;
         }
 
     // not_disabled:
@@ -125,19 +125,19 @@ uint8_t LearnMove(move_t toLearn){
         // BIT_A(SUBSTATUS_TRANSFORMED);
         // JP_NZ (mLearnMove_learned);
 
-        if(wram->wBattleMode != 0 && wram->wCurPartyMon == wram->wCurBattleMon && !bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TRANSFORMED)) {
+        if(wram->wBattleMode != 0 && wram->wCurPartyMon == wram->wCurBattleMon && !bit_test(gBattle.player.subStatus5, SUBSTATUS_TRANSFORMED)) {
             // LD_H_D;
             // LD_L_E;
             // LD_DE(wBattleMonMoves);
             // LD_BC(NUM_MOVES);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wBattleMon.moves, moves, sizeof(wram->wBattleMon.moves));
+            CopyBytes(gBattle.battleMon.moves, moves, sizeof(gBattle.battleMon.moves));
             // LD_BC(wPartyMon1PP - (wPartyMon1Moves + NUM_MOVES));
             // ADD_HL_BC;
             // LD_DE(wBattleMonPP);
             // LD_BC(NUM_MOVES);
             // CALL(aCopyBytes);
-            CopyBytes(wram->wBattleMon.pp, pp, sizeof(wram->wBattleMon.moves));
+            CopyBytes(gBattle.battleMon.pp, pp, sizeof(gBattle.battleMon.moves));
         }
         // JP(mLearnMove_learned);
     // learned:

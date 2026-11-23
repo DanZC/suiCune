@@ -13,14 +13,14 @@ void BattleCommand_Conversion2(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // IF_NZ goto failed;
-    if(wram->wAttackMissed)
+    if(gBattle.attackMissed)
         goto failed;
     // LD_HL(wBattleMonType1);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto got_type;
     // LD_HL(wEnemyMonType1);
-    struct BattleMon* mon = (hram.hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* mon = UserBattleMon();
 
 // got_type:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);

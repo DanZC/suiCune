@@ -424,7 +424,7 @@ void TrainerType4(const struct TrainerParty* de){
 }
 
 void ComputeTrainerReward(void){
-    log_debug("Trainer reward: base %d, level %d\n", wram->wEnemyTrainerBaseReward, wram->wCurPartyLevel);
+    log_debug("Trainer reward: base %d, level %d\n", gBattle.enemyTrainerBaseReward, wram->wCurPartyLevel);
     // LD_HL(hProduct);
     // XOR_A_A;
     // LD_hli_A;
@@ -435,22 +435,22 @@ void ComputeTrainerReward(void){
     // LD_A_addr(wCurPartyLevel);
     // LD_hl_A;  // hMultiplier
     // CALL(aMultiply);
-    uint32_t reward = wram->wEnemyTrainerBaseReward * wram->wCurPartyLevel;
+    uint32_t reward = gBattle.enemyTrainerBaseReward * wram->wCurPartyLevel;
     // LD_HL(wBattleReward);
     // XOR_A_A;
     // LD_hli_A;
-    wram->wBattleReward[0] = HIGH(reward >> 8);
+    gBattle.battleReward[0] = HIGH(reward >> 8);
     // LDH_A_addr(hProduct + 2);
     // LD_hli_A;
-    wram->wBattleReward[1] = HIGH(reward);
+    gBattle.battleReward[1] = HIGH(reward);
     // LDH_A_addr(hProduct + 3);
     // LD_hl_A;
-    wram->wBattleReward[2] = LOW(reward);
+    gBattle.battleReward[2] = LOW(reward);
     // RET;
 
 }
 
-uint8_t* Battle_GetTrainerName(void){
+xchar_t* Battle_GetTrainerName(void){
     // LD_A_addr(wInBattleTowerBattle);
     // BIT_A(0);
     // LD_HL(wOTPlayerName);
@@ -468,7 +468,7 @@ uint8_t* Battle_GetTrainerName(void){
     return GetTrainerName(b - 1, c);
 }
 
-uint8_t* GetTrainerName(uint8_t tid, uint8_t tclass){
+xchar_t* GetTrainerName(uint8_t tid, uint8_t tclass){
     log_debug("GetTrainerName: class:%d, id:%d\n", tclass, tid);
     // LD_A_C;
     // CP_A(CAL);
@@ -539,7 +539,7 @@ uint8_t* GetTrainerName(uint8_t tid, uint8_t tclass){
     return gMisc.stringBuffer1;
 }
 
-uint8_t* CopyTrainerName(const uint8_t* hl){
+xchar_t* CopyTrainerName(const xchar_t* hl){
     // LD_DE(wStringBuffer1);
     // PUSH_DE;
     // LD_BC(NAME_LENGTH);

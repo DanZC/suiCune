@@ -179,13 +179,13 @@ void AI_Basic(void){
             // LD_A_addr(wBattleMonStatus);
             // AND_A_A;
             // IF_NZ goto discourage;
-            if(wram->wBattleMon.status[0] == 0) {
+            if(gBattle.battleMon.status[0] == 0) {
 
             //  Dismiss Safeguard if it's already active.
                 // LD_A_addr(wPlayerScreens);
                 // BIT_A(SCREENS_SAFEGUARD);
                 // IF_Z goto checkmove;
-                if(!bit_test(wram->wPlayerScreens, SCREENS_SAFEGUARD))
+                if(!bit_test(gBattle.player.screens, SCREENS_SAFEGUARD))
                     continue;
             }
         }
@@ -267,7 +267,7 @@ void AI_Setup(void){
             // LD_A_addr(wEnemyTurnsTaken);
             // AND_A_A;
             // IF_NZ goto discourage;
-            if(wram->wEnemyTurnsTaken != 0) {
+            if(gBattle.enemy.turnsTaken != 0) {
                 AI_Setup_discourage(hl);
                 continue;
             }
@@ -288,7 +288,7 @@ void AI_Setup(void){
             // LD_A_addr(wPlayerTurnsTaken);
             // AND_A_A;
             // IF_NZ goto discourage;
-            if(wram->wPlayerTurnsTaken != 0) {
+            if(gBattle.player.turnsTaken != 0) {
                 AI_Setup_discourage(hl);
                 continue;
             }
@@ -793,7 +793,7 @@ static void AI_Smart_LockOn(uint8_t* hl){
     // LD_A_addr(wPlayerSubStatus5);
     // BIT_A(SUBSTATUS_LOCK_ON);
     // IF_NZ goto player_locked_on;
-    if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)) {
+    if(bit_test(gBattle.player.subStatus5, SUBSTATUS_LOCK_ON)) {
     // player_locked_on:
         // PUSH_HL;
         // LD_HL(wEnemyAIMoveScores - 1);
@@ -862,20 +862,20 @@ static void AI_Smart_LockOn(uint8_t* hl){
     // LD_A_addr(wPlayerEvaLevel);
     // CP_A(BASE_STAT_LEVEL + 3);
     // IF_NC goto maybe_encourage;
-    if(wram->wPlayerEvaLevel >= BASE_STAT_LEVEL + 3)
+    if(gBattle.player.evaLevel >= BASE_STAT_LEVEL + 3)
         goto maybe_encourage;
     // CP_A(BASE_STAT_LEVEL + 1);
     // IF_NC goto do_nothing;
-    if(wram->wPlayerEvaLevel >= BASE_STAT_LEVEL + 1)
+    if(gBattle.player.evaLevel >= BASE_STAT_LEVEL + 1)
         return;
     // LD_A_addr(wEnemyAccLevel);
     // CP_A(BASE_STAT_LEVEL - 2);
     // IF_C goto maybe_encourage;
-    if(wram->wEnemyAccLevel < BASE_STAT_LEVEL - 2)
+    if(gBattle.enemy.accLevel < BASE_STAT_LEVEL - 2)
         goto maybe_encourage;
     // CP_A(BASE_STAT_LEVEL);
     // IF_C goto do_nothing;
-    if(wram->wEnemyAccLevel < BASE_STAT_LEVEL)
+    if(gBattle.enemy.accLevel < BASE_STAT_LEVEL)
         return;
 
     // LD_HL(wEnemyMonMoves);
@@ -1025,7 +1025,7 @@ static void AI_Smart_EvasionUp(uint8_t* hl){
     // LD_A_addr(wEnemyEvaLevel);
     // CP_A(MAX_STAT_LEVEL);
     // JP_NC (mAIDiscourageMove);
-    if(wram->wEnemyEvaLevel > MAX_STAT_LEVEL)
+    if(gBattle.enemy.evaLevel > MAX_STAT_LEVEL)
         return AIDiscourageMove(hl);
 
 //  If enemy's HP is full...
@@ -1037,7 +1037,7 @@ static void AI_Smart_EvasionUp(uint8_t* hl){
         // LD_A_addr(wPlayerSubStatus5);
         // BIT_A(SUBSTATUS_TOXIC);
         // IF_NZ goto greatly_encourage;
-        if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TOXIC)) {
+        if(bit_test(gBattle.player.subStatus5, SUBSTATUS_TOXIC)) {
         // greatly_encourage:
             // DEC_hl;
             // DEC_hl;
@@ -1125,7 +1125,7 @@ not_encouraged:
     // LD_A_addr(wPlayerSubStatus5);
     // BIT_A(SUBSTATUS_TOXIC);
     // IF_NZ goto maybe_greatly_encourage;
-    if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TOXIC)) {
+    if(bit_test(gBattle.player.subStatus5, SUBSTATUS_TOXIC)) {
     //  Player is badly poisoned.
     //  70% chance to greatly encourage this move.
     //  This would counter any previous discouragement.
@@ -1145,7 +1145,7 @@ not_encouraged:
     // LD_A_addr(wPlayerSubStatus4);
     // BIT_A(SUBSTATUS_LEECH_SEED);
     // IF_NZ goto maybe_encourage;
-    if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LEECH_SEED)) {
+    if(bit_test(gBattle.player.subStatus5, SUBSTATUS_LEECH_SEED)) {
     //  Player is seeded.
     //  50% chance to encourage this move.
     //  This would partly counter any previous discouragement.
@@ -1168,7 +1168,7 @@ not_encouraged:
     // LD_A_addr(wPlayerAccLevel);
     // CP_A_B;
     // IF_C goto discourage;
-    if(wram->wEnemyEvaLevel > wram->wPlayerAccLevel) {
+    if(gBattle.enemy.evaLevel > gBattle.player.accLevel) {
         // INC_hl;
         (*hl)++;
         // RET;
@@ -1183,7 +1183,7 @@ not_encouraged:
     // LD_A_addr(wPlayerSubStatus1);
     // BIT_A(SUBSTATUS_ROLLOUT);
     // IF_NZ goto greatly_encourage;
-    if(wram->wPlayerFuryCutterCount != 0 || bit_test(wram->wPlayerSubStatus1, SUBSTATUS_ROLLOUT)) {
+    if(gBattle.player.furyCutterCount != 0 || bit_test(gBattle.player.subStatus1, SUBSTATUS_ROLLOUT)) {
     // greatly_encourage:
         // DEC_hl;
         // DEC_hl;
@@ -1213,8 +1213,8 @@ static void AI_Smart_AlwaysHit(uint8_t* hl){
     // RET_C ;
 
     
-    if(wram->wEnemyAccLevel  < BASE_STAT_LEVEL - 2
-    || wram->wPlayerEvaLevel > BASE_STAT_LEVEL + 2) {
+    if(gBattle.enemy.accLevel  < BASE_STAT_LEVEL - 2
+    || gBattle.player.evaLevel > BASE_STAT_LEVEL + 2) {
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
@@ -1233,7 +1233,7 @@ static void AI_Smart_MirrorMove(uint8_t* hl){
     // LD_A_addr(wLastPlayerCounterMove);
     // AND_A_A;
     // IF_NZ goto usedmove;
-    if(wram->wLastPlayerCounterMove == NO_MOVE) {
+    if(gBattle.player.lastCounterMove == NO_MOVE) {
     //  ...do nothing if enemy is slower than player
         // CALL(aAICompareSpeed);
         // RET_NC ;
@@ -1256,7 +1256,7 @@ static void AI_Smart_MirrorMove(uint8_t* hl){
 
 //  ...do nothing if he didn't use a useful move.
     // RET_NC ;
-    if(!IsInMoveArray(UsefulMoves, UsefulMoves_Size, wram->wLastPlayerCounterMove))
+    if(!IsInMoveArray(UsefulMoves, UsefulMoves_Size, gBattle.player.lastCounterMove))
         return;
 
 //  If he did, 50% chance to encourage this move...
@@ -1296,7 +1296,7 @@ static void AI_Smart_AccuracyDown(uint8_t* hl){
         // LD_A_addr(wPlayerSubStatus5);
         // BIT_A(SUBSTATUS_TOXIC);
         // IF_NZ goto greatly_encourage;
-        if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TOXIC)) {
+        if(bit_test(gBattle.player.subStatus5, SUBSTATUS_TOXIC)) {
             *hl -= 2;
             return;
         }
@@ -1369,7 +1369,7 @@ not_encouraged:
     // LD_A_addr(wPlayerSubStatus5);
     // BIT_A(SUBSTATUS_TOXIC);
     // IF_NZ goto maybe_greatly_encourage;
-    if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TOXIC)) {
+    if(bit_test(gBattle.player.subStatus5, SUBSTATUS_TOXIC)) {
     //  Player is badly poisoned.
     //  70% chance to greatly encourage this move.
     //  This would counter any previous discouragement.
@@ -1390,7 +1390,7 @@ not_encouraged:
     // LD_A_addr(wPlayerSubStatus4);
     // BIT_A(SUBSTATUS_LEECH_SEED);
     // IF_NZ goto encourage;
-    if(bit_test(wram->wPlayerSubStatus4, SUBSTATUS_LEECH_SEED)) {
+    if(bit_test(gBattle.player.subStatus4, SUBSTATUS_LEECH_SEED)) {
     //  Player is seeded.
     //  50% chance to encourage this move.
     //  This would partly counter any previous discouragement.
@@ -1411,7 +1411,7 @@ not_encouraged:
     // LD_A_addr(wPlayerAccLevel);
     // CP_A_B;
     // IF_C goto discourage;
-    if(wram->wEnemyEvaLevel > wram->wPlayerAccLevel) {
+    if(gBattle.enemy.evaLevel > gBattle.player.accLevel) {
         (*hl)++;
         return;
     }
@@ -1424,8 +1424,8 @@ not_encouraged:
     // LD_A_addr(wPlayerSubStatus1);
     // BIT_A(SUBSTATUS_ROLLOUT);
     // IF_NZ goto greatly_encourage;
-    if(wram->wPlayerFuryCutterCount != 0
-    || bit_test(wram->wPlayerSubStatus1, SUBSTATUS_ROLLOUT)) {
+    if(gBattle.player.furyCutterCount != 0
+    || bit_test(gBattle.player.subStatus1, SUBSTATUS_ROLLOUT)) {
         *hl -= 2;
         return;
     }
@@ -1449,7 +1449,7 @@ static void AI_Smart_ResetStats(uint8_t* hl){
         // LD_A_hli;
         // CP_A(BASE_STAT_LEVEL - 2);
         // IF_C goto encourage;
-        if(wram->wEnemyStatLevels[i] < BASE_STAT_LEVEL - 2) {
+        if(gBattle.enemy.statLevels[i] < BASE_STAT_LEVEL - 2) {
         // encourage:
             // POP_HL;
             // CALL(aRandom);
@@ -1478,7 +1478,7 @@ static void AI_Smart_ResetStats(uint8_t* hl){
         // LD_A_hli;
         // CP_A(BASE_STAT_LEVEL + 3);
         // IF_C goto playerstatsloop;
-        if(wram->wEnemyStatLevels[i] >= BASE_STAT_LEVEL + 3) {
+        if(gBattle.enemy.statLevels[i] >= BASE_STAT_LEVEL + 3) {
         // encourage:
             // POP_HL;
             // CALL(aRandom);
@@ -1630,7 +1630,7 @@ static void AI_Smart_Ohko(uint8_t* hl){
     // LD_A_addr(wEnemyMonLevel);
     // CP_A_B;
     // JP_C (mAIDiscourageMove);
-    if(wram->wEnemyMon.level < wram->wBattleMon.level)
+    if(wram->wEnemyMon.level < gBattle.battleMon.level)
         return AIDiscourageMove(hl);
     // CALL(aAICheckPlayerHalfHP);
     // RET_C ;
@@ -1647,7 +1647,7 @@ static void AI_Smart_TrapTarget(uint8_t* hl){
     // LD_A_addr(wPlayerWrapCount);
     // AND_A_A;
     // IF_NZ goto discourage;
-    if(wram->wPlayerWrapCount == 0) {
+    if(gBattle.player.wrapCount == 0) {
     //  50% chance to greatly encourage this move if player is either
     //  badly poisoned, in love, identified, stuck in Rollout, or has a Nightmare.
         // LD_A_addr(wPlayerSubStatus5);
@@ -1662,9 +1662,9 @@ static void AI_Smart_TrapTarget(uint8_t* hl){
         // LD_A_addr(wPlayerTurnsTaken);
         // AND_A_A;
         // IF_Z goto encourage;
-        if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TOXIC)
-        || (wram->wPlayerSubStatus1 & (1 << SUBSTATUS_IN_LOVE | 1 << SUBSTATUS_ROLLOUT | 1 << SUBSTATUS_IDENTIFIED | 1 << SUBSTATUS_NIGHTMARE))
-        || wram->wPlayerTurnsTaken == 0) {
+        if(bit_test(gBattle.player.subStatus5, SUBSTATUS_TOXIC)
+        || (gBattle.player.subStatus1 & (1 << SUBSTATUS_IN_LOVE | 1 << SUBSTATUS_ROLLOUT | 1 << SUBSTATUS_IDENTIFIED | 1 << SUBSTATUS_NIGHTMARE))
+        || gBattle.player.turnsTaken == 0) {
         // encourage:
             // CALL(aAICheckEnemyQuarterHP);
             // RET_NC ;
@@ -1700,8 +1700,8 @@ static void AI_Smart_RazorWind(uint8_t* hl){
     // LD_A_addr(wEnemyPerishCount);
     // CP_A(3);
     // IF_C goto discourage;
-    if(bit_test(wram->wEnemySubStatus1, SUBSTATUS_PERISH)
-    && wram->wEnemyPerishCount < 3) {
+    if(bit_test(gBattle.enemy.subStatus1, SUBSTATUS_PERISH)
+    && gBattle.enemy.perishCount < 3) {
         (*hl)++;
         return;
     }
@@ -1714,7 +1714,7 @@ static void AI_Smart_RazorWind(uint8_t* hl){
     for(uint8_t i = 0; i < NUM_MOVES; ++i) {
     // checkmove:
         // LD_A_hli;
-        move_t a = wram->wPlayerUsedMoves[i];
+        move_t a = gBattle.playerUsedMoves[i];
         // AND_A_A;
         // IF_Z goto movesdone;
         if(a == NO_MOVE)
@@ -1749,7 +1749,7 @@ static void AI_Smart_RazorWind(uint8_t* hl){
     // CALL(aAICheckEnemyHalfHP);
     // RET_C ;
 
-    if(bit_test(wram->wEnemySubStatus3, SUBSTATUS_CONFUSED) || AICheckEnemyHalfHP()) {
+    if(bit_test(gBattle.enemy.subStatus3, SUBSTATUS_CONFUSED) || AICheckEnemyHalfHP()) {
     // maybe_discourage:
         // CALL(aRandom);
         // CP_A(79 percent - 1);
@@ -1796,7 +1796,7 @@ static void AI_Smart_SpDefenseUp2(uint8_t* hl){
     // CP_A(BASE_STAT_LEVEL + 4);
     // IF_NC goto discourage;
     if(AICheckEnemyHalfHP()
-    || wram->wEnemySDefLevel > BASE_STAT_LEVEL + 3) {
+    || gBattle.enemy.SDefLevel > BASE_STAT_LEVEL + 3) {
     // discourage:
         // INC_hl;
         (*hl)++;
@@ -1808,7 +1808,7 @@ static void AI_Smart_SpDefenseUp2(uint8_t* hl){
 //  enemy's Special Defense level is lower than +2, and the player is of a special type.
     // CP_A(BASE_STAT_LEVEL + 2);
     // RET_NC ;
-    if(wram->wEnemySDefLevel >= BASE_STAT_LEVEL + 2)
+    if(gBattle.enemy.SDefLevel >= BASE_STAT_LEVEL + 2)
         return;
 
     // LD_A_addr(wBattleMonType1);
@@ -1817,8 +1817,8 @@ static void AI_Smart_SpDefenseUp2(uint8_t* hl){
     // LD_A_addr(wBattleMonType2);
     // CP_A(SPECIAL);
     // RET_C ;
-    if(wram->wBattleMon.type1 >= SPECIAL
-    || wram->wBattleMon.type2 >= SPECIAL) {
+    if(gBattle.battleMon.type1 >= SPECIAL
+    || gBattle.battleMon.type2 >= SPECIAL) {
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
@@ -1840,7 +1840,7 @@ static void AI_Smart_Fly(uint8_t* hl){
     // LD_A_addr(wPlayerSubStatus3);
     // AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
     // RET_Z ;
-    if((wram->wPlayerSubStatus3 & (1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND)) == 0)
+    if((gBattle.player.subStatus3 & (1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND)) == 0)
         return;
 
     // CALL(aAICompareSpeed);
@@ -1907,7 +1907,7 @@ static void AI_Smart_SpeedDownHit(uint8_t* hl){
     // LD_A_addr(wEnemyMoveStruct + MOVE_ANIM);
     // CP_A(ICY_WIND);
     // RET_NZ ;
-    if(wram->wEnemyMoveStruct.animation != ICY_WIND)
+    if(gBattle.enemyMoveStruct.animation != ICY_WIND)
         return;
     // CALL(aAICheckEnemyQuarterHP);
     // RET_NC ;
@@ -1920,7 +1920,7 @@ static void AI_Smart_SpeedDownHit(uint8_t* hl){
     // CP_A(12 percent);
     // RET_C ;
     if(!AICheckEnemyQuarterHP()
-    && wram->wPlayerTurnsTaken == 0
+    && gBattle.player.turnsTaken == 0
     && !AICompareSpeed()
     && Random() >= 12 percent - 1) {
         // DEC_hl;
@@ -1978,7 +1978,7 @@ static void AI_Smart_Rage(uint8_t* hl){
     // LD_A_addr(wEnemySubStatus4);
     // BIT_A(SUBSTATUS_RAGE);
     // IF_Z goto notbuilding;
-    if(bit_test(wram->wEnemySubStatus4, SUBSTATUS_RAGE)) {
+    if(bit_test(gBattle.enemy.subStatus4, SUBSTATUS_RAGE)) {
     //  If enemy's Rage is building, 50% chance to encourage this move.
         // CALL(aAI_50_50);
         // IF_C goto skipencourage;
@@ -1993,14 +1993,14 @@ static void AI_Smart_Rage(uint8_t* hl){
         // LD_A_addr(wEnemyRageCounter);
         // CP_A(2);
         // RET_C ;
-        if(wram->wEnemyRageCounter < 2)
+        if(gBattle.enemy.rageCounter < 2)
             return;
         // DEC_hl;
         (*hl)--;
         // LD_A_addr(wEnemyRageCounter);
         // CP_A(3);
         // RET_C ;
-        if(wram->wEnemyRageCounter < 3)
+        if(gBattle.enemy.rageCounter < 3)
             return;
         // DEC_hl;
         (*hl)--;
@@ -2034,7 +2034,7 @@ static void AI_Smart_Mimic(uint8_t* hl){
     // LD_A_addr(wLastPlayerCounterMove);
     // AND_A_A;
     // IF_Z goto dismiss;
-    if(wram->wLastPlayerCounterMove == NO_MOVE) {
+    if(gBattle.player.lastCounterMove == NO_MOVE) {
     // dismiss:
     //  Dismiss this move if the enemy is faster than the player.
         // CALL(aAICompareSpeed);
@@ -2055,7 +2055,7 @@ static void AI_Smart_Mimic(uint8_t* hl){
     // PUSH_HL;
     // LD_A_addr(wLastPlayerCounterMove);
     // CALL(aAIGetEnemyMove);
-    AIGetEnemyMove(wram->wLastPlayerCounterMove);
+    AIGetEnemyMove(gBattle.player.lastCounterMove);
 
     // LD_A(1);
     // LDH_addr_A(hBattleTurn);
@@ -2089,7 +2089,7 @@ static void AI_Smart_Mimic(uint8_t* hl){
 
     // POP_HL;
     // RET_NC ;
-    if(IsInMoveArray(UsefulMoves, UsefulMoves_Size, wram->wLastPlayerCounterMove) && AI_50_50()) {
+    if(IsInMoveArray(UsefulMoves, UsefulMoves_Size, gBattle.player.lastCounterMove) && AI_50_50()) {
         // CALL(aAI_50_50);
         // RET_C ;
         // DEC_hl;
@@ -2118,7 +2118,7 @@ static void AI_Smart_Counter(uint8_t* hl){
     for(uint8_t i = 0; i < NUM_MOVES; ++i) {
     // playermoveloop:
         // LD_A_hli;
-        move_t a = wram->wPlayerUsedMoves[i];
+        move_t a = gBattle.playerUsedMoves[i];
         // AND_A_A;
         // IF_Z goto skipmove;
         if(a == NO_MOVE)
@@ -2165,11 +2165,11 @@ static void AI_Smart_Counter(uint8_t* hl){
         // LD_A_addr(wLastPlayerCounterMove);
         // AND_A_A;
         // IF_Z goto done;
-        if(wram->wLastPlayerCounterMove == NO_MOVE)
+        if(gBattle.player.lastCounterMove == NO_MOVE)
             return;
 
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove(wram->wLastPlayerCounterMove);
+        const struct Move* mv = AIGetEnemyMove(gBattle.player.lastCounterMove);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
@@ -2212,11 +2212,11 @@ static void AI_Smart_Encore(uint8_t* hl){
     // LD_A_addr(wLastPlayerMove);
     // AND_A_A;
     // JP_Z (mAIDiscourageMove);
-    if(wram->wLastPlayerMove == NO_MOVE)
+    if(gBattle.player.lastMove == NO_MOVE)
         return AIDiscourageMove(hl);
 
     // CALL(aAIGetEnemyMove);
-    const struct Move* mv = AIGetEnemyMove(wram->wLastPlayerMove);
+    const struct Move* mv = AIGetEnemyMove(gBattle.player.lastMove);
 
     // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
     // AND_A_A;
@@ -2242,7 +2242,7 @@ static void AI_Smart_Encore(uint8_t* hl){
         // CALL(aIsInArray);
         // POP_HL;
         // IF_NC goto discourage;
-        if(!IsInMoveArray(EncoreMoves, EncoreMoves_Size, wram->wLastPlayerCounterMove)) {
+        if(!IsInMoveArray(EncoreMoves, EncoreMoves_Size, gBattle.player.lastCounterMove)) {
         // discourage:
             // INC_hl;
             // INC_hl;
@@ -2289,7 +2289,7 @@ static void AI_Smart_PainSplit(uint8_t* hl){
     // INC_HL;
     // LD_C_hl;
     uint16_t enmy_hp = BigEndianToNative16(wram->wEnemyMon.hp);
-    uint16_t plyr_hp = BigEndianToNative16(wram->wBattleMon.hp);
+    uint16_t plyr_hp = BigEndianToNative16(gBattle.battleMon.hp);
     // SLA_C;
     // RL_B;
     // LD_HL(wBattleMonHP + 1);
@@ -2355,7 +2355,7 @@ static void AI_Smart_Spite(uint8_t* hl){
     // LD_A_addr(wLastPlayerCounterMove);
     // AND_A_A;
     // IF_NZ goto usedmove;
-    if(wram->wLastPlayerCounterMove == NO_MOVE) {
+    if(gBattle.player.lastCounterMove == NO_MOVE) {
         // CALL(aAICompareSpeed);
         // JP_C (mAIDiscourageMove);
         if(AICompareSpeed())
@@ -2373,12 +2373,12 @@ static void AI_Smart_Spite(uint8_t* hl){
 // usedmove:
     // PUSH_HL;
     // LD_B_A;
-    move_t b = wram->wLastPlayerCounterMove;
+    move_t b = gBattle.player.lastCounterMove;
     // LD_C(NUM_MOVES);
     // LD_HL(wBattleMonMoves);
-    move_t* mvs = wram->wBattleMon.moves;
+    move_t* mvs = gBattle.battleMon.moves;
     // LD_DE(wBattleMonPP);
-    uint8_t* pp = wram->wBattleMon.pp;
+    uint8_t* pp = gBattle.battleMon.pp;
 
     for(uint8_t i = 0; i < NUM_MOVES; ++i) {
     // moveloop:
@@ -2543,7 +2543,7 @@ static void AI_Smart_PriorityHit(uint8_t* hl){
     // LD_A_addr(wPlayerSubStatus3);
     // AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
     // JP_NZ (mAIDiscourageMove);
-    if(wram->wPlayerSubStatus3 & ((1 << SUBSTATUS_FLYING) | (1 << SUBSTATUS_UNDERGROUND)))
+    if(gBattle.player.subStatus3 & ((1 << SUBSTATUS_FLYING) | (1 << SUBSTATUS_UNDERGROUND)))
         return AIDiscourageMove(hl);
 
 //  Greatly encourage this move if it will KO the player.
@@ -2567,7 +2567,7 @@ static void AI_Smart_PriorityHit(uint8_t* hl){
     // CP_A_C;
     // LD_A_addr(wBattleMonHP);
     // SBC_A_B;
-    uint16_t hp = BigEndianToNative16(wram->wBattleMon.hp);
+    uint16_t hp = BigEndianToNative16(gBattle.battleMon.hp);
 
     // RET_NC ;
     if(hp < bc) {
@@ -2595,9 +2595,9 @@ static void AI_Smart_Conversion2(uint8_t* hl){
     // AND_A_A;
     // IF_NZ goto discourage;  // should be jr z
 #if BUGFIX_CONVERSION2
-    if(wram->wLastPlayerMove == NO_MOVE)
+    if(gBattle.player.lastMove == NO_MOVE)
 #else
-    if(wram->wLastPlayerMove != NO_MOVE)
+    if(gBattle.player.lastMove != NO_MOVE)
 #endif
     {
     // discourage:
@@ -2621,7 +2621,7 @@ static void AI_Smart_Conversion2(uint8_t* hl){
     // LD_A(BANK(aMoves));
     // CALL(aGetFarByte);
     // LD_addr_A(wPlayerMoveStruct + MOVE_TYPE);
-    wram->wPlayerMoveStruct.type = Moves[wram->wLastPlayerMove].type;
+    gBattle.playerMoveStruct.type = Moves[gBattle.player.lastMove].type;
 
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
@@ -2682,7 +2682,7 @@ static void AI_Smart_Disable(uint8_t* hl){
 
         // POP_HL;
         // IF_NC goto notencourage;
-        if(IsInMoveArray(UsefulMoves, UsefulMoves_Size, wram->wLastPlayerCounterMove)) {
+        if(IsInMoveArray(UsefulMoves, UsefulMoves_Size, gBattle.player.lastCounterMove)) {
             // CALL(aRandom);
             // CP_A(39 percent + 1);
             // RET_C ;
@@ -2697,7 +2697,7 @@ static void AI_Smart_Disable(uint8_t* hl){
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
         // RET_NZ ;
-        if(wram->wEnemyMoveStruct.power != 0)
+        if(gBattle.enemyMoveStruct.power != 0)
             return;
     }
 
@@ -2734,9 +2734,9 @@ static void AI_Smart_MeanLook(uint8_t* hl){
     // BIT_A(SUBSTATUS_TOXIC);
     // IF_NZ goto encourage;
 #if BUGFIX_MEANLOOK
-    uint8_t substat5 = wram->wPlayerSubStatus5;
+    uint8_t substat5 = gBattle.player.subStatus5;
 #else
-    uint8_t substat5 = wram->wEnemySubStatus5;
+    uint8_t substat5 = gBattle.enemy.subStatus5;
 #endif
 //  80% chance to greatly encourage this move if the player is either
 //  in love, identified, stuck in Rollout, or has a Nightmare.
@@ -2744,7 +2744,7 @@ static void AI_Smart_MeanLook(uint8_t* hl){
     // AND_A(1 << SUBSTATUS_IN_LOVE | 1 << SUBSTATUS_ROLLOUT | 1 << SUBSTATUS_IDENTIFIED | 1 << SUBSTATUS_NIGHTMARE);
     // IF_NZ goto encourage;
     if(bit_test(substat5, SUBSTATUS_TOXIC)
-    || (wram->wPlayerSubStatus1 & ((1 << SUBSTATUS_IN_LOVE) | (1 << SUBSTATUS_ROLLOUT) | (1 << SUBSTATUS_IDENTIFIED) | (1 << SUBSTATUS_NIGHTMARE)))) {
+    || (gBattle.player.subStatus1 & ((1 << SUBSTATUS_IN_LOVE) | (1 << SUBSTATUS_ROLLOUT) | (1 << SUBSTATUS_IDENTIFIED) | (1 << SUBSTATUS_NIGHTMARE)))) {
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
@@ -2852,7 +2852,7 @@ static void AI_Smart_Curse(uint8_t* hl){
         // LD_A_addr(wPlayerSubStatus1);
         // BIT_A(SUBSTATUS_CURSE);
         // JP_NZ (mAIDiscourageMove);
-        if(bit_test(wram->wPlayerSubStatus1, SUBSTATUS_CURSE))
+        if(bit_test(gBattle.player.subStatus1, SUBSTATUS_CURSE))
             return AIDiscourageMove(hl);
 
         // PUSH_HL;
@@ -2913,7 +2913,7 @@ static void AI_Smart_Curse(uint8_t* hl){
         // LD_A_addr(wPlayerTurnsTaken);
         // AND_A_A;
         // RET_NZ ;
-        if(wram->wPlayerTurnsTaken != 0)
+        if(gBattle.player.turnsTaken != 0)
             return;
 
     // maybe_greatly_encourage:
@@ -2939,19 +2939,19 @@ static void AI_Smart_Curse(uint8_t* hl){
         // LD_A_addr(wEnemyAtkLevel);
         // CP_A(BASE_STAT_LEVEL + 4);
         // IF_NC goto encourage;
-        if(wram->wEnemyAtkLevel >= BASE_STAT_LEVEL + 4) {
+        if(gBattle.enemy.atkLevel >= BASE_STAT_LEVEL + 4) {
             (*hl)++;
             return;
         }
         // CP_A(BASE_STAT_LEVEL + 2);
         // RET_NC ;
-        if(wram->wEnemyAtkLevel >= BASE_STAT_LEVEL + 2)
+        if(gBattle.enemy.atkLevel >= BASE_STAT_LEVEL + 2)
             return;
 
         // LD_A_addr(wBattleMonType1);
         // CP_A(GHOST);
         // IF_Z goto greatly_encourage;
-        if(wram->wBattleMon.type1 == GHOST) {
+        if(gBattle.battleMon.type1 == GHOST) {
             *hl += 2;
             return;
         }
@@ -2960,8 +2960,8 @@ static void AI_Smart_Curse(uint8_t* hl){
         // LD_A_addr(wBattleMonType2);
         // CP_A(SPECIAL);
         // RET_NC ;
-        if(wram->wBattleMon.type1 >= SPECIAL
-        || wram->wBattleMon.type2 >= SPECIAL) 
+        if(gBattle.battleMon.type1 >= SPECIAL
+        || gBattle.battleMon.type2 >= SPECIAL) 
             return;
 
         // CALL(aAI_80_20);
@@ -2992,7 +2992,7 @@ static void AI_Smart_Protect(uint8_t* hl){
     // LD_A_addr(wEnemyProtectCount);
     // AND_A_A;
     // IF_NZ goto greatly_discourage;
-    if(wram->wEnemyProtectCount != 0) {
+    if(gBattle.enemy.protectCount != 0) {
         (*hl)++;
     }
 
@@ -3000,7 +3000,7 @@ static void AI_Smart_Protect(uint8_t* hl){
     // LD_A_addr(wPlayerSubStatus5);
     // BIT_A(SUBSTATUS_LOCK_ON);
     // IF_NZ goto discourage;
-    else if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_LOCK_ON)) {
+    else if(bit_test(gBattle.player.subStatus5, SUBSTATUS_LOCK_ON)) {
         // goto discourage
     }
 
@@ -3031,12 +3031,12 @@ static void AI_Smart_Protect(uint8_t* hl){
     // LD_A_addr(wPlayerRolloutCount);
     // CP_A(3);
     // IF_C goto discourage;
-    else if(wram->wPlayerFuryCutterCount >= 3
-        ||  bit_test(wram->wPlayerSubStatus3, SUBSTATUS_CHARGED)
-        ||  bit_test(wram->wPlayerSubStatus5, SUBSTATUS_TOXIC)
-        ||  bit_test(wram->wPlayerSubStatus4, SUBSTATUS_LEECH_SEED)
-        ||  bit_test(wram->wPlayerSubStatus1, SUBSTATUS_CURSE)
-        || (bit_test(wram->wPlayerSubStatus1, SUBSTATUS_ROLLOUT) &&  wram->wPlayerRolloutCount >= 3)) {
+    else if(gBattle.player.furyCutterCount >= 3
+        ||  bit_test(gBattle.player.subStatus3, SUBSTATUS_CHARGED)
+        ||  bit_test(gBattle.player.subStatus5, SUBSTATUS_TOXIC)
+        ||  bit_test(gBattle.player.subStatus4, SUBSTATUS_LEECH_SEED)
+        ||  bit_test(gBattle.player.subStatus1, SUBSTATUS_CURSE)
+        || (bit_test(gBattle.player.subStatus1, SUBSTATUS_ROLLOUT) &&  gBattle.player.rolloutCount >= 3)) {
     //  80% chance to encourage this move otherwise.
     // encourage:
         // CALL(aAI_80_20);
@@ -3091,10 +3091,10 @@ static void AI_Smart_Foresight(uint8_t* hl){
     // LD_A_addr(wBattleMonType2);
     // CP_A(GHOST);
     // IF_Z goto encourage;
-    if(wram->wEnemyAccLevel < BASE_STAT_LEVEL - 2
-    || wram->wPlayerEvaLevel > BASE_STAT_LEVEL + 2
-    || wram->wBattleMon.type1 == GHOST
-    || wram->wBattleMon.type2 == GHOST) {
+    if(gBattle.enemy.accLevel < BASE_STAT_LEVEL - 2
+    || gBattle.player.evaLevel > BASE_STAT_LEVEL + 2
+    || gBattle.battleMon.type1 == GHOST
+    || gBattle.battleMon.type2 == GHOST) {
     // encourage:
         // CALL(aRandom);
         // CP_A(39 percent + 1);
@@ -3137,7 +3137,7 @@ static void AI_Smart_PerishSong(uint8_t* hl){
     // LD_A_addr(wPlayerSubStatus5);
     // BIT_A(SUBSTATUS_CANT_RUN);
     // IF_NZ goto yes;
-    if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_CANT_RUN)) {
+    if(bit_test(gBattle.player.subStatus5, SUBSTATUS_CANT_RUN)) {
     // yes:
         // CALL(aAI_50_50);
         // RET_C ;
@@ -3192,8 +3192,8 @@ static void AI_Smart_Sandstorm(uint8_t* hl){
     // CALL(aIsInArray);
     // POP_HL;
     // IF_C goto greatly_discourage;
-    if(IsInU8Array(SandstormImmuneTypes, wram->wBattleMon.type1)
-    || IsInU8Array(SandstormImmuneTypes, wram->wBattleMon.type2)) {
+    if(IsInU8Array(SandstormImmuneTypes, gBattle.battleMon.type1)
+    || IsInU8Array(SandstormImmuneTypes, gBattle.battleMon.type2)) {
         (*hl)++;
     }
 
@@ -3234,7 +3234,7 @@ static void AI_Smart_Endure(uint8_t* hl){
 //  Greatly discourage this move if the enemy's HP is full.
     // CALL(aAICheckEnemyMaxHP);
     // IF_C goto greatly_discourage;
-    if(wram->wEnemyProtectCount != 0 || AICheckEnemyMaxHP()) {
+    if(gBattle.enemy.protectCount != 0 || AICheckEnemyMaxHP()) {
     // greatly_discourage:
         // INC_hl;
     
@@ -3277,7 +3277,7 @@ static void AI_Smart_Endure(uint8_t* hl){
     // LD_A_addr(wEnemySubStatus5);
     // BIT_A(SUBSTATUS_LOCK_ON);
     // RET_Z ;
-    if(!bit_test(wram->wEnemySubStatus5, SUBSTATUS_LOCK_ON))
+    if(!bit_test(gBattle.enemy.subStatus5, SUBSTATUS_LOCK_ON))
         return;
 
 //  50% chance to greatly encourage this move.
@@ -3297,14 +3297,14 @@ static void AI_Smart_FuryCutter(uint8_t* hl){
     // LD_A_addr(wEnemyFuryCutterCount);
     // AND_A_A;
     // JR_Z (mAI_Smart_Rollout);
-    if(wram->wEnemyFuryCutterCount == 0)
+    if(gBattle.enemy.furyCutterCount == 0)
         return AI_Smart_Rollout(hl);
     // DEC_hl;
     *hl -= 1;
 
     // CP_A(2);
     // JR_C (mAI_Smart_Rollout);
-    if(wram->wEnemyFuryCutterCount < 2)
+    if(gBattle.enemy.furyCutterCount < 2)
         return AI_Smart_Rollout(hl);
     // DEC_hl;
     // DEC_hl;
@@ -3312,7 +3312,7 @@ static void AI_Smart_FuryCutter(uint8_t* hl){
 
     // CP_A(3);
     // JR_C (mAI_Smart_Rollout);
-    if(wram->wEnemyFuryCutterCount < 3)
+    if(gBattle.enemy.furyCutterCount < 3)
         return AI_Smart_Rollout(hl);
     // DEC_hl;
     // DEC_hl;
@@ -3350,12 +3350,12 @@ static void AI_Smart_Rollout(uint8_t* hl){
     // LD_A_addr(wPlayerEvaLevel);
     // CP_A(BASE_STAT_LEVEL + 1);
     // IF_NC goto maybe_discourage;
-    if(bit_test(wram->wEnemySubStatus1, SUBSTATUS_IN_LOVE)
-    || bit_test(wram->wEnemySubStatus3, SUBSTATUS_CONFUSED)
+    if(bit_test(gBattle.enemy.subStatus1, SUBSTATUS_IN_LOVE)
+    || bit_test(gBattle.enemy.subStatus3, SUBSTATUS_CONFUSED)
     || bit_test(wram->wEnemyMon.status[0], PAR)
     || AICheckEnemyQuarterHP()
-    || wram->wEnemyAccLevel < BASE_STAT_LEVEL
-    || wram->wPlayerEvaLevel > BASE_STAT_LEVEL) {
+    || gBattle.enemy.accLevel < BASE_STAT_LEVEL
+    || gBattle.player.evaLevel > BASE_STAT_LEVEL) {
     // maybe_discourage:
         // CALL(aAI_80_20);
         // RET_C ;
@@ -3390,7 +3390,7 @@ static void AI_Smart_Attract(uint8_t* hl){
     // LD_A_addr(wPlayerTurnsTaken);
     // AND_A_A;
     // IF_Z goto first_turn;
-    if(wram->wPlayerTurnsTaken == 0) {
+    if(gBattle.player.turnsTaken == 0) {
     // first_turn:
         // CALL(aRandom);
         // CP_A(79 percent - 1);
@@ -3434,13 +3434,13 @@ static void AI_Smart_Earthquake(uint8_t* hl){
     // LD_A_addr(wLastPlayerCounterMove);
     // CP_A(DIG);
     // RET_NZ ;
-    if(wram->wLastPlayerCounterMove != DIG)
+    if(gBattle.player.lastCounterMove != DIG)
         return;
 
     // LD_A_addr(wPlayerSubStatus3);
     // BIT_A(SUBSTATUS_UNDERGROUND);
     // IF_Z goto could_dig;
-    if(!bit_test(wram->wPlayerSubStatus3, SUBSTATUS_UNDERGROUND)) {
+    if(!bit_test(gBattle.player.subStatus3, SUBSTATUS_UNDERGROUND)) {
     // could_dig:
     // Try to predict if the player will use Dig this turn.
 
@@ -3526,9 +3526,9 @@ static void AI_Smart_RapidSpin(uint8_t* hl){
     // LD_A_addr(wEnemyScreens);
     // BIT_A(SCREENS_SPIKES);
     // RET_Z ;
-    if(wram->wEnemyWrapCount != 0
-    || bit_test(wram->wEnemySubStatus4, SUBSTATUS_LEECH_SEED)
-    || bit_test(wram->wEnemyScreens, SCREENS_SPIKES)) {
+    if(gBattle.enemy.wrapCount != 0
+    || bit_test(gBattle.enemy.subStatus4, SUBSTATUS_LEECH_SEED)
+    || bit_test(gBattle.enemy.screens, SCREENS_SPIKES)) {
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
@@ -3595,21 +3595,21 @@ static void AI_Smart_RainDance(uint8_t* hl){
     // LD_A_addr(wBattleMonType1);
     // CP_A(WATER);
     // JR_Z (mAIBadWeatherType);
-    if(wram->wBattleMon.type1 == WATER)
+    if(gBattle.battleMon.type1 == WATER)
         return AIBadWeatherType(hl);
     // CP_A(FIRE);
     // JR_Z (mAIGoodWeatherType);
-    if(wram->wBattleMon.type1 == FIRE)
+    if(gBattle.battleMon.type1 == FIRE)
         return AIGoodWeatherType(hl);
 
     // LD_A_addr(wBattleMonType2);
     // CP_A(WATER);
     // JR_Z (mAIBadWeatherType);
-    if(wram->wBattleMon.type2 == WATER)
+    if(gBattle.battleMon.type2 == WATER)
         return AIBadWeatherType(hl);
     // CP_A(FIRE);
     // JR_Z (mAIGoodWeatherType);
-    if(wram->wBattleMon.type2 == FIRE)
+    if(gBattle.battleMon.type2 == FIRE)
         return AIGoodWeatherType(hl);
 
     // PUSH_HL;
@@ -3626,21 +3626,21 @@ static void AI_Smart_SunnyDay(uint8_t* hl){
     // LD_A_addr(wBattleMonType1);
     // CP_A(FIRE);
     // JR_Z (mAIBadWeatherType);
-    if(wram->wBattleMon.type1 == FIRE)
+    if(gBattle.battleMon.type1 == FIRE)
         return AIBadWeatherType(hl);
     // CP_A(WATER);
     // JR_Z (mAIGoodWeatherType);
-    if(wram->wBattleMon.type1 == WATER)
+    if(gBattle.battleMon.type1 == WATER)
         return AIGoodWeatherType(hl);
 
     // LD_A_addr(wBattleMonType2);
     // CP_A(FIRE);
     // JR_Z (mAIBadWeatherType);
-    if(wram->wBattleMon.type2 == FIRE)
+    if(gBattle.battleMon.type2 == FIRE)
         return AIBadWeatherType(hl);
     // CP_A(WATER);
     // JR_Z (mAIGoodWeatherType);
-    if(wram->wBattleMon.type2 == WATER)
+    if(gBattle.battleMon.type2 == WATER)
         return AIGoodWeatherType(hl);
 
     // PUSH_HL;
@@ -3705,7 +3705,7 @@ static void AIGoodWeatherType(uint8_t* hl){
     // LD_A_addr(wEnemyTurnsTaken);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wPlayerTurnsTaken == 0 || wram->wEnemyTurnsTaken == 0) {
+    if(gBattle.player.turnsTaken == 0 || gBattle.enemy.turnsTaken == 0) {
     // good:
         // DEC_hl;
         // DEC_hl;
@@ -3722,7 +3722,7 @@ static void AI_Smart_BellyDrum(uint8_t* hl){
     // LD_A_addr(wEnemyAtkLevel);
     // CP_A(BASE_STAT_LEVEL + 3);
     // IF_NC goto discourage;
-    if(wram->wEnemyAtkLevel < BASE_STAT_LEVEL + 3) {
+    if(gBattle.enemy.atkLevel < BASE_STAT_LEVEL + 3) {
         // CALL(aAICheckEnemyMaxHP);
         // RET_C ;
         if(!AICheckEnemyMaxHP()) {
@@ -3759,7 +3759,7 @@ static void AI_Smart_PsychUp(uint8_t* hl){
         // SUB_A(BASE_STAT_LEVEL);
         // ADD_A_C;
         // LD_C_A;
-        c += wram->wEnemyStatLevels[i] - BASE_STAT_LEVEL;
+        c += gBattle.enemy.statLevels[i] - BASE_STAT_LEVEL;
         // DEC_B;
         // IF_NZ goto enemy_loop;
     }
@@ -3776,7 +3776,7 @@ static void AI_Smart_PsychUp(uint8_t* hl){
         // SUB_A(BASE_STAT_LEVEL);
         // ADD_A_D;
         // LD_D_A;
-        d += wram->wPlayerStatLevels[i] - BASE_STAT_LEVEL;
+        d += gBattle.player.statLevels[i] - BASE_STAT_LEVEL;
         // DEC_B;
         // IF_NZ goto player_loop;
     }
@@ -3807,8 +3807,8 @@ static void AI_Smart_PsychUp(uint8_t* hl){
 
     // CALL(aAI_80_20);
     // RET_C ;
-    if(wram->wPlayerAccLevel >= BASE_STAT_LEVEL - 1 
-    && wram->wEnemyEvaLevel  <  BASE_STAT_LEVEL + 1
+    if(gBattle.player.accLevel >= BASE_STAT_LEVEL - 1 
+    && gBattle.enemy.evaLevel  <  BASE_STAT_LEVEL + 1
     && !AI_80_20()) {
         // DEC_hl;
         (*hl)--;
@@ -3826,7 +3826,7 @@ static void AI_Smart_MirrorCoat(uint8_t* hl){
     for(uint8_t i = 0; i < NUM_MOVES; ++i) {
     // playermoveloop:
         // LD_A_hli;
-        move_t a = wram->wPlayerUsedMoves[i];
+        move_t a = gBattle.playerUsedMoves[i];
         // AND_A_A;
         // IF_Z goto skipmove;
         if(a == NO_MOVE)
@@ -3872,11 +3872,11 @@ static void AI_Smart_MirrorCoat(uint8_t* hl){
         // LD_A_addr(wLastPlayerCounterMove);
         // AND_A_A;
         // IF_Z goto done;
-        if(wram->wLastPlayerCounterMove == NO_MOVE)
+        if(gBattle.player.lastCounterMove == NO_MOVE)
             return;
 
         // CALL(aAIGetEnemyMove);
-        const struct Move* mv = AIGetEnemyMove(wram->wLastPlayerCounterMove);
+        const struct Move* mv = AIGetEnemyMove(gBattle.player.lastCounterMove);
 
         // LD_A_addr(wEnemyMoveStruct + MOVE_POWER);
         // AND_A_A;
@@ -3910,11 +3910,11 @@ static void AI_Smart_Gust(uint8_t* hl){
     // LD_A_addr(wLastPlayerCounterMove);
     // CP_A(FLY);
     // RET_NZ ;
-    if(wram->wLastPlayerCounterMove == FLY) {
+    if(gBattle.player.lastCounterMove == FLY) {
         // LD_A_addr(wPlayerSubStatus3);
         // BIT_A(SUBSTATUS_FLYING);
         // IF_Z goto couldFly;
-        if(bit_test(wram->wPlayerSubStatus3, SUBSTATUS_FLYING)) {
+        if(bit_test(gBattle.player.subStatus3, SUBSTATUS_FLYING)) {
             // CALL(aAICompareSpeed);
             // RET_NC ;
 
@@ -3955,7 +3955,7 @@ static void AI_Smart_FutureSight(uint8_t* hl){
     // AND_A(1 << SUBSTATUS_FLYING | 1 << SUBSTATUS_UNDERGROUND);
     // RET_Z ;
 
-    if(AICompareSpeed() && (wram->wPlayerSubStatus3 & ((1 << SUBSTATUS_FLYING) | (1 << SUBSTATUS_UNDERGROUND)))) {
+    if(AICompareSpeed() && (gBattle.player.subStatus3 & ((1 << SUBSTATUS_FLYING) | (1 << SUBSTATUS_UNDERGROUND)))) {
         // DEC_hl;
         // DEC_hl;
         *hl -= 2;
@@ -3973,7 +3973,7 @@ static void AI_Smart_Stomp(uint8_t* hl){
     // RET_C ;
 
     
-    if(wram->wPlayerMinimized && !AI_80_20()) {
+    if(gBattle.player.minimized && !AI_80_20()) {
         // DEC_hl;
         // RET;
         (*hl)--;
@@ -3986,7 +3986,7 @@ static void AI_Smart_Solarbeam(uint8_t* hl){
     // LD_A_addr(wBattleWeather);
     // CP_A(WEATHER_SUN);
     // IF_Z goto encourage;
-    if(wram->wBattleWeather == WEATHER_SUN) {
+    if(gBattle.battleWeather == WEATHER_SUN) {
     // encourage:
         // CALL(aAI_80_20);
         // RET_C ;
@@ -4001,7 +4001,7 @@ static void AI_Smart_Solarbeam(uint8_t* hl){
 
     // CP_A(WEATHER_RAIN);
     // RET_NZ ;
-    if(wram->wBattleWeather == WEATHER_RAIN) {
+    if(gBattle.battleWeather == WEATHER_RAIN) {
         // CALL(aRandom);
         // CP_A(10 percent);
         // RET_C ;
@@ -4026,7 +4026,7 @@ static void AI_Smart_Thunder(uint8_t* hl){
     // CP_A(10 percent);
     // RET_C ;
 
-    if(wram->wBattleWeather == WEATHER_SUN && Random() >= 10 percent) {
+    if(gBattle.battleWeather == WEATHER_SUN && Random() >= 10 percent) {
         // INC_hl;
         // RET;
         (*hl)++;
@@ -4037,7 +4037,7 @@ static void AI_Smart_Thunder(uint8_t* hl){
 bool AICompareSpeed(void){
     // PUSH_BC;
     uint16_t eSpeed = (wram->wEnemyMon.speed[0] << 8) | wram->wEnemyMon.speed[1];
-    uint16_t pSpeed = (wram->wBattleMon.speed[0] << 8) | wram->wBattleMon.speed[1];
+    uint16_t pSpeed = (gBattle.battleMon.speed[0] << 8) | gBattle.battleMon.speed[1];
     // LD_A_addr(wEnemyMonSpeed + 1);
     // LD_B_A;
     // LD_A_addr(wBattleMonSpeed + 1);
@@ -4058,7 +4058,7 @@ bool AICheckPlayerMaxHP(void){
     // LD_DE(wBattleMonHP);
     // LD_HL(wBattleMonMaxHP);
     // JR(mAICheckMaxHP);
-    return AICheckMaxHP(wram->wBattleMon.hp, wram->wBattleMon.maxHP);
+    return AICheckMaxHP(gBattle.battleMon.hp, gBattle.battleMon.maxHP);
 }
 
 bool AICheckEnemyMaxHP(void){
@@ -4105,8 +4105,8 @@ bool AICheckPlayerHalfHP(void){
     // LD_B_hl;
     // INC_HL;
     // LD_C_hl;
-    uint16_t hp = BigEndianToNative16(wram->wBattleMon.hp);
-    uint16_t maxHP = BigEndianToNative16(wram->wBattleMon.maxHP);
+    uint16_t hp = BigEndianToNative16(gBattle.battleMon.hp);
+    uint16_t maxHP = BigEndianToNative16(gBattle.battleMon.maxHP);
     // SLA_C;
     // RL_B;
     // INC_HL;
@@ -4178,8 +4178,8 @@ bool AICheckPlayerQuarterHP(void){
     // LD_B_hl;
     // INC_HL;
     // LD_C_hl;
-    uint16_t hp = BigEndianToNative16(wram->wBattleMon.hp);
-    uint16_t maxHP = BigEndianToNative16(wram->wBattleMon.maxHP);
+    uint16_t hp = BigEndianToNative16(gBattle.battleMon.hp);
+    uint16_t maxHP = BigEndianToNative16(gBattle.battleMon.maxHP);
     // SLA_C;
     // RL_B;
     // SLA_C;
@@ -4495,7 +4495,7 @@ void AIDamageCalc(void){
     // LD_HL(mConstantDamageEffects);
     // CALL(aIsInArray);
     // IF_NC goto notconstant;
-    if(IsInU8Array(ConstantDamageEffects, wram->wEnemyMoveStruct.effect)) {
+    if(IsInU8Array(ConstantDamageEffects, gBattle.enemyMoveStruct.effect)) {
         // CALLFAR(aBattleCommand_ConstantDamage);
         BattleCommand_ConstantDamage();
         // RET;
@@ -4519,7 +4519,7 @@ void AI_Cautious(void){
     // LD_A_addr(wEnemyTurnsTaken);
     // AND_A_A;
     // RET_Z ;
-    if(wram->wEnemyTurnsTaken == 0)
+    if(gBattle.enemy.turnsTaken == 0)
         return;
 
     // LD_HL(wEnemyAIMoveScores - 1);
@@ -4606,7 +4606,7 @@ void AI_Status(void){
             // LD_A_addr(wBattleMonType2);
             // CP_A(POISON);
             // IF_Z goto immune;
-            if(wram->wBattleMon.type1 == POISON || wram->wBattleMon.type2 == POISON) {
+            if(gBattle.battleMon.type1 == POISON || gBattle.battleMon.type2 == POISON) {
             // immune:
                 // CALL(aAIDiscourageMove);
                 AIDiscourageMove(hl + i);
@@ -4726,7 +4726,7 @@ void AI_Risky(void){
         // CP_A_E;
         // LD_A_addr(wBattleMonHP);
         // SBC_A_D;
-        uint16_t hp = BigEndianToNative16(wram->wBattleMon.hp);
+        uint16_t hp = BigEndianToNative16(gBattle.battleMon.hp);
         // IF_NC goto nextmove;
         if(hp < de) {
             // POP_HL;
@@ -4772,13 +4772,13 @@ static const struct Move* AIGetEnemyMove(move_t a){
     // LD_DE(wEnemyMoveStruct);
     // LD_A(BANK(aMoves));
     // CALL(aFarCopyBytes);
-    CopyBytes(&wram->wEnemyMoveStruct, Moves + a, sizeof(wram->wEnemyMoveStruct));
+    CopyBytes(&gBattle.enemyMoveStruct, Moves + a, sizeof(gBattle.enemyMoveStruct));
 
     // POP_BC;
     // POP_DE;
     // POP_HL;
     // RET;
-    return &wram->wEnemyMoveStruct;
+    return &gBattle.enemyMoveStruct;
 }
 
 // 20% chance to return carry/true.

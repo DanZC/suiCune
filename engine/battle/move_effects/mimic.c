@@ -16,14 +16,14 @@ void BattleCommand_Mimic(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // IF_NZ goto fail;
-    if(wram->wAttackMissed)
+    if(gBattle.attackMissed)
         return FailMimic();
     // LD_HL(wBattleMonMoves);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto player_turn;
     // LD_HL(wEnemyMonMoves);
-    struct BattleMon* mon = (hram.hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* mon = UserBattleMon();
 
 // player_turn:
     // CALL(aCheckHiddenOpponent);

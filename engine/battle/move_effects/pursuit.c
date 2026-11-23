@@ -10,7 +10,7 @@ void BattleCommand_Pursuit(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_HL(wPlayerIsSwitching);
-    uint8_t isSwitching = (hram.hBattleTurn == TURN_PLAYER)? wram->wEnemyIsSwitching: wram->wPlayerIsSwitching;
+    uint8_t isSwitching = OpponentBattleStatus()->isSwitching;
 
 // ok:
     // LD_A_hl;

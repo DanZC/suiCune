@@ -39,7 +39,7 @@ bool AI_SwitchOrTryItem(void){
     // LD_A_addr(wEnemyWrapCount);
     // AND_A_A;
     // JR_NZ (mDontSwitch);
-    if(bit_test(wram->wPlayerSubStatus5, SUBSTATUS_CANT_RUN) || wram->wEnemyWrapCount != 0)
+    if(bit_test(gBattle.player.subStatus5, SUBSTATUS_CANT_RUN) || gBattle.enemy.wrapCount != 0)
         return DontSwitch();
 
 // always load the first trainer class in wTrainerClass for Battle Tower trainers
@@ -86,7 +86,7 @@ bool SwitchOften(void){
     CheckAbleToSwitch();
     // LD_A_addr(wEnemySwitchMonParam);
     // AND_A(0xf0);
-    uint8_t param = (wram->wEnemySwitchMonParam & 0xf0);
+    uint8_t param = (gBattle.enemySwitchMonParam & 0xf0);
     // JP_Z (mDontSwitch);
     if(param == 0x0)
         return DontSwitch();
@@ -128,7 +128,7 @@ bool SwitchOften(void){
     // INC_A;
 // In register 'a' is the number (1-6) of the mon to switch to
     // LD_addr_A(wEnemySwitchMonIndex);
-    wram->wEnemySwitchMonIndex = (wram->wEnemySwitchMonParam & 0xf) + 1;
+    gBattle.enemySwitchMonIndex = (gBattle.enemySwitchMonParam & 0xf) + 1;
     // JP(mAI_TrySwitch);
     return AI_TrySwitch();
 }
@@ -138,7 +138,7 @@ bool SwitchRarely(void){
     CheckAbleToSwitch();
     // LD_A_addr(wEnemySwitchMonParam);
     // AND_A(0xf0);
-    uint8_t param = (wram->wEnemySwitchMonParam & 0xf0);
+    uint8_t param = (gBattle.enemySwitchMonParam & 0xf0);
     // JP_Z (mDontSwitch);
     if(param == 0x0)
         return DontSwitch();
@@ -179,7 +179,7 @@ bool SwitchRarely(void){
     // AND_A(0xf);
     // INC_A;
     // LD_addr_A(wEnemySwitchMonIndex);
-    wram->wEnemySwitchMonIndex = (wram->wEnemySwitchMonParam & 0xf) + 1;
+    gBattle.enemySwitchMonIndex = (gBattle.enemySwitchMonParam & 0xf) + 1;
     // JP(mAI_TrySwitch);
     return AI_TrySwitch();
 }
@@ -189,7 +189,7 @@ bool SwitchSometimes(void){
     CheckAbleToSwitch();
     // LD_A_addr(wEnemySwitchMonParam);
     // AND_A(0xf0);
-    uint8_t param = (wram->wEnemySwitchMonParam & 0xf0);
+    uint8_t param = (gBattle.enemySwitchMonParam & 0xf0);
     // JP_Z (mDontSwitch);
     if(param == 0x0)
         return DontSwitch();
@@ -230,7 +230,7 @@ bool SwitchSometimes(void){
     // AND_A(0xf);
     // INC_A;
     // LD_addr_A(wEnemySwitchMonIndex);
-    wram->wEnemySwitchMonIndex = (wram->wEnemySwitchMonParam & 0xf) + 1;
+    gBattle.enemySwitchMonIndex = (gBattle.enemySwitchMonParam & 0xf) + 1;
     // JP(mAI_TrySwitch);
     return AI_TrySwitch();
 }
@@ -240,7 +240,7 @@ bool CheckSubstatusCantRun(void){
     // LD_A_addr(wEnemySubStatus5);
     // BIT_A(SUBSTATUS_CANT_RUN);
     // RET;
-    return bit_test(wram->wEnemySubStatus5, SUBSTATUS_CANT_RUN);
+    return bit_test(gBattle.enemy.subStatus5, SUBSTATUS_CANT_RUN);
 }
 
 static bool AI_Items_DontUse(void){
@@ -273,7 +273,7 @@ static bool AI_Items_Status(uint8_t bc){
         // LD_A_addr(wEnemyToxicCount);
         // CP_A(4);
         // IF_C goto FailToxicCheck;
-        if(bit_test(wram->wEnemySubStatus5, SUBSTATUS_TOXIC) && wram->wEnemyToxicCount >= 4) {
+        if(bit_test(gBattle.enemy.subStatus5, SUBSTATUS_TOXIC) && gBattle.enemy.toxicCount >= 4) {
             // CALL(aRandom);
             // CP_A(50 percent + 1);
             // JP_C (mAI_Items_Use);
@@ -366,7 +366,7 @@ static bool AI_Items_XItem(uint8_t bc){
     // LD_A_addr(wEnemyTurnsTaken);
     // AND_A_A;
     // IF_NZ goto notfirstturnout;
-    if(wram->wEnemyTurnsTaken == 0) {
+    if(gBattle.enemy.turnsTaken == 0) {
         // LD_A_bc;
         // BIT_A(ALWAYS_USE_F);
         // JP_NZ (mAI_Items_Use);
@@ -671,7 +671,7 @@ static bool AI_TryItem_IsHighestLevel(void){
     // LD_A_hl;
     // CP_A_E;
     // IF_NC goto yes;
-    if(wram->wOTPartyMon[wram->wCurOTMon].mon.level >= e) {
+    if(wram->wOTPartyMon[gBattle.curOTMon].mon.level >= e) {
     // yes:
         // SCF;
         // RET;
@@ -698,7 +698,7 @@ bool AI_TryItem(void){
     // LD_A_addr(wEnemyTrainerItem2);
     // OR_A_B;
     // RET_Z ;
-    if(wram->wEnemyTrainerItem1 == NO_ITEM && wram->wEnemyTrainerItem2 == NO_ITEM)
+    if(gBattle.enemyTrainerItems[0] == NO_ITEM && gBattle.enemyTrainerItems[1] == NO_ITEM)
         return false;
 
     // CALL(aAI_TryItem_IsHighestLevel);
@@ -717,7 +717,7 @@ bool AI_TryItem(void){
     // LD_HL(mAI_Items);
     const struct ItemFunc* hl = AI_Items;
     // LD_DE(wEnemyTrainerItem1);
-    item_t* de = &wram->wEnemyTrainerItem1;
+    item_t* de = gBattle.enemyTrainerItems;
 
     while(hl->item != NO_ITEM) {
     // loop:
@@ -768,27 +768,27 @@ bool AI_TryItem(void){
             *de = NO_ITEM;
             // INC_A;
             // LD_addr_A(wEnemyGoesFirst);
-            wram->wEnemyGoesFirst = TRUE;
+            gBattle.enemyGoesFirst = TRUE;
 
             // LD_HL(wEnemySubStatus3);
             // RES_hl(SUBSTATUS_BIDE);
-            bit_reset(wram->wEnemySubStatus3, SUBSTATUS_BIDE);
+            bit_reset(gBattle.enemy.subStatus3, SUBSTATUS_BIDE);
 
             // XOR_A_A;
             // LD_addr_A(wEnemyFuryCutterCount);
-            wram->wEnemyFuryCutterCount = 0;
+            gBattle.enemy.furyCutterCount = 0;
             // LD_addr_A(wEnemyProtectCount);
-            wram->wEnemyProtectCount = 0;
+            gBattle.enemy.protectCount = 0;
             // LD_addr_A(wEnemyRageCounter);
-            wram->wEnemyRageCounter = 0;
+            gBattle.enemy.rageCounter = 0;
 
             // LD_HL(wEnemySubStatus4);
             // RES_hl(SUBSTATUS_RAGE);
-            bit_reset(wram->wEnemySubStatus4, SUBSTATUS_RAGE);
+            bit_reset(gBattle.enemy.subStatus4, SUBSTATUS_RAGE);
 
             // XOR_A_A;
             // LD_addr_A(wLastEnemyCounterMove);
-            wram->wLastEnemyCounterMove = NO_MOVE;
+            gBattle.enemy.lastCounterMove = NO_MOVE;
 
             // SCF;
             // RET;
@@ -815,7 +815,7 @@ void AIUpdateHUD(void){
     hram.hBGMapMode = BGMAPMODE_UPDATE_TILES;
     // LD_HL(wEnemyItemState);
     // DEC_hl;
-    wram->wEnemyItemState--;
+    gBattle.enemyItemState--;
     // SCF;
     // RET;
 }
@@ -855,10 +855,10 @@ void EnemyUsedFullRestore(void){
     wram->wCurEnemyItem = FULL_RESTORE;
     // LD_HL(wEnemySubStatus3);
     // RES_hl(SUBSTATUS_CONFUSED);
-    bit_reset(wram->wEnemySubStatus3, SUBSTATUS_CONFUSED);
+    bit_reset(gBattle.enemy.subStatus3, SUBSTATUS_CONFUSED);
     // XOR_A_A;
     // LD_addr_A(wEnemyConfuseCount);
-    wram->wEnemyConfuseCount = 0;
+    gBattle.enemy.confuseCount = 0;
     return FullRestoreContinue();
 }
 
@@ -1024,12 +1024,12 @@ bool AI_TrySwitch(void){
 bool AI_Switch(void){
     // LD_A(0x1);
     // LD_addr_A(wEnemyIsSwitching);
-    wram->wEnemyIsSwitching = 0x1;
+    gBattle.enemy.isSwitching = 0x1;
     // LD_addr_A(wEnemyGoesFirst);
-    wram->wEnemyGoesFirst = TRUE;
+    gBattle.enemyGoesFirst = TRUE;
     // LD_HL(wEnemySubStatus4);
     // RES_hl(SUBSTATUS_RAGE);
-    bit_reset(wram->wEnemySubStatus4, SUBSTATUS_RAGE);
+    bit_reset(gBattle.enemy.subStatus4, SUBSTATUS_RAGE);
     // XOR_A_A;
     // LDH_addr_A(hBattleTurn);
     hram.hBattleTurn = TURN_PLAYER;
@@ -1046,7 +1046,7 @@ bool AI_Switch(void){
     // LD_HL(wEnemyMonStatus);
     // LD_BC(MON_MAXHP - MON_STATUS);
     // CALL(aCopyBytes);
-    CopyBytes(&wram->wOTPartyMon[wram->wCurOTMon].status, wram->wEnemyMon.status, MON_MAXHP - MON_STATUS);
+    CopyBytes(&wram->wOTPartyMon[gBattle.curOTMon].status, wram->wEnemyMon.status, MON_MAXHP - MON_STATUS);
     // POP_AF;
 
     // IF_C goto skiptext;
@@ -1066,7 +1066,7 @@ bool AI_Switch(void){
     ResetEnemyStatLevels();
     // LD_HL(wPlayerSubStatus1);
     // RES_hl(SUBSTATUS_IN_LOVE);
-    bit_reset(wram->wPlayerSubStatus1, SUBSTATUS_IN_LOVE);
+    bit_reset(gBattle.player.subStatus1, SUBSTATUS_IN_LOVE);
     // FARCALL(aEnemySwitch);
     EnemySwitch();
     // FARCALL(aResetBattleParticipants);
@@ -1107,16 +1107,16 @@ void AI_HealStatus(void){
     // CALL(aAddNTimes);
     // XOR_A_A;
     // LD_hl_A;
-    wram->wOTPartyMon[wram->wCurOTMon].status = 0;
+    wram->wOTPartyMon[gBattle.curOTMon].status = 0;
     // LD_addr_A(wEnemyMonStatus);
     wram->wEnemyMon.status[0] = 0;
 #if BUGFIX_AI_HEAL_STATUS
     // ld hl, wEnemySubStatus1
     // res SUBSTATUS_NIGHTMARE, [hl]
-    bit_reset(wram->wEnemySubStatus1, SUBSTATUS_NIGHTMARE);
+    bit_reset(gBattle.enemy.subStatus1, SUBSTATUS_NIGHTMARE);
     // ld hl, wEnemySubStatus3
     // res SUBSTATUS_CONFUSED, [hl]
-    bit_reset(wram->wEnemySubStatus3, SUBSTATUS_CONFUSED);
+    bit_reset(gBattle.enemy.subStatus3, SUBSTATUS_CONFUSED);
 #endif
 // Bug: this should reset SUBSTATUS_NIGHTMARE
 // Uncomment the 2 lines below to fix
@@ -1128,7 +1128,7 @@ void AI_HealStatus(void){
 // res SUBSTATUS_CONFUSED, [hl]
     // LD_HL(wEnemySubStatus5);
     // RES_hl(SUBSTATUS_TOXIC);
-    bit_reset(wram->wEnemySubStatus5, SUBSTATUS_TOXIC);
+    bit_reset(gBattle.enemy.subStatus5, SUBSTATUS_TOXIC);
     // RET;
 }
 
@@ -1137,7 +1137,7 @@ void EnemyUsedXAccuracy(void){
     AIUsedItemSound();
     // LD_HL(wEnemySubStatus4);
     // SET_hl(SUBSTATUS_X_ACCURACY);
-    bit_set(wram->wEnemySubStatus4, SUBSTATUS_X_ACCURACY);
+    bit_set(gBattle.enemy.subStatus4, SUBSTATUS_X_ACCURACY);
     // LD_A(X_ACCURACY);
     // JP(mPrintText_UsedItemOn_AND_AIUpdateHUD);
     PrintText_UsedItemOn_AND_AIUpdateHUD(X_ACCURACY);
@@ -1148,7 +1148,7 @@ void EnemyUsedGuardSpec(void){
     AIUsedItemSound();
     // LD_HL(wEnemySubStatus4);
     // SET_hl(SUBSTATUS_MIST);
-    bit_set(wram->wEnemySubStatus4, SUBSTATUS_MIST);
+    bit_set(gBattle.enemy.subStatus4, SUBSTATUS_MIST);
     // LD_A(GUARD_SPEC);
     // JP(mPrintText_UsedItemOn_AND_AIUpdateHUD);
     PrintText_UsedItemOn_AND_AIUpdateHUD(GUARD_SPEC);
@@ -1159,7 +1159,7 @@ void EnemyUsedDireHit(void){
     AIUsedItemSound();
     // LD_HL(wEnemySubStatus4);
     // SET_hl(SUBSTATUS_FOCUS_ENERGY);
-    bit_set(wram->wEnemySubStatus4, SUBSTATUS_FOCUS_ENERGY);
+    bit_set(gBattle.enemy.subStatus4, SUBSTATUS_FOCUS_ENERGY);
     // LD_A(DIRE_HIT);
     // JP(mPrintText_UsedItemOn_AND_AIUpdateHUD);
     PrintText_UsedItemOn_AND_AIUpdateHUD(DIRE_HIT);

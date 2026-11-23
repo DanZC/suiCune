@@ -15,7 +15,7 @@ void BattleCommand_Snore(void){
         ResetDamage();
         // LD_A(0x1);
         // LD_addr_A(wAttackMissed);
-        wram->wAttackMissed = TRUE;
+        gBattle.attackMissed = TRUE;
         // CALL(aFailMove);
         FailMove();
         // JP(mEndMoveEffect);

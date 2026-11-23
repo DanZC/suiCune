@@ -525,7 +525,7 @@ struct wram_s
                         uint8_t wPlayerJustGotFrozen;
                         uint8_t wEnemyJustGotFrozen;
                         //void wBattleEnd
-                    };
+                    } _battle;
                     struct {
                         // WRAM0
                         // link patch lists

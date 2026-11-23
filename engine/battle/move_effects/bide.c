@@ -21,12 +21,12 @@ void BattleCommand_StoreEnergy(void){
     // AND_A_A;
     // IF_Z goto check_still_storing_energy;
     // LD_HL(wEnemyRolloutCount);
-    uint8_t* rc = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    struct BattleStatus* status = UserBattleStatus();
 
 // check_still_storing_energy:
     // DEC_hl;
     // IF_NZ goto still_storing;
-    if(--*rc != 0) {
+    if(--status->rolloutCount != 0) {
     // still_storing:
         // LD_HL(mStoringEnergyText);
         // CALL(aStdBattleTextbox);
@@ -56,8 +56,6 @@ void BattleCommand_StoreEnergy(void){
     // IF_Z goto player;
     // LD_HL(wEnemyDamageTaken + 1);
     // LD_DE(wEnemyCharging);  // enemy
-    uint16_t* hl = (uint16_t*)((hram.hBattleTurn == TURN_PLAYER)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
-    uint8_t* de = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerCharging: &wram->wEnemyCharging;
 
 // player:
     // LD_A_hld;
@@ -67,7 +65,7 @@ void BattleCommand_StoreEnergy(void){
     // LD_A_hl;
     // RL_A;
     // LD_addr_A(wCurDamage);
-    uint32_t temp = BigEndianToNative16(*hl) << 1;
+    uint32_t temp = BigEndianToNative16(status->damageTaken) << 1;
     // IF_NC goto not_maxed;
     if(temp > 0xffff) {
         // LD_A(0xff);
@@ -85,16 +83,16 @@ void BattleCommand_StoreEnergy(void){
     if(temp == 0) {
         // LD_A(1);
         // LD_addr_A(wAttackMissed);
-        wram->wAttackMissed = TRUE;
+        gBattle.attackMissed = TRUE;
     }
 
 // built_up_something:
     // XOR_A_A;
     // LD_hli_A;
     // LD_hl_A;
-    *hl = 0;
+    status->damageTaken = 0;
     // LD_de_A;
-    *de = 0;
+    status->charging = 0;
 
     // LD_A(BATTLE_VARS_MOVE_ANIM);
     // CALL(aGetBattleVarAddr);
@@ -117,8 +115,7 @@ void BattleCommand_UnleashEnergy(void){
     // IF_Z goto got_damage;
     // LD_DE(wEnemyDamageTaken);
     // LD_BC(wEnemyRolloutCount);
-    uint16_t* de = (uint16_t*)((hram.hBattleTurn == TURN_PLAYER)? wram_ptr(wPlayerDamageTaken): wram_ptr(wEnemyDamageTaken));
-    uint8_t* bc = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerRolloutCount: &wram->wEnemyRolloutCount;
+    struct BattleStatus* status = UserBattleStatus();
 
 // got_damage:
     // LD_A(BATTLE_VARS_SUBSTATUS3);
@@ -129,20 +126,20 @@ void BattleCommand_UnleashEnergy(void){
     // LD_de_A;
     // INC_DE;
     // LD_de_A;
-    *de = 0;
+    status->damageTaken = 0;
     // LD_addr_A(wPlayerMoveStructEffect);
-    wram->wPlayerMoveStruct.effect = 0;
+    gBattle.playerMoveStruct.effect = 0;
     // LD_addr_A(wEnemyMoveStructEffect);
-    wram->wEnemyMoveStruct.effect = 0;
+    gBattle.enemyMoveStruct.effect = 0;
     // CALL(aBattleRandom);
     // AND_A(1);
     // INC_A;
     // INC_A;
     // LD_bc_A;
-    *bc = (v_BattleRandom() & 1) + 2;
+    status->rolloutCount = (v_BattleRandom() & 1) + 2;
     // LD_A(1);
     // LD_addr_A(wBattleAnimParam);
-    wram->wBattleAnimParam = 1;
+    gBattle.battleAnimParam = 1;
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
     // JP(mEndMoveEffect);

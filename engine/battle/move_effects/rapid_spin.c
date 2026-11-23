@@ -30,15 +30,14 @@ void BattleCommand_ClearHazards(void){
     // IF_Z goto got_screens_wrap;
     // LD_HL(wEnemyScreens);
     // LD_DE(wEnemyWrapCount);
-    uint8_t* screens = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerScreens: &wram->wEnemyScreens;
-    uint8_t* wrap    = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
+    struct BattleStatus* status = UserBattleStatus();
 
 // got_screens_wrap:
     // BIT_hl(SCREENS_SPIKES);
     // IF_Z goto no_spikes;
-    if(bit_test(*screens, SCREENS_SPIKES)) {
+    if(bit_test(status->screens, SCREENS_SPIKES)) {
         // RES_hl(SCREENS_SPIKES);
-        bit_reset(*screens, SCREENS_SPIKES);
+        bit_reset(status->screens, SCREENS_SPIKES);
         // LD_HL(mBlewSpikesText);
         // PUSH_DE;
         // CALL(aStdBattleTextbox);
@@ -51,12 +50,12 @@ void BattleCommand_ClearHazards(void){
     // LD_A_de;
     // AND_A_A;
     // RET_Z ;
-    if(*wrap == 0)
+    if(status->wrapCount == 0)
         return;
 
     // XOR_A_A;
     // LD_de_A;
-    *wrap = 0;
+    status->wrapCount = 0;
     // LD_HL(mReleasedByText);
     // JP(mStdBattleTextbox);
     return StdBattleTextbox(ReleasedByText);

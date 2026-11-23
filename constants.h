@@ -97,5 +97,6 @@ extern struct CrystalData gCrystal;
 extern struct Audio gAudio;
 extern gfx_s gGFX;
 extern struct Misc gMisc;
+extern struct Battle gBattle;
 extern script_s gCurScript;
 #endif

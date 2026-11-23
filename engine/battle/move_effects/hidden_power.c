@@ -8,7 +8,7 @@ void BattleCommand_HiddenPower(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // RET_NZ ;
-    if(wram->wAttackMissed)
+    if(gBattle.attackMissed)
         return;
     // FARCALL(aHiddenPowerDamage);
     gBattleCmdState.d = HiddenPowerDamage();

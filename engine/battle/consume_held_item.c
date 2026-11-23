@@ -18,14 +18,14 @@ void ConsumeHeldItem(void){
         // LD_DE(wEnemyMonItem);
         bmon = &wram->wEnemyMon;
         // LD_A_addr(wCurOTMon);
-        curMon = wram->wCurOTMon;
+        curMon = gBattle.curOTMon;
         // IF_Z goto theirturn;
     }
     else {
         // LD_HL(wPartyMon1Item);
         pmon = gPokemon.partyMon;
         // LD_DE(wBattleMonItem);
-        bmon = &wram->wBattleMon;
+        bmon = &gBattle.battleMon;
         // LD_A_addr(wCurBattleMon);
         curMon = wram->wCurBattleMon;
     }

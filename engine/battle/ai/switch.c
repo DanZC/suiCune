@@ -48,7 +48,7 @@ static void CheckPlayerMoveTypeMatchups_CheckEnemyMoveMatchups(uint8_t matchup) 
         // CALL(aGetMoveByte);
         // LD_HL(wBattleMonType1);
         // CALL(aCheckTypeMatchup);
-        uint8_t matchup2 = CheckTypeMatchup(Moves[a].type, wram->wBattleMon.types);
+        uint8_t matchup2 = CheckTypeMatchup(Moves[a].type, gBattle.battleMon.types);
 
         // LD_A_addr(wTypeMatchup);
     // immune
@@ -92,19 +92,19 @@ static void CheckPlayerMoveTypeMatchups_CheckEnemyMoveMatchups(uint8_t matchup) 
     // AND_A_A;
     // IF_Z goto doubledown;  // double down
     if(c == 0) {
-        --wram->wEnemyAISwitchScore;
-        --wram->wEnemyAISwitchScore;
+        --gBattle.enemyAISwitchScore;
+        --gBattle.enemyAISwitchScore;
     }
     // CP_A(5);
     // IF_C goto DecreaseScore;  // down
     else if(c < 5) {
-        --wram->wEnemyAISwitchScore;
+        --gBattle.enemyAISwitchScore;
     }
     // CP_A(100);
     // RET_C ;
     else if(c >= 100) {
         // goto IncreaseScore;  // up
-        ++wram->wEnemyAISwitchScore;
+        ++gBattle.enemyAISwitchScore;
     }
     else {
         return;
@@ -135,17 +135,17 @@ uint8_t CheckPlayerMoveTypeMatchups(void){
     // PUSH_BC;
     // LD_A(BASE_AI_SWITCH_SCORE);
     // LD_addr_A(wEnemyAISwitchScore);
-    wram->wEnemyAISwitchScore = BASE_AI_SWITCH_SCORE;
+    gBattle.enemyAISwitchScore = BASE_AI_SWITCH_SCORE;
     uint8_t matchup = EFFECTIVE;
     // LD_HL(wPlayerUsedMoves);
     // LD_A_hl;
     // AND_A_A;
     // IF_Z goto unknown_moves;
-    if(wram->wPlayerUsedMoves[0] == NO_MOVE) {
+    if(gBattle.playerUsedMoves[0] == NO_MOVE) {
     // unknown_moves:
         // LD_A_addr(wBattleMonType1);
         // LD_B_A;
-        uint8_t type = wram->wBattleMon.type1;
+        uint8_t type = gBattle.battleMon.type1;
         // LD_HL(wEnemyMonType1);
         // CALL(aCheckTypeMatchup);
         matchup = CheckTypeMatchup(type, wram->wEnemyMon.types);
@@ -154,7 +154,7 @@ uint8_t CheckPlayerMoveTypeMatchups(void){
         // IF_C goto ok;
         if(matchup >= EFFECTIVE + 1) {
             // CALL(aCheckPlayerMoveTypeMatchups_DecreaseScore);
-            --wram->wEnemyAISwitchScore;
+            --gBattle.enemyAISwitchScore;
         }
     // ok:
         // LD_A_addr(wBattleMonType2);
@@ -164,16 +164,16 @@ uint8_t CheckPlayerMoveTypeMatchups(void){
         // LD_A_addr(wTypeMatchup);
         // CP_A(EFFECTIVE + 1);  // 1.0 + 0.1
         // IF_C goto ok2;
-        if(wram->wBattleMon.type2 != type
-        && (matchup = CheckTypeMatchup(wram->wBattleMon.type2, wram->wEnemyMon.types), matchup >= EFFECTIVE + 1)) {
+        if(gBattle.battleMon.type2 != type
+        && (matchup = CheckTypeMatchup(gBattle.battleMon.type2, wram->wEnemyMon.types), matchup >= EFFECTIVE + 1)) {
             // CALL(aCheckPlayerMoveTypeMatchups_DecreaseScore);
-            --wram->wEnemyAISwitchScore;
+            --gBattle.enemyAISwitchScore;
         }
     // ok2:
 
     }
     else {
-        move_t* hl = wram->wPlayerUsedMoves;
+        move_t* hl = gBattle.playerUsedMoves;
         // LD_D(NUM_MOVES);
         uint8_t d = NUM_MOVES;
         // LD_E(0);
@@ -193,14 +193,14 @@ uint8_t CheckPlayerMoveTypeMatchups(void){
                 if(e == 2)
                     break;
                 // CALL(aCheckPlayerMoveTypeMatchups_IncreaseScore);
-                ++wram->wEnemyAISwitchScore;
+                ++gBattle.enemyAISwitchScore;
                 // LD_A_E;
                 // AND_A_A;
                 // IF_NZ goto done;
                 if(e != 0)
                     break;
                 // CALL(aCheckPlayerMoveTypeMatchups_IncreaseScore);
-                ++wram->wEnemyAISwitchScore;
+                ++gBattle.enemyAISwitchScore;
                 break;
             }
             // PUSH_HL;
@@ -225,7 +225,7 @@ uint8_t CheckPlayerMoveTypeMatchups(void){
             if(matchup >= EFFECTIVE + 1) {
             // super_effective:
                 // CALL(aCheckPlayerMoveTypeMatchups_DecreaseScore);
-                --wram->wEnemyAISwitchScore;
+                --gBattle.enemyAISwitchScore;
                 // POP_HL;
                 break;
             }
@@ -269,14 +269,14 @@ uint8_t CheckPlayerMoveTypeMatchups(void){
     // POP_DE;
     // POP_HL;
     // RET;
-    return wram->wEnemyAISwitchScore;
+    return gBattle.enemyAISwitchScore;
 }
 
 // Returns true (nc) if able to switch.
 bool CheckAbleToSwitch(void){
     // XOR_A_A;
     // LD_addr_A(wEnemySwitchMonParam);
-    wram->wEnemySwitchMonParam = 0x0;
+    gBattle.enemySwitchMonParam = 0x0;
     // CALL(aFindAliveEnemyMons);
     // RET_C ;
     if(FindAliveEnemyMons().flag)
@@ -289,7 +289,7 @@ bool CheckAbleToSwitch(void){
     // LD_A_addr(wEnemyPerishCount);
     // CP_A(1);
     // IF_NZ goto no_perish;
-    if(bit_test(wram->wEnemySubStatus1, SUBSTATUS_PERISH) && wram->wEnemyPerishCount == 1) {
+    if(bit_test(gBattle.enemy.subStatus1, SUBSTATUS_PERISH) && gBattle.enemy.perishCount == 1) {
     // Perish count is 1
         // CALL(aFindAliveEnemyMons);
         uint8_t c = FindAliveEnemyMons().a;
@@ -307,7 +307,7 @@ bool CheckAbleToSwitch(void){
             // LD_A_addr(wEnemyAISwitchScore);
             // ADD_A(0x30);  // maximum chance
             // LD_addr_A(wEnemySwitchMonParam);
-            wram->wEnemySwitchMonParam = wram->wEnemyAISwitchScore + 0x30;
+            gBattle.enemySwitchMonParam = gBattle.enemyAISwitchScore + 0x30;
             // RET;
             return true;
         }
@@ -332,7 +332,7 @@ bool CheckAbleToSwitch(void){
         // LD_A_B;
         // ADD_A(0x30);  // maximum chance
         // LD_addr_A(wEnemySwitchMonParam);
-        wram->wEnemySwitchMonParam = b + 0x30;
+        gBattle.enemySwitchMonParam = b + 0x30;
         // RET;
     }
 
@@ -347,7 +347,7 @@ bool CheckAbleToSwitch(void){
     // LD_A_addr(wLastPlayerCounterMove);
     // AND_A_A;
     // IF_Z goto no_last_counter_move;
-    if(wram->wLastPlayerCounterMove != NO_MOVE) {
+    if(gBattle.player.lastCounterMove != NO_MOVE) {
         // CALL(aFindEnemyMonsImmuneToLastCounterMove);
         uint8_t c = FindEnemyMonsImmuneToLastCounterMove();
         // LD_A_addr(wEnemyAISwitchScore);
@@ -360,11 +360,11 @@ bool CheckAbleToSwitch(void){
             // LD_A_addr(wEnemyAISwitchScore);
             // CP_A(0xff);
             // RET_Z ;
-            if(wram->wEnemyAISwitchScore == 0xff)
+            if(gBattle.enemyAISwitchScore == 0xff)
                 return true;
 
             // LD_B_A;
-            uint8_t b = wram->wEnemyAISwitchScore;
+            uint8_t b = gBattle.enemyAISwitchScore;
             // LD_A_E;
             // CP_A(2);
             // IF_Z goto not_2_again;
@@ -380,7 +380,7 @@ bool CheckAbleToSwitch(void){
                 // LD_A_B;
                 // ADD_A(0x10);
                 // LD_addr_A(wEnemySwitchMonParam);
-                wram->wEnemySwitchMonParam = 0x10 + b;
+                gBattle.enemySwitchMonParam = 0x10 + b;
                 // RET;
                 return true;
             }
@@ -402,7 +402,7 @@ bool CheckAbleToSwitch(void){
             // LD_A_B;
             // ADD_A_C;
             // LD_addr_A(wEnemySwitchMonParam);
-            wram->wEnemySwitchMonParam = c + b;
+            gBattle.enemySwitchMonParam = c + b;
             // RET;
             return true;
         }
@@ -434,7 +434,7 @@ bool CheckAbleToSwitch(void){
     // LD_A_addr(wEnemyAISwitchScore);
     // ADD_A(0x10);
     // LD_addr_A(wEnemySwitchMonParam);
-    wram->wEnemySwitchMonParam = wram->wEnemyAISwitchScore + 10;
+    gBattle.enemySwitchMonParam = gBattle.enemyAISwitchScore + 10;
     // RET;
     return true;
 }
@@ -463,7 +463,7 @@ u8_flag_s FindAliveEnemyMons(void){
         // LD_A_addr(wCurOTMon);
         // CP_A_E;
         // IF_Z goto next;
-        if(wram->wCurOTMon == e)
+        if(gBattle.curOTMon == e)
             continue;
 
         // PUSH_BC;
@@ -521,7 +521,7 @@ static uint8_t FindEnemyMonsImmuneToLastCounterMove(void){
     uint8_t d = 0;
     // XOR_A_A;
     // LD_addr_A(wEnemyAISwitchScore);
-    wram->wEnemyAISwitchScore = 0;
+    gBattle.enemyAISwitchScore = 0;
 
     while(1) {
     // loop:
@@ -529,7 +529,7 @@ static uint8_t FindEnemyMonsImmuneToLastCounterMove(void){
         // CP_A_D;
         // PUSH_HL;
         // IF_Z goto next;
-        if(wram->wCurOTMon != d) {
+        if(gBattle.curOTMon != d) {
             // PUSH_HL;
             // PUSH_BC;
 
@@ -552,7 +552,7 @@ static uint8_t FindEnemyMonsImmuneToLastCounterMove(void){
                 // DEC_A;
                 // LD_HL(mMoves + MOVE_POWER);
                 // CALL(aGetMoveAttr);
-                const struct Move* move = GetMoveAttr(wram->wLastPlayerCounterMove);
+                const struct Move* move = GetMoveAttr(gBattle.player.lastCounterMove);
                 // AND_A_A;
                 // IF_Z goto next;
                 if(move->power != 0) {
@@ -571,7 +571,7 @@ static uint8_t FindEnemyMonsImmuneToLastCounterMove(void){
                         // LD_A_addr(wEnemyAISwitchScore);
                         // OR_A_C;
                         // LD_addr_A(wEnemyAISwitchScore);
-                        wram->wEnemyAISwitchScore |= c;
+                        gBattle.enemyAISwitchScore |= c;
                     }
                 }
             }
@@ -582,7 +582,7 @@ static uint8_t FindEnemyMonsImmuneToLastCounterMove(void){
         // DEC_B;
         // RET_Z ;
         if(--b == 0)
-            return wram->wEnemyAISwitchScore;
+            return gBattle.enemyAISwitchScore;
 
         // PUSH_BC;
         // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -647,7 +647,7 @@ static uint8_t FindAliveEnemyMonsWithASuperEffectiveMove(uint8_t c){
 static uint8_t FindEnemyMonsWithASuperEffectiveMove(uint8_t c){
     // LD_A(-1);
     // LD_addr_A(wEnemyAISwitchScore);
-    wram->wEnemyAISwitchScore = 0xff;
+    gBattle.enemyAISwitchScore = 0xff;
     // LD_HL(wOTPartyMon1Moves);
     const struct PartyMon* hl = wram->wOTPartyMon;
     // LD_B(1 << (PARTY_LENGTH - 1));
@@ -694,7 +694,7 @@ static uint8_t FindEnemyMonsWithASuperEffectiveMove(uint8_t c){
                 // CALL(aGetMoveByte);
                 // LD_HL(wBattleMonType1);
                 // CALL(aCheckTypeMatchup);
-                uint8_t matchup = CheckTypeMatchup(move->type, wram->wBattleMon.types);
+                uint8_t matchup = CheckTypeMatchup(move->type, gBattle.battleMon.types);
 
             // if immune or not very effective: continue
                 // LD_A_addr(wTypeMatchup);
@@ -790,7 +790,7 @@ done2:
 
     // LD_A_C;
     // LD_addr_A(wEnemyAISwitchScore);
-    wram->wEnemyAISwitchScore = c2;
+    gBattle.enemyAISwitchScore = c2;
     // POP_BC;
     // RET;
     return e;
@@ -824,10 +824,10 @@ static uint8_t FindEnemyMonsThatResistPlayer(uint8_t c){
         // CALL(aGetMoveAttr);
         // AND_A_A;
         // IF_Z goto skip_move;
-        if(wram->wLastPlayerCounterMove != NO_MOVE && GetMoveAttr(wram->wLastPlayerCounterMove)->power != 0) {
+        if(gBattle.player.lastCounterMove != NO_MOVE && GetMoveAttr(gBattle.player.lastCounterMove)->power != 0) {
             // INC_HL;
             // CALL(aGetMoveByte);
-            type = GetMoveAttr(wram->wLastPlayerCounterMove)->type;
+            type = GetMoveAttr(gBattle.player.lastCounterMove)->type;
             // goto check_type;
         }
         else {
@@ -835,14 +835,14 @@ static uint8_t FindEnemyMonsThatResistPlayer(uint8_t c){
             // LD_A_addr(wBattleMonType1);
             // LD_HL(wBaseType);
             // CALL(aCheckTypeMatchup);
-            uint8_t matchup = CheckTypeMatchup(wram->wBattleMon.type1, wram->wBaseType);
+            uint8_t matchup = CheckTypeMatchup(gBattle.battleMon.type1, wram->wBaseType);
             // LD_A_addr(wTypeMatchup);
             // CP_A(10 + 1);
             // IF_NC goto dont_choose_mon;
             if(matchup >= 10 + 1)
                 goto dont_choose_mon;
             // LD_A_addr(wBattleMonType2);
-            type = wram->wBattleMon.type2;
+            type = gBattle.battleMon.type2;
         }
 
     // check_type:

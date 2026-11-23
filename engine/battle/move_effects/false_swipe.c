@@ -14,7 +14,7 @@ bool CheckFalseSwipe(void) {
     // AND_A_A;
     // IF_Z goto got_hp;
     // LD_HL(wBattleMonHP);
-    uint16_t hp = BigEndianToNative16((hram.hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.hp: wram->wBattleMon.hp);
+    uint16_t hp = BigEndianToNative16(OpponentBattleMon()->hp);
 
 // got_hp:
     // LD_DE(wCurDamage);
@@ -46,10 +46,10 @@ bool CheckFalseSwipe(void) {
         // LD_A_addr(wCriticalHit);
         // CP_A(2);
         // IF_NZ goto carry;
-        if(wram->wCriticalHit == 2) {
+        if(gBattle.criticalHit == 2) {
             // XOR_A_A;
             // LD_addr_A(wCriticalHit);
-            wram->wCriticalHit = 0;
+            gBattle.criticalHit = 0;
         }
 
     // carry:

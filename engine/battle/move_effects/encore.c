@@ -17,8 +17,8 @@ void BattleCommand_Encore(void){
     // IF_Z goto ok;
     // LD_HL(wBattleMonMoves);
     // LD_DE(wPlayerEncoreCount);
-    struct BattleMon* mon = (hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyMon: &wram->wBattleMon;
-    uint8_t* de = (hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyEncoreCount: &wram->wPlayerEncoreCount;
+    struct BattleMon* mon = OpponentBattleMon();
+    uint8_t* de = &OpponentBattleStatus()->encoreCount;
 
 // ok:
     // LD_A(BATTLE_VARS_LAST_MOVE_OPP);
@@ -57,7 +57,7 @@ void BattleCommand_Encore(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // JP_NZ (mBattleCommand_Encore_failed);
-    if((mon->pp[c] & PP_MASK) == 0 || wram->wAttackMissed)
+    if((mon->pp[c] & PP_MASK) == 0 || gBattle.attackMissed)
         goto failed;
     // LD_A(BATTLE_VARS_SUBSTATUS5_OPP);
     // CALL(aGetBattleVarAddr);
@@ -85,11 +85,11 @@ void BattleCommand_Encore(void){
             // PUSH_HL;
             // LD_A_addr(wLastPlayerMove);
             // LD_B_A;
-            move_t pmove = wram->wLastPlayerMove;
+            move_t pmove = gBattle.player.lastMove;
             uint8_t idx = 0;
             // LD_C(0);
             // LD_HL(wBattleMonMoves);
-            move_t* pmoves = wram->wBattleMon.moves;
+            move_t* pmoves = gBattle.battleMon.moves;
 
             while(1) {
             // find_player_move:
@@ -118,21 +118,21 @@ void BattleCommand_Encore(void){
             // POP_HL;
             // LD_A_C;
             // LD_addr_A(wCurMoveNum);
-            wram->wCurMoveNum = idx;
+            gBattle.player.curMoveNum = idx;
             // LD_A_B;
             // LD_addr_A(wCurPlayerMove);
-            wram->wCurPlayerMove = pmove;
+            gBattle.curPlayerMove = pmove;
             // DEC_A;
             // LD_DE(wPlayerMoveStruct);
             // CALL(aGetMoveData);
-            GetMoveData(&wram->wPlayerMoveStruct, pmove);
+            GetMoveData(&gBattle.playerMoveStruct, pmove);
             // goto finish_move;
         }
         else {
         // force_last_enemy_move:
             // PUSH_HL;
             // LD_A_addr(wLastEnemyMove);
-            move_t emove = wram->wLastEnemyMove;
+            move_t emove = gBattle.enemy.lastMove;
             // LD_B_A;
             // LD_C(0);
             uint8_t idx = 0;
@@ -166,14 +166,14 @@ void BattleCommand_Encore(void){
             // POP_HL;
             // LD_A_C;
             // LD_addr_A(wCurEnemyMoveNum);
-            wram->wCurEnemyMoveNum = idx;
+            gBattle.enemy.curMoveNum = idx;
             // LD_A_B;
             // LD_addr_A(wCurEnemyMove);
-            wram->wCurEnemyMove = emove;
+            gBattle.curEnemyMove = emove;
             // DEC_A;
             // LD_DE(wEnemyMoveStruct);
             // CALL(aGetMoveData);
-            GetMoveData(&wram->wEnemyMoveStruct, emove);
+            GetMoveData(&gBattle.enemyMoveStruct, emove);
         }
     }
 

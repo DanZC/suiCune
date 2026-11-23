@@ -6,7 +6,7 @@ void BattleCommand_TripleKick(void){
 
     // LD_A_addr(wBattleAnimParam);
     // LD_B_A;
-    uint8_t b = wram->wBattleAnimParam + 1;
+    uint8_t b = gBattle.battleAnimParam + 1;
     // INC_B;
     // LD_HL(wCurDamage + 1);
     // LD_A_hld;
@@ -47,6 +47,6 @@ void BattleCommand_KickCounter(void){
 
     // LD_HL(wBattleAnimParam);
     // INC_hl;
-    wram->wBattleAnimParam++;
+    gBattle.battleAnimParam++;
     // RET;
 }

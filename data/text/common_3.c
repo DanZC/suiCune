@@ -1617,7 +1617,7 @@ const txt_cmd_s v_BallSoCloseText[] = {
 const txt_cmd_s v_Text_BallCaught[] = {
     text_start("Gotcha! @"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(
         t_line "was caught!@"
         )
@@ -1645,7 +1645,7 @@ const txt_cmd_s v_BallSentToPCText[] = {
 };
 
 const txt_cmd_s v_NewDexDataText[] = {
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start("'s data"
         t_line "was newly added to"
         t_cont "the #DEX.@"

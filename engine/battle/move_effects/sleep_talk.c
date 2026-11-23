@@ -46,7 +46,7 @@ static bool BattleCommand_SleepTalk_check_has_usable_move(struct BattleMon* mon)
     // IF_Z goto got_move_2;
 
     // LD_A_addr(wEnemyDisabledMove);
-    move_t disabledMove = (hram.hBattleTurn == TURN_PLAYER)? wram->wDisabledMove: wram->wEnemyDisabledMove;
+    move_t disabledMove = UserBattleStatus()->disabledMove;
 
 // got_move_2:
     // LD_B_A;
@@ -103,7 +103,7 @@ void BattleCommand_SleepTalk(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // IF_NZ goto fail;
-    if(wram->wAttackMissed)
+    if(gBattle.attackMissed)
         goto fail;
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -114,8 +114,8 @@ void BattleCommand_SleepTalk(void){
     // LD_HL(wEnemyMonMoves + 1);
     // LD_A_addr(wEnemyDisabledMove);
     // LD_D_A;
-    struct BattleMon* mon = (hram.hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
-    move_t d = (hram.hBattleTurn == TURN_PLAYER)? wram->wDisabledMove: wram->wEnemyDisabledMove;
+    struct BattleMon* mon = UserBattleMon();
+    move_t d = UserBattleStatus()->disabledMove;
 
 // got_moves:
     // LD_A(BATTLE_VARS_STATUS);
@@ -179,13 +179,13 @@ void BattleCommand_SleepTalk(void){
     // IF_NZ goto charging;
     if(!CheckUserIsCharging()) {
         // LD_A_addr(wBattleAnimParam);
-        uint8_t param = wram->wBattleAnimParam;
+        uint8_t param = gBattle.battleAnimParam;
         // PUSH_AF;
         // CALL(aBattleCommand_LowerSub);
         BattleCommand_LowerSub();
         // POP_AF;
         // LD_addr_A(wBattleAnimParam);
-        wram->wBattleAnimParam = param;
+        gBattle.battleAnimParam = param;
     }
 
 // charging:

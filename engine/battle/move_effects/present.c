@@ -37,7 +37,7 @@ void BattleCommand_Present(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // JP_NZ (mAnimateFailedMove);
-    if(wram->wTypeMatchup == 0 || wram->wAttackMissed)
+    if(wram->wTypeMatchup == 0 || gBattle.attackMissed)
         return AnimateFailedMove();
 
     // PUSH_BC;
@@ -59,7 +59,7 @@ void BattleCommand_Present(void){
             // POP_BC;
             // LD_A(0x3);  // heal animation
             // LD_addr_A(wBattleAnimParam);
-            wram->wBattleAnimParam = 0x3;
+            gBattle.battleAnimParam = 0x3;
             // CALL(aAnimateCurrentMove);
             AnimateCurrentMove();
             // CALL(aBattleCommand_SwitchTurn);
@@ -127,7 +127,7 @@ void BattleCommand_Present(void){
 // got_power:
     // LD_A_C;
     // LD_addr_A(wBattleAnimParam);
-    wram->wBattleAnimParam = c;
+    gBattle.battleAnimParam = c;
     // CALL(aAnimateCurrentMoveEitherSide);
     AnimateCurrentMoveEitherSide();
     // LD_D_hl;

@@ -932,7 +932,7 @@ void GetEggFrontpic(tile_t* de, species_t a){
     GetBaseData(a);
     // LD_HL(wBattleMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter(wram->wBattleMon.dvs);
+    GetUnownLetter(gBattle.battleMon.dvs);
     // POP_DE;
     // PREDEF_JUMP(pGetMonFrontpic);
     GetMonFrontpic(de);
@@ -948,7 +948,7 @@ void GetHatchlingFrontpic(tile_t* de, species_t a){
     GetBaseData(a);
     // LD_HL(wBattleMonDVs);
     // PREDEF(pGetUnownLetter);
-    GetUnownLetter(wram->wBattleMon.dvs);
+    GetUnownLetter(gBattle.battleMon.dvs);
     // POP_DE;
     // PREDEF_JUMP(pGetAnimatedFrontpic);
     GetAnimatedFrontpic(de, 0);

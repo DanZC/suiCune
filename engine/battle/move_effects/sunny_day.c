@@ -8,10 +8,10 @@ void BattleCommand_StartSun(void){
 //  startsun
     // LD_A(WEATHER_SUN);
     // LD_addr_A(wBattleWeather);
-    wram->wBattleWeather = WEATHER_SUN;
+    gBattle.battleWeather = WEATHER_SUN;
     // LD_A(5);
     // LD_addr_A(wWeatherCount);
-    wram->wWeatherCount = 5;
+    gBattle.weatherCount = 5;
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
     // LD_HL(mSunGotBrightText);

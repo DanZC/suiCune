@@ -63,7 +63,7 @@ void FindFirstAliveMonAndStartBattle(void){
     // ADD_HL_DE;
     // LD_A_hl;
     // LD_addr_A(wBattleMonLevel);
-    wram->wBattleMon.level = lvl;
+    gBattle.battleMon.level = lvl;
     // PREDEF(pDoBattleTransition);
     DoBattleTransition();
     // FARCALL(av_LoadBattleFontsHPBar);
@@ -265,11 +265,11 @@ void ClearBattleRAM(void){
     // LD_addr_A(wMenuScrollPosition);
     wram->wMenuScrollPosition = 0;
     // LD_addr_A(wCriticalHit);
-    wram->wCriticalHit = 0;
+    gBattle.criticalHit = 0;
     // LD_addr_A(wBattleMonSpecies);
-    wram->wBattleMon.species = 0;
+    gBattle.battleMon.species = 0;
     // LD_addr_A(wBattleParticipantsNotFainted);
-    wram->wBattleParticipantsNotFainted = 0;
+    gBattle.battleParticipantsNotFainted = 0;
     // LD_addr_A(wCurBattleMon);
     wram->wCurBattleMon = 0;
     // LD_addr_A(wForcedSwitch);
@@ -277,9 +277,9 @@ void ClearBattleRAM(void){
     // LD_addr_A(wTimeOfDayPal);
     gPlayer.timeOfDayPal = 0;
     // LD_addr_A(wPlayerTurnsTaken);
-    wram->wPlayerTurnsTaken = 0;
+    gBattle.player.turnsTaken = 0;
     // LD_addr_A(wEnemyTurnsTaken);
-    wram->wEnemyTurnsTaken = 0;
+    gBattle.enemy.turnsTaken = 0;
     // LD_addr_A(wEvolvableFlags);
     wram->wEvolvableFlags[0] = 0;
 
@@ -292,7 +292,7 @@ void ClearBattleRAM(void){
     // LD_HL(wBattleMonDVs);
     // LD_hli_A;
     // LD_hl_A;
-    wram->wBattleMon.dvs = 0;
+    gBattle.battleMon.dvs = 0;
 
     // LD_HL(wEnemyMonDVs);
     // LD_hli_A;
@@ -304,7 +304,7 @@ void ClearBattleRAM(void){
     // LD_BC(wBattleEnd - wBattle);
     // XOR_A_A;
     // CALL(aByteFill);
-    ByteFill(&wram->wEnemyMoveStruct.animation, wBattleEnd - wBattle, 0);
+    ByteFill(&gBattle, sizeof(gBattle), 0);
 
     // CALLFAR(aResetEnemyStatLevels);
     ResetEnemyStatLevels();

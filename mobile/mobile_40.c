@@ -2418,16 +2418,16 @@ static uint8_t v_LinkBattleSendReceiveAction_StageForSend(void){
         // LD_B(BATTLEACTION_STRUGGLE);
         // CP_A(STRUGGLE);
         // IF_Z goto struggle;
-        if(wram->wCurPlayerMove == STRUGGLE)
+        if(gBattle.curPlayerMove == STRUGGLE)
             return BATTLEACTION_STRUGGLE & 0x0f;
         // LD_B(BATTLEACTION_SKIPTURN);
         // CP_A(0xff);
         // IF_Z goto struggle;
-        if(wram->wCurPlayerMove == 0xff)
+        if(gBattle.curPlayerMove == 0xff)
             return BATTLEACTION_SKIPTURN & 0x0f;
         // LD_A_addr(wCurMoveNum);
         // goto use_move;
-        return (wram->wCurMoveNum) & 0x0f;
+        return (gBattle.player.curMoveNum) & 0x0f;
     }
     else {
     // switch_:
@@ -2762,7 +2762,7 @@ static void Mobile_MoveSelectionScreen_ListMoves(void){
     // LD_DE(wListMoves_MoveIndicesBuffer);
     // LD_BC(NUM_MOVES);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wListMoves_MoveIndicesBuffer, wram->wBattleMon.moves, sizeof(wram->wBattleMon.moves));
+    CopyBytes(wram->wListMoves_MoveIndicesBuffer, gBattle.battleMon.moves, sizeof(gBattle.battleMon.moves));
     // LD_A(SCREEN_WIDTH * 2);
     // LD_addr_A(wListMovesLineSpacing);
     wram->wListMovesLineSpacing = SCREEN_WIDTH * 2;
@@ -2772,7 +2772,7 @@ static void Mobile_MoveSelectionScreen_ListMoves(void){
     // RET;
 #else
     Textbox(coord(4, 17 - NUM_MOVES - 1, wram->wTilemap), 4, 14);
-    CopyBytes(wram->wListMoves_MoveIndicesBuffer, wram->wBattleMon.moves, sizeof(wram->wBattleMon.moves));
+    CopyBytes(wram->wListMoves_MoveIndicesBuffer, gBattle.battleMon.moves, sizeof(gBattle.battleMon.moves));
     wram->wListMovesLineSpacing = SCREEN_WIDTH;
     ListMoves(coord(6, 17 - NUM_MOVES, wram->wTilemap));
 #endif
@@ -2865,7 +2865,7 @@ Top:
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
         // LD_addr_A(wCurMoveNum);
-        wram->wCurMoveNum = wram->wMenuCursorY - 1;
+        gBattle.player.curMoveNum = wram->wMenuCursorY - 1;
         // LD_A(0x01);
         // AND_A_A;
         // RET;
@@ -2875,7 +2875,7 @@ Top:
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
         // LD_addr_A(wCurMoveNum);
-        wram->wCurMoveNum = wram->wMenuCursorY - 1;
+        gBattle.player.curMoveNum = wram->wMenuCursorY - 1;
         // LD_A_addr(wMenuCursorY);
         // DEC_A;
         // LD_C_A;
@@ -2885,7 +2885,7 @@ Top:
         // LD_A_hl;
         // AND_A(0x3f);
         // IF_Z goto no_pp_left;
-        if((wram->wBattleMon.pp[wram->wMenuCursorY - 1] & 0x3f) == 0) {
+        if((gBattle.battleMon.pp[wram->wMenuCursorY - 1] & 0x3f) == 0) {
         // no_pp_left:
             // LD_HL(mBattleText_TheresNoPPLeftForThisMove);
     
@@ -2903,7 +2903,7 @@ Top:
         // DEC_A;
         // CP_A_C;
         // IF_Z goto move_disabled;
-        if(((wram->wPlayerDisableCount >> 4) & 0xf) - 1 == wram->wCurMoveNum) {
+        if(((gBattle.player.disableCount >> 4) & 0xf) - 1 == gBattle.player.curMoveNum) {
         // move_disabled:
             // LD_HL(mBattleText_TheMoveIsDisabled);
             // goto print_text;
@@ -2924,7 +2924,7 @@ Top:
         // ADD_HL_BC;
         // LD_A_hl;
         // LD_addr_A(wCurPlayerMove);
-        wram->wCurPlayerMove = wram->wBattleMon.moves[wram->wMenuCursorY - 1];
+        gBattle.curPlayerMove = gBattle.battleMon.moves[wram->wMenuCursorY - 1];
         // XOR_A_A;
         // RET;
         return 0x0;
@@ -2985,7 +2985,7 @@ void Function100c98(void){
     // LD_A_addr(wCurMoveNum);
     // INC_A;
     // LD_addr_A(wMenuCursorY);
-    wram->wMenuCursorY = wram->wCurMoveNum + 1;
+    wram->wMenuCursorY = gBattle.player.curMoveNum + 1;
     // RET;
 }
 
@@ -3837,7 +3837,7 @@ void Function10107d(void){
     // LD_DE(wOTClassName + 1);
     // LD_BC(NAME_LENGTH);
     // CALL(aFunction10107d_CopyAllFromOT);
-    Function10107d_CopyAllFromOT(wram->wOTClassName + 1, wram->wOTPartyMonOT[0], NAME_LENGTH);
+    Function10107d_CopyAllFromOT(gBattle.OTClassName + 1, wram->wOTPartyMonOT[0], NAME_LENGTH);
     // LD_HL(wOTPartyMon1Species);
     // LD_DE(0xc699);
     // LD_BC(PARTYMON_STRUCT_LENGTH);
@@ -5759,7 +5759,7 @@ static void v_StartMobileBattle_CopyOTDetails(void){
     // LD_DE(wOTClassName);
     // LD_BC(NAME_LENGTH);
     // CALL(aCopyBytes);
-    CopyBytes(wram->wOTClassName, wram->wOTPlayerName, NAME_LENGTH);
+    CopyBytes(gBattle.OTClassName, wram->wOTPlayerName, NAME_LENGTH);
     // LD_A_addr(wcd2f);
     // AND_A_A;
     // LD_A(USING_INTERNAL_CLOCK);

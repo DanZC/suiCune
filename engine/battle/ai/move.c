@@ -67,7 +67,7 @@ void AIChooseMove(void){
     // LD_A_addr(wEnemyDisabledMove);
     // AND_A_A;
     // IF_Z goto CheckPP;
-    if(wram->wEnemyDisabledMove != NO_MOVE) {
+    if(gBattle.enemy.disabledMove != NO_MOVE) {
         // LD_HL(wEnemyMonMoves);
         // LD_C(0);
 
@@ -75,7 +75,7 @@ void AIChooseMove(void){
         // CheckDisabledMove:
             // CP_A_hl;
             // IF_Z goto ScoreDisabledMove;
-            if(wram->wEnemyDisabledMove == wram->wEnemyMon.moves[i]) {
+            if(gBattle.enemy.disabledMove == wram->wEnemyMon.moves[i]) {
             // ScoreDisabledMove:
                 // LD_HL(wEnemyAIMoveScores);
                 // LD_B(0);
@@ -297,10 +297,10 @@ void AIChooseMove(void){
     } while(move == NO_MOVE);
 
     // LD_addr_A(wCurEnemyMove);
-    wram->wCurEnemyMove = move;
+    gBattle.curEnemyMove = move;
     // LD_A_C;
     // LD_addr_A(wCurEnemyMoveNum);
-    wram->wCurEnemyMoveNum = moveIdx;
+    gBattle.enemy.curMoveNum = moveIdx;
     // RET;
 }
 

@@ -49,12 +49,12 @@ void BattleCommand_Teleport(void){
             // LD_A_addr(wBattleMonLevel);
             // CP_A_B;
             // IF_NC goto run_away;
-            if(wram->wBattleMon.level < b) {
+            if(gBattle.battleMon.level < b) {
             // c = player level + enemy level + 1
                 // ADD_A_B;
                 // LD_C_A;
                 // INC_C;
-                uint8_t c = wram->wBattleMon.level + b + 1;
+                uint8_t c = gBattle.battleMon.level + b + 1;
             // Generate a number less than c
                 uint8_t a;
                 do {
@@ -86,7 +86,7 @@ void BattleCommand_Teleport(void){
         // b = enemy level
             // LD_A_addr(wBattleMonLevel);
             // LD_B_A;
-            uint8_t b = wram->wBattleMon.level;
+            uint8_t b = gBattle.battleMon.level;
         // If enemy level >= player level, Teleport will succeed
             // LD_A_addr(wCurPartyLevel);
             // CP_A_B;
@@ -130,7 +130,7 @@ void BattleCommand_Teleport(void){
     // LD_addr_A(wForcedSwitch);
     wram->wForcedSwitch = 1;
     // LD_addr_A(wBattleAnimParam);
-    wram->wBattleAnimParam = 1;
+    gBattle.battleAnimParam = 1;
     // CALL(aSetBattleDraw);
     SetBattleDraw();
     // CALL(aBattleCommand_LowerSub);

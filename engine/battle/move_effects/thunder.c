@@ -15,7 +15,7 @@ void BattleCommand_ThunderAccuracy(void){
     // LD_A_addr(wBattleWeather);
     // CP_A(WEATHER_RAIN);
     // IF_Z goto rain;
-    if(wram->wBattleWeather == WEATHER_RAIN) {
+    if(gBattle.battleWeather == WEATHER_RAIN) {
     // rain:
     // Redundant with CheckHit guranteeing hit
         // LD_hl(100 percent);
@@ -26,7 +26,7 @@ void BattleCommand_ThunderAccuracy(void){
 
     // CP_A(WEATHER_SUN);
     // RET_NZ ;
-    else if(wram->wBattleWeather == WEATHER_SUN) {
+    else if(gBattle.battleWeather == WEATHER_SUN) {
         // LD_hl(50 percent + 1);
         *hl = 50 percent + 1;
         // RET;

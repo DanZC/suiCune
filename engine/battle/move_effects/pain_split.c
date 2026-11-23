@@ -84,7 +84,7 @@ void BattleCommand_PainSplit(void){
     // JP_NZ (mBattleCommand_PainSplit_ButItFailed);
     // CALL(aCheckSubstituteOpp);
     // JP_NZ (mBattleCommand_PainSplit_ButItFailed);
-    if(wram->wAttackMissed || CheckSubstituteOpp()) {
+    if(gBattle.attackMissed || CheckSubstituteOpp()) {
     // ButItFailed:
         // JP(mPrintDidntAffect2);
         return PrintDidntAffect2();
@@ -94,7 +94,7 @@ void BattleCommand_PainSplit(void){
     // LD_HL(wBattleMonMaxHP + 1);
     // LD_DE(wEnemyMonMaxHP + 1);
     // CALL(aBattleCommand_PainSplit_PlayerShareHP);
-    BattleCommand_PainSplit_PlayerShareHP(&wram->wBattleMon, &wram->wEnemyMon);
+    BattleCommand_PainSplit_PlayerShareHP(&gBattle.battleMon, &wram->wEnemyMon);
     // LD_A(0x1);
     // LD_addr_A(wWhichHPBar);
     // hlcoord(10, 9, wTilemap);
@@ -112,7 +112,7 @@ void BattleCommand_PainSplit(void){
     // LD_addr_A(wHPBuffer1);
     wram->wHPBuffer1 = BigEndianToNative16(wram->wEnemyMon.maxHP);
     // CALL(aBattleCommand_PainSplit_EnemyShareHP);
-    BattleCommand_PainSplit_EnemyShareHP(&wram->wBattleMon);
+    BattleCommand_PainSplit_EnemyShareHP(&gBattle.battleMon);
     // XOR_A_A;
     // LD_addr_A(wWhichHPBar);
     // CALL(aResetDamage);

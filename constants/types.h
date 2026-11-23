@@ -508,12 +508,7 @@ RedPartyMon
     };
 };
 
-#if defined(__cplusplus) || defined(_MSC_VER)
-struct 
-#else
-struct __attribute__((packed))
-#endif
-BattleMon 
+struct BattleMon
 {
     species_t species;
     item_t item;
@@ -2418,4 +2413,312 @@ struct Misc {
     xchar_t stringBuffer3[STRING_BUFFER_LENGTH];
     xchar_t stringBuffer4[STRING_BUFFER_LENGTH];
     xchar_t stringBuffer5[STRING_BUFFER_LENGTH];
+};
+
+struct BattleStatus {
+    uint8_t subStatus1;
+    uint8_t subStatus2;
+    uint8_t subStatus3;
+    uint8_t subStatus4;
+    uint8_t subStatus5;
+
+    uint8_t rolloutCount;
+    uint8_t confuseCount;
+    uint8_t toxicCount;
+    uint8_t disableCount;
+    uint8_t encoreCount;
+    uint8_t perishCount;
+    uint8_t furyCutterCount;
+    uint8_t protectCount;
+
+    union {
+        uint16_t stats[6];
+        struct {
+            uint16_t attack;
+            uint16_t defense;
+            uint16_t speed;
+            uint16_t spAtk;
+            uint16_t spDef;
+            uint16_t unkStat;
+        };
+    };
+    union {
+        uint8_t statLevels[NUM_LEVEL_STATS];
+        struct {
+            uint8_t atkLevel;
+            uint8_t defLevel;
+            uint8_t spdLevel;
+            uint8_t SAtkLevel;
+            uint8_t SDefLevel;
+            uint8_t accLevel;
+            uint8_t evaLevel;
+            uint8_t skip_16[1];
+        };
+    };
+
+    uint16_t damageTaken;
+    uint8_t turnsTaken;
+    uint8_t disabledMove;
+    uint8_t substituteHP;
+    move_t lastMove;
+    uint8_t isSwitching;
+
+    uint8_t curMoveNum;
+
+    // exists so you can't counter on switch
+    move_t lastCounterMove;
+    uint8_t minimized;
+    // bit
+    // 0 spikes
+    // 1
+    // 2 safeguard
+    // 3 light screen
+    // 4 reflect
+    // 5-7 unused
+    uint8_t screens;
+    uint8_t safeguardCount;
+    uint8_t lightScreenCount;
+    uint8_t reflectCount;
+    uint8_t skip_22[1];
+
+    uint8_t futureSightCount;
+    uint16_t futureSightDamage;
+    uint8_t rageCounter;
+    uint8_t beatUpHitAtLeastOnce;
+    move_t trappingMove;
+    uint8_t wrapCount;
+    uint8_t charging;
+    uint8_t justGotFrozen;
+};
+
+struct Battle {
+    // WRAM0
+    // battle data
+    //union wBattle
+    struct Move enemyMoveStruct;
+    struct Move playerMoveStruct;
+    xchar_t enemyMonNickname[MON_NAME_LENGTH];
+    xchar_t battleMonNickname[MON_NAME_LENGTH];
+    struct BattleMon battleMon;
+    uint8_t skip_11[2];
+    species_t wildMon;
+    uint8_t skip_12[1];
+    union {
+        struct {
+            item_t enemyTrainerItem1;
+            item_t enemyTrainerItem2;
+        };
+        item_t enemyTrainerItems[2];
+    };
+    uint8_t enemyTrainerBaseReward;
+    uint8_t enemyTrainerAIFlags[3];
+    xchar_t OTClassName[TRAINER_CLASS_NAME_LENGTH];
+    uint8_t curOTMon;
+    // Bit array.  Bits 0 - 5 correspond to party members 1 - 6.
+    // Bit set if the mon appears in battle.
+    // Bit cleared if the mon faints.
+    // Backed up if the enemy switches.
+    // All bits cleared if the enemy faints.
+    uint8_t battleParticipantsNotFainted;
+    // >10: super-effective
+    //  10: normal
+    // <10: not very effective
+    // bit 7: stab
+    uint8_t typeModifier;
+    // 0 if not critical
+    // 1 for a critical hit
+    // 2 for a OHKO
+    uint8_t criticalHit;
+    // nonzero for a miss
+    uint8_t attackMissed;
+    // uint8_t playerSubStatus1;
+    // uint8_t playerSubStatus2;
+    // uint8_t playerSubStatus3;
+    // uint8_t playerSubStatus4;
+    // uint8_t playerSubStatus5;
+    // uint8_t enemySubStatus1;
+    // uint8_t enemySubStatus2;
+    // uint8_t enemySubStatus3;
+    // uint8_t enemySubStatus4;
+    // uint8_t enemySubStatus5;
+    struct BattleStatus player;
+    struct BattleStatus enemy;
+    // uint8_t playerRolloutCount;
+    // uint8_t playerConfuseCount;
+    // uint8_t playerToxicCount;
+    // uint8_t playerDisableCount;
+    // uint8_t playerEncoreCount;
+    // uint8_t playerPerishCount;
+    // uint8_t playerFuryCutterCount;
+    // uint8_t playerProtectCount;
+    // uint8_t enemyRolloutCount;
+    // uint8_t enemyConfuseCount;
+    // uint8_t enemyToxicCount;
+    // uint8_t enemyDisableCount;
+    // uint8_t enemyEncoreCount;
+    // uint8_t enemyPerishCount;
+    // uint8_t enemyFuryCutterCount;
+    // uint8_t enemyProtectCount;
+    // uint16_t playerDamageTaken;
+    // uint16_t enemyDamageTaken;
+    uint8_t battleReward[3];
+    uint8_t battleAnimParam;
+    uint8_t battleScriptBuffer[40];
+    uint16_t battleScriptBufferAddress;
+    uint8_t turnEnded;
+    uint8_t skip_13[1];
+    // union {
+    //     uint16_t playerStats[5];
+    //     struct {
+    //         uint16_t playerAttack;
+    //         uint16_t playerDefense;
+    //         uint16_t playerSpeed;
+    //         uint16_t playerSpAtk;
+    //         uint16_t playerSpDef;
+    //     };
+    // };
+    // uint8_t skip_14[1];
+    // union {
+    //     uint16_t enemyStats[5];
+    //     struct {
+    //         uint16_t enemyAttack;
+    //         uint16_t enemyDefense;
+    //         uint16_t enemySpeed;
+    //         uint16_t enemySpAtk;
+    //         uint16_t enemySpDef;
+    //     };
+    // };
+    // uint8_t skip_15[1];
+    //union wPlayerStatLevels
+    // union {
+    //     uint8_t playerStatLevels[NUM_LEVEL_STATS];
+    //     struct {
+    //         uint8_t playerAtkLevel;
+    //         uint8_t playerDefLevel;
+    //         uint8_t playerSpdLevel;
+    //         uint8_t playerSAtkLevel;
+    //         uint8_t playerSDefLevel;
+    //         uint8_t playerAccLevel;
+    //         uint8_t playerEvaLevel;
+    //         uint8_t skip_16[1];
+    //     };
+    // };
+    // union {
+    // //union wEnemyStatLevels
+    //     uint8_t enemyStatLevels[NUM_LEVEL_STATS];
+    //     struct {
+    //         uint8_t enemyAtkLevel;
+    //         uint8_t enemyDefLevel;
+    //         uint8_t enemySpdLevel;
+    //         uint8_t enemySAtkLevel;
+    //         uint8_t enemySDefLevel;
+    //         uint8_t enemyAccLevel;
+    //         uint8_t enemyEvaLevel;
+    //         uint8_t skip_17[1];
+    //     };
+    // };
+    // uint8_t enemyTurnsTaken;
+    // uint8_t playerTurnsTaken;
+    // uint8_t skip_18[1];
+    // uint8_t playerSubstituteHP;
+    // uint8_t enemySubstituteHP;
+    uint8_t unusedPlayerLockedMove;
+    uint8_t skip_19[1];
+    move_t curPlayerMove;
+    move_t curEnemyMove;
+    // how far through the prng stream
+    uint8_t linkBattleRNCount;
+    uint8_t enemyItemState;
+    uint8_t skip_20[2];
+    // uint8_t curEnemyMoveNum;
+    uint16_t enemyHPAtTimeOfPlayerSwitch;
+    uint8_t payDayMoney[3];
+    uint8_t safariMonAngerCount;
+    // unreferenced
+    uint8_t safariMonEating;
+    uint8_t skip_21[1];
+    uint16_t enemyBackupDVs;
+    // used when enemy is transformed
+    uint8_t alreadyDisobeyed;
+    uint8_t disabledMove;
+    uint8_t enemyDisabledMove;
+    uint8_t whichMonFaintedFirst;
+    // exists so you can't counter on switch
+    // uint8_t lastPlayerCounterMove;
+    // uint8_t lastEnemyCounterMove;
+    // uint8_t enemyMinimized;
+    uint8_t alreadyFailed;
+    uint8_t battleParticipantsIncludingFainted;
+    uint8_t battleLowHealthAlarm;
+    // uint8_t playerMinimized;
+    // bit
+    // 0 spikes
+    // 1
+    // 2 safeguard
+    // 3 light screen
+    // 4 reflect
+    // 5-7 unused
+    // uint8_t playerScreens;
+    // see wPlayerScreens
+    // uint8_t enemyScreens;
+    // uint8_t playerSafeguardCount;
+    // uint8_t playerLightScreenCount;
+    // uint8_t playerReflectCount;
+    // uint8_t skip_22[1];
+    // uint8_t enemySafeguardCount;
+    // uint8_t enemyLightScreenCount;
+    // uint8_t enemyReflectCount;
+    // uint8_t skip_23[1];
+    uint8_t skip_24[1];
+    // 00 normal
+    // 01 rain
+    // 02 sun
+    // 03 sandstorm
+    // 04 rain stopped
+    // 05 sunliight faded
+    // 06 sandstorm subsided
+    uint8_t battleWeather;
+    // # turns remaining
+    uint8_t weatherCount;
+    uint8_t loweredStat;
+    uint8_t effectFailed;
+    uint8_t failedMessage;
+    uint8_t enemyGoesFirst;
+    uint8_t playerIsSwitching;
+    uint8_t enemyIsSwitching;
+    // add a move that has been used once by the player
+    // added in order of use
+    uint8_t playerUsedMoves[NUM_MOVES];
+    uint8_t enemyAISwitchScore;
+    uint8_t enemySwitchMonParam;
+    uint8_t enemySwitchMonIndex;
+    uint8_t tempLevel;
+    uint8_t lastPlayerMon;
+    // uint8_t lastPlayerMove;
+    // uint8_t lastEnemyMove;
+    // uint8_t playerFutureSightCount;
+    // uint8_t enemyFutureSightCount;
+    uint8_t givingExperienceToExpShareHolders;
+    uint8_t backupEnemyMonBaseStats[NUM_EXP_STATS];
+    uint8_t backupEnemyMonCatchRate;
+    uint8_t backupEnemyMonBaseExp;
+    // uint16_t playerFutureSightDamage;
+    // uint16_t enemyFutureSightDamage;
+    // uint8_t playerRageCounter;
+    // uint8_t enemyRageCounter;
+    uint8_t beatUpHitAtLeastOnce;
+    // uint8_t playerTrappingMove;
+    // uint8_t enemyTrappingMove;
+    // uint8_t playerWrapCount;
+    // uint8_t enemyWrapCount;
+    // uint8_t playerCharging;
+    // uint8_t enemyCharging;
+    uint8_t battleEnded;
+    uint8_t wildMonMoves[NUM_MOVES];
+    uint8_t wildMonPP[NUM_MOVES];
+    uint8_t amuletCoin;
+    uint8_t someoneIsRampaging;
+    // uint8_t playerJustGotFrozen;
+    // uint8_t enemyJustGotFrozen;
+    //void wBattleEnd
 };

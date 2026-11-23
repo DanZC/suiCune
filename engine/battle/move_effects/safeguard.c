@@ -14,13 +14,12 @@ void BattleCommand_Safeguard(void){
     // IF_Z goto ok;
     // LD_HL(wEnemyScreens);
     // LD_DE(wEnemySafeguardCount);
-    uint8_t* screens = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerScreens: &wram->wEnemyScreens;
-    uint8_t* safeguard_cnt = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerSafeguardCount: &wram->wEnemySafeguardCount;
+    struct BattleStatus* status = UserBattleStatus();
 
 // ok:
     // BIT_hl(SCREENS_SAFEGUARD);
     // IF_NZ goto failed;
-    if(bit_test(*screens, SCREENS_SAFEGUARD)) {
+    if(bit_test(status->screens, SCREENS_SAFEGUARD)) {
     // failed:
         // CALL(aAnimateFailedMove);
         AnimateFailedMove();
@@ -29,10 +28,10 @@ void BattleCommand_Safeguard(void){
     }
 
     // SET_hl(SCREENS_SAFEGUARD);
-    bit_set(*screens, SCREENS_SAFEGUARD);
+    bit_set(status->screens, SCREENS_SAFEGUARD);
     // LD_A(5);
     // LD_de_A;
-    *safeguard_cnt = 5;
+    status->safeguardCount = 5;
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
     // LD_HL(mCoveredByVeilText);

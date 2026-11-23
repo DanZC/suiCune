@@ -744,7 +744,7 @@ void Gen2ToGen2LinkComms(void){
         // LD_DE(wOTClassName);
         // LD_BC(NAME_LENGTH);
         // CALL(aCopyBytes);
-        CopyBytes(wram->wOTClassName, wram->wOTPlayerName, NAME_LENGTH);
+        CopyBytes(gBattle.OTClassName, wram->wOTPlayerName, NAME_LENGTH);
         // CALL(aReturnToMapFromSubmenu);
         ReturnToMapFromSubmenu();
         // LD_A_addr(wDisableTextAcceleration);

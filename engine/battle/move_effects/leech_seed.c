@@ -11,7 +11,7 @@ void BattleCommand_LeechSeed(void){
     // IF_NZ goto evaded;
     // CALL(aCheckSubstituteOpp);
     // IF_NZ goto evaded;
-    if(wram->wAttackMissed || CheckSubstituteOpp())
+    if(gBattle.attackMissed || CheckSubstituteOpp())
         goto evaded;
 
     // LD_DE(wEnemyMonType1);
@@ -19,7 +19,7 @@ void BattleCommand_LeechSeed(void){
     // AND_A_A;
     // IF_Z goto ok;
     // LD_DE(wBattleMonType1);
-    uint8_t* types = (hram.hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.types: wram->wBattleMon.types;
+    uint8_t* types = OpponentBattleMon()->types;
 
 // ok:
 

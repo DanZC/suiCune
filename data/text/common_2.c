@@ -183,14 +183,14 @@ const txt_cmd_s v_YourFoesWeakGetmMonText[] = {
 };
 
 const txt_cmd_s v_BattleMonNicknameText[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start("!"
         t_done )
 
 };
 
 const txt_cmd_s v_BattleMonNickCommaText[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(",@"
         )
     text_end

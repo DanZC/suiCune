@@ -11,7 +11,7 @@ void BattleCommand_BellyDrum(void){
 //  before checking that it has enough HP to use the move.
 //  Swap the order of these two blocks to fix.
 #if BUGFIX_BELLYDRUM
-    if(!CheckUserHasEnoughHP(GetHalfMaxHP()) || (BattleCommand_AttackUp2(), wram->wAttackMissed))
+    if(!CheckUserHasEnoughHP(GetHalfMaxHP()) || (BattleCommand_AttackUp2(), gBattle.attackMissed))
 #else
     // CALL(aBattleCommand_AttackUp2);
     // LD_A_addr(wAttackMissed);
@@ -21,7 +21,7 @@ void BattleCommand_BellyDrum(void){
     // CALLFAR(aGetHalfMaxHP);
     // CALLFAR(aCheckUserHasEnoughHP);
     // IF_NC goto failed;
-    if((BattleCommand_AttackUp2(), wram->wAttackMissed) || !CheckUserHasEnoughHP(GetHalfMaxHP()))
+    if((BattleCommand_AttackUp2(), gBattle.attackMissed) || !CheckUserHasEnoughHP(GetHalfMaxHP()))
 #endif
     {
     // failed:

@@ -2,19 +2,19 @@
 #include "battle_vars.h"
 
 static uint8_t* BattleVarLocations[] = {
-    [PLAYER_SUBSTATUS_1]    = wram_ptr(wPlayerSubStatus1),           [ENEMY_SUBSTATUS_1]    = wram_ptr(wEnemySubStatus1),
-    [PLAYER_SUBSTATUS_2]    = wram_ptr(wPlayerSubStatus2),           [ENEMY_SUBSTATUS_2]    = wram_ptr(wEnemySubStatus2),
-    [PLAYER_SUBSTATUS_3]    = wram_ptr(wPlayerSubStatus3),           [ENEMY_SUBSTATUS_3]    = wram_ptr(wEnemySubStatus3),
-    [PLAYER_SUBSTATUS_4]    = wram_ptr(wPlayerSubStatus4),           [ENEMY_SUBSTATUS_4]    = wram_ptr(wEnemySubStatus4),
-    [PLAYER_SUBSTATUS_5]    = wram_ptr(wPlayerSubStatus5),           [ENEMY_SUBSTATUS_5]    = wram_ptr(wEnemySubStatus5),
-    [PLAYER_STATUS]         = wram_ptr(wBattleMonStatus),            [ENEMY_STATUS]         = wram_ptr(wEnemyMonStatus),
-    [PLAYER_MOVE_ANIMATION] = wram_ptr(wPlayerMoveStructAnimation),  [ENEMY_MOVE_ANIMATION] = wram_ptr(wEnemyMoveStructAnimation),
-    [PLAYER_MOVE_EFFECT]    = wram_ptr(wPlayerMoveStructEffect),     [ENEMY_MOVE_EFFECT]    = wram_ptr(wEnemyMoveStructEffect),
-    [PLAYER_MOVE_POWER]     = wram_ptr(wPlayerMoveStructPower),      [ENEMY_MOVE_POWER]     = wram_ptr(wEnemyMoveStructPower),
-    [PLAYER_MOVE_TYPE]      = wram_ptr(wPlayerMoveStructType),       [ENEMY_MOVE_TYPE]      = wram_ptr(wEnemyMoveStructType),
-    [PLAYER_CUR_MOVE]       = wram_ptr(wCurPlayerMove),              [ENEMY_CUR_MOVE]       = wram_ptr(wCurEnemyMove),
-    [PLAYER_COUNTER_MOVE]   = wram_ptr(wLastPlayerCounterMove),      [ENEMY_COUNTER_MOVE]   = wram_ptr(wLastEnemyCounterMove),
-    [PLAYER_LAST_MOVE]      = wram_ptr(wLastPlayerMove),             [ENEMY_LAST_MOVE]      = wram_ptr(wLastEnemyMove),
+    [PLAYER_SUBSTATUS_1]    = &gBattle.player.subStatus1,            [ENEMY_SUBSTATUS_1]    = &gBattle.enemy.subStatus1,
+    [PLAYER_SUBSTATUS_2]    = &gBattle.player.subStatus2,            [ENEMY_SUBSTATUS_2]    = &gBattle.enemy.subStatus2,
+    [PLAYER_SUBSTATUS_3]    = &gBattle.player.subStatus3,            [ENEMY_SUBSTATUS_3]    = &gBattle.enemy.subStatus3,
+    [PLAYER_SUBSTATUS_4]    = &gBattle.player.subStatus4,            [ENEMY_SUBSTATUS_4]    = &gBattle.enemy.subStatus4,
+    [PLAYER_SUBSTATUS_5]    = &gBattle.player.subStatus5,            [ENEMY_SUBSTATUS_5]    = &gBattle.enemy.subStatus5,
+    [PLAYER_STATUS]         = gBattle.battleMon.status,              [ENEMY_STATUS]         = wram_ptr(wEnemyMonStatus),
+    [PLAYER_MOVE_ANIMATION] = &gBattle.playerMoveStruct.animation,   [ENEMY_MOVE_ANIMATION] = &gBattle.enemyMoveStruct.animation,
+    [PLAYER_MOVE_EFFECT]    = &gBattle.playerMoveStruct.effect,      [ENEMY_MOVE_EFFECT]    = &gBattle.enemyMoveStruct.effect,
+    [PLAYER_MOVE_POWER]     = &gBattle.playerMoveStruct.power,       [ENEMY_MOVE_POWER]     = &gBattle.enemyMoveStruct.power,
+    [PLAYER_MOVE_TYPE]      = &gBattle.playerMoveStruct.type,        [ENEMY_MOVE_TYPE]      = &gBattle.enemyMoveStruct.type,
+    [PLAYER_CUR_MOVE]       = &gBattle.curPlayerMove,                [ENEMY_CUR_MOVE]       = &gBattle.curEnemyMove,
+    [PLAYER_COUNTER_MOVE]   = &gBattle.player.lastCounterMove,       [ENEMY_COUNTER_MOVE]   = &gBattle.enemy.lastCounterMove,
+    [PLAYER_LAST_MOVE]      = &gBattle.player.lastMove,              [ENEMY_LAST_MOVE]      = &gBattle.enemy.lastMove,
 };
 
 static const uint8_t BattleVarPairs[][2] = {

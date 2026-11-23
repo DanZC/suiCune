@@ -18,8 +18,9 @@ void BattleCommand_Substitute(void){
     // IF_Z goto got_hp;
     // LD_HL(wEnemyMonMaxHP);
     // LD_DE(wEnemySubstituteHP);
-    struct BattleMon* mon = (hram.hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
-    uint8_t* subHP = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerSubstituteHP: &wram->wEnemySubstituteHP;
+    struct BattleMon* mon = UserBattleMon();
+    struct BattleStatus* status = UserBattleStatus();
+    uint8_t* subHP = &status->substituteHP;
 
 // got_hp:
 
@@ -90,8 +91,8 @@ void BattleCommand_Substitute(void){
     // IF_Z goto player;
     // LD_HL(wEnemyWrapCount);
     // LD_DE(wEnemyTrappingMove);
-    uint8_t* wrapCount = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerWrapCount: &wram->wEnemyWrapCount;
-    move_t* trappingMove = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerTrappingMove: &wram->wEnemyTrappingMove;
+    uint8_t* wrapCount = &status->wrapCount;
+    move_t* trappingMove = &status->trappingMove;
 
 // player:
 
@@ -110,7 +111,7 @@ void BattleCommand_Substitute(void){
         // LD_addr_A(wFXAnimID + 1);
         wram->wFXAnimID &= 0xff;
         // LD_addr_A(wBattleAnimParam);
-        wram->wBattleAnimParam = 0;
+        gBattle.battleAnimParam = 0;
         // LD_A(SUBSTITUTE);
         // CALL(aLoadAnim);
         LoadAnim(SUBSTITUTE);

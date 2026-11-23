@@ -25,7 +25,7 @@ bool AI_Redundant(uint8_t c){
         // LD_A_addr(wBattleMonStatus);
         // AND_A(SLP);
         // IF_Z return true;
-        if(wram->wBattleMon.status[0] & SLP)
+        if(gBattle.battleMon.status[0] & SLP)
             return true;
         // goto NotRedundant;
         return false;
@@ -44,75 +44,75 @@ bool AI_Redundant(uint8_t c){
         // LD_A_addr(wEnemyScreens);
         // BIT_A(SCREENS_LIGHT_SCREEN);
         // RET;
-        return bit_test(wram->wEnemyScreens, SCREENS_LIGHT_SCREEN);
+        return bit_test(gBattle.enemy.screens, SCREENS_LIGHT_SCREEN);
     //dbw ['EFFECT_MIST', '.Mist']
     case EFFECT_MIST:
     // Mist:
         // LD_A_addr(wEnemySubStatus4);
         // BIT_A(SUBSTATUS_MIST);
         // RET;
-        return bit_test(wram->wEnemySubStatus4, SUBSTATUS_MIST);
+        return bit_test(gBattle.enemy.subStatus4, SUBSTATUS_MIST);
     //dbw ['EFFECT_FOCUS_ENERGY', '.FocusEnergy']
     case EFFECT_FOCUS_ENERGY:
     // FocusEnergy:
         // LD_A_addr(wEnemySubStatus4);
         // BIT_A(SUBSTATUS_FOCUS_ENERGY);
         // RET;
-        return bit_test(wram->wEnemySubStatus1, SUBSTATUS_FOCUS_ENERGY);
+        return bit_test(gBattle.enemy.subStatus1, SUBSTATUS_FOCUS_ENERGY);
     //dbw ['EFFECT_CONFUSE', '.Confuse']
     case EFFECT_CONFUSE:
     // Confuse:
         // LD_A_addr(wPlayerSubStatus3);
         // BIT_A(SUBSTATUS_CONFUSED);
         // RET_NZ ;
-        if(bit_test(wram->wPlayerSubStatus3, SUBSTATUS_CONFUSED))
+        if(bit_test(gBattle.player.subStatus3, SUBSTATUS_CONFUSED))
             return true;
         // LD_A_addr(wPlayerScreens);
         // BIT_A(SCREENS_SAFEGUARD);
         // RET;
-        return bit_test(wram->wPlayerScreens, SCREENS_SAFEGUARD);
+        return bit_test(gBattle.player.screens, SCREENS_SAFEGUARD);
     //dbw ['EFFECT_TRANSFORM', '.Transform']
     case EFFECT_TRANSFORM:
     // Transform:
         // LD_A_addr(wEnemySubStatus5);
         // BIT_A(SUBSTATUS_TRANSFORMED);
         // RET;
-        return bit_test(wram->wEnemySubStatus5, SUBSTATUS_TRANSFORMED);
+        return bit_test(gBattle.enemy.subStatus5, SUBSTATUS_TRANSFORMED);
     //dbw ['EFFECT_REFLECT', '.Reflect']
     case EFFECT_REFLECT:
     // Reflect:
         // LD_A_addr(wEnemyScreens);
         // BIT_A(SCREENS_REFLECT);
         // RET;
-        return bit_test(wram->wEnemyScreens, SCREENS_REFLECT);
+        return bit_test(gBattle.enemy.screens, SCREENS_REFLECT);
     //dbw ['EFFECT_SUBSTITUTE', '.Substitute']
     case EFFECT_SUBSTITUTE:
     // Substitute:
         // LD_A_addr(wEnemySubStatus4);
         // BIT_A(SUBSTATUS_SUBSTITUTE);
         // RET;
-        return bit_test(wram->wEnemySubStatus4, SUBSTATUS_SUBSTITUTE);
+        return bit_test(gBattle.enemy.subStatus4, SUBSTATUS_SUBSTITUTE);
     //dbw ['EFFECT_LEECH_SEED', '.LeechSeed']
     case EFFECT_LEECH_SEED:
     // LeechSeed:
         // LD_A_addr(wPlayerSubStatus4);
         // BIT_A(SUBSTATUS_LEECH_SEED);
         // RET;
-        return bit_test(wram->wPlayerSubStatus4, SUBSTATUS_LEECH_SEED);
+        return bit_test(gBattle.player.subStatus4, SUBSTATUS_LEECH_SEED);
     //dbw ['EFFECT_DISABLE', '.Disable']
     case EFFECT_DISABLE:
     // Disable:
         // LD_A_addr(wPlayerDisableCount);
         // AND_A_A;
         // RET;
-        return wram->wPlayerDisableCount != 0;
+        return gBattle.player.disableCount != 0;
     //dbw ['EFFECT_ENCORE', '.Encore']
     case EFFECT_ENCORE:
     // Encore:
         // LD_A_addr(wPlayerSubStatus5);
         // BIT_A(SUBSTATUS_ENCORED);
         // RET;
-        return bit_test(wram->wPlayerSubStatus5, SUBSTATUS_ENCORED);
+        return bit_test(gBattle.player.subStatus5, SUBSTATUS_ENCORED);
     //dbw ['EFFECT_SNORE', '.Snore']
     case EFFECT_SNORE:
     // Snore:
@@ -132,47 +132,47 @@ bool AI_Redundant(uint8_t c){
         // LD_A_addr(wEnemySubStatus5);
         // BIT_A(SUBSTATUS_CANT_RUN);
         // RET;
-        return bit_test(wram->wEnemySubStatus5, SUBSTATUS_CANT_RUN);
+        return bit_test(gBattle.enemy.subStatus5, SUBSTATUS_CANT_RUN);
     //dbw ['EFFECT_NIGHTMARE', '.Nightmare']
     case EFFECT_NIGHTMARE:
     // Nightmare:
         // LD_A_addr(wBattleMonStatus);
         // AND_A_A;
         // IF_Z goto Redundant;
-        if(wram->wBattleMon.status[0] == 0)
+        if(gBattle.battleMon.status[0] == 0)
             return true;
         // LD_A_addr(wPlayerSubStatus1);
         // BIT_A(SUBSTATUS_NIGHTMARE);
         // RET;
-        return bit_test(wram->wPlayerSubStatus1, SUBSTATUS_NIGHTMARE);
+        return bit_test(gBattle.player.subStatus1, SUBSTATUS_NIGHTMARE);
     //dbw ['EFFECT_SPIKES', '.Spikes']
     case EFFECT_SPIKES:
     // Spikes:
         // LD_A_addr(wPlayerScreens);
         // BIT_A(SCREENS_SPIKES);
         // RET;
-        return bit_test(wram->wPlayerScreens, SCREENS_SPIKES);
+        return bit_test(gBattle.player.screens, SCREENS_SPIKES);
     //dbw ['EFFECT_FORESIGHT', '.Foresight']
     case EFFECT_FORESIGHT:
     // Foresight:
         // LD_A_addr(wPlayerSubStatus1);
         // BIT_A(SUBSTATUS_IDENTIFIED);
         // RET;
-        return bit_test(wram->wPlayerSubStatus1, SUBSTATUS_IDENTIFIED);
+        return bit_test(gBattle.player.subStatus1, SUBSTATUS_IDENTIFIED);
     //dbw ['EFFECT_PERISH_SONG', '.PerishSong']
     case EFFECT_PERISH_SONG:
     // PerishSong:
         // LD_A_addr(wPlayerSubStatus1);
         // BIT_A(SUBSTATUS_PERISH);
         // RET;
-        return bit_test(wram->wPlayerSubStatus1, SUBSTATUS_PERISH);
+        return bit_test(gBattle.player.subStatus1, SUBSTATUS_PERISH);
     //dbw ['EFFECT_SANDSTORM', '.Sandstorm']
     case EFFECT_SANDSTORM:
     // Sandstorm:
         // LD_A_addr(wBattleWeather);
         // CP_A(WEATHER_SANDSTORM);
         // IF_Z goto Redundant;
-        if(wram->wBattleWeather == WEATHER_SANDSTORM)
+        if(gBattle.battleWeather == WEATHER_SANDSTORM)
             return true;
         // goto NotRedundant;
         return false;
@@ -186,21 +186,21 @@ bool AI_Redundant(uint8_t c){
         // LD_A_addr(wPlayerSubStatus1);
         // BIT_A(SUBSTATUS_IN_LOVE);
         // RET;
-        return bit_test(wram->wPlayerSubStatus1, SUBSTATUS_IN_LOVE);
+        return bit_test(gBattle.player.subStatus1, SUBSTATUS_IN_LOVE);
     //dbw ['EFFECT_SAFEGUARD', '.Safeguard']
     case EFFECT_SAFEGUARD:
     // Safeguard:
         // LD_A_addr(wEnemyScreens);
         // BIT_A(SCREENS_SAFEGUARD);
         // RET;
-        return bit_test(wram->wEnemyScreens, SCREENS_SAFEGUARD);
+        return bit_test(gBattle.enemy.screens, SCREENS_SAFEGUARD);
     //dbw ['EFFECT_RAIN_DANCE', '.RainDance']
     case EFFECT_RAIN_DANCE:
     // RainDance:
         // LD_A_addr(wBattleWeather);
         // CP_A(WEATHER_RAIN);
         // IF_Z goto Redundant;
-        if(wram->wBattleWeather == WEATHER_RAIN)
+        if(gBattle.battleWeather == WEATHER_RAIN)
             return true;
         // goto NotRedundant;
         return false;
@@ -210,7 +210,7 @@ bool AI_Redundant(uint8_t c){
         // LD_A_addr(wBattleWeather);
         // CP_A(WEATHER_SUN);
         // IF_Z goto Redundant;
-        if(wram->wBattleWeather == WEATHER_SUN)
+        if(gBattle.battleWeather == WEATHER_SUN)
             return true;
         // goto NotRedundant;
         return false;
@@ -228,14 +228,14 @@ bool AI_Redundant(uint8_t c){
         // LD_A_addr(wPlayerSubStatus3);
         // BIT_A(SUBSTATUS_CONFUSED);
         // RET;
-        return bit_test(wram->wPlayerSubStatus3, SUBSTATUS_CONFUSED);
+        return bit_test(gBattle.player.subStatus3, SUBSTATUS_CONFUSED);
     //dbw ['EFFECT_FUTURE_SIGHT', '.FutureSight']
     case EFFECT_FUTURE_SIGHT:
     // FutureSight:
         // LD_A_addr(wEnemyScreens);
         // BIT_A(5);
         // RET;
-        return bit_test(wram->wEnemyScreens, 5);
+        return bit_test(gBattle.enemy.screens, 5);
     //db ['-1'];
     default:
         return false;

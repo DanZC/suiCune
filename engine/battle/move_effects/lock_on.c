@@ -13,7 +13,7 @@ void BattleCommand_LockOn(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // IF_NZ goto fail;
-    if(CheckSubstituteOpp() || wram->wAttackMissed) {
+    if(CheckSubstituteOpp() || gBattle.attackMissed) {
     // fail:
         // CALL(aAnimateFailedMove);
         AnimateFailedMove();

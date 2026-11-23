@@ -8,10 +8,10 @@ void BattleCommand_StartRain(void){
 //  startrain
     // LD_A(WEATHER_RAIN);
     // LD_addr_A(wBattleWeather);
-    wram->wBattleWeather = WEATHER_RAIN;
+    gBattle.battleWeather = WEATHER_RAIN;
     // LD_A(5);
     // LD_addr_A(wWeatherCount);
-    wram->wWeatherCount = 5;
+    gBattle.weatherCount = 5;
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
     // LD_HL(mDownpourText);

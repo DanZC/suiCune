@@ -63,13 +63,13 @@ void BattleCommand_MirrorMove(void){
     // IF_NZ goto done;
     if(!CheckUserIsCharging()) {
         // LD_A_addr(wBattleAnimParam);
-        uint8_t param = wram->wBattleAnimParam;
+        uint8_t param = gBattle.battleAnimParam;
         // PUSH_AF;
         // CALL(aBattleCommand_LowerSub);
         BattleCommand_LowerSub();
         // POP_AF;
         // LD_addr_A(wBattleAnimParam);
-        wram->wBattleAnimParam = param;
+        gBattle.battleAnimParam = param;
     }
 
 // done:

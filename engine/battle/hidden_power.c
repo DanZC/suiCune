@@ -2,6 +2,7 @@
 #include "hidden_power.h"
 #include "effect_commands.h"
 #include "../../home/battle_vars.h"
+#include "../../home/battle.h"
 
 uint8_t HiddenPowerDamage(void){
 //  Override Hidden Power's type and power based on the user's DVs.
@@ -11,7 +12,7 @@ uint8_t HiddenPowerDamage(void){
     // AND_A_A;
     // IF_Z goto got_dvs;
     // LD_HL(wEnemyMonDVs);
-    uint16_t dvs = (hram.hBattleTurn == TURN_PLAYER)? wram->wBattleMon.dvs: wram->wEnemyMon.dvs;
+    uint16_t dvs = UserBattleMon()->dvs;
 
 // got_dvs:
 

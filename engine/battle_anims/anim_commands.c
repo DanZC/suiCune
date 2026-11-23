@@ -815,7 +815,7 @@ void BattleAnimCmd_JumpUntil(battleanim_s* anim, battleanim_func func){
     // LD_A_hl;
     // AND_A_A;
     // IF_Z goto dont_jump;
-    if(wram->wBattleAnimParam == 0) {
+    if(gBattle.battleAnimParam == 0) {
     // dont_jump:
         // LD_HL(wBattleAnimAddress);
         // LD_E_hl;
@@ -831,7 +831,7 @@ void BattleAnimCmd_JumpUntil(battleanim_s* anim, battleanim_func func){
     }
 
     // DEC_hl;
-    --wram->wBattleAnimParam;
+    --gBattle.battleAnimParam;
     // CALL(aGetBattleAnimByte);
     // LD_E_A;
     // CALL(aGetBattleAnimByte);
@@ -897,7 +897,7 @@ void BattleAnimCmd_IfParamEqual(battleanim_s* anim, uint8_t param, battleanim_fu
     // LD_HL(wBattleAnimParam);
     // CP_A_hl;
     // IF_Z goto jump;
-    if(wram->wBattleAnimParam == param) {
+    if(gBattle.battleAnimParam == param) {
     // jump:
         // CALL(aGetBattleAnimByte);
         // LD_E_A;
@@ -931,7 +931,7 @@ void BattleAnimCmd_IfParamAnd(battleanim_s* anim, uint8_t n, battleanim_func fun
     // LD_A_addr(wBattleAnimParam);
     // AND_A_E;
     // IF_NZ goto jump;
-    if(wram->wBattleAnimParam & n) {
+    if(gBattle.battleAnimParam & n) {
     // jump:
         // CALL(aGetBattleAnimByte);
         // LD_E_A;
@@ -1453,7 +1453,7 @@ void BattleAnimCmd_Transform(void){
         wram->wCurPartySpecies = wram->wTempBattleMonSpecies;
         // LD_HL(wBattleMonDVs);
         // PREDEF(pGetUnownLetter);
-        GetUnownLetter(wram->wBattleMon.dvs);
+        GetUnownLetter(gBattle.battleMon.dvs);
         // LD_DE(vTiles0 + LEN_2BPP_TILE * 0x00);
         // PREDEF(pGetMonFrontpic);
         GetMonFrontpic(vram->vTiles0 + LEN_2BPP_TILE * 0x00);
@@ -1755,7 +1755,7 @@ void BattleAnimCmd_BeatUp(void){
 
     // LD_A_addr(wBattleAnimParam);
     // LD_addr_A(wCurPartySpecies);
-    wram->wCurPartySpecies = wram->wBattleAnimParam;
+    wram->wCurPartySpecies = gBattle.battleAnimParam;
 
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -1763,7 +1763,7 @@ void BattleAnimCmd_BeatUp(void){
     if(hram.hBattleTurn != TURN_PLAYER) {
         // LD_HL(wBattleMonDVs);
         // PREDEF(pGetUnownLetter);
-        GetUnownLetter(wram->wBattleMon.dvs);
+        GetUnownLetter(gBattle.battleMon.dvs);
         // LD_DE(vTiles2 + LEN_2BPP_TILE * 0x00);
         // PREDEF(pGetMonFrontpic);
         GetMonFrontpic(vram->vTiles2 + LEN_2BPP_TILE * 0x00);
@@ -1904,7 +1904,7 @@ void BattleAnimCmd_Cry(uint8_t cry){
         // LD_addr_A(wCryTracks);
         gAudio.cryTracks = 0xf0;
         // LD_A_addr(wBattleMonSpecies);
-        species = wram->wBattleMon.species;
+        species = gBattle.battleMon.species;
         // goto done_cry_tracks;
     }
     else {
@@ -1980,7 +1980,7 @@ void PlayHitSound(void){
     if(wram->wNumHits != 0x1 && wram->wNumHits != 0x4)
         return;
 
-    const uint8_t typeMod = (wram->wTypeModifier & 0x7f);
+    const uint8_t typeMod = (gBattle.typeModifier & 0x7f);
 // okay:
     // LD_A_addr(wTypeModifier);
     // AND_A(0x7f);

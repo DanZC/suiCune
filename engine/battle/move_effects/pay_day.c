@@ -17,7 +17,7 @@ void BattleCommand_PayDay(void){
     // LD_A_addr(wBattleMonLevel);
     // IF_Z goto ok;
     // LD_A_addr(wEnemyMonLevel);
-    uint8_t level = (hram.hBattleTurn == TURN_PLAYER)? wram->wBattleMon.level: wram->wEnemyMon.level;
+    uint8_t level = UserBattleMon()->level;
 
 // ok:
 
@@ -25,17 +25,17 @@ void BattleCommand_PayDay(void){
     level <<= 1;
     // LD_HL(wPayDayMoney + 2);
     // ADD_A_hl;
-    uint32_t temp = wram->wPayDayMoney[2] + level;
+    uint32_t temp = gBattle.payDayMoney[2] + level;
     // LD_hld_A;
-    wram->wPayDayMoney[2] = (uint8_t)temp;
+    gBattle.payDayMoney[2] = (uint8_t)temp;
     // IF_NC goto done;
     if(temp > 255) {
         // INC_hl;
         // DEC_HL;
         // IF_NZ goto done;
-        if(++wram->wPayDayMoney[1] == 0) {
+        if(++gBattle.payDayMoney[1] == 0) {
             // INC_hl;
-            wram->wPayDayMoney[0]++;
+            gBattle.payDayMoney[0]++;
         }
     }
 // done:

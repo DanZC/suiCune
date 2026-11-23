@@ -28,7 +28,7 @@ void UsedMoveText_Function(struct TextCmdState* state) {
     if(hram.hBattleTurn == TURN_PLAYER) {
         // LD_A_addr(wPlayerMoveStruct + MOVE_ANIM);
         // CALL(aUpdateUsedMoves);
-        UpdateUsedMoves(wram->wPlayerMoveStruct.animation);
+        UpdateUsedMoves(gBattle.playerMoveStruct.animation);
     }
 
 // start:
@@ -75,7 +75,7 @@ void UsedMoveText_Function(struct TextCmdState* state) {
     // AND_A_A;
     // LD_HL(mUsedMove2Text);
     // RET_NZ ;
-    if(wram->wAlreadyDisobeyed != 0) {
+    if(gBattle.alreadyDisobeyed != 0) {
         state->hl = UsedMove2Text;
         return;
     }
@@ -118,7 +118,7 @@ void UsedMoveText_CheckObedience(struct TextCmdState* state){
     // LD_A_addr(wAlreadyDisobeyed);
     // AND_A_A;
     // IF_Z goto GetMoveNameText;
-    if(wram->wAlreadyDisobeyed == 0)
+    if(gBattle.alreadyDisobeyed == 0)
         return UsedMoveText_CheckObedience_GetMoveNameText(state);
 //  print "instead,"
     // LD_HL(mUsedMoveText_CheckObedience_UsedInsteadText);
@@ -246,7 +246,7 @@ static void UpdateUsedMoves(move_t a){
     // PUSH_BC;
 //  start of list
     // LD_HL(wPlayerUsedMoves);
-    move_t* hl = wram->wPlayerUsedMoves;
+    move_t* hl = gBattle.playerUsedMoves;
 //  get move id
     // LD_B_A;
 //  next count
@@ -285,7 +285,7 @@ static void UpdateUsedMoves(move_t a){
 //  shift the list back one byte, deleting the first move used
 //  this can occur with struggle or a new learned move
     // LD_HL(wPlayerUsedMoves + 1);
-    hl = wram->wPlayerUsedMoves;
+    hl = gBattle.playerUsedMoves;
 //  1 = 2
     // LD_A_hld;
     // LD_hli_A;

@@ -30,7 +30,7 @@ void BattleCommand_Transform(void){
     // LD_addr_A(wFXAnimID + 1);
     // LD_A(0x1);
     // LD_addr_A(wBattleAnimParam);
-    wram->wBattleAnimParam = 0x1;
+    gBattle.battleAnimParam = 0x1;
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVarAddr);
     uint8_t ss4 = *GetBattleVarAddr(BATTLE_VARS_SUBSTATUS4);
@@ -58,7 +58,7 @@ void BattleCommand_Transform(void){
 
     if(hram.hBattleTurn != TURN_PLAYER) {
         // LD_HL(wBattleMonSpecies);
-        hl = &wram->wBattleMon;
+        hl = &gBattle.battleMon;
         // LD_DE(wEnemyMonSpecies);
         de = &wram->wEnemyMon;
         // LDH_A_addr(hBattleTurn);
@@ -69,10 +69,10 @@ void BattleCommand_Transform(void){
         // LD_HL(wEnemyMonSpecies);
         hl = &wram->wEnemyMon;
         // LD_DE(wBattleMonSpecies);
-        de = &wram->wBattleMon;
+        de = &gBattle.battleMon;
         // XOR_A_A;
         // LD_addr_A(wCurMoveNum);
-        wram->wCurMoveNum = 0;
+        gBattle.player.curMoveNum = 0;
     }
 
 // got_mon_species:
@@ -95,7 +95,7 @@ void BattleCommand_Transform(void){
         // INC_DE;
         // LD_A_de;
         // LD_addr_A(wEnemyBackupDVs + 1);
-        wram->wEnemyBackupDVs = de->dvs;
+        gBattle.enemyBackupDVs = de->dvs;
         // DEC_DE;
     }
 
@@ -163,12 +163,12 @@ void BattleCommand_Transform(void){
     // LD_DE(wPlayerStats);
     // LD_BC(2 * 5);
     // CALL(aBattleSideCopy);
-    BattleSideCopy(wram->wEnemyStats, wram->wPlayerStats, 2 * 5);
+    BattleSideCopy(gBattle.enemy.stats, gBattle.player.stats, 2 * 5);
     // LD_HL(wEnemyStatLevels);
     // LD_DE(wPlayerStatLevels);
     // LD_BC(8);
     // CALL(aBattleSideCopy);
-    BattleSideCopy(wram->wEnemyStatLevels, wram->wPlayerStatLevels, 2 * 5);
+    BattleSideCopy(gBattle.enemy.statLevels, gBattle.player.statLevels, 2 * 5);
     // CALL(av_CheckBattleScene);
     // IF_C goto mimic_anims;
     if(!v_CheckBattleScene()) {
@@ -179,7 +179,7 @@ void BattleCommand_Transform(void){
         // LD_A_addr(wEnemyMinimized);
 
     // got_byte:
-        uint8_t minimized = (hram.hBattleTurn == 0)? wram->wPlayerMinimized: wram->wEnemyMinimized;
+        uint8_t minimized = UserBattleStatus()->minimized;
         // AND_A_A;
         // IF_NZ goto mimic_anims;
         if(minimized)
@@ -203,7 +203,7 @@ void BattleCommand_Transform(void){
     // LD_addr_A(wFXAnimID + 1);
     // LD_A(0x2);
     // LD_addr_A(wBattleAnimParam);
-    wram->wBattleAnimParam = 0x2;
+    gBattle.battleAnimParam = 0x2;
     // POP_AF;
     // LD_A(SUBSTITUTE);
     // CALL_NZ (aLoadAnim);

@@ -59,7 +59,7 @@ void BattleCommand_Sketch(void){
     // AND_A_A;
     // IF_Z goto get_last_move;
     // LD_HL(wEnemyMonMoves);
-    struct BattleMon* hl = (hram.hBattleTurn == TURN_PLAYER)? &wram->wBattleMon: &wram->wEnemyMon;
+    struct BattleMon* hl = UserBattleMon();
 
 // get_last_move:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
@@ -141,12 +141,12 @@ void BattleCommand_Sketch(void){
         // LD_B(0);
         // ADD_HL_BC;
         // LD_hl_A;
-        wram->wWildMonPP[i] = data->pp;
+        gBattle.wildMonPP[i] = data->pp;
         // LD_HL(wWildMonMoves);
         // ADD_HL_BC;
         // POP_BC;
         // LD_hl_B;
-        wram->wWildMonMoves[i] = b;
+        gBattle.wildMonMoves[i] = b;
         // goto done_copy;
     }
     else {

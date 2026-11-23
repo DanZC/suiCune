@@ -1542,7 +1542,7 @@ const txt_cmd_s v_EnemyWithdrewText[] = {
         t_line "withdrew"
         t_cont "@"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start("!"
         t_prompt )
 
@@ -1556,7 +1556,7 @@ const txt_cmd_s v_EnemyUsedOnText[] = {
     text_start(
         t_cont "on @"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start("!"
         t_prompt )
 

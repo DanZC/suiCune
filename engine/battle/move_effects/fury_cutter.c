@@ -9,23 +9,22 @@ void BattleCommand_FuryCutter(void){
     // AND_A_A;
     // IF_Z goto go;
     // LD_HL(wEnemyFuryCutterCount);
-    uint8_t* hl = (hram.hBattleTurn == TURN_PLAYER)? &wram->wPlayerFuryCutterCount: &wram->wEnemyFuryCutterCount;
-
+    struct BattleStatus* status = UserBattleStatus();
 
 // go:
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // JP_NZ (mResetFuryCutterCount);
-    if(wram->wAttackMissed)
+    if(gBattle.attackMissed)
         return ResetFuryCutterCount();
 
     // INC_hl;
-    ++(*hl);
+    ++status->furyCutterCount;
 
 //  Damage capped at 5 turns' worth (16x).
     // LD_A_hl;
     // LD_B_A;
-    uint8_t b = *hl;
+    uint8_t b = status->furyCutterCount;
     // CP_A(6);
     // IF_C goto checkdouble;
     // LD_B(5);
@@ -70,13 +69,8 @@ void ResetFuryCutterCount(void){
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // IF_Z goto reset;
-    if(hram.hBattleTurn == TURN_PLAYER) {
-        wram->wPlayerFuryCutterCount = 0;
-    }
     // LD_HL(wEnemyFuryCutterCount);
-    else {
-        wram->wEnemyFuryCutterCount = 0;
-    }
+    UserBattleStatus()->furyCutterCount = 0;
 
 // reset:
     // XOR_A_A;

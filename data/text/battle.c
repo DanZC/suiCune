@@ -13,7 +13,7 @@ const txt_cmd_s BattleText_PlayerPickedUpPayDayMoney[] = {
 const txt_cmd_s WildPokemonAppearedText[] = {
     text_start("Wild @"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(
         t_line "appeared!"
         t_prompt )
@@ -24,7 +24,7 @@ const txt_cmd_s HookedPokemonAttackedText[] = {
     text_start("The hooked"
         t_line "@"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(
         t_cont "attacked!"
         t_prompt )
@@ -32,7 +32,7 @@ const txt_cmd_s HookedPokemonAttackedText[] = {
 };
 
 const txt_cmd_s PokemonFellFromTreeText[] = {
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(" fell"
         t_line "out of the tree!"
         t_prompt )
@@ -42,7 +42,7 @@ const txt_cmd_s PokemonFellFromTreeText[] = {
 const txt_cmd_s WildCelebiAppearedText[] = {
     text_start("Wild @"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(
         t_line "appeared!"
         t_prompt )
@@ -59,7 +59,7 @@ const txt_cmd_s WantsToBattleText[] = {
 const txt_cmd_s BattleText_WildFled[] = {
     text_start("Wild @"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(
         t_line "fled!"
         t_prompt )
@@ -69,7 +69,7 @@ const txt_cmd_s BattleText_WildFled[] = {
 const txt_cmd_s BattleText_EnemyFled[] = {
     text_start("Enemy @"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(
         t_line "fled!"
         t_prompt )
@@ -225,7 +225,7 @@ const txt_cmd_s BattleText_TheSandstormSubsided[] = {
 const txt_cmd_s BattleText_EnemyMonFainted[] = {
     text_start("Enemy @"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(
         t_line "fainted!"
         t_prompt )
@@ -288,7 +288,7 @@ const txt_cmd_s UnusedRivalLossText[] = {
 };
 
 const txt_cmd_s BattleText_MonFainted[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(
         t_line "fainted!"
         t_prompt )
@@ -321,7 +321,7 @@ const txt_cmd_s BattleText_EnemyIsAboutToUseWillPlayerChangeMon[] = {
         t_line "is about to use"
         t_cont "@"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start("."
 
         t_para "Will <PLAYER>"
@@ -335,7 +335,7 @@ const txt_cmd_s BattleText_EnemySentOut[] = {
         t_line "sent out"
         t_cont "@"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start("!"
         t_done )
 
@@ -429,7 +429,7 @@ const txt_cmd_s BattleText_ItemsCantBeUsedHere[] = {
 };
 
 const txt_cmd_s BattleText_MonIsAlreadyOut[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(
         t_line "is already out."
         t_prompt )
@@ -437,7 +437,7 @@ const txt_cmd_s BattleText_MonIsAlreadyOut[] = {
 };
 
 const txt_cmd_s BattleText_MonCantBeRecalled[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(
         t_line "can't be recalled!"
         t_prompt )
@@ -459,7 +459,7 @@ const txt_cmd_s BattleText_TheMoveIsDisabled[] = {
 };
 
 const txt_cmd_s BattleText_MonHasNoMovesLeft[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(
         t_line "has no moves left!"
         t_done )
@@ -491,7 +491,7 @@ const txt_cmd_s BattleText_StringBuffer1GrewToLevel[] = {
 const txt_cmd_s BattleText_WildMonIsEating[] = {
     text_start("Wild @"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(
         t_line "is eating!"
         t_prompt )
@@ -501,7 +501,7 @@ const txt_cmd_s BattleText_WildMonIsEating[] = {
 const txt_cmd_s BattleText_WildMonIsAngry[] = {
     text_start("Wild @"
         )
-    text_ram(wram_ptr(wEnemyMonNickname))
+    text_ram(gBattle.enemyMonNickname)
     text_start(
         t_line "is angry!"
         t_prompt )
@@ -716,7 +716,7 @@ const txt_cmd_s DisabledMoveText[] = {
 };
 
 const txt_cmd_s LoafingAroundText[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(" is"
         t_line "loafing around."
         t_prompt )
@@ -724,7 +724,7 @@ const txt_cmd_s LoafingAroundText[] = {
 };
 
 const txt_cmd_s BeganToNapText[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(" began"
         t_line "to nap!"
         t_prompt )
@@ -732,7 +732,7 @@ const txt_cmd_s BeganToNapText[] = {
 };
 
 const txt_cmd_s WontObeyText[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(" won't"
         t_line "obey!"
         t_prompt )
@@ -740,7 +740,7 @@ const txt_cmd_s WontObeyText[] = {
 };
 
 const txt_cmd_s TurnedAwayText[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(" turned"
         t_line "away!"
         t_prompt )
@@ -748,7 +748,7 @@ const txt_cmd_s TurnedAwayText[] = {
 };
 
 const txt_cmd_s IgnoredOrdersText[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(" ignored"
         t_line "orders!"
         t_prompt )
@@ -756,7 +756,7 @@ const txt_cmd_s IgnoredOrdersText[] = {
 };
 
 const txt_cmd_s IgnoredSleepingText[] = {
-    text_ram(wram_ptr(wBattleMonNickname))
+    text_ram(gBattle.battleMonNickname)
     text_start(" ignored"
         t_line "orders…sleeping!"
         t_prompt )

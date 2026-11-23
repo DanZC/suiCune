@@ -13,7 +13,7 @@ void BattleCommand_Disable(void){
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // IF_NZ goto failed;
-    if(wram->wAttackMissed)
+    if(gBattle.attackMissed)
         goto failed;
 
     // LD_DE(wEnemyDisableCount);
@@ -23,15 +23,15 @@ void BattleCommand_Disable(void){
     // IF_Z goto got_moves;
     // LD_DE(wPlayerDisableCount);
     // LD_HL(wBattleMonMoves);
-    uint8_t* disableCount = (hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyDisableCount: &wram->wPlayerDisableCount;
-    move_t* moves = (hram.hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.moves: wram->wBattleMon.moves;
+    struct BattleStatus* opp_status = OpponentBattleStatus();
+    move_t* moves = OpponentBattleMon()->moves;
 
 // got_moves:
 
     // LD_A_de;
     // AND_A_A;
     // IF_NZ goto failed;
-    if(*disableCount != 0)
+    if(opp_status->disableCount != 0)
         goto failed;
 
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
@@ -61,7 +61,7 @@ void BattleCommand_Disable(void){
     // LD_HL(wEnemyMonPP);
     // IF_Z goto got_pp;
     // LD_HL(wBattleMonPP);
-    uint8_t* pp = (hram.hBattleTurn == TURN_PLAYER)? wram->wEnemyMon.pp: wram->wBattleMon.pp;
+    uint8_t* pp = &OpponentMoveStruct()->pp;
 
 // got_pp:
     // LD_B(0);
@@ -86,7 +86,7 @@ void BattleCommand_Disable(void){
     // SWAP_C;
     // ADD_A_C;
     // LD_de_A;
-    *disableCount = a + ((c << 4) | (c >> 4));
+    opp_status->disableCount = a + ((c << 4) | (c >> 4));
     // CALL(aAnimateCurrentMove);
     AnimateCurrentMove();
     // LD_HL(wDisabledMove);
@@ -94,13 +94,12 @@ void BattleCommand_Disable(void){
     // AND_A_A;
     // IF_NZ goto got_disabled_move_pointer;
     // INC_HL;
-    move_t* disabledMove = (hram.hBattleTurn == TURN_PLAYER)? &wram->wEnemyDisabledMove: &wram->wDisabledMove;
 
 // got_disabled_move_pointer:
     // LD_A(BATTLE_VARS_LAST_COUNTER_MOVE_OPP);
     // CALL(aGetBattleVar);
     // LD_hl_A;
-    *disabledMove = lastCounterMove;
+    opp_status->disabledMove = lastCounterMove;
     // LD_addr_A(wNamedObjectIndex);
     // CALL(aGetMoveName);
     GetMoveName(lastCounterMove);

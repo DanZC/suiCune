@@ -9,8 +9,8 @@ void BattleCommand_PerishSong(void){
 //  perishsong
 
     // LD_HL(wPlayerSubStatus1);
-    uint8_t* hl = &wram->wPlayerSubStatus1;
-    uint8_t* de = &wram->wEnemySubStatus1;
+    uint8_t* hl = &gBattle.player.subStatus1;
+    uint8_t* de = &gBattle.enemy.subStatus1;
     // LD_DE(wEnemySubStatus1);
     // BIT_hl(SUBSTATUS_PERISH);
     // IF_Z goto ok;
@@ -36,7 +36,7 @@ void BattleCommand_PerishSong(void){
         bit_set(*hl, SUBSTATUS_PERISH);
         // LD_A(4);
         // LD_addr_A(wPlayerPerishCount);
-        wram->wPlayerPerishCount = 4;
+        gBattle.player.perishCount = 4;
     }
 
 // enemy:
@@ -50,7 +50,7 @@ void BattleCommand_PerishSong(void){
         bit_set(*de, SUBSTATUS_PERISH);
         // LD_A(4);
         // LD_addr_A(wEnemyPerishCount);
-        wram->wEnemyPerishCount = 4;
+        gBattle.enemy.perishCount = 4;
     }
 
 // done:
