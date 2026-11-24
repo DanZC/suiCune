@@ -6740,8 +6740,8 @@ void HandleHPHealingItem(void){
 // go:
 //  If, and only if, Pokemon's HP is less than half max, use the item.
 //  Store current HP in Buffer 3/4
-    uint16_t hp    = *hp_;
-    uint16_t maxhp = *maxhp_;
+    uint16_t hp    = BigEndianToNative16(*hp_);
+    uint16_t maxhp = BigEndianToNative16(*maxhp_);
     // PUSH_BC;
     // LD_A_de;
     // LD_addr_A(wHPBuffer2);
