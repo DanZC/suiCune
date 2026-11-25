@@ -194,7 +194,6 @@ void BattleCommand_CheckTurn(void){
 //  Repurposed as hardcoded turn handling. Useless as a command.
 
 //  Move $ff immediately ends the turn.
-    PEEK("");
     // LD_A(BATTLE_VARS_MOVE);
     // CALL(aGetBattleVar);
     // INC_A;
@@ -930,7 +929,6 @@ void BattleCommand_CheckObedience(void){
 //  checkobedience
 
 // Enemy can't disobey
-    PEEK("");
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // RET_NZ ;
@@ -1371,7 +1369,6 @@ bool IgnoreSleepOnly(void){
 
 void BattleCommand_UsedMoveText(void){
 //  usedmovetext
-    PEEK("");
     // FARCALL(aDisplayUsedMoveText);
     DisplayUsedMoveText();
     // RET;
@@ -1460,7 +1457,6 @@ static uint8_t BattleCommand_DoTurn_consume_pp(uint8_t* hl) {
 }
 
 void BattleCommand_DoTurn(void){
-    PEEK("");
     // CALL(aCheckUserIsCharging);
     // RET_NZ ;
     if(CheckUserIsCharging())
@@ -1650,7 +1646,6 @@ void BattleCommand_Critical(void){
 
 //  Determine whether this attack's hit will be critical.
 
-    PEEK("");
     // XOR_A_A;
     // LD_addr_A(wCriticalHit);
     gBattle.criticalHit = FALSE;
@@ -1775,7 +1770,6 @@ void BattleCommand_Critical(void){
 
 void BattleCommand_Stab(void){
 //  STAB = Same Type Attack Bonus
-    PEEK("");
     // LD_A(BATTLE_VARS_MOVE_ANIM);
     // CALL(aGetBattleVar);
     // CP_A(STRUGGLE);
@@ -2130,7 +2124,6 @@ uint8_t CheckTypeMatchup(uint8_t d, const uint8_t* hl){
 void BattleCommand_ResetTypeMatchup(void){
 //  Reset the type matchup multiplier to 1.0, if the type matchup is not 0.
 //  If there is immunity in play, the move automatically misses.
-    PEEK("");
     // CALL(aBattleCheckTypeMatchup);
     uint8_t matchup = BattleCheckTypeMatchup();
     // LD_A_addr(wTypeMatchup);
@@ -2169,7 +2162,6 @@ void BattleCommand_DamageVariation(void){
 //  Because of the method of division the probability distribution
 //  is not consistent. This makes the highest damage multipliers
 //  rarer than normal.
-    PEEK("");
 //  No point in reducing 1 or 0 damage.
     // LD_HL(wCurDamage);
     uint16_t dmg = BigEndianToNative16(wram->wCurDamage);
@@ -2542,7 +2534,6 @@ static void BattleCommand_CheckHit_StatModifiers(void) {
 
 void BattleCommand_CheckHit(void){
 //  checkhit
-    PEEK("");
     // CALL(aBattleCommand_CheckHit_DreamEater);
     // JP_Z (mBattleCommand_CheckHit_Miss);
     if(!BattleCommand_CheckHit_DreamEater())
@@ -2659,7 +2650,6 @@ Miss:
 
 void BattleCommand_EffectChance(void){
 //  effectchance
-    PEEK("");
     // XOR_A_A;
     // LD_addr_A(wEffectFailed);
     gBattle.effectFailed = FALSE;
@@ -2729,7 +2719,6 @@ static bool BattleCommand_LowerSub_Rampage(void) {
 
 void BattleCommand_LowerSub(void){
 //  lowersub
-    PEEK("");
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_SUBSTITUTE);
@@ -2824,7 +2813,6 @@ void BattleCommand_LowerSub(void){
 
 void BattleCommand_MoveAnim(void){
 //  moveanim
-    PEEK("");
     // CALL(aBattleCommand_LowerSub);
     BattleCommand_LowerSub();
     // CALL(aBattleCommand_MoveAnimNoSub);
@@ -2980,7 +2968,6 @@ void BattleCommand_StatUpDownAnim(uint8_t anim){
 
 void BattleCommand_SwitchTurn(void){
 //  switchturn
-    PEEK("");
     // LDH_A_addr(hBattleTurn);
     // XOR_A(1);
     // LDH_addr_A(hBattleTurn);
@@ -2990,7 +2977,6 @@ void BattleCommand_SwitchTurn(void){
 
 void BattleCommand_RaiseSub(void){
 //  raisesub
-    PEEK("");
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_SUBSTITUTE);
@@ -3021,7 +3007,6 @@ void BattleCommand_FailureText(void){
 //  If the move missed or failed, load the appropriate
 //  text, and end the effects of multi-turn or multi-
 //  hit moves.
-    PEEK("");
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // RET_Z ;
@@ -3127,7 +3112,6 @@ static void BattleCommand_ApplyDamage_update_damage_taken(void) {
 
 void BattleCommand_ApplyDamage(void){
 //  applydamage
-    PEEK("");
     // LD_A(BATTLE_VARS_SUBSTATUS1_OPP);
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_ENDURE);
@@ -3331,7 +3315,6 @@ void FailText_CheckOpponentProtect(const struct TextCmd* hl, const struct TextCm
 }
 
 void BattleCommand_BideFailText(void){
-    PEEK("");
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // RET_Z ;
@@ -3350,7 +3333,6 @@ void BattleCommand_BideFailText(void){
 void BattleCommand_CriticalText(void){
 //  criticaltext
 //  Prints the message for critical hits or one-hit KOs.
-    PEEK("");
     static const struct TextCmd* texts[] = {
         CriticalHitText,
         OneHitKOText,
@@ -3387,7 +3369,6 @@ void BattleCommand_CriticalText(void){
 
 void BattleCommand_StartLoop(void){
 //  startloop
-    // PEEK("");
     // LD_HL(wPlayerRolloutCount);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -3404,7 +3385,6 @@ void BattleCommand_StartLoop(void){
 
 void BattleCommand_SuperEffectiveLoopText(void){
 //  supereffectivelooptext
-    PEEK("");
     // LD_A(BATTLE_VARS_SUBSTATUS3);
     // CALL(aGetBattleVarAddr);
     // BIT_A(SUBSTATUS_IN_LOOP);
@@ -3419,7 +3399,6 @@ void BattleCommand_SuperEffectiveLoopText(void){
 
 void BattleCommand_SuperEffectiveText(void){
 //  supereffectivetext
-    PEEK("");
     // LD_A_addr(wTypeModifier);
     // AND_A(0x7f);
     // CP_A(EFFECTIVE);
@@ -3442,7 +3421,6 @@ void BattleCommand_SuperEffectiveText(void){
 
 void BattleCommand_CheckFaint(void){
 //  checkfaint
-    PEEK("");
 //  Faint the opponent if its HP reached zero
 //   and faint the user along with it if it used Destiny Bond.
 //  Ends the move effect if the opponent faints.
@@ -3579,7 +3557,6 @@ void BattleCommand_CheckFaint(void){
 
 void BattleCommand_BuildOpponentRage(void){
 //  buildopponentrage
-    PEEK("");
     //  Useless jump? Just inlining the code here.
     // JP(mBattleCommand_BuildOpponentRage_start);
 
@@ -3625,7 +3602,6 @@ void BattleCommand_BuildOpponentRage(void){
 
 void BattleCommand_RageDamage(void){
 //  ragedamage
-    PEEK("");
     // LD_A_addr(wCurDamage);
     // LD_H_A;
     // LD_B_A;
@@ -3741,7 +3717,6 @@ void DittoMetalPowder(uint8_t* b, uint8_t* c){
 
 void BattleCommand_DamageStats(void){
 //  damagestats
-    PEEK("");
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
     // JP_NZ (mEnemyAttackDamage);
@@ -4207,7 +4182,6 @@ void EnemyAttackDamage(struct BattleCmdState* state){
 
 void BattleCommand_ClearMissDamage(void){
 //  clearmissdamage
-    PEEK("");
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // RET_Z ;
@@ -4271,7 +4245,6 @@ void HitSelfInConfusion(struct BattleCmdState* state){
 
 void BattleCommand_DamageCalc(void){
 //  damagecalc
-    PEEK("");
 //  Return a damage value for move power d, player level e, enemy defense c and player attack b.
 
 //  Return 1 if successful, else 0.
@@ -4574,7 +4547,6 @@ dont_floor:
 
 void BattleCommand_ConstantDamage(void){
 //  constantdamage
-    PEEK("");
     // LD_HL(wBattleMonLevel);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -4831,7 +4803,6 @@ void BattleCommand_ConstantDamage(void){
 
 void BattleCommand_DefrostOpponent(void){
 //  defrostopponent
-    PEEK("");
 //  Thaw the opponent if frozen, and
 //  raise the user's Attack one stage.
 
@@ -5236,7 +5207,6 @@ static bool BattleCommand_SleepTarget_CheckAIRandomFail(void) {
 
 void BattleCommand_SleepTarget(void){
 //  sleeptarget
-    PEEK("");
     item_t item;
     // CALL(aGetOpponentItem);
     uint16_t effect = GetOpponentItem(&item);
@@ -5342,7 +5312,6 @@ void BattleCommand_SleepTarget(void){
 
 void BattleCommand_PoisonTarget(void){
 //  poisontarget
-    PEEK("");
     // CALL(aCheckSubstituteOpp);
     // RET_NZ ;
     if(CheckSubstituteOpp())
@@ -5423,7 +5392,6 @@ static void BattleCommand_Poison_apply_poison(void) {
 
 void BattleCommand_Poison(void){
 //  poison
-    PEEK("");
     // LD_HL(mDoesntAffectText);
     // LD_A_addr(wTypeModifier);
     // AND_A(0x7f);
@@ -5632,7 +5600,6 @@ void PoisonOpponent(void){
 
 void BattleCommand_DrainTarget(void){
 //  draintarget
-    PEEK("");
     // CALL(aSapHealth);
     SapHealth();
     // LD_HL(mSuckedHealthText);
@@ -5643,7 +5610,6 @@ void BattleCommand_DrainTarget(void){
 
 void BattleCommand_EatDream(void){
 //  eatdream
-    PEEK("");
     // CALL(aSapHealth);
     SapHealth();
     // LD_HL(mDreamEatenText);
@@ -5779,7 +5745,6 @@ finish:;
 
 void BattleCommand_BurnTarget(void){
 //  burntarget
-    PEEK("");
     // XOR_A_A;
     // LD_addr_A(wNumHits);
     wram->wNumHits = 0;
@@ -5874,7 +5839,6 @@ void Defrost(uint8_t* status){
 
 void BattleCommand_FreezeTarget(void){
 //  freezetarget
-    PEEK("");
     // XOR_A_A;
     // LD_addr_A(wNumHits);
     wram->wNumHits = 0;
@@ -5960,7 +5924,6 @@ void BattleCommand_FreezeTarget(void){
 
 void BattleCommand_ParalyzeTarget(void){
 //  paralyzetarget
-    PEEK("");
     // XOR_A_A;
     // LD_addr_A(wNumHits);
     wram->wNumHits = 0;
@@ -6340,7 +6303,6 @@ void MinimizeDropSub(void){
 
 void BattleCommand_AttackDown(void){
 //  attackdown
-    PEEK("");
     // LD_A(ATTACK);
     gBattleCmdState.a = ATTACK;
     // JR(mBattleCommand_StatDown);
@@ -6825,7 +6787,6 @@ bool TryLowerStat(uint8_t c, uint16_t* hl){
 
 void BattleCommand_StatUpFailText(void){
 //  statupfailtext
-    PEEK("");
     // LD_A_addr(wFailedMessage);
     uint8_t failed = gBattle.failedMessage;
     // AND_A_A;
@@ -6856,7 +6817,6 @@ void BattleCommand_StatUpFailText(void){
 
 void BattleCommand_StatDownFailText(void){
 //  statdownfailtext
-    PEEK("");
     // LD_A_addr(wFailedMessage);
     uint8_t failed = gBattle.failedMessage;
     // AND_A_A;
@@ -7105,7 +7065,6 @@ void BattleCommand_TriStatusChance(void){
 
 void BattleCommand_Curl(void){
 //  curl
-    PEEK("");
     // LD_A(BATTLE_VARS_SUBSTATUS2);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_CURLED);
@@ -7300,7 +7259,6 @@ void CalcBattleStats(uint8_t* hl, uint16_t* de, uint16_t* bc, uint8_t a){
 
 void BattleCommand_CheckRampage(void){
 //  checkrampage
-    PEEK("");
     // LD_DE(wPlayerRolloutCount);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -7355,7 +7313,6 @@ void BattleCommand_CheckRampage(void){
 
 void BattleCommand_Rampage(void){
 //  rampage
-    PEEK("");
 //  No rampage during Sleep Talk.
     // LD_A(BATTLE_VARS_STATUS);
     // CALL(aGetBattleVar);
@@ -7770,7 +7727,6 @@ bool CheckPlayerHasMonToSwitchTo(void){
 
 void BattleCommand_EndLoop(void){
 //  endloop
-    PEEK("");
 //  Loop back to 'critical'.
 
 // TODO: fix the gotos here.
@@ -7973,7 +7929,6 @@ loop_back_to_critical:
 }
 
 void BattleCommand_FakeOut(void){
-    PEEK("");
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // RET_NZ ;
@@ -8007,7 +7962,6 @@ void BattleCommand_FakeOut(void){
 }
 
 void BattleCommand_FlinchTarget(void){
-    PEEK("");
     // CALL(aCheckSubstituteOpp);
     // RET_NZ ;
     if(CheckSubstituteOpp())
@@ -8061,7 +8015,6 @@ bool CheckOpponentWentFirst(void){
 
 void BattleCommand_HeldFlinch(void){
 //  kingsrock
-    PEEK("");
     // LD_A_addr(wAttackMissed);
     // AND_A_A;
     // RET_NZ ;
@@ -8101,7 +8054,6 @@ void BattleCommand_HeldFlinch(void){
 
 void BattleCommand_OHKO(void){
 //  ohko
-    PEEK("");
     // CALL(aResetDamage);
     ResetDamage();
     // LD_A_addr(wTypeModifier);
@@ -8170,7 +8122,6 @@ no_effect:
 
 void BattleCommand_CheckCharge(void){
 //  checkcharge
-    PEEK("");
     // LD_A(BATTLE_VARS_SUBSTATUS3);
     // CALL(aGetBattleVarAddr);
     uint8_t* hl = GetBattleVarAddr(BATTLE_VARS_SUBSTATUS3);
@@ -8266,7 +8217,6 @@ static void BattleCommand_Charge_UsedText_Function(struct TextCmdState* state) {
 
 void BattleCommand_Charge(void){
 //  charge
-    PEEK("");
     // CALL(aBattleCommand_ClearText);
     BattleCommand_ClearText();
     // LD_A(BATTLE_VARS_STATUS);
@@ -8396,7 +8346,6 @@ struct MoveText {
 
 void BattleCommand_TrapTarget(void){
 //  traptarget
-    PEEK("");
     static const struct MoveText Traps[] = {
         {BIND, UsedBindText},  // 'used BIND on'
         {WRAP, WrappedByText},  // 'was WRAPPED by'
@@ -8474,7 +8423,6 @@ void BattleCommand_TrapTarget(void){
 
 void BattleCommand_Recoil(void){
 //  recoil
-    PEEK("");
     // LD_HL(wBattleMonMaxHP);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -8575,7 +8523,6 @@ void BattleCommand_Recoil(void){
 
 void BattleCommand_ConfuseTarget(void){
 //  confusetarget
-    PEEK("");
     // CALL(aGetOpponentItem);
     // LD_A_B;
     // CP_A(HELD_PREVENT_CONFUSE);
@@ -8605,7 +8552,6 @@ void BattleCommand_ConfuseTarget(void){
 
 void BattleCommand_Confuse(void){
 //  confuse
-    PEEK("");
     // CALL(aGetOpponentItem);
     // LD_A_B;
     // CP_A(HELD_PREVENT_CONFUSE);
@@ -8725,7 +8671,6 @@ void BattleCommand_Confuse_CheckSnore_Swagger_ConfuseHit(void){
 
 void BattleCommand_Paralyze(void){
 //  paralyze
-    PEEK("");
     // LD_A(BATTLE_VARS_STATUS_OPP);
     // CALL(aGetBattleVar);
     // BIT_A(PAR);
@@ -8886,7 +8831,6 @@ bool CheckMoveTypeMatchesTarget(void){
 
 void BattleCommand_RechargeNextTurn(void){
 //  rechargenextturn
-    PEEK("");
     // LD_A(BATTLE_VARS_SUBSTATUS4);
     // CALL(aGetBattleVarAddr);
     // SET_hl(SUBSTATUS_RECHARGE);
@@ -8908,7 +8852,6 @@ void EndRechargeOpp(void){
 
 void BattleCommand_DoubleFlyingDamage(void){
 //  doubleflyingdamage
-    PEEK("");
     // LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_FLYING);
@@ -8922,7 +8865,6 @@ void BattleCommand_DoubleFlyingDamage(void){
 
 void BattleCommand_DoubleUndergroundDamage(void){
 //  doubleundergrounddamage
-    PEEK("");
     // LD_A(BATTLE_VARS_SUBSTATUS3_OPP);
     // CALL(aGetBattleVar);
     // BIT_A(SUBSTATUS_UNDERGROUND);
@@ -8984,7 +8926,6 @@ static void BattleCommand_ResetStats_Fill(uint8_t* hl, uint8_t a) {
 
 void BattleCommand_ResetStats(void){
 //  resetstats
-    PEEK("");
     // LD_A(BASE_STAT_LEVEL);
     // LD_HL(wPlayerStatLevels);
     // CALL(aBattleCommand_ResetStats_Fill);
@@ -9020,7 +8961,6 @@ void BattleCommand_ResetStats(void){
 
 void BattleCommand_Heal(void){
 //  heal
-    PEEK("");
     // LD_DE(wBattleMonHP);
     // LD_HL(wBattleMonMaxHP);
     // LDH_A_addr(hBattleTurn);
@@ -9192,7 +9132,6 @@ void ResetActorDisable(void){
 
 void BattleCommand_Screen(void){
 //  screen
-    PEEK("");
     // LD_HL(wPlayerScreens);
     // LD_BC(wPlayerLightScreenCount);
     // LDH_A_addr(hBattleTurn);
@@ -9405,7 +9344,6 @@ void ResetTurn(void){
 
 void BattleCommand_ArenaTrap(void){
 //  arenatrap
-    PEEK("");
 //  Doesn't work on an absent opponent.
 
     // CALL(aCheckHiddenOpponent);
@@ -9441,7 +9379,6 @@ void BattleCommand_ArenaTrap(void){
 
 void BattleCommand_Defrost(void){
 //  defrost
-    PEEK("");
 //  Thaw the user.
 
     // LD_A(BATTLE_VARS_STATUS);
@@ -9536,7 +9473,6 @@ bool SafeCheckSafeguard(void){
 
 void BattleCommand_CheckSafeguard(void){
 //  checksafeguard
-    PEEK("");
     // LD_HL(wEnemyScreens);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -9572,7 +9508,6 @@ void BattleCommand_CheckSafeguard(void){
 
 void BattleCommand_HealMorn(void){
 //  healmorn
-    PEEK("");
     // LD_B(MORN_F);
     // JR(mBattleCommand_TimeBasedHealContinue);
 
@@ -9581,7 +9516,6 @@ void BattleCommand_HealMorn(void){
 
 void BattleCommand_HealDay(void){
 //  healday
-    PEEK("");
     // LD_B(DAY_F);
     // JR(mBattleCommand_TimeBasedHealContinue);
 
@@ -9590,7 +9524,6 @@ void BattleCommand_HealDay(void){
 
 void BattleCommand_HealNite(void){
 //  healnite
-    PEEK("");
     // LD_B(NITE_F);
 // fallthrough
 
@@ -9719,7 +9652,6 @@ void BattleCommand_TimeBasedHealContinue(uint8_t b){
 
 void BattleCommand_DoubleMinimizeDamage(void){
 //  doubleminimizedamage
-    PEEK("");
     // LD_HL(wEnemyMinimized);
     // LDH_A_addr(hBattleTurn);
     // AND_A_A;
@@ -9752,7 +9684,6 @@ void BattleCommand_DoubleMinimizeDamage(void){
 
 void BattleCommand_SkipSunCharge(void){
 //  mimicsuncharge
-    PEEK("");
     // LD_A_addr(wBattleWeather);
     // CP_A(WEATHER_SUN);
     // RET_NZ ;

@@ -178,6 +178,8 @@ uint8_t* Utf8ToCrystal(const char* src)
 xchar_t* Utf8ToCrystalBuffer(xchar_t* dest, size_t dest_size, const char* src)
 {
     size_t i = 0;
+    if(dest_size == 0)
+        return dest;
     while(i < dest_size - 1 && *src)
     {
         for(unsigned int j = 0; j < lengthof(charmp); j++)
@@ -211,7 +213,7 @@ xchar_t* Utf8ToCrystalBuffer(xchar_t* dest, size_t dest_size, const char* src)
         src++;
     nextchar:;
     }
-    if(i - 1 >= dest_size) {
+    if(i > dest_size - 1) {
         log_warn("Truncated string of size %zu+ to size %zu.\n", i, dest_size);
     }
     dest[i] = CHAR_TERM;
