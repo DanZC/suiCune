@@ -102,6 +102,7 @@ extern const txt_cmd_s LabWhereGoingText[];
 extern const txt_cmd_s TakeCyndaquilText[];
 extern const txt_cmd_s TakeTotodileText[];
 extern const txt_cmd_s TakeChikoritaText[];
+extern const txt_cmd_s TakePokemonText[];
 extern const txt_cmd_s DidntChooseStarterText[];
 extern const txt_cmd_s ChoseStarterText[];
 extern const txt_cmd_s ReceivedStarterText[];

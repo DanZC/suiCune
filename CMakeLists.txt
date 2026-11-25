@@ -270,6 +270,7 @@ add_executable(${PROJECT_NAME}
   data/pokemon/names.c
   data/pokemon/palettes.c
   data/pokemon/pic_pointers.c
+  data/pokemon/starters.c
   data/pokemon/unown_pic_pointers.c
   data/radio/buenas_passwords.c
   data/radio/channel_music.c

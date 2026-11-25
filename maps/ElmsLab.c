@@ -94,6 +94,7 @@ const struct MapEvents ElmsLab_MapEvents = {
 #include "../constants.h"
 #include "../util/scripting.h"
 #include "ElmsLab.h"
+#include "../data/pokemon/starters.h"
 
 bool ElmsLab_MapScripts_MeetElm(script_s* s) {
     SCRIPT_BEGIN
@@ -279,11 +280,13 @@ bool CyndaquilPokeBallScript(script_s* s) {
     iftrue_jump(LookAtElmPokeBallScript)
     turnobject(ELMSLAB_ELM, DOWN)
     refreshscreen
-    pokepic(CYNDAQUIL)
-    playcry(CYNDAQUIL)
+    pokepic(StarterPokemon[STARTER_CYNDAQUIL])
+    playcry(StarterPokemon[STARTER_CYNDAQUIL])
     waitbutton
     closepokepic
     opentext
+    getmonname(STRING_BUFFER_3, StarterPokemon[STARTER_CYNDAQUIL])
+    writetext((StarterPokemon[STARTER_CYNDAQUIL] != CYNDAQUIL)? TakePokemonText: TakeCyndaquilText)
     writetext(TakeCyndaquilText)
     yesorno
     iffalse_jump(DidntChooseStarterScript)
@@ -292,12 +295,12 @@ bool CyndaquilPokeBallScript(script_s* s) {
     writetext(ChoseStarterText)
     promptbutton
     waitsfx
-    getmonname(STRING_BUFFER_3, CYNDAQUIL)
+    getmonname(STRING_BUFFER_3, StarterPokemon[STARTER_CYNDAQUIL])
     writetext(ReceivedStarterText)
     playsound(SFX_CAUGHT_MON)
     waitsfx
     promptbutton
-    givepoke(CYNDAQUIL, 5, BERRY)
+    givepoke(StarterPokemon[STARTER_CYNDAQUIL], 5, BERRY)
     closetext
     readvar(VAR_FACING)
     ifequal_jump(RIGHT, ElmDirectionsScript)
@@ -311,12 +314,13 @@ bool TotodilePokeBallScript(script_s* s) {
     iftrue_jump(LookAtElmPokeBallScript)
     turnobject(ELMSLAB_ELM, DOWN)
     refreshscreen
-    pokepic(TOTODILE)
-    playcry(TOTODILE)
+    pokepic(StarterPokemon[STARTER_TOTODILE])
+    playcry(StarterPokemon[STARTER_TOTODILE])
     waitbutton
     closepokepic
     opentext
-    writetext(TakeTotodileText)
+    getmonname(STRING_BUFFER_3, StarterPokemon[STARTER_TOTODILE])
+    writetext((StarterPokemon[STARTER_TOTODILE] != TOTODILE)? TakePokemonText: TakeTotodileText)
     yesorno
     iffalse_jump(DidntChooseStarterScript)
     disappear(ELMSLAB_POKE_BALL2)
@@ -324,12 +328,12 @@ bool TotodilePokeBallScript(script_s* s) {
     writetext(ChoseStarterText)
     promptbutton
     waitsfx
-    getmonname(STRING_BUFFER_3, TOTODILE)
+    getmonname(STRING_BUFFER_3, StarterPokemon[STARTER_TOTODILE])
     writetext(ReceivedStarterText)
     playsound(SFX_CAUGHT_MON)
     waitsfx
     promptbutton
-    givepoke(TOTODILE, 5, BERRY)
+    givepoke(StarterPokemon[STARTER_TOTODILE], 5, BERRY)
     closetext
     applymovement(PLAYER, AfterTotodileMovement)
     sjump(ElmDirectionsScript)
@@ -341,12 +345,13 @@ bool ChikoritaPokeBallScript(script_s* s) {
     iftrue_jump(LookAtElmPokeBallScript)
     turnobject(ELMSLAB_ELM, DOWN)
     refreshscreen
-    pokepic(CHIKORITA)
-    playcry(CHIKORITA)
+    pokepic(StarterPokemon[STARTER_CHIKORITA])
+    playcry(StarterPokemon[STARTER_CHIKORITA])
     waitbutton
     closepokepic
     opentext
-    writetext(TakeChikoritaText)
+    getmonname(STRING_BUFFER_3, StarterPokemon[STARTER_CHIKORITA])
+    writetext((StarterPokemon[STARTER_CHIKORITA] != CHIKORITA)? TakePokemonText: TakeChikoritaText)
     yesorno
     iffalse_jump(DidntChooseStarterScript)
     disappear(ELMSLAB_POKE_BALL3)
@@ -354,12 +359,12 @@ bool ChikoritaPokeBallScript(script_s* s) {
     writetext(ChoseStarterText)
     promptbutton
     waitsfx
-    getmonname(STRING_BUFFER_3, CHIKORITA)
+    getmonname(STRING_BUFFER_3, StarterPokemon[STARTER_CHIKORITA])
     writetext(ReceivedStarterText)
     playsound(SFX_CAUGHT_MON)
     waitsfx
     promptbutton
-    givepoke(CHIKORITA, 5, BERRY)
+    givepoke(StarterPokemon[STARTER_CHIKORITA], 5, BERRY)
     closetext
     applymovement(PLAYER, AfterChikoritaMovement)
     sjump(ElmDirectionsScript)
@@ -1038,6 +1043,14 @@ const txt_cmd_s ElmText_LetYourMonBattleIt[] = {
 const txt_cmd_s LabWhereGoingText[] = {
     text_start("ELM: Wait! Where"
         t_line "are you going?"
+        t_done )
+};
+const txt_cmd_s TakePokemonText[] = {
+    text_start("ELM: You'll take"
+        t_line )
+    text_ram(gMisc.stringBuffer3)
+    text_start(", the"
+        t_cont "#MON?"
         t_done )
 };
 const txt_cmd_s TakeCyndaquilText[] = {
