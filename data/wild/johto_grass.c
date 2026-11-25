@@ -1,9 +1,8 @@
 #include "../../constants.h"
 #include "johto_grass.h"
 
-struct WildGrassMons* JohtoGrassWildMons;
-#if 0
-const struct WildGrassMons JohtoGrassWildMons[] = {
+#if FEATURE_EMBED_DATA
+struct WildGrassMons* JohtoGrassWildMons = (struct WildGrassMons[]){
 // Johto Pokémon in grass
     {MAP_ID(SPROUT_TOWER_2F),
         .encounterRates={2 percent, 2 percent, 2 percent }, //  encounter rates: morn/day/nite
@@ -1962,4 +1961,7 @@ const struct WildGrassMons JohtoGrassWildMons[] = {
         .mons = { { { 0 } }, { { 0 } }, { { 0 } } }
     },
 };
-#endif
+#else
+// Data is stored in johto_grass.json
+struct WildGrassMons* JohtoGrassWildMons;
+#endif // FEATURE_EMBED_DATA

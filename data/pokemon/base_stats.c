@@ -1,5 +1,5 @@
 #include "../../constants.h"
-#if 0
+#if FEATURE_EMBED_DATA
 #include "../../util/variadic_macros.h"
 #include <stddef.h>
 #define tmhm_id_byte(_x) (_x >> 3)
@@ -81,7 +81,7 @@
 
 #define dn(_x, _y) ((((_x) & 0xf) << 4) | ((_y) & 0xf))
 //  used in data/pokemon/base_stats/*.asm
-const struct BaseData BasePokemonData[] = { 
+struct BaseData BasePokemonData[] = { 
     [BULBASAUR-1] = {
         .dexNo = BULBASAUR , // 001
         .stats = { 45,  49,  49,  45,  65,  65}, 
@@ -4605,4 +4605,4 @@ const struct BaseData BasePokemonData[] = {
 static_assert(lengthof(BasePokemonData) == NUM_POKEMON, "");
 #else
 struct BaseData BasePokemonData[NUM_POKEMON];
-#endif
+#endif // FEATURE_EMBED_DATA

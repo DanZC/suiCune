@@ -28,3 +28,10 @@
 #error "Time capsule cannot be enabled without networking."
 #endif
 #endif // FEATURE_TIME_CAPSULE
+
+// Controls whether certain data is loaded from the source code, or loaded from external JSON files.
+// 1 = Load data from source code
+// 0 = Load data from external JSON
+#ifndef FEATURE_EMBED_DATA
+#define FEATURE_EMBED_DATA 0
+#endif // FEATURE_EMBED_DATA

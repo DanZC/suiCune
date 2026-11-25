@@ -1,7 +1,8 @@
 #include "../../constants.h"
 #include "moves.h"
 
-const struct Move Moves[] = {
+#if FEATURE_EMBED_DATA
+struct Move Moves[] = {
 // entries correspond to move ids (see constants/move_constants.h)
     [POUND]         = {POUND,        EFFECT_NORMAL_HIT,         40, NORMAL,       100 percent, 35,   0 percent},
     [KARATE_CHOP]   = {KARATE_CHOP,  EFFECT_NORMAL_HIT,         50, FIGHTING,     100 percent, 25,   0 percent},
@@ -257,3 +258,6 @@ const struct Move Moves[] = {
 };
 
 static_assert(lengthof(Moves) == NUM_ATTACKS + 1, "");
+#else
+struct Move Moves[NUM_ATTACKS + 1];
+#endif // FEATURE_EMBED_DATA

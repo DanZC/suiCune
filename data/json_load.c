@@ -3,24 +3,25 @@
 #include "constant_strings.h"
 #include <assert.h>
 #include "json_load.h"
-#include "../engine/items/mart.h"
+#include "items/marts.h"
 #include "wild/johto_grass.h"
 #include "wild/kanto_grass.h"
 #include "wild/johto_water.h"
 #include "wild/kanto_water.h"
 #include "pokemon/base_stats.h"
+#include "moves/moves.h"
 
 const char MartJSONPath[] = "data/items/marts.json";
 
 u32_flag_s JSONStringToConstant(json_value_t* const value) {
     json_string_t* str = json_value_as_string(value);
     if(str == NULL) {
-        log_err("Could not parse JSON value as string.");
+        log_err("Could not parse JSON value as string.\n");
         return u32_flag((uint32_t)-1, false);
     }
     u32_flag_s res = FindConstantValueByString(str->string);
     if(!res.flag) {
-        log_err("Could not find constant value '%s'.", str->string);
+        log_err("Could not find constant value '%s'.\n", str->string);
         return u32_flag((uint32_t)-1, false);
     }
     return res;
@@ -29,7 +30,7 @@ u32_flag_s JSONStringToConstant(json_value_t* const value) {
 int_flag_s JSONValueToInt(json_value_t* const value) {
     json_number_t* num = json_value_as_number(value);
     if(num == NULL) {
-        log_err("Could not parse JSON value as number.");
+        log_err("Could not parse JSON value as number.\n");
         return int_flag(-1, false);
     }
     return int_flag(atoi(num->number), true);
@@ -344,8 +345,71 @@ void JSONLoadPokemonBaseStats(struct BaseData* data) {
     free(root);
 }
 
+static const char MoveDataPath[] = "data/moves/moves.json";
+void JSONLoadMoveData(void) {
+    asset_s a = LoadTextAsset(MoveDataPath);
+    json_value_t* root = json_parse(a.ptr, a.size);
+    assert(root);
+
+    json_object_t* root_object = json_value_as_object(root);
+    assert(root_object);
+
+    for(json_object_element_t* it = root_object->start; it != NULL; it = it->next) {
+        u32_flag_s index = FindConstantValueByString(it->name->string);
+        if(!index.flag || index.a > NUM_ATTACKS) {
+            log_warn("Index %s was not found. Skipping...\n", it->name->string);
+            continue;
+        }
+        struct Move* move = Moves + index.a;
+        json_object_t* obj = json_value_as_object(it->value);
+        for(json_object_element_t* obj_it = obj->start; obj_it != NULL; obj_it = obj_it->next) {
+            const char* fkey = obj_it->name->string;
+            if(strcmp(fkey, "effect") == 0) {
+                u32_flag_s res = JSONStringToConstant(obj_it->value);
+                if(res.flag)
+                    move->effect = (uint8_t)res.a;
+            }
+            else if(strcmp(fkey, "animation") == 0) {
+                u32_flag_s res = JSONStringToConstant(obj_it->value);
+                if(res.flag)
+                    move->animation = (uint8_t)res.a;
+            }
+            else if(strcmp(fkey, "type") == 0) {
+                u32_flag_s res = JSONStringToConstant(obj_it->value);
+                if(res.flag)
+                    move->type = (uint8_t)res.a;
+            }
+            else if(strcmp(fkey, "accuracy") == 0) {
+                int_flag_s res = JSONValueToInt(obj_it->value);
+                if(res.flag)
+                    move->accuracy = (uint8_t)(res.a percent);
+            }
+            else if(strcmp(fkey, "effectChance") == 0) {
+                int_flag_s res = JSONValueToInt(obj_it->value);
+                if(res.flag)
+                    move->effectChance = (uint8_t)(res.a percent);
+            }
+            else if(strcmp(fkey, "power") == 0) {
+                int_flag_s res = JSONValueToInt(obj_it->value);
+                if(res.flag)
+                    move->power = (uint8_t)res.a;
+            }
+            else if(strcmp(fkey, "pp") == 0) {
+                int_flag_s res = JSONValueToInt(obj_it->value);
+                if(res.flag)
+                    move->pp = (uint8_t)res.a;
+            }
+        }
+    }
+    free(root);
+    FreeAsset(a);
+}
+
 void JSONLoadTables(void) {
+#if !FEATURE_EMBED_DATA
     JSONLoadMarts();
     JSONLoadWildEncounters();
     JSONLoadPokemonBaseStats(BasePokemonData);
+    JSONLoadMoveData();
+#endif // !FEATURE_EMBED_DATA
 }

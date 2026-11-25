@@ -1,3 +1,3 @@
 #pragma once
 
-extern const struct Move Moves[];
+extern struct Move Moves[];
