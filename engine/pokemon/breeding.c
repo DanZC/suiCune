@@ -355,7 +355,7 @@ static void Text_HatchEgg_Function(struct TextCmdState* state) {
     };
     // LD_HL(wVramState);
     // RES_hl(0);
-    bit_reset(wram->wVramState, 0);
+    bit_reset(gGFX.vramState, VRAM_STATE_OW_SPRITE_F);
     // PUSH_HL;
     // PUSH_DE;
     // PUSH_BC;

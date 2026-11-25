@@ -2891,7 +2891,7 @@ void ReturnToMapWithSpeechTextbox(void){
     Textbox(coord(0, 12, wram->wTilemap), 4, 18);
     // LD_HL(wVramState);
     // SET_hl(0);
-    bit_set(wram->wVramState, 0);
+    bit_set(gGFX.vramState, VRAM_STATE_OW_SPRITE_F);
     // CALL(aUpdateSprites);
     UpdateSprites();
     // CALL(aWaitBGMap2);

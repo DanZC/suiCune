@@ -574,7 +574,7 @@ bool LoadMovementDataPointer(uint8_t a, const uint8_t* hl){
 
     // LD_HL(wVramState);
     // SET_hl(7);
-    bit_set(wram->wVramState, 7);
+    bit_set(gGFX.vramState, VRAM_STATE_SURF_F);
     // AND_A_A;
     // RET;
     return true;
@@ -763,7 +763,7 @@ uint8_t v_GetMovementByte(const uint8_t* hl, struct Object* bc){
 void SetVramState_Bit0(void){
     // LD_HL(wVramState);
     // SET_hl(0);
-    bit_set(wram->wVramState, 0);
+    bit_set(gGFX.vramState, VRAM_STATE_OW_SPRITE_F);
     // RET;
 }
 
@@ -771,7 +771,7 @@ void SetVramState_Bit0(void){
 void ResetVramState_Bit0(void){
     // LD_HL(wVramState);
     // RES_hl(0);
-    bit_reset(wram->wVramState, 0);
+    bit_reset(gGFX.vramState, VRAM_STATE_OW_SPRITE_F);
     // RET;
 }
 
@@ -779,7 +779,7 @@ void UpdateSprites(void){
     // LD_A_addr(wVramState);
     // BIT_A(0);
     // RET_Z ;
-    if(!bit_test(wram->wVramState, 0))
+    if(!bit_test(gGFX.vramState, VRAM_STATE_OW_SPRITE_F))
         return;
 
     // FARCALL(aUpdateAllObjectsFrozen);

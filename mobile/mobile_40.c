@@ -168,7 +168,7 @@ void Function100022(uint8_t d, uint8_t e, const mobile_comm_fn_t* bc){
     Function11615a();
     // LD_HL(wVramState);
     // SET_hl(1);
-    bit_set(wram->wVramState, 1);
+    bit_set(gGFX.vramState, VRAM_STATE_SPRITE_UPDATE_F);
     // RET;
 }
 
@@ -179,7 +179,7 @@ void Function100057(void){
     ReturnToMapFromSubmenu();
     // LD_HL(wVramState);
     // RES_hl(1);
-    bit_reset(wram->wVramState, 1);
+    bit_reset(gGFX.vramState, VRAM_STATE_SPRITE_UPDATE_F);
     // RET;
 
 }

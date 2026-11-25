@@ -96,7 +96,7 @@ void ReanchorBGMap_NoOAMUpdate(void){
     // LD_HL(wVramState);
     // SET_hl(6);
     // RET;
-    bit_set(wram->wVramState, 6);
+    bit_set(gGFX.vramState, VRAM_STATE_TEXT_F);
 }
 
 static void LoadFonts_NoOAMUpdate_LoadGFX(void) {

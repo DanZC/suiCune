@@ -3641,7 +3641,7 @@ void UpdateAllObjectsFrozen(void) {
     // LD_A_addr(wVramState);
     // BIT_A(0);
     // RET_Z;
-    if(!bit_test(wram->wVramState, 0))
+    if(!bit_test(gGFX.vramState, VRAM_STATE_OW_SPRITE_F))
         return;
     
     // LD_BC(wObjectStructs);
@@ -4497,7 +4497,7 @@ void v_UpdateSprites(void) {
     // LD_A_addr(wVramState);
     // BIT_A(0);
     // RET_Z;
-    if(!bit_test(wram->wVramState, 0))
+    if(!bit_test(gGFX.vramState, VRAM_STATE_OW_SPRITE_F))
         return;
     
     // XOR_A_A;
@@ -4520,7 +4520,7 @@ void v_UpdateSprites(void) {
     // LD_B(NUM_SPRITE_OAM_STRUCTS * SPRITEOAMSTRUCT_LENGTH);
     // IF_Z goto ok;
     // LD_B((NUM_SPRITE_OAM_STRUCTS - 12) * SPRITEOAMSTRUCT_LENGTH);
-    uint8_t b = (bit_test(wram->wVramState, 1))? (NUM_SPRITE_OAM_STRUCTS - 12) : NUM_SPRITE_OAM_STRUCTS;
+    uint8_t b = (bit_test(gGFX.vramState, VRAM_STATE_SPRITE_UPDATE_F))? (NUM_SPRITE_OAM_STRUCTS - 12) : NUM_SPRITE_OAM_STRUCTS;
 
 // ok:
 

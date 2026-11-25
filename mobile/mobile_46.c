@@ -826,9 +826,9 @@ void BattleTowerRoomMenu_InitRAM(void){
     // LD_HL(wVramState);
     // LD_A_hl;
     // LD_addr_A(wcd7f);
-    wram->wcd7f = wram->wVramState;
+    wram->wcd7f = gGFX.vramState;
     // SET_hl(1);
-    bit_set(wram->wVramState, 1);
+    bit_set(gGFX.vramState, VRAM_STATE_SPRITE_UPDATE_F);
     // LD_A((1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
     // LDH_addr_A(rIE);
     gb_write(rIE, (1 << SERIAL) | (1 << TIMER) | (1 << LCD_STAT) | (1 << VBLANK));
@@ -893,7 +893,7 @@ void BattleTowerRoomMenu_Cleanup(void){
     // NOP;
     // LD_A_addr(wcd7f);
     // LD_addr_A(wVramState);
-    wram->wVramState = wram->wcd7f;
+    gGFX.vramState = wram->wcd7f;
     // LD_A_addr(wMobileErrorCodeBuffer);
     // LD_addr_A(wScriptVar);
     wram->wScriptVar = wram->wMobileErrorCodeBuffer[0];
@@ -8889,10 +8889,10 @@ void Function11ac51(void){
     bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LD_A_addr(wVramState);
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0;
+    gGFX.vramState = 0;
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
     uint8_t inMenu = hram.hInMenu;
@@ -8950,7 +8950,7 @@ void Function11ac51(void){
     hram.hInMenu = inMenu;
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // POP_AF;
     // LD_addr_A(wOptions);
     gOptions.options = options;

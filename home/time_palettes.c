@@ -12,8 +12,8 @@ bool UpdateTimeAndPals(void){
     UpdateTime();
 
 //  obj update on?
-    uint8_t vram_state = wram->wVramState;
-    if(!bit_test(vram_state, 0))  // obj update
+    uint8_t vram_state = gGFX.vramState;
+    if(!bit_test(vram_state, VRAM_STATE_OW_SPRITE_F))  // obj update
         return false;
 
     return TimeOfDayPals();

@@ -210,7 +210,7 @@ uint8_t CopyObjectStruct(struct MapObject* bc, uint8_t a){
             // LD_HL(wVramState);
             // BIT_hl(7);
             // RET_Z ;
-            if(!bit_test(wram->wVramState, 7))
+            if(!bit_test(gGFX.vramState, VRAM_STATE_SURF_F))
                 return 0;
 
             // LD_HL(OBJECT_FLAGS2);

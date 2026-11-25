@@ -348,7 +348,7 @@ void Movement_step_end(struct Object* bc){
 
     // LD_HL(wVramState);
     // RES_hl(7);
-    bit_reset(wram->wVramState, 7);
+    bit_reset(gGFX.vramState, VRAM_STATE_SURF_F);
 
     // LD_HL(OBJECT_STEP_TYPE);
     // ADD_HL_BC;
@@ -382,7 +382,7 @@ void Movement_48(struct Object* bc){
 
     // LD_HL(wVramState);
     // RES_hl(7);
-    bit_reset(wram->wVramState, 7);
+    bit_reset(gGFX.vramState, VRAM_STATE_SURF_F);
     // RET;
 }
 
@@ -400,7 +400,7 @@ void Movement_remove_object(struct Object* bc){
 // not_leading:
     // LD_HL(wVramState);
     // RES_hl(7);
-    bit_reset(wram->wVramState, 7);
+    bit_reset(gGFX.vramState, VRAM_STATE_SURF_F);
     // RET;
 }
 
@@ -417,7 +417,7 @@ void Movement_4b(struct Object* bc){
 
     // LD_HL(wVramState);
     // RES_hl(7);
-    bit_reset(wram->wVramState, 7);
+    bit_reset(gGFX.vramState, VRAM_STATE_SURF_F);
     // RET;
 }
 

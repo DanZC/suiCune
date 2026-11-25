@@ -404,7 +404,7 @@ static void LoadMapTimeOfDay_PushAttrmap(void) {
 void LoadMapTimeOfDay(void){
     // LD_HL(wVramState);
     // RES_hl(6);
-    bit_reset(wram->wVramState, 6);
+    bit_reset(gGFX.vramState, VRAM_STATE_TEXT_F);
     // LD_A(0x1);
     // LD_addr_A(wSpriteUpdatesEnabled);
     wram->wSpriteUpdatesEnabled = 0x1;
@@ -464,7 +464,7 @@ void RefreshMapSprites(void){
     if(!bit_test(wram->wPlayerSpriteSetupFlags, PLAYERSPRITESETUP_SKIP_RELOAD_GFX_F)) {
         // LD_HL(wVramState);
         // SET_hl(0);
-        bit_set(wram->wVramState, 0);
+        bit_set(gGFX.vramState, VRAM_STATE_OW_SPRITE_F);
         // CALL(aSafeUpdateSprites);
         SafeUpdateSprites();
     }

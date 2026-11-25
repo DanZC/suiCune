@@ -178,9 +178,9 @@ void RunMobileTradeAnim_Frontpics(const uint8_t* de){
     // LD_HL(wVramState);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // RES_hl(0);
-    bit_reset(wram->wVramState, 0);
+    bit_reset(gGFX.vramState, VRAM_STATE_OW_SPRITE_F);
     // LD_HL(wOptions);
     // LD_A_hl;
     uint8_t options = gOptions.options;
@@ -202,7 +202,7 @@ void RunMobileTradeAnim_Frontpics(const uint8_t* de){
     gOptions.options = options;
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // POP_AF;
     // LDH_addr_A(hMapAnims);
     hram.hMapAnims = mapAnims;
@@ -224,9 +224,9 @@ void RunMobileTradeAnim_NoFrontpics(const uint8_t* de){
     // LD_HL(wVramState);
     // LD_A_hl;
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // RES_hl(0);
-    bit_reset(wram->wVramState, 0);
+    bit_reset(gGFX.vramState, VRAM_STATE_OW_SPRITE_F);
     // LD_HL(wOptions);
     // LD_A_hl;
     uint8_t options = gOptions.options;
@@ -248,7 +248,7 @@ void RunMobileTradeAnim_NoFrontpics(const uint8_t* de){
     gOptions.options = options;
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // POP_AF;
     // LDH_addr_A(hMapAnims);
     hram.hMapAnims = mapAnims;

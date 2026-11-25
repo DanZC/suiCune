@@ -11,6 +11,13 @@ typedef struct GFX {
     tile_t BGMapBuffer[SCREEN_WIDTH * 2];
     uint8_t BGMapPalBuffer[SCREEN_WIDTH * 2];
     uint16_t BGMapBufferPointers[SCREEN_WIDTH];
+
+    // bit 0: overworld sprite updating on/off
+    // bit 1: something to do with sprite updates
+    // bit 6: something to do with text
+    // bit 7: on when surf initiates
+    //        flickers when climbing waterfall
+    uint8_t vramState;
 } gfx_s;
 
 extern gfx_s gGFX;

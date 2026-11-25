@@ -8,7 +8,7 @@ void DisableSpriteUpdates(void){
     // LD_A_addr(wVramState);
     // RES_A(0);
     // LD_addr_A(wVramState);
-    bit_reset(wram->wVramState, 0);
+    bit_reset(gGFX.vramState, VRAM_STATE_OW_SPRITE_F);
     // LD_A(0x0);
     // LD_addr_A(wSpriteUpdatesEnabled);
     wram->wSpriteUpdatesEnabled = 0x0;
@@ -22,7 +22,7 @@ void EnableSpriteUpdates(void){
     // LD_A_addr(wVramState);
     // SET_A(0);
     // LD_addr_A(wVramState);
-    bit_set(wram->wVramState, 0);
+    bit_set(gGFX.vramState, VRAM_STATE_OW_SPRITE_F);
     // LD_A(0x1);
     // LDH_addr_A(hMapAnims);
     hram.hMapAnims = 0x1;

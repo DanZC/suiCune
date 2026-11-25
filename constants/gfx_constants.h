@@ -59,3 +59,11 @@ enum {
     ANIM_MON_EGG1,
     ANIM_MON_EGG2,
 };
+
+// wVramState bit flags
+enum {
+    VRAM_STATE_OW_SPRITE_F,
+    VRAM_STATE_SPRITE_UPDATE_F,
+    VRAM_STATE_TEXT_F = 6,
+    VRAM_STATE_SURF_F,
+};

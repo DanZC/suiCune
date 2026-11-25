@@ -50,10 +50,10 @@ static const struct JohtoBadgesOAM TrainerCard_JohtoBadgesOAM;
 void TrainerCard(void){
     // LD_A_addr(wVramState);
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0;
+    gGFX.vramState = 0;
     // LD_HL(wOptions);
     // LD_A_hl;
     // PUSH_AF;
@@ -101,7 +101,7 @@ void TrainerCard(void){
     gOptions.options = options;
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // RET;
 
 

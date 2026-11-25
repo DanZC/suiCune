@@ -158,7 +158,7 @@ void WaitScriptMovement(void){
     // LD_HL(wVramState);
     // BIT_hl(7);
     // RET_NZ ;
-    if(bit_test(wram->wVramState, 7))
+    if(bit_test(gGFX.vramState, VRAM_STATE_SURF_F))
         return;
 
     // FARCALL(aUnfreezeAllObjects);
@@ -1555,7 +1555,7 @@ static bool ApplyObjectFacing(uint8_t d, uint8_t e){
     // LD_HL(wVramState);
     // BIT_hl(6);
     // IF_NZ goto text_state;
-    if(!bit_test(wram->wVramState, 6)) {
+    if(!bit_test(gGFX.vramState, VRAM_STATE_TEXT_F)) {
         // CALL(aApplyObjectFacing_DisableTextTiles);
         ApplyObjectFacing_DisableTextTiles();
     }

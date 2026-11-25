@@ -12,7 +12,7 @@ static void ScrollingMenu_UpdatePalettes(void){
     // LD_HL(wVramState);
     // BIT_hl(0);
     // JP_NZ (mUpdateTimePals);
-    if(bit_test(wram->wVramState, 0))
+    if(bit_test(gGFX.vramState, VRAM_STATE_OW_SPRITE_F))
         return UpdateTimePals();
     // JP(mSetPalettes);
     SetPalettes();

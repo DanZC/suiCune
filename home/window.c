@@ -72,7 +72,7 @@ void CloseText(void){
     // LD_HL(wVramState);
     // RES_hl(6);
     // RET;
-    bit_reset(wram->wVramState, 6);
+    bit_reset(gGFX.vramState, VRAM_STATE_TEXT_F);
 }
 
 void OpenText(void){

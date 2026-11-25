@@ -92,7 +92,7 @@ void RedCredits(void){
     // FARCALL(aFadeOutPalettes);
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0x0;
+    gGFX.vramState = 0x0;
     // LDH_addr_A(hMapAnims);
     hram.hMapAnims = FALSE;
     // FARCALL(aInitDisplayForRedCredits);
@@ -125,7 +125,7 @@ void HallOfFame_FadeOutMusic(void){
     FadeOutPalettes();
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0x0;
+    gGFX.vramState = 0x0;
     // LDH_addr_A(hMapAnims);
     hram.hMapAnims = 0x0;
     // FARCALL(aInitDisplayForHallOfFame);

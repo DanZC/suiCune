@@ -429,10 +429,10 @@ void FlyFromAnim(void){
     DelayFrame();
     // LD_A_addr(wVramState);
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0;
+    gGFX.vramState = 0;
     // CALL(aFlyFunction_InitGFX);
     FlyFunction_InitGFX();
     // depixel4(10, 10, 4, 0);
@@ -471,7 +471,7 @@ void FlyFromAnim(void){
 // exit:
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // RET;
 }
 
@@ -507,10 +507,10 @@ void FlyToAnim(void){
     DelayFrame();
     // LD_A_addr(wVramState);
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0;
+    gGFX.vramState = 0;
     // CALL(aFlyFunction_InitGFX);
     FlyFunction_InitGFX();
     // depixel4(31, 10, 4, 0);
@@ -553,7 +553,7 @@ void FlyToAnim(void){
 // exit:
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // CALL(aFlyToAnim_RestorePlayerSprite_DespawnLeaves);
     FlyToAnim_RestorePlayerSprite_DespawnLeaves();
     // RET;

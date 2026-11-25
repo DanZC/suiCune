@@ -84,10 +84,10 @@ void Pokedex(void){
     bit_set(gOptions.options, NO_TEXT_SCROLL);
     // LD_A_addr(wVramState);
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0;
+    gGFX.vramState = 0;
     // LDH_A_addr(hInMenu);
     // PUSH_AF;
     uint8_t inMenu = hram.hInMenu;
@@ -137,7 +137,7 @@ void Pokedex(void){
     hram.hInMenu = inMenu;
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // POP_AF;
     // LD_addr_A(wOptions);
     gOptions.options = options;

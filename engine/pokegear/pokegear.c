@@ -181,10 +181,10 @@ void PokeGear(void){
     hram.hInMenu = 0x1;
     // LD_A_addr(wVramState);
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0;
+    gGFX.vramState = 0;
     // CALL(aPokeGear_InitTilemap);
     PokeGear_InitTilemap();
     // CALL(aDelayFrame);
@@ -221,7 +221,7 @@ void PokeGear(void){
     WaitSFX();
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram.hInMenu = inMenu;
@@ -2871,10 +2871,10 @@ void v_TownMap(void){
 
     // LD_A_addr(wVramState);
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0;
+    gGFX.vramState = 0;
 
     // CALL(aClearBGPalettes);
     ClearBGPalettes();
@@ -2956,7 +2956,7 @@ void v_TownMap(void){
 // resume:
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // POP_AF;
     // LDH_addr_A(hInMenu);
     hram.hInMenu = inMenu;

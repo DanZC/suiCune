@@ -46,10 +46,10 @@ void CelebiShrineEvent(void){
     // CALL(aDelayFrame);
     // LD_A_addr(wVramState);
     // PUSH_AF;
-    uint8_t vramState = wram->wVramState;
+    uint8_t vramState = gGFX.vramState;
     // XOR_A_A;
     // LD_addr_A(wVramState);
-    wram->wVramState = 0x0;
+    gGFX.vramState = 0x0;
     // CALL(aLoadCelebiGFX);
     LoadCelebiGFX();
     // depixel4(0, 10, 7, 0);
@@ -104,7 +104,7 @@ void CelebiShrineEvent(void){
 // done:
     // POP_AF;
     // LD_addr_A(wVramState);
-    wram->wVramState = vramState;
+    gGFX.vramState = vramState;
     // CALL(aCelebiShrineEvent_RestorePlayerSprite_DespawnLeaves);
     CelebiShrineEvent_RestorePlayerSprite_DespawnLeaves();
     // CALL(aCelebiEvent_SetBattleType);
